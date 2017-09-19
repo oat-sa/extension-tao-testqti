@@ -25,6 +25,10 @@ define([
 ], function (_, helpers, messagesHelper) {
     'use strict';
 
+    var messagesHelperApi = [
+        { title: 'getExitMessage' }
+    ];
+
     QUnit.module('helpers/messages');
 
 
@@ -32,11 +36,6 @@ define([
         QUnit.expect(1);
         assert.equal(typeof messagesHelper, 'object', "The messages helper module exposes an object");
     });
-
-
-    var messagesHelperApi = [
-        {title: 'getExitMessage'}
-    ];
 
     QUnit
         .cases(messagesHelperApi)
@@ -76,230 +75,181 @@ define([
         };
     }
 
-    QUnit.test('helpers/messages.getExitMessage (enabled)', function (assert) {
-        var context = {itemPosition: 1};
-        var data = {
-            config: {
-                enableUnansweredItemsWarning: true
+    QUnit
+        .cases([
+            {
+                title: 'all answered, none flagged',
+                testStats:      { answered: 3 },
+                partStats:      { answered: 3 },
+                sectionStats:   { answered: 3 },
+                currentItemResponse: { string: 'test' },
+                currentItemAnswered: true,
+                testMessage:    'You answered all 3 question(s) in this test.',
+                partMessage:    'You answered all 3 question(s).',
+                sectionMessage: 'You answered all 3 question(s) in this section.'
+            }, {
+                title: 'current not answered, none flagged',
+                testStats:      { answered: 2 },
+                partStats:      { answered: 2 },
+                sectionStats:   { answered: 2 },
+                currentItemResponse: null,
+                currentItemAnswered: false,
+                testMessage:    'You have 1 unanswered question(s).',
+                partMessage:    'You have 1 unanswered question(s).',
+                sectionMessage: 'You answered only 2 of the 3 question(s) in this section.'
+            }, {
+                title: 'current not answered, none flagged',
+                testStats:      { answered: 2 },
+                partStats:      { answered: 2 },
+                sectionStats:   { answered: 2 },
+                currentItemResponse: null,
+                currentItemAnswered: false,
+                testMessage:    'You have 1 unanswered question(s).',
+                partMessage:    'You have 1 unanswered question(s).',
+                sectionMessage: 'You answered only 2 of the 3 question(s) in this section.'
+            }, {
+                title: 'current not answered, one flagged',
+                testStats:      { answered: 2, flagged: 1 },
+                partStats:      { answered: 2, flagged: 1 },
+                sectionStats:   { answered: 2, flagged: 1 },
+                currentItemResponse: null,
+                currentItemAnswered: false,
+                testMessage:    'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now.',
+                partMessage:    'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now.',
+                sectionMessage: 'You answered only 2 of the 3 question(s) in this section, and flagged 1 of them.'
+            }, {
+                title: 'all answered, one flagged',
+                testStats:      { answered: 3, flagged: 1 },
+                partStats:      { answered: 3, flagged: 1 },
+                sectionStats:   { answered: 3, flagged: 1 },
+                currentItemResponse: { string: 'test' },
+                currentItemAnswered: true,
+                testMessage:    'You answered all 3 question(s) in this test and you flagged 1 item(s) that you can review now.',
+                partMessage:    'You answered all 3 question(s) and you flagged 1 item(s) that you can review now.',
+                sectionMessage: 'You answered all 3 question(s) in this section, and flagged 1 of them.'
+            }, {
+                title: 'one flagged, test taker has just answered to the current item, but without moving from it yet',
+                testStats:      { answered: 1, flagged: 1 },
+                partStats:      { answered: 1, flagged: 1 },
+                sectionStats:   { answered: 1, flagged: 1 },
+                currentItemResponse: { string: 'test' },
+                currentItemAnswered: false,
+                testMessage:    'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now.',
+                partMessage:    'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now.',
+                sectionMessage: 'You answered only 2 of the 3 question(s) in this section, and flagged 1 of them.'
+            }, {
+                title: 'none flagged, test taker has just answered to the current item, but without moving from it yet',
+                testStats:      { answered: 1 },
+                partStats:      { answered: 1 },
+                sectionStats:   { answered: 1 },
+                currentItemResponse: { string: 'test' },
+                currentItemAnswered: false,
+                testMessage:    'You have 1 unanswered question(s).',
+                partMessage:    'You have 1 unanswered question(s).',
+                sectionMessage: 'You answered only 2 of the 3 question(s) in this section.'
+            }, {
+                title: 'none flagged, all answered, test taker has just moved to an already answered item',
+                testStats:      { answered: 3 },
+                partStats:      { answered: 3 },
+                sectionStats:   { answered: 3 },
+                currentItemResponse: { string: 'test' },
+                currentItemAnswered: true,
+                testMessage:    'You answered all 3 question(s) in this test.',
+                partMessage:    'You answered all 3 question(s).',
+                sectionMessage: 'You answered all 3 question(s) in this section.'
+            }, {
+                title: 'none flagged, all answered, test taker removes answer from a previously answered item',
+                testStats:      { answered: 3 },
+                partStats:      { answered: 3 },
+                sectionStats:   { answered: 3 },
+                currentItemResponse: null,
+                currentItemAnswered: true,
+                testMessage:    'You have 1 unanswered question(s).',
+                partMessage:    'You have 1 unanswered question(s).',
+                sectionMessage: 'You answered only 2 of the 3 question(s) in this section.'
             }
-        };
-        var map = {
-            jumps: [
-                {position: 0, identifier: 'item1', section: 'section1', part: 'part1'},
-                {position: 1, identifier: 'item2', section: 'section1', part: 'part1'},
-                {position: 2, identifier: 'item3', section: 'section1', part: 'part1'}
-            ],
-            parts: {
-                part1: {
-                    sections: {
-                        section1: {
-                            items: {
-                                item1: {},
-                                item2: {},
-                                item3: {}
-                            },
-                            stats: {
-                                questions: 3,
-                                answered: 3,
-                                flagged: 0,
-                                viewed: 0,
-                                total: 3
-                            }
-                        }
-                    },
-                    stats: {
-                        questions: 3,
-                        answered: 3,
-                        flagged: 0,
-                        viewed: 0,
-                        total: 3
-                    }
+        ])
+        .test('helpers/messages.getExitMessage (enabled)', function (testData, assert) {
+            var context = {
+                itemPosition: 1,
+                itemAnswered: testData.currentItemAnswered
+            };
+            var data = {
+                config: {
+                    enableUnansweredItemsWarning: true
                 }
-            },
-            stats: {
-                questions: 3,
-                answered: 3,
-                flagged: 0,
-                viewed: 0,
-                total: 3
-            }
-        };
-        var declarations = {
-            "responsedeclaration": {
-                "identifier": "RESPONSE",
-                "serial": "responsedeclaration",
-                "qtiClass": "responseDeclaration",
-                "attributes": {
-                    "identifier": "RESPONSE", "cardinality": "single", "baseType": "string"
-                },
-                "defaultValue": []
-            }
-        };
-        var responses = {RESPONSE: {base: null}};
-        var runner = runnerMock(map, context, data, responses, declarations);
-        var message = 'This is a test.';
-
-        QUnit.expect(18);
-
-        // all answered, no flagged
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You answered all 3 question(s) in this test. ' + message, 'The messages helper return the right message when the scope is "test"');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You answered all 3 question(s). ' + message, 'The messages helper return the right message when the scope is "part"');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered all 3 question(s) in this section. ' + message, 'The messages helper return the right message when the scope is "section"');
-
-        // some answered, no flagged
-        map.stats.answered = 2;
-        map.parts.part1.stats.answered = 2;
-        map.parts.part1.sections.section1.stats.answered = 2;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered only 2 of the 3 question(s) in this section. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
-
-        // some answered, some flagged
-        map.stats.flagged = 1;
-        map.parts.part1.stats.flagged = 1;
-        map.parts.part1.sections.section1.stats.flagged = 1;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered and flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered and flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered only 2 of the 3 question(s) in this section, and flagged 1 of them. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered and flagged items');
-
-
-        // all answered, some flagged
-        map.stats.answered = 3;
-        map.parts.part1.stats.answered = 3;
-        map.parts.part1.sections.section1.stats.answered = 3;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You answered all 3 question(s) in this test and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "test" and there are flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You answered all 3 question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "part" and there are flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered all 3 question(s) in this section, and flagged 1 of them. ' + message, 'The messages helper return the right message when the scope is "section" and there are flagged items');
-
-        // some answered, some flagged, current item answered
-        map.stats.answered = 1;
-        map.parts.part1.stats.answered = 1;
-        map.parts.part1.sections.section1.stats.answered = 1;
-        responses.RESPONSE.base = {string: 'test'};
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now. ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered only 2 of the 3 question(s) in this section, and flagged 1 of them. ' + message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
-
-        // some answered, no flagged, current item answered
-        map.stats.flagged = 0;
-        map.parts.part1.stats.flagged = 0;
-        map.parts.part1.sections.section1.stats.flagged = 0;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), 'You have 1 unanswered question(s). ' + message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), 'You answered only 2 of the 3 question(s) in this section. This is a test.', 'The messages helper return the right message when the scope is "section" and there are unanswered items');
-    });
-
-    QUnit.test('helpers/messages.getExitMessage (disabled)', function (assert) {
-        var context = {itemPosition: 1};
-        var data = {
-            config: {
-                enableUnansweredItemsWarning: false
-            }
-        };
-        var map = {
-            jumps: [
-                {position: 0, identifier: 'item1', section: 'section1', part: 'part1'},
-                {position: 1, identifier: 'item2', section: 'section1', part: 'part1'},
-                {position: 2, identifier: 'item3', section: 'section1', part: 'part1'}
-            ],
-            parts: {
-                part1: {
-                    sections: {
-                        section1: {
-                            items: {
-                                item1: {},
-                                item2: {},
-                                item3: {}
-                            },
-                            stats: {
-                                questions: 3,
-                                answered: 3,
-                                flagged: 0,
-                                viewed: 0,
-                                total: 3
+            };
+            var map = {
+                jumps: [
+                    {position: 0, identifier: 'item1', section: 'section1', part: 'part1'},
+                    {position: 1, identifier: 'item2', section: 'section1', part: 'part1'},
+                    {position: 2, identifier: 'item3', section: 'section1', part: 'part1'}
+                ],
+                parts: {
+                    part1: {
+                        sections: {
+                            section1: {
+                                items: {
+                                    item1: {},
+                                    item2: {},
+                                    item3: {}
+                                },
+                                stats: _.defaults(testData.sectionStats, {
+                                    questions: 3,
+                                    answered: 3,
+                                    flagged: 0,
+                                    viewed: 0,
+                                    total: 3
+                                })
                             }
-                        }
-                    },
-                    stats: {
-                        questions: 3,
-                        answered: 3,
-                        flagged: 0,
-                        viewed: 0,
-                        total: 3
+                        },
+                        stats: _.defaults(testData.partStats, {
+                            questions: 3,
+                            answered: 3,
+                            flagged: 0,
+                            viewed: 0,
+                            total: 3
+                        })
                     }
-                }
-            },
-            stats: {
-                questions: 3,
-                answered: 3,
-                flagged: 0,
-                viewed: 0,
-                total: 3
-            }
-        };
-        var declarations = {
-            "responsedeclaration": {
-                "identifier": "RESPONSE",
-                "serial": "responsedeclaration",
-                "qtiClass": "responseDeclaration",
-                "attributes": {
-                    "identifier": "RESPONSE", "cardinality": "single", "baseType": "string"
                 },
-                "defaultValue": []
-            }
-        };
-        var responses = {RESPONSE: {base: null}};
-        var runner = runnerMock(map, context, data, responses, declarations);
-        var message = 'This is a test.';
+                stats: _.defaults(testData.testStats, {
+                    questions: 3,
+                    answered: 3,
+                    flagged: 0,
+                    viewed: 0,
+                    total: 3
+                })
+            };
+            var declarations = {
+                "responsedeclaration": {
+                    "identifier": "RESPONSE",
+                    "serial": "responsedeclaration",
+                    "qtiClass": "responseDeclaration",
+                    "attributes": {
+                        "identifier": "RESPONSE", "cardinality": "single", "baseType": "string"
+                    },
+                    "defaultValue": []
+                }
+            };
+            var responses = {
+                RESPONSE: {
+                    base: testData.currentItemResponse
+                }
+            };
+            var runner = runnerMock(map, context, data, responses, declarations);
+            var message = 'This is a test.';
 
-        QUnit.expect(18);
+            QUnit.expect(6);
 
-        // all answered, no flagged
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test"');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'The messages helper return the right message when the scope is "part"');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'The messages helper return the right message when the scope is "section"');
+            assert.equal(messagesHelper.getExitMessage(message, 'test', runner), testData.testMessage + ' ' + message, 'message include the right stats for test scope');
+            assert.equal(messagesHelper.getExitMessage(message, 'part', runner), testData.partMessage + ' ' + message, 'message include the right stats for part scope');
+            assert.equal(messagesHelper.getExitMessage(message, 'section', runner), testData.sectionMessage + ' ' + message, 'message include the right stats for section scope');
 
-        // some answered, no flagged
-        map.stats.answered = 0;
-        map.parts.part1.stats.answered = 1;
-        map.parts.part1.sections.section1.stats.answered = 2;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
+            data.config.enableUnansweredItemsWarning = false;
 
-        // some answered, some flagged
-        map.stats.flagged = 3;
-        map.parts.part1.stats.flagged = 2;
-        map.parts.part1.sections.section1.stats.flagged = 1;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test" and there are unanswered and flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'The messages helper return the right message when the scope is "part" and there are unanswered and flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'The messages helper return the right message when the scope is "section" and there are unanswered and flagged items');
-
-
-        // no answered, some flagged
-        map.stats.answered = 3;
-        map.parts.part1.stats.answered = 3;
-        map.parts.part1.sections.section1.stats.answered = 3;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test" and there are flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'The messages helper return the right message when the scope is "part" and there are flagged items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'The messages helper return the right message when the scope is "section" and there are flagged items');
-
-        // some answered, some flagged, current item answered
-        map.stats.answered = 0;
-        map.parts.part1.stats.answered = 1;
-        map.parts.part1.sections.section1.stats.answered = 2;
-        responses.RESPONSE.base = {string: 'test'};
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
-
-        // some answered, no flagged, current item answered
-        map.stats.flagged = 0;
-        map.parts.part1.stats.flagged = 0;
-        map.parts.part1.sections.section1.stats.flagged = 0;
-        assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'The messages helper return the right message when the scope is "test" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'The messages helper return the right message when the scope is "part" and there are unanswered items');
-        assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'The messages helper return the right message when the scope is "section" and there are unanswered items');
-    });
+            assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'no stats in test scope when option is disabled');
+            assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'no stats in part scope when option is disabled');
+            assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'no stats in session scope when option is disabled');
+        });
 
 });
