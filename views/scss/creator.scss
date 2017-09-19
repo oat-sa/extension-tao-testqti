@@ -25,7 +25,7 @@
 #test-creator{
 
     $toolbarHeight : 50px;
-    $minHeight : 550px;
+    $minHeight : 500px;
 
     $sideWidthWide : 350px;
     $sideWidthMedium : 300px;
@@ -37,25 +37,19 @@
     $rubColor: whiten($info, 0.3);
 
     position: relative;
+    height: calc(100vh - 99px);
     min-height: $minHeight;
-    height: auto;
+    @include flex-container;
+
+    & > section {
+        @include simple-flex-box;
+    }
 
     .test-creator-toolbar{
         position: relative;
         height: $toolbarHeight;
-        @include responsive('padding-left', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
         background-color: $uiHeaderBg;
         color: $textColor;
-
-        .logo {
-            position: absolute;
-            left: 10px;
-            top: 0;
-            height: 50px;
-            overflow: hidden;
-            @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
-            background: url('../img/test-creator.png') no-repeat left;
-        }
 
         & > ul {
 
@@ -101,125 +95,64 @@
     .test-creator-sidebar {
         background-color: $canvas;
         color: $textColor;
+        @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+        @include vendor-prefix(flex, 0 1 auto, property, (-ms-, -webkit-, ''));
+        height: 100%;
     }
 
     .test-creator-items{
         position: relative;
-        @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
-        @include responsive('max-width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
-        display: table-cell;
-        vertical-align: top;
-        min-height: $minHeight - $toolbarHeight;
-        height: auto !important;
-        border-right: 1px #ddd solid;
+
+        border-right: 1px #ddd $uiGeneralContentBorder;
 
         h1 {
-            @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
             @include font-size(14);
-            line-height: 1.6;
             background-color: $uiHeaderBg;
             color: $textColor;
             margin-top: 1px;
+            margin-bottom : 0;
             padding: 5px;
-            height: 38px;
 
             &:before {
                 @include tao-icon-setup;
                 @include icon-item;
-                @include font-size(16);
-                line-height: 1.6;
                 margin-right: 3px;
             }
         }
         .item-selection {
-            margin: 6px;
-        }
-        input{
-            @include responsive('width', ($sideWidthSmall - 20px), ($sideWidthMedium - 20px), ($sideWidthWide - 20px));
-            margin-bottom: 10px;
-        }
-        ul.item-box li {
             position: relative;
-            padding: 4px;
-            @include responsive('padding-right', ($sideWidthSmall / 4), ($sideWidthMedium / 4), ($sideWidthWide / 4));
-            margin: 0;
-            height: 40px;
-            line-height: 1.2;
-            background-color: $uiGeneralContentBg;
-            border-top: solid 1px $uiGeneralContentBorder;
-            border-left: solid 1px $uiGeneralContentBorder;
-            border-right: solid 1px $uiGeneralContentBorder;
-            text-overflow: ellipsis;
-            &:last-child {
-                border-bottom: solid 1px $uiGeneralContentBorder;
-            }
-
-            .flag {
-                text-overflow: ellipsis;
-                position: absolute;
-                right: 0;
-                bottom: 0;
-                padding: 0 3px;
-                @include responsive('max-width', ($sideWidthSmall / 4), ($sideWidthMedium / 4), ($sideWidthWide / 4));
-                height: 16px;
-                background-color: $info;
-                color: $textHighlight;
-                @include border-radius-top-left(2);
-            }
-
-            &:hover, &.selected {
-                background-color: $uiClickableHoverBg;
-                color: $textHighlight;
-                cursor: pointer;
-
-                &:after {
-                    @include tao-icon-setup;
-                    @include icon-right;
-                    position: absolute;
-                    right: 4px;
-                    top: 0px;
-                    bottom: 0px;
-                    margin: auto;
-                    height: 30px;
-                    @include font-size(28);
-                }
-            }
+            height: calc(100% - 65px);
+            overflow: hidden;
         }
     }
 
     .test-creator-props{
         position: relative;
-        @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
-        display: table-cell;
-        vertical-align: top;
-        height: auto !important;
-        min-height: $minHeight - $toolbarHeight;
         background-color: $uiClickableDefaultBg;
         color: $textColor;
-        border-left: 1px solid #ddd;
+        border-left: 1px solid $uiGeneralContentBorder;
         h1 {
-            @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
             @include font-size(14);
-            line-height: 1.6;
             background-color: $uiHeaderBg;
             color: $textColor;
             margin-top: 1px;
+            margin-bottom: 0;
             padding: 5px;
+
             &:before {
                 @include tao-icon-setup;
                 @include icon-settings;
                 @include font-size(16);
-                line-height: 1.6;
                 margin-right: 3px;
             }
         }
 
         h3 {
             padding: 6px;
+            margin: 10px 0;
         }
 
         h4 {
-            @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
             @include font-size(13);
             line-height: 1.3;
             background-color: $uiHeaderBg;
@@ -237,6 +170,11 @@
                     top: 3px;
                 }
             }
+        }
+
+        .props {
+            height: calc(100% - 65px);
+            overflow-y: scroll;
         }
 
         .help {
@@ -304,13 +242,10 @@
     }
 
     .test-creator-test{
-        @include responsive('margin-left', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
-        @include responsive('margin-right', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+        @include simple-flex-box;
         position: relative;
         width: 100%;
-        display: table-cell;
-        vertical-align: top;
-        min-height: $minHeight - toolbarHeight;
+        height: 100%;
         background-color: $uiGeneralContentBg;
         color: $textColor;
 
@@ -343,19 +278,22 @@
         & > h1 {
            position: relative;
            background-color: $uiClickableDefaultBg;
-           height: 39px;
-           padding: 6px 60px 3px 48px ;
-           margin-bottom: 10px;
-           margin-top : 0;
+           height: 30px;
+           padding: 4px 60px 3px 48px ;
+           margin-bottom: 0;
+           margin-top : 1px;
+           @include font-size(16);
+           font-weight: bold;
             &:before {
                 @include tao-icon-setup;
                 @include icon-test;
                 position: absolute;
-                left: 20px;
-                margin-top: -2px;
+                left: 22px;
+                top: 6px;
             }
             .actions{
                 margin-right: 12px;
+                margin-top: -3px;
             }
             & > span:first-child {
                 display: inline-block;
@@ -367,7 +305,9 @@
 
 
         .test-content {
-            padding: 0 0 0 20px;
+            padding: 0 0 0 10px;
+            height: calc(100% - 65px);
+            overflow-y : auto;
             h1, h2 {
                 position: relative;
                 height: 35px;
@@ -385,7 +325,7 @@
             color: $textColor;
             border-left: solid 5px $testPartColor;
             padding: 0 5px;
-            margin: 20px 0;
+            margin: 10px 0;
 
             & > h1 {
                 background-color: whiten($testPartColor, 0.2);
@@ -412,7 +352,7 @@
             color: $textColor;
             border-left: solid 5px $sectionColor;
             padding: 0 5px 0 15px;
-            margin: 20px 0 10px 10px;
+            margin: 10px 0 10px 10px;
 
             & > h2 {
                 color: blacken($sectionColor, 0.4);

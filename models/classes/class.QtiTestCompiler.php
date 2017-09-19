@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
- * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  * 
  */
 
@@ -27,6 +27,9 @@ use qtism\data\QtiComponentIterator;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlCompactDocument;
 use qtism\data\AssessmentTest;
+use qtism\data\ExtendedAssessmentSection;
+use qtism\data\ExtendedAssessmentItemRef;
+use qtism\data\AssessmentItemRef;
 use qtism\data\content\RubricBlock;
 use qtism\data\content\StylesheetCollection;
 use qtism\common\utils\Url;
@@ -36,6 +39,11 @@ use oat\oatbox\filesystem\Directory;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiItem\model\ItemModel;
+use oat\taoQtiItem\model\QtiJsonItemCompiler;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoDelivery\model\container\delivery\ContainerProvider;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -44,8 +52,11 @@ use oat\taoQtiTest\models\QtiTestCompilerIndex;
  * @package taoQtiTest
  
  */
-class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler
+class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler implements ContainerProvider
 {
+    const ADAPTIVE_SECTION_MAP_FILENAME = 'adaptive-section-map.json';
+    
+    const ADAPTIVE_PLACEHOLDER_CATEGORY = 'x-tao-qti-adaptive-placeholder';
     
     /**
      * The list of mime types of files that are accepted to be put
@@ -280,7 +291,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * * 6. The resources composing the test that have to be accessed at delivery time are compied into the public compilation directory.
      * * 7. The Service Call definition enabling TAO to run the compiled test is built.
      * 
-     * @param core_kernel_file_File $destinationDirectory The directory where the compiled files must be put.
      * @return tao_models_classes_service_ServiceCall A ServiceCall object that represent the way to call the newly compiled test.
      * @throws taoQtiTest_models_classes_QtiTestCompilationFailedException If an error occurs during the compilation.
      */
@@ -319,19 +329,22 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 
             // 7. Copy the needed files into the public directory.
             $this->copyPublicResources();
+            
+            // 8. Compile adaptive components of the test.
+            $this->compileAdaptive($assessmentTest);
 
-            // 8. Compile the test definition into PHP source code and put it
+            // 9. Compile the test definition into PHP source code and put it
             // into the private directory.
             $this->compileTest($assessmentTest);
             
-            // 9. Compile the test meta data into PHP array source code and put it
+            // 10. Compile the test meta data into PHP array source code and put it
             // into the private directory.
             $this->compileMeta($assessmentTest);
             
-            // 10. Compile the test index in JSON content and put it into the private directory.
+            // 11. Compile the test index in JSON content and put it into the private directory.
             $this->compileIndex();
 
-            // 11. Build the service call.
+            // 12. Build the service call.
             $serviceCall = $this->buildServiceCall();
             
             common_Logger::t("QTI Test successfully compiled.");
@@ -340,7 +353,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $report->setMessage(__('QTI Test "%s" successfully published.', $this->getResource()->getLabel()));
             $report->setData($serviceCall);
         }
-        catch(XmlStorageException $e){
+        catch (XmlStorageException $e){
 
             $details[] = $e->getMessage();
             while (($previous = $e->getPrevious()) != null) {
@@ -370,6 +383,28 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         return $report;
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see \oat\taoDelivery\model\container\delivery\ContainerProvider::getContainer()
+     */
+    public function getContainer() {
+        $itemModel = $this->getServiceLocator()->get(ItemModel::SERVICE_ID);
+        $registry = DeliveryContainerRegistry::getRegistry();
+        $registry->setServiceLocator($this->getServiceLocator());
+        if ($itemModel->getCompilerClass() == QtiJsonItemCompiler::class) {
+            // client container
+            $container = $registry->getDeliveryContainer('qtiTest',array(
+                'source' => $this->getResource()->getUri(),
+                'private' => $this->getPrivateDirectory()->getId(),
+                'public' => $this->getPublicDirectory()->getId()
+            ));
+        } else {
+            $serviceCall = $this->buildServiceCall();
+            $container = $registry->getDeliveryContainer('service',$serviceCall);
+        }
+        return $container;
+    }
+
     /**
      * Compact the test and items in a single QTI-XML Compact Document.
      * 
@@ -413,6 +448,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                 $itemService = $subReport->getdata(); 
                 $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
                 $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $inputValues['itemDataPath']);
+                
+                // Ask for item ref information compilation for fast later usage.
+                $this->compileAssessmentItemRefHrefIndex($assessmentItemRef);
+                
             } else {
                 $report->setType(common_report_Report::TYPE_ERROR);
             }
@@ -462,9 +501,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         // Call TestCategoryRulesService to generate additional rules if enabled.
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
         if (isset($config['enable-category-rules-generation']) && $config['enable-category-rules-generation'] === true) {
-            common_Logger::i('Automatic Category Rules Generation will occur...');
-            $serviceManager = ServiceManager::getServiceManager();
-            $testCategoryRulesService = $serviceManager->get(TestCategoryRulesService::SERVICE_ID);
+            common_Logger::t('Automatic Category Rules Generation will occur...');
+            $testCategoryRulesService = $this->getServiceLocator()->get(TestCategoryRulesService::SERVICE_ID);
             $testCategoryRulesService->apply($assessmentTest);
         }
     }
@@ -516,6 +554,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function compileRubricBlocks(AssessmentTest $assessmentTest) {
         common_Logger::t("Compiling QTI rubricBlocks...");
+        
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
+        $cssScoping = isset($config['enable-rubric-block-stylesheet-scoping']) && $config['enable-rubric-block-stylesheet-scoping'] === true;
         
         $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
@@ -570,25 +611,27 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $styleRendering = $renderingEngine->getStylesheets();
             $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
 
-            foreach ($stylesheets as $rubricStylesheet) {
-                $relPath = trim($this->getExtraPath(), '/');
-                $relPath = (empty($relPath) ? '' : $relPath.DIRECTORY_SEPARATOR)
-                    . $rubricStylesheet->getHref();
-                $sourceFile = $sourceDir->getFile($relPath);
-                
-                if (!$publicCompiledDocDir->has($relPath)) {
-                    try {
-                        $data = $sourceFile->read();
-                        $tmpDir = \tao_helpers_File::createTempDir();
-                        $tmpFile = $tmpDir.'tmp.css';
-                        file_put_contents($tmpFile, $data);
-                        $scopedCss = $cssScoper->render($tmpFile, $rubric->getId());
-                        unlink($tmpFile);
-                        rmdir($tmpDir);
-                        $publicCompiledDocDir->write($relPath, $scopedCss);
-                        
-                    } catch (\InvalidArgumentException $e) {
-                        common_Logger::e('Unable to copy file into public directory: ' . $relPath);
+            if ($cssScoping === true) {
+                foreach ($stylesheets as $rubricStylesheet) {
+                    $relPath = trim($this->getExtraPath(), '/');
+                    $relPath = (empty($relPath) ? '' : $relPath.DIRECTORY_SEPARATOR)
+                        . $rubricStylesheet->getHref();
+                    $sourceFile = $sourceDir->getFile($relPath);
+                    
+                    if (!$publicCompiledDocDir->has($relPath)) {
+                        try {
+                            $data = $sourceFile->read();
+                            $tmpDir = \tao_helpers_File::createTempDir();
+                            $tmpFile = $tmpDir.'tmp.css';
+                            file_put_contents($tmpFile, $data);
+                            $scopedCss = $cssScoper->render($tmpFile, $rubric->getId());
+                            unlink($tmpFile);
+                            rmdir($tmpDir);
+                            $publicCompiledDocDir->write($relPath, $scopedCss);
+                            
+                        } catch (\InvalidArgumentException $e) {
+                            common_Logger::e('Unable to copy file into public directory: ' . $relPath);
+                        }
                     }
                 }
             }
@@ -717,6 +760,102 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     }
     
     /**
+     * Compile Adaptive Test Information.
+     * 
+     * This method compiles all information required at runtime in terms of Adaptive Testing.
+     * 
+     * @param \qtism\data\AssessmentTest $test
+     */
+    protected function compileAdaptive(AssessmentTest $test)
+    {
+        $phpDocument = new PhpDocument('2.1');
+        $catService = $this->getServiceLocator()->get(CatService::SERVICE_ID);
+        $catSectionMap = [];
+
+        $trail = [];
+        foreach ($test->getTestParts() as $testPart) {
+            foreach ($testPart->getAssessmentSections() as $assessmentSection) {
+                array_push($trail, $assessmentSection);
+            }
+        }
+
+        $traversed = [];
+
+        while (count($trail) > 0) {
+            $current = array_pop($trail);
+            
+            if (in_array($current, $traversed, true) === false) {
+                // 1st pass.
+                array_push($trail, $current);
+                
+                foreach ($current->getSectionParts() as $sectionPart) {
+                    if ($sectionPart instanceof ExtendedAssessmentSection) {
+                        array_push($trail, $sectionPart);
+                    }
+                }
+                
+                array_push($traversed, $current);
+            } else {
+                // 2nd pass.
+                $sectionParts = $current->getSectionParts();
+                $sectionIdentifier = $current->getIdentifier();
+                
+                $catInfo = $catService->getAdaptiveAssessmentSectionInfo(
+                    $test,
+                    $this->getPrivateDirectory(),
+                    $this->getExtraPath(),
+                    $sectionIdentifier
+                );
+                
+                if ($catInfo !== false) {
+                    
+                    // QTI Adaptive Section detected.
+                    \common_Logger::d("QTI Adaptive Section with identifier '" . $current->getIdentifier() . "' found.");
+                    
+                    // Deal with AssessmentSection Compiling.
+                    $phpDocument->setDocumentComponent($current);
+                    $this->getPrivateDirectory()->write("adaptive-assessment-section-${sectionIdentifier}.php", $phpDocument->saveToString());
+                    
+                    foreach ($sectionParts->getKeys() as $sectionPartIdentifier) {
+                        $sectionPart =  $sectionParts[$sectionPartIdentifier];
+                        
+                        if ($sectionPart instanceof ExtendedAssessmentItemRef) {
+                            $sectionPartHref = $sectionPart->getHref();
+                            
+                            // Deal with AssessmentItemRef Compiling.
+                            $phpDocument->setDocumentComponent($sectionPart);
+                            $this->getPrivateDirectory()->write("adaptive-assessment-item-ref-${sectionPartIdentifier}.php", $phpDocument->saveToString());
+                            
+                            unset($sectionParts[$sectionPartIdentifier]);
+                        }
+                    }
+                    
+                    if (count($sectionParts) === 0) {
+                        $placeholderIdentifier = "adaptive-placeholder-${sectionIdentifier}";
+                        // Make the placeholder's href something predictable for later use...
+                        $placeholderHref = "x-tao-qti-adaptive://section/${sectionIdentifier}";
+                        
+                        $placeholder = new ExtendedAssessmentItemRef($placeholderIdentifier, $placeholderHref);
+                        
+                        // Tag the item ref in order to make it recognizable as an adaptive placeholder.
+                        $placeholder->getCategories()[] = self::ADAPTIVE_PLACEHOLDER_CATEGORY;
+                        $sectionParts[] = $placeholder;
+                        
+                        \common_Logger::d("Adaptive AssessmentItemRef Placeholder '${placeholderIdentifier}' injected in AssessmentSection '${sectionIdentifier}'.");
+                        
+                        // Ask for section setup to the CAT Engine.
+                        $section = $catService->getEngine($catInfo['adaptiveEngineRef'])->setupSection($catInfo['adaptiveSectionIdentifier']);
+                        $catSectionMap[$catInfo['qtiSectionIdentifier']] = ['section' => $section, 'endpoint' => $catInfo['adaptiveEngineRef']];
+                    }
+                }
+            }
+        }
+        
+        // Write Adaptive Section Map for runtime usage.
+        $this->getPrivateDirectory()->write(self::ADAPTIVE_SECTION_MAP_FILENAME, json_encode($catSectionMap));
+    }
+    
+    /**
      * Compile the $test meta-data into PHP source code for maximum performance. The file is
      * stored into PRIVATE_DIRECTORY/test-meta.php.
      * 
@@ -747,13 +886,50 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         }
     }
     
+    private function getServiceLocator()
+    {
+        return ServiceManager::getServiceManager();
+    }
+
+    /**
+     * Compile AssessmentItemRef Href Indexes
+     * 
+     * This method indexes the value of $assessmentItemRef->href by $assessmentItemRef->identifier for later
+     * usage at delivery time (for fast access).
+     * 
+     * @param \qtism\data\AssessmentItemRef $assessmentItemRef
+     */
+    protected function compileAssessmentItemRefHrefIndex(AssessmentItemRef $assessmentItemRef)
+    {
+        $compiledDocDir = $this->getPrivateDirectory();
+        
+        $compiledDocDir->write(
+            self::buildHrefIndexPath($assessmentItemRef->getIdentifier()), 
+            $assessmentItemRef->getHref()
+        );
+    }
+    
     /**
      * Get the list of mime types of files that are accepted to be put
      * into the public compilation directory.
      * 
      * @return array
      */
-    static protected function getPublicMimeTypes() {
+    static protected function getPublicMimeTypes()
+    {
         return self::$publicMimeTypes;
+    }
+    
+    /**
+     * Build Href Index Path
+     * 
+     * Builds the Href Index Path from given $identifier.
+     * 
+     * @param string $identifier
+     * @return string
+     */
+    static public function buildHrefIndexPath($identifier)
+    {
+        return TAOQTITEST_COMPILED_HREF_INDEX_FILE_PREFIX . md5($identifier) . TAOQTITEST_COMPILED_HREF_INDEX_FILE_EXTENSION;
     }
 }

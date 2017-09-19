@@ -36,31 +36,33 @@ define([
 
 
     var mapHelperApi = [
-        { name : 'getJumps', title : 'getJumps' },
-        { name : 'getParts', title : 'getParts' },
-        { name : 'getJump', title : 'getJump' },
-        { name : 'getPart', title : 'getPart' },
-        { name : 'getSection', title : 'getSection' },
-        { name : 'getItem', title : 'getItem' },
-        { name : 'getTestStats', title : 'getTestStats' },
-        { name : 'getPartStats', title : 'getPartStats' },
-        { name : 'getSectionStats', title : 'getSectionStats' },
-        { name : 'getScopeStats', title : 'getScopeStats' },
-        { name : 'getScopeMap', title : 'getScopeMap' },
-        { name : 'getItemPart', title : 'getItemPart' },
-        { name : 'getItemSection', title : 'getItemSection' },
-        { name : 'getItemAt', title : 'getItemAt' },
-        { name : 'each', title : 'each' },
-        { name : 'updateItemStats', title : 'updateItemStats' },
-        { name : 'computeItemStats', title : 'computeItemStats' },
-        { name : 'computeStats', title : 'computeStats' }
+        { title : 'getJumps' },
+        { title : 'getParts' },
+        { title : 'getJump' },
+        { title : 'getPart' },
+        { title : 'getSection' },
+        { title : 'getSections' },
+        { title : 'getItem' },
+        { title : 'getTestStats' },
+        { title : 'getPartStats' },
+        { title : 'getSectionStats' },
+        { title : 'getScopeStats' },
+        { title : 'getScopeMap' },
+        { title : 'getItemPart' },
+        { title : 'getItemSection' },
+        { title : 'getItemAt' },
+        { title : 'getItemIdentifier' },
+        { title : 'each' },
+        { title : 'updateItemStats' },
+        { title : 'computeItemStats' },
+        { title : 'computeStats' }
     ];
 
     QUnit
         .cases(mapHelperApi)
         .test('helpers/map API ', function(data, assert) {
             QUnit.expect(1);
-            assert.equal(typeof mapHelper[data.name], 'function', 'The map helper expose a "' + data.name + '" function');
+            assert.equal(typeof mapHelper[data.title], 'function', 'The map helper expose a "' + data.title + '" function');
         });
 
 
@@ -124,6 +126,13 @@ define([
         assert.equal(mapHelper.getSection(mapSample, 'assessmentSection-0'), undefined, 'The map helper getSection does not provide any section when the section does not exist');
         assert.equal(mapHelper.getSection({}), undefined, 'The map helper getSection does not provide any section when the map is wrong');
         assert.equal(mapHelper.getSection(), undefined, 'The map helper getSection does not provide any section when the map does not exist');
+    });
+
+    QUnit.test('helpers/map.getSections', function(assert) {
+        //QUnit.expect(3);
+        assert.deepEqual(mapHelper.getSections(mapSample), _.extend({}, mapSample.parts['testPart-1'].sections, mapSample.parts['testPart-2'].sections), 'The map helper getSection provides the right section');
+        assert.deepEqual(mapHelper.getSections({}), {}, 'The map helper getSection does not provide any section when the map is wrong');
+        assert.deepEqual(mapHelper.getSections(), {}, 'The map helper getSection does not provide any section when the map does not exist');
     });
 
 
@@ -272,6 +281,18 @@ define([
         assert.equal(mapHelper.getItemAt(mapSample, 100), undefined, 'The map helper getItemAt does not provide any item when the position does not exist');
         assert.equal(mapHelper.getItemAt({}), undefined, 'The map helper getItemAt does not provide any item when the map is wrong');
         assert.equal(mapHelper.getItemAt(), undefined, 'The map helper getItemAt does not provide any item when the map does not exist');
+    });
+
+
+    QUnit.test('helpers/map.getItemIdentifier', function(assert) {
+        QUnit.expect(6);
+
+        assert.equal(mapHelper.getItemIdentifier(mapSample, 8), 'item-9', 'The map helper getItemIdentifier provides the right identifier');
+        assert.equal(mapHelper.getItemIdentifier(mapSample, 'item-8'), 'item-8', 'The map helper getItemIdentifier provides the right identifier if directly provided');
+        assert.equal(mapHelper.getItemIdentifier(mapSample, 'item-100'), undefined, 'The map helper getItemIdentifier does not provide the identifier if the item does not exist');
+        assert.equal(mapHelper.getItemIdentifier(mapSample, 100), undefined, 'The map helper getItemIdentifier does not provide any identifier when the position does not exist');
+        assert.equal(mapHelper.getItemIdentifier({}), undefined, 'The map helper getItemIdentifier does not provide any identifier when the map is wrong');
+        assert.equal(mapHelper.getItemIdentifier(), undefined, 'The map helper getItemIdentifier does not provide any identifier when the map does not exist');
     });
 
 

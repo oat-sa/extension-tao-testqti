@@ -41,8 +41,7 @@ define([
         assert.notStrictEqual(timerFactory(runner), timerFactory(runner), "The timerFactory factory provides a different instance on each call");
     });
 
-
-    var pluginApi = [
+    QUnit.cases([
         { name : 'init', title : 'init' },
         { name : 'render', title : 'render' },
         { name : 'finish', title : 'finish' },
@@ -58,15 +57,11 @@ define([
         { name : 'hide', title : 'hide' },
         { name : 'enable', title : 'enable' },
         { name : 'disable', title : 'disable' }
-    ];
-
-    QUnit
-        .cases(pluginApi)
-        .test('plugin API ', 1, function(data, assert) {
-            var runner = runnerFactory(providerName);
-            var timer = timerFactory(runner);
-            assert.equal(typeof timer[data.name], 'function', 'The timerFactory instances expose a "' + data.name + '" function');
-        });
+    ]).test('plugin API ', 1, function(data, assert) {
+        var runner = runnerFactory(providerName);
+        var timer = timerFactory(runner);
+        assert.equal(typeof timer[data.name], 'function', 'The timerFactory instances expose a "' + data.name + '" function');
+    });
 
 
     QUnit.asyncTest('timer.init', function(assert) {
@@ -327,5 +322,59 @@ define([
                 assert.ok(false, 'The init method must not fail');
                 QUnit.start();
             });
+    });
+
+    QUnit.asyncTest('timer toggle', function(assert) {
+        var runner = runnerFactory(providerName);
+        var timer = timerFactory(runner, runner.getAreaBroker());
+
+        //mock the context to have a timer
+        runner.getTestContext = function() {
+            return {
+                "timeConstraints": [{
+                    "label": "item-1",
+                    "source": "item-1",
+                    "seconds": 60,
+                    "allowLateSubmission": false,
+                    "qtiClassName": "assessmentItemRef"
+                }],
+                "extraTime": {
+                    "total": 0,
+                    "consumed": 0,
+                    "remaining": 0
+                },
+            };
+        };
+
+        QUnit.expect(6);
+
+        timer.init().then(function() {
+            timer.render().then(function() {
+                var $container = runner.getAreaBroker().getControlArea();
+                var $timerContainer = $container.find('.timer-box');
+                var $toggler = $timerContainer.find('.timer-toggler');
+
+                assert.equal($timerContainer.length, 1, 'The timer is appended');
+                assert.equal($toggler.length, 1, 'The timer toggler is appended');
+                assert.ok($toggler.hasClass('hidden'), 'The toggler is hidden');
+
+                runner
+                    .after('renderitem', function(){
+                        assert.ok( ! $toggler.hasClass('hidden'), 'The toggler is now shown');
+                        assert.ok(! $timerContainer.hasClass('zen-mode'), 'The timer is not in zen mode');
+
+                        $toggler.trigger('click');
+
+                        assert.ok($timerContainer.hasClass('zen-mode'), 'The timer is now in zen mode');
+
+                        QUnit.start();
+
+                    })
+                    .trigger('renderitem');
+            });
+        }).catch(function(err) {
+            assert.ok(false, err.message);
+            QUnit.start();
+        });
     });
 });

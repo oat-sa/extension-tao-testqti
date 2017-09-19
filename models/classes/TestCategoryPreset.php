@@ -54,6 +54,11 @@ class TestCategoryPreset implements JsonSerializable
      */
     private $order = 0;
 
+    /**
+     * @var string $pluginId - related plugin that the preset depends on
+     */
+    private $pluginId = '';
+
 
     /**
      * Create a test category preset
@@ -85,6 +90,9 @@ class TestCategoryPreset implements JsonSerializable
         if(isset($data['order'])) {
             $this->order = (integer) $data['order'];
         }
+        if(isset($data['pluginId'])) {
+            $this->pluginId = (string) $data['pluginId'];
+        }
     }
 
     public function getId()
@@ -112,6 +120,11 @@ class TestCategoryPreset implements JsonSerializable
         return $this->order;
     }
 
+    public function getPluginId()
+    {
+        return $this->pluginId;
+    }
+
     /**
      * @see JsonSerializable::jsonSerialize
      */
@@ -131,7 +144,8 @@ class TestCategoryPreset implements JsonSerializable
             'label'       => $this->label,
             'qtiCategory' => $this->qtiCategory,
             'description' => $this->description,
-            'order'       => $this->order
+            'order'       => $this->order,
+            'pluginId'    => $this->pluginId
         ];
     }
 

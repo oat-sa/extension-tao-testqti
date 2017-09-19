@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.1.0-sprint33\n"
-"PO-Revision-Date: 2016-08-25T14:37:09\n"
+"Project-Id-Version: TAO 3.1.0-sprint23\n"
+"PO-Revision-Date: 2016-08-18T12:00:51\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -31,8 +31,8 @@ msgstr "Eine entfernte Ressource, die im QTI Test '%s' angegeben ist, konnte nic
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Eine sichtbare Sektion, ist eine Sektion, die vom Kandidaten identifiziert werden."
 
-msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr ""
+msgid "Add a zip file containing QTI tests and items"
+msgstr "ZIP-Datei mit QTI Tests und Elementen hinzufügen"
 
 msgid "Add selected item(s) here."
 msgstr "Hier ausgewählte(s) Element(e) hinzufügen."
@@ -91,9 +91,6 @@ msgstr "Autor"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Hilfsdatei konnte unter dem angegebenen Pfad \"%s\" nicht gefunden werden."
 
-msgid "Calculator"
-msgstr ""
-
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -102,9 +99,6 @@ msgstr "Kandidat"
 
 msgid "Categories"
 msgstr "Kategorien"
-
-msgid "Change the current color preset"
-msgstr ""
 
 msgid "Collapse the review panel"
 msgstr "Das Vorschau-Panel zusammenklappen"
@@ -115,44 +109,23 @@ msgstr "Kommentar"
 msgid "Completed items"
 msgstr "Abgeschlossene Elemente"
 
-msgid "Contrast"
-msgstr ""
-
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr "Gibt die maximal erlaubte Anzahl an Versuchen vor. 0 bedeutet Unendlich."
 
 msgid "Disable validation"
 msgstr "Validierung ausschalten"
 
-msgid "displays a mark for review button. This option requires requires the x-tao-option-reviewScreen option"
-msgstr ""
-
-msgid "displays a next section button"
-msgstr ""
-
-msgid "displays a next section button that warns the user that they will not be able to return to the section"
-msgstr ""
-
-msgid "displays an exit button"
-msgstr ""
-
-msgid "displays the review screen / navigator"
-msgstr ""
-
 msgid "Do not mark the current item for later review"
-msgstr ""
-
-msgid "enable calculator"
 msgstr ""
 
 msgid "Enable selection"
 msgstr "Auswahl aktivieren"
 
-msgid "End test"
-msgstr ""
-
 msgid "End Test"
 msgstr "Test beenden"
+
+msgid "End test"
+msgstr ""
 
 msgid "Enter a category"
 msgstr "Kategorie eingeben"
@@ -228,8 +201,8 @@ msgstr "Wenn der Kandidat das Element überspringen kann, ohne eine Antwort einz
 msgid "Import"
 msgstr "Importieren"
 
-msgid "Import a QTI/APIP Content Package"
-msgstr ""
+msgid "Import a QTI 2.1 Test Package"
+msgstr "QTI 2.1 Testpaket importieren"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "IMS QTI Element, in der IMS Manifest Datei referenziert als \"%s\", konnte nicht importiert werden."
@@ -402,9 +375,6 @@ msgstr "Nur die Elemente anzeigen, die für Bewertung markiert sind"
 msgid "Only display the unanswered items"
 msgstr "Nur die unbeantworteten Elemente anzeigen"
 
-msgid "Open Calculator"
-msgstr ""
-
 msgid "Ordering"
 msgstr "Sortierung"
 
@@ -438,14 +408,11 @@ msgstr "Veröffentlichen von QTI Test \"%s\" fehlgeschlagen."
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI Test \"%s\" wurde erfolgreich veröffentlicht."
 
+msgid "QTI Test Package"
+msgstr "QTI Test-Paket"
+
 msgid "QTI Test Package 2.1"
 msgstr "QTI Test-Paket 2.1"
-
-msgid "QTI Test Package 2.2"
-msgstr ""
-
-msgid "QTI/APIP Test Content Package"
-msgstr ""
 
 msgid "Reference"
 msgstr "Referenz"
@@ -756,15 +723,6 @@ msgstr "Sie haben %s unbeantwortete Frage(n) und %s Element(e) zur Überprüfung
 msgid "You have %s unanswered question(s)."
 msgstr "Sie haben %s unbeantwortete Frage(n)."
 
-msgid "You must answer the question before leaving this item!"
-msgstr ""
-
 msgid "Your comment…"
 msgstr "Ihr Kommentar..."
-
-msgid "Zoom in"
-msgstr ""
-
-msgid "Zoom out"
-msgstr ""
 

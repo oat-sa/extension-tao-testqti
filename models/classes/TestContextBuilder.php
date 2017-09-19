@@ -27,23 +27,23 @@ use qtism\runtime\tests\AssessmentTestSession;
 
 /**
  * Interface TestContextBuilder.
- * 
+ *
  * Provides a way to extend the assessment test context.
- * 
+ *
  * @package oat\taoQtiTest\models
  */
 interface TestContextBuilder
 {
     /**
      * Extends an already built context
-     * 
+     *
      * @param array $context A reference to the context to extend
      * @param AssessmentTestSession $session A given AssessmentTestSession object.
      * @param array $testMeta An associative array containing meta-data about the test definition taken by the candidate.
      * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge base.
      * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge base.
      * @param string $standalone
-     * @param string $compilationDirs An array containing respectively the private and public compilation directories.
+     * @param array $compilationDirs An array containing respectively the private and public compilation directories.
      * @return array The context of the candidate session.
      */
     public function extendAssessmentTestContext(array &$context, AssessmentTestSession $session, array $testMeta, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone, $compilationDirs);

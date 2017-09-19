@@ -17,28 +17,17 @@
  */
 
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
-use oat\oatbox\task\Task;
-use oat\tao\model\TaskQueueActionTrait;
+use oat\taoQtiItem\controller\AbstractRestQti;
 
 /**
  *
  * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
  */
-class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
+class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 {
-    use TaskQueueActionTrait {
-        getTask as parentGetTask;
-        getTaskData as traitGetTaskData;
-    }
+    const IMPORT_TASK_CLASS = 'oat\taoQtiTest\models\tasks\ImportQtiTest';
 
-    const TASK_ID_PARAM = 'id';
-
-    private static $accepted_types = array(
-        'application/zip',
-        'application/x-zip-compressed',
-        'multipart/x-zip',
-        'application/x-compressed'
-    );
+    const ENABLE_METADATA_GUARDIANS = 'enableMetadataGuardians';
 
     public function index()
     {
@@ -58,36 +47,38 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
      */
     public function import()
     {
-        $fileUploadName = "qtiPackage";
-        if ($this->getRequestMethod() != Request::HTTP_POST) {
-            throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
-        }
-        if(tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+        try {
+            $fileUploadName = "qtiPackage";
+            if ($this->getRequestMethod() != Request::HTTP_POST) {
+                throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
+            }
+            if (!tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+                throw new common_exception_RestApi(__('Missed test package file'));
+            }
             $file = tao_helpers_Http::getUploadedFile($fileUploadName);
             $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
             if (!in_array($mimeType, self::$accepted_types)) {
-                $this->returnFailure(new common_exception_BadRequest());
-            } else {
-                $report = $this->service->importQtiTest($file['tmp_name']);
-                if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
-                    $data = array();
-                    foreach ($report as $r) {
-                        $values = $r->getData();
-                        $testid = $values->rdfsResource->getUri();
-                        foreach ($values->items as $item) {
-                            $itemsid[] = $item->getUri();
-                        }
-                        $data[] = array(
-                            'testId' => $testid,
-                            'testItems' => $itemsid);
-                    }
-                    return $this->returnSuccess($data);
-                } else {
-                    return $this->returnFailure(new common_exception_InconsistentData($report->getMessage()));
-                }
+                throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-        } else {
-            return $this->returnFailure(new common_exception_BadRequest());
+            $report = $this->service->importQtiTest($file['tmp_name'], $this->getTestClass(), $this->isMetadataGuardiansEnabled());
+            if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
+                $data = array();
+                foreach ($report as $r) {
+                    $values = $r->getData();
+                    $testid = $values->rdfsResource->getUri();
+                    foreach ($values->items as $item) {
+                        $itemsid[] = $item->getUri();
+                    }
+                    $data[] = array(
+                        'testId' => $testid,
+                        'testItems' => $itemsid);
+                }
+                return $this->returnSuccess($data);
+            } else {
+                throw new \common_exception_RestApi($report->getMessage());
+            }
+        } catch (\common_exception_RestApi $e) {
+            return $this->returnFailure($e);
         }
     }
 
@@ -97,49 +88,68 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
      */
     public function importDeferred()
     {
-        $fileUploadName = "qtiPackage";
-        if ($this->getRequestMethod() != Request::HTTP_POST) {
-            throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
-        }
-        if(tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+        try {
+            $fileUploadName = "qtiPackage";
+            if ($this->getRequestMethod() != Request::HTTP_POST) {
+                throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
+            }
+            if (!tao_helpers_Http::hasUploadedFile($fileUploadName)) {
+                throw new common_exception_RestApi(__('Missed test package file'));
+            }
+
             $file = tao_helpers_Http::getUploadedFile($fileUploadName);
             $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
             if (!in_array($mimeType, self::$accepted_types)) {
-                $this->returnFailure(new common_exception_BadRequest());
-            } else {
-                $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
-                $testResource = \taoQtiTest_models_classes_QtiTestService::singleton()->createInstance($class);
-                $task = ImportQtiTest::createTask($file, $class, $testResource);
-                $result = [
-                    'reference_id' => $task->getId()
-                ];
-                $report = $task->getReport();
-                if (!empty($report)) {
-                    if ($report instanceof \common_report_Report) {
-                        //serialize report to array
-                        $report = json_encode($report);
-                        $report = json_decode($report);
-                    }
-                    $result['report'] = $report;
-                }
-                return $this->returnSuccess($result);
+                throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-        } else {
-            return $this->returnFailure(new common_exception_BadRequest());
+            $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+            $testResource = \taoQtiTest_models_classes_QtiTestService::singleton()->createInstance($class);
+            $task = ImportQtiTest::createTask($file, $class, $this->isMetadataGuardiansEnabled(), $testResource);
+            $result = [
+                'reference_id' => $task->getId()
+            ];
+            $report = $task->getReport();
+            if (!empty($report)) {
+                if ($report instanceof \common_report_Report) {
+                    //serialize report to array
+                    $report = json_encode($report);
+                    $report = json_decode($report);
+                }
+                $result['report'] = $report;
+            }
+            return $this->returnSuccess($result);
+        } catch (\common_exception_RestApi $e) {
+            return $this->returnFailure($e);
         }
     }
 
     /**
-     * Action to retrieve test import status from queue
+     * Create a Test Class
+     *
+     * Label parameter is mandatory
+     * If parent class parameter is an uri of valid test class, new class will be created under it
+     * If not parent class parameter is provided, class will be created under root class
+     * Comment parameter is not mandatory, used to describe new created class
+     *
+     * @return \core_kernel_classes_Class
      */
-    public function getStatus()
+    public function createClass()
     {
         try {
-            if (!$this->hasRequestParameter(self::TASK_ID_PARAM)) {
-                throw new \common_exception_MissingParameter(self::TASK_ID_PARAM, $this->getRequestURI());
-            }
-            $data = $this->getTaskData($this->getRequestParameter(self::TASK_ID_PARAM));
-            $this->returnSuccess($data);
+            $class = $this->createSubClass(new \core_kernel_classes_Class(TAO_TEST_CLASS));
+
+            $result = [
+                'message' => __('Class successfully created.'),
+                'class-uri' => $class->getUri(),
+            ];
+
+            $this->returnSuccess($result);
+        } catch (\common_exception_ClassAlreadyExists $e) {
+            $result = [
+                'message' => $e->getMessage(),
+                'class-uri' => $e->getClass()->getUri(),
+            ];
+            $this->returnSuccess($result);
         } catch (\Exception $e) {
             $this->returnFailure($e);
         }
@@ -166,60 +176,33 @@ class taoQtiTest_actions_RestQtiTests extends \tao_actions_RestController
     }
 
     /**
-     * @param Task $taskId
-     * @return Task
-     * @throws common_exception_BadRequest
+     * Get class instance to import test
+     * @throws \common_exception_RestApi
+     * @return \core_kernel_classes_Class
      */
-    protected function getTask($taskId)
+    private function getTestClass()
     {
-        $task = $this->parentGetTask($taskId);
-        if ($task->getInvocable() !== 'oat\taoQtiTest\models\tasks\ImportQtiTest') {
-            throw new \common_exception_BadRequest("Wrong task type");
-        }
-        return $task;
+        return $this->getClassFromRequest(new \core_kernel_classes_Class(TAO_TEST_CLASS));
     }
 
     /**
-     * @param Task $task
-     * @return string
+     * @return bool
+     * @throws common_exception_RestApi
      */
-    protected function getTaskStatus(Task $task)
+    private function isMetadataGuardiansEnabled()
     {
-        $report = $task->getReport();
-        if (in_array(
-            $task->getStatus(),
-            [Task::STATUS_CREATED, Task::STATUS_RUNNING, Task::STATUS_STARTED])
-        ) {
-            $result = 'In Progress';
-        } else if ($report) {
-            $report = \common_report_Report::jsonUnserialize($report);
-            $plainReport = $this->getPlainReport($report);
-            $success = true;
-            foreach ($plainReport as $r) {
-                $success = $success && $r->getType() != \common_report_Report::TYPE_ERROR;
-            }
-            $result = $success ? 'Success' : 'Failed';
-        }
-        return $result;
-    }
+        $enableMetadataGuardians = $this->getRequestParameter(self::ENABLE_METADATA_GUARDIANS);
 
-    /**
-     * @param Task $task
-     * @return array
-     */
-    protected function getTaskReport(Task $task)
-    {
-        $report = \common_report_Report::jsonUnserialize($task->getReport());
-        $result = [];
-        if ($report) {
-            $plainReport = $this->getPlainReport($report);
-            foreach ($plainReport as $r) {
-                $result[] = [
-                    'type' => $r->getType(),
-                    'message' => $r->getMessage(),
-                ];
-            }
+        if (is_null($enableMetadataGuardians)) {
+            return true; // default value if parameter not passed
         }
-        return $result;
+
+        if (!in_array($enableMetadataGuardians, ['true', 'false'])) {
+            throw new \common_exception_RestApi(
+                self::ENABLE_METADATA_GUARDIANS . ' parameter should be boolean (true or false).'
+            );
+        }
+
+        return filter_var($enableMetadataGuardians, FILTER_VALIDATE_BOOLEAN);
     }
 }

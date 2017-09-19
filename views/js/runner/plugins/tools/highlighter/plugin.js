@@ -63,6 +63,7 @@ define([
 
             this.buttonRemove = this.getAreaBroker().getToolbox().createEntry({
                 title: __('Clear all active highlights'),
+                icon: 'result-nok',
                 control: 'highlight-clear',
                 text: __('Clear Highlights')
             });

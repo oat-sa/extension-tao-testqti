@@ -13,17 +13,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
     'jquery',
-    'lodash',
     'i18n',
-    'taoTests/runner/plugin'
-], function ($, _, __, pluginFactory) {
+    'ui/waitingDialog/waitingDialog',
+    'taoTests/runner/plugin',
+    'tpl!taoQtiTest/runner/plugins/controls/connectivity/connectivity'
+], function ($, __, waitingDialog, pluginFactory, connectivityTpl) {
     'use strict';
 
     /**
@@ -45,61 +47,82 @@ define([
          * Installs the plugin (called when the runner bind the plugin)
          */
         install: function install() {
+            var self = this;
+
+            var waiting    = false;
 
             var testRunner = this.getTestRunner();
+            var proxy      = testRunner.getProxy();
 
-            function disconnect() {
+            //create the indicator
+            this.$element = $(connectivityTpl({
+                state: proxy.isOnline() ? 'connected' : 'disconnected'
+            }));
+
+            //the Proxy is the only one to know something about connectivity
+            proxy.on('disconnect', function disconnect(source) {
                 if (!testRunner.getState('disconnected')) {
-                    testRunner.trigger('disconnect');
-                }
-            }
-
-            function reconnect() {
-                if (testRunner.getState('disconnected')) {
-                    testRunner.trigger('reconnect');
-                }
-            }
-
-            // immediate detection of connectivity loss using Offline API
-            $(window).on('offline.connectivity', function() {
-                disconnect();
-            });
-
-            // immediate detection of connectivity back using Offline API
-            $(window).on('online.connectivity', function() {
-                reconnect();
-            });
-
-            testRunner
-                .on('disconnect', function() {
                     testRunner.setState('disconnected', true);
-                })
-                .on('reconnect', function() {
+                    testRunner.trigger('disconnect', source);
+                    self.$element.removeClass('connected').addClass('disconnected');
+                }
+            })
+            .on('reconnect', function reconnect() {
+                if (testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', false);
-                })
-                .before('error', function(e, error) {
-                    // detect connectivity errors as network error without error code
-                    if (_.isObject(error) && error.source === 'network' && !error.code) {
-                        disconnect();
+                    testRunner.trigger('reconnect');
+                    self.$element.removeClass('disconnected').addClass('connected');
+                }
+            });
 
-                        // prevent default error handling
-                        return false;
+            testRunner.before('error', function(e, err) {
+                var dialog;
+
+                // detect and prevent connectivity errors
+                if (proxy.isConnectivityError(err)){
+                    return false;
+                }
+
+                //offline navigation error, we pause the test
+                if (proxy.isOffline()) {
+                    if(!waiting){
+                        waiting = true;
+
+                        dialog = waitingDialog({
+                            message : __('You are encountering a prolonged connectivity loss'),
+                            waitContent : __('Please wait while we try to restore the connection.'),
+                            proceedContent : __('The connection seems to be back, please proceed')
+                        })
+                        .on('proceed', function(){
+                            testRunner
+                                .trigger('pause', {
+                                    reasons : {
+                                        category : __('technical'),
+                                        subCategory : __('network')
+                                    }
+                                });
+                        })
+                        .on('render', function(){
+                            proxy
+                                .off('reconnect.waiting')
+                                .on('reconnect.waiting', function(){
+                                    waiting = false;
+                                    dialog.endWait();
+                                });
+                        });
                     }
-                });
 
-            testRunner.getProxy()
-                .on('receive', function() {
-                    // any message received, state the runner is connected
-                    reconnect();
-                });
+                    return false;
+                }
+            });
         },
 
         /**
-         * Called during the runner's destroy phase
+         * Called during the runner's render phase
          */
-        destroy : function destroy (){
-            $(window).off('offline.connectivity');
-            $(window).off('online.connectivity');
+        render : function render(){
+            var $container = this.getAreaBroker().getControlArea();
+            $container.append(this.$element);
         }
     });
 });

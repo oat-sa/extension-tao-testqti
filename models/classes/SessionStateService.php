@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoDelivery\model\execution\ServiceProxy;
 use qtism\runtime\tests\AssessmentTestSession;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 
@@ -48,13 +49,13 @@ class SessionStateService extends ConfigurableService
     const OPTION_STATE_FORMAT = 'stateFormat';
     
     /**
-     * @var \taoDelivery_models_classes_execution_ServiceProxy
+     * @var ServiceProxy
      */
     private $deliveryExecutionService;
 
     public function __construct(array $options = array())
     {
-        $this->deliveryExecutionService = \taoDelivery_models_classes_execution_ServiceProxy::singleton();
+        $this->deliveryExecutionService = ServiceProxy::singleton();
         parent::__construct($options);
     }
 

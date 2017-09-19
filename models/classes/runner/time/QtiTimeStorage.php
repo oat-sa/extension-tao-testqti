@@ -71,7 +71,20 @@ class QtiTimeStorage implements TimeStorage
      */
     protected function getStorageKey()
     {
-        return self::STORAGE_PREFIX . $this->testSessionId;
+        return self::getStorageKeyFromTestSessionId($this->testSessionId);
+    }
+    
+    /**
+     * Storage Key from Test Session Id
+     * 
+     * Returns the Storage Key corresponding to a fiven $testSessionId
+     * 
+     * @param string $testSessionId
+     * @return string
+     */
+    public static function getStorageKeyFromTestSessionId($testSessionId)
+    {
+        return self::STORAGE_PREFIX . $testSessionId;
     }
 
     /**

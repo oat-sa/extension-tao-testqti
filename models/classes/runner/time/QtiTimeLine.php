@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\taoTests\models\runner\time\ArraySerializable;
 use oat\taoTests\models\runner\time\IncompleteRangeException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
@@ -34,7 +35,7 @@ use oat\taoTests\models\runner\time\TimePoint;
  * Class QtiTimeLine
  * @package oat\taoQtiTest\models\runner\time
  */
-class QtiTimeLine implements TimeLine
+class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSerializable
 {
     /**
      * The list of TimePoint representing the TimeLine
@@ -53,6 +54,47 @@ class QtiTimeLine implements TimeLine
                 $this->add($point);
             }
         }
+    }
+
+    /**
+     * Exports the internal state to an array
+     * @return array
+     */
+    public function toArray()
+    {
+        $data = [];
+        foreach ($this->points as $point) {
+            $data[] = $point->toArray();
+        }
+        return $data;
+    }
+
+    /**
+     * Imports the internal state from an array
+     * @param array $data
+     */
+    public function fromArray($data)
+    {
+        $this->points = [];
+        if (is_array($data)) {
+            foreach ($data as $dataPoint) {
+                $point = new TimePoint();
+                $point->fromArray($dataPoint);
+                $this->points[] = $point;
+            }
+        }
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 
     /**
@@ -224,13 +266,13 @@ class QtiTimeLine implements TimeLine
         $duration = 0;
         foreach ($ranges as $range) {
 
-            // the last range could be still open, so auto close it
-            $nb = count($range);
-            $last = $nb && $nb % 2 ?$range[$nb - 1] : null;
-            if ($last && $last->getType() == TimePoint::TYPE_START) {
-                $range[] = new TimePoint($last->getTags(), $lastTimestamp, TimePoint::TYPE_END, $last->getTarget());
-            }
+            // the last range could be still open, or some range could be malformed due to connection issues...
+            $range = $this->fixRange($range, $lastTimestamp);
             
+            // compute the duration of the range, an exception may be thrown if the range is malformed
+            // possible errors are (but should be avoided by the `fixRange()` method):
+            // - unclosed range: should be autoclosed by fixRange
+            // - unsorted points or nested/blended ranges: should be corrected by fixRange
             $duration += $this->computeRange($range);
         }
         
@@ -257,7 +299,7 @@ class QtiTimeLine implements TimeLine
         $end = null;
         foreach ($range as $point) {
             // grab the START TimePoint
-            if ($point->match(null, TimePoint::TARGET_ALL, TimePoint::TYPE_START)) {
+            if ($this->isStartPoint($point)) {
                 // we cannot have the START TimePoint twice
                 if ($start) {
                     throw new MalformedRangeException('A time range must be defined by a START and a END TimePoint! Twice START found.');
@@ -266,7 +308,7 @@ class QtiTimeLine implements TimeLine
             }
 
             // grab the END TimePoint
-            if ($point->match(null, TimePoint::TARGET_ALL, TimePoint::TYPE_END)) {
+            if ($this->isEndPoint($point)) {
                 // we cannot have the END TimePoint twice
                 if ($end) {
                     throw new MalformedRangeException('A time range must be defined by a START and a END TimePoint! Twice END found.');
@@ -283,6 +325,81 @@ class QtiTimeLine implements TimeLine
         }
         
         return $duration;
+    }
+
+    /**
+     * Ensures the ranges are well formed. They should have been sorted before, otherwise the process won't work.
+     * Tries to fix a range by adding missing points
+     * @param array $range
+     * @param float $lastTimestamp - An optional timestamp to apply on the last TimePoint if missing
+     * @return array
+     */
+    protected function fixRange($range, $lastTimestamp = null)
+    {
+        $fixedRange = [];
+        $last = null;
+        $open = false;
+
+        foreach ($range as $point) {
+            if ($this->isStartPoint($point)) {              // start of range
+                // the last range could be still open...
+                if ($last && $open) {
+                    $fixedRange[] = $this->cloneTimePoint($point, TimePoint::TYPE_END);
+                }
+                $open = true;
+            } else if ($this->isEndPoint($point)) {         // end of range
+                // this range could not be started...
+                if (!$open) {
+                    $fixedRange[] = $this->cloneTimePoint($last ? $last : $point, TimePoint::TYPE_START);
+                }
+                $open = false;
+            }
+            $fixedRange[] = $point;
+            $last = $point;
+        }
+
+        // the last range could be still open...
+        if ($last && $open) {
+            $fixedRange[] = $this->cloneTimePoint($last, TimePoint::TYPE_END, $lastTimestamp);
+        }
+        
+        return $fixedRange;
+    }
+
+    /**
+     * Makes a copy of a TimePoint and forces a particular type
+     * @param TimePoint $point - The point to duplicate
+     * @param int $type - The type of the new point. It should be different!
+     * @param float $timestamp - An optional timestamp to set on the new point. By default keep the source timestamp.
+     * @return TimePoint
+     */
+    protected function cloneTimePoint(TimePoint $point, $type, $timestamp = null)
+    {
+        if (is_null($timestamp)) {
+            $timestamp = $point->getTimestamp();
+        }
+        \common_Logger::d("Create missing TimePoint at " . $timestamp);
+        return new TimePoint($point->getTags(), $timestamp, $type, $point->getTarget());
+    }
+
+    /**
+     * Tells if this is a start TimePoint
+     * @param TimePoint $point
+     * @return bool
+     */
+    protected function isStartPoint(TimePoint $point)
+    {
+        return $point->match(null, TimePoint::TARGET_ALL, TimePoint::TYPE_START);
+    }
+
+    /**
+     * Tells if this is a end TimePoint
+     * @param TimePoint $point
+     * @return bool
+     */
+    protected function isEndPoint(TimePoint $point)
+    {
+        return $point->match(null, TimePoint::TARGET_ALL, TimePoint::TYPE_END);
     }
 
     /**

@@ -25,6 +25,7 @@ use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
 
@@ -85,10 +86,29 @@ class TestSessionService extends ConfigurableService
             $session = null;
         }
 
+        /** @var \tao_models_classes_service_FileStorage $fileStorage */
+        $fileStorage = $this->getServiceManager()->get(\tao_models_classes_service_FileStorage::SERVICE_ID);
+        $directoryIds = explode('|', $inputParameters['QtiTestCompilation']);
+        $directories = array(
+            'private' => $fileStorage->getDirectoryById($directoryIds[0]),
+            'public' => $fileStorage->getDirectoryById($directoryIds[1])
+        );
+
         self::$cache[$sessionId] = [
             'session' => $session,
-            'storage' => $qtiStorage
+            'storage' => $qtiStorage,
+            'compilation' => $directories
         ];
+    }
+
+    /**
+     * Checks if a session has been loaded
+     * @param $sessionId
+     * @return bool
+     */
+    protected function hasTestSession($sessionId)
+    {
+        return (isset(self::$cache[$sessionId]) && isset(self::$cache[$sessionId]['session']));
     }
 
     /**
@@ -102,7 +122,7 @@ class TestSessionService extends ConfigurableService
     public function getTestSession(DeliveryExecution $deliveryExecution)
     {
         $sessionId = $deliveryExecution->getIdentifier();
-        if (!isset(self::$cache[$sessionId]['session'])) {
+        if (!$this->hasTestSession($sessionId)) {
             $this->loadSession($deliveryExecution);
         }
 
@@ -114,14 +134,36 @@ class TestSessionService extends ConfigurableService
      *
      * @param TestSession $session
      * @param \taoQtiTest_helpers_TestSessionStorage $storage
+     * @param array $compilationDirectories
      */
-    public function registerTestSession($session, $storage)
+    public function registerTestSession(AssessmentTestSession $session, \taoQtiTest_helpers_TestSessionStorage $storage, array $compilationDirectories)
     {
         $sessionId = $session->getSessionId();
         self::$cache[$sessionId] = [
             'session' => $session,
-            'storage' => $storage
+            'storage' => $storage,
+            'compilation' => $compilationDirectories
         ];
+    }
+    
+    /**
+     * Get a test session data by identifier.
+     * 
+     * Get a session by $sessionId. In case it was previously registered using the TestSessionService::registerTestSession method,
+     * an array with the following keys will be returned:
+     * 
+     * * 'session': A qtism AssessmentTestSession object.
+     * * 'storage': A taoQtiTest_helpers_TestSessionStorage.
+     * * 'context': A RunnerServiceContext object (if not provided at TestSessionService::registerTestSession call time, it contains null).
+     * 
+     * In case of no such session is found for $sessionId, false is returned.
+     * 
+     * @param string $sessionId
+     * @return false|array
+     */
+    public function getTestSessionDataById($sessionId)
+    {
+        return $this->hasTestSession($sessionId) ? self::$cache[$sessionId] : false;
     }
 
     /**
@@ -135,7 +177,7 @@ class TestSessionService extends ConfigurableService
     public function getTestSessionStorage(DeliveryExecution $deliveryExecution)
     {
         $sessionId = $deliveryExecution->getIdentifier();
-        if (!isset(self::$cache[$sessionId]['session'])) {
+        if (!$this->hasTestSession($sessionId)) {
             $this->loadSession($deliveryExecution);
         }
 
@@ -169,7 +211,7 @@ class TestSessionService extends ConfigurableService
     public function persist(AssessmentTestSession $session)
     {
         $sessionId = $session->getSessionId();
-        if (isset(self::$cache[$sessionId])) {
+        if ($this->hasTestSession($sessionId)) {
             $storage = self::$cache[$sessionId]['storage'];
             $storage->persist($session);
         }

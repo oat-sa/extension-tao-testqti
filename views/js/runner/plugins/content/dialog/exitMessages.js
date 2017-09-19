@@ -55,8 +55,8 @@ define([
 
                         // the leave can occurs when the runner is in inconsistent state (i.e. error)
                         // prevent side error with item disabling
-                        if (context && context.itemUri) {
-                            testRunner.disableItem(context.itemUri);
+                        if (context && context.itemIdentifier) {
+                            testRunner.disableItem(context.itemIdentifier);
                         }
 
                         // wait for the message acknowledge before leaving the runner

@@ -16,4 +16,8 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
-return new oat\taoQtiTest\models\QtiTestListenerService();
+return new oat\taoQtiTest\models\QtiTestListenerService(
+    [
+        oat\taoQtiTest\models\QtiTestListenerService::OPTION_ARCHIVE_EXCLUDE => []
+    ]
+);

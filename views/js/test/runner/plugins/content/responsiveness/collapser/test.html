@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test runner plugin - collapser</title>
+    <link rel="stylesheet" type="text/css" href="/tao/views/js/lib/qunit/qunit.css">
+    <link rel="stylesheet" type="text/css" href="/tao/views/css/tao-main-style.css">
+    <link rel="stylesheet" type="text/css" href="/taoQtiTest/views/css/new-test-runner.css">
+    <script type="text/javascript" src="/tao/views/js/lib/require.js"></script>
+    <script type="text/javascript" src="/tao/views/js/lib/qunit/qunit.js"></script>
+    <script type="text/javascript" src="/tao/views/js/lib/qunit/qunit-parameterize.js"></script>
+    <script type="text/javascript" src="/tao/views/js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking"
+            data-cover-only="/taoQtiTest/views/js/runner/plugins/content/responsiveness/collapser.js"></script>
+    <script type="text/javascript">
+        QUnit.config.autostart = false;
+        require(['/tao/ClientConfig/config'], function () {
+            require(['taoQtiTest/test/runner/plugins/content/responsiveness/collapser/test'], function () {
+                QUnit.start();
+            });
+        });
+    </script>
+    <style>
+
+        .content, .control, .header, .panel {
+            display: none;
+        }
+
+        .el {
+            float: left;
+            margin-right: 10px;
+        }
+        .el .icon {
+            display: inline-block;
+            width: 20px;
+        }
+        .el .text {
+            display: inline-block;
+            width: 70px;
+        }
+
+        .tool-label-collapsed .text,
+        .tool-label-collapsed-hover .text,
+        .no-tool-label .text {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture">
+    <div class="test-runner-scope">
+        <nav class="action-bar content-action-bar horizontal-action-bar bottom-action-bar">
+            <div class="control-box">
+                <div class="tools-box lft">
+                    <div class="button1 el">
+                        <span class="icon icon-add"></span><span class="text">button1</span>
+                    </div>
+                    <div class="button2 el">
+                        <span class="icon icon-add"></span><span class="text">button2</span>
+                    </div>
+                    <div class="button3 el no-tool-label">
+                        <span class="icon icon-remove"></span><span class="text">button3</span>
+                    </div>
+                    <div class="button4 el">
+                        <span class="icon icon-add"></span><span class="text">button4</span>
+                    </div>
+                    <div class="button5 el">
+                        <span class="icon icon-add"></span><span class="text">button5</span>
+                    </div>
+                </div>
+                <div class="navi-container rgt">
+                    <div class="prev el">
+                        <span class="icon icon-left"></span><div class="text">prev</div>
+                    </div>
+                    <div class="next el">
+                        <span class="icon icon-right"></span><div class="text">next</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

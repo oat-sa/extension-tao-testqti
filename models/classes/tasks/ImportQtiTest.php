@@ -36,6 +36,9 @@ use oat\taoQtiTest\models\import\QtiTestImporter;
 class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 {
     const FILE_DIR = 'ImportQtiTestTask';
+    const PARAM_CLASS_URI = 'class_uri';
+    const PARAM_FILE = 'file';
+    const PARAM_ENABLE_GUARDIANS = 'enable_guardians';
 
     protected $service;
 
@@ -46,9 +49,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      */
     public function __invoke($params)
     {
-        if (!isset($params['file'])) {
-            throw new \common_exception_MissingParameter('Missing parameter `file` in ' . self::class);
+        if (!isset($params[self::PARAM_FILE])) {
+            throw new \common_exception_MissingParameter('Missing parameter `' . self::PARAM_FILE . '` in ' . self::class);
         }
+
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
@@ -56,13 +60,12 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
         $importer = $importersService->getImporter(QtiTestImporter::IMPORTER_ID);
 
-        $class = null;
-        if (isset($params['class'])) {
-            $class = new \core_kernel_classes_Class($params['class']);
-        }
-
         /** @var \common_report_Report $report */
-        $report = $importer->import($file, $class);
+        $report = $importer->import(
+            $file,
+            $this->getClass($params),
+            isset($params[self::PARAM_ENABLE_GUARDIANS]) ? $params[self::PARAM_ENABLE_GUARDIANS] : true
+        );
 
         if (isset($params['resource']) && !empty($params['resource'])) {
             $taskResources = self::getTaskClass()->searchInstances([
@@ -90,23 +93,42 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     /**
      * Create task in queue
      * @param array $packageFile uploaded file
-     * @param \core_kernel_classes_Class $class
+     * @param \core_kernel_classes_Class $class uploaded file
+     * @param bool $enableGuardians Flag that marks use or not metadata guardians during the import.
      * @param \core_kernel_classes_Resource $testResource
      * @return Task created task id
      */
-    public static function createTask($packageFile, \core_kernel_classes_Class $class, \core_kernel_classes_Resource $testResource)
+    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true, \core_kernel_classes_Resource $testResource)
     {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
 
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
         $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
+
         $task = $queue->createTask($action, [
-            'file' => $fileUri,
-            'class' => $class->getUri(),
-            'resource' => $testResource->getUri()
+            self::PARAM_FILE => $fileUri,
+            self::PARAM_CLASS_URI => $class->getUri(),
+            self::PARAM_ENABLE_GUARDIANS => $enableGuardians
         ]);
+
         $queue->linkTask($task, $testResource);
         return $task;
+    }
+
+    /**
+     * @param array $taskParams
+     * @return \core_kernel_classes_Class
+     */
+    private function getClass(array $taskParams)
+    {
+        $class = null;
+        if (isset($taskParams[self::PARAM_CLASS_URI])) {
+            $class = new \core_kernel_classes_Class($taskParams[self::PARAM_CLASS_URI]);
+        }
+        if ($class === null || !$class->exists()) {
+            $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+        }
+        return $class;
     }
 }

@@ -83,9 +83,10 @@ define([
                 .on('ready', function(){
                     self.hide();
                 })
-                .on('loaditem', function(itemRef, itemData){
-                    if(itemData.rubrics) {
-                        self.$element.html(itemData.rubrics);
+                .on('loaditem', function(){
+                    var context = testRunner.getTestContext();
+                    if(context.rubrics) {
+                        self.$element.html(context.rubrics);
 
                         blankifyLinks(self.$element);
                         mathify(self.$element).then(function(){

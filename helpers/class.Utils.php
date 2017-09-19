@@ -106,43 +106,6 @@ class taoQtiTest_helpers_Utils {
     }
     
     /**
-     * Do not use as it only works on local filesystem
-     * Used to get the expected absolute path to a given $qtiResource that is already stored in TAO.
-     * 
-     * @param core_kernel_file_File|string $testContent The pointer to the TAO Test Content folder.
-     * @param oat\taoQtiItem\model\qti\Resource|string $qtiTestResource The QTI resource to be copied into $testContent. If given as a string, it must be the relative (to the TAO Content Folder) path to the resource file.
-     * @throws InvalidArgumentException If one of the above arguments is invalid.
-     * @return string The absolute path to $qtiResource.
-     * @deprecated
-     */
-    static public function storedQtiResourcePath($testContent, $qtiResource) {
-        if ($testContent instanceof core_kernel_file_File) {
-            $contentPath = $testContent->getAbsolutePath();
-        }
-        else if (is_string($testContent) === true) {
-            $contentPath = $testContent;
-        }
-        else {
-            throw new InvalidArgumentException("The 'testContent' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
-        }
-        
-        if ($qtiResource instanceof taoQti_models_classes_QTI_Resource) {
-            $filePath = $qtiResource->getFile();
-        }
-        else if (is_string($qtiResource) === true) {
-            $filePath = $qtiResource;
-        }
-        else {
-            throw new InvalidArgumentException("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
-        }
-        
-        $ds = DIRECTORY_SEPARATOR;
-        $filePath = ltrim($filePath, '/');
-        $contentPath = rtrim($contentPath, $ds);
-        return $contentPath . $ds . str_replace('/', $ds, $filePath);
-    }
-    
-    /**
      * Returns an empty IMS Manifest file as a DOMDocument, ready to be fill with
      * new information about IMS QTI Items and Tests.
      * 

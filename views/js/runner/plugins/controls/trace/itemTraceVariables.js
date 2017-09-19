@@ -111,7 +111,7 @@ define([
 
                         .before('unloaditem', function () {
                             var context = testRunner.getTestContext();
-                            return testRunner.getProxy().callItemAction(context.itemUri, 'storeTraceData', {
+                            return testRunner.getProxy().callItemAction(context.itemIdentifier, 'storeTraceData', {
                                 traceData: JSON.stringify(variables)
                             });
                         })

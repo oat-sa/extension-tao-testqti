@@ -21,113 +21,104 @@
  */
 define([
     'jquery',
-    'lodash',
-    'taoQtiTest/controller/creator/templates/index'
-], function($, _, templates){
+    'i18n',
+    'core/logger',
+    'taoQtiTest/provider/testItems',
+    'ui/resource/selector',
+    'ui/feedback'
+], function($, __, loggerFactory, testItemProviderFactory, resourceSelectorFactory, feedback){
     'use strict';
 
-    var itemTemplate = templates.item;
+   /**
+    * Create a dedicated logger
+    */
+    var logger = loggerFactory('taoQtiTest/creator/views/item');
 
+    /**
+     * Let's you access the data
+     */
+    var testItemProvider = testItemProviderFactory();
 
+    /**
+     * Handles errors
+     * @param {Error} err
+     */
+    var onError = function onError(err){
+        logger.error(err);
+        feedback.error(err.message || __('An error occured while retrieving items'));
+    };
 
    /**
      * The ItemView setup items related components
      * @exports taoQtiTest/controller/creator/views/item
-     * @param {Function} loadItems - the function used to get items from the server
-     * @param {Function} getCategories - the function used to get items' categories
+     * @param {jQueryElement} $container - where to append the view
      */
-    var itemView =  function(loadItems, getCategories){
+    return function itemView($container){
 
-        var $panel     = $('.test-creator-items .item-selection');
-        var $search    = $('#item-filter');
-        var $itemBox   = $('.item-box', $panel);
-
-        var getItems = function getItems(pattern){
-            return loadItems(pattern).then(function(items){
-                if(!items || !items.length){
-                    return update();
-                }
-                return getCategories(_.pluck(items, 'uri')).then(function(categories){
-                    update(_.map(items, function(item){
-                        item.categories = _.isArray(categories[item.uri]) ? categories[item.uri] : [];
-                        return item;
-                    }));
-                });
-            });
+        var selectorConfig = {
+            type : __('items'),
+            multiple : true
         };
 
-        getItems().then(setUpLiveSearch);
+        //load the classes hierarchy
+        testItemProvider.getItemClasses()
+            .then(function(classes){
+                selectorConfig.classes = classes;
+                selectorConfig.classUri = classes[0].uri;
+            })
+            .then(function(){
+                //load the class properties
+                return testItemProvider.getItemClassProperties(selectorConfig.classUri);
+            })
+            .then(function(filters){
+                //set the filters from the properties
+                selectorConfig.filters = filters;
+            })
+            .then(function(){
+                //set up the resource selector
+                resourceSelectorFactory($container, selectorConfig)
+                    .on('render', function(){
+                        var self = this;
+                        $container.on('itemselected.creator', function(){
+                            self.clearSelection();
+                        });
+                    })
+                    .on('query', function(params){
+                        var self = this;
 
-        /**
-         * Set up the search behavior: once 3 chars are enters into the field,
-         * we load the items that matches the given search pattern.
-         * @private
-         */
-        function setUpLiveSearch (){
-            var timeout;
+                        //ask the server the item from the component query
+                        testItemProvider.getItems(params)
+                            .then(function(items){
+                                //and update the item list
+                                self.update(items, params);
+                            })
+                            .catch(onError);
+                    })
+                    .on('classchange', function(classUri){
+                        var self = this;
 
-            var liveSearch = function(){
-                var pattern = $search.val();
-                if(pattern.length > 1 || pattern.length === 0){
-                    clearTimeout(timeout);
-                    timeout = setTimeout(function(){
-                        getItems(pattern);
-                    }, 300);
-                }
-            };
+                        //by changing the class we need to change the
+                        //properties filters
+                        testItemProvider
+                            .getItemClassProperties(classUri)
+                            .then(function(filters){
+                                self.updateFilters(filters);
+                            })
+                            .catch(onError);
+                    })
+                    .on('change', function(values){
 
-            //trigger the search on keyp and on the magnifer button click
-            $search.keyup(liveSearch)
-                     .siblings('.ctrl').click(liveSearch);
-        }
-
-        /**
-         * Update the items list
-         * @private
-         * @param {Array} items - the new items
-         */
-        function update (items){
-            disableSelection();
-            $itemBox.empty().append(itemTemplate(items));
-            enableSelection();
-        }
-
-        /**
-         * Disable the selectable component
-         * @private
-         * @param {Array} items - the new items
-         */
-        function disableSelection (){
-            if($panel.data('selectable')){
-                $panel.selectable('disable');
-            }
-        }
-
-        /**
-         * Enable to select items to be added to sections
-         * using the jquery-ui selectable.
-         * @private
-         */
-        function enableSelection (){
-
-            if($panel.data('selectable')){
-                $panel.selectable('enable');
-            } else {
-                $panel.selectable({
-                    filter: 'li',
-                    selected: function( event, ui ) {
-                        $(ui.selected).addClass('selected');
-                    },
-                    unselected: function( event, ui ) {
-                        $(ui.unselected).removeClass('selected');
-                    },
-                    stop: function(){
-                        $(this).trigger('itemselect.creator', $('.selected'));
-                    }
-                });
-            }
-        }
+                        /**
+                         * We've got a selection, triggered on the view container
+                         *
+                         * TODO replace jquery events by the eventifier
+                         *
+                         * @event jQuery#itemselect.creator
+                         * @param {Object[]} values - the selection
+                         */
+                        $container.trigger('itemselect.creator', [values]);
+                    });
+            })
+            .catch(onError);
     };
-
-    return itemView;
 });

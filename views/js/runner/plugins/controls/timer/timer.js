@@ -52,7 +52,7 @@ define([
     /**
      * The message to display when exiting
      */
-    var exitMessage = __('After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?');
+    var exitMessage = __('Once you close this section, you cannot return to it or change your answers.');
 
 
     var timerTypes = {
@@ -117,7 +117,10 @@ define([
              * Gets the remaining extra time, if any
              * @returns {Number} the remaining extra time in milliseconds
              */
-            var getRemainingExtraTime = function getRemainingExtraTime() {
+            var getRemainingExtraTime = function getRemainingExtraTime(extra) {
+                if (extra) {
+                    extraTime = extra;
+                }
                 return Math.max(0, extraTime - consumedExtraTime) * precision;
             };
 
@@ -129,7 +132,7 @@ define([
              */
             var setRemainingTime = function setRemainingTime(timerConfig, remaining) {
                 // will display the timer with extra time, if any
-                timerConfig.remaining = remaining + getRemainingExtraTime();
+                timerConfig.remaining = remaining + getRemainingExtraTime(timerConfig.extra);
 
                 // keep track of the regular timer, without extra time
                 timerConfig.regular = remaining;
@@ -156,6 +159,7 @@ define([
                     if (timeConstraint) {
                         timer = setRemainingTime({
                             label: timeConstraint.label,
+                            extra: timeConstraint.extraTime,
                             type: timeConstraint.qtiClassName,
                             id: timeConstraint.source,
                             running: true,
@@ -238,7 +242,7 @@ define([
                     displayedTimers[type] = timerComponentFactory(config);
                     displayedTimers[type]
                         .init()
-                        .render(self.$element);
+                        .render(self.$element.find('.timer-wrapper'));
 
                     /**
                      * @event timerPlugin#addtimer
@@ -302,7 +306,12 @@ define([
                         })
                     );
                 });
-                return Promise.all(timerUpdatePromises);
+                return Promise
+                        .all(timerUpdatePromises)
+                        .then(function(data){
+                            toggleToggler();
+                            return data;
+                        });
             };
 
             /**
@@ -323,6 +332,35 @@ define([
                 }
             }
 
+            /**
+             * Show/hide the timers akka "zen mode"
+             */
+            function toggleZenMode() {
+                if(self.$element.hasClass('zen-mode')){
+                    self.$element.removeClass('zen-mode');
+                    self.$toggler.attr('title', __('Hide timers'));
+                    self.storage.removeItem('zen-mode');
+                } else {
+                    self.$element.addClass('zen-mode');
+                    self.$toggler.attr('title', __('Show timers'));
+                    self.storage.setItem('zen-mode', true);
+                }
+            }
+
+            /**
+             * Hide the toggler without timers,
+             * display it otherwise
+             */
+            function toggleToggler() {
+                if(self.$toggler.length){
+                    if(_.size(timers) > 0){
+                        hider.show(self.$toggler);
+                    } else {
+                        hider.hide(self.$toggler);
+                    }
+                }
+            }
+
             return store('timer-' + testRunner.getConfig().serviceCallId)
                 .then(function(timeStore) {
                     if (self.shouldClearStorage) {
@@ -338,6 +376,24 @@ define([
 
                     //the element that'll contain the timers
                     self.$element = $(timerBoxTpl());
+
+                    //used to show/hide the timer
+                    self.$toggler =  self.$element.find('.timer-toggler');
+
+                    //restore the zen mode if set previously
+                    self.storage
+                        .getItem('zen-mode')
+                        .then(function(zenMode){
+                            if(zenMode  && !self.$element.hasClass('zen-mode')){
+                                toggleZenMode();
+                            }
+                        });
+
+                    self.$toggler.on('click', function(e){
+                        e.preventDefault();
+                        toggleZenMode();
+                    });
+
 
                     //one stopwatch to count the time
                     self.stopwatch = timerFactory({
@@ -417,12 +473,12 @@ define([
                             return updateTimers(true);
                         })
                         .on('enableitem', doEnable)
-                        .on('disableitem disconnect', doDisable)
+                        .on('disableitem', doDisable)
                         .after('renderitem', doEnable)
                         .before('move', function(e, type, scope, position) {
                             var context = testRunner.getTestContext();
-                            var testData = testRunner.getTestData();
-                            var config = testData && testData.config;
+                            var testDataBeforeMove = testRunner.getTestData();
+                            var config = testDataBeforeMove && testDataBeforeMove.config;
                             var timerConfig = config && config.timer || {};
                             var options = context && context.options || {};
 
@@ -432,18 +488,25 @@ define([
                                     resolve();
                                     // display a message if we exit a timed section
                                 } else if (leaveTimedSection(type, scope, position) && !options.noExitTimedSectionWarning && !timerConfig.keepUpToTimeout) {
-                                    testRunner.trigger('confirm.exittimed', messages.getExitMessage(exitMessage, 'section', testRunner), resolve, reject);
+                                    testRunner.trigger(
+                                        'confirm.exittimed',
+                                        messages.getExitMessage(exitMessage, 'section', testRunner),
+                                        resolve,
+                                        reject,
+                                        {
+                                            buttons: {
+                                                labels: {
+                                                    ok : __('Close this Section'),
+                                                    cancel : __('Review my Answers')
+                                                }
+                                            }
+                                        });
                                 } else {
                                     resolve();
                                 }
                             });
 
                             movePromise
-                                .then(function doMove() {
-                                    //pause the timers when moving
-                                    doDisable();
-                                    removeTimer(timerTypes.item);
-                                })
                                 .catch(function cancelMove() {
                                     // Use `defer` to be sure the timer resume will occur after the move event is
                                     // finished to be handled. Otherwise, the duration plugin will be frozen and
@@ -454,6 +517,10 @@ define([
                                 });
 
                             return movePromise;
+                        })
+                        .on('move', function () {
+                            doDisable();
+                            removeTimer(timerTypes.item);
                         })
                         .before('move skip exit timeout', function() {
                             testRunner.getProxy().addCallActionParams({

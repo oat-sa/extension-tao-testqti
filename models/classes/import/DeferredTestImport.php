@@ -78,7 +78,7 @@ class DeferredTestImport implements \tao_models_classes_import_ImportHandler, Ph
                 $task = ImportQtiTest::createTask([
                     'tmp_name' => $uploadedFile,
                     'name' => $fileInfo['name'],
-                ], $class, $testResource);
+                ], $class, true, $testResource);
 
                 if ($task->getStatus() === Task::STATUS_FINISHED) {
                     $report = $task->getReport();

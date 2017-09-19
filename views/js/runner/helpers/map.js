@@ -60,6 +60,26 @@ define([
         },
 
         /**
+         * Get sections table
+         * @param {Object} map - The assessment test map
+         * @returns {Object} the sections
+         */
+        getSections: function getSections(map) {
+            var parts = this.getParts(map),
+                result = {};
+
+            _.forEach(parts, function (part) {
+                var sections = part.sections;
+                if (sections) {
+                    _.forEach(sections, function (section) {
+                        result[section.id] = section;
+                    });
+                }
+            });
+            return result;
+        },
+
+        /**
          * Gets the jump at a particular position
          * @param {Object} map - The assessment test map
          * @param {Number} position - The position of the item
@@ -151,7 +171,6 @@ define([
          */
         getScopeStats: function getScopeStats(map, position, scope) {
             var jump = this.getJump(map, position);
-
             switch (scope) {
                 case 'section':
                 case 'testSection':
@@ -212,6 +231,55 @@ define([
         },
 
         /**
+         * Gets the map of a particular scope from a current context
+         * @param {Object} map - The assessment test map
+         * @param {Object} context - The current session context
+         * @param {String} [scope] - The name of the scope. Can be: test, part, section (default: test)
+         * @returns {object} The scoped map
+         */
+        getScopeMapFromContext: function getScopeMapFromContext(map, context, scope) {
+            // need a clone of the map as we will change some properties
+            var scopeMap = _.cloneDeep(map || {});
+            var part;
+            var section;
+
+            // gets the current part and section
+            if (context && context.testPartId) {
+                part = this.getPart(scopeMap, context.testPartId);
+            }
+            if (context && context.sectionId) {
+                section = this.getSection(scopeMap, context.sectionId);
+            }
+
+            // reduce the map to the scope part
+            if (scope && scope !== 'test') {
+                scopeMap.parts = {};
+                if (part) {
+                    scopeMap.parts[context.testPartId] = part;
+                }
+            }
+
+            // reduce the map to the scope section
+            if (part && (scope === 'section' || scope === 'testSection')) {
+                part.sections = {};
+                if (section) {
+                    part.sections[context.sectionId] = section;
+                }
+            }
+
+            // update the stats to reflect the scope
+            if (section) {
+                section.stats = this.computeItemStats(section.items);
+            }
+            if (part) {
+                part.stats = this.computeStats(part.sections);
+            }
+            scopeMap.stats = this.computeStats(scopeMap.parts);
+
+            return scopeMap;
+        },
+
+        /**
          * Gets the test part containing a particular position
          * @param {Object} map - The assessment test map
          * @param {Number} position - The position of the item
@@ -248,6 +316,22 @@ define([
             var section = sections && sections[jump && jump.section];
             var items = section && section.items;
             return items && items[jump && jump.identifier];
+        },
+
+        /**
+         * Gets the identifier of an existing item
+         * @param {Object} map - The assessment test map
+         * @param {Number|String} position - The position of the item, can already be the identifier
+         * @returns {String}
+         */
+        getItemIdentifier: function getItemIdentifier(map, position) {
+            var item;
+            if (_.isFinite(position)) {
+                item = this.getItemAt(map, position);
+            } else {
+                item = this.getItem(map, position);
+            }
+            return item && item.id;
         },
 
         /**

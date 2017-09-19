@@ -373,7 +373,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             echo json_encode($ctx);
         }
         
-        common_Logger::i("Persisting QTI Assessment Test Session '${sessionId}'...");
+        common_Logger::t("Persisting QTI Assessment Test Session '${sessionId}'...");
 	    $this->getStorage()->persist($testSession);
     }
 
@@ -490,7 +490,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 $this->handleAssessmentTestSessionException($e);
             }
 
-            common_Logger::i("Persisting QTI Assessment Test Session '${sessionId}'...");
+            common_Logger::t("Persisting QTI Assessment Test Session '${sessionId}'...");
             $this->getStorage()->persist($testSession);
         }
     }
@@ -777,7 +777,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             $stateOutput = new taoQtiCommon_helpers_PciStateOutput();
 
             try {
-                common_Logger::i('Responses sent from the client-side. The Response Processing will take place.');
+                common_Logger::t('Responses sent from the client-side. The Response Processing will take place.');
                 $this->getTestSession()->endAttempt($responses, true);
 
                 // Return the item session state to the client side.
@@ -865,14 +865,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	    $sessionId = $this->getServiceCallId();
 	    
 	    if ($qtiStorage->exists($sessionId) === false) {
-	        common_Logger::i("Instantiating QTI Assessment Test Session");
+	        common_Logger::t("Instantiating QTI Assessment Test Session");
             $this->setTestSession($qtiStorage->instantiate($this->getTestDefinition(), $sessionId));
 
             $testTaker = \common_session_SessionManager::getSession()->getUser();
             taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
 	    }
 	    else {
-	        common_Logger::i("Retrieving QTI Assessment Test Session '${sessionId}'...");
+	        common_Logger::t("Retrieving QTI Assessment Test Session '${sessionId}'...");
 	        $this->setTestSession($qtiStorage->retrieve($this->getTestDefinition(), $sessionId));
 	    }
 
@@ -917,7 +917,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
                 $this->getItemIndex()->unserialize($data);
             }
         } catch(\Exception $e) {
-            \common_Logger::i('Ignoring file not found exception for Items Index');
+            \common_Logger::d('Ignoring file not found exception for Items Index');
         }
     }
 

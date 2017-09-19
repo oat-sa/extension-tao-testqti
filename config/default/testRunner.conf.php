@@ -386,7 +386,13 @@ return array(
      * Enable Allow/Disallow Skipping feature.
      * @type boolean
      */
-    'enable-allow-skipping' => false,
+    'enable-allow-skipping' => true,
+
+    /*
+     * Enable Allow/Disallow Validate Responses feature.
+     * @type boolean
+     */
+    'enable-validate-responses' => true,
 
     /*
      * Force branch rules to be executed even if the current navigation mode is non-linear.
@@ -486,9 +492,15 @@ return array(
 
     /**
      * Allows to browse the next item (before it is displayed).
-     * The is required for caching scenarios
+     * This is required for caching scenarios
      * @type boolean
      */
-    'allow-browse-next-item' => false
-
+    'allow-browse-next-item' => false,
+    
+    /**
+     * Defines the number of items to cache, when the feature is allowed (allow-browse-next-item).
+     * This is required for caching scenarios
+     * @type integer
+     */
+    'item-cache-size' => 3
 );

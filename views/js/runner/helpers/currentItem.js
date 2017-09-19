@@ -114,9 +114,15 @@ define([
          */
         isQtiValueNull: function isQtiValueNull(value, baseType, cardinality) {
             var mappedCardinality = responseCardinalities[cardinality];
+
+            if (_.isObject(value) && value[mappedCardinality] === null) {
+                value = null;
+            }
+
             if (_.isObject(value) && value[mappedCardinality] && 'undefined' !== typeof value[mappedCardinality][baseType]) {
                 value = value[mappedCardinality][baseType];
             }
+
             return null === value || ('string' === baseType && _.isEmpty(value)) || (cardinality !== 'single' && _.isEmpty(value));
         },
 
@@ -132,7 +138,7 @@ define([
             var answered;
             defaultValue = defaultValue || null;
             if (currentItemHelper.isQtiValueNull(response, baseType, cardinality)) {
-                answered = !currentItemHelper.isQtiValueNull(defaultValue, baseType, cardinality);
+                answered = false;
             } else {
                 answered = !_.isEqual(response, currentItemHelper.toResponse(defaultValue, baseType, cardinality));
             }
@@ -143,9 +149,10 @@ define([
          * Tells is the current item has been answered or not
          * The item is considered answered when at least one response has been set to not empty {base : null}
          * @param {Object} runner - testRunner instance
+         * @param {Boolean} [partially = true] - if false all questions must have been answered
          * @returns {Boolean}
          */
-        isAnswered: function isAnswered(runner) {
+        isAnswered: function isAnswered(runner, partially) {
             var itemRunner = runner.itemRunner;
             var responses = itemRunner && itemRunner.getResponses();
             var count = 0;
@@ -164,8 +171,10 @@ define([
                     }
                 });
             }
-
-            return count !== 0 && empty !== count;
+            if( partially === false ){
+                return count > 0 && empty === 0;
+            }
+            return count > 0 && empty < count;
         }
     };
 
