@@ -238,9 +238,7 @@ define([
             volume = 40; // default volume
 
             // we have to mark some blocks as ignored to prevent TTS accessing it
-            $(options.ignoreEls.join(',')).each(function () {
-                $(this).attr('ignore', true);
-            });
+            $(options.ignoreEls.join(',')).attr('ignore', true);
 
             require([options.toolbarUrl], function () {
                 var tss = self._get('texthelpSpeechStream');
@@ -262,13 +260,15 @@ define([
 
             // Action clicks
             $this.find('.action').on('click', function (e) {
+                var $action = $(this);
+
                 // prevents disabled actions from being triggered
-                if ($(this).hasClass('disabled')) {
+                if ($action.hasClass('disabled')) {
                     e.stopImmediatePropagation();
                 }
 
                 // hides settings menu when another action clicked
-                if (!$(this).closest('.settings').length) {
+                if (!$action.closest('.settings').length) {
                     $this.find('.settings').removeClass('active');
                     $this.find('.settings > .settings-menu').hide();
                 }
@@ -283,9 +283,7 @@ define([
             // Settings menu
             $this.find('.settings > .settings-menu')
             .on('click', function (e) { // prevent child elements triggering a click on settings menu
-                if ($(this).closest('.settings-menu').length) {
-                    e.stopPropagation();
-                }
+                e.stopPropagation();
             })
             .hide(); // Hide settings menu to begin
 
@@ -339,34 +337,34 @@ define([
             var $el = this.getElement();
 
             if (options.enableClickToSpeak) {
-                $('.click-to-speak', $el).addClass('active');
-                $('.play', $el).addClass('disabled').show();
-                $('.pause', $el).addClass('disabled').hide();
+                $el.find('.click-to-speak').addClass('active');
+                $el.find('.play').addClass('disabled').show();
+                $el.find('.pause').addClass('disabled').hide();
                 options.$contentArea.css('cursor', 'pointer');
             } else {
-                $('.click-to-speak', $el).removeClass('active');
-                $('.play', $el).removeClass('disabled').show();
-                $('.pause', $el).removeClass('disabled').hide();
+                $el.find('.click-to-speak').removeClass('active');
+                $el.find('.play').removeClass('disabled').show();
+                $el.find('.pause').removeClass('disabled').hide();
                 options.$contentArea.css('cursor', 'default');
             }
         })
         .on('play', function () {
             var $el = this.getElement();
 
-            $('.play', $el).hide();
-            $('.pause', $el).show();
+            $el.find('.play').hide();
+            $el.find('.pause').show();
         })
         .on('pause', function () {
             var $el = this.getElement();
 
-            $('.play', $el).show();
-            $('.pause', $el).hide();
+            $el.find('.play').show();
+            $el.find('.pause').hide();
         })
         .on('stop', function () {
             var $el = this.getElement();
 
-            $('.play', $el).show();
-            $('.pause', $el).hide();
+            $el.find('.play').show();
+            $el.find('.pause').hide();
         });
 
         return component;
