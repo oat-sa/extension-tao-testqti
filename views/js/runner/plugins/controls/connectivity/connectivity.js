@@ -75,6 +75,7 @@ define([
                 }
             });
 
+
             testRunner.before('error', function(e, err) {
                 var dialog;
 
@@ -83,11 +84,20 @@ define([
                     return false;
                 }
 
-                //offline navigation error, we pause the test
+                //offline navigation error
                 if (proxy.isOffline()) {
                     if(!waiting){
                         waiting = true;
 
+                        //is a pause event occurs offline, we wait the connection to be back
+                        testRunner.before('pause.waiting', function(){
+                            return new Promise(function(resolve){
+                                proxy.off('reconnect.pausing')
+                                    .after('reconnect.pausing', resolve);
+                            });
+                        });
+
+                        //creates the waiting modal dialog
                         dialog = waitingDialog({
                             message : __('You are encountering a prolonged connectivity loss'),
                             waitContent : __('Please wait while we try to restore the connection.'),
@@ -102,6 +112,7 @@ define([
                             proxy
                                 .off('reconnect.waiting')
                                 .after('reconnect.waiting', function(){
+                                    testRunner.off('pause.waiting');
                                     waiting = false;
                                     dialog.endWait();
                                 });
