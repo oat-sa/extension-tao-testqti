@@ -253,7 +253,7 @@ define([
                 }
             }
 
-            rubricModel.orderIndex = rubricModel.index + 1;
+            rubricModel.orderIndex = (rubricModel.index || 0) + 1;
             rubricModel.uid = _.uniqueId('rb');
             rubricModel.feedback = {
                 activated: !!qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content'),
