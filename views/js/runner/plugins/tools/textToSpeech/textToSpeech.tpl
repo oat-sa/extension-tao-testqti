@@ -1,5 +1,5 @@
 <div class="text-to-speech hidden">
-    <div class="action click-to-speak" title="{{__ 'Click to speak'}}"><span class="icon-bubble2"></span></div>
+    <div class="action click-to-speak" title="{{__ 'Click to speak'}}"><span class="icon-click-to-speak"></span></div>
 
     <div class="action play" title="{{__ 'Play'}}"><span class="icon-play"></span></div>
     <div class="action pause" title="{{__ 'Pause'}}"><span class="icon-pause"></span></div>
