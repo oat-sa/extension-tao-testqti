@@ -200,7 +200,7 @@ interface RunnerService
      * @return boolean
      * @throws \common_Exception
      */
-    public function timeout(RunnerServiceContext $context, $scope, $ref);
+    public function timeout(RunnerServiceContext $context, $scope, $ref, $force = false);
 
     /**
      * Exits the test before its end
