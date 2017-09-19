@@ -1590,5 +1590,20 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('14.1.5', '15.8.1');
+
+        if ($this->isVersion('15.8.1')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'textToSpeech',
+                'name' => 'Text to Speech',
+                'module' => 'taoQtiTest/runner/plugins/tools/textToSpeech/plugin',
+                'description' => 'Enables text-to-speech via Texthelp',
+                'category' => 'tools',
+                'active' => true,
+                'tags' => []
+            ]));
+
+            $this->setVersion('15.9.0');
+        }
     }
 }

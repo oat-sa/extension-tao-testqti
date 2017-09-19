@@ -13,11 +13,23 @@ module.exports = function(grunt) {
     sass.taoqtitest.files[root + 'css/new-test-runner.css'] = root + 'scss/new-test-runner.scss';
     sass.taoqtitest.files[root + 'css/plugins/key-navigation.css'] = root + 'scss/plugins/key-navigation.scss';
 
+    sass.texttospeech = {};
+    sass.texttospeech.files = {};
+    sass.texttospeech.files[root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.css'] = root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.scss';
+
     watch.taoqtitestsass = {
         files : [root + 'scss/**/*.scss'],
         tasks : ['sass:taoqtitest', 'notify:taoqtitestsass'],
         options : {
             debounceDelay : 1000
+        }
+    };
+
+    watch.texttospeechsass = {
+        files: [root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.scss'],
+        tasks: ['sass:texttospeech', 'notify:taoqtitestsass'],
+        options: {
+            debounceDelay: 1000
         }
     };
 

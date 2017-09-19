@@ -1,0 +1,89 @@
+@import 'inc/bootstrap';
+
+.text-to-speech {
+    @include simple-border($uiGeneralContentBorder);
+    background-color: $uiClickableDefaultBg;
+    bottom: 33px;
+    box-shadow: 0 0 15px 1px rgba(0,0,0,0.2);
+    color: $textColor;
+    left: 8px;
+    padding: 2px;
+    position: absolute;
+    width: 180px;
+
+    > .action {
+        background-color: $uiClickableDefaultBg;
+        display: inline-block;
+        height: 28px;
+        position: relative;
+        width: 40px;
+
+        > span {
+            color: whiten($textColor);
+            font-size: 24px !important;
+            padding: 0 !important;
+            vertical-align: middle;
+        }
+
+        > .settings-menu {
+            @include simple-border($uiGeneralContentBorder);
+            background-color: $uiClickableDefaultBg;
+            bottom: 33px;
+            box-shadow: 0 0 15px 1px rgba(0,0,0,0.2);
+            left: 8px;
+            padding: 2px;
+            position: absolute;
+
+            > .option {
+                background-color: $uiClickableDefaultBg;
+                height: 30px;
+                position: relative;
+                width: 30px;
+
+                > span {
+                    color: whiten($textColor);
+                    font-size: 18px;
+                    padding: 0;
+                    vertical-align: middle;
+                }
+
+                > .slider-container {
+                    @include simple-border($uiGeneralContentBorder);
+                    background-color: $uiClickableDefaultBg;
+                    height: 17px;
+                    left: 26px;
+                    margin: 8px;
+                    padding: 2px;
+                    position: relative;
+                    top: -24px;
+                    width: 80px;
+                }
+
+                > .hover-container { // assists in hover so as not to easily lose state
+                    height: 44px;
+                    left: 20px;
+                    position: absolute;
+                    top: -8px;
+                    width: 106px;
+                    z-index: -1;
+                }
+
+                &:hover {
+                    background-color: $uiClickableHoverBg;
+                }
+            }
+        }
+
+        &:hover {
+            background-color: $uiClickableHoverBg;
+        }
+
+        &.active {
+            background-color: $uiClickableActiveBg;
+        }
+
+        &.disabled {
+            background-color: whiten($uiClickableActiveBg);
+        }
+    }
+}
