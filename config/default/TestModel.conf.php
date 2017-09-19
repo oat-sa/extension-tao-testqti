@@ -23,7 +23,8 @@ return new \oat\taoQtiTest\models\TestModelService([
         new taoQtiTest_models_classes_export_TestExport22()
     ],
     'importHandlers' => [
-        new taoQtiTest_models_classes_import_TestImport()
+        new taoQtiTest_models_classes_import_TestImport(),
+        new \oat\taoQtiTest\models\import\DeferredTestImport(),
     ],
     'testCompilerClass'  => 'taoQtiTest_models_classes_QtiTestCompiler'
 ]);

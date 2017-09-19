@@ -26,7 +26,8 @@ use oat\oatbox\service\ServiceManager;
 use oat\oatbox\task\Queue;
 use oat\oatbox\task\Task;
 use oat\tao\model\import\ImportersService;
-use \oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoQtiTest\models\import\QtiTestImporter;
+
 /**
  * Class ImportQtiTest
  * @package oat\taoQtiTest\models\tasks
@@ -38,6 +39,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     const PARAM_CLASS_URI = 'class_uri';
     const PARAM_FILE = 'file';
     const PARAM_ENABLE_GUARDIANS = 'enable_guardians';
+    const PARAM_TEST_RESOURCE = 'resource';
 
     protected $service;
 
@@ -59,11 +61,26 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
         $importer = $importersService->getImporter(QtiTestImporter::IMPORTER_ID);
 
-        return $importer->import(
+        /** @var \common_report_Report $report */
+        $report = $importer->import(
             $file,
             $this->getClass($params),
             isset($params[self::PARAM_ENABLE_GUARDIANS]) ? $params[self::PARAM_ENABLE_GUARDIANS] : true
         );
+
+        if (isset($params[self::PARAM_TEST_RESOURCE]) && !empty($params[self::PARAM_TEST_RESOURCE])) {
+            $taskResources = self::getTaskClass()->searchInstances([
+                Task::PROPERTY_LINKED_RESOURCE => $params['resource']
+            ]);
+            foreach ($taskResources as $taskResource) {
+                $taskResource->setPropertyValue(
+                    new \core_kernel_classes_Property(Task::PROPERTY_REPORT),
+                    json_encode($report)
+                );
+            }
+        }
+
+        return $report;
     }
 
     /**
@@ -79,9 +96,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      * @param array $packageFile uploaded file
      * @param \core_kernel_classes_Class $class uploaded file
      * @param bool $enableGuardians Flag that marks use or not metadata guardians during the import.
+     * @param \core_kernel_classes_Resource $testResource
      * @return Task created task id
      */
-    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true)
+    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true, \core_kernel_classes_Resource $testResource)
     {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
@@ -89,11 +107,15 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
         $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
 
-        return $queue->createTask($action, [
+        $task = $queue->createTask($action, [
             self::PARAM_FILE => $fileUri,
             self::PARAM_CLASS_URI => $class->getUri(),
-            self::PARAM_ENABLE_GUARDIANS => $enableGuardians
+            self::PARAM_ENABLE_GUARDIANS => $enableGuardians,
+            self::PARAM_TEST_RESOURCE => $testResource->getUri(),
         ]);
+
+        $queue->linkTask($task, $testResource);
+        return $task;
     }
 
     /**

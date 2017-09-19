@@ -102,7 +102,9 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
             if (!in_array($mimeType, self::$accepted_types)) {
                 throw new \common_exception_RestApi(__('Wrong file mime type'));
             }
-            $task = ImportQtiTest::createTask($file, $this->getTestClass(), $this->isMetadataGuardiansEnabled());
+            $class = new \core_kernel_classes_Class(TAO_TEST_CLASS);
+            $testResource = \taoQtiTest_models_classes_QtiTestService::singleton()->createInstance($class);
+            $task = ImportQtiTest::createTask($file, $class, $this->isMetadataGuardiansEnabled(), $testResource);
             $result = [
                 'reference_id' => $task->getId()
             ];

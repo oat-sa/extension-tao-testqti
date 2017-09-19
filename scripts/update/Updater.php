@@ -1590,5 +1590,15 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('14.1.5', '15.8.1');
+
+        if ($this->isVersion('15.8.1')) {
+            $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+            $options = $testModelService->getOptions();
+            $options['importHandlers'][] = new \oat\taoQtiTest\models\import\DeferredTestImport();
+            $testModelService->setOptions($options);
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
+
+            $this->setVersion('15.9.0');
+        }
     }
 }
