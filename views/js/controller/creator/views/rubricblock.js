@@ -39,7 +39,14 @@ define([
     var ckConfig = ckConfigurator.getConfig(ckeditor, 'qtiBlock');
 
     function filterPlugin(plugin) {
-        return _.contains(['taoqtiimage', 'taoqtimedia', 'taoqtimaths', 'taoqtiinclude', 'taoqtitable'], plugin);
+        return _.contains([
+            'taoqtiimage',
+            'taoqtimedia',
+            'taoqtimaths',
+            'taoqtiinclude',
+            'taoqtitable',
+            'sharedspace' // the toolbar positionning plugin now used by the item creator. That Ck instance still use floating space
+        ], plugin);
     }
 
     ckConfig.plugins = _.reject(ckConfig.plugins.split(','), filterPlugin).join(',');
