@@ -39,6 +39,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     const PARAM_CLASS_URI = 'class_uri';
     const PARAM_FILE = 'file';
     const PARAM_ENABLE_GUARDIANS = 'enable_guardians';
+    const PARAM_TEST_RESOURCE = 'resource';
 
     protected $service;
 
@@ -67,7 +68,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             isset($params[self::PARAM_ENABLE_GUARDIANS]) ? $params[self::PARAM_ENABLE_GUARDIANS] : true
         );
 
-        if (isset($params['resource']) && !empty($params['resource'])) {
+        if (isset($params[self::PARAM_TEST_RESOURCE]) && !empty($params[self::PARAM_TEST_RESOURCE])) {
             $taskResources = self::getTaskClass()->searchInstances([
                 Task::PROPERTY_LINKED_RESOURCE => $params['resource']
             ]);
@@ -109,7 +110,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $task = $queue->createTask($action, [
             self::PARAM_FILE => $fileUri,
             self::PARAM_CLASS_URI => $class->getUri(),
-            self::PARAM_ENABLE_GUARDIANS => $enableGuardians
+            self::PARAM_ENABLE_GUARDIANS => $enableGuardians,
+            self::PARAM_TEST_RESOURCE => $testResource->getUri(),
         ]);
 
         $queue->linkTask($task, $testResource);
