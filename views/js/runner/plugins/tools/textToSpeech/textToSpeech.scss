@@ -1,62 +1,80 @@
 @import 'inc/bootstrap';
 
 .text-to-speech {
+
+    $ttsBgColor : $uiClickableDefaultBg;
+    $ttsFontColor : $textColor;
+    $ttsHoverBgColor : $uiClickableDefaultBg;
+    $ttsHoverFontColor : whiten($textColor, .55);
+    $ttsActiveBgColor : $uiClickableActiveBg;
+
     @include simple-border($uiGeneralContentBorder);
-    background-color: $uiClickableDefaultBg;
-    bottom: 33px;
+    background-color: $ttsBgColor;
+    bottom: 37px;
     box-shadow: 0 0 15px 1px rgba(0,0,0,0.2);
-    color: $textColor;
-    left: 8px;
+    color: $ttsFontColor;
+    left: -2px;
     padding: 2px;
     position: absolute;
-    width: 180px;
+    width: 144px;
 
     > .action {
-        background-color: $uiClickableDefaultBg;
+        background-color: $ttsBgColor;
         display: inline-block;
         height: 28px;
         position: relative;
-        width: 40px;
+        width: 32px;
 
         > span {
-            color: whiten($textColor);
-            font-size: 24px !important;
+            color: $ttsFontColor;
+            font-size: 15px !important;
             padding: 0 !important;
             vertical-align: middle;
+            left: 0px;
         }
 
         > .settings-menu {
             @include simple-border($uiGeneralContentBorder);
-            background-color: $uiClickableDefaultBg;
-            bottom: 33px;
+            background-color: $ttsBgColor;
+            bottom: 30px;
             box-shadow: 0 0 15px 1px rgba(0,0,0,0.2);
-            left: 8px;
+            left: -1px;
             padding: 2px;
             position: absolute;
 
             > .option {
-                background-color: $uiClickableDefaultBg;
+                background-color: $ttsBgColor;
                 height: 30px;
                 position: relative;
                 width: 30px;
 
                 > span {
-                    color: whiten($textColor);
-                    font-size: 18px;
+                    color: $ttsFontColor;
+                    font-size: 15px;
                     padding: 0;
                     vertical-align: middle;
+                    left: 0px;
+                    &.icon-volume{
+                        left: 1px;
+                    }
                 }
 
                 > .slider-container {
                     @include simple-border($uiGeneralContentBorder);
-                    background-color: $uiClickableDefaultBg;
-                    height: 17px;
+                    background-color: $ttsBgColor;
+                    height: 12px;
                     left: 26px;
                     margin: 8px;
                     padding: 2px;
                     position: relative;
-                    top: -24px;
+                    top: -22px;
                     width: 80px;
+                    .noUi-horizontal{
+                        height: 6px;
+                        .noUi-handle{
+                            top: -7px;
+                        }
+                    }
                 }
 
                 > .hover-container { // assists in hover so as not to easily lose state
@@ -69,21 +87,33 @@
                 }
 
                 &:hover {
-                    background-color: $uiClickableHoverBg;
+                    background-color: $ttsHoverBgColor;
+                    > span {
+                        color: $ttsHoverFontColor;
+                    }
                 }
             }
         }
 
         &:hover {
-            background-color: $uiClickableHoverBg;
+            background-color: $ttsHoverBgColor;
+            > span {
+                color: $ttsHoverFontColor;
+            }
         }
 
         &.active {
-            background-color: $uiClickableActiveBg;
+            background-color: $ttsActiveBgColor;
+            > span {
+                color: whiten($textColor, .2);
+            }
         }
 
         &.disabled {
-            background-color: whiten($uiClickableActiveBg);
+            background-color: $ttsBgColor !important;
+            > span{
+                color: whiten($textColor, .8);
+            }
         }
     }
 }
