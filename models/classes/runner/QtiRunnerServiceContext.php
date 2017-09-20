@@ -24,6 +24,8 @@ namespace oat\taoQtiTest\models\runner;
 
 use oat\libCat\CatSession;
 use oat\libCat\Exception\CatEngineException;
+use oat\taoQtiTest\helpers\TestSessionMemento;
+use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
@@ -54,7 +56,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var AbstractQtiBinaryStorage
      */
     protected $storage;
-    
+
+    /**
+     * @var \taoQtiTest_helpers_SessionManager
+     */
     protected $sessionManager;
 
     /**
@@ -261,7 +266,17 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         return $this->storage;
     }
-    
+
+    /**
+     * @return EventManager
+     */
+    protected function getEventManager() {
+        return $this->getServiceLocator()->get(EventManager::SERVICE_ID);
+    }
+
+    /**
+     * @return \taoQtiTest_helpers_SessionManager
+     */
     public function getSessionManager()
     {
         return $this->sessionManager;
@@ -618,14 +633,18 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     
     public function persistCurrentCatItemId($catItemId)
     {
-        $sessionId = $this->getTestSession()->getSessionId();
-        
+        $session = $this->getTestSession();
+        $sessionId = $session->getSessionId();
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
             $sessionId,
             $this->getCatSection()->getSectionId(),
             'current-cat-item-id',
             $catItemId
         );
+        
+        $event = new QtiTestChangeEvent($session, new TestSessionMemento($session));
+        $this->getServiceManager()->propagate($event);
+        $this->getEventManager()->trigger($event);
     }
     
     public function getItemPositionInRoute($refId, &$catItemId = '')
