@@ -303,7 +303,7 @@ function(
                 var index, rubricModel;
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
                     index = $rubricBlock.data('bind-index');
-                    rubricModel = sectionModel.rubricBlocks[index];
+                    rubricModel = sectionModel.rubricBlocks[index] || {};
 
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
                     rubricBlockView.setUp(modelOverseer, rubricModel, $rubricBlock);
