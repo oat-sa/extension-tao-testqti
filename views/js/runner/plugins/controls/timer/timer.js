@@ -33,8 +33,9 @@ define([
     'taoTests/runner/plugin',
     'taoQtiTest/runner/plugins/controls/timer/timerComponent',
     'taoQtiTest/runner/helpers/messages',
+    'taoQtiTest/runner/helpers/navigation',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
-], function($, _, __, Promise, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, timerBoxTpl) {
+], function($, _, __, Promise, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, navigationHelper, timerBoxTpl) {
     'use strict';
 
     /**
@@ -187,23 +188,18 @@ define([
                 return timer;
             };
 
-            //TODO this kind of function is generic enough to be moved to a util/helper
-            var leaveTimedSection = function leaveTimedSection(type, scope, position) {
+            /**
+             * Check if the movment leads to leaving an active timed section
+             * @param {String} direction - the move direction (next, previous or jump)
+             * @param {String} scope - the move scope (item, section, testPart)
+             * @param {Number} [position] - the position in case of jump
+             * @returns {Boolean}
+             */
+            var leaveTimedSection = function leaveTimedSection(direction, scope, position) {
                 var context = testRunner.getTestContext();
                 var map = testRunner.getTestMap();
-
-                var section = map.parts[context.testPartId].sections[context.sectionId];
-                var nbItems = _.size(section.items);
-                var item = _.find(section.items, {
-                    position: context.itemPosition
-                });
-
-                if (!context.isTimeout && context.itemSessionState !== itemStates.closed && isTimedSection(context) && item) {
-
-                    return !!((type === 'next' && (scope === 'assessmentSection' || ((item.positionInSection + 1) === nbItems))) ||
-                        (type === 'previous' && item.positionInSection === 0) ||
-                        (type === 'jump' && position > 0 && (position < section.position || position >= section.position + nbItems)));
-
+                if (!context.isTimeout && context.itemSessionState !== itemStates.closed && isTimedSection(context)) {
+                    return navigationHelper.isLeavingSection(context, map, direction, scope, position);
                 }
                 return false;
             };
@@ -270,17 +266,21 @@ define([
                         new Promise(function(resolve) {
                             var timerConfig = getTimerConfig(type);
                             var timerExists = typeof displayedTimers[type] !== 'undefined';
+                            var addAndResolve = function addAndResolve(){
+                                addTimer(type, timerConfig);
+                                return resolve();
+                            };
 
                             //no new time for this type
                             if (!timerConfig) {
-                                if (timerExists) {
-                                    removeTimer(type);
-                                }
+                                console.log(type, 'No timerConfig -> remove');
+                                removeTimer(type);
                                 return resolve();
                             }
 
                             //timer exists
                             if(timerExists && displayedTimers[type].id() === timerConfig.id){
+                                console.log(type, 'Same timer -> set remaining time');
                                 setRemainingTime(timerConfig, timers[type]);
                                 return resolve();
                             } else {
@@ -289,20 +289,20 @@ define([
                                 if (checkStorage){
                                     self.storage.getItem(timerConfig.id).then(function(savedTime) {
                                         if (_.isNumber(savedTime) && savedTime >= 0) {
-                                            console.log('load timer from storage');
                                             setRemainingTime(timerConfig, savedTime);
                                         }
-                                        addTimer(type, timerConfig);
-                                        return resolve();
-                                    }).catch(function() {
+                                        console.log(type, 'add timer from storage', savedTime);
+                                        return addAndResolve();
+                                    }).catch(function(err) {
+                                        console.log(type, 'storage err -> add the timer', err);
                                         //add the timer even if the storage doesn't work
-                                        addTimer(type, timerConfig);
-                                        return resolve();
+                                        return addAndResolve();
                                     });
 
                                 } else {
-                                    addTimer(type, timerConfig);
-                                    return resolve();
+
+                                    console.log(type, 'no storage -> add the timer');
+                                    return addAndResolve();
                                 }
                             }
                         })
