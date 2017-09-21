@@ -210,7 +210,6 @@ define([
              */
             var removeTimer = function removeTimer(type) {
                 if (displayedTimers[type]) {
-                    self.storage.removeItem(displayedTimers[type].id());
 
                     displayedTimers[type].destroy();
                     displayedTimers = _.omit(displayedTimers, type);
@@ -273,14 +272,12 @@ define([
 
                             //no new time for this type
                             if (!timerConfig) {
-                                console.log(type, 'No timerConfig -> remove');
                                 removeTimer(type);
                                 return resolve();
                             }
 
                             //timer exists
                             if(timerExists && displayedTimers[type].id() === timerConfig.id){
-                                console.log(type, 'Same timer -> set remaining time');
                                 setRemainingTime(timerConfig, timers[type]);
                                 return resolve();
                             } else {
@@ -291,17 +288,13 @@ define([
                                         if (_.isNumber(savedTime) && savedTime >= 0) {
                                             setRemainingTime(timerConfig, savedTime);
                                         }
-                                        console.log(type, 'add timer from storage', savedTime);
                                         return addAndResolve();
-                                    }).catch(function(err) {
-                                        console.log(type, 'storage err -> add the timer', err);
+                                    }).catch(function() {
                                         //add the timer even if the storage doesn't work
                                         return addAndResolve();
                                     });
 
                                 } else {
-
-                                    console.log(type, 'no storage -> add the timer');
                                     return addAndResolve();
                                 }
                             }
