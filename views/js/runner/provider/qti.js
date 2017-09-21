@@ -271,13 +271,17 @@ define([
                                 });
                             })
                             .then(function(results){
-                                if(results.testContext){
-                                    self.setTestContext(results.testContext);
+                                if (!_.isArray(results)) {
+                                    results = [results];
                                 }
-
-                                if (results.testMap) {
-                                    self.setTestMap(results.testMap);
-                                }
+                                _.forEach(results, function (result) {
+                                    if (result.testContext) {
+                                        self.setTestContext(result.testContext);
+                                    }
+                                    if (result.testMap) {
+                                        self.setTestMap(result.testMap);
+                                    }
+                                });
 
                                 updateStats();
 
