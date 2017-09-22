@@ -40,15 +40,13 @@ define([
 
             isItemCurrentlyAnswered = currentItemHelper.isAnswered(runner);
 
-        if (isItemCurrentlyAnswered){
-            if (!isItemCurrentlyAnswered && context.itemAnswered) {
-                stats.answered--;
-            }
+        if (!isItemCurrentlyAnswered && context.itemAnswered) {
+            stats.answered--;
 
-            if (isItemCurrentlyAnswered && !context.itemAnswered) {
-                stats.answered++;
-            }
+        } else if (isItemCurrentlyAnswered && !context.itemAnswered) {
+            stats.answered++;
         }
+
         return stats;
     }
 
