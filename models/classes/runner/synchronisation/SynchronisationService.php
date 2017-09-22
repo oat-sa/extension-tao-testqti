@@ -34,7 +34,7 @@ class SynchronisationService extends ConfigurableService
      *
      * @param $data
      * @param $serviceContext QtiRunnerServiceContext
-     * @return string
+     * @return array
      * @throws \common_exception_InconsistentData
      */
     public function process($data, $serviceContext)
@@ -48,12 +48,10 @@ class SynchronisationService extends ConfigurableService
             $actions[] = $this->resolve($entry);
         }
 
-        $this->initTimers($actions);
-
         $response = [];
 
         /** @var TestRunnerAction $action */
-        foreach( $actions as $action) {
+        foreach ($actions as $action) {
 
             try {
                 $action->setServiceContext($serviceContext);
@@ -131,30 +129,6 @@ class SynchronisationService extends ConfigurableService
         }
 
         return $this->getServiceManager()->propagate(new $actionClass($actionName, $data['timestamp'], $data['parameters']));
-    }
-
-    /**
-     * Set the action start timers:
-     *
-     * $start = snow - sitemDuration
-     * Start by the last action to have a consistent QtiTimeLine
-     * Add 1 ms to start to avoid collision
-     *
-     * @param TestRunnerAction[] $actions
-     */
-    protected function initTimers(array &$actions)
-    {
-        $last = microtime(true);
-        /** @var TestRunnerAction $action */
-        foreach (array_reverse($actions) as &$action) {
-
-            if ($duration = $action->hasRequestParameter('itemDuration')) {
-                $start = $last - $duration;
-                $last = $start;
-                $action->setStart($start+1);
-            }
-
-        }
     }
 
     /**

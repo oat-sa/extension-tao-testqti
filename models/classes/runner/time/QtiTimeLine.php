@@ -222,6 +222,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         
         // gather filterer TimePoint
         $points = [];
+        /** @var TimePoint $point */
         foreach ($this->points as $point) {
             if ($point->match($tags, $target, $type)) {
                 $points [] = $point;
@@ -275,7 +276,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             // - unsorted points or nested/blended ranges: should be corrected by fixRange
             $duration += $this->computeRange($range);
         }
-        
+
         return $duration;
     }
 
@@ -348,6 +349,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
                 }
                 $open = true;
             } else if ($this->isEndPoint($point)) {         // end of range
+
                 // this range could not be started...
                 if (!$open) {
                     $fixedRange[] = $this->cloneTimePoint($last ? $last : $point, TimePoint::TYPE_START);
@@ -418,6 +420,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
 
         // the two TimePoint must be correctly ordered
         $rangeDuration = $end->getTimestamp() - $start->getTimestamp();
+
         if ($rangeDuration < 0) {
             throw new InconsistentRangeException('A START TimePoint cannot take place after the END!');
         }

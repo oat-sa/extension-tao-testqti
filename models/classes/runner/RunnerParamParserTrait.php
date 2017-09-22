@@ -108,15 +108,15 @@ trait RunnerParamParserTrait
 
     /**
      * End the item timer to QtiTimeLine
-
+     *
      * @param null $timestamp The start of action, optional
      * @return bool
      */
     protected function endItemTimer($timestamp = null)
     {
-        if($this->getRequestParameter('itemDuration')){
-            $serviceContext    = $this->getServiceContext(false);
-            $itemDuration      = $this->getRequestParameter('itemDuration');
+        if ($this->hasRequestParameter('itemDuration')) {
+            $serviceContext = $this->getServiceContext(false);
+            $itemDuration = $this->getRequestParameter('itemDuration');
             $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
             return $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $timestamp);
         }

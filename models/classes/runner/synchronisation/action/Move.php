@@ -51,21 +51,21 @@ class Move extends TestRunnerAction
         $start     = ($this->getRequestParameter('start') !== false);
 
         try {
-
             /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getStart());
+                $this->endItemTimer($this->getTime());
                 $this->saveItemState();
             }
+
             $this->initServiceContext();
 
             $this->saveItemResponses(false);
 
             $this->setOffline();
 
-            $serviceContext->getTestSession()->initItemTimer($this->getStart());
+            $serviceContext->getTestSession()->initItemTimer($this->getTime());
             $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
 
             $response = [
@@ -82,7 +82,7 @@ class Move extends TestRunnerAction
 
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getStart());
+                $this->getRunnerService()->startTimer($serviceContext, $this->getTime()+1);
             }
 
         } catch (\Exception $e) {

@@ -34,7 +34,6 @@ use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
-use qtism\runtime\tests\Route;
 use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
@@ -506,7 +505,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 $output[$itemIdentifier] = new ItemResult($itemIdentifier, $variables);
             }
         }
-        
+
         return $output;
     }
     
@@ -580,6 +579,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * This method returns a CAT Item ID in case of the CAT Engine returned one. Otherwise, it returns
      * null meaning that there is no CAT Item to be presented.
      *
+     * Try to register the Cat service result as test variables
+     * 
      * @return mixed|null
      * @throws \common_Exception
      */

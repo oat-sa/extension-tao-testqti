@@ -122,23 +122,13 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     }
 
     /**
-     * Get the timestamp of current action start
+     * Get the timestamp of current action in seconds
      *
      * @return mixed
      */
-    public function getStart()
+    public function getTime()
     {
-        return $this->start;
-    }
-
-    /**
-     * Set the timestamp of current action start
-     *
-     * @param mixed $start
-     */
-    public function setStart($start)
-    {
-        $this->start = $start;
+        return $this->getTimestamp()/1000;
     }
 
     /**
@@ -152,7 +142,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     }
 
     /**
-     * Get the timestamp of current action
+     * Get the timestamp of current action in milliseconds
      *
      * @return integer
      */
