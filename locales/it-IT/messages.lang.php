@@ -71,6 +71,7 @@ $GLOBALS['__l10n']["An item involved in the test cannot be read or is not QTI co
 $GLOBALS['__l10n']["An item involved in the test cannot be written."]="Un item del test non può essere scritto";
 $GLOBALS['__l10n']["An unknown error occured while compiled QTI Test '%s'."]="Errore sconosciuto durante la compilazione del test QTI %s";
 $GLOBALS['__l10n']["An unknown error occured while compiling QTI test '%s'."]="Si è verificato un errore sconosciuto durante la compilazione del test QTI '% s'";
+$GLOBALS['__l10n']["and you flagged %s item(s) that you can review now"]=" ";
 $GLOBALS['__l10n']["Answered"]="Risposto";
 $GLOBALS['__l10n']["Are you sure to delete the versioned resource?\nThe history will be lost as well."]="Sei sicuro di eliminare la risorsa? Si perderanno tutti i dati.";
 $GLOBALS['__l10n']["Are you sure you want to delete it?"]="Sei sicuro di voler cancellare?";

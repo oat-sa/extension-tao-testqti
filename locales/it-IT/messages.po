@@ -137,7 +137,7 @@ msgid "and flagged %s of them"
 msgstr ""
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr ""
+msgstr " "
 
 msgid "Answer Eliminator"
 msgstr ""
