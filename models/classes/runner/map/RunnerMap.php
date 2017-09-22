@@ -31,6 +31,11 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
  */
 interface RunnerMap
 {
+    const SCOPE_TEST = 'test';
+    const SCOPE_PART = 'part';
+    const SCOPE_SECTION = 'section';
+
+
     /**
      * Builds the map of an assessment test
      * @param RunnerServiceContext $context The test context
@@ -38,4 +43,14 @@ interface RunnerMap
      * @return mixed
      */
     public function getMap(RunnerServiceContext $context, RunnerConfig $config);
+
+    /**
+     * Get the testMap for the current context but limited to the given scope
+     * @param RunnerServiceContext $context The test context
+     * @param RunnerConfig $config The runner config
+     * @param string $scope the target scope, section by default
+     * @return mixed
+     */
+    public function getScopedMap(RunnerServiceContext $context, RunnerConfig $config, $scope = self::SCOPE_SECTION);
+
 }
