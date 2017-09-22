@@ -192,7 +192,8 @@ define([
             function getItemResults() {
                 var results = {};
                 var context = self.getTestContext();
-                if(context && self.itemRunner){
+                var states = self.getTestData().states;
+                if(context && self.itemRunner && context.itemSessionState <= states.interacting){
                     results = {
                         itemResponse   : self.itemRunner.getResponses(),
                         itemState      : self.itemRunner.getState()
@@ -259,7 +260,6 @@ define([
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
                         self.off('.'+action);
-
 
                         self.getProxy()
                             .callItemAction(context.itemIdentifier, action, params)
@@ -424,8 +424,7 @@ define([
                             self.trigger('error', err);
                         });
                 })
-                .on('renderitem', function(){
-
+                .on('loaditem', function(){
                     var context = this.getTestContext();
                     var states = this.getTestData().itemStates;
                     var warning = false;
@@ -438,9 +437,6 @@ define([
                         var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
                         return item && item.label ? item.label : context.itemIdentifier;
                     };
-
-                    this.trigger('enablenav enabletools');
-
 
                     //The item is rendered but in a state that prevents us from interacting
                     if (context.isTimeout) {
@@ -460,6 +456,15 @@ define([
                         self.disableItem(context.itemIdentifier);
                         self.trigger('warning', warning);
                     }
+
+                })
+                .on('renderitem', function(){
+                    var context = this.getTestContext();
+
+                    if(!this.getItemState(context.itemIdentifier, 'disabled')){
+                        this.trigger('enabletools');
+                    }
+                    this.trigger('enablenav');
                 })
                 .on('resumeitem', function(){
                     this.trigger('enableitem enablenav');

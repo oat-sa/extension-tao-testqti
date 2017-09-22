@@ -138,7 +138,6 @@ define([
              * @returns {Promise} resolves with the action result
              */
             this.offlineAction = function offlineAction(action, actionParams){
-
                 return this.actiontStore.push(
                     action,
                     this.prepareParams(_.defaults(actionParams || {}, this.requestConfig))
@@ -228,8 +227,10 @@ define([
                             }
                             return self.offlineAction(action, actionParams);
                         })
-                        .catch(function(){
-                            return self.offlineAction(action, actionParams);
+                        .catch(function(err){
+                            if(self.isConnectivityError(err)){
+                                return self.offlineAction(action, actionParams);
+                            }
                         });
                 }
 
@@ -294,7 +295,7 @@ define([
 
             //we resync as soon as the connection is back
             this.on('reconnect', function(){
-                this.syncOfflineData();
+                return this.syncOfflineData();
             });
 
             //if some actions remains unsynced
