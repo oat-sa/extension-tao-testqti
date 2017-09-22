@@ -1161,7 +1161,7 @@ msgid "Yes"
 msgstr "Sì"
 
 msgid "You answered all %s question(s)"
-msgstr "Hai risposto a tutte le domande e stai per chiudere la prova."
+msgstr "Hai risposto a tutte le domande e stai per chiudere la prova"
 
 msgid "You answered all %s question(s) in this section"
 msgstr ""
@@ -1188,13 +1188,13 @@ msgid "You have %s item(s) marked for review."
 msgstr " "
 
 msgid "You have %s unanswered question(s)"
-msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova."
+msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
 msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova."
 
 msgid "You have %s unanswered question(s)."
-msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova."
+msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova"
 
 msgid "Your comment…"
 msgstr "Il tuo commento :"
