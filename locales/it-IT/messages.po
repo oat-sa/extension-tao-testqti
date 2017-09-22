@@ -957,7 +957,7 @@ msgid "The assessment is still running."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr ""
+msgstr "Il candidato non è autorizzato a inviare le risposte sbagliate."
 
 msgid "The connection seems to be back, please proceed"
 msgstr ""
@@ -1161,7 +1161,7 @@ msgid "Yes"
 msgstr "Sì"
 
 msgid "You answered all %s question(s)"
-msgstr ""
+msgstr "Hai risposto a tutte le domande e stai per chiudere la prova."
 
 msgid "You answered all %s question(s) in this section"
 msgstr ""
@@ -1188,7 +1188,7 @@ msgid "You have %s item(s) marked for review."
 msgstr " "
 
 msgid "You have %s unanswered question(s)"
-msgstr ""
+msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova."
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
 msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova."
