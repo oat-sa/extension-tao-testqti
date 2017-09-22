@@ -34,7 +34,7 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
      * @exports taoQtiTest/controller/creator/views/test
      * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
      */
-    function testView (modelOverseer) {
+    function testView (modelOverseer, areaBroker) {
         var testModel = modelOverseer.getModel();
         var config = modelOverseer.getConfig();
 
@@ -57,7 +57,7 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
                     testModel.testParts[index] = {};
                 }
 
-                testPartView.setUp(modelOverseer, testModel.testParts[index], $testPart);
+                testPartView.setUp(modelOverseer, areaBroker, testModel.testParts[index], $testPart);
             });
         }
 
@@ -176,7 +176,7 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
                         partModel = testModel.testParts[added.index];
 
                         //initialize the new test part
-                        testPartView.setUp(modelOverseer, partModel, $testPart);
+                        testPartView.setUp(modelOverseer, areaBroker, partModel, $testPart);
 
                         /**
                          * @event modelOverseer#part-add

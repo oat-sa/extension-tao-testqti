@@ -35,7 +35,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
      * @param {Object} partModel - the data model to bind to the test part
      * @param {jQueryElement} $testPart - the testpart container to set up
      */
-    function setUp (modelOverseer, partModel, $testPart){
+    function setUp (modelOverseer, areaBroker, partModel, $testPart){
         var $actionContainer = $('h1', $testPart);
         var config = modelOverseer.getConfig();
 
@@ -85,7 +85,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                     partModel.assessmentSections[index] = {};
                 }
 
-                sectionView.setUp(modelOverseer, partModel.assessmentSections[index], $section);
+                sectionView.setUp(modelOverseer, areaBroker, partModel.assessmentSections[index], $section);
             });
         }
 
@@ -124,7 +124,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                         sectionModel = partModel.assessmentSections[index];
 
                         //initialize the new test part
-                        sectionView.setUp(modelOverseer, sectionModel, $section);
+                        sectionView.setUp(modelOverseer, areaBroker, sectionModel, $section);
 
                         /**
                          * @event modelOverseer#section-add

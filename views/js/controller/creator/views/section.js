@@ -56,7 +56,7 @@ function(
      * @param {Object} sectionModel - the data model to bind to the test section
      * @param {jQueryElement} $section - the section to set up
      */
-    function setUp (modelOverseer, sectionModel, $section){
+    function setUp (modelOverseer, areaBroker, sectionModel, $section){
 
         var $actionContainer = $('h2', $section);
         var config = modelOverseer.getConfig();
@@ -269,7 +269,7 @@ function(
                     sectionModel.rubricBlocks[index] = {};
                 }
 
-                rubricBlockView.setUp(modelOverseer, sectionModel.rubricBlocks[index], $rubricBlock);
+                rubricBlockView.setUp(modelOverseer, areaBroker, sectionModel.rubricBlocks[index], $rubricBlock);
             });
 
             //opens the rubric blocks section if they are there.
@@ -306,7 +306,7 @@ function(
                     rubricModel = sectionModel.rubricBlocks[index] || {};
 
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
-                    rubricBlockView.setUp(modelOverseer, rubricModel, $rubricBlock);
+                    rubricBlockView.setUp(modelOverseer, areaBroker, rubricModel, $rubricBlock);
 
                     /**
                      * @event modelOverseer#rubric-add

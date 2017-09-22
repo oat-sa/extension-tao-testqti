@@ -27,6 +27,7 @@ define([
     'html5-history-api',
     'ui/feedback',
     'core/databindcontroller',
+    'taoQtiTest/controller/creator/areaBroker',
     'taoQtiTest/controller/creator/modelOverseer',
     'taoQtiTest/controller/creator/views/item',
     'taoQtiTest/controller/creator/views/test',
@@ -48,6 +49,7 @@ define([
     history,
     feedback,
     DataBindController,
+    areaBrokerFactory,
     modelOverseerFactory,
     itemView, testView,
     testPartView,
@@ -62,6 +64,19 @@ define([
     ){
 
     'use strict';
+
+    /**
+     * Set up the areaBroker mapping from the actual DOM
+     * @returns {areaBroker} already mapped
+     */
+    var loadAreaBroker = function loadAreaBroker(){
+        var $container = $('#test-creator');
+        return areaBrokerFactory($container, {
+            'creatorPanel':         $('#test-creator .test-creator-area'),
+            'itemSelectorPanel':    $('#test-creator .test-creator-items'),
+            'propertyPanel':        $('#test-creator .test-creator-props')
+        });
+    };
 
     /**
      * The test creator controller is the main entry point
@@ -87,6 +102,7 @@ define([
             var $container = $('#test-creator');
             var $saver = $('#saver');
             var binder, binderOptions, modelOverseer;
+            var areaBroker = loadAreaBroker();
 
             self.identifiers = [];
 
@@ -173,7 +189,7 @@ define([
                     validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers), true);
 
                     //once model is loaded, we set up the test view
-                    testView(modelOverseer);
+                    testView(modelOverseer, areaBroker);
 
                     //listen for changes to update available actions
                     testPartView.listenActionState();
