@@ -191,7 +191,6 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         return $last;
     }
 
-
     /**
      * Gets the last timestamp of the range for the provided tags
      * @param string|array $tags
@@ -211,7 +210,23 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         return $last;
     }
 
+    /**
+     * Gets the last registered timestamp
+     * @return bool|float $timestamp Returns the last timestamp or false if none
+     */
+    public function getLastRegisteredTimestamp()
+    {
+        $points = $this->timeLine->getPoints();
+        $length = count($points);
+        $last = false;
 
+        if ($length) {
+            $last = $points[$length - 1]->getTimestamp();
+        }
+        
+        return $last;
+    }
+    
     /**
      * Adds "client start" and "client end" TimePoint based on the provided duration for a particular ItemRef
      * @param string|array $tags

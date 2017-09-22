@@ -30,11 +30,17 @@ class SynchronisationService extends ConfigurableService
     const ACTIONS_OPTION = 'actions';
 
     /**
+     * Typical amount of time spent on a navigation request.
+     * This value will be used to adjust intervals between moves in the synced time line.
+     */
+    const REQUEST_DURATION = .01;
+
+    /**
      * Wrap the process to appropriate action and aggregate results
      *
      * @param $data
      * @param $serviceContext QtiRunnerServiceContext
-     * @return string
+     * @return array
      * @throws \common_exception_InconsistentData
      */
     public function process($data, $serviceContext)
@@ -43,19 +49,41 @@ class SynchronisationService extends ConfigurableService
             throw new \common_exception_InconsistentData('No action to check. Processing action requires data.');
         }
 
+        // first, extract the actions and build usable instances
         $actions = [];
+        $duration = 0;
         foreach ($data as $entry) {
-            $actions[] = $this->resolve($entry);
+            $action = $this->resolve($entry);
+            $actions[] = $action;
+            
+            if ($action->hasRequestParameter('itemDuration')) {
+                $duration += $action->getRequestParameter('itemDuration') + self::REQUEST_DURATION;
+            }
         }
-
-        $this->initTimers($actions);
+        
+        // ensure the total duration of actions to sync is comprised within the elapsed time since the last sync.
+        $now = microtime(true);
+        $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
+        $elapsed = $now - $last;
+        if ($duration > $elapsed) {
+            throw new \common_exception_InconsistentData('Client duration exceed the elapsed server time!');
+        }
+        
+        // the actions should be chronological
+        usort($actions, function($a, $b) {
+           return $a->getTimestamp() - $b->getTimestamp(); 
+        });
 
         $response = [];
 
         /** @var TestRunnerAction $action */
         foreach( $actions as $action) {
-
             try {
+                if ($action->hasRequestParameter('itemDuration')) {
+                    $last += $action->getRequestParameter('itemDuration') + self::REQUEST_DURATION;
+                }
+                $action->setTime($last);
+
                 $action->setServiceContext($serviceContext);
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
@@ -131,30 +159,6 @@ class SynchronisationService extends ConfigurableService
         }
 
         return $this->getServiceManager()->propagate(new $actionClass($actionName, $data['timestamp'], $data['parameters']));
-    }
-
-    /**
-     * Set the action start timers:
-     *
-     * $start = snow - sitemDuration
-     * Start by the last action to have a consistent QtiTimeLine
-     * Add 1 ms to start to avoid collision
-     *
-     * @param TestRunnerAction[] $actions
-     */
-    protected function initTimers(array &$actions)
-    {
-        $last = microtime(true);
-        /** @var TestRunnerAction $action */
-        foreach (array_reverse($actions) as &$action) {
-
-            if ($duration = $action->hasRequestParameter('itemDuration')) {
-                $start = $last - $duration;
-                $last = $start;
-                $action->setStart($start+1);
-            }
-
-        }
     }
 
     /**
