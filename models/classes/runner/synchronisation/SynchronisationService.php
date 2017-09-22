@@ -53,11 +53,6 @@ class SynchronisationService extends ConfigurableService
         /** @var TestRunnerAction $action */
         foreach ($actions as $action) {
 
-            \common_Logger::i(
-                str_pad($action->getName(), 15) . ' : ' .
-                (new \DateTime())->setTimestamp($action->getTimestamp())->format('Y-m-d H:i:s') . ' :: ' .
-                $action->getRequestParameter('itemDuration')
-            );
             try {
                 $action->setServiceContext($serviceContext);
                 $responseAction = $action->process();

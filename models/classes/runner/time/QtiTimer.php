@@ -561,15 +561,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     protected function checkTimestampCoherence($points, $timestamp)
     {
-        \common_Logger::i(
-            str_pad(' - to-check', 15) . ' : ' .
-            (new \DateTime())->setTimestamp($timestamp)->format('H:i:s')
-        );
         foreach($points as $point) {
-            \common_Logger::i(
-                str_pad(' - existing', 15) . ' : ' .
-                (new \DateTime())->setTimestamp($timestamp)->format('H:i:s')
-            );
             if ($point->getTimestamp() > $timestamp) {
                 throw new InconsistentRangeException('A new TimePoint cannot be set before an existing one!');
             }

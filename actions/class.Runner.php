@@ -503,8 +503,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $params = $this->getRequest()->getRawParameters();
             $itemResponse = isset($params['itemResponse']) ? $params['itemResponse'] : null;
 
-            common_Logger::i(__METHOD__);
-            common_Logger::i(print_r($itemResponse,true));
             if(!is_null($itemResponse) && ! empty($itemDefinition)) {
 
                 $responses = $this->runnerService->parsesItemResponse($serviceContext, $itemDefinition, json_decode($itemResponse, true));

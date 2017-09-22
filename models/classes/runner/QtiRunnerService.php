@@ -702,7 +702,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             } else {
                 \common_Logger::e('Invalid json payload');
             }
-            \common_Logger::i(print_r($responses, true));
 
             return $responses;
         } else {
@@ -781,17 +780,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $assessmentItem = $session->getAssessmentItem();
                     $assessmentItemIdentifier = $assessmentItem->getIdentifier();
                     $output = $context->getLastCatItemOutput();
-                    
+
                     $output[$assessmentItemIdentifier] = new ItemResult(
                         $assessmentItemIdentifier,
-                            new ResultVariable(
-                                $score->getIdentifier(),
-                                BaseType::getNameByConstant($score->getBaseType()),
-                                $score->getValue()->getValue()
-                            )
-                        );
-
-
+                        new ResultVariable(
+                            $score->getIdentifier(),
+                            BaseType::getNameByConstant($score->getBaseType()),
+                            $score->getValue()->getValue()
+                        )
+                    );
                         
                     $context->persistLastCatItemOutput($output);
                     
