@@ -1604,7 +1604,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                         'description' => 'Reduce the size of the tools when the available space is not enough',
                         'category' => 'content',
                         'active' => true,
-                        'tags' => []
+                        'tags' => [ 'core' ]
                     ]
                 )
             );

@@ -116,6 +116,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => true,
                 'tags' => [ 'core', 'qti' ]
+            ],
+            [
+                'id' => 'collapser',
+                'name' => 'Collapser',
+                'module' => 'taoQtiTest/runner/plugins/content/responsiveness/collapser',
+                'description' => 'Reduce the size of the tools when the available space is not enough',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core' ]
             ]
         ],
         'controls' => [

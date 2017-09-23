@@ -18,6 +18,7 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  * @author Christophe Noël <christophe@taotesting.com>
+ * @author Dieter Raber <dieter@taotesting.com>
  */
 define([
     'lodash',
@@ -80,14 +81,6 @@ define([
     var $window = $(window);
 
     /**
-     * .after('renderitem loaditem' is triggered multiple times which leads to
-     * multiple, eventually conflicting calls of toggleCollapsibles()
-     * This switch avoids this behavior
-     * @type {boolean}
-     */
-    var renderingComplete = false;
-
-    /**
      * Creates the responsiveness collapser plugin.
      * Reduce the size of the action bar tools when the available space is below the needed one.
      */
@@ -114,54 +107,36 @@ define([
 
             var allCollapsibles,
                 availableWidth,
-                previousAvailableWidth,
-                totalExtraWidth;
+                previousAvailableWidth;
 
             /**
              * Get a reference of all collapsibles
              */
             function buildCollapsiblesList() {
-                // use the given order to build the collapsibles list
-                if (shouldCollapseInOrder()) {
-                    allCollapsibles = config.collapseOrder.map(function(selector) {
-                        var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
-                        var extraWidth = 0;
+                // use the given order to build the collapsibles list or generate on in natural order
 
-                        if ($elements.length) {
-                            $elements.each(function() {
-                                extraWidth += getExtraWidth($(this));
-                            });
-                            return {
-                                $elements: $elements,
-                                extraWidth: extraWidth
-                            };
-                        }
-                        return false;
-                    });
+                config.collapseOrder = config.collapseInOrder && config.collapseOrder.length ?
+                    config.collapseOrder :
+                    getNaturalCollapseOrder();
 
-                    allCollapsibles = _.compact(allCollapsibles);
+                allCollapsibles = config.collapseOrder.map(function(selector) {
+                    var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
+                    var extraWidth = 0;
 
-                // collapsibles will be either tools and/or nav whole blocks depending on configuration
-                } else {
-                    allCollapsibles = [];
-                    if (config.collapseTools) {
-                        allCollapsibles.push({
-                            $elements: $toolbox,
-                            extraWidth: getExtraWidth($toolbox)
+                    if ($elements.length) {
+                        $elements.each(function() {
+                            extraWidth += getExtraWidth($(this));
                         });
+                        return {
+                            $elements: $elements,
+                            extraWidth: extraWidth
+                        };
                     }
-                    if (config.collapseNavigation) {
-                        allCollapsibles.push({
-                            $elements: $navigation,
-                            extraWidth: getExtraWidth($navigation)
-                        });
-                    }
+                    return false;
+                });
 
-                    totalExtraWidth = allCollapsibles.reduce(function(total, collapsible) {
-                        total += collapsible.extraWidth;
-                        return total;
-                    }, 0);
-                }
+                allCollapsibles = _.compact(allCollapsibles);
+
             }
 
             /**
@@ -188,34 +163,12 @@ define([
                 availableWidth = getAvailableWidth();
 
                 if (availableWidth < previousAvailableWidth) {
-                    if (shouldCollapseInOrder()) {
-                        collapseInOrder();
-                    } else {
-                        collapseAll(collapseNeeded());
-                    }
+                    collapseInOrder();
                 } else {
-
-                    if (shouldCollapseInOrder()) {
-                        expandInOrder();
-                    } else {
-                        expandAll();
-                    }
+                    expandInOrder();
                 }
 
                 previousAvailableWidth = availableWidth;
-            }
-
-            function shouldCollapseInOrder() {
-                return config.collapseInOrder && _.isArray(config.collapseOrder) && config.collapseOrder.length;
-            }
-
-            function collapseAll(yes) {
-                if (config.collapseTools) {
-                    $toolbox.toggleClass(collapseCls, yes);
-                }
-                if (config.collapseNavigation) {
-                    $navigation.toggleClass(collapseCls, yes);
-                }
             }
 
             function collapseInOrder() {
@@ -230,15 +183,6 @@ define([
 
             function collapseNeeded() {
                 return getToolbarWidth() > getAvailableWidth();
-            }
-
-
-            function expandAll() {
-                if (expandPossible(totalExtraWidth)) {
-                    allCollapsibles.forEach(function(collapsible) {
-                        collapsible.$elements.removeClass(collapseCls);
-                    });
-                }
             }
 
             function expandInOrder() {
@@ -265,6 +209,61 @@ define([
                 return $toolbox.outerWidth(true) + $navigation.outerWidth(true);
             }
 
+            /**
+             * Build the collapse order from the left to the right, related elements are grouped.
+             * If config.collapseInOrder is false there will be only one element, ie. all buttons
+             * will be collapsed at once
+             */
+            function getNaturalCollapseOrder() {
+                var collection = [],
+                    $controls = $(),
+                    groups;
+
+                if(config.collapseTools) {
+                    $controls = $controls.add($toolbox.find('>ul>[data-control]'));
+                }
+
+                if(config.collapseNavigation) {
+                    $controls = $controls.add($navigation.find('>ul>[data-control]'));
+                }
+
+                if(!$controls.length) {
+                    return collection;
+                }
+
+                if(config.collapseInOrder) {
+                    groups = {};
+                    // group items by prefix
+                    // eg. zoomIn and zoomOut -> zoom
+                    $controls.each(function() {
+                        var ctrl = this.dataset.control,
+                            // re makes group `foo` from `foo-bar`, `fooBar` and `foo_bar`
+                            group = ctrl.substring(0, ctrl.search(/[A-Z-_]/));
+                        groups[group] = groups[group] || [];
+                        groups[group].push(ctrl);
+                    });
+
+                    // move items to collection
+                    _.forOwn(groups, function(values) {
+                        var ctrls = [];
+                        _.forEach(values, function(ctrl) {
+                            ctrls.push('[data-control="' + ctrl + '"]');
+                        });
+                        collection.push(ctrls.join(','));
+                    });
+                }
+                else {
+                    // collapse/expand all in one go
+                    $controls.each(function() {
+                        var ctrl = this.dataset.control;
+                        collection.push('[data-control="' + ctrl + '"]');
+                    });
+                    collection = [collection.join(',')];
+                }
+
+                return collection;
+            }
+
 
 
             $window.on('resize' + ns, _.throttle(function() {
@@ -273,15 +272,11 @@ define([
 
             testRunner
                 .after('renderitem loaditem', function() {
-                    if(renderingComplete) {
-                        return;
-                    }
                     previousAvailableWidth = Infinity;
 
                     buildCollapsiblesList();
 
                     testRunner.trigger('collapseTools');
-                    renderingComplete = true;
                 })
                 .on('collapseTools' + ns, function() {
                     toggleCollapsibles();
