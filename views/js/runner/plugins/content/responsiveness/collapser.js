@@ -51,6 +51,13 @@ define([
      */
     var labelHiddenCls = 'no-tool-label';
 
+
+    /**
+     * Name of the  CSS class for separators
+     * @type {string}
+     */
+    var separatorCls = 'separator';
+
     /**
      * Default plugin options
      * @type {Object}
@@ -113,30 +120,19 @@ define([
              * Get a reference of all collapsibles
              */
             function buildCollapsiblesList() {
+
                 // use the given order to build the collapsibles list or generate on in natural order
-
-                config.collapseOrder = config.collapseInOrder && config.collapseOrder.length ?
-                    config.collapseOrder :
-                    getNaturalCollapseOrder();
-
-                allCollapsibles = config.collapseOrder.map(function(selector) {
-                    var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
-                    var extraWidth = 0;
-
-                    if ($elements.length) {
-                        $elements.each(function() {
-                            extraWidth += getExtraWidth($(this));
-                        });
-                        return {
-                            $elements: $elements,
-                            extraWidth: extraWidth
-                        };
-                    }
-                    return false;
-                });
-
-                allCollapsibles = _.compact(allCollapsibles);
-
+                if(config.collapseInOrder && config.collapseOrder.length) {
+                    allCollapsibles = getCollapsiblesFromConfig();
+                }
+                // get values from DOM, grouped by prefix
+                else if(config.collapseInOrder) {
+                    allCollapsibles = getSortedCollapsiblesFromDom();
+                }
+                // get all in one chunk
+                else {
+                    allCollapsibles = getUnsortedCollapsiblesFromDom();
+                }
             }
 
             /**
@@ -162,11 +158,7 @@ define([
             function toggleCollapsibles() {
                 availableWidth = getAvailableWidth();
 
-                if (availableWidth < previousAvailableWidth) {
-                    collapseInOrder();
-                } else {
-                    expandInOrder();
-                }
+                availableWidth < previousAvailableWidth ? collapseInOrder() : expandInOrder();
 
                 previousAvailableWidth = availableWidth;
             }
@@ -210,58 +202,106 @@ define([
             }
 
             /**
-             * Build the collapse order from the left to the right, related elements are grouped.
-             * If config.collapseInOrder is false there will be only one element, ie. all buttons
-             * will be collapsed at once
+             * Parse DOM for controls that can be collapsed
+             * @returns {*|jQuery|HTMLElement}
              */
-            function getNaturalCollapseOrder() {
-                var collection = [],
-                    $controls = $(),
-                    groups;
+            function getControlsFromDom() {
+                var $controls = $(),
+                    selector = '>ul>[data-control]';
 
                 if(config.collapseTools) {
-                    $controls = $controls.add($toolbox.find('>ul>[data-control]'));
+                    $controls = $controls.add($toolbox.find(selector).not('.' + labelHiddenCls).not('.' + separatorCls));
                 }
 
                 if(config.collapseNavigation) {
-                    $controls = $controls.add($navigation.find('>ul>[data-control]'));
+                    $controls = $controls.add($navigation.find(selector).not('.' + labelHiddenCls).not('.' + separatorCls));
                 }
 
-                if(!$controls.length) {
-                    return collection;
-                }
+                return $controls;
+            }
 
-                if(config.collapseInOrder) {
-                    groups = {};
-                    // group items by prefix
-                    // eg. zoomIn and zoomOut -> zoom
-                    $controls.each(function() {
-                        var ctrl = this.dataset.control,
-                            // re makes group `foo` from `foo-bar`, `fooBar` and `foo_bar`
-                            group = ctrl.substring(0, ctrl.search(/[A-Z-_]/));
-                        groups[group] = groups[group] || [];
-                        groups[group].push(ctrl);
-                    });
+            /**
+             * Get allCollapsibles based on configuration
+             *
+             * @returns {Array}
+             */
+            function getCollapsiblesFromConfig() {
 
-                    // move items to collection
-                    _.forOwn(groups, function(values) {
-                        var ctrls = [];
-                        _.forEach(values, function(ctrl) {
-                            ctrls.push('[data-control="' + ctrl + '"]');
+                return _.compact(config.collapseOrder.map(function(selector) {
+                    // some buttons are collapsed by configuration, some other are only separators: we should leave them alone
+                    var $elements = $(selector).not('.' + labelHiddenCls).not('.' + separatorCls);
+                    var extraWidth = 0;
+
+                    if ($elements.length) {
+                        $elements.each(function() {
+                            extraWidth += getExtraWidth($(this));
                         });
-                        collection.push(ctrls.join(','));
-                    });
-                }
-                else {
-                    // collapse/expand all in one go
-                    $controls.each(function() {
-                        var ctrl = this.dataset.control;
-                        collection.push('[data-control="' + ctrl + '"]');
-                    });
-                    collection = [collection.join(',')];
-                }
+                        return {
+                            $elements: $elements,
+                            extraWidth: extraWidth
+                        };
+                    }
+                    return false;
+                }));
+            }
 
-                return collection;
+            /**
+             * Get allCollapsibles based on DOM
+             * Build the collapse order from the left to the right, related elements are grouped.
+             *
+             * @returns {Array}
+             */
+            function getSortedCollapsiblesFromDom() {
+
+                var $elements = getControlsFromDom(),
+                    _allCollapsibles = [],
+                    order = {};
+
+                // group items by prefix
+                // eg. zoomIn and zoomOut -> zoom
+                $elements.each(function() {
+                    var ctrl = this.dataset.control,
+                        // re makes group `foo` from `foo-bar`, `fooBar` and `foo_bar`
+                        key = ctrl.substring(0, ctrl.search(/[A-Z-_]/));
+                    order[key] = order[key] || $();
+                    order[key] = order[key].add($(this));
+                });
+
+                // move items to allCollapsibles
+                _.forOwn(order, function($elements) {
+                    var extraWidth = 0;
+                    $elements.each(function() {
+                        extraWidth += getExtraWidth($(this));
+                    });
+                    _allCollapsibles.push({
+                        $elements: $elements,
+                        extraWidth: extraWidth
+                    })
+                });
+
+                return _.compact(_allCollapsibles);
+            }
+
+            /**
+             * Get allCollapsibles based on DOM, all buttons will be collapsed at once
+             *
+             * @returns {Array}
+             */
+            function getUnsortedCollapsiblesFromDom() {
+                var $elements = getControlsFromDom(),
+                    _allCollapsibles = [],
+                    extraWidth = 0;
+
+                $elements.each(function() {
+                    extraWidth += getExtraWidth($(this));
+                });
+
+                _allCollapsibles.push({
+                    $elements: $elements,
+                    extraWidth: extraWidth
+                });
+
+                return _.compact(_allCollapsibles);
             }
 
 
