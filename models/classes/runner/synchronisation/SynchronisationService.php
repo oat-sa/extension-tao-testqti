@@ -30,10 +30,10 @@ class SynchronisationService extends ConfigurableService
     const ACTIONS_OPTION = 'actions';
 
     /**
-     * Typical amount of time spent on a navigation request.
+     * Typical amount of time added on TimePoints to avoid timestamp collisions.
      * This value will be used to adjust intervals between moves in the synced time line.
      */
-    const REQUEST_DURATION = .01;
+    const TIMEPOINT_INTERVAL = .001;
 
     /**
      * Wrap the process to appropriate action and aggregate results
@@ -57,7 +57,7 @@ class SynchronisationService extends ConfigurableService
             $actions[] = $action;
             
             if ($action->hasRequestParameter('itemDuration')) {
-                $duration += $action->getRequestParameter('itemDuration') + self::REQUEST_DURATION;
+                $duration += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
             }
         }
         
@@ -80,7 +80,7 @@ class SynchronisationService extends ConfigurableService
         foreach( $actions as $action) {
             try {
                 if ($action->hasRequestParameter('itemDuration')) {
-                    $last += $action->getRequestParameter('itemDuration') + self::REQUEST_DURATION;
+                    $last += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
                 }
                 $action->setTime($last);
 
