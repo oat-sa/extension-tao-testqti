@@ -37,7 +37,7 @@ use oat\taoTests\models\runner\time\Timer;
  * Class QtiTimer
  * @package oat\taoQtiTest\models\runner\time
  */
-class QtiTimer implements Timer, ExtraTime
+class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 {
     /**
      * The name of the storage key for the TimeLine
@@ -191,7 +191,6 @@ class QtiTimer implements Timer, ExtraTime
         return $last;
     }
 
-
     /**
      * Gets the last timestamp of the range for the provided tags
      * @param string|array $tags
@@ -211,7 +210,23 @@ class QtiTimer implements Timer, ExtraTime
         return $last;
     }
 
+    /**
+     * Gets the last registered timestamp
+     * @return bool|float $timestamp Returns the last timestamp or false if none
+     */
+    public function getLastRegisteredTimestamp()
+    {
+        $points = $this->timeLine->getPoints();
+        $length = count($points);
+        $last = false;
 
+        if ($length) {
+            $last = $points[$length - 1]->getTimestamp();
+        }
+        
+        return $last;
+    }
+    
     /**
      * Adds "client start" and "client end" TimePoint based on the provided duration for a particular ItemRef
      * @param string|array $tags
@@ -347,6 +362,24 @@ class QtiTimer implements Timer, ExtraTime
     }
 
     /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+            self::STORAGE_KEY_TIME_LINE => $this->timeLine->toArray(),
+            self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
+            self::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
+            self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine->toArray(),
+            self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
+        ];
+    }
+
+    /**
      * Saves the data to the storage
      * @return Timer
      * @throws InvalidStorageException
@@ -359,13 +392,7 @@ class QtiTimer implements Timer, ExtraTime
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
         
-        $this->storage->store(json_encode([
-            self::STORAGE_KEY_TIME_LINE => $this->timeLine,
-            self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
-            self::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
-            self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine,
-            self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
-        ]));
+        $this->storage->store(json_encode($this));
         
         return $this;
     }
