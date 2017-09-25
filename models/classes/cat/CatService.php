@@ -52,6 +52,8 @@ class CatService extends ConfigurableService
     
     const OPTION_ENGINE_ENDPOINTS = 'endpoints';
     
+    const OPTION_ENGINE_URL = 'url';
+
     const OPTION_ENGINE_CLASS = 'class';
     
     const OPTION_ENGINE_ARGS = 'args';
@@ -65,6 +67,8 @@ class CatService extends ConfigurableService
     const CAT_ADAPTIVE_IDS_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections';
 
     const IS_CAT_ADAPTIVE = 'is-cat-adaptive';
+
+    const IS_SHADOW_ITEM = 'is-shadow-item';
 
     private $engines = [];
     
@@ -91,10 +95,13 @@ class CatService extends ConfigurableService
             
                 $class = $engineOptions[self::OPTION_ENGINE_CLASS];
                 $args = $engineOptions[self::OPTION_ENGINE_ARGS];
+                $url = isset($engineOptions[self::OPTION_ENGINE_URL])
+                    ? $engineOptions[self::OPTION_ENGINE_URL]
+                    : $endpoint;
                 array_unshift($args, $endpoint);
 
                 try {
-                    $this->engines[$endpoint] = new $class($endpoint, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
+                    $this->engines[$endpoint] = new $class($url, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
                 } catch (\Exception $e) {
                     \common_Logger::e('Fail to connect to CAT endpoint : ' . $e->getMessage());
                     throw new CatEngineNotFoundException('CAT Engine for endpoint "' . $endpoint . '" is misconfigured.', $endpoint, 0, $e);
@@ -316,19 +323,23 @@ class CatService extends ConfigurableService
         return in_array(\taoQtiTest_models_classes_QtiTestCompiler::ADAPTIVE_PLACEHOLDER_CATEGORY, $assessmentItemRef->getCategories()->getArrayCopy());
     }
 
+    /**
+     * @deprecated set on SelectNextAdaptiveItemEvent
+     */
     public function onQtiContinueInteraction($event)
     {
-        if($event instanceof QtiContinueInteractionEvent){
-            $isCat = false;
+        if ($event instanceof QtiContinueInteractionEvent) {
             $context = $event->getContext();
-            if($context->isAdaptive()){
+            $isAdaptive = $context->isAdaptive();
+            $isCat = false;
+            
+            if ($isAdaptive) {
                 $isCat = true;
             }
 
             $itemIdentifier = $event->getContext()->getCurrentAssessmentItemRef()->getIdentifier();
             $hrefParts = explode('|', $event->getRunnerService()->getItemHref($context, $itemIdentifier));
             $event->getRunnerService()->storeTraceVariable($context, $hrefParts[0], self::IS_CAT_ADAPTIVE, $isCat);
-
         }
     }
 
@@ -430,5 +441,18 @@ class CatService extends ConfigurableService
         );
         
         return $catItemId;
+    }
+    
+    public function getCatAttempts(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, $identifier, RouteItem $routeItem = null)
+    {
+        $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+            $testSession->getSessionId(),
+            $this->getCatSection($testSession, $compilationDirectory, $routeItem)->getSectionId(),
+            'cat-attempts'
+        );
+        
+        $catAttempts = ($catAttempts) ? $catAttempts : [];
+        
+        return (isset($catAttempts[$identifier])) ? $catAttempts[$identifier] : 0;
     }
 }

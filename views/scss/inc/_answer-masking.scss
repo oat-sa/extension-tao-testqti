@@ -27,6 +27,10 @@
                     @include icon-eye-slash;
                 }
             }
+            .label-content {
+                padding-right: 40px;
+            }
+
             &.masked {
                 .answer-mask {
                     width: 100%;

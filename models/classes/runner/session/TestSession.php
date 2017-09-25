@@ -20,10 +20,12 @@
 
 namespace oat\taoQtiTest\models\runner\session;
 
+use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\cat\CatService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\Duration;
 use qtism\common\datatypes\QtiDuration;
@@ -161,7 +163,6 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             $sectionId,
             $testPart->getIdentifier(),
             $test->getIdentifier(),
-            $itemRef->getHref(),
         ];
 
         if ($this->isRunning() === true) {
@@ -458,15 +459,20 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     public function submitItemResults(AssessmentItemSession $itemSession, $occurrence = 0)
     {
         $itemRef = $itemSession->getAssessmentItem();
-        $identifier = $itemRef->getIdentifier();
-        $duration = $this->getTimerDuration($identifier);
+        
+        // Ensure that specific results from adaptive placeholders are not recorded.
+        $catService = ServiceManager::getServiceManager()->get(CatService::SERVICE_ID);
+        if (!$catService->isAdaptivePlaceholder($itemRef)) {
+            $identifier = $itemRef->getIdentifier();
+            $duration = $this->getTimerDuration($identifier);
 
-        $itemDurationVar = $itemSession->getVariable('duration');
-        $sessionDuration = $itemDurationVar->getValue();
-        \common_Logger::t("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
-        $itemSession->getVariable('duration')->setValue($duration);
+            $itemDurationVar = $itemSession->getVariable('duration');
+            $sessionDuration = $itemDurationVar->getValue();
+            \common_Logger::t("Force duration of item '${identifier}' to ${duration} instead of ${sessionDuration}");
+            $itemSession->getVariable('duration')->setValue($duration);
 
-        parent::submitItemResults($itemSession, $occurrence);
+            parent::submitItemResults($itemSession, $occurrence);
+        }
     }
 
     /**
