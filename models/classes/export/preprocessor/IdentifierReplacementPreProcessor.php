@@ -31,7 +31,7 @@ use qtism\data\storage\xml\XmlDocument;
  * Replace the test identifier (item-1, item-2 ...) by the item identifier
  * @package oat\taoQtiTest\models\export\preprocessor
  */
-class IdentifierReplacementPreProcessor extends ConfigurableService implements PreProcessor
+class IdentifierReplacementPreProcessor extends ConfigurableService implements AssessmentItemRefPreProcessor
 {
 
     public function process(XmlDocument $testDocument)
@@ -48,6 +48,14 @@ class IdentifierReplacementPreProcessor extends ConfigurableService implements P
                     ->getDataItemByRdfItem($item);
                 $identifier = $itemRdf->getIdentifier();
                 $identifier = Format::sanitizeIdentifier($identifier);
+                $count = 0;
+                $newId = $identifier;
+                while(isset($items[$newId])){
+                    $count++;
+                    $appender = '-'.$count;
+                    $newId = $identifier . $appender;
+                }
+                $identifier = $newId;
                 $assessmentItemRef->setIdentifier($identifier);
                 $items[$identifier] = $item;
             }

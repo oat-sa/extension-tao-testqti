@@ -25,13 +25,13 @@ namespace oat\taoQtiTest\models\export\preprocessor;
 use qtism\data\storage\xml\XmlDocument;
 
 /**
- * Interface PreProcessor
+ * Interface AssessmentItemRefPreProcessor
  * Allow to preprocess the test exporter
  * @package oat\taoQtiTest\models\export\preprocessor
  */
-interface PreProcessor
+interface AssessmentItemRefPreProcessor
 {
-    const SERVICE_ID = 'taoQtiTest/preprocessor';
+    const SERVICE_ID = 'taoQtiTest/itempreprocessor';
 
     /**
      * @return array $items key is item identifier and value are item resources
