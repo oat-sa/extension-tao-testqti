@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
 use oat\taoQtiTest\models\export\preprocessor\IdentifierReplacementPreProcessor;
-use oat\taoQtiTest\models\export\preprocessor\PreProcessor;
+use oat\taoQtiTest\models\export\preprocessor\AssessmentItemRefPreProcessor;
 
 /**
  * Set PreProcessing Configuration Install Action
@@ -39,7 +39,7 @@ class SetExportPreProcessing extends InstallAction
     public function __invoke($params)
     {
 
-        $this->getServiceManager()->register(PreProcessor::SERVICE_ID, new IdentifierReplacementPreProcessor());
+        $this->getServiceManager()->register(AssessmentItemRefPreProcessor::SERVICE_ID, new IdentifierReplacementPreProcessor());
 
         return new \common_report_Report(
             \common_report_Report::TYPE_SUCCESS,

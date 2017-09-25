@@ -23,7 +23,7 @@ use oat\oatbox\filesystem\Directory;
 use oat\taoQtiItem\model\qti\metadata\exporter\MetadataExporter;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\oatbox\service\ServiceManager;
-use oat\taoQtiTest\models\export\preprocessor\PreProcessor;
+use oat\taoQtiTest\models\export\preprocessor\AssessmentItemRefPreProcessor;
 
 /**
  * A specialization of QTI ItemExporter aiming at exporting IMS QTI Test definitions from the TAO
@@ -174,9 +174,9 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
     public function preProcessing()
     {
-        if($this->getServiceManager()->has(PreProcessor::SERVICE_ID)) {
-            /** @var PreProcessor $preprocessor */
-            $preprocessor = $this->getServiceManager()->get(PreProcessor::SERVICE_ID);
+        if($this->getServiceManager()->has(AssessmentItemRefPreProcessor::SERVICE_ID)) {
+            /** @var AssessmentItemRefPreProcessor $preprocessor */
+            $preprocessor = $this->getServiceManager()->get(AssessmentItemRefPreProcessor::SERVICE_ID);
             $items = $preprocessor->process($this->testDocument);
             $this->setItems($items);
         }
