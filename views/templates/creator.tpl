@@ -75,7 +75,9 @@ requirejs.config({
                 identifier : '<?=get_data('identifierUrl')?>'
             },
             categoriesPresets : <?=get_data('categoriesPresets')?>,
-            labels : <?=get_data('labels')?>
+            labels : <?=get_data('labels')?>,
+            enableAllowSkipping : "<?= get_data('enableAllowSkipping') ?>",
+            enableValidateResponses : "<?= get_data('enableValidateResponses') ?>"
        }
     }
 });

@@ -39,6 +39,9 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
         var $actionContainer = $('h1', $testPart);
         var config = modelOverseer.getConfig();
 
+        partModel.enableAllowSkipping = config.enableAllowSkipping || false;
+        partModel.enableValidateResponses = config.enableValidateResponses || false;
+
         //run setup methods
         actions.properties($actionContainer, 'testpart', partModel, propHandler);
         actions.move($actionContainer, 'testparts', 'testpart');

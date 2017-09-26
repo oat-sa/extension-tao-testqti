@@ -18,6 +18,7 @@
 */
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 
 /**
  *  QTI test Creator Controller.
@@ -55,6 +56,10 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
                 $this->setData('blueprintsByTestSectionUrl', _url('getBlueprintsByTestSection', 'Blueprints', 'taoBlueprints', array('test' => $testUri)));
             }
             $this->setData('identifierUrl', _url('getIdentifier', null, null, array('uri' => $testUri)));
+
+            $testConfig = $this->getServiceManager()->get(QtiRunnerConfig::SERVICE_ID);
+            $this->setData('enableAllowSkipping', $testConfig->getConfigValue('enableAllowSkipping'));
+            $this->setData('enableValidateResponses', $testConfig->getConfigValue('enableValidateResponses'));
 
             $this->setView('creator.tpl');
 	}
