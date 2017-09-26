@@ -125,12 +125,12 @@ define([
          * Enable plugin
          */
         enable: function enable() {
-            if (self.tts) {
-                self.tts.enable();
+            if (this.tts) {
+                this.tts.enable();
             }
 
-            if (self.ttsButton) {
-                self.ttsButton.enable();
+            if (this.ttsButton) {
+                this.ttsButton.enable();
             }
         },
 
@@ -138,12 +138,12 @@ define([
          * Disable plugin
          */
         disable: function disable() {
-            if (self.tts) {
-                self.tts.disable();
+            if (this.tts) {
+                this.tts.disable();
             }
 
-            if (self.ttsButton) {
-                self.ttsButton.disable();
+            if (this.ttsButton) {
+                this.ttsButton.disable();
             }
         }
     });
