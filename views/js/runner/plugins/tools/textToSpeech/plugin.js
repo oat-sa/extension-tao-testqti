@@ -67,7 +67,9 @@ define([
                 self.tts = ttsFactory({
                     $contentArea: testRunner.getAreaBroker().getContentArea()
                 })
-                .render(self.ttsButton.getElement());
+                .render(self.ttsButton.getElement())
+                .disable()
+                .hide();
 
                 stacker.autoBringToFront(self.tts.getElement());
             })
@@ -86,7 +88,9 @@ define([
                 } else {
                     self.tts.enable();
                 }
-            });
+            })
+            .disable()
+            .hide();
 
             testRunner
             .on('loaditem', function () {
@@ -123,9 +127,10 @@ define([
         enable: function enable() {
             if (self.tts) {
                 self.tts.enable();
+            }
+
+            if (self.ttsButton) {
                 self.ttsButton.enable();
-            } else {
-                self.ttsButton.disable();
             }
         },
 
@@ -135,8 +140,9 @@ define([
         disable: function disable() {
             if (self.tts) {
                 self.tts.disable();
-                self.ttsButton.disable();
-            } else {
+            }
+
+            if (self.ttsButton) {
                 self.ttsButton.disable();
             }
         }
