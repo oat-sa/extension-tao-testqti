@@ -68,7 +68,7 @@ define([
                     $contentArea: testRunner.getAreaBroker().getContentArea()
                 })
                 .render(self.ttsButton.getElement())
-                .disable()
+                .disable() // disable & hide by default
                 .hide();
 
                 stacker.autoBringToFront(self.tts.getElement());
@@ -89,7 +89,7 @@ define([
                     self.tts.enable();
                 }
             })
-            .disable()
+            .disable() // disable & hide by default
             .hide();
 
             testRunner
