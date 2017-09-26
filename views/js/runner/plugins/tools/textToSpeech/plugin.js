@@ -90,21 +90,18 @@ define([
 
             testRunner
             .on('loaditem', function () {
-                self.tts.disable();
-                self.ttsButton.disable();
+                self.disable();
                 self.ttsButton.hide();
             })
             .on('enabletools', function () {
-                self.tts.enable();
-                self.ttsButton.enable();
+                self.enable();
             })
             .on('renderitem', function () {
                 var context = testRunner.getTestContext();
                 var config = testRunner.getConfig();
 
                 if (context.options.textToSpeech) {
-                    self.tts.enable();
-                    self.ttsButton.enable();
+                    self.enable();
                     self.ttsButton.show();
 
                     self.tts.updateTexthelpCache(
@@ -114,11 +111,34 @@ define([
                 }
             })
             .on('disabletools unloaditem', function () {
-                self.tts.disable();
-                self.ttsButton.disable();
+                self.disable();
             });
 
             return this;
+        },
+
+        /**
+         * Enable plugin
+         */
+        enable: function enable() {
+            if (self.tts) {
+                self.tts.enable();
+                self.ttsButton.enable();
+            } else {
+                self.ttsButton.disable();
+            }
+        },
+
+        /**
+         * Disable plugin
+         */
+        disable: function disable() {
+            if (self.tts) {
+                self.tts.disable();
+                self.ttsButton.disable();
+            } else {
+                self.ttsButton.disable();
+            }
         }
     });
 });
