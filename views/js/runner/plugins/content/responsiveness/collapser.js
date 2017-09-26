@@ -190,11 +190,15 @@ define([
             }
 
             function expandPossible(extraWidth) {
+                console.log(getToolbarWidth(), extraWidth, getAvailableWidth());
                 return (getToolbarWidth() + extraWidth) <= getAvailableWidth();
             }
 
             function getAvailableWidth() {
-                return $actionsBar.width();
+                // Scrollbars are commonly between ~12px and ~18px in width. Subtracting 20px from the available width
+                // makes sure that scrollbars are always taken in account. The worst case scenario is that the buttons
+                // start to collapse, although they would still have had 20px available.
+                return $actionsBar.width() - 20;
             }
 
             function getToolbarWidth() {
