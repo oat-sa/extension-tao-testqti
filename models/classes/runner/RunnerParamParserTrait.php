@@ -135,10 +135,9 @@ trait RunnerParamParserTrait
         if ($this->getRequestParameter('itemDefinition') && $this->getRequestParameter('itemState')) {
             $serviceContext = $this->getServiceContext(false);
             $itemIdentifier = $this->getRequestParameter('itemDefinition');
-            $stateId =  $serviceContext->getTestExecutionUri() . $itemIdentifier;
             $state = $this->getRequestParameter('itemState') ? json_decode($this->getRequestParameter('itemState'), true) : new \stdClass();
 
-            return $this->getRunnerService()->setItemState($serviceContext, $stateId, $state);
+            return $this->getRunnerService()->setItemState($serviceContext, $itemIdentifier, $state);
         }
 
         return false;
