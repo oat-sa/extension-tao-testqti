@@ -144,6 +144,8 @@ define([
                 this._set('pageCompleteCallback', function () {
                     self.trigger('stop');
                 });
+
+                return this;
             },
 
             /**
@@ -156,6 +158,8 @@ define([
                 tss.g_strPageId = itemId;
 
                 this._exec('tagSentences', options.$contentArea.selector);
+
+                return this;
             },
 
             /**
@@ -163,6 +167,7 @@ define([
              */
             enable: function enable() {
                 this._exec('enableSpeech');
+                return this;
             },
 
             /**
@@ -170,6 +175,7 @@ define([
              */
             disable: function disable() {
                 this._exec('disableSpeech');
+                return this;
             },
 
             /**
@@ -180,6 +186,8 @@ define([
                     this._exec('event_play');
                     this.trigger('play');
                 }
+
+                return this;
             },
 
             /**
@@ -188,6 +196,8 @@ define([
             pause: function pause() {
                 this._exec('event_pause');
                 this.trigger('pause');
+
+                return this;
             },
 
             /**
@@ -196,6 +206,8 @@ define([
             stop: function stop() {
                 this._exec('stopSpeech');
                 this.trigger('stop');
+
+                return this;
             },
 
             /**
@@ -206,6 +218,8 @@ define([
 
                 this._exec('setSpeedValue', speed);
                 this.trigger('setSpeed', speed);
+
+                return this;
             },
 
             /**
@@ -216,6 +230,8 @@ define([
 
                 this._exec('setVolumeValue', volume);
                 this.trigger('setVolume', volume);
+
+                return this;
             },
 
             /**
@@ -223,9 +239,12 @@ define([
              */
             clickToSpeak: function clickToSpeak() {
                 options.enableClickToSpeak = !options.enableClickToSpeak;
+
                 this._exec('enableClickToSpeak', options.enableClickToSpeak);
                 this._exec('enableContinuousReading', !options.enableClickToSpeak); // continuous reading is off when click to speak is on
                 this.trigger('clickToSpeak');
+
+                return this;
             }
         }, {
             // defaults
