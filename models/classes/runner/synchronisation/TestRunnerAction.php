@@ -41,7 +41,8 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
     const OFFLINE_VARIABLE = 'offline';
 
-    protected $start;
+    /** @var double The timestamp of current action */
+    protected $time;
 
     /** @var integer The timestamp of action */
     protected $timestamp;
@@ -122,23 +123,23 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     }
 
     /**
-     * Get the timestamp of current action start
+     * Get the timestamp of current action in seconds
      *
-     * @return mixed
+     * @return double $time
      */
-    public function getStart()
+    public function getTime()
     {
-        return $this->start;
+        return $this->time;
     }
 
     /**
-     * Set the timestamp of current action start
+     * Set the timestamp of current action in seconds
      *
-     * @param mixed $start
+     * @param double $time
      */
-    public function setStart($start)
+    public function setTime($time)
     {
-        $this->start = $start;
+        $this->time = $time;
     }
 
     /**

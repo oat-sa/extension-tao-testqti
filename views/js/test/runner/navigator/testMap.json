@@ -66,6 +66,14 @@
           "id": "assessmentSection-2",
           "label": "Rubric block",
           "position": 3,
+          "timeConstraint": {
+            "label": "Rubric block",
+            "source": "assessmentSection-2",
+            "seconds": "60",
+            "extraTime": 0,
+            "allowLateSubmission": false,
+            "qtiClassName": "assessmentSection"
+          },
           "items": {
             "item-4": {
               "id": "item-4",
@@ -107,7 +115,15 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
-              "informational": false
+              "informational": false,
+              "timeConstraint": {
+                "label": "Item 3",
+                "source": "item-6",
+                "seconds": "20",
+                "extraTime": 0,
+                "allowLateSubmission": false,
+                "qtiClassName": "assessmentItemRef"
+              }
             }
           },
           "stats": {
@@ -122,6 +138,14 @@
           "id": "assessmentSection-3",
           "label": "Timed section",
           "position": 6,
+          "timeConstraint": {
+            "label": "Timed section",
+            "source": "assessmentSection-3",
+            "seconds": "90",
+            "extraTime": 0,
+            "allowLateSubmission": false,
+            "qtiClassName": "assessmentSection"
+          },
           "items": {
             "item-7": {
               "id": "item-7",

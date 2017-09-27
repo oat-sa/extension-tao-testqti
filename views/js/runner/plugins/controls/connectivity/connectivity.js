@@ -75,6 +75,7 @@ define([
                 }
             });
 
+
             testRunner.before('error', function(e, err) {
                 var dialog;
 
@@ -83,29 +84,35 @@ define([
                     return false;
                 }
 
-                //offline navigation error, we pause the test
+                //offline navigation error
                 if (proxy.isOffline()) {
                     if(!waiting){
                         waiting = true;
 
+                        //is a pause event occurs offline, we wait the connection to be back
+                        testRunner.before('pause.waiting', function(){
+                            return new Promise(function(resolve){
+                                proxy.off('reconnect.pausing')
+                                    .after('reconnect.pausing', resolve);
+                            });
+                        });
+
+                        //creates the waiting modal dialog
                         dialog = waitingDialog({
                             message : __('You are encountering a prolonged connectivity loss'),
                             waitContent : __('Please wait while we try to restore the connection.'),
                             proceedContent : __('The connection seems to be back, please proceed')
                         })
                         .on('proceed', function(){
-                            testRunner
-                                .trigger('pause', {
-                                    reasons : {
-                                        category : __('technical'),
-                                        subCategory : __('network')
-                                    }
-                                });
+                            var testContext = testRunner.getTestContext();
+
+                            testRunner.loadItem(testContext.itemIdentifier);
                         })
                         .on('render', function(){
                             proxy
                                 .off('reconnect.waiting')
-                                .on('reconnect.waiting', function(){
+                                .after('reconnect.waiting', function(){
+                                    testRunner.off('pause.waiting');
                                     waiting = false;
                                     dialog.endWait();
                                 });
