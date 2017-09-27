@@ -457,7 +457,6 @@ define([
          * @fires sendVariables
          */
         sendVariables: function sendVariables(variables) {
-            //var self = this;
             var action = 'storeTraceData';
             var actionParams = {
                 traceData: JSON.stringify(variables)
