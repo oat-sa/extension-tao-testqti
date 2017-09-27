@@ -16,6 +16,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -146,8 +147,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
         $map = [
             'scope' => $scope,
-            'parts' => [],
-            'jumps' => []
+            'parts' => []
         ];
 
         // get config for the sequence number option
@@ -178,10 +178,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     break;
             }
 
-            $offset        = 0;
-            $offsetPart    = 0;
+            $offset = $this->getPosition($context, $routeItems[0]);
             $offsetSection = 0;
-            $lastPart      = null;
             $lastSection   = null;
 
             // fallback index in case of the delivery was compiled without the index of item href
@@ -216,10 +214,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $sectionId = $section->getIdentifier();
                     $itemId = $itemRef->getIdentifier();
 
-                    if ($lastPart != $partId) {
-                        $offsetPart = 0;
-                        $lastPart = $partId;
-                    }
                     if ($lastSection != $sectionId) {
                         $offsetSection = 0;
                         $lastSection = $sectionId;
@@ -241,9 +235,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'id' => $itemId,
                         'label' => $label,
                         'position' => $offset,
-                        'positionInPart' => $offsetPart,
-                        'positionInSection' => $offsetSection,
-                        'index' => $offsetSection + 1,
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
@@ -259,7 +250,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $itemInfos['timeConstraint'] = $this->getTimeConstraint($session, $itemRef, $navigationMode);
                     }
 
-                    if (!isset($map['parts'][$partId])) {
+                    if (!isset($map['parts'][$partId]) && $scope != RunnerMap::SCOPE_SECTION) {
                         $map['parts'][$partId]['id'] = $partId;
                         $map['parts'][$partId]['label'] = $partId;
                         $map['parts'][$partId]['position'] = $offset;
@@ -276,7 +267,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $map['parts'][$partId]['sections'][$sectionId]['isCatAdaptive'] = CatUtils::isAssessmentSectionAdaptive($section);
                         $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
 
-
                         if($section->hasTimeLimits()){
                             $map['parts'][$partId]['sections'][$sectionId]['timeConstraint'] = $this->getTimeConstraint($session, $section, $navigationMode);
                         }
@@ -285,12 +275,20 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
 
                     // update the stats
-                    $this->updateStats($map, $itemInfos);
-                    $this->updateStats($map['parts'][$partId], $itemInfos);
-                    $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    if($scope == RunnerMap::SCOPE_TEST) {
+                        $this->updateStats($map, $itemInfos);
+                        $this->updateStats($map['parts'][$partId], $itemInfos);
+                        $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    }
+                    if($scope == RunnerMap::SCOPE_PART) {
+                        $this->updateStats($map['parts'][$partId], $itemInfos);
+                        $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    }
+                    if($scope == RunnerMap::SCOPE_SECTION) {
+                        $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    }
 
                     $offset ++;
-                    $offsetPart ++;
                     $offsetSection ++;
                 }
             }
@@ -373,6 +371,39 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
 
         return $itemRefs;
+    }
+
+     /**
+      * Get the relative position of the given RouteItem within the test.
+      * The position takes adaptive sections (and count items instead of placeholders).
+      *
+      * @param RunnerServiceContext $context
+      * @param RouteItem $routeItem
+      * @return int the offset position
+      */
+     protected function getOffsetPosition(RunnerServiceContext $context, RouteItem $currentRouteItem)
+     {
+        $session = $context->getTestSession();
+        $route = $session->getRoute();
+        $routeCount = $route->count();
+
+        $finalPosition = 0;
+
+        for ($i = 0; $i < $routeCount; $i++) {
+            $routeItem = $route->getRouteItemAt($i);
+
+            if ($routeItem !== $currentRouteItem) {
+                if (!$context->isAdaptive($routeItem->getAssessmentItemRef())) {
+                    $finalPosition++;
+                } else {
+                    $finalPosition += count($context->getShadowTest($routeItem));
+                }
+            } else {
+                break;
+            }
+        }
+
+        return $finalPosition;
     }
 
     /**
