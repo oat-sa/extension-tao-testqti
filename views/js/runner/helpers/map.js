@@ -416,6 +416,110 @@ define([
                 acc.total += item.stats.total;
                 return acc;
             }, getEmptyStats());
+        },
+
+        patch : function patch(currentMap, partialMap) {
+            var targetMap;
+            var updates = false;
+            var self = this;
+
+            if(!_.isPlainObject(partialMap) || !partialMap.jumps || !partialMap.parts) {
+                throw new TypeError('Invalid map');
+            }
+            if(!currentMap || partialMap.scope === 'test'){
+                return partialMap;
+            }
+
+            console.log('testMap', _.cloneDeep(currentMap));
+            console.log('patch', _.cloneDeep(partialMap));
+
+            targetMap = _.cloneDeep(currentMap);
+
+            _.forEach(partialMap.parts, function(partialPart, targetPartId){
+                if (partialMap.scope === 'part') {
+                    targetMap.parts[targetPartId] = partialPart;
+                    updates = true;
+                }
+                if (partialMap.scope === 'section') {
+                    _.forEach(partialPart.sections, function(partialSection, targetSectionId){
+                        //replace the target section
+                        targetMap.parts[targetPartId].sections[targetSectionId] = _.cloneDeep(partialSection);
+                        updates = true;
+                    });
+                }
+            });
+            if (updates) {
+                targetMap = this.reindex(targetMap);
+            }
+            console.log('results', _.cloneDeep(targetMap));
+
+            return targetMap;
+        },
+
+        reindex : function reindex(map){
+            var offset        = 0;
+            var offsetPart    = 0;
+            var offsetSection = 0;
+            var lastPartId;
+            var lastSectionId;
+
+            //remove the jump table
+            map.jumps = [];
+
+            _.sortBy(map && map.parts, 'position').forEach(function(part) {
+                _.sortBy(part && part.sections, 'position').forEach(function(section) {
+                    _.sortBy(section && section.items, 'position').forEach(function(item) {
+
+                        if(lastPartId !== part.id){
+                            offsetPart = 0;
+                            lastPartId = part.id;
+                        }
+                        if(lastSectionId !== section.id){
+                            offsetSection = 0;
+                            lastSectionId = section.id;
+                        }
+                        console.log('Position ' + item.position + ' / ' + offset);
+                        item.position = offset;
+                        item.index    = offsetSection + 1;
+                        item.positionInPart = offsetPart;
+                        item.positionInSection = offsetSection;
+
+                        map.jumps[offset] = {
+                            identifier : item.id,
+                            section    : section.id ,
+                            part       : part.id,
+                            position   : offset
+                        };
+
+                        offset++;
+                        offsetSection++;
+                        offsetPart++;
+                    });
+                });
+            });
+
+            return map;
+        },
+
+        createJumpTable : function createJumpTable(map){
+
+            if (!_.isPlainObject(map)) {
+                throw new TypeError('Invalid map');
+            }
+
+            map.jumps = [];
+
+            this.each(map, function (item, section, part){
+                var offset = item.position;
+                map.jumps[offset] = {
+                    identifier : item.id,
+                    section    : section.id ,
+                    part       : part.id,
+                    position   : offset
+                };
+            });
+
+            return map;
         }
     };
 });

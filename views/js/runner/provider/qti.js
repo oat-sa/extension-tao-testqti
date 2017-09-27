@@ -276,7 +276,7 @@ define([
                                 }
 
                                 if (results.testMap) {
-                                    self.setTestMap(results.testMap);
+                                    self.setTestMap(mapHelper.patch(self.getTestMap(), results.testMap));
                                 }
 
                                 updateStats();
@@ -504,7 +504,7 @@ define([
                 }).then(function(results){
                     self.setTestData(results.testData);
                     self.setTestContext(results.testContext);
-                    self.setTestMap(results.testMap);
+                    self.setTestMap(mapHelper.createJumpTable(results.testMap));
 
                     //check if we need to trigger a storeChange
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
