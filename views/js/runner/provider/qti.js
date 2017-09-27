@@ -274,6 +274,7 @@ define([
                                 if (!_.isArray(results)) {
                                     results = [results];
                                 }
+                                //todo:test context and map should be given from the last action
                                 _.forEach(results, function (result) {
                                     if (result.testContext) {
                                         self.setTestContext(result.testContext);
