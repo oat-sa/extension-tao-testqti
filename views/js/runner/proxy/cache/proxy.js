@@ -153,28 +153,22 @@ define([
             this.offlineAction = function offlineAction(action, actionParams){
                 var testNavigator;
                 var testContext;
-                var storeAction  = function storeAction(){
-                    return self.actiontStore.push(
-                        action,
-                        self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
-                    );
-                };
 
                 // try the navigation if the actionParams context meaningful data
                 if( actionParams.direction && actionParams.scope){
                     testNavigator = testNavigatorFactory(self.testData, self.testContext, self.testMap);
                     testContext = testNavigator.navigate(
-                            actionParams.direction,
-                            actionParams.scope,
-                            actionParams.ref
-                        );
+                        actionParams.direction,
+                        actionParams.scope,
+                        actionParams.ref
+                    );
 
                     //we are really not able to navigate
                     if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
                         throw offlineNavError;
                     }
 
-                    return storeAction().then(function(){
+                    return this.scheduleAction(action, actionParams).then(function(){
                         return {
                             success : true,
                             testContext : testContext
@@ -182,11 +176,25 @@ define([
                     });
                 }
 
-                return storeAction().then(function(){
+                return this.scheduleAction(action, actionParams).then(function(){
                     return {
                         success : true
                     };
                 });
+            };
+
+            /**
+             * Schedule an action do be done with next call
+             *
+             * @param {String} action - the action name (ie. move, skip, timeout)
+             * @param {Object} actionParams - the parameters sent along the action
+             * @returns {Promise} resolves with the action result
+             */
+            this.scheduleAction = function scheduleAction(action, actionParams) {
+                return self.actiontStore.push(
+                    action,
+                    self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
+                );
             };
 
             /**
