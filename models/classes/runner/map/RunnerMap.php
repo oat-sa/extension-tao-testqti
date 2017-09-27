@@ -31,10 +31,10 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
  */
 interface RunnerMap
 {
-    const SCOPE_TEST = 'test';
-    const SCOPE_PART = 'part';
+    //available scopes
+    const SCOPE_TEST    = 'test';
+    const SCOPE_PART    = 'part';
     const SCOPE_SECTION = 'section';
-
 
     /**
      * Builds the map of an assessment test

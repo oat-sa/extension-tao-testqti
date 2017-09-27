@@ -122,10 +122,16 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      */
     public function getMap(RunnerServiceContext $context, RunnerConfig $config)
     {
-        return $this->getScopedMap($context, $config, RunnerMap::SCOPE_SECTION);
+        return $this->getScopedMap($context, $config, RunnerMap::SCOPE_TEST);
     }
 
-
+    /**
+     * Get the testMap for the current context but limited to the given scope
+     * @param RunnerServiceContext $context The test context
+     * @param RunnerConfig $config The runner config
+     * @param string $scope the target scope, section by default
+     * @return mixed
+     */
     public function getScopedMap(RunnerServiceContext $context, RunnerConfig $config, $scope = RunnerMap::SCOPE_SECTION)
     {
         if (!($context instanceof QtiRunnerServiceContext)) {
@@ -139,6 +145,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
 
         $map = [
+            'scope' => $scope,
             'parts' => [],
             'jumps' => []
         ];
@@ -151,22 +158,18 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
         $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
 
-        $partial = false;
-
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
         $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
         if ($session->isRunning() !== false) {
-            $route = $session->getRoute();
-            $store = $session->getAssessmentItemSessionStore();
+            $route         = $session->getRoute();
+            $store         = $session->getAssessmentItemSessionStore();
 
             switch($scope){
                 case RunnerMap::SCOPE_SECTION :
-                    $partial = true;
                     $routeItems = $route->getRouteItemsByAssessmentSection($session->getCurrentAssessmentSection());
                     break;
                 case RunnerMap::SCOPE_PART :
-                    $partial = true;
                     $routeItems = $route->getRouteItemsByTestPart($session->getCurrentTestPart());
                     break;
                 case RunnerMap::SCOPE_TEST:
@@ -174,14 +177,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $routeItems = $route->getAllRouteItems();
                     break;
             }
-            $offset = $partial ? $route->getPosition()  : 0;
-            $offset += $route->getRouteItemPosition($routeItems[0]);
-            $offsetPart = 0;
-            $offsetSection = 0;
-            $lastPart = null;
-            $lastSection = null;
 
-            $map['partial'] = $partial;
+            $offset        = 0;
+            $offsetPart    = 0;
+            $offsetSection = 0;
+            $lastPart      = null;
+            $lastSection   = null;
 
             // fallback index in case of the delivery was compiled without the index of item href
             $this->itemHrefIndex = [];
@@ -258,14 +259,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $itemInfos['timeConstraint'] = $this->getTimeConstraint($session, $itemRef, $navigationMode);
                     }
 
-                    // update the map
-                    $map['jumps'][] = [
-                        'identifier' => $itemId,
-                        'section' => $sectionId,
-                        'part' => $partId,
-                        'position' => $offset
-                    ];
-
                     if (!isset($map['parts'][$partId])) {
                         $map['parts'][$partId]['id'] = $partId;
                         $map['parts'][$partId]['label'] = $partId;
@@ -300,7 +293,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $offsetPart ++;
                     $offsetSection ++;
                 }
-
             }
             // fallback in case of the delivery was compiled without the index of item href
             if ($shouldBuildItemHrefIndex) {
