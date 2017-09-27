@@ -50,10 +50,23 @@ define([
     var loadNextDelay = 450;
 
     /**
+     * When we are unable to navigate offline
+     * @type {Error}
+     */
+    var offlineNavError = new Error(__('We are unable to connect to the server to retrieve the next item.'));
+    _.assign(offlineNavError, {
+        success : false,
+        source: 'navigator',
+        purpose: 'proxy',
+        type: 'Item not found',
+        code : 404
+    });
+
+    /**
      * Overrides the qtiServiceProxy with the precaching behavior
      * @extends taoQtiTest/runner/proxy/qtiServiceProxy
      */
-    var cacheProxy = _.defaults({
+    return _.defaults({
 
         /**
          * Installs the proxy
@@ -138,45 +151,40 @@ define([
              * @returns {Promise} resolves with the action result
              */
             this.offlineAction = function offlineAction(action, actionParams){
-                return this.actiontStore.push(
-                    action,
-                    this.prepareParams(_.defaults(actionParams || {}, this.requestConfig))
-                )
-                .then(function(){
-                    var testNavigator;
-                    var testContext;
-                    var offlineNavError;
+                var testNavigator;
+                var testContext;
+                var storeAction  = function storeAction(){
+                    return self.actiontStore.push(
+                        action,
+                        self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
+                    );
+                };
 
-                    // try the navigation if the actionParams context meaningful data
-                    if( actionParams.direction && actionParams.scope){
-                        testNavigator = testNavigatorFactory(self.testData, self.testContext, self.testMap);
-                        testContext = testNavigator.navigate(
-                                actionParams.direction,
-                                actionParams.scope,
-                                actionParams.ref
-                            );
+                // try the navigation if the actionParams context meaningful data
+                if( actionParams.direction && actionParams.scope){
+                    testNavigator = testNavigatorFactory(self.testData, self.testContext, self.testMap);
+                    testContext = testNavigator.navigate(
+                            actionParams.direction,
+                            actionParams.scope,
+                            actionParams.ref
+                        );
 
-                        //we are really not able to navigate
-                        if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
-                            offlineNavError = new Error(__('We are unable to connect to the server to retrieve the next item.'));
-                            _.assign(offlineNavError, {
-                                success : false,
-                                source: 'navigator',
-                                purpose: 'proxy',
-                                type: 'Item not found',
-                                code : 404
-                            });
-                            throw offlineNavError;
-                        }
+                    //we are really not able to navigate
+                    if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
+                        throw offlineNavError;
+                    }
+
+                    return storeAction().then(function(){
                         return {
                             success : true,
                             testContext : testContext
                         };
-                    }
+                    });
+                }
 
-                    //at worst, we have saved the action and just want to continue
+                return storeAction().then(function(){
                     return {
-                        success: true
+                        success : true
                     };
                 });
             };
@@ -222,8 +230,9 @@ define([
                             //if the up request succeed,
                             // we ask for action sync, and we run the request
                             if(self.isOnline()){
-                                self.syncOfflineData();
-                                return runRequestThenOffline();
+                                return self.syncOfflineData().then(function(){
+                                    return runRequestThenOffline();
+                                });
                             }
                             return self.offlineAction(action, actionParams);
                         })
@@ -275,20 +284,35 @@ define([
             //set up the action store for the current service call
             this.actiontStore  = actionStoreFactory(config.serviceCallId);
 
-            //proxy some received data
-            this.on('receive', function (data) {
-                if (data) {
-                    if (data.testData && data.testData.config && data.testData.config.itemCaching) {
-                        self.cacheAmount = parseInt(data.testData.config.itemCaching.amount, 10) || self.cacheAmount;
+            //let's intercept some useful data (used by the proxy)
+            this.on('receive', function onReceive(response) {
+                var lastResponseValue;
+                var responseValue;
+                if (response) {
+                    //in case of sync we can have multiple entries in the response
+                    if(_.isArray(response)){
+                        lastResponseValue = _.findLast(response, function(value){
+                            return _.isPlainObject(value.testContext) || _.isPlainObject(value.testMap);
+                        });
+                        if(lastResponseValue){
+                            responseValue = _.cloneDeep(lastResponseValue);
+                        }
                     }
-                    if(data.testData){
-                        self.testData = data.testData;
+                    if(!responseValue){
+                        responseValue = _.cloneDeep(response);
                     }
-                    if (data.testMap) {
-                        self.testMap = data.testMap;
+                    if (responseValue.testData && responseValue.testData.config && responseValue.testData.config.itemCaching) {
+                        self.cacheAmount = parseInt(responseValue.testData.config.itemCaching.amount, 10) || self.cacheAmount;
                     }
-                    if(data.testContext){
-                        self.testContext = data.testContext;
+
+                    if(responseValue.testData){
+                        self.testData = responseValue.testData;
+                    }
+                    if (responseValue.testMap) {
+                        self.testMap = responseValue.testMap;
+                    }
+                    if(responseValue.testContext){
+                        self.testContext = responseValue.testContext;
                     }
                 }
             });
@@ -506,6 +530,4 @@ define([
             // );
         }
     }, qtiServiceProxy);
-
-    return cacheProxy;
 });

@@ -29,8 +29,6 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\Duration;
 use qtism\common\datatypes\QtiDuration;
-use qtism\data\AssessmentItemRef;
-use qtism\data\ItemSessionControl;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -165,7 +163,6 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             $sectionId,
             $testPart->getIdentifier(),
             $test->getIdentifier(),
-            $itemRef->getHref(),
         ];
 
         if ($this->isRunning() === true) {
