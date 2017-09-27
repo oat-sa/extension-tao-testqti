@@ -218,12 +218,28 @@ define([
              * @returns {Promise} resolves with the action result
              */
             this.requestNetworkThenOffline = function requestNetworkThenOffline(url, action, actionParams){
-
                 //perform the request, but fallback on offline if the request itself fails
                 var runRequestThenOffline = function runRequestThenOffline(){
-                    return self.request(url, actionParams).then(function(result){
+                    var request;
+                    //todo: actions which can be sent using 'sync' channel should be given from SynchronisationService service.
+                    if (action === 'storeTraceData' || action === 'move') {
+                        request = self.send('sync', [{
+                            action: action,
+                            parameters: self.prepareParams(_.defaults(actionParams, self.requestConfig)),
+                            timestamp: Date.now() / 1000
+                        }]);
+                    } else {
+                        request = self.request(url, actionParams);
+                    }
+
+                    return request.then(function(result){
                         //if the request fails, we should be offline
-                        if(self.isOffline()){
+                        if (self.isOffline()) {
+                            return self.offlineAction(action, actionParams);
+                        }
+                        return result;
+                    }).catch(function(result){
+                        if (self.isOffline()) {
                             return self.offlineAction(action, actionParams);
                         }
                         return result;
@@ -441,34 +457,17 @@ define([
          * @fires sendVariables
          */
         sendVariables: function sendVariables(variables) {
-            var self = this;
+            //var self = this;
             var action = 'storeTraceData';
             var actionParams = {
                 traceData: JSON.stringify(variables)
             };
 
-            return self.send('sync', [{
-                action: action,
-                parameters: this.prepareParams(_.defaults(actionParams, this.requestConfig)),
-                timestamp: Date.now() / 1000
-            }]);
-
-            // return new Promise(function (resolve, reject) {
-            //     self.offlineAction(action, actionParams).then(function () {
-            //         self.syncOfflineData().then(function(response) {
-            //             resolve(response);
-            //         }).catch(function(err){
-            //             reject(err);
-            //         });
-            //     });
-            // });
-
-
-            // return this.requestNetworkThenOffline(
-            //     this.configStorage.getTestActionUrl(action),
-            //     action,
-            //     actionParams
-            // );
+            return this.requestNetworkThenOffline(
+                this.configStorage.getTestActionUrl(action),
+                action,
+                actionParams
+            );
         },
 
         /**
@@ -515,27 +514,12 @@ define([
             }
 
             params = _.merge({ itemDefinition : itemIdentifier }, params);
-            return self.send('sync', [{
-                action: action,
-                parameters: this.prepareParams(_.defaults(params, this.requestConfig)),
-                timestamp: Date.now() / 1000
-            }]);
 
-            // return new Promise(function (resolve, reject) {
-            //     self.offlineAction(action, params).then(function () {
-            //         self.syncOfflineData().then(function(response) {
-            //             resolve(response);
-            //         }).catch(function(err){
-            //             reject(err);
-            //         });
-            //     });
-            // });
-
-            // return this.requestNetworkThenOffline(
-            //     this.configStorage.getItemActionUrl(itemIdentifier, action),
-            //     action,
-            //     _.merge({ itemDefinition : itemIdentifier }, params)
-            // );
+            return this.requestNetworkThenOffline(
+                this.configStorage.getItemActionUrl(itemIdentifier, action),
+                action,
+                _.merge({ itemDefinition : itemIdentifier }, params)
+            );
         }
     }, qtiServiceProxy);
 });
