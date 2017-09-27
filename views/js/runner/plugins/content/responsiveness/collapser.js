@@ -190,7 +190,6 @@ define([
             }
 
             function expandPossible(extraWidth) {
-                console.log(getToolbarWidth(), extraWidth, getAvailableWidth());
                 return (getToolbarWidth() + extraWidth) <= getAvailableWidth();
             }
 
