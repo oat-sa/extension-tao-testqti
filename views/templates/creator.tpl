@@ -17,7 +17,7 @@
     </section>
 
 <!-- test editor  -->
-    <section class="test-creator-test test-creator-area">
+    <section class="test-creator-test test-creator-area test-creator-content">
         <div class="action-bar plain content-action-bar horizontal-action-bar">
             <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
                 <li id="saver" class="btn-info small">
@@ -47,7 +47,7 @@
                 </div>
             </div>
         </h1>
-        <div class="test-content">
+        <div class="test-content hoverable">
             <div class="testparts" data-bind-each="testParts" data-bind-tmpl="testpart"> </div>
             <button class="btn-info small testpart-adder">
                 <span class="icon-add"></span><?=__('New test part')?>
@@ -60,6 +60,7 @@
 
         </div>
        <h1><?=__('Properties')?></h1>
+        <div class="qti-element-props"></div>
     </section
 
 </div>

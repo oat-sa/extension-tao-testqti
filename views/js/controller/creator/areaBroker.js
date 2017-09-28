@@ -30,8 +30,9 @@ define([
     'use strict';
 
     var requireAreas = [
-        'creatorPanel',
+        'creator',
         'itemSelectorPanel',
+        'contentCreatorPanel',
         'propertyPanel'
     ];
 

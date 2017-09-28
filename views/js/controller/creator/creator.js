@@ -72,8 +72,9 @@ define([
     var loadAreaBroker = function loadAreaBroker(){
         var $container = $('#test-creator');
         return areaBrokerFactory($container, {
-            'creatorPanel':         $('#test-creator .test-creator-area'),
+            'creator'   :         $('#test-creator'),
             'itemSelectorPanel':    $('#test-creator .test-creator-items'),
+            'contentCreatorPanel':  $('#test-creator .test-creator-content'),
             'propertyPanel':        $('#test-creator .test-creator-props')
         });
     };
