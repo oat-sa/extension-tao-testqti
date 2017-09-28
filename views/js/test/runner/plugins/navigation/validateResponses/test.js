@@ -90,6 +90,7 @@ define([
     QUnit.cases([{
         title: 'when the option is not enabled',
         context: {
+            itemIdentifier : 'item-1',
             enableValidateResponses: false,
             validateResponses: true
         },
@@ -98,6 +99,7 @@ define([
     }, {
         title: 'when the item has no interactions',
         context: {
+            itemIdentifier : 'item-1',
             enableValidateResponses: true,
             validateResponses: true
         },
@@ -106,6 +108,7 @@ define([
     }, {
         title: 'when the item is configured without the validation',
         context: {
+            itemIdentifier : 'item-1',
             enableValidateResponses: true,
             validateResponses: false
         },
@@ -114,6 +117,7 @@ define([
     }, {
         title: 'when the item is answered',
         context: {
+            itemIdentifier : 'item-1',
             enableValidateResponses: true,
             validateResponses: true
         },
@@ -149,6 +153,7 @@ define([
     QUnit.cases([{
         title: 'when the item not answered',
         context: {
+            itemIdentifier : 'item-1',
             enableValidateResponses: true,
             validateResponses: true
         },
