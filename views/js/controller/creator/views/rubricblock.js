@@ -28,29 +28,11 @@ define([
     'util/namespace',
     'taoQtiTest/controller/creator/views/actions',
     'helpers',
-    'ckeditor',
     'taoQtiTest/controller/creator/encoders/dom2qti',
-    'taoQtiTest/controller/creator/helpers/ckConfigurator',
-    'taoQtiTest/controller/creator/helpers/qtiElement'
-], function ($, _, __, hider, dialogAlert, namespaceHelper, actions, helpers, ckeditor, Dom2QtiEncoder, ckConfigurator, qtiElementHelper) { // qtiClasses, creatorRenderer, XmlRenderer, simpleParser){
+    'taoQtiTest/controller/creator/helpers/qtiElement',
+    'taoQtiTest/controller/creator/qtiContentCreator'
+], function ($, _, __, hider, dialogAlert, namespaceHelper, actions, helpers, Dom2QtiEncoder, qtiElementHelper, qtiContentCreator) {
     'use strict';
-
-    //compute ckeditor config only once
-    var ckConfig = ckConfigurator.getConfig(ckeditor, 'qtiBlock');
-
-    function filterPlugin(plugin) {
-        return _.contains([
-            'taoqtiimage',
-            'taoqtimedia',
-            'taoqtimaths',
-            'taoqtiinclude',
-            'taoqtitable',
-            'sharedspace' // the toolbar positionning plugin now used by the item creator. That Ck instance still use floating space
-        ], plugin);
-    }
-
-    ckConfig.plugins = _.reject(ckConfig.plugins.split(','), filterPlugin).join(',');
-    ckConfig.extraPlugins = _.reject(ckConfig.extraPlugins.split(','), filterPlugin).join(',');
 
     /**
      * The rubriclockView setup RB related components and behavior
@@ -65,11 +47,10 @@ define([
          * @param {Object} rubricModel - the rubric block data
          * @param {jQueryElement} $rubricBlock - the rubric block to set up
          */
-        setUp: function setUp(modelOverseer, rubricModel, $rubricBlock) {
+        setUp: function setUp(modelOverseer, areaBroker, rubricModel, $rubricBlock) {
             //we need to synchronize the ck elt with an hidden elt that has data-binding
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
             var syncRubricBlockContent = _.debounce(editorToModel, 100);
-            var editor;
 
             /**
              * Bind a listener only related to this rubric.
@@ -296,10 +277,12 @@ define([
 
             modelToEditor();
 
-            editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
-            editor.on('change', function () {
-                syncRubricBlockContent();
-            });
+            qtiContentCreator.init(areaBroker, $rubricBlockContent);
+
+            // editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
+            // editor.on('change', function () {
+            //     syncRubricBlockContent();
+            // });
         }
     };
 });
