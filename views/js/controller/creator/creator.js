@@ -72,10 +72,11 @@ define([
     var loadAreaBroker = function loadAreaBroker(){
         var $container = $('#test-creator');
         return areaBrokerFactory($container, {
-            'creator'   :         $('#test-creator'),
-            'itemSelectorPanel':    $('#test-creator .test-creator-items'),
-            'contentCreatorPanel':  $('#test-creator .test-creator-content'),
-            'propertyPanel':        $('#test-creator .test-creator-props')
+            'creator'   :         $container,
+            'itemSelectorPanel':    $container.find('.test-creator-items'),
+            'contentCreatorPanel':  $container.find('.test-creator-content'),
+            'propertyPanel':        $container.find('.test-creator-props'),
+            'qtiElementProperties': $container.find('.qti-content-props')
         });
     };
 

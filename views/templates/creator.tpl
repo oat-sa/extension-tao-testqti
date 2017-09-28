@@ -59,9 +59,9 @@
         <div class="action-bar plain content-action-bar horizontal-action-bar">
 
         </div>
-       <h1><?=__('Properties')?></h1>
-        <div class="qti-element-props"></div>
-    </section
+        <h1><?=__('Properties')?></h1>
+        <div class="qti-content-props"></div>
+    </section>
 
 </div>
 <script type="text/javascript">

@@ -33,7 +33,8 @@ define([
         'creator',
         'itemSelectorPanel',
         'contentCreatorPanel',
-        'propertyPanel'
+        'propertyPanel',
+        'qtiElementProperties'
     ];
 
     /**
