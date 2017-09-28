@@ -1167,7 +1167,7 @@ msgid "You answered all %s question(s) in this section"
 msgstr ""
 
 msgid "You answered all %s question(s) in this test"
-msgstr ""
+msgstr "Hai risposto a tutte le domande e stai per chiudere la prova"
 
 msgid "You answered only %s of the %s question(s) in this section"
 msgstr ""
