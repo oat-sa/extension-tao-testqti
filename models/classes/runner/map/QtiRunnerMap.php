@@ -178,7 +178,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     break;
             }
 
-            $offset = $this->getPosition($context, $routeItems[0]);
+            $offset = $this->getOffsetPosition($context, $routeItems[0]);
             $offsetSection = 0;
             $lastSection   = null;
 
