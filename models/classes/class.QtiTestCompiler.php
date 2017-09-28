@@ -750,12 +750,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function compileTest(AssessmentTest $test) {
         common_Logger::t("Compiling QTI test definition...");
-        // Compiling a test may require extra processing time.
-        helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
-
-        $phpCompiledDoc = new PhpDocument('2.1', $test);
-        $data = $phpCompiledDoc->saveToString();
-        $this->getPrivateDirectory()->write(TAOQTITEST_COMPILED_FILENAME, $data);
+        $this->getPrivateDirectory()->write(TAOQTITEST_COMPILED_FILENAME, serialize($test));
         common_Logger::d("QTI-PHP Test Compilation file saved to stream.");
     }
     
