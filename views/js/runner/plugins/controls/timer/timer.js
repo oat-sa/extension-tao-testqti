@@ -470,51 +470,14 @@ define([
                         .on('enableitem', doEnable)
                         .on('disableitem', doDisable)
                         .after('renderitem', doEnable)
-                        .before('skip', function(e, type, scope, position) {
-                            var context = testRunner.getTestContext();
-                            var testDataBeforeSkip = testRunner.getTestData();
-                            var config = testDataBeforeSkip && testDataBeforeSkip.config;
-                            var timerConfig = config && config.timer || {};
-                            var options = context && context.options || {};
-
-                            var skipPromise = new Promise(function(resolve, reject) {
-                               if (leaveTimedSection('next', scope, position) && !options.noExitTimedSectionWarning && !timerConfig.keepUpToTimeout) {
-                                    testRunner.trigger(
-                                        'confirm.exittimed',
-                                        messages.getExitMessage(exitMessage, 'section', testRunner),
-                                        resolve,
-                                        reject,
-                                        {
-                                            buttons: {
-                                                labels: {
-                                                    ok : __('Close this Section'),
-                                                    cancel : __('Review my Answers')
-                                                }
-                                            }
-                                        });
-                                } else {
-                                    resolve();
-                                }
-                            });
-
-                            skipPromise
-                                .catch(function cancelSkip() {
-                                    // Use `defer` to be sure the timer resume will occur after the move event is
-                                    // finished to be handled. Otherwise, the duration plugin will be frozen and
-                                    // the additional time will not be taken into account!
-                                    _.defer(function() {
-                                        testRunner.trigger('enableitem enablenav');
-                                    });
-                                });
-
-                            return skipPromise;
-                        })
-                        .before('move', function(e, type, scope, position) {
+                        .before('move skip', function(e, type, scope, position) {
                             var context = testRunner.getTestContext();
                             var testDataBeforeMove = testRunner.getTestData();
                             var config = testDataBeforeMove && testDataBeforeMove.config;
                             var timerConfig = config && config.timer || {};
                             var options = context && context.options || {};
+                            type = type ? type : 'next';
+
                             var movePromise = new Promise(function(resolve, reject) {
                                 // endTestWarning has already been displayed, so we don't repeat the warning
                                 if (context.isLast && options.endTestWarning) {
