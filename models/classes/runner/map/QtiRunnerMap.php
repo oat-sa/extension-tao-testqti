@@ -322,10 +322,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
         if (empty($itemInfos['informational'])) {
             $target['stats']['questions'] ++;
-        }
 
-        if (!empty($itemInfos['answered'])) {
-            $target['stats']['answered'] ++;
+            if (!empty($itemInfos['answered'])) {
+                $target['stats']['answered'] ++;
+            }
         }
 
         if (!empty($itemInfos['flagged'])) {
