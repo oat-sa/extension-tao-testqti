@@ -60,7 +60,7 @@
 
         </div>
         <h1><?=__('Properties')?></h1>
-        <div class="qti-content-props"></div>
+        <div class="qti-widget-properties"></div>
     </section>
 
 </div>

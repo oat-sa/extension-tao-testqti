@@ -277,7 +277,14 @@ define([
 
             modelToEditor();
 
+            // Create the Qti-ckEditor instance
+
             qtiContentCreator.init(areaBroker, $rubricBlockContent);
+
+            $rubricBlockContent.on('editorfocus', function() {
+                // close all properties forms and turn off their related button
+                areaBroker.getPropertyPanelArea().children('.props').hide().trigger('propclose.propview');
+            });
 
             // editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
             // editor.on('change', function () {
