@@ -101,13 +101,13 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $href = $indexFile->read();
         } else {
             if (!isset($this->itemHrefIndex)) {
-            $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+                $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
                 $this->itemHrefIndex = $storage->loadItemHrefIndex($context->getTestExecutionUri());
-        }
+            }
 
             if (isset($this->itemHrefIndex[$itemIdentifier])) {
                 $href = $this->itemHrefIndex[$itemIdentifier];
-        }
+            }
         }
         
         return $href;
@@ -162,7 +162,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $this->itemHrefIndex = [];
             $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getCurrentAssessmentItemRef()->getIdentifier());
             \common_Logger::t('Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package'));
-            
+
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 
@@ -189,8 +189,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     }
                     $sectionId = $section->getIdentifier();
                     $itemId = $itemRef->getIdentifier();
-                    $itemDefinition = $itemRef->getHref();
-                    $itemUri = strstr($itemDefinition, '|', true);
                     
                     if ($lastPart != $partId) {
                         $offsetPart = 0;
@@ -204,6 +202,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if ($forceTitles) {
                         $label = __($uniqueTitle, $offsetSection + 1);
                     } else {
+                        $itemUri = strstr($itemRef->getHref(), '|', true);
                         if ($useTitle) {
                             $label = $context->getItemIndexValue($itemUri, 'title');
                         } else {
@@ -227,8 +226,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
                     $itemInfos = [
                         'id' => $itemId,
-                        'uri' => $itemUri,
-                        'definition' => $itemDefinition,
                         'label' => $label,
                         'position' => $offset,
                         'positionInPart' => $offsetPart,
@@ -254,8 +251,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'identifier' => $itemId,
                         'section' => $sectionId,
                         'part' => $partId,
-                        'position' => $offset,
-                        'uri' => $itemUri,
+                        'position' => $offset
                     ];
                     
                     if (!isset($map['parts'][$partId])) {
@@ -294,12 +290,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 }
                 
             }
-                // fallback in case of the delivery was compiled without the index of item href
-                if ($shouldBuildItemHrefIndex) {
-                    \common_Logger::t('Store index of item href into the test state storage');
-                    $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
-                    $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
-                }
+            // fallback in case of the delivery was compiled without the index of item href
+            if ($shouldBuildItemHrefIndex) {
+                \common_Logger::t('Store index of item href into the test state storage');
+                $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+                $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
+            }
         }
         
         return $map;
