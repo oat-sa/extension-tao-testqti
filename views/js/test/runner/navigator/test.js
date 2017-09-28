@@ -78,7 +78,7 @@ define([
     QUnit.test('is moving to the next item inside a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(5);
+        QUnit.expect(4);
 
         updatedContext = testNavigator(testData, testContexts.context1, testMap).nextItem();
 
@@ -112,7 +112,7 @@ define([
     QUnit.test('is moving to the next item over a testPart', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        QUnit.expect(5);
 
         updatedContext = testNavigator(testData, testContexts.context3, testMap).nextItem();
 
@@ -126,12 +126,11 @@ define([
     QUnit.test('is moving to the next item over timed sections', function(assert) {
         var updatedContext;
 
-        QUnit.expect(7);
+        QUnit.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context4, testMap).nextItem();
 
         assert.equal(updatedContext.itemIdentifier, 'item-7', 'The updated context contains the correct item identifier');
-        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178142091170+|https:\/\/act.krampstud.io\/tao.rdf#i149881178178341171-', 'The updated context contains the correct item definition');
         assert.equal(updatedContext.itemPosition, 6, 'The updated context contains the correct item position');
         assert.equal(updatedContext.sectionId, 'assessmentSection-3', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
@@ -161,7 +160,7 @@ define([
     QUnit.test('is moving to the previous item inside a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(5);
+        QUnit.expect(4);
 
         updatedContext = testNavigator(testData, testContexts.context2, testMap).previousItem();
 
@@ -176,12 +175,11 @@ define([
     QUnit.test('is moving to the next section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(7);
+        QUnit.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context4, testMap).nextSection();
 
         assert.equal(updatedContext.itemIdentifier, 'item-7', 'The updated context contains the correct item identifier');
-        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178142091170+|https:\/\/act.krampstud.io\/tao.rdf#i149881178178341171-', 'The updated context contains the correct item definition');
         assert.equal(updatedContext.itemPosition, 6, 'The updated context contains the correct item position');
         assert.equal(updatedContext.sectionId, 'assessmentSection-3', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
@@ -201,12 +199,11 @@ define([
     QUnit.test('is jumping to the 2nd previous item', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        QUnit.expect(5);
 
         updatedContext = testNavigator(testData, testContexts.context4, testMap).jumpItem(3);
 
         assert.equal(updatedContext.itemIdentifier, 'item-4', 'The updated context contains the correct item identifier');
-        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178196711164+|https:\/\/act.krampstud.io\/tao.rdf#i149881178182901165-', 'The updated context contains the correct item definition');
         assert.equal(updatedContext.itemPosition, 3, 'The updated context contains the correct item position');
         assert.equal(updatedContext.sectionId, 'assessmentSection-2', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
