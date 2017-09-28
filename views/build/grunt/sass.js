@@ -13,11 +13,23 @@ module.exports = function(grunt) {
     sass.taoqtitest.files[root + 'css/new-test-runner.css'] = root + 'scss/new-test-runner.scss';
     sass.taoqtitest.files[root + 'css/plugins/key-navigation.css'] = root + 'scss/plugins/key-navigation.scss';
 
+    sass.taoqtitestplugins = {};
+    sass.taoqtitestplugins.files = {};
+    sass.taoqtitestplugins.files[root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.css'] = root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.scss';
+
     watch.taoqtitestsass = {
         files : [root + 'scss/**/*.scss'],
         tasks : ['sass:taoqtitest', 'notify:taoqtitestsass'],
         options : {
             debounceDelay : 1000
+        }
+    };
+
+    watch.taoqtitestpluginssass = {
+        files: [root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.scss'],
+        tasks: ['sass:taoqtitestplugins', 'notify:taoqtitestsass'],
+        options: {
+            debounceDelay: 1000
         }
     };
 
@@ -33,5 +45,5 @@ module.exports = function(grunt) {
     grunt.config('notify', notify);
 
     //register an alias for main build
-    grunt.registerTask('taoqtitestsass', ['sass:taoqtitest']);
+    grunt.registerTask('taoqtitestsass', ['sass:taoqtitest', 'sass:taoqtitestplugins']);
 };

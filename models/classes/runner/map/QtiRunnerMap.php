@@ -131,7 +131,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $context
             );
         }
-        
+
         $map = [
             'parts' => [],
             'jumps' => []
@@ -224,7 +224,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if ($shouldBuildItemHrefIndex) {
                         $this->itemHrefIndex[$itemId] = $itemRef->getHref();
                     }
-                    
+
                     $itemInfos = [
                         'id' => $itemId,
                         'uri' => $itemUri,
@@ -324,12 +324,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
         if (empty($itemInfos['informational'])) {
             $target['stats']['questions'] ++;
+
+            if (!empty($itemInfos['answered'])) {
+                $target['stats']['answered'] ++;
+            }
         }
-        
-        if (!empty($itemInfos['answered'])) {
-            $target['stats']['answered'] ++;
-        }
-        
+
         if (!empty($itemInfos['flagged'])) {
             $target['stats']['flagged'] ++;
         }

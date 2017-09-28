@@ -78,11 +78,10 @@ define([
     QUnit.test('is moving to the next item inside a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        QUnit.expect(5);
 
         updatedContext = testNavigator(testData, testContexts.context1, testMap).nextItem();
 
-        assert.equal(typeof updatedContext, 'object', 'The nextItem method creates an object');
         assert.equal(updatedContext.itemIdentifier, 'item-2', 'The updated context contains the correct item identifier');
         assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147|https:\/\/act.krampstud.io\/tao.rdf#i149881178170141160+|https:\/\/act.krampstud.io\/tao.rdf#i14988117812381161-', 'The updated context contains the correct item definition');
         assert.equal(updatedContext.itemPosition, 1, 'The updated context contains the correct item position');
@@ -97,22 +96,28 @@ define([
 
         updatedContext = testNavigator(testData, testContexts.context2, testMap).nextItem();
 
-        assert.equal(typeof updatedContext, 'object', 'The nextItem method creates an object');
         assert.equal(updatedContext.itemIdentifier, 'item-4', 'The updated context contains the correct item identifier');
         assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178196711164+|https:\/\/act.krampstud.io\/tao.rdf#i149881178182901165-', 'The updated context contains the correct item definition');
         assert.equal(updatedContext.itemPosition, 3, 'The updated context contains the correct item position');
         assert.equal(updatedContext.sectionId, 'assessmentSection-2', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
+        assert.deepEqual(updatedContext.timeConstraints, [{
+            "label": "Rubric block",
+            "source": "assessmentSection-2",
+            "seconds": "60",
+            "extraTime": 0,
+            "allowLateSubmission": false,
+            "qtiClassName": "assessmentSection"
+        }], "The updated context contains the new section time constraints");
     });
 
     QUnit.test('is moving to the next item over a testPart', function(assert) {
         var updatedContext;
 
-        QUnit.expect(7);
+        QUnit.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context3, testMap).nextItem();
 
-        assert.equal(typeof updatedContext, 'object', 'The nextItem method creates an object');
         assert.equal(updatedContext.itemIdentifier, 'item-15', 'The updated context contains the correct item identifier');
         assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881143336021129|https:\/\/act.krampstud.io\/tao.rdf#i149881178297961186+|https:\/\/act.krampstud.io\/tao.rdf#i149881178278141187-', 'The updated context contains the correct item definition');
         assert.equal(updatedContext.itemPosition, 14, 'The updated context contains the correct item position');
@@ -121,16 +126,48 @@ define([
         assert.equal(updatedContext.isLinear, true, 'The updated context contains the correct isLinear option');
     });
 
+    QUnit.test('is moving to the next item over timed sections', function(assert) {
+        var updatedContext;
+
+        QUnit.expect(7);
+
+        updatedContext = testNavigator(testData, testContexts.context4, testMap).nextItem();
+
+        assert.equal(updatedContext.itemIdentifier, 'item-7', 'The updated context contains the correct item identifier');
+        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178142091170+|https:\/\/act.krampstud.io\/tao.rdf#i149881178178341171-', 'The updated context contains the correct item definition');
+        assert.equal(updatedContext.itemPosition, 6, 'The updated context contains the correct item position');
+        assert.equal(updatedContext.sectionId, 'assessmentSection-3', 'The updated context contains the correct section id');
+        assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
+        assert.equal(updatedContext.isLinear, false, 'The updated context contains the correct isLinear option');
+        assert.deepEqual(updatedContext.timeConstraints, [{
+            "label": "Timed section",
+            "source": "assessmentSection-3",
+            "seconds": "90",
+            "extraTime": 0,
+            "allowLateSubmission": false,
+            "qtiClassName": "assessmentSection"
+        }], "The updated context contains the new section time constraints");
+
+    });
+
+    QUnit.test('is moving to the next item to the end', function(assert) {
+        var updatedContext;
+
+        QUnit.expect(1);
+
+        updatedContext = testNavigator(testData, testContexts.context5, testMap).nextItem();
+        assert.equal(updatedContext, false, 'There is no next item');
+    });
+
     QUnit.module('navigator.previousItem');
 
     QUnit.test('is moving to the previous item inside a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        QUnit.expect(5);
 
         updatedContext = testNavigator(testData, testContexts.context2, testMap).previousItem();
 
-        assert.equal(typeof updatedContext, 'object', 'The nextItem method creates an object');
         assert.equal(updatedContext.itemIdentifier, 'item-2', 'The updated context contains the correct item identifier');
         assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168574691147|https:\/\/act.krampstud.io\/tao.rdf#i149881178170141160+|https:\/\/act.krampstud.io\/tao.rdf#i14988117812381161-', 'The updated context contains the correct item definition');
         assert.equal(updatedContext.itemPosition, 1, 'The updated context contains the correct item position');
@@ -138,4 +175,68 @@ define([
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
     });
 
+    QUnit.module('navigator.nextSection');
+
+    QUnit.test('is moving to the next section', function(assert) {
+        var updatedContext;
+
+        QUnit.expect(7);
+
+        updatedContext = testNavigator(testData, testContexts.context4, testMap).nextSection();
+
+        assert.equal(updatedContext.itemIdentifier, 'item-7', 'The updated context contains the correct item identifier');
+        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178142091170+|https:\/\/act.krampstud.io\/tao.rdf#i149881178178341171-', 'The updated context contains the correct item definition');
+        assert.equal(updatedContext.itemPosition, 6, 'The updated context contains the correct item position');
+        assert.equal(updatedContext.sectionId, 'assessmentSection-3', 'The updated context contains the correct section id');
+        assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
+        assert.equal(updatedContext.isLinear, false, 'The updated context contains the correct isLinear option');
+        assert.deepEqual(updatedContext.timeConstraints, [{
+            "label": "Timed section",
+            "source": "assessmentSection-3",
+            "seconds": "90",
+            "extraTime": 0,
+            "allowLateSubmission": false,
+            "qtiClassName": "assessmentSection"
+        }], "The updated context contains the new section time constraints");
+    });
+
+    QUnit.module('navigator.jumpItem');
+
+    QUnit.test('is jumping to the 2nd previous item', function(assert) {
+        var updatedContext;
+
+        QUnit.expect(6);
+
+        updatedContext = testNavigator(testData, testContexts.context4, testMap).jumpItem(3);
+
+        assert.equal(updatedContext.itemIdentifier, 'item-4', 'The updated context contains the correct item identifier');
+        assert.equal(updatedContext.itemDefinition, 'https:\/\/act.krampstud.io\/tao.rdf#i149881168366501144|https:\/\/act.krampstud.io\/tao.rdf#i149881178196711164+|https:\/\/act.krampstud.io\/tao.rdf#i149881178182901165-', 'The updated context contains the correct item definition');
+        assert.equal(updatedContext.itemPosition, 3, 'The updated context contains the correct item position');
+        assert.equal(updatedContext.sectionId, 'assessmentSection-2', 'The updated context contains the correct section id');
+        assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
+        assert.deepEqual(updatedContext.timeConstraints, [{
+            "label": "Rubric block",
+            "source": "assessmentSection-2",
+            "seconds": "60",
+            "extraTime": 0,
+            "allowLateSubmission": false,
+            "qtiClassName": "assessmentSection"
+        }], "The updated context contains the new section time constraints");
+
+    });
+
+    QUnit.module('navigator.navigate');
+
+    QUnit.test('executes the correct movement', function(assert) {
+        var aTestNaviagtor = testNavigator(testData, testContexts.context4, testMap);
+
+        QUnit.expect(5);
+
+        assert.deepEqual(aTestNaviagtor.navigate('next', 'item'), aTestNaviagtor.nextItem());
+        assert.deepEqual(aTestNaviagtor.navigate('previous', 'item'), aTestNaviagtor.previousItem());
+        assert.deepEqual(aTestNaviagtor.navigate('next', 'section'), aTestNaviagtor.nextSection());
+        assert.deepEqual(aTestNaviagtor.navigate('jump', 'item', 3), aTestNaviagtor.jumpItem(3));
+
+        assert.equal(typeof aTestNaviagtor.navigate('forward', 'test-part', 3), 'undefined');
+    });
 });
