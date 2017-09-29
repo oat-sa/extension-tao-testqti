@@ -53,14 +53,31 @@ define([
      * When we are unable to navigate offline
      * @type {Error}
      */
-    var offlineNavError = new Error(__('We are unable to connect to the server to retrieve the next item.'));
-    _.assign(offlineNavError, {
-        success : false,
-        source: 'navigator',
-        purpose: 'proxy',
-        type: 'Item not found',
-        code : 404
-    });
+    var offlineNavError = _.assign(
+        new Error(__('We are unable to connect to the server to retrieve the next item.')),
+        {
+            success : false,
+            source: 'navigator',
+            purpose: 'proxy',
+            type: 'nav',
+            code : 404
+        }
+    );
+
+    /**
+     * When we are unable to navigate offline
+     * @type {Error}
+     */
+    var offlineExitError = _.assign(
+        new Error(__('We are unable to connect to the submit your results.')),
+        {
+            success : false,
+            source: 'navigator',
+            purpose: 'proxy',
+            type: 'exit',
+            code : 404
+        }
+    );
 
     /**
      * Overrides the qtiServiceProxy with the precaching behavior
@@ -159,6 +176,8 @@ define([
                 var testNavigator;
                 var newTestContext;
 
+                var blockingActions = ['exitTest', 'timeout'];
+
                 var testData    = this.getDataHolder().get('testData');
                 var testContext = this.getDataHolder().get('testContext');
                 var testMap     = this.getDataHolder().get('testMap');
@@ -169,6 +188,14 @@ define([
                         self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
                     );
                 };
+
+                //we just block those actions
+                if( _.contains(blockingActions, action) ||
+                    ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
+
+                    storeAction();
+                    throw offlineExitError;
+                }
 
                 // try the navigation if the actionParams context meaningful data
                 if( actionParams.direction && actionParams.scope){
