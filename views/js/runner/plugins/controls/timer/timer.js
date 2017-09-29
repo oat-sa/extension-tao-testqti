@@ -470,12 +470,13 @@ define([
                         .on('enableitem', doEnable)
                         .on('disableitem', doDisable)
                         .after('renderitem', doEnable)
-                        .before('move', function(e, type, scope, position) {
+                        .before('move skip', function(e, type, scope, position) {
                             var context = testRunner.getTestContext();
                             var testDataBeforeMove = testRunner.getTestData();
                             var config = testDataBeforeMove && testDataBeforeMove.config;
                             var timerConfig = config && config.timer || {};
                             var options = context && context.options || {};
+                            type = type ? type : 'next';
 
                             var movePromise = new Promise(function(resolve, reject) {
                                 // endTestWarning has already been displayed, so we don't repeat the warning

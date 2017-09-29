@@ -24,7 +24,6 @@ define([
     'lodash',
     'helpers',
     'i18n',
-    'html5-history-api',
     'ui/feedback',
     'core/databindcontroller',
     'taoQtiTest/controller/creator/modelOverseer',
@@ -45,7 +44,6 @@ define([
     _,
     helpers,
     __,
-    history,
     feedback,
     DataBindController,
     modelOverseerFactory,
@@ -100,10 +98,7 @@ define([
             //back button
             $('#authoringBack').on('click', function(e){
                 e.preventDefault();
-
-                if (history) {
-                    history.back();
-                }
+                window.history.back();
             });
 
             //set up the ItemView, give it a configured loadItems ref
