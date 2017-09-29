@@ -375,7 +375,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
      /**
       * Get the relative position of the given RouteItem within the test.
-      * The position takes adaptive sections (and count items instead of placeholders).
+      * The position takes into account adaptive sections (and count items instead of placeholders).
       *
       * @param RunnerServiceContext $context
       * @param RouteItem $routeItem
@@ -426,6 +426,14 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         return $constraint;
     }
 
+     /**
+      * Get the label of a Map item
+      *
+      * @param RunnerServiceContext $context
+      * @param string $itemUri
+      * @param int $useTitle 
+      * @return string the title
+      */
     private function getItemLabel(RunnerServiceContext $context, $itemUri, $useTitle = false)
     {
         $label = '';
