@@ -132,6 +132,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      * @param RunnerConfig $config The runner config
      * @param string $scope the target scope, section by default
      * @return mixed
+     * @throws \common_exception_InvalidArgumentType
      */
     public function getScopedMap(RunnerServiceContext $context, RunnerConfig $config, $scope = RunnerMap::SCOPE_SECTION)
     {
