@@ -16,6 +16,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -84,9 +85,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
     /**
      * Gets AssessmentItemRef's Href by AssessmentItemRef Identifier.
-     * 
+     *
      * Returns the AssessmentItemRef href attribute value from a given $identifier.
-     * 
+     *
      * @param QtiRunnerServiceContext $context
      * @param string $itemIdentifier
      * @return boolean|string The href value corresponding to the given $identifier. If no corresponding href is found, false is returned.
@@ -109,10 +110,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $href = $this->itemHrefIndex[$itemIdentifier];
             }
         }
-        
+
         return $href;
     }
-    
+
     /**
      * Builds the map of an assessment test
      * @param RunnerServiceContext $context The test context
@@ -121,6 +122,19 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      * @throws \common_exception_InvalidArgumentType
      */
     public function getMap(RunnerServiceContext $context, RunnerConfig $config)
+    {
+        return $this->getScopedMap($context, $config, RunnerMap::SCOPE_TEST);
+    }
+
+    /**
+     * Get the testMap for the current context but limited to the given scope
+     * @param RunnerServiceContext $context The test context
+     * @param RunnerConfig $config The runner config
+     * @param string $scope the target scope, section by default
+     * @return mixed
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getScopedMap(RunnerServiceContext $context, RunnerConfig $config, $scope = RunnerMap::SCOPE_SECTION)
     {
         if (!($context instanceof QtiRunnerServiceContext)) {
             throw new \common_exception_InvalidArgumentType(
@@ -133,8 +147,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
 
         $map = [
-            'parts' => [],
-            'jumps' => []
+            'scope' => $scope,
+            'parts' => []
         ];
 
         // get config for the sequence number option
@@ -149,14 +163,25 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $session = $context->getTestSession();
         $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
         if ($session->isRunning() !== false) {
-            $route = $session->getRoute();
-            $store = $session->getAssessmentItemSessionStore();
-            $routeItems = $route->getAllRouteItems();
-            $offset = $route->getRouteItemPosition($routeItems[0]);
-            $offsetPart = 0;
+            $route         = $session->getRoute();
+            $store         = $session->getAssessmentItemSessionStore();
+
+            switch($scope){
+                case RunnerMap::SCOPE_SECTION :
+                    $routeItems = $route->getRouteItemsByAssessmentSection($session->getCurrentAssessmentSection());
+                    break;
+                case RunnerMap::SCOPE_PART :
+                    $routeItems = $route->getRouteItemsByTestPart($session->getCurrentTestPart());
+                    break;
+                case RunnerMap::SCOPE_TEST:
+                default:
+                    $routeItems = $route->getAllRouteItems();
+                    break;
+            }
+
+            $offset = $this->getOffsetPosition($context, $routeItems[0]);
             $offsetSection = 0;
-            $lastPart = null;
-            $lastSection = null;
+            $lastSection   = null;
 
             // fallback index in case of the delivery was compiled without the index of item href
             $this->itemHrefIndex = [];
@@ -165,11 +190,11 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
-                
+
                 $catSession = false;
                 $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
                 $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
-                
+
                 foreach ($itemRefs as $itemRef) {
                     $occurrence = ($catSession !== false) ? 0 : $routeItem->getOccurence();
 
@@ -189,11 +214,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     }
                     $sectionId = $section->getIdentifier();
                     $itemId = $itemRef->getIdentifier();
-                    
-                    if ($lastPart != $partId) {
-                        $offsetPart = 0;
-                        $lastPart = $partId;
-                    }
+
                     if ($lastSection != $sectionId) {
                         $offsetSection = 0;
                         $lastSection = $sectionId;
@@ -203,20 +224,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $label = __($uniqueTitle, $offsetSection + 1);
                     } else {
                         $itemUri = strstr($itemRef->getHref(), '|', true);
-                        if ($useTitle) {
-                            $label = $context->getItemIndexValue($itemUri, 'title');
-                        } else {
-                            $label = '';
-                        }
-                        
-                        if (!$label) {
-                            $label = $context->getItemIndexValue($itemUri, 'label');
-                        }
-                        
-                        if (!$label) {
-                            $item = new \core_kernel_classes_Resource($itemUri);
-                            $label = $item->getLabel();
-                        }
+                        $label = $this->getItemLabel($context, $itemUri, $useTitle);
                     }
 
                     // fallback in case of the delivery was compiled without the index of item href
@@ -228,16 +236,13 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'id' => $itemId,
                         'label' => $label,
                         'position' => $offset,
-                        'positionInPart' => $offsetPart,
-                        'positionInSection' => $offsetSection,
-                        'index' => $offsetSection + 1,
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
                         'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
                     ];
-                    
+
                     if ($checkInformational) {
                         $itemInfos['informational'] = ($itemSession) ? TestRunnerUtils::isItemInformational($routeItem, $itemSession) : false;
                     }
@@ -245,16 +250,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if($itemRef->hasTimeLimits()){
                         $itemInfos['timeConstraint'] = $this->getTimeConstraint($session, $itemRef, $navigationMode);
                     }
-                    
-                    // update the map
-                    $map['jumps'][] = [
-                        'identifier' => $itemId,
-                        'section' => $sectionId,
-                        'part' => $partId,
-                        'position' => $offset
-                    ];
-                    
-                    if (!isset($map['parts'][$partId])) {
+
+                    if (!isset($map['parts'][$partId]) && $scope != RunnerMap::SCOPE_SECTION) {
                         $map['parts'][$partId]['id'] = $partId;
                         $map['parts'][$partId]['label'] = $partId;
                         $map['parts'][$partId]['position'] = $offset;
@@ -264,31 +261,37 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                             $map['parts'][$partId]['timeConstraint'] =  $this->getTimeConstraint($session, $testPart, $navigationMode);
                         }
                     }
-                    
+
                     if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
                         $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
                         $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
                         $map['parts'][$partId]['sections'][$sectionId]['isCatAdaptive'] = CatUtils::isAssessmentSectionAdaptive($section);
                         $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
 
-
                         if($section->hasTimeLimits()){
                             $map['parts'][$partId]['sections'][$sectionId]['timeConstraint'] = $this->getTimeConstraint($session, $section, $navigationMode);
                         }
                     }
-                    
+
                     $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
-                    
+
                     // update the stats
-                    $this->updateStats($map, $itemInfos);
-                    $this->updateStats($map['parts'][$partId], $itemInfos);
-                    $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
-                    
+                    if($scope == RunnerMap::SCOPE_TEST) {
+                        $this->updateStats($map, $itemInfos);
+                        $this->updateStats($map['parts'][$partId], $itemInfos);
+                        $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    }
+                    if($scope == RunnerMap::SCOPE_PART) {
+                        $this->updateStats($map['parts'][$partId], $itemInfos);
+                        $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    }
+                    if($scope == RunnerMap::SCOPE_SECTION) {
+                        $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
+                    }
+
                     $offset ++;
-                    $offsetPart ++;
                     $offsetSection ++;
                 }
-                
             }
             // fallback in case of the delivery was compiled without the index of item href
             if ($shouldBuildItemHrefIndex) {
@@ -297,7 +300,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
             }
         }
-        
+
         return $map;
     }
 
@@ -329,21 +332,21 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         if (!empty($itemInfos['flagged'])) {
             $target['stats']['flagged'] ++;
         }
-        
+
         if (!empty($itemInfos['viewed'])) {
             $target['stats']['viewed'] ++;
         }
-        
+
         $target['stats']['total'] ++;
     }
-    
+
     /**
      * Get AssessmentItemRef objects.
-     * 
+     *
      * Get the AssessmentItemRef objects bound to a RouteItem object. In most of cases, an array of a single
      * AssessmentItemRef object will be returned. But in case of the given $routeItem is a CAT Adaptive Placeholder,
      * multiple AssessmentItemRef objects might be returned.
-     * 
+     *
      * @param RunnerServiceContext $context
      * @param RouteItem $routeItem
      * @param mixed $catSession A reference to a variable that will be fed with the CatSession object related to the $routeItem. In case the $routeItem is not bound to a CatSession object, $catSession will be set with false.
@@ -356,19 +359,52 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $compilationDirectory = $context->getCompilationDirectory()['private'];
         $itemRefs = [];
         $catSession = false;
-        
+
         if ($context->isAdaptive($routeItem->getAssessmentItemRef())) {
             $catSession = $context->getCatSession($routeItem);
-            
+
             $itemRefs = $catService->getAssessmentItemRefByIdentifiers(
-                $compilationDirectory, 
+                $compilationDirectory,
                 $context->getShadowTest($routeItem)
             );
         } else {
             $itemRefs[] = $routeItem->getAssessmentItemRef();
         }
-        
+
         return $itemRefs;
+    }
+
+     /**
+      * Get the relative position of the given RouteItem within the test.
+      * The position takes into account adaptive sections (and count items instead of placeholders).
+      *
+      * @param RunnerServiceContext $context
+      * @param RouteItem $routeItem
+      * @return int the offset position
+      */
+     protected function getOffsetPosition(RunnerServiceContext $context, RouteItem $currentRouteItem)
+     {
+        $session = $context->getTestSession();
+        $route = $session->getRoute();
+        $routeCount = $route->count();
+
+        $finalPosition = 0;
+
+        for ($i = 0; $i < $routeCount; $i++) {
+            $routeItem = $route->getRouteItemAt($i);
+
+            if ($routeItem !== $currentRouteItem) {
+                if (!$context->isAdaptive($routeItem->getAssessmentItemRef())) {
+                    $finalPosition++;
+                } else {
+                    $finalPosition += count($context->getShadowTest($routeItem));
+                }
+            } else {
+                break;
+            }
+        }
+
+        return $finalPosition;
     }
 
     /**
@@ -389,5 +425,32 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         );
         $constraint->setTimer($session->getTimer());
         return $constraint;
+    }
+
+     /**
+      * Get the label of a Map item
+      *
+      * @param RunnerServiceContext $context
+      * @param string $itemUri
+      * @param int $useTitle 
+      * @return string the title
+      */
+    private function getItemLabel(RunnerServiceContext $context, $itemUri, $useTitle = false)
+    {
+        $label = '';
+
+        if ($useTitle) {
+            $label = $context->getItemIndexValue($itemUri, 'title');
+        }
+
+        if (!$label) {
+            $label = $context->getItemIndexValue($itemUri, 'label');
+        }
+
+        if (!$label) {
+            $item = new \core_kernel_classes_Resource($itemUri);
+            $label = $item->getLabel();
+        }
+        return $label;
     }
 }

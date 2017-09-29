@@ -29,10 +29,10 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '15.15.1',
+    'version'     => '16.0.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
-        'taoTests'   => '>=6.4.0',
+        'taoTests'   => '>=6.5.0',
         'taoQtiItem' => '>=10.1.0',
         'tao'        => '>=12.12.0',
         'generis'    => '>=3.36.0',
