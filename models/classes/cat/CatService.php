@@ -170,7 +170,8 @@ class CatService extends ConfigurableService
         
         $data = $privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php");
         
-        return unserialize($data);
+        $component = unserialize($data);
+        return $component->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
     /**
