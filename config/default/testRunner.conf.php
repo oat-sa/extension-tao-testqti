@@ -369,6 +369,33 @@ return array(
             'action' => 'messages',
 
             /**
+             * List of actions which can be send to server using common communication channel
+             * @type array
+             */
+            'syncActions' => array(
+                /**
+                 * Action name
+                 * @type array
+                 */
+                'move' => array(
+                    /**
+                     * Whether sending of action request can be postponed (true) of should be send immediately (false).
+                     * @type string
+                     */
+                    'deferred' => false,
+                ),
+                'skip' => array(
+                    'deferred' => false,
+                ),
+                'storeTraceData' => array(
+                    'deferred' => true,
+                ),
+                'timeout' => array(
+                    'deferred' => false,
+                ),
+            ),
+
+            /**
              * The address of the remote service to connect.
              * When this address is provided it is used instead of url building from extension/controller/action.
              * @type string

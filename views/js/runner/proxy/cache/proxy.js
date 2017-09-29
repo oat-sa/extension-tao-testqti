@@ -89,6 +89,9 @@ define([
             //configuration params, that comes on every request/params
             this.requestConfig = {};
 
+            //communication config needs to synchronize actions
+            this.communicationConfig = {};
+
             //preload at least this number of items
             this.cacheAmount = 1;
 
@@ -221,14 +224,18 @@ define([
                 //perform the request, but fallback on offline if the request itself fails
                 var runRequestThenOffline = function runRequestThenOffline(){
                     var request;
-                    //todo: actions which can be sent using 'sync' channel should be given from SynchronisationService service.
-                    if (action === 'storeTraceData' || action === 'move') {
-                        request = self.send('sync', [{
-                            action: action,
-                            parameters: self.prepareParams(_.defaults(actionParams, self.requestConfig)),
-                            timestamp: Date.now() / 1000
-                        }]);
+                    if (self.communicationConfig.syncActions[action]) {
+                        request = new Promise(function(resolve){
+                            self.scheduleAction(action, actionParams).then(function(){
+                                if (!self.communicationConfig.syncActions[action].deferred) {
+                                    self.syncOfflineData().then(function (result) {
+                                        resolve(result);
+                                    });
+                                }
+                            });
+                        });
                     } else {
+                        //fallback to direct request
                         request = self.request(url, actionParams);
                     }
 
@@ -301,6 +308,7 @@ define([
          */
         init: function init(config, params) {
             var self = this;
+            var result;
 
             //those needs to be in each request params.
             this.requestConfig = _.pick(config, ['testDefinition', 'testCompilation', 'serviceCallId']);
@@ -350,7 +358,12 @@ define([
             this.syncOfflineData();
 
             //run the init
-            return qtiServiceProxy.init.call(this, config, params);
+            result = qtiServiceProxy = qtiServiceProxy.init.call(this, config, params);
+
+            //communication config needs to synchronize actions
+            this.communicationConfig = self.configStorage.getCommunicationConfig();
+
+            return result;
         },
 
         /**

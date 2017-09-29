@@ -1590,5 +1590,26 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('14.1.5', '15.11.3');
+
+        if ($this->isVersion('15.11.3')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap']['communication']['syncActions'] = [
+                'move' => [
+                    'deferred' => false,
+                ],
+                'skip' => [
+                    'deferred' => false,
+                ],
+                'storeTraceData' => [
+                    'deferred' => true,
+                ],
+                'timeout' => [
+                    'deferred' => false,
+                ],
+            ];
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('15.12.0');
+        }
     }
 }
