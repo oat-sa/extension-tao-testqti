@@ -1589,6 +1589,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('14.1.5');
         }
 
-        $this->skip('14.1.5', '15.13.0');
+        $this->skip('14.1.5', '16.1.0');
     }
 }
