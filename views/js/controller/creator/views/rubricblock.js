@@ -279,7 +279,7 @@ define([
 
             // Create the Qti-ckEditor instance
 
-            qtiContentCreator.init(areaBroker, $rubricBlockContent);
+            qtiContentCreator.init(modelOverseer, areaBroker, $rubricBlockContent);
 
             $rubricBlockContent.on('editorfocus', function() {
                 // close all properties forms and turn off their related button
