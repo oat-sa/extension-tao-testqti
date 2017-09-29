@@ -763,7 +763,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      */
     protected function compileAdaptive(AssessmentTest $test)
     {
-        $phpDocument = new PhpDocument('2.1');
         $catService = $this->getServiceLocator()->get(CatService::SERVICE_ID);
         $catSectionMap = [];
 
@@ -808,8 +807,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     \common_Logger::d("QTI Adaptive Section with identifier '" . $current->getIdentifier() . "' found.");
                     
                     // Deal with AssessmentSection Compiling.
-                    $phpDocument->setDocumentComponent($current);
-                    $this->getPrivateDirectory()->write("adaptive-assessment-section-${sectionIdentifier}.php", $phpDocument->saveToString());
+                    $this->getPrivateDirectory()->write("adaptive-assessment-section-${sectionIdentifier}.php", serialize($current));
                     
                     foreach ($sectionParts->getKeys() as $sectionPartIdentifier) {
                         $sectionPart =  $sectionParts[$sectionPartIdentifier];
@@ -818,8 +816,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                             $sectionPartHref = $sectionPart->getHref();
                             
                             // Deal with AssessmentItemRef Compiling.
-                            $phpDocument->setDocumentComponent($sectionPart);
-                            $this->getPrivateDirectory()->write("adaptive-assessment-item-ref-${sectionPartIdentifier}.php", $phpDocument->saveToString());
+                            $this->getPrivateDirectory()->write("adaptive-assessment-item-ref-${sectionPartIdentifier}.php", serialize($sectionPart));
                             
                             unset($sectionParts[$sectionPartIdentifier]);
                         }

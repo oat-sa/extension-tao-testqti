@@ -132,10 +132,9 @@ class CatService extends ConfigurableService
      */
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
     {
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php"));
+        $data = $privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php");
         
-        return $doc->getDocumentComponent();
+        return unserialize($data);
     }
     
     /**
@@ -169,10 +168,9 @@ class CatService extends ConfigurableService
         $urlinfo = parse_url($placeholder->getHref());
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
         
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
+        $data = $privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php");
         
-        return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
+        return unserialize($data);
     }
     
     /**
