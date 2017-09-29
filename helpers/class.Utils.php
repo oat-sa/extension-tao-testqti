@@ -25,6 +25,7 @@ use oat\oatbox\service\ServiceManager;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\Directory;
+use oat\taoQtiTest\models\CompilationDataService;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -220,11 +221,13 @@ class taoQtiTest_helpers_Utils {
     static public function getTestDefinition($qtiTestCompilation)
     {
         $directoryIds = explode('|', $qtiTestCompilation);
-
-        $data = \tao_models_classes_service_FileStorage::singleton()
-            ->getDirectoryById($directoryIds[0])
-            ->read(TAOQTITEST_COMPILED_FILENAME);
-            
-        return unserialize($data);
+        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[0]);
+        
+        $compilationDataService = ServiceManager::getServiceManager()->get(CompilationDataService::SERVICE_ID);
+        
+        return $compilationDataService->readPhpCompilationData(
+            $directory,
+            TAOQTITEST_COMPILED_FILENAME
+        );
     }
 }

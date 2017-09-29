@@ -35,6 +35,7 @@ use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
+use oat\taoQtiTest\models\CompilationDataService;
 
 /**
  * Computerized Adaptive Testing Service
@@ -132,9 +133,12 @@ class CatService extends ConfigurableService
      */
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
     {
-        $data = $privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php");
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
         
-        return unserialize($data);
+        return $compilationDataService->readPhpCompilationData(
+            $privateCompilationDirectory,
+            "adaptive-assessment-item-ref-${identifier}.php"
+        );
     }
     
     /**
@@ -168,9 +172,12 @@ class CatService extends ConfigurableService
         $urlinfo = parse_url($placeholder->getHref());
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
         
-        $data = $privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php");
-        
-        $component = unserialize($data);
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $component = $compilationDataService->readPhpCompilationData(
+            $privateCompilationDirectory,
+            "adaptive-assessment-section-${adaptiveSectionId}.php"
+        );
+
         return $component->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
