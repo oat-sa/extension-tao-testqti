@@ -25,7 +25,6 @@
             "items": {
               "item-1": {
                 "id": "item-1",
-                "uri": "http://bertaoact/tao.rdf#i1486479622628292",
                 "label": "Item 1",
                 "position": 0,
                 "positionInPart": 0,
@@ -40,7 +39,6 @@
               },
               "item-2": {
                 "id": "item-2",
-                "uri": "http://bertaoact/tao.rdf#i1486479820205295",
                 "label": "Item 2",
                 "position": 1,
                 "positionInPart": 1,
@@ -55,7 +53,6 @@
               },
               "item-3": {
                 "id": "item-3",
-                "uri": "http://bertaoact/tao.rdf#i14864798372457299",
                 "label": "Item 3",
                 "position": 2,
                 "positionInPart": 2,
@@ -70,7 +67,6 @@
               },
               "item-4": {
                 "id": "item-4",
-                "uri": "http://bertaoact/tao.rdf#i14864798509152303",
                 "label": "Item 4",
                 "position": 3,
                 "positionInPart": 3,
@@ -85,7 +81,6 @@
               },
               "item-5": {
                 "id": "item-5",
-                "uri": "http://bertaoact/tao.rdf#i14864798661204307",
                 "label": "Item 5",
                 "position": 4,
                 "positionInPart": 4,
@@ -100,7 +95,6 @@
               },
               "item-6": {
                 "id": "item-6",
-                "uri": "http://bertaoact/tao.rdf#i14864798812357311",
                 "label": "Item 6",
                 "position": 5,
                 "positionInPart": 5,
@@ -115,7 +109,6 @@
               },
               "item-7": {
                 "id": "item-7",
-                "uri": "http://bertaoact/tao.rdf#i14864798984770315",
                 "label": "Item 7",
                 "position": 6,
                 "positionInPart": 6,
@@ -130,7 +123,6 @@
               },
               "item-8": {
                 "id": "item-8",
-                "uri": "http://bertaoact/tao.rdf#i1486479913571319",
                 "label": "Item 8",
                 "position": 7,
                 "positionInPart": 7,
@@ -145,7 +137,6 @@
               },
               "item-9": {
                 "id": "item-9",
-                "uri": "http://bertaoact/tao.rdf#i14864799289710323",
                 "label": "Item 9",
                 "position": 8,
                 "positionInPart": 8,
@@ -160,7 +151,6 @@
               },
               "item-10": {
                 "id": "item-10",
-                "uri": "http://bertaoact/tao.rdf#i14864799415251327",
                 "label": "Item 10",
                 "position": 9,
                 "positionInPart": 9,
@@ -196,62 +186,52 @@
       "identifier": "item-1",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 0,
-      "uri": "http://bertaoact/tao.rdf#i1486479622628292"
+      "position": 0
     }, {
       "identifier": "item-2",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 1,
-      "uri": "http://bertaoact/tao.rdf#i1486479820205295"
+      "position": 1
     }, {
       "identifier": "item-3",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 2,
-      "uri": "http://bertaoact/tao.rdf#i14864798372457299"
+      "position": 2
     }, {
       "identifier": "item-4",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 3,
-      "uri": "http://bertaoact/tao.rdf#i14864798509152303"
+      "position": 3
     }, {
       "identifier": "item-5",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 4,
-      "uri": "http://bertaoact/tao.rdf#i14864798661204307"
+      "position": 4
     }, {
       "identifier": "item-6",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 5,
-      "uri": "http://bertaoact/tao.rdf#i14864798812357311"
+      "position": 5
     }, {
       "identifier": "item-7",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 6,
-      "uri": "http://bertaoact/tao.rdf#i14864798984770315"
+      "position": 6
     }, {
       "identifier": "item-8",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 7,
-      "uri": "http://bertaoact/tao.rdf#i1486479913571319"
+      "position": 7
     }, {
       "identifier": "item-9",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 8,
-      "uri": "http://bertaoact/tao.rdf#i14864799289710323"
+      "position": 8
     }, {
       "identifier": "item-10",
       "section": "assessmentSection-1",
       "part": "testPart-1",
-      "position": 9,
-      "uri": "http://bertaoact/tao.rdf#i14864799415251327"
+      "position": 9
     }, {
     }],
     "stats": {
@@ -273,7 +253,6 @@
     "attemptDuration": 16,
     "isTimeout": false,
     "itemIdentifier": "item-1",
-    "itemUri": "http://bertaoact/tao.rdf#i1486479622628292|http://bertaoact/tao.rdf#i14864806816446383+|http://bertaoact/tao.rdf#i14864806816272384-",
     "itemSessionState": 1,
     "needMapUpdate": false,
     "isLast": false,

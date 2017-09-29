@@ -46,7 +46,6 @@ define([
     };
 
 
-
     /**
      * The following tests applies to all plugins
      */
@@ -122,6 +121,7 @@ define([
     QUnit.cases([{
         title: 'when the option is not enabled',
         context: {
+            itemIdentifier : 'item-1',
             enableAllowSkipping: false,
             allowSkipping: false
         },
@@ -130,6 +130,7 @@ define([
     }, {
         title: 'when the item has no interactions',
         context: {
+            itemIdentifier : 'item-1',
             enableAllowSkipping: true,
             allowSkipping: false
         },
@@ -138,6 +139,7 @@ define([
     }, {
         title: 'when the item is allowed to be skipped',
         context: {
+            itemIdentifier : 'item-1',
             enableAllowSkipping: true,
             allowSkipping: true
         },
@@ -146,6 +148,7 @@ define([
     }, {
         title: 'when the item is answered',
         context: {
+            itemIdentifier : 'item-1',
             enableAllowSkipping: true,
             allowSkipping: false
         },
@@ -169,6 +172,7 @@ define([
                 runner.on('move', function() {
                     assert.ok(true, 'Move is allowed');
                     QUnit.start();
+                    return Promise.reject();
                 });
                 runner.trigger('move');
             })
@@ -181,6 +185,7 @@ define([
     QUnit.cases([{
         title: 'when the item not answered',
         context: {
+            itemIdentifier : 'item-1',
             enableAllowSkipping: true,
             allowSkipping: false
         },
