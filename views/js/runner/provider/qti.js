@@ -247,7 +247,11 @@ define([
                             })
                             .catch(submitError);
                     } else {
-                        context.itemAnswered = currentItemHelper.isAnswered(self);
+                        if (action === 'skip') {
+                            context.itemAnswered = false;
+                        } else {
+                            context.itemAnswered = currentItemHelper.isAnswered(self);
+                        }
                         resolve();
                     }
                 });
