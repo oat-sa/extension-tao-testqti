@@ -33,11 +33,11 @@ use qtism\data\AssessmentItemRef;
  */
 interface RunnerService
 {
-    const PROPERTY_INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
+    const INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
 
-    const PROPERTY_INSTANCE_TEST_ITEM_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner';
+    const INSTANCE_TEST_ITEM_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner';
 
-    const PROPERTY_INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId';
+    const INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId';
     /**
      * Initializes the delivery execution session
      * @param RunnerServiceContext $context

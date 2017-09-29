@@ -530,7 +530,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
      * @return tao_models_classes_service_ServiceCall
      */
     protected function buildServiceCall() {
-        $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(RunnerService::PROPERTY_INSTANCE_TEST_RUNNER_SERVICE));
+        $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(RunnerService::INSTANCE_TEST_RUNNER_SERVICE));
         $param = new tao_models_classes_service_ConstantParameter(
                         // Test Definition URI passed to the QtiTestRunner service.
                         new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_DEFINITION),
@@ -540,7 +540,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         
         $param = new tao_models_classes_service_ConstantParameter(
                         // Test Compilation URI passed to the QtiTestRunner service.
-                        new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::PROPERTY_INSTANCE_FORMAL_PARAM_TEST_COMPILATION),
+                        new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_COMPILATION),
                         $this->getPrivateDirectory()->getId() . '|' . $this->getPublicDirectory()->getId()
         );
         $service->addInParameter($param);

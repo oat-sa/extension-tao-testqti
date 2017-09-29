@@ -78,7 +78,7 @@ class TestSessionService extends ConfigurableService
                 $session->setUserUri($userId);
             }
 
-            $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(DeliveryContainerService::RESULT_SERVER_PROP));
+            $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(DeliveryContainerService::PROPERTY_RESULT_SERVER));
             $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
             $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
             $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));

@@ -64,7 +64,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
 
     const INSTANCE_FORMAL_PARAM_TEST_DEFINITION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition';
-    const PROPERTY_INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
+    const INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
 
     const TEST_COMPILED_FILENAME = 'compact-test.php';
     const TEST_COMPILED_META_FILENAME = 'test-meta.php';
