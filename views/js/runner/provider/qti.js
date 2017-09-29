@@ -182,11 +182,10 @@ define([
         install : function install(){
 
             /**
-             * Overrides runner.setTestMap to either :
              *  - reindex and build the jump table
              *  - patch the current testMap if a partial map is set
              *
-             * @param {Object} testMap
+             * @param {Object} testMap - the testMap to build
              * @param {Boolean} [updateStats = false] - if we need to update the stats of the current item
              * @returns {runner} chains
              */
@@ -207,6 +206,12 @@ define([
                 return this;
             };
 
+            /**
+             * Update current based on the context
+             *
+             * @param {Object} testMap - the testMap to update
+             * @returns {Object} the updated testMap
+             */
             this.updateStats = function updateStats(testMap){
                 var testContext = this.getTestContext();
                 var states = this.getTestData().states;
