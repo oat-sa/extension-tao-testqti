@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\execution\ServiceProxy;
+use oat\taoQtiTest\models\cat\CatService;
 use qtism\runtime\tests\AssessmentTestSession;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 
@@ -219,6 +220,25 @@ class SessionStateService extends ConfigurableService
             }
 
             $progress = $positions[$route->getPosition()];
+
+            $catService = $this->getServiceManager()->get(CatService::SERVICE_ID);
+            $currentItem = $route->current();
+            if ($catService->isAdaptive($session, $currentItem->getAssessmentItemRef())) {
+                $testSessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
+                $testSessionData = $testSessionService->getTestSessionDataById($session->getSessionId());
+                $sectionItems = $catService->getShadowTest($session, $testSessionData['compilation']['private'], $currentItem);
+                $currentItem = $catService->getCurrentCatItemId($session, $testSessionData['compilation']['private'], $currentItem);
+                $positionInSection = array_search($currentItem, $sectionItems);
+                
+                // When in an adaptive section, the actual section is just a placeholder that is dynamically
+                // replaced by the adaptive content. To set the right position, just grab the offset within
+                // this dynamic content and add it to the placeholder position.
+                $progress['test'] += $positionInSection;
+                $progress['part'] += $positionInSection;
+                $progress['section'] += $positionInSection;
+                $lengthSections[$progress['sectionId']] = count($sectionItems);
+            }
+
             return [
                 'test' => $progress['test'],
                 'testPart' => $progress['part'],

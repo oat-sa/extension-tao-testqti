@@ -36,7 +36,6 @@
         "isAdaptive": false,
         "isTimeout": false,
         "itemIdentifier": "item-1",
-        "itemUri": "http:\/\/tao.dev\/TAO.rdf#i145198308883913|http:\/\/tao.dev\/TAO.rdf#i14527618787145157+|http:\/\/tao.dev\/TAO.rdf#i14527618786135158-",
         "itemSessionState": 1,
         "needMapUpdate": false,
         "isLast": false,
@@ -69,7 +68,6 @@
                         "position": 0,
                         "items": {
                             "item-1": {
-                                "uri": "http:\/\/tao.dev\/TAO.rdf#i145198308883913",
                                 "title": "Chocolate Factory",
                                 "position": 0,
                                 "positionInPart": 0,
@@ -80,7 +78,6 @@
                                 "viewed": true
                             },
                             "item-2": {
-                                "uri": "http:\/\/tao.dev\/TAO.rdf#i1451983089533915",
                                 "title": "Associate Things",
                                 "position": 1,
                                 "positionInPart": 1,
@@ -107,14 +104,12 @@
             "identifier": "item-1",
             "section": "assessmentSection-1",
             "part": "testPart-1",
-            "position": 0,
-            "uri": "http:\/\/tao.dev\/TAO.rdf#i145198308883913"
+            "position": 0
         }, {
             "identifier": "item-2",
             "section": "assessmentSection-1",
             "part": "testPart-1",
-            "position": 1,
-            "uri": "http:\/\/tao.dev\/TAO.rdf#i1451983089533915"
+            "position": 1
         }],
         "stats": {
             "answered": 1,
