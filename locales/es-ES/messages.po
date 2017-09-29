@@ -1158,6 +1158,9 @@ msgstr "Gris sobre verde (opcion de bajo contraste)"
 msgid "You answered all %s question(s) in this section"
 msgstr "Usted respondio a las %s preguntas en esta sección"
 
+msgid "You answered all %s question(s) in this test"
+msgstr "Usted respondio a las %s preguntas en esta prueba"
+
 msgid "You answered only %s of the %s question(s) in this section"
 msgstr "Usted respondió sólo %s de las preguntas %s en esta sección"
 
@@ -1177,7 +1180,7 @@ msgid "You have %s unanswered question(s)"
 msgstr "Tienes %s preguntas sin respuesta"
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr "y marcaste x artículos que puedes revisar ahora"
+msgstr "y marcaste %s artículos que puedes revisar ahora"
 
 msgid "Connected to server"
 msgstr "Conectado al servidor"
