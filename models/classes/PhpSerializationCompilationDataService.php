@@ -2,9 +2,11 @@
 
 namespace oat\taoQtiTest\models;
 
+use qtism\data\QtiComponent;
+
 class PhpSerializationCompilationDataService extends CompilationDataService
 {
-    public function writePhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $object)
+    public function writePhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
         $compilationDirectory->write(
             $path,
@@ -12,7 +14,7 @@ class PhpSerializationCompilationDataService extends CompilationDataService
         );
     }
     
-    public function readPhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path)
+    public function readPhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
         return unserialize($compilationDirectory->read($path));
     }

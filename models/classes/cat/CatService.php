@@ -134,10 +134,12 @@ class CatService extends ConfigurableService
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
     {
         $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $filename = "adaptive-assessment-item-ref-${identifier}";
         
         return $compilationDataService->readPhpCompilationData(
             $privateCompilationDirectory,
-            "adaptive-assessment-item-ref-${identifier}.php"
+            "${filename}.php",
+            "${filename}"
         );
     }
     
@@ -173,9 +175,12 @@ class CatService extends ConfigurableService
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
         
         $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $filename = "adaptive-assessment-section-${adaptiveSectionId}";
+        
         $component = $compilationDataService->readPhpCompilationData(
             $privateCompilationDirectory,
-            "adaptive-assessment-section-${adaptiveSectionId}.php"
+            "${filename}.php",
+            $filename
         );
 
         return $component->getComponentsByClassName('assessmentItemRef')->getArrayCopy();

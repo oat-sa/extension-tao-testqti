@@ -18,4 +18,4 @@
  *               
  * 
  */  
-return new oat\taoQtiTest\models\PhpSerializationCompilationDataService();
+return new oat\taoQtiTest\models\PhpCodeCompilationDataService();
