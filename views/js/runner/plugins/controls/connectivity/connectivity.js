@@ -108,7 +108,7 @@ define([
                             if(err.type === 'nav'){
                                 testRunner.loadItem(testContext.itemIdentifier);
                             }
-                            if(err.type === 'exit'){
+                            if(err.type === 'finish'){
                                 testRunner.finish();
                             }
                         })

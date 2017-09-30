@@ -65,16 +65,16 @@ define([
     );
 
     /**
-     * When we are unable to navigate offline
+     * When we are unable to exit the test offline
      * @type {Error}
      */
     var offlineExitError = _.assign(
-        new Error(__('We are unable to connect to the submit your results.')),
+        new Error(__('We are unable to connect the server to submit your results.')),
         {
             success : false,
             source: 'navigator',
             purpose: 'proxy',
-            type: 'exit',
+            type: 'finish',
             code : 404
         }
     );
@@ -189,7 +189,7 @@ define([
                     );
                 };
 
-                //we just block those actions
+                //we just block those actions and the end of the test
                 if( _.contains(blockingActions, action) ||
                     ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
 
@@ -208,6 +208,7 @@ define([
 
                     //we are really not able to navigate
                     if(!newTestContext || !newTestContext.itemIdentifier || !self.hasItem(newTestContext.itemIdentifier)){
+                        storeAction();
                         throw offlineNavError;
                     }
 
@@ -278,6 +279,7 @@ define([
                             if(self.isConnectivityError(err)){
                                 return self.offlineAction(action, actionParams);
                             }
+                            throw err;
                         });
                 }
 
@@ -462,6 +464,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callTestAction: function callTestAction(action, params) {
+            console.log('call TestAction', action);
             return this.requestNetworkThenOffline(
                 this.configStorage.getTestActionUrl(action),
                 action,
@@ -478,6 +481,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         callItemAction: function callItemAction(itemIdentifier, action, params) {
+            console.log('call ItemAction', action);
             var self = this;
 
             var testMap = this.getDataHolder().get('testMap');
