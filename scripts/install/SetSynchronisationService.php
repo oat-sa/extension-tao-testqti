@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
+use oat\taoQtiTest\models\runner\synchronisation\action\ExitTest;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
@@ -37,7 +38,7 @@ use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 class SetSynchronisationService extends InstallAction
 {
     /**
-     * Register 4 actions as available for SynchronisationService
+     * Register 5 actions as available for SynchronisationService
      *
      * @param $params
      * @return \common_report_Report
@@ -54,6 +55,7 @@ class SetSynchronisationService extends InstallAction
         }
 
         $newActions = [
+            'exitTest' => ExitTest::class,
             'move' => Move::class,
             'skip' => Skip::class,
             'storeTraceData' => StoreTraceData::class,
