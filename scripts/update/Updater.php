@@ -1590,15 +1590,15 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('14.1.5');
         }
 
-        $this->skip('14.1.5', '16.1.0');
+        $this->skip('14.1.5', '16.0.0');
         
-        if ($this->isVersion('16.1.0')) {
+        if ($this->isVersion('16.0.0')) {
             $this->getServiceManager()->register(
                 PhpCodeCompilationDataService::SERVICE_ID, 
                 new PhpCodeCompilationDataService()
             );
             
-            $this->setVersion('16.2.0');
+            $this->setVersion('16.1.0');
         }
     }
 }
