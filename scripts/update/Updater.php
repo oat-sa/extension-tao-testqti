@@ -58,6 +58,7 @@ use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
+use oat\taoQtiTest\models\PhpCodeCompilationDataService;
 use oat\tao\scripts\update\OntologyUpdater;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
@@ -1590,5 +1591,14 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('14.1.5', '16.1.0');
+        
+        if ($this->isVersion('16.1.0')) {
+            $this->getServiceManager()->register(
+                PhpCodeCompilationDataService::SERVICE_ID, 
+                new PhpCodeCompilationDataService()
+            );
+            
+            $this->setVersion('16.2.0');
+        }
     }
 }
