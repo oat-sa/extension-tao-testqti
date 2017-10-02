@@ -106,7 +106,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var string
      */
     protected $testExecutionUri;
-    
+
+    /**
+     * Whether we are in synchronization mode
+     * @var boolean
+     */
+    private $syncingMode = false;
+
     /**
      * QtiRunnerServiceContext constructor.
      * 
@@ -556,32 +562,34 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function selectAdaptiveNextItem()
     {
-        $lastItemId = $this->getCurrentCatItemId();
-        $lastOutput = $this->getLastCatItemOutput();
-        $catSession = $this->getCatSession();
+        if( ! $this->syncingMode ) {
+            $lastItemId = $this->getCurrentCatItemId();
+            $lastOutput = $this->getLastCatItemOutput();
+            $catSession = $this->getCatSession();
 
-        try {
-            $selection = $catSession->getTestMap(array_values($lastOutput));
-            if (!$this->saveAdaptiveResults($catSession)) {
-                \common_Logger::w('Unable to save CatService results.');
+            try {
+                $selection = $catSession->getTestMap(array_values($lastOutput));
+                if (!$this->saveAdaptiveResults($catSession)) {
+                    \common_Logger::w('Unable to save CatService results.');
+                }
+                $isShadowItem = false;
+            } catch (CatEngineException $e) {
+                \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
+                $selection = $catSession->getTestMap();
+                $isShadowItem = true;
             }
-            $isShadowItem = false;
-        } catch (CatEngineException $e) {
-            \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
-            $selection = $catSession->getTestMap();
-            $isShadowItem = true;
-        }
 
-        $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection, $isShadowItem);
-        $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+            $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection, $isShadowItem);
+            $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
-        if (is_array($selection) && count($selection) == 0) {
-            \common_Logger::d('No new CAT item selection.');
-            return null;
-        } else {
-            $this->persistCatSession($catSession);
-            \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
-            return $selection[0];
+            if (is_array($selection) && count($selection) == 0) {
+                \common_Logger::d('No new CAT item selection.');
+                return null;
+            } else {
+                $this->persistCatSession($catSession);
+                \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
+                return $selection[0];
+            }
         }
     }
     
@@ -828,5 +836,23 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         \common_Logger::i('Cat service results stored as outcome variable.');
 
         return true;
+    }
+
+    /**
+     * Are we in a synchronization mode
+     * @return bool 
+     */
+    public function isSyncingMode()
+    {
+        return $this->syncingMode;
+    }
+
+    /**
+     * Set/Unset the synchronization mode
+     * @param bool $syncing
+     */
+    public function setSyncingMode($syncing)
+    {
+        $this->syncingMode = (bool) $syncing;
     }
 }
