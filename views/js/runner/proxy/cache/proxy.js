@@ -53,14 +53,31 @@ define([
      * When we are unable to navigate offline
      * @type {Error}
      */
-    var offlineNavError = new Error(__('We are unable to connect to the server to retrieve the next item.'));
-    _.assign(offlineNavError, {
-        success : false,
-        source: 'navigator',
-        purpose: 'proxy',
-        type: 'Item not found',
-        code : 404
-    });
+    var offlineNavError = _.assign(
+        new Error(__('We are unable to connect to the server to retrieve the next item.')),
+        {
+            success : false,
+            source: 'navigator',
+            purpose: 'proxy',
+            type: 'nav',
+            code : 404
+        }
+    );
+
+    /**
+     * When we are unable to exit the test offline
+     * @type {Error}
+     */
+    var offlineExitError = _.assign(
+        new Error(__('We are unable to connect the server to submit your results.')),
+        {
+            success : false,
+            source: 'navigator',
+            purpose: 'proxy',
+            type: 'finish',
+            code : 404
+        }
+    );
 
     /**
      * Overrides the qtiServiceProxy with the precaching behavior
@@ -159,6 +176,8 @@ define([
                 var testNavigator;
                 var newTestContext;
 
+                var blockingActions = ['exitTest', 'timeout'];
+
                 var testData    = this.getDataHolder().get('testData');
                 var testContext = this.getDataHolder().get('testContext');
                 var testMap     = this.getDataHolder().get('testMap');
@@ -169,6 +188,14 @@ define([
                         self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
                     );
                 };
+
+                //we just block those actions and the end of the test
+                if( _.contains(blockingActions, action) ||
+                    ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
+
+                    storeAction();
+                    throw offlineExitError;
+                }
 
                 // try the navigation if the actionParams context meaningful data
                 if( actionParams.direction && actionParams.scope){
@@ -181,6 +208,7 @@ define([
 
                     //we are really not able to navigate
                     if(!newTestContext || !newTestContext.itemIdentifier || !self.hasItem(newTestContext.itemIdentifier)){
+                        storeAction();
                         throw offlineNavError;
                     }
 
@@ -251,6 +279,7 @@ define([
                             if(self.isConnectivityError(err)){
                                 return self.offlineAction(action, actionParams);
                             }
+                            throw err;
                         });
                 }
 
