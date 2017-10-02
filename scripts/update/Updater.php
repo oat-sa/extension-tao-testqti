@@ -1590,6 +1590,16 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('14.1.5');
         }
 
-        $this->skip('14.1.5', '15.7.6');
+        $this->skip('14.1.5', '16.0.1');
+
+        if($this->isVersion('16.0.1')){
+
+            // Update the synchronisation service
+            $this->runExtensionScript(SetSynchronisationService::class);
+
+            $this->setVersion('16.1.0');
+        }
+      
+        $this->skip('16.1.0', '16.1.1');
     }
 }
