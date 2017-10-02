@@ -5,6 +5,12 @@ namespace oat\taoQtiTest\models;
 use qtism\data\storage\php\PhpDocument;
 use qtism\data\QtiComponent;
 
+/**
+ * PHP Code Compilation Data Service.
+ * 
+ * This Compilation Data Service implementation aims at compiling
+ * Delivery data as plain PHP code.
+ */
 class PhpCodeCompilationDataService extends CompilationDataService
 {
     protected $cacheDir;
