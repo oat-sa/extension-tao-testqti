@@ -464,7 +464,6 @@ define([
          *                      Any error will be provided if rejected.
          */
         callTestAction: function callTestAction(action, params) {
-            console.log('call TestAction', action);
             return this.requestNetworkThenOffline(
                 this.configStorage.getTestActionUrl(action),
                 action,
@@ -481,7 +480,6 @@ define([
          *                      Any error will be provided if rejected.
          */
         callItemAction: function callItemAction(itemIdentifier, action, params) {
-            console.log('call ItemAction', action);
             var self = this;
 
             var testMap = this.getDataHolder().get('testMap');
