@@ -52,7 +52,7 @@ class ExitTest extends TestRunnerAction
             $serviceContext = $this->getServiceContext();
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer();
+                $this->endItemTimer($this->getTime());
                 $this->saveItemState();
             }
             $this->initServiceContext();
