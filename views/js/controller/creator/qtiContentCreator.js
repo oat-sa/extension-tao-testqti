@@ -27,7 +27,7 @@ define([
     'use strict';
 
     return {
-        init: function init(modelOverseer, areaBroker, $dom) {
+        init: function init(modelOverseer, areaBroker, $dom, options) {
             var removePlugins = [
                     'taoqtiimage',
                     'taoqtimedia',
@@ -64,7 +64,8 @@ define([
                 toolbar: toolbar,
                 metadata: {
                     outcomes: modelOverseer.getOutcomesNames()
-                }
+                },
+                change: options.change || _.noop
             });
         }
     };
