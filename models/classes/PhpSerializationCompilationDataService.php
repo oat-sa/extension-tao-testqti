@@ -23,6 +23,11 @@ class PhpSerializationCompilationDataService extends CompilationDataService
     
     public function readPhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
-        return unserialize($compilationDirectory->read($path));
+        if (($component = @unserialize($compilationDirectory->read($path))) !== false) {
+            return $component;
+        } else {
+            $msg = "PHP Compilation Data in directory '" . $compilationDirectory->getId() . "' at path '" . $path . "' could not be unserialized properly.";
+            throw new \common_Exception($msg);
+        }
     }
 }

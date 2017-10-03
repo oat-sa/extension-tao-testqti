@@ -44,6 +44,8 @@ abstract class CompilationDataService extends ConfigurableService
      * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
      * @param string $path
      * @param string $cacheInfo (optional) A context string possibly used by implementations for caching purpose.
+     * @return \qtism\data\QtiComponent
+     * @throws \common_Exception In case of error.
      */
     abstract public function readPhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '');
 }

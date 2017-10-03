@@ -3,6 +3,7 @@
 namespace oat\taoQtiTest\models;
 
 use qtism\data\storage\php\PhpDocument;
+use qtism\data\storage\php\PhpStorageException;
 use qtism\data\QtiComponent;
 
 /**
@@ -43,8 +44,13 @@ class PhpCodeCompilationDataService extends CompilationDataService
             file_put_contents($cacheFile, $data);
         }
         
-        $doc = new PhpDocument();
-        $doc->load($cacheFile);
+        try {
+            $doc = new PhpDocument();
+            $doc->load($cacheFile);
+        } catch (PhpStorageException $e) {
+            $msg = "PHP Compilation Data in directory '" . $compilationDirectory->getId() . "' at path '" . $path . "' could not be executed properly.";
+            throw new \common_Exception($msg);
+        }
         
         return $doc->getDocumentComponent();
     }
