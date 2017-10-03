@@ -34,7 +34,10 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
     {
         $extManager = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID);
         $report = new Report(Report::TYPE_INFO, "Script gracefully ended.");
-            
+        
+        $count = 0;
+        $failCount = 0;    
+        
         if ($extManager->isInstalled('taoDeliveryRdf') === true && $extManager->isEnabled('taoDeliveryRdf') === true) {
             
             $extManager->getExtensionById('taoDeliveryRdf');
@@ -42,24 +45,47 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
             $phpDocument = new PhpDocument();
             
             $iterator = new \core_kernel_classes_ResourceIterator([DeliveryAssemblyService::singleton()->getRootClass()]);
+            
             foreach ($iterator as $delivery) {
-                $runtime = $runtimeService->getRuntime($delivery->getUri());
+                $deliveryUri = $delivery->getUri();
+                $runtime = $runtimeService->getRuntime($deliveryUri);
                 $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
                 list($privateId, $publicId) = explode('|', $inputParameters['QtiTestCompilation'], 2);
                 $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($privateId);
                 
-                $compact = $directory->getFile('compact-test.php');
-                $count = 0;
-                
-                if ($compact->exists()) {
-                    if ($this->compileData($compact)) {
-                        $count++;
+                foreach ($directory->getIterator() as $filePrefix) {
+                    if ($filePrefix === 'compact-test.php' || preg_match('/adaptive-assessment-section-.+?\.php/', $filePrefix) === 1 || preg_match('/adaptive-assessment-item-ref-.+?\.php/', $filePrefix) === 1) {
+                        try {
+                            if ($this->compileData($directory->getFile($filePrefix))) {
+                                $count++;
+                                
+                                $report->add(
+                                    Report::TYPE_SUCCESS,
+                                    "File '${filePrefix}' successfully compiled for delivery '${deliveryUri}'."
+                                );
+                            } else {
+                                $failCount++;
+                                $report->add(
+                                    Report::TYPE_WARNING,
+                                    "File '${filePrefix}' could not be compiled for delivery '${deliveryUri}'."
+                                );
+                            }
+                        } catch (\Exception $e) {
+                            $failCount++;
+                            $report->add(
+                                Report::TYPE_ERROR,
+                                "An unexpected error occured while compiling file '${filePrefix}' for Delivery '${deliveryUri}'. The system returned the following error:\n" . $e->getMessage()
+                            );
+                        }
                     }
                 }
             }
         } else {
             $report->add(
-                new Report(Report::TYPE_WARNING, "Extension taoDeliveryRdf is not installed. No compilation environment is available.")
+                new Report(
+                    Report::TYPE_ERROR, 
+                    "Extension taoDeliveryRdf is not installed. No compilation environment is available."
+                )
             );
         }
         
