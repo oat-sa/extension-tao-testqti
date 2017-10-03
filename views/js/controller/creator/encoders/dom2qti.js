@@ -22,8 +22,9 @@
 define([
     'jquery',
     'lodash',
-    'taoQtiTest/controller/creator/helpers/qtiElement'
-], function ($, _, qtiElementHelper) {
+    'taoQtiTest/controller/creator/helpers/qtiElement',
+    'taoQtiTest/controller/creator/helpers/baseType'
+], function ($, _, qtiElementHelper, baseType) {
     'use strict';
 
     /**
@@ -33,7 +34,24 @@ define([
     var normalizedNodes = {
         feedbackblock: 'feedbackBlock',
         outcomeidentifier: 'outcomeIdentifier',
-        showhide: 'showHide'
+        showhide: 'showHide',
+        printedvariable: 'printedVariable'
+    };
+
+    /**
+     * Some Nodes have attributes that needs typing during decoding.
+     * @type {Object}
+     */
+    var typedNodes = {
+        printedVariable: {
+            identifier: baseType.getConstantByName('identifier'),
+            powerForm: baseType.getConstantByName('boolean'),
+            base: baseType.getConstantByName('intOrIdentifier'),
+            index: baseType.getConstantByName('intOrIdentifier'),
+            delimiter: baseType.getConstantByName('string'),
+            field: baseType.getConstantByName('string'),
+            mappingIndicator: baseType.getConstantByName('string')
+        }
     };
 
     /**
@@ -90,7 +108,8 @@ define([
          * @returns {String}
          */
         encode: function (modelValue) {
-            var self = this;
+            var self = this,
+                startTag;
 
             if (_.isArray(modelValue)) {
                 return _.reduce(modelValue, function (result, value) {
@@ -100,7 +119,7 @@ define([
                 if (modelValue['qti-type'] === 'textRun') {
                     return modelValue.content;
                 }
-                var startTag = '<' + modelValue['qti-type'] + attrToStr(getAttributes(modelValue));
+                startTag = '<' + modelValue['qti-type'] + attrToStr(getAttributes(modelValue));
                 if (modelValue.content) {
                     return startTag + '>' + self.encode(modelValue.content) + '</' + modelValue['qti-type'] + '>';
                 } else {
@@ -119,6 +138,7 @@ define([
             var self = this;
             var $nodeValue = (nodeValue instanceof $) ? nodeValue : $(nodeValue);
             var result = [];
+            var nodeName;
 
             _.forEach($nodeValue, function (elt) {
                 var object;
@@ -130,7 +150,9 @@ define([
                         }));
                     }
                 } else if (elt.nodeType === 1) {
-                    object = _.merge(qtiElementHelper.create(normalizeNodeName(elt.nodeName), {
+                    nodeName = normalizeNodeName(elt.nodeName);
+
+                    object = _.merge(qtiElementHelper.create(nodeName, {
                         'id': '',
                         'class': '',
                         'xmlBase': '',
@@ -138,8 +160,14 @@ define([
                         'label': ''
                     }),
                     _.transform(elt.attributes, function (acc, value) {
-                        if (value.nodeName) {
-                            acc[normalizeNodeName(value.nodeName)] = value.nodeValue;
+                        var attrName = normalizeNodeName(value.nodeName);
+                        //todo: cover with unit tests
+                        if (attrName) {
+                            if (typedNodes[nodeName] && typedNodes[nodeName][attrName]) {
+                                acc[attrName] = baseType.getValue(typedNodes[nodeName][attrName], value.nodeValue);
+                            } else {
+                                acc[attrName] = value.nodeValue;
+                            }
                         }
                     }));
                     if (elt.childNodes.length > 0) {

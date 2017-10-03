@@ -27,14 +27,14 @@ define([
     'use strict';
 
     return {
-        init: function init(modelOverseer, areaBroker, $dom, options) {
+        init: function init(modelOverseer, areaBroker, $container, options) {
             var removePlugins = [
                     'taoqtiimage',
                     'taoqtimedia',
                     'taoqtimaths',
                     'taoqtiinclude',
                     'taoqtitable',
-                    'sharedspace' // the toolbar positioning plugin now used by the the item creator. That Ck instance still use floatingspace
+                    'sharedspace' // That Ck instance still use floatingspace to position the toolbar, whereas the sharedspace plugin is used by the Item creator
                 ].join(','),
 
                 toolbar = [
@@ -58,7 +58,7 @@ define([
                     }
                 ];
 
-            containerEditor.create($dom, {
+            containerEditor.create($container, {
                 areaBroker: areaBroker,
                 removePlugins: removePlugins,
                 toolbar: toolbar,

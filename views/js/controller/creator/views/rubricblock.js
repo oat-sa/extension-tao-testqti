@@ -83,10 +83,10 @@ define([
             /**
              * Forwards the editor content into the model
              */
-            function editorToModel() {
+            function editorToModel(html) {
                 var rubric = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock', 'content');
                 var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
-                var content = Dom2QtiEncoder.decode(ensureWrap($rubricBlockContent.html()));
+                var content = Dom2QtiEncoder.decode(ensureWrap(html));
 
                 if (wrapper) {
                     wrapper.content = content;
@@ -281,7 +281,7 @@ define([
 
             qtiContentCreator.init(modelOverseer, areaBroker, $rubricBlockContent, {
                 change: function change(html) {
-                    console.log('changing for ', html);
+                    editorToModel(html);
                 }
             });
 
