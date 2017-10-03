@@ -42,7 +42,7 @@ define([
      * Some Nodes have attributes that needs typing during decoding.
      * @type {Object}
      */
-    var typedNodes = {
+    var typedAttributes = {
         printedVariable: {
             identifier: baseType.getConstantByName('identifier'),
             powerForm: baseType.getConstantByName('boolean'),
@@ -163,8 +163,8 @@ define([
                         var attrName = normalizeNodeName(value.nodeName);
                         //todo: cover with unit tests
                         if (attrName) {
-                            if (typedNodes[nodeName] && typedNodes[nodeName][attrName]) {
-                                acc[attrName] = baseType.getValue(typedNodes[nodeName][attrName], value.nodeValue);
+                            if (typedAttributes[nodeName] && typedAttributes[nodeName][attrName]) {
+                                acc[attrName] = baseType.getValue(typedAttributes[nodeName][attrName], value.nodeValue);
                             } else {
                                 acc[attrName] = value.nodeValue;
                             }
