@@ -32,8 +32,8 @@ class CompileDeliveriesWithPhpSerialization extends CompileDeliveriesPhpData
     {
         try {
             $phpDocument = new PhpDocument();
-            $component = $phpDocument->loadFromString($file->read());
-            $file->put(serialize($component));
+            $phpDocument->loadFromString($file->read());
+            $file->put(serialize($phpDocument->getDocumentComponent()));
             
             return true;
         } catch (PhpStorageException $e) {
