@@ -119,6 +119,8 @@ define([
             $('#authoringBack').on('click', function(e){
                 e.preventDefault();
 
+                $(document).trigger('creatorclose');
+
                 if (history) {
                     history.back();
                 }

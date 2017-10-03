@@ -50,7 +50,6 @@ define([
         setUp: function setUp(modelOverseer, areaBroker, rubricModel, $rubricBlock) {
             //we need to synchronize the ck elt with an hidden elt that has data-binding
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
-            var syncRubricBlockContent = _.debounce(editorToModel, 100);
 
             /**
              * Bind a listener only related to this rubric.
@@ -279,21 +278,22 @@ define([
 
             // Create the Qti-ckEditor instance
 
-            qtiContentCreator.init(modelOverseer, areaBroker, $rubricBlockContent, {
+            qtiContentCreator.create(modelOverseer, areaBroker, $rubricBlockContent, {
                 change: function change(html) {
                     editorToModel(html);
                 }
+            });
+
+            // destroy CK instance on rubric bloc deletion.
+            // todo: find a way to destroy CK upon destroying rubric bloc parent section/part
+            bindEvent($rubricBlock, 'delete', function() {
+                qtiContentCreator.destroy($rubricBlockContent);
             });
 
             $rubricBlockContent.on('editorfocus', function() {
                 // close all properties forms and turn off their related button
                 areaBroker.getPropertyPanelArea().children('.props').hide().trigger('propclose.propview');
             });
-
-            // editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
-            // editor.on('change', function () {
-            //     syncRubricBlockContent();
-            // });
         }
     };
 });

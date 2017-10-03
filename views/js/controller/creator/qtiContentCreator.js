@@ -22,12 +22,18 @@
  */
 define([
     'lodash',
+    'jquery',
+    'lib/uuid',
     'taoQtiItem/qtiCreator/editor/containerEditor'
-], function(_, containerEditor) {
+], function(_, $, uuid, containerEditor) {
     'use strict';
 
     return {
-        init: function init(modelOverseer, areaBroker, $container, options) {
+        create: function create(modelOverseer, areaBroker, $container, options) {
+            var self = this,
+                $document = $(document),
+                editorId = uuid();
+
             var removePlugins = [
                     'taoqtiimage',
                     'taoqtimedia',
@@ -65,8 +71,21 @@ define([
                 metadata: {
                     outcomes: modelOverseer.getOutcomesNames()
                 },
-                change: options.change || _.noop
+                change: options.change || _.noop,
+                resetRenderer: true
             });
+
+            // destroying ckInstance on editor close
+            $document.on('creatorclose.' + editorId, function() {
+                self.destroy($container);
+                $document.off('.' + editorId);
+            });
+
+            return editorId;
+        },
+
+        destroy: function destroy($container) {
+            containerEditor.destroy($container);
         }
     };
 });
