@@ -399,12 +399,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The number of current attempt (1 for the first time ...)
                 $response['attempt'] = ($context->isAdaptive()) ? $context->getCatAttempts($response['itemIdentifier']) + 1 : $itemSession['numAttempts']->getValue();
 
-                // The definition of the current item (HREF)
-                $response['itemDefinition'] = $itemRef->getHref();
-
-                //deprecated key
-                $response['itemUri'] = $itemRef->getHref();
-
                 // The state of the current AssessmentTestSession.
                 $response['itemSessionState'] = $itemSession->getState();
 
@@ -503,23 +497,29 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Gets the map of the test items
      * @param RunnerServiceContext $context
+     * @param bool $partial the full testMap or only the current section
      * @return array
      * @throws \common_Exception
      */
-    public function getTestMap(RunnerServiceContext $context)
+    public function getTestMap(RunnerServiceContext $context, $partial = false)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $map = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
-            return $map->getMap($context, $this->getTestConfig());
-        } else {
-            throw new \common_exception_InvalidArgumentType(
-                'QtiRunnerService',
-                'getTestMap',
-                0,
-                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
-                $context
-            );
+            $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
+
+            if ($partial) {
+                return $mapService->getScopedMap($context, $this->getTestConfig());
+            }
+
+            return $mapService->getMap($context, $this->getTestConfig());
         }
+
+        throw new \common_exception_InvalidArgumentType(
+            'QtiRunnerService',
+            'getTestMap',
+            0,
+            'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+            $context
+        );
     }
 
     /**
