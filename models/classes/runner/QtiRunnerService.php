@@ -776,20 +776,25 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $session->beginItemSession();
                     $session->beginAttempt();
                     $session->endAttempt($responses);
-                    $score = $session->getVariable('SCORE');
+                    
                     $assessmentItem = $session->getAssessmentItem();
                     $assessmentItemIdentifier = $assessmentItem->getIdentifier();
+                    $score = $session->getVariable('SCORE');
                     $output = $context->getLastCatItemOutput();
                     
-                    $output[$assessmentItemIdentifier] = new ItemResult(
-                        $assessmentItemIdentifier,
+                    if ($score !== null) {
+                        $output[$assessmentItemIdentifier] = new ItemResult(
+                            $assessmentItemIdentifier,
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
                                 $score->getValue()->getValue()
                             )
                         );
-                        
+                    } else {
+                        \common_Logger::i("No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an adaptive section.");
+                    }
+                    
                     $context->persistLastCatItemOutput($output);
                     
                     // Send results to TAO Results.
