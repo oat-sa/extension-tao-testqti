@@ -35,6 +35,7 @@ define([
                 editorId = uuid();
 
             var removePlugins = [
+                    'magicline',
                     'taoqtiimage',
                     'taoqtimedia',
                     'taoqtimaths',
