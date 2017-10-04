@@ -317,6 +317,11 @@ define([
                 });
 
                 feedbackPromise.then(function(){
+                    // ensure the current item answer state is correctly set
+                    var item = mapHelper.getItemAt(self.getTestMap(), context.itemPosition);
+                    if (item) {
+                        item.answered = context.itemAnswered;
+                    }
 
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
