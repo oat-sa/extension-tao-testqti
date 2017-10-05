@@ -741,7 +741,9 @@ define([
                                 traceData[id] = entry;
                             });
                             //and send them
-                            return self.getProxy().sendVariables(traceData);
+                            return self.getProxy().callAction('storeTraceData', {
+                                traceData: JSON.stringify(traceData)
+                            });
                         }
                     })
                     .then(function(){
