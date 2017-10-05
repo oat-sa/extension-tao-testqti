@@ -327,9 +327,9 @@ define([
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
                         self.off('.'+action);
-
+                        params.itemIdentifier = context.itemIdentifier;
                         self.getProxy()
-                            .callItemAction(context.itemIdentifier, action, params)
+                            .callAction(action, params)
                             .then(function(results){
                                 loadPromise = loadPromise || Promise.resolve();
 
@@ -338,12 +338,34 @@ define([
                                 });
                             })
                             .then(function(results){
-                                if(results.testContext){
-                                    self.setTestContext(results.testContext);
+                                var testContext;
+                                var testMap;
+
+                                if (!_.isArray(results)) {
+                                    results = [results];
                                 }
 
-                                if (results.testMap) {
-                                    self.buildTestMap(results.testMap, true);
+                                //find last testContext and testMap occurrence
+                                results.reverse();
+                                _.forEach(results, function (result) {
+                                    if (result.testContext) {
+                                        testContext = result.testContext;
+                                        return;
+                                    }
+                                });
+                                _.forEach(results, function (result) {
+                                    if (result.testMap) {
+                                        testMap = result.testMap;
+                                        return;
+                                    }
+                                });
+
+                                if (testContext) {
+                                    self.setTestContext(testContext);
+                                }
+
+                                if (testMap) {
+                                    self.buildTestMap(testMap, true);
                                 } else {
                                     self.setTestMap(self.updateStats(self.getTestMap()));
                                 }
@@ -406,7 +428,7 @@ define([
                     this.disableItem(context.itemIdentifier);
 
                     this.getProxy()
-                        .callTestAction('exitTest', _.merge(getItemResults(), {
+                        .callAction('exitTest', _.merge(getItemResults(), {
                             itemDefinition : context.itemIdentifier,
                             reason: reason
                         }))
@@ -443,7 +465,7 @@ define([
 
                     if (!this.getState('disconnected')) {
                         // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause', {
+                        pause = self.getProxy().callAction('pause', {
                             reason: {
                                 reasons: data && data.reasons,
                                 comment : data && data.message
@@ -719,7 +741,9 @@ define([
                                 traceData[id] = entry;
                             });
                             //and send them
-                            return self.getProxy().sendVariables(traceData);
+                            return self.getProxy().callAction('storeTraceData', {
+                                traceData: JSON.stringify(traceData)
+                            });
                         }
                     })
                     .then(function(){

@@ -162,7 +162,7 @@ define([
                 self.disable();
 
                 return testRunner.getProxy()
-                    .callTestAction('flagItem', {
+                    .callAction('flagItem', {
                         position: position,
                         flag: flag
                     })

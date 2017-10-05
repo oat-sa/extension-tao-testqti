@@ -212,7 +212,7 @@ define([
                         throw offlineNavError;
                     }
 
-                    return storeAction().then(function(){
+                    return this.scheduleAction(action, actionParams).then(function(){
                         return {
                             success : true,
                             testContext : newTestContext
@@ -220,12 +220,26 @@ define([
                     });
                 }
 
-                return storeAction().then(function(){
+                return this.scheduleAction(action, actionParams).then(function(){
                     return {
                         success : true
                     };
                 });
             };
+
+            /**
+             * Schedule an action do be done with next call
+             *
+             * @param {String} action - the action name (ie. move, skip, timeout)
+             * @param {Object} actionParams - the parameters sent along the action
+             * @returns {Promise} resolves with the action result
+             */
+           this.scheduleAction = function scheduleAction(action, actionParams) {
+               return self.actiontStore.push(
+                   action,
+                   self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
+               );
+           };
 
             /**
              * Request/Offline strategy :
@@ -252,12 +266,34 @@ define([
 
                 //perform the request, but fallback on offline if the request itself fails
                 var runRequestThenOffline = function runRequestThenOffline(){
-                    return self.request(url, actionParams).then(function(result){
+                    var request;
+                    //if (self.communicationConfig.syncActions[action]) {
+                    if (false) {
+                        request = new Promise(function(resolve){
+                            self.scheduleAction(action, actionParams).then(function(){
+                                if (!self.communicationConfig.syncActions[action].deferred) {
+                                    self.syncOfflineData().then(function (result) {
+                                        resolve(result);
+                                    });
+                                }
+                            });
+                       });
+                    } else {
+                        //fallback to direct request
+                        request = self.request(url, actionParams);
+                    }
+
+                    return request.then(function(result){
                         //if the request fails, we should be offline
-                        if(self.isOffline()){
-                            return self.offlineAction(action, actionParams);
+                        if (self.isOffline()) {
+                             return self.offlineAction(action, actionParams);
                         }
                         return result;
+                    }).catch(function(result){
+                         if (self.isOffline()) {
+                             return self.offlineAction(action, actionParams);
+                         }
+                         return result;
                     });
                 };
 
@@ -435,77 +471,42 @@ define([
             return qtiServiceProxy.submitItem.call(this, itemIdentifier, state, response, params);
         },
 
-
         /**
-         * Sends the test variables
-         * @param {Object} variables
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         * @fires sendVariables
-         */
-        sendVariables: function sendVariables(variables) {
-            var action = 'storeTraceData';
-            var actionParams = {
-                traceData: JSON.stringify(variables)
-            };
-
-            return this.requestNetworkThenOffline(
-                this.configStorage.getTestActionUrl(action),
-                action,
-                actionParams
-            );
-        },
-
-        /**
-         * Calls an action related to the test
+         * Calls test runner action
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        callTestAction: function callTestAction(action, params) {
-            return this.requestNetworkThenOffline(
-                this.configStorage.getTestActionUrl(action),
-                action,
-                params
-            );
-        },
-
-        /**
-         * Calls an action related to a particular item
-         * @param {String} itemIdentifier - The identifier of the item for which call the action
-         * @param {String} action - The name of the action to call
-         * @param {Object} [params] - Some optional parameters to join to the call
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        callItemAction: function callItemAction(itemIdentifier, action, params) {
+        callAction: function callAction(action, params) {
             var self = this;
+            var testMap;
+            var url;
 
-            var testMap = this.getDataHolder().get('testMap');
+            if (params.itemIdentifier) {
+                testMap = this.getDataHolder().get('testMap');
+                url = this.configStorage.getItemActionUrl(params.itemIdentifier, action);
+                //check if we have already the item for the action we are going to perform
+                self.getItemFromStore = (
+                    (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(params.itemIdentifier)) ||
+                    (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(params.itemIdentifier)) ||
+                    (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(testMap,  params.ref)))
+                );
 
-            //update the item state
-            if(params.itemState){
-                self.updateState(itemIdentifier, params.itemState);
+                //update the item state
+                if (params.itemState) {
+                    self.updateState(params.itemIdentifier, params.itemState);
+                }
+
+                //as we will pick the next item from the store ensure the next request will start the timer
+                if (self.getItemFromStore) {
+                    params.start = true;
+                }
+            } else {
+                url = this.configStorage.getTestActionUrl(action);
             }
 
-            //check if we have already the item for the action we are going to perform
-            self.getItemFromStore = (
-                (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(itemIdentifier)) ||
-                (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(itemIdentifier)) ||
-                (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(testMap,  params.ref)))
-            );
-
-            //as we will pick the next item from the store ensure the next request will start the timer
-            if (self.getItemFromStore) {
-                params.start = true;
-            }
-
-            return this.requestNetworkThenOffline(
-                this.configStorage.getItemActionUrl(itemIdentifier, action),
-                action,
-                _.merge({ itemDefinition : itemIdentifier }, params)
-            );
+            return this.requestNetworkThenOffline(url, action, params);
         }
     }, qtiServiceProxy);
 });

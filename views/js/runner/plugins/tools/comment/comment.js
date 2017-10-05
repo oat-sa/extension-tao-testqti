@@ -123,7 +123,7 @@ define([
                         self.button.turnOff();
 
                         testRunner.getProxy()
-                            .callTestAction('comment', {
+                            .callAction('comment', {
                                 comment: comment
                             })
                             .then(function () {

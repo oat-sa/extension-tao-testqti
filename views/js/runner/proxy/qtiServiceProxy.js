@@ -227,28 +227,21 @@ define([
             return this.request(this.configStorage.getTestActionUrl('getTestMap'));
         },
 
-        /**
-         * Sends the test variables
-         * @param {Object} variables
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         * @fires sendVariables
-         */
-        sendVariables: function sendVariables(variables) {
-            return this.request(this.configStorage.getTestActionUrl('storeTraceData'), {
-                traceData: JSON.stringify(variables)
-            });
-        },
-
-        /**
-         * Calls an action related to the test
-         * @param {String} action - The name of the action to call
-         * @param {Object} [params] - Some optional parameters to join to the call
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        callTestAction: function callTestAction(action, params) {
-            return this.request(this.configStorage.getTestActionUrl(action), params);
+       /**
+        * Calls test runner action
+        * @param {String} action - The name of the action to call
+        * @param {Object} [params] - Some optional parameters to join to the call
+        * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
+        *
+        */
+        callAction :function callAction(action, params) {
+            var url;
+            if (params.itemIdentifier) {
+                url = this.configStorage.getItemActionUrl(params.itemIdentifier, action);
+            } else {
+                url = this.configStorage.getTestActionUrl(action);
+            }
+            return this.request(url, params);
         },
 
         /**
@@ -259,7 +252,8 @@ define([
          *                      Any error will be provided if rejected.
          */
         getItem: function getItem(itemIdentifier, params) {
-            return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params);
+            params.itemIdentifier = itemIdentifier;
+            return this.callAction('getItem', params);
         },
 
         /**
@@ -276,20 +270,8 @@ define([
                 itemState: state,
                 itemResponse: response
             }, params || {});
-
-            return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'submitItem'), body);
-        },
-
-        /**
-         * Calls an action related to a particular item
-         * @param {String} itemIdentifier - The identifier of the item for which call the action
-         * @param {String} action - The name of the action to call
-         * @param {Object} [params] - Some optional parameters to join to the call
-         * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
-         *                      Any error will be provided if rejected.
-         */
-        callItemAction: function callItemAction(itemIdentifier, action, params) {
-            return this.request(this.configStorage.getItemActionUrl(itemIdentifier, action), params);
+            body.itemIdentifier = itemIdentifier;
+            return this.callAction('submitItem', body);
         },
 
         /**
@@ -302,6 +284,7 @@ define([
          * @fires telemetry
          */
         telemetry: function telemetry(itemIdentifier, signal, params) {
+            params.itemIdentifier = itemIdentifier;
             return this.request(this.configStorage.getTelemetryUrl(itemIdentifier, signal), params, null, true);
         },
 
