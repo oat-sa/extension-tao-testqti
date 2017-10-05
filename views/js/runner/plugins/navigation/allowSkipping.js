@@ -63,7 +63,7 @@ define([
                 var testContext = this.getTestContext();
                 var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
 
-                if ( isInteracting && testContext.enableAllowSkipping && !testContext.allowSkipping ) {
+                if ( isInteracting && testContext.enableAllowSkipping && !testContext.options.allowSkipping ) {
 
                     this.trigger('disablenav disabletools');
 
