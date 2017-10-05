@@ -714,7 +714,7 @@ function (
                 var showSkipEnd = false;
                 var showNextSection = !!testContext.nextSection && (this.hasOption(optionNextSection) || this.hasOption(optionNextSectionWarning));
 
-                if (this.testContext.allowSkipping === true) {
+                if (this.testContext.options.allowSkipping === true) {
                     if (this.testContext.isLast === false) {
                         showSkip = true;
                     } else {

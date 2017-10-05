@@ -63,7 +63,7 @@ define([
                 var testContext = this.getTestContext();
                 var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
 
-                if ( isInteracting && testContext.enableAllowSkipping && !testContext.allowSkipping ) {
+                if ( isInteracting && testContext.enableAllowSkipping && !testContext.options.allowSkipping ) {
 
                     this.trigger('disablenav disabletools');
 
@@ -75,7 +75,7 @@ define([
                             return resolve();
                         }
 
-                        if (!self.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
+                        if (!self.getState('alerted.notallowed')) { // Only show one alert for 'not allowed'
                             self.setState('alerted.notallowed', true);
                             self.trigger(
                                 'alert.notallowed',

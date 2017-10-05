@@ -151,11 +151,9 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 
         // Comment allowed? Skipping allowed? Logout or Exit allowed ?
         $options = [
-            'allowComment'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session),
-            'allowSkipping'     => \taoQtiTest_helpers_TestRunnerUtils::doesAllowSkipping($session),
-            'exitButton'        => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session, $context),
-            'logoutButton'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session),
-            'validateResponses' => \taoQtiTest_helpers_TestRunnerUtils::doesValidateResponses($session),
+            'allowComment' => \taoQtiTest_helpers_TestRunnerUtils::doesAllowComment($session),
+            'exitButton'   => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session, $context),
+            'logoutButton' => \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session),
         ];
 
         // get the options from the categories owned by the current item

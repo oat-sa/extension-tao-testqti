@@ -332,44 +332,6 @@
             </div>
         </div>
 
-<!-- assessmentTest/testPart/assessmentSection/itemSessionControl/allowSkipping -->
-        <div class="grid-row pseudo-label-box">
-            <div class="col-5">
-                <label for="section-allow-skipping">{{__ 'Allow Skipping'}}</label>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input type="checkbox" name="section-allow-skipping" value="true" checked="checked" data-bind="itemSessionControl.allowSkipping" data-bind-encoder="boolean" />
-                    <span class="icon-checkbox"></span>
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ 'If the candidate can skip the item, without submitting a response.'}}
-                </div>
-            </div>
-        </div>
-
-<!-- assessmentTest/testPart/assessmentSection/itemSessionControl/validateResponses -->
-        <div class="grid-row pseudo-label-box">
-            <div class="col-5">
-                <label for="section-validate-responses">{{__ 'Validate Responses'}}</label>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input type="checkbox" name="section-validate-responses" value="true" data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean" />
-                    <span class="icon-checkbox"></span>
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ "The candidate is not allowed to submit invalid responses."}}
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <h4 class="toggler closed" data-toggle="~ .section-time-limits">{{__ 'Time Limits'}}</h4>
