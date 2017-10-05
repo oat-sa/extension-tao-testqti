@@ -191,7 +191,6 @@ define([
                 var extension = communication.extension || this.getServiceExtension();
                 var controller = communication.controller || this.getServiceController();
                 var action = communication.action;
-                var syncActions = communication.syncActions || {};
 
                 // build the service address from the provided config
                 // it can be overwritten by a full url from the config
@@ -219,8 +218,7 @@ define([
                 return {
                     enabled: communication.enabled,
                     type: communication.type,
-                    params: params,
-                    syncActions: syncActions,
+                    params: params
                 };
             }
         };
