@@ -23,6 +23,8 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
 {
     public function registerPresets(TestCategoryPresetProvider $presetService)
     {
+        $testRunnerConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
         $presetService->register(
             TestCategoryPresetProvider::GROUP_NAVIGATION,
             [
@@ -104,25 +106,40 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'order'         => 500,
                     'pluginId'      => 'next'
                 ]),
-                // todo: if enabled
-                TestCategoryPreset::fromArray([
-                    'id'            => 'allowSkipping',
-                    'label'         => __('Allow Skipping'),
-                    'qtiCategory'   => 'x-tao-option-allowSkipping',
-                    'description'   => __('If the candidate can skip the item, without submitting a response.'),
-                    'order'         => 600,
-                    'pluginId'      => 'allowSkipping'
-                ]),
-                TestCategoryPreset::fromArray([
-                    'id'            => 'validateResponses',
-                    'label'         => __('Validate Responses'),
-                    'qtiCategory'   => 'x-tao-option-validateResponses',
-                    'description'   => __('The candidate is not allowed to submit invalid responses.'),
-                    'order'         => 700,
-                    'pluginId'      => 'validateResponses'
-                ]),
             ]
         );
+
+        if ( isset($testRunnerConfig['enable-allow-skipping']) ? $testRunnerConfig['enable-allow-skipping'] : false ) {
+            $presetService->register(
+                TestCategoryPresetProvider::GROUP_WARNING,
+                [
+                    TestCategoryPreset::fromArray([
+                        'id'            => 'allowSkipping',
+                        'label'         => __('Allow Skipping'),
+                        'qtiCategory'   => 'x-tao-option-allowSkipping',
+                        'description'   => __('If the candidate can skip the item, without submitting a response.'),
+                        'order'         => 600,
+                        'pluginId'      => 'allowSkipping'
+                    ]),
+                ]
+            );
+        }
+
+        if ( isset($testRunnerConfig['enable-validate-responses']) ? $testRunnerConfig['enable-validate-responses'] : false ) {
+            $presetService->register(
+                TestCategoryPresetProvider::GROUP_WARNING,
+                [
+                    TestCategoryPreset::fromArray([
+                        'id'            => 'validateResponses',
+                        'label'         => __('Validate Responses'),
+                        'qtiCategory'   => 'x-tao-option-validateResponses',
+                        'description'   => __('The candidate is not allowed to submit invalid responses.'),
+                        'order'         => 700,
+                        'pluginId'      => 'validateResponses'
+                    ]),
+                ]
+            );
+        }
 
         $presetService->register(
             TestCategoryPresetProvider::GROUP_TOOLS,
