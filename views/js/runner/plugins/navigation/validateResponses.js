@@ -61,7 +61,7 @@ define([
                 var testContext = this.getTestContext();
                 var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
 
-                if ( isInteracting && testContext.enableValidateResponses &&  testContext.validateResponses) {
+                if ( isInteracting && testContext.enableValidateResponses && testContext.options.validateResponses ) {
                     this.trigger('disablenav disabletools');
 
                     return new Promise(function (resolve, reject) {
@@ -71,7 +71,7 @@ define([
                         if (currentItemHelper.isAnswered(self, false)) {
                             return resolve();
                         }
-                        if (!self.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
+                        if (!self.getState('alerted.notallowed')) { // Only show one alert for 'not allowed'
                             self.setState('alerted.notallowed', true);
                             self.trigger(
                                 'alert.notallowed',

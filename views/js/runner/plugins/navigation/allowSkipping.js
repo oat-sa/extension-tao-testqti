@@ -75,7 +75,7 @@ define([
                             return resolve();
                         }
 
-                        if (!self.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
+                        if (!self.getState('alerted.notallowed')) { // Only show one alert for 'not allowed'
                             self.setState('alerted.notallowed', true);
                             self.trigger(
                                 'alert.notallowed',

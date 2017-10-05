@@ -104,6 +104,7 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'order'         => 500,
                     'pluginId'      => 'next'
                 ]),
+                // todo: if enabled
                 TestCategoryPreset::fromArray([
                     'id'            => 'allowSkipping',
                     'label'         => __('Allow Skipping'),
