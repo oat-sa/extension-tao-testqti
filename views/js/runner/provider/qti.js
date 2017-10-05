@@ -174,6 +174,66 @@ define([
         },
 
         /**
+         * Install step : add new methods
+         *
+         * @this {runner} the runner context, not the provider
+         * @returns {Promise} to chain
+         */
+        install : function install(){
+
+            /**
+             *  - reindex and build the jump table
+             *  - patch the current testMap if a partial map is set
+             *
+             * @param {Object} testMap - the testMap to build
+             * @param {Boolean} [updateStats = false] - if we need to update the stats of the current item
+             * @returns {runner} chains
+             */
+            this.buildTestMap = function buildTestMap(testMap, updateStats){
+                var newMap;
+
+                if(testMap){
+                    if(testMap.scope && testMap.scope !== 'test'){
+                        newMap = mapHelper.patch(this.getTestMap(), testMap);
+                    } else {
+                        newMap = mapHelper.reindex(testMap);
+                    }
+                    if(updateStats){
+                        newMap = this.updateStats(newMap);
+                    }
+                    return this.setTestMap(newMap);
+                }
+                return this;
+            };
+
+            /**
+             * Update current based on the context
+             *
+             * @param {Object} testMap - the testMap to update
+             * @returns {Object} the updated testMap
+             */
+            this.updateStats = function updateStats(testMap){
+                var testContext = this.getTestContext();
+                var states = this.getTestData().states;
+                var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+
+                if(item && states && testContext && testContext.state === states.interacting){
+
+                    //flag as viewed, always
+                    item.viewed = true;
+
+                    //flag as answered only if a response has been set
+                    if (!_.isUndefined(testContext.itemAnswered)) {
+                        item.answered = testContext.itemAnswered;
+                    }
+
+                    return mapHelper.updateItemStats(testMap, testContext.itemPosition);
+                }
+                return testMap;
+            };
+        },
+
+        /**
          * Initialization of the provider, called during test runner init phase.
          *
          * We install behaviors during this phase (ie. even handlers)
@@ -247,22 +307,29 @@ define([
                             })
                             .catch(submitError);
                     } else {
-                        context.itemAnswered = currentItemHelper.isAnswered(self);
+                        if (action === 'skip') {
+                            context.itemAnswered = false;
+                        } else {
+                            context.itemAnswered = currentItemHelper.isAnswered(self);
+                        }
                         resolve();
                     }
                 });
 
                 feedbackPromise.then(function(){
-
-                    updateStats();
+                    // ensure the current item answer state is correctly set
+                    var item = mapHelper.getItemAt(self.getTestMap(), context.itemPosition);
+                    if (item) {
+                        item.answered = context.itemAnswered;
+                    }
 
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
                         self.off('.'+action);
-
+                        params.itemIdentifier = context.itemIdentifier;
                         self.getProxy()
-                            .callItemAction(context.itemIdentifier, action, params)
+                            .callAction(action, params)
                             .then(function(results){
                                 loadPromise = loadPromise || Promise.resolve();
 
@@ -271,20 +338,37 @@ define([
                                 });
                             })
                             .then(function(results){
+                                var testContext;
+                                var testMap;
+
                                 if (!_.isArray(results)) {
                                     results = [results];
                                 }
-                                //todo:test context and map should be given from the last action
+
+                                //find last testContext and testMap occurrence
+                                results.reverse();
                                 _.forEach(results, function (result) {
                                     if (result.testContext) {
-                                        self.setTestContext(result.testContext);
+                                        testContext = result.testContext;
+                                        return;
                                     }
+                                });
+                                _.forEach(results, function (result) {
                                     if (result.testMap) {
-                                        self.setTestMap(result.testMap);
+                                        testMap = result.testMap;
+                                        return;
                                     }
                                 });
 
-                                updateStats();
+                                if (testContext) {
+                                    self.setTestContext(testContext);
+                                }
+
+                                if (testMap) {
+                                    self.buildTestMap(testMap, true);
+                                } else {
+                                    self.setTestMap(self.updateStats(self.getTestMap()));
+                                }
 
                                 load();
                             })
@@ -300,7 +384,6 @@ define([
              * Load the next action: load the current item or call finish based the test state
              */
             function load(){
-
                 var context = self.getTestContext();
                 var states = self.getTestData().states;
                 if(context.state <= states.interacting){
@@ -308,32 +391,6 @@ define([
                 } else if (context.state === states.closed){
                     self.finish();
                 }
-            }
-
-            /**
-             * Update the stats on the TestMap
-             */
-            function updateStats(){
-
-                var context = self.getTestContext();
-                var testMap = self.getTestMap();
-                var states = self.getTestData().states;
-                var item = mapHelper.getItemAt(testMap, context.itemPosition);
-
-                if(!item || context.state !== states.interacting){
-                    return;
-                }
-
-                //flag as viewed, always
-                item.viewed = true;
-
-                //flag as answered only if a response has been set
-                if ("undefined" !== typeof context.itemAnswered) {
-                    item.answered = context.itemAnswered;
-                }
-
-                //update the map stats, then reassign the map
-                self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             }
 
             areaBroker.setComponent('toolbox', toolboxFactory());
@@ -371,7 +428,7 @@ define([
                     this.disableItem(context.itemIdentifier);
 
                     this.getProxy()
-                        .callTestAction('exitTest', _.merge(getItemResults(), {
+                        .callAction('exitTest', _.merge(getItemResults(), {
                             itemDefinition : context.itemIdentifier,
                             reason: reason
                         }))
@@ -408,7 +465,7 @@ define([
 
                     if (!this.getState('disconnected')) {
                         // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause', {
+                        pause = self.getProxy().callAction('pause', {
                             reason: {
                                 reasons: data && data.reasons,
                                 comment : data && data.message
@@ -509,7 +566,7 @@ define([
                 }).then(function(results){
                     self.setTestData(results.testData);
                     self.setTestContext(results.testContext);
-                    self.setTestMap(results.testMap);
+                    self.buildTestMap(results.testMap, true);
 
                     //check if we need to trigger a storeChange
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
