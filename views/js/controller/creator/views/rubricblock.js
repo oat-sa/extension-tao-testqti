@@ -98,7 +98,7 @@ define([
              * Forwards the model content into the editor
              */
             function modelToEditor() {
-                var rubric = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock', 'content');
+                var rubric = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock', 'content') || {};
                 var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
                 var content = wrapper ? wrapper.content : rubric.content;
                 var html = ensureWrap(Dom2QtiEncoder.encode(content));

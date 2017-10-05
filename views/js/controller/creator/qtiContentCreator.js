@@ -24,8 +24,9 @@ define([
     'lodash',
     'jquery',
     'lib/uuid',
+    'taoQtiItem/qtiCreator/helper/commonRenderer',
     'taoQtiItem/qtiCreator/editor/containerEditor'
-], function(_, $, uuid, containerEditor) {
+], function(_, $, uuid, qtiCommonRenderer, containerEditor) {
     'use strict';
 
     return {
@@ -65,6 +66,8 @@ define([
                     }
                 ];
 
+            qtiCommonRenderer.setContext(areaBroker.getContentCreatorPanelArea());
+
             containerEditor.create($container, {
                 areaBroker: areaBroker,
                 removePlugins: removePlugins,
@@ -81,8 +84,6 @@ define([
                 self.destroy($container);
                 $document.off('.' + editorId);
             });
-
-            return editorId;
         },
 
         destroy: function destroy($container) {
