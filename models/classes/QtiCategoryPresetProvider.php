@@ -103,7 +103,23 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review.'),
                     'order'         => 500,
                     'pluginId'      => 'next'
-                ])
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'allowSkipping',
+                    'label'         => __('Allow Skipping'),
+                    'qtiCategory'   => 'x-tao-option-allowSkipping',
+                    'description'   => __('If the candidate can skip the item, without submitting a response.'),
+                    'order'         => 600,
+                    'pluginId'      => 'allowSkipping'
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'validateResponses',
+                    'label'         => __('Validate Responses'),
+                    'qtiCategory'   => 'x-tao-option-validateResponses',
+                    'description'   => __('The candidate is not allowed to submit invalid responses.'),
+                    'order'         => 700,
+                    'pluginId'      => 'validateResponses'
+                ]),
             ]
         );
 
