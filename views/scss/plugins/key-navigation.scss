@@ -74,7 +74,7 @@
                         border-bottom-color: transparent !important;
                         background: whiten($info, .9) !important;
                     }
-                    &:not(.active){
+                    &:not(.active):not(:active) {
                         .li-inner{
                             color : whiten($info, .9);
                         }

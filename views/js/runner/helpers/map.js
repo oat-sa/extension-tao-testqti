@@ -416,6 +416,148 @@ define([
                 acc.total += item.stats.total;
                 return acc;
             }, getEmptyStats());
+        },
+
+        /**
+         * Patch a testMap with a partial testMap.
+         *
+         * If the currentMap is null or the scope is test,
+         * we just use the partialMap as it is.
+         *
+         * Indexes, position and stats will be (re)built.
+         *
+         * @param {Object} currentMap - the map to patch
+         * @param {Object} partialMap - the patch
+         * @param {String} partialMap.scope - indicate the scope of the patch (test, part or section)
+         * @returns {Object} the patched testMap
+         * @throws {TypeError} if the partialMap is no a map
+         */
+        patch : function patch(currentMap, partialMap) {
+            var self = this;
+            var targetMap;
+
+            if(!_.isPlainObject(partialMap) || !partialMap.parts) {
+                throw new TypeError('Invalid test map format');
+            }
+
+            if(!currentMap || partialMap.scope === 'test'){
+                targetMap = _.cloneDeep(partialMap);
+            } else {
+
+                targetMap = _.cloneDeep(currentMap);
+
+                _.forEach(partialMap.parts, function(partialPart, targetPartId){
+                    if (partialMap.scope === 'part') {
+                        //replace the target part
+                        targetMap.parts[targetPartId] = _.cloneDeep(partialPart);
+                    }
+                    if (partialMap.scope === 'section') {
+                        _.forEach(partialPart.sections, function(partialSection, targetSectionId){
+                            //replace the target section
+                            targetMap.parts[targetPartId].sections[targetSectionId] = _.cloneDeep(partialSection);
+
+                            //compte new section stats
+                            targetMap.parts[targetPartId].sections[targetSectionId].stats = self.computeItemStats(targetMap.parts[targetPartId].sections[targetSectionId].items);
+                        });
+                    }
+                    //compte new/updated part stats
+                    targetMap.parts[targetPartId].stats = self.computeStats(targetMap.parts[targetPartId].sections);
+                });
+                //compte updated test stats
+                targetMap.stats = this.computeStats(targetMap.parts);
+            }
+
+            //the updated map can have a different size than the original
+            targetMap = this.reindex(targetMap);
+
+            return targetMap;
+        },
+
+        /**
+         * Rebuild the indexes, positions of all map parts.
+         * Then recreate the jump table.
+         *
+         * @param {Object} map - the map to reindex
+         * @returns {Object} the brand new map
+         * @throws {TypeError} if the map is no a map
+         */
+        reindex : function reindex(map){
+            var offset        = 0;
+            var offsetPart    = 0;
+            var offsetSection = 0;
+            var lastPartId;
+            var lastSectionId;
+
+            if(!_.isPlainObject(map) || !map.parts) {
+                throw new TypeError('Invalid test map format');
+            }
+
+            //remove the jump table
+            map.jumps = [];
+
+            //browse the test map, by position
+            _.sortBy(map && map.parts, 'position').forEach(function(part) {
+                _.sortBy(part && part.sections, 'position').forEach(function(section) {
+                    _.sortBy(section && section.items, 'position').forEach(function(item) {
+
+                        if(lastPartId !== part.id){
+                            offsetPart = 0;
+                            lastPartId = part.id;
+                            part.position = offset;
+                        }
+                        if(lastSectionId !== section.id){
+                            offsetSection = 0;
+                            lastSectionId = section.id;
+                            section.position = offset;
+                        }
+                        item.position = offset;
+                        item.index    = offsetSection + 1;
+                        item.positionInPart = offsetPart;
+                        item.positionInSection = offsetSection;
+
+                        map.jumps[offset] = {
+                            identifier : item.id,
+                            section    : section.id ,
+                            part       : part.id,
+                            position   : offset
+                        };
+
+                        offset++;
+                        offsetSection++;
+                        offsetPart++;
+                    });
+                });
+            });
+
+            return map;
+        },
+
+        /**
+         * Create the jump table for a test map
+         *
+         * @param {Object} map - the map
+         * @returns {Object} the brand new map with a jump table
+         * @throws {TypeError} if the map is no a map
+         */
+        createJumpTable : function createJumpTable(map){
+
+            if(!_.isPlainObject(map) || !map.parts) {
+                throw new TypeError('Invalid test map format');
+            }
+
+            map.jumps = [];
+
+            this.each(map, function (item, section, part){
+                var offset = item.position;
+                map.jumps[offset] = {
+                    identifier : item.id,
+                    section    : section.id ,
+                    part       : part.id,
+                    position   : offset
+                };
+            });
+
+            return map;
         }
     };
 });

@@ -24,7 +24,6 @@ define([
     'lodash',
     'helpers',
     'i18n',
-    'html5-history-api',
     'ui/feedback',
     'core/databindcontroller',
     'taoQtiTest/controller/creator/areaBroker',
@@ -46,7 +45,6 @@ define([
     _,
     helpers,
     __,
-    history,
     feedback,
     DataBindController,
     areaBrokerFactory,
@@ -118,12 +116,8 @@ define([
             //back button
             $('#authoringBack').on('click', function(e){
                 e.preventDefault();
-
                 $(document).trigger('creatorclose');
-
-                if (history) {
-                    history.back();
-                }
+                window.history.back();
             });
 
             //set up the ItemView, give it a configured loadItems ref

@@ -33,6 +33,9 @@ use qtism\data\storage\php\PhpDocument;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
+use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
+use oat\taoQtiTest\models\CompilationDataService;
 
 /**
  * Computerized Adaptive Testing Service
@@ -75,6 +78,8 @@ class CatService extends ConfigurableService
     private $sectionMapCache = [];
     
     private $catSection = [];
+
+    private $catSession = [];
     
     /**
      * Returns the Adaptive Engine
@@ -128,10 +133,14 @@ class CatService extends ConfigurableService
      */
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
     {
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php"));
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $filename = "adaptive-assessment-item-ref-${identifier}";
         
-        return $doc->getDocumentComponent();
+        return $compilationDataService->readPhpCompilationData(
+            $privateCompilationDirectory,
+            "${filename}.php",
+            "${filename}"
+        );
     }
     
     /**
@@ -165,10 +174,16 @@ class CatService extends ConfigurableService
         $urlinfo = parse_url($placeholder->getHref());
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
         
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $filename = "adaptive-assessment-section-${adaptiveSectionId}";
         
-        return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
+        $component = $compilationDataService->readPhpCompilationData(
+            $privateCompilationDirectory,
+            "${filename}.php",
+            $filename
+        );
+
+        return $component->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
     /**
@@ -428,6 +443,125 @@ class CatService extends ConfigurableService
         }
         
         return $catEngine;
+    }
+
+    /**
+     * @param AssessmentTestSession $testSession
+     * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
+     * @param RouteItem|null $routeItem
+     * @return array
+     */
+    public function getPreviouslySeenCatItemIds(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
+    {
+        $result = [];
+
+        if ($catSection = $this->getCatSection($testSession, $compilationDirectory, $routeItem)) {
+            $items = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+                $testSession->getSessionId(),
+                $catSection->getSectionId(),
+                'cat-seen-item-ids'
+            );
+
+            $result = !$items ? [] : json_decode($items);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param AssessmentTestSession $testSession
+     * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
+     * @param RouteItem|null $routeItem
+     * @return array
+     */
+    public function getShadowTest(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
+    {
+        $shadow = array_values(
+            array_unique(
+                array_merge(
+                    $this->getPreviouslySeenCatItemIds($testSession, $compilationDirectory, $routeItem),
+                    $this->getCatSession($testSession, $compilationDirectory, $routeItem)->getTestMap()
+                )
+            )
+        );
+
+        return $shadow;
+    }
+
+    /**
+     * Get the current CAT Session Object.
+     * @param AssessmentTestSession $testSession
+     * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
+     * @param RouteItem|null $routeItem
+     * @return \oat\libCat\CatSession|false
+     */
+    public function getCatSession(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
+    {
+        if ($catSection = $this->getCatSection($testSession, $compilationDirectory, $routeItem)) {
+            $catSectionId = $catSection->getSectionId();
+
+            if (!isset($this->catSession[$catSectionId])) {
+                // No retrieval trial yet in the current execution context.
+                $this->catSession = false;
+
+                $catSessionData = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
+                    $testSession->getSessionId(),
+                    $catSection->getSectionId(),
+                    'cat-session'
+                );
+
+                if ($catSessionData) {
+                    // We already have something in persistence for the session, let's restore it.
+                    $this->catSession[$catSectionId] = $catSection->restoreSession($catSessionData);
+                    \common_Logger::d("CAT Session '" . $this->catSession[$catSectionId]->getTestTakerSessionId() . "' for CAT Section '${catSectionId}' restored.");
+                } else {
+                    // First time the session is required, let's initialize it.
+                    $this->catSession[$catSectionId] = $catSection->initSession();
+                    $assessmentSection = $routeItem ? $routeItem->getAssessmentSection() : $testSession->getCurrentAssessmentSection();
+
+                    $event = new InitializeAdaptiveSessionEvent(
+                        $testSession,
+                        $assessmentSection,
+                        $this->catSession[$catSectionId]
+                    );
+
+                    $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+                    $this->persistCatSession($this->catSession[$catSectionId], $testSession, $compilationDirectory, $routeItem);
+                    \common_Logger::d("CAT Session '" . $this->catSession[$catSectionId]->getTestTakerSessionId() . "' for CAT Section '${catSectionId}' initialized and persisted.");
+                }
+            }
+
+            return $this->catSession[$catSectionId];
+
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Persist the CAT Session Data.
+     *
+     * Persist the current CAT Session Data in storage.
+     *
+     * @param string $catSession JSON encoded CAT Session data.
+     * @param AssessmentTestSession $testSession
+     * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
+     * @param RouteItem|null $routeItem
+     */
+    public function persistCatSession($catSession, AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
+    {
+        if ($catSection = $this->getCatSection($testSession, $compilationDirectory, $routeItem)) {
+            $catSectionId = $catSection->getSectionId();
+            $this->catSession[$catSectionId] = $catSession;
+
+            $sessionId = $testSession->getSessionId();
+            $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
+                $sessionId,
+                $catSectionId,
+                'cat-session',
+                json_encode($this->catSession[$catSectionId])
+            );
+        }
     }
     
     public function getCurrentCatItemId(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
