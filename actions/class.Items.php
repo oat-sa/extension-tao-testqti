@@ -17,6 +17,7 @@
  * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
+use oat\generis\model\OntologyRdfs;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoItems\model\CategoryService;
 use qtism\common\utils\Format;
@@ -48,7 +49,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         $notEmpty = filter_var($this->getRequestParameter('notempty'), FILTER_VALIDATE_BOOLEAN);
 
         if (($pattern = $this->getRequestParameter('pattern')) !== null && $pattern !== '') {
-            $propertyFilters[RDFS_LABEL] = $pattern;
+            $propertyFilters[OntologyRdfs::RDFS_LABEL] = $pattern;
         }
 
         $itemsService = taoItems_models_classes_ItemsService::singleton();
