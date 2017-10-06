@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\tao\model\TaoOntology;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
@@ -283,7 +284,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isBetween('2.16.0','2.17.0')) {
             AclProxy::applyRule(new AccessRule(
                 AccessRule::GRANT,
-                INSTANCE_ROLE_DELIVERY,
+				TaoOntology::PROPERTY_INSTANCE_ROLE_DELIVERY,
                 ['ext' => 'taoQtiTest' , 'mod' => 'Runner']
             ));
 
