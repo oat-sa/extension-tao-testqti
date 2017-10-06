@@ -74,7 +74,9 @@ define([
                 removePlugins: removePlugins,
                 toolbar: toolbar,
                 metadata: {
-                    outcomes: modelOverseer.getOutcomesNames()
+                    getOutcomes: function getOutcomes() {
+                        return modelOverseer.getOutcomesNames();
+                    }
                 },
                 change: options.change || _.noop,
                 resetRenderer: true
