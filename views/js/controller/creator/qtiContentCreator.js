@@ -16,7 +16,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 /**
- * Instanciate a Wysiwyg editor to create QTI content
+ * Instanciate a Wysiwyg editor to create QTI content.
  *
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -29,10 +29,11 @@ define([
 ], function(_, $, uuid, qtiCommonRenderer, containerEditor) {
     'use strict';
 
+    var $document = $(document);
+
     return {
         create: function create(modelOverseer, areaBroker, $container, options) {
             var self = this,
-                $document = $(document),
                 editorId = uuid();
 
             var removePlugins = [
@@ -82,12 +83,20 @@ define([
             // destroying ckInstance on editor close
             $document.on('creatorclose.' + editorId, function() {
                 self.destroy($container);
-                $document.off('.' + editorId);
             });
+
+            $container.data('editorId', editorId);
         },
 
+        /**
+         * @returns {Promise} - when editor is destroyed
+         */
         destroy: function destroy($container) {
-            containerEditor.destroy($container);
+            var editorId = $container.data('editorId');
+            if (editorId) {
+                $document.off('.' + editorId);
+            }
+            return containerEditor.destroy($container);
         }
     };
 });

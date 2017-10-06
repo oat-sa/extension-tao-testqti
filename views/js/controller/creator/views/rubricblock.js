@@ -48,7 +48,6 @@ define([
          * @param {jQueryElement} $rubricBlock - the rubric block to set up
          */
         setUp: function setUp(modelOverseer, areaBroker, rubricModel, $rubricBlock) {
-            //we need to synchronize the ck elt with an hidden elt that has data-binding
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
 
             /**
@@ -102,7 +101,19 @@ define([
                 var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
                 var content = wrapper ? wrapper.content : rubric.content;
                 var html = ensureWrap(Dom2QtiEncoder.encode(content));
-                $rubricBlockContent.html(html);
+
+                // Destroy any existing CKEditor instance
+                qtiContentCreator.destroy($rubricBlockContent).then(function() {
+                    // update the editor content
+                    $rubricBlockContent.html(html);
+
+                    // Re-create the Qti-ckEditor instance
+                    qtiContentCreator.create(modelOverseer, areaBroker, $rubricBlockContent, {
+                        change: function change(editorContent) {
+                            editorToModel(editorContent);
+                        }
+                    });
+                });
             }
 
             /**
@@ -275,14 +286,6 @@ define([
             actions.properties($rubricBlock, 'rubricblock', rubricModel, propHandler);
 
             modelToEditor();
-
-            // Create the Qti-ckEditor instance
-
-            qtiContentCreator.create(modelOverseer, areaBroker, $rubricBlockContent, {
-                change: function change(html) {
-                    editorToModel(html);
-                }
-            });
 
             // destroy CK instance on rubric bloc deletion.
             // todo: find a way to destroy CK upon destroying rubric bloc parent section/part
