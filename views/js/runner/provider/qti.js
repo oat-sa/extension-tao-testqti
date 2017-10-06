@@ -338,12 +338,34 @@ define([
                                 });
                             })
                             .then(function(results){
-                                if(results.testContext){
-                                    self.setTestContext(results.testContext);
+                                var testContext;
+                                var testMap;
+
+                                if (!_.isArray(results)) {
+                                    results = [results];
                                 }
 
-                                if (results.testMap) {
-                                    self.buildTestMap(results.testMap, true);
+                                //find last testContext and testMap occurrence
+                                results.reverse();
+                                _.forEach(results, function (result) {
+                                    if (result.testContext) {
+                                        testContext = result.testContext;
+                                        return;
+                                    }
+                                });
+                                _.forEach(results, function (result) {
+                                    if (result.testMap) {
+                                        testMap = result.testMap;
+                                        return;
+                                    }
+                                });
+
+                                if(testContext){
+                                    self.setTestContext(testContext);
+                                }
+
+                                if (testMap) {
+                                    self.buildTestMap(testMap, true);
                                 } else {
                                     self.setTestMap(self.updateStats(self.getTestMap()));
                                 }

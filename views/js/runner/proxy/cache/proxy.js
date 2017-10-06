@@ -212,7 +212,7 @@ define([
                         throw offlineNavError;
                     }
 
-                    return storeAction().then(function(){
+                    return this.scheduleAction(action, actionParams).then(function(){
                         return {
                             success : true,
                             testContext : newTestContext
@@ -220,11 +220,25 @@ define([
                     });
                 }
 
-                return storeAction().then(function(){
+                return this.scheduleAction(action, actionParams).then(function(){
                     return {
                         success : true
                     };
                 });
+            };
+
+            /**
+             * Schedule an action do be done with next call
+             *
+             * @param {String} action - the action name (ie. move, skip, timeout)
+             * @param {Object} actionParams - the parameters sent along the action
+             * @returns {Promise} resolves with the action result
+             */
+            this.scheduleAction = function scheduleAction(action, actionParams) {
+                return self.actiontStore.push(
+                    action,
+                    self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
+                );
             };
 
             /**
@@ -245,16 +259,30 @@ define([
              *
              * @param {String} action - the action name (ie. move, skip, timeout)
              * @param {Object} actionParams - the parameters sent along the action
+             * @param {Boolean} deferred whether action can be scheduled (put into queue) to be sent in a bunch of actions later.
              * @returns {Promise} resolves with the action result
              */
-            this.requestNetworkThenOffline = function requestNetworkThenOffline(url, action, actionParams){
+            this.requestNetworkThenOffline = function requestNetworkThenOffline(url, action, actionParams, deferred){
                 var testContext = this.getDataHolder().get('testContext');
 
                 //perform the request, but fallback on offline if the request itself fails
                 var runRequestThenOffline = function runRequestThenOffline(){
-                    return self.request(url, actionParams).then(function(result){
-                        //if the request fails, we should be offline
-                        if(self.isOffline()){
+                    var request = new Promise(function(resolve){
+                            self.scheduleAction(action, actionParams).then(function(){
+                                if (!deferred) {
+                                    self.syncOfflineData().then(function (result) {
+                                        resolve(result);
+                                    });
+                                }
+                            });
+                       });
+                    return request.then(function(result){
+                        if (self.isOffline()) {
+                            return self.offlineAction(action, actionParams);
+                        }
+                        return result;
+                    }).catch(function(result){
+                        if (self.isOffline()) {
                             return self.offlineAction(action, actionParams);
                         }
                         return result;
@@ -439,20 +467,24 @@ define([
         /**
          * Sends the test variables
          * @param {Object} variables
+         * @param {Boolean} deferred whether action can be scheduled (put into queue) to be sent in a bunch of actions later.
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          * @fires sendVariables
          */
-        sendVariables: function sendVariables(variables) {
+        sendVariables: function sendVariables(variables, deferred) {
             var action = 'storeTraceData';
             var actionParams = {
                 traceData: JSON.stringify(variables)
             };
 
+            deferred = !!deferred;
+
             return this.requestNetworkThenOffline(
                 this.configStorage.getTestActionUrl(action),
                 action,
-                actionParams
+                actionParams,
+                deferred
             );
         },
 
@@ -460,14 +492,17 @@ define([
          * Calls an action related to the test
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
+         * @param {Boolean} deferred whether action can be scheduled (put into queue) to be sent in a bunch of actions later.
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        callTestAction: function callTestAction(action, params) {
+        callTestAction: function callTestAction(action, params, deferred) {
+            deferred = !!deferred;
             return this.requestNetworkThenOffline(
                 this.configStorage.getTestActionUrl(action),
                 action,
-                params
+                params,
+                deferred
             );
         },
 
@@ -476,13 +511,15 @@ define([
          * @param {String} itemIdentifier - The identifier of the item for which call the action
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
+         * @param {Boolean} deferred whether action can be scheduled (put into queue) to be sent in a bunch of actions later.
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        callItemAction: function callItemAction(itemIdentifier, action, params) {
+        callItemAction: function callItemAction(itemIdentifier, action, params, deferred) {
             var self = this;
 
             var testMap = this.getDataHolder().get('testMap');
+            deferred = !!deferred;
 
             //update the item state
             if(params.itemState){
@@ -504,7 +541,8 @@ define([
             return this.requestNetworkThenOffline(
                 this.configStorage.getItemActionUrl(itemIdentifier, action),
                 action,
-                _.merge({ itemDefinition : itemIdentifier }, params)
+                _.merge({ itemDefinition : itemIdentifier }, params),
+                deferred
             );
         }
     }, qtiServiceProxy);
