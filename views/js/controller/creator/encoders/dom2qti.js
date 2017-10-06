@@ -28,14 +28,16 @@ define([
     'use strict';
 
     /**
-     * A mapping of QTI-XML node names in order to keep the camel case form
+     * A mapping of QTI-XML node and attributes names in order to keep the camel case form
      * @type {Object}
      */
     var normalizedNodes = {
         feedbackblock: 'feedbackBlock',
         outcomeidentifier: 'outcomeIdentifier',
         showhide: 'showHide',
-        printedvariable: 'printedVariable'
+        printedvariable: 'printedVariable',
+        powerform: 'powerForm',
+        mappingindicator: 'mappingIndicator'
     };
 
     /**
@@ -44,12 +46,12 @@ define([
      */
     var typedAttributes = {
         printedVariable: {
-            identifier: baseType.getConstantByName('identifier'),
-            powerForm: baseType.getConstantByName('boolean'),
-            base: baseType.getConstantByName('intOrIdentifier'),
-            index: baseType.getConstantByName('intOrIdentifier'),
-            delimiter: baseType.getConstantByName('string'),
-            field: baseType.getConstantByName('string'),
+            identifier:       baseType.getConstantByName('identifier'),
+            powerForm:        baseType.getConstantByName('boolean'),
+            base:             baseType.getConstantByName('intOrIdentifier'),
+            index:            baseType.getConstantByName('intOrIdentifier'),
+            delimiter:        baseType.getConstantByName('string'),
+            field:            baseType.getConstantByName('string'),
             mappingIndicator: baseType.getConstantByName('string')
         }
     };
@@ -76,7 +78,7 @@ define([
      */
     function attrToStr(attributes) {
         return _.reduce(attributes, function (acc, value, key) {
-            if (_.isNumber(value) || (_.isString(value) && !_.isEmpty(value))) {
+            if (_.isNumber(value) || _.isBoolean(value) || (_.isString(value) && !_.isEmpty(value))) {
                 return acc + ' ' + key + '="' + value + '" ';
             }
             return acc;
