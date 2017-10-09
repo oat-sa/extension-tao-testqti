@@ -22,7 +22,6 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
-use oat\taoTests\models\runner\time\InvalidDataException;
 use oat\taoTests\models\runner\time\TimeStorage;
 
 /**
@@ -108,33 +107,41 @@ class QtiTimeStorage implements TimeStorage
 
     /**
      * Stores the timer data
-     * @param string $data
+     * @param array $data
      * @return TimeStorage
-     * @throws InvalidDataException
      * @throws \common_exception_Error
      */
     public function store($data)
     {
-        if (!is_string($data)) {
-            throw new InvalidDataException('The timer data to store are not valid!');
-        }
+        $json = json_encode($data);
 
-        $this->cache[$this->testSessionId] = $data;
+        $this->cache[$this->testSessionId] = $json;
 
-        $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $data);
+        $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $json);
+        \common_Logger::d(sprintf('QtiTimer: Stored %d bytes into state storage', strlen($json)));
 
         return $this;
     }
 
     /**
      * Loads the timer data from the storage
-     * @return string
+     * @return array
      * @throws \common_exception_Error
      */
     public function load()
     {
         if (!isset($this->cache[$this->testSessionId])) {
-            $this->cache[$this->testSessionId] = $this->getStorageService()->get($this->getUserKey(), $this->getStorageKey());
+            $encodedData = $this->getStorageService()->get($this->getUserKey(), $this->getStorageKey());
+            \common_Logger::d(sprintf('QtiTimer: Loaded %d bytes from state storage', strlen($encodedData)));
+            
+            $decodedData = json_decode($encodedData, true);
+            
+            // fallback for old storage that uses PHP serialize format
+            if (is_null($decodedData) && $encodedData) {
+                $decodedData = unserialize($encodedData);
+            }
+            
+            $this->cache[$this->testSessionId] = $decodedData;
         }
 
         return $this->cache[$this->testSessionId];
