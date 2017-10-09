@@ -346,7 +346,7 @@ define([
             };
         };
 
-        QUnit.expect(6);
+        QUnit.expect(7);
 
         timer.init().then(function() {
             timer.render().then(function() {
@@ -357,6 +357,7 @@ define([
                 assert.equal($timerContainer.length, 1, 'The timer is appended');
                 assert.equal($toggler.length, 1, 'The timer toggler is appended');
                 assert.ok($toggler.hasClass('hidden'), 'The toggler is hidden');
+                assert.ok(! $timerContainer.hasClass('zen-mode'), 'The timer is not in zen mode');
 
                 runner
                     .after('renderitem', function(){
@@ -367,8 +368,11 @@ define([
 
                         assert.ok($timerContainer.hasClass('zen-mode'), 'The timer is now in zen mode');
 
+                        //to remove the store
+                        this.trigger('finish');
+                    })
+                    .on('finish', function(){
                         QUnit.start();
-
                     })
                     .trigger('renderitem');
             });

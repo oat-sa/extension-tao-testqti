@@ -59,6 +59,7 @@ use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
+use oat\taoQtiTest\models\PhpCodeCompilationDataService;
 use oat\tao\scripts\update\OntologyUpdater;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
@@ -1579,7 +1580,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('13.2.0', '14.1.4');
 
-        if($this->isVersion('14.1.4')){
+        if($this->isVersion('14.1.4')) {
             /** @var CreatorItems $creatorItemsService */
             $creatorItemsService = $this->getServiceManager()->get(CreatorItems::SERVICE_ID);
             $creatorItemsService->setOption(CreatorItems::ITEM_MODEL_SEARCH_OPTION, CreatorItems::ITEM_MODEL_QTI_URI);
@@ -1590,6 +1591,27 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('14.1.5');
         }
 
-        $this->skip('14.1.5', '15.7.6');
+        $this->skip('14.1.5', '16.0.1');
+
+        if($this->isVersion('16.0.1')) {
+
+            // Update the synchronisation service
+            $this->runExtensionScript(SetSynchronisationService::class);
+
+            $this->setVersion('16.1.0');
+        }
+
+        $this->skip('16.1.0', '16.1.1');
+
+        if ($this->isVersion('16.1.1')) {
+            $this->getServiceManager()->register(
+                PhpCodeCompilationDataService::SERVICE_ID,
+                new PhpCodeCompilationDataService()
+            );
+
+            $this->setVersion('16.2.0');
+        }
+
+        $this->skip('16.2.0', '16.2.2');
     }
 }

@@ -25,6 +25,7 @@ use oat\oatbox\service\ServiceManager;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\Directory;
+use oat\taoQtiTest\models\CompilationDataService;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -220,27 +221,13 @@ class taoQtiTest_helpers_Utils {
     static public function getTestDefinition($qtiTestCompilation)
     {
         $directoryIds = explode('|', $qtiTestCompilation);
-
-        $data = \tao_models_classes_service_FileStorage::singleton()
-            ->getDirectoryById($directoryIds[0])
-            ->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME);
-            
-        // Store a copy to get it in opcache...
-        $expectedCacheDir = sys_get_temp_dir() . '/taooldtestrunnerphpcache';
-        $expectedCacheFile = $expectedCacheDir . '/' . md5($qtiTestCompilation) . '.php';
+        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[0]);
         
-        if (!is_dir($expectedCacheDir)) {
-            mkdir($expectedCacheDir);
-        }
-        
-        if (!is_file($expectedCacheFile)) {
-            file_put_contents($expectedCacheFile, $data);
-        }
+        $compilationDataService = ServiceManager::getServiceManager()->get(CompilationDataService::SERVICE_ID);
 
-        common_Logger::d("Loading QTI-PHP file from '${expectedCacheFile}'.");
-        $doc = new PhpDocument();
-        $doc->load($expectedCacheFile);
-
-        return $doc->getDocumentComponent();
+        return $compilationDataService->readPhpCompilationData(
+            $directory,
+            taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME
+        );
     }
 }
