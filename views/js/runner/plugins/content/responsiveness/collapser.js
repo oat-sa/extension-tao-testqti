@@ -20,6 +20,8 @@
  * @author Christophe Noël <christophe@taotesting.com>
  * @author Dieter Raber <dieter@taotesting.com>
  */
+
+
 define([
     'lodash',
     'jquery',
@@ -265,7 +267,9 @@ define([
                 $elements.each(function() {
                     var ctrl = this.dataset.control,
                         // re makes group `foo` from `foo-bar`, `fooBar` and `foo_bar`
-                        key = ctrl.substring(0, ctrl.search(/[A-Z-_]/));
+                        // if we do not have a prefix use the control name as key to ensure uniqueness
+                        key = ctrl.substring(0, ctrl.search(/[A-Z-_]/)) || ctrl;
+
                     order[key] = order[key] || $();
                     order[key] = order[key].add($(this));
                 });
