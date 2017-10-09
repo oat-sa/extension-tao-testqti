@@ -264,10 +264,13 @@ define([
              */
             this.requestNetworkThenOffline = function requestNetworkThenOffline(url, action, actionParams, deferred){
                 var testContext = this.getDataHolder().get('testContext');
+                var communicationConfig = self.configStorage.getCommunicationConfig();
 
                 //perform the request, but fallback on offline if the request itself fails
                 var runRequestThenOffline = function runRequestThenOffline(){
-                    var request = new Promise(function(resolve){
+                    var request;
+                    if (communicationConfig.syncActions && communicationConfig.syncActions.indexOf(action) >= 0) {
+                        request = new Promise(function(resolve) {
                             self.scheduleAction(action, actionParams).then(function(){
                                 if (!deferred) {
                                     self.syncOfflineData().then(function (result) {
@@ -275,7 +278,12 @@ define([
                                     });
                                 }
                             });
-                       });
+                        });
+                    } else {
+                        //action is not synchronizable
+                        //fallback to direct request
+                        request = self.request(url, actionParams);
+                    }
                     return request.then(function(result){
                         if (self.isOffline()) {
                             return self.offlineAction(action, actionParams);
