@@ -47,7 +47,7 @@
                 </div>
             </div>
         </h1>
-        <div class="test-content hoverable">
+        <div class="test-content">
             <div class="testparts" data-bind-each="testParts" data-bind-tmpl="testpart"> </div>
             <button class="btn-info small testpart-adder">
                 <span class="icon-add"></span><?=__('New test part')?>
