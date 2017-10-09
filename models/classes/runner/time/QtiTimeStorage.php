@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStorageJsonFormat;
 use oat\taoTests\models\runner\time\TimeStorage;
 
 /**
@@ -52,6 +53,12 @@ class QtiTimeStorage implements TimeStorage
      * @var string
      */
     protected $userId;
+
+    /**
+     * The encoder for the storage format 
+     * @var QtiTimeStorageFormat
+     */
+    protected $storageFormat;
 
     /**
      * QtiTimeStorage constructor.
@@ -89,7 +96,6 @@ class QtiTimeStorage implements TimeStorage
     /**
      * Gets the user key to access the storage
      * @return string
-     * @throws \common_exception_Error
      */
     protected function getUserKey()
     {
@@ -106,16 +112,26 @@ class QtiTimeStorage implements TimeStorage
     }
 
     /**
+     * @return QtiTimeStorageFormat
+     */
+    protected function getStorageFormat()
+    {
+        if (!$this->storageFormat) {
+            $this->storageFormat = new QtiTimeStorageJsonFormat();
+        }
+        return $this->storageFormat;
+    }
+
+    /**
      * Stores the timer data
      * @param array $data
      * @return TimeStorage
-     * @throws \common_exception_Error
      */
     public function store($data)
     {
-        $json = json_encode($data);
+        $json = $this->getStorageFormat()->encode($data);
 
-        $this->cache[$this->testSessionId] = $json;
+        $this->cache[$this->testSessionId] = &$json;
 
         $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $json);
         \common_Logger::d(sprintf('QtiTimer: Stored %d bytes into state storage', strlen($json)));
@@ -126,22 +142,14 @@ class QtiTimeStorage implements TimeStorage
     /**
      * Loads the timer data from the storage
      * @return array
-     * @throws \common_exception_Error
      */
     public function load()
     {
         if (!isset($this->cache[$this->testSessionId])) {
             $encodedData = $this->getStorageService()->get($this->getUserKey(), $this->getStorageKey());
             \common_Logger::d(sprintf('QtiTimer: Loaded %d bytes from state storage', strlen($encodedData)));
-            
-            $decodedData = json_decode($encodedData, true);
-            
-            // fallback for old storage that uses PHP serialize format
-            if (is_null($decodedData) && $encodedData) {
-                $decodedData = unserialize($encodedData);
-            }
-            
-            $this->cache[$this->testSessionId] = $decodedData;
+
+            $this->cache[$this->testSessionId] = $this->getStorageFormat()->decode($encodedData);
         }
 
         return $this->cache[$this->testSessionId];
