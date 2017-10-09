@@ -93,7 +93,7 @@ define([
      * @returns {String}
      */
     function normalizeNodeName(nodeName) {
-        var normalized = nodeName.toLocaleLowerCase();
+        var normalized = (nodeName) ? nodeName.toLocaleLowerCase() : '';
         return normalizedNodes[normalized] || normalized;
     }
 
@@ -163,7 +163,6 @@ define([
                     }),
                     _.transform(elt.attributes, function (acc, value) {
                         var attrName = normalizeNodeName(value.nodeName);
-                        //todo: cover with unit tests
                         if (attrName) {
                             if (typedAttributes[nodeName] && typedAttributes[nodeName][attrName]) {
                                 acc[attrName] = baseType.getValue(typedAttributes[nodeName][attrName], value.nodeValue);

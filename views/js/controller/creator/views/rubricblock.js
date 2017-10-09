@@ -287,6 +287,8 @@ define([
 
             modelToEditor();
 
+            console.log(rubricModel);
+
             // destroy CK instance on rubric bloc deletion.
             // todo: find a way to destroy CK upon destroying rubric bloc parent section/part
             bindEvent($rubricBlock, 'delete', function() {
