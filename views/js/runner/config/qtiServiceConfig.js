@@ -146,31 +146,31 @@ define([
 
             /**
              * Gets an URL of a service action related to a particular item
-             * @param {String} uri - The URI of the item
+             * @param {String} itemIdentifier - The URI of the item
              * @param {String} action - the name of the action to request
              * @returns {String} - Returns the URL
              */
-            getItemActionUrl : function getItemActionUrl(uri, action) {
+            getItemActionUrl : function getItemActionUrl(itemIdentifier, action) {
                 return helpers._url(action, this.getServiceController(), this.getServiceExtension(), {
                     testDefinition : this.getTestDefinition(),
                     testCompilation : this.getTestCompilation(),
                     testServiceCallId : this.getServiceCallId(),
-                    itemDefinition : uri
+                    itemDefinition : itemIdentifier
                 });
             },
 
             /**
              * Gets an URL of a telemetry signal related to a particular item
-             * @param {String} uri - The URI of the item
+             * @param {String} itemIdentifier - The URI of the item
              * @param {String} signal - the name of the signal to request
              * @returns {String} - Returns the URL
              */
-            getTelemetryUrl : function getTelemetryUrl(uri, signal) {
+            getTelemetryUrl : function getTelemetryUrl(itemIdentifier, signal) {
                 return helpers._url(signal, this.getServiceController(), this.getServiceExtension(), {
                     testDefinition : this.getTestDefinition(),
                     testCompilation : this.getTestCompilation(),
                     testServiceCallId : this.getServiceCallId(),
-                    itemDefinition : uri
+                    itemDefinition : itemIdentifier
                 });
             },
 

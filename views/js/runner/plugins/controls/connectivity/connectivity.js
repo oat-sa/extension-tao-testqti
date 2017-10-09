@@ -99,14 +99,18 @@ define([
 
                         //creates the waiting modal dialog
                         dialog = waitingDialog({
-                            message : __('You are encountering a prolonged connectivity loss'),
+                            message : __('You are encountering a prolonged connectivity loss. ') + err.message,
                             waitContent : __('Please wait while we try to restore the connection.'),
                             proceedContent : __('The connection seems to be back, please proceed')
                         })
                         .on('proceed', function(){
                             var testContext = testRunner.getTestContext();
-
-                            testRunner.loadItem(testContext.itemIdentifier);
+                            if(err.type === 'nav'){
+                                testRunner.loadItem(testContext.itemIdentifier);
+                            }
+                            if(err.type === 'finish'){
+                                testRunner.finish();
+                            }
                         })
                         .on('render', function(){
                             proxy

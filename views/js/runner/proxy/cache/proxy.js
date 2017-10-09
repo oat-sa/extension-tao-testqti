@@ -53,14 +53,31 @@ define([
      * When we are unable to navigate offline
      * @type {Error}
      */
-    var offlineNavError = new Error(__('We are unable to connect to the server to retrieve the next item.'));
-    _.assign(offlineNavError, {
-        success : false,
-        source: 'navigator',
-        purpose: 'proxy',
-        type: 'Item not found',
-        code : 404
-    });
+    var offlineNavError = _.assign(
+        new Error(__('We are unable to connect to the server to retrieve the next item.')),
+        {
+            success : false,
+            source: 'navigator',
+            purpose: 'proxy',
+            type: 'nav',
+            code : 404
+        }
+    );
+
+    /**
+     * When we are unable to exit the test offline
+     * @type {Error}
+     */
+    var offlineExitError = _.assign(
+        new Error(__('We are unable to connect the server to submit your results.')),
+        {
+            success : false,
+            source: 'navigator',
+            purpose: 'proxy',
+            type: 'finish',
+            code : 404
+        }
+    );
 
     /**
      * Overrides the qtiServiceProxy with the precaching behavior
@@ -89,13 +106,18 @@ define([
             //configuration params, that comes on every request/params
             this.requestConfig = {};
 
-            //preload at least this number of items
-            this.cacheAmount = 1;
-
-            //keep reference on the test map as we don't have access to the test runner
-            this.testMap     = null;
-            this.testData    = null;
-            this.testContext = null;
+            /**
+             * Get the item cache size from the test data
+             * @returns {Number} the cache size
+             */
+            this.getCacheAmount = function getCacheAmount(){
+                var cacheAmount = 1;
+                var testData    = this.getDataHolder().get('testData');
+                if(testData && testData.config && testData.config.itemCaching) {
+                    cacheAmount = parseInt(testData.config.itemCaching.amount, 10) || cacheAmount;
+                }
+                return cacheAmount;
+            };
 
             /**
              * Update the item state in the store
@@ -127,7 +149,7 @@ define([
              * @returns {Boolean}
              */
             this.hasNextItem = function hasNextItem(itemIdentifier) {
-                var sibling = navigationHelper.getNextItem(self.testMap, itemIdentifier);
+                var sibling = navigationHelper.getNextItem(this.getDataHolder().get('testMap'), itemIdentifier);
                 return sibling && self.hasItem(sibling.id);
             };
 
@@ -137,7 +159,7 @@ define([
              * @returns {Boolean}
              */
             this.hasPreviousItem = function hasPreviousItem(itemIdentifier) {
-                var sibling = navigationHelper.getPreviousItem(self.testMap, itemIdentifier);
+                var sibling = navigationHelper.getPreviousItem(this.getDataHolder().get('testMap'), itemIdentifier);
                 return sibling && self.hasItem(sibling.id);
             };
 
@@ -152,7 +174,14 @@ define([
              */
             this.offlineAction = function offlineAction(action, actionParams){
                 var testNavigator;
-                var testContext;
+                var newTestContext;
+
+                var blockingActions = ['exitTest', 'timeout'];
+
+                var testData    = this.getDataHolder().get('testData');
+                var testContext = this.getDataHolder().get('testContext');
+                var testMap     = this.getDataHolder().get('testMap');
+
                 var storeAction  = function storeAction(){
                     return self.actiontStore.push(
                         action,
@@ -160,24 +189,33 @@ define([
                     );
                 };
 
+                //we just block those actions and the end of the test
+                if( _.contains(blockingActions, action) ||
+                    ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
+
+                    storeAction();
+                    throw offlineExitError;
+                }
+
                 // try the navigation if the actionParams context meaningful data
                 if( actionParams.direction && actionParams.scope){
-                    testNavigator = testNavigatorFactory(self.testData, self.testContext, self.testMap);
-                    testContext = testNavigator.navigate(
+                    testNavigator = testNavigatorFactory(testData, testContext, testMap);
+                    newTestContext = testNavigator.navigate(
                             actionParams.direction,
                             actionParams.scope,
                             actionParams.ref
                         );
 
                     //we are really not able to navigate
-                    if(!testContext || !testContext.itemIdentifier || !self.hasItem(testContext.itemIdentifier)){
+                    if(!newTestContext || !newTestContext.itemIdentifier || !self.hasItem(newTestContext.itemIdentifier)){
+                        storeAction();
                         throw offlineNavError;
                     }
 
                     return storeAction().then(function(){
                         return {
                             success : true,
-                            testContext : testContext
+                            testContext : newTestContext
                         };
                     });
                 }
@@ -210,6 +248,7 @@ define([
              * @returns {Promise} resolves with the action result
              */
             this.requestNetworkThenOffline = function requestNetworkThenOffline(url, action, actionParams){
+                var testContext = this.getDataHolder().get('testContext');
 
                 //perform the request, but fallback on offline if the request itself fails
                 var runRequestThenOffline = function runRequestThenOffline(){
@@ -225,7 +264,7 @@ define([
                 if(this.isOffline()){
                     //try the telemetry action, just in case
                     return this
-                        .telemetry(this.testContext.itemIdentifier, 'up')
+                        .telemetry(testContext.itemIdentifier, 'up')
                         .then(function(){
                             //if the up request succeed,
                             // we ask for action sync, and we run the request
@@ -240,6 +279,7 @@ define([
                             if(self.isConnectivityError(err)){
                                 return self.offlineAction(action, actionParams);
                             }
+                            throw err;
                         });
                 }
 
@@ -276,46 +316,16 @@ define([
          *                      Any error will be provided if rejected.
          */
         init: function init(config, params) {
-            var self = this;
+
+            if(!this.getDataHolder()){
+                throw new Error('Unable to retrieve test runners data holder');
+            }
 
             //those needs to be in each request params.
             this.requestConfig = _.pick(config, ['testDefinition', 'testCompilation', 'serviceCallId']);
 
             //set up the action store for the current service call
             this.actiontStore  = actionStoreFactory(config.serviceCallId);
-
-            //let's intercept some useful data (used by the proxy)
-            this.on('receive', function onReceive(response) {
-                var lastResponseValue;
-                var responseValue;
-                if (response) {
-                    //in case of sync we can have multiple entries in the response
-                    if(_.isArray(response)){
-                        lastResponseValue = _.findLast(response, function(value){
-                            return _.isPlainObject(value.testContext) || _.isPlainObject(value.testMap);
-                        });
-                        if(lastResponseValue){
-                            responseValue = _.cloneDeep(lastResponseValue);
-                        }
-                    }
-                    if(!responseValue){
-                        responseValue = _.cloneDeep(response);
-                    }
-                    if (responseValue.testData && responseValue.testData.config && responseValue.testData.config.itemCaching) {
-                        self.cacheAmount = parseInt(responseValue.testData.config.itemCaching.amount, 10) || self.cacheAmount;
-                    }
-
-                    if(responseValue.testData){
-                        self.testData = responseValue.testData;
-                    }
-                    if (responseValue.testMap) {
-                        self.testMap = responseValue.testMap;
-                    }
-                    if(responseValue.testContext){
-                        self.testContext = responseValue.testContext;
-                    }
-                }
-            });
 
             //we resync as soon as the connection is back
             this.on('reconnect', function(){
@@ -338,7 +348,6 @@ define([
 
             this.itemStore.clear();
 
-            this.testMap          = null;
             this.getItemFromStore = false;
 
             return qtiServiceProxy.destroy.call(this);
@@ -359,7 +368,9 @@ define([
              * @returns {Promise} that always resolves
              */
             var loadNextItem = function loadNextItem(){
-                var siblings = navigationHelper.getSiblingItems(self.testMap, itemIdentifier, 'both', self.cacheAmount);
+                var testMap = self.getDataHolder().get('testMap');
+
+                var siblings = navigationHelper.getSiblingItems(testMap, itemIdentifier, 'both', self.getCacheAmount());
                 var missing = _.reduce(siblings, function (list, sibling) {
                     if (!self.hasItem(sibling.id)) {
                         list.push(sibling.id);
@@ -471,6 +482,8 @@ define([
         callItemAction: function callItemAction(itemIdentifier, action, params) {
             var self = this;
 
+            var testMap = this.getDataHolder().get('testMap');
+
             //update the item state
             if(params.itemState){
                 self.updateState(itemIdentifier, params.itemState);
@@ -480,7 +493,7 @@ define([
             self.getItemFromStore = (
                 (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(itemIdentifier)) ||
                 (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(itemIdentifier)) ||
-                (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(self.testMap,  params.ref)))
+                (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(testMap,  params.ref)))
             );
 
             //as we will pick the next item from the store ensure the next request will start the timer

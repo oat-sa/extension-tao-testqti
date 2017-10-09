@@ -23,6 +23,7 @@ use oat\oatbox\filesystem\Directory;
 use oat\taoQtiItem\model\qti\metadata\exporter\MetadataExporter;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\oatbox\service\ServiceManager;
+use oat\taoQtiTest\models\export\preprocessor\AssessmentItemRefPreProcessor;
 
 /**
  * A specialization of QTI ItemExporter aiming at exporting IMS QTI Test definitions from the TAO
@@ -170,6 +171,17 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         return $this->manifest;
     }
 
+
+    public function preProcessing()
+    {
+        if($this->getServiceManager()->has(AssessmentItemRefPreProcessor::SERVICE_ID)) {
+            /** @var AssessmentItemRefPreProcessor $preprocessor */
+            $preprocessor = $this->getServiceManager()->get(AssessmentItemRefPreProcessor::SERVICE_ID);
+            $items = $preprocessor->process($this->testDocument);
+            $this->setItems($items);
+        }
+
+    }
     /**
      * Export the test definition and all its dependencies (media, items, ...) into
      * the related ZIP archive.
@@ -179,6 +191,8 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      */
     public function export($options = array())
     {
+        $this->preProcessing();
+
         // 1. Export the items bound to the test.
         $report = $this->exportItems();
         $itemIdentifiers = $report->getData();
@@ -381,9 +395,14 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     protected function getMetadataExporter()
     {
         if (! $this->metadataExporter) {
-            $this->metadataExporter = ServiceManager::getServiceManager()->get(MetadataService::SERVICE_ID)->getExporter();
+            $this->metadataExporter = $this->getServiceManager()->get(MetadataService::SERVICE_ID)->getExporter();
         }
         return $this->metadataExporter;
 
+    }
+
+    protected function getServiceManager()
+    {
+        return ServiceManager::getServiceManager();
     }
 }

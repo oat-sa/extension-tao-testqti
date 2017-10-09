@@ -67,7 +67,9 @@ define([
                 self.tts = ttsFactory({
                     $contentArea: testRunner.getAreaBroker().getContentArea()
                 })
-                .render(self.ttsButton.getElement());
+                .render(self.ttsButton.getElement())
+                .disable() // disable & hide by default
+                .hide();
 
                 stacker.autoBringToFront(self.tts.getElement());
             })
@@ -86,25 +88,24 @@ define([
                 } else {
                     self.tts.enable();
                 }
-            });
+            })
+            .disable() // disable & hide by default
+            .hide();
 
             testRunner
             .on('loaditem', function () {
-                self.tts.disable();
-                self.ttsButton.disable();
+                self.disable();
                 self.ttsButton.hide();
             })
             .on('enabletools', function () {
-                self.tts.enable();
-                self.ttsButton.enable();
+                self.enable();
             })
             .on('renderitem', function () {
                 var context = testRunner.getTestContext();
                 var config = testRunner.getConfig();
 
                 if (context.options.textToSpeech) {
-                    self.tts.enable();
-                    self.ttsButton.enable();
+                    self.enable();
                     self.ttsButton.show();
 
                     self.tts.updateTexthelpCache(
@@ -114,11 +115,36 @@ define([
                 }
             })
             .on('disabletools unloaditem', function () {
-                self.tts.disable();
-                self.ttsButton.disable();
+                self.disable();
             });
 
             return this;
+        },
+
+        /**
+         * Enable plugin
+         */
+        enable: function enable() {
+            if (this.tts) {
+                this.tts.enable();
+            }
+
+            if (this.ttsButton) {
+                this.ttsButton.enable();
+            }
+        },
+
+        /**
+         * Disable plugin
+         */
+        disable: function disable() {
+            if (this.tts) {
+                this.tts.disable();
+            }
+
+            if (this.ttsButton) {
+                this.ttsButton.disable();
+            }
         }
     });
 });
