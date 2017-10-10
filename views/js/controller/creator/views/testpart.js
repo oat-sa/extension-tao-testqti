@@ -85,7 +85,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                     partModel.assessmentSections[index] = {};
                 }
 
-                sectionView.setUp(modelOverseer, partModel.assessmentSections[index], $section);
+                sectionView.setUp(modelOverseer, partModel.assessmentSections[index], partModel, $section);
             });
         }
 

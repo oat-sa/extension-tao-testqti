@@ -56,10 +56,16 @@ function(
      * @param {Object} sectionModel - the data model to bind to the test section
      * @param {jQueryElement} $section - the section to set up
      */
-    function setUp (modelOverseer, sectionModel, $section){
+    function setUp (modelOverseer, sectionModel, partModel, $section){
 
         var $actionContainer = $('h2', $section);
         var config = modelOverseer.getConfig();
+
+        // set item session control to use test part options if section level isn't set
+        if (!sectionModel.itemSessionControl) {
+            sectionModel.itemSessionControl = {};
+        }
+        _.merge(sectionModel.itemSessionControl, partModel.itemSessionControl);
 
         if(!_.isEmpty(config.routes.blueprintsById)){
             sectionModel.hasBlueprint = true;
@@ -148,7 +154,7 @@ function(
                     sectionModel.sectionParts[index] = {};
                 }
 
-                itemRefView.setUp(modelOverseer, sectionModel.sectionParts[index], $itemRef);
+                itemRefView.setUp(modelOverseer, sectionModel.sectionParts[index], sectionModel, $itemRef);
                 $itemRef.find('.title').text(
                     config.labels[uri.encode($itemRef.data('uri'))]
                 );
