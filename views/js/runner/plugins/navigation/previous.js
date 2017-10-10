@@ -118,17 +118,12 @@ define([
             function doPrevious(previousItemWarning) {
                 var context = testRunner.getTestContext();
 
-                function enable() {
-                    // testRunner.trigger('enablenav enabletools');
-                }
-
                 if(self.getState('enabled') !== false){
                     if (previousItemWarning && context.remainingAttempts !== -1) {
                         testRunner.trigger(
                             'confirm.previous',
                             __('You are about to go to the previous item. Click OK to continue and go to the previous item.'),
-                            testRunner.previous, // if the test taker accept
-                            enable  // if the test taker refuse
+                            testRunner.previous // if the test taker accept
                         );
 
                     } else {
