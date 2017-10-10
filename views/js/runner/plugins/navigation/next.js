@@ -142,10 +142,6 @@ define([
                     unansweredOnly:     unansweredOnly
                 });
 
-                function enable() {
-                    // testRunner.trigger('enablenav enabletools');
-                }
-
                 if(self.getState('enabled') !== false) {
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
