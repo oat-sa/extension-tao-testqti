@@ -119,12 +119,10 @@ define([
                 var context = testRunner.getTestContext();
 
                 function enable() {
-                    testRunner.trigger('enablenav enabletools');
+                    // testRunner.trigger('enablenav enabletools');
                 }
 
                 if(self.getState('enabled') !== false){
-                    testRunner.trigger('disablenav disabletools');
-
                     if (previousItemWarning && context.remainingAttempts !== -1) {
                         testRunner.trigger(
                             'confirm.previous',

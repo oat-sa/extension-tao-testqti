@@ -143,11 +143,10 @@ define([
                 });
 
                 function enable() {
-                    testRunner.trigger('enablenav enabletools');
+                    // testRunner.trigger('enablenav enabletools');
                 }
 
                 if(self.getState('enabled') !== false) {
-                    testRunner.trigger('disablenav disabletools');
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
                         testRunner.trigger(
