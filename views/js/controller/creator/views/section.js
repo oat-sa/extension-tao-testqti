@@ -168,8 +168,7 @@ function(
          * @fires modelOverseer#item-add
          */
         function acceptItemRefs(){
-            var $selected;
-            var $itemsPanel     = $('.test-creator-items .item-selection');
+            var $itemsPanel = $('.test-creator-items .item-selection');
 
             //the item selector trigger a select event
             $itemsPanel.on('itemselect.creator', function(e, selection){
