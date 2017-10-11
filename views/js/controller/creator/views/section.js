@@ -66,7 +66,7 @@ function(
         if (!sectionModel.itemSessionControl) {
             sectionModel.itemSessionControl = {};
         }
-        _.merge(sectionModel.itemSessionControl, partModel.itemSessionControl);
+        _.defaults(sectionModel.itemSessionControl, partModel.itemSessionControl);
 
         if(!_.isEmpty(config.routes.blueprintsById)){
             sectionModel.hasBlueprint = true;

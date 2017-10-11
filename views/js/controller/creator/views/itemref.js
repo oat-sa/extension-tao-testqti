@@ -67,7 +67,7 @@ function(
         if (!refModel.itemSessionControl) {
             refModel.itemSessionControl = {};
         }
-        _.merge(refModel.itemSessionControl, sectionModel.itemSessionControl);
+        _.defaults(refModel.itemSessionControl, sectionModel.itemSessionControl);
 
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
