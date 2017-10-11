@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\models\runner\time\storageFormat;
 
+use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorageFormat;
 
 /**
@@ -54,6 +55,14 @@ class QtiTimeStorageJsonFormat implements QtiTimeStorageFormat
         // fallback for old storage that uses PHP serialize format
         if (is_null($decodedData) && $data) {
             $decodedData = unserialize($data);
+        }
+
+        foreach ($decodedData as $key => &$value) {
+            if (is_array($value)) {
+                $timeLine = new QtiTimeLine();
+                $timeLine->fromArray($value);
+                $decodedData[$key] = $timeLine;
+            }
         }
         
         return $decodedData;

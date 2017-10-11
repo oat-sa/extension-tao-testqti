@@ -197,7 +197,7 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
             }
         }
 
-        return parent::encode($data);
+        return json_encode($data);
     }
 
     /**
@@ -207,7 +207,12 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
      */
     public function decode(&$data)
     {
-        $decodedData = parent::decode($data);
+        $decodedData = json_decode($data, true);
+
+        // fallback for old storage that uses PHP serialize format
+        if (is_null($decodedData) && $data) {
+            $decodedData = unserialize($data);
+        }
 
         if (is_array($decodedData) && isset($decodedData[self::STORAGE_KEY_FORMAT])) {
             if ($decodedData[self::STORAGE_KEY_FORMAT] != $this->getFormat()) {
@@ -217,6 +222,17 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
             foreach ($decodedData as $key => &$value) {
                 if (is_array($value)) {
                     $decodedData[$key] = $this->unpackTimeLine($value);
+                }
+            }
+            
+            unset($decodedData[self::STORAGE_KEY_FORMAT]);
+            unset($decodedData[self::STORAGE_KEY_VERSION]);
+        } else {
+            foreach ($decodedData as $key => &$value) {
+                if (is_array($value)) {
+                    $timeLine = new QtiTimeLine();
+                    $timeLine->fromArray($value);
+                    $decodedData[$key] = $timeLine;
                 }
             }
         }
