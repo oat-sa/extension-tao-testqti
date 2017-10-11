@@ -294,8 +294,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                     if ($testsFound !== true) {
                         $report->add(common_report_Report::createFailure(__("Package is valid but no tests were found. Make sure that it contains valid QTI tests.")));
                     } else {
+                        $alreadyImportedQtiResources = [];
+                        
                         foreach ($tests as $qtiTestResource) {
-                            $report->add($this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder));
+                            $importTestReport = $this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder, $alreadyImportedQtiResources);
+                            $report->add($importTestReport);
+                            
+                            if ($data = $importTestReport->getData()) {
+                                $alreadyImportedQtiResources = array_unique(
+                                    array_merge(
+                                        $alreadyImportedQtiResources,
+                                        $data->itemQtiResources
+                                    )
+                                );
+                            }
                         }
                     }
                 }
@@ -362,9 +374,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @param oat\taoQtiItem\model\qti\Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
      * @param string $folder The absolute path to the folder where the IMS archive containing the test content
+     * @param oat\taoQtiItem\model\qti\Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored at import time.
      * @return common_report_Report A report about how the importation behaved.
      */
-    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder) {
+    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = []) {
 
         $itemImportService = ImportService::singleton();
         $testClass = $targetClass;
@@ -402,16 +415,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $reportCtx->manifestResource = $qtiTestResource;
         $reportCtx->rdfsResource = $testResource;
         $reportCtx->itemClass = $targetClass;
-        $reportCtx->items = array();
+        $reportCtx->items = [];
+        $reportCtx->itemQtiResources = [];
         $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
-        $reportCtx->createdClasses = array();
+        $reportCtx->createdClasses = [];
         $report->setData($reportCtx);
 
         // Expected test.xml file location.
         $expectedTestFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiTestResource->getFile());
 
         // Already imported test items (qti xml file paths).
-        $alreadyImportedTestItemFiles = array();
+        $alreadyImportedTestItemFiles = [];
 
         // -- Check if the file referenced by the test QTI resource exists.
         if (is_readable($expectedTestFile) === false) {
@@ -450,76 +464,89 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
 
                                 $resourceIdentifier = $qtiDependency->getIdentifier();
+                                
+                                if (!array_key_exists($resourceIdentifier, $ignoreQtiResources)) {
 
-                                // Check if the item is already stored in the bank.
-                                $guardian = $this->getMetadataImporter()->guard($resourceIdentifier, self::METADATA_GUARDIAN_CONTEXT_NAME);
-                                if ($this->useMetadataGuardians && $guardian !== false) {
-                                    $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
-                                    \common_Logger::d($message);
-                                    $report->add(common_report_Report::createInfo($message, $guardian));
-                                    $reportCtx->items[$assessmentItemRefId] = $guardian;
-                                    // Simply do not import again.
-                                    continue;
-                                }
-
-                                $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
-
-                                // If metadata should be aware of the test context...
-                                foreach ($this->getMetadataImporter()->getExtractors() as $extractor) {
-                                    if ($extractor instanceof MetadataTestContextAware) {
-                                        $metadataValues = array_merge(
-                                            $metadataValues, 
-                                            $extractor->contextualizeWithTest(
-                                                $qtiTestResource->getIdentifier(),
-                                                $transitionalDoc,
-                                                $resourceIdentifier,
-                                                $metadataValues
-                                            )
-                                        );
+                                    // Check if the item is already stored in the bank.
+                                    $guardian = $this->getMetadataImporter()->guard($resourceIdentifier, self::METADATA_GUARDIAN_CONTEXT_NAME);
+                                    if ($this->useMetadataGuardians && $guardian !== false) {
+                                        $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
+                                        \common_Logger::d($message);
+                                        $report->add(common_report_Report::createInfo($message, $guardian));
+                                        $reportCtx->items[$assessmentItemRefId] = $guardian;
+                                        // Simply do not import again.
+                                        continue;
                                     }
-                                }
 
-                                // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
-                                if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
+                                    $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
-                                    $createdClasses = array();
+                                    // If metadata should be aware of the test context...
+                                    foreach ($this->getMetadataImporter()->getExtractors() as $extractor) {
+                                        if ($extractor instanceof MetadataTestContextAware) {
+                                            $metadataValues = array_merge(
+                                                $metadataValues, 
+                                                $extractor->contextualizeWithTest(
+                                                    $qtiTestResource->getIdentifier(),
+                                                    $transitionalDoc,
+                                                    $resourceIdentifier,
+                                                    $metadataValues
+                                                )
+                                            );
+                                        }
+                                    }
 
-                                    $itemReport = $itemImportService->importQtiItem(
-                                        $folder, 
-                                        $qtiDependency, 
-                                        $targetClass, 
-                                        $dependencies['dependencies'],
-                                        $metadataValues,
-                                        array(),
-                                        array(),
-                                        array(),
-                                        array(),
-                                        $createdClasses
-                                    );
+                                    // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
+                                    if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
 
-                                    $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);
-                                    
-                                    $rdfItem = $itemReport->getData();
+                                        $createdClasses = array();
 
-                                    if ($rdfItem) {
-                                        $reportCtx->items[$assessmentItemRefId] = $rdfItem;
-                                        $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
+                                        $itemReport = $itemImportService->importQtiItem(
+                                            $folder, 
+                                            $qtiDependency, 
+                                            $targetClass, 
+                                            $dependencies['dependencies'],
+                                            $metadataValues,
+                                            array(),
+                                            array(),
+                                            array(),
+                                            array(),
+                                            $createdClasses
+                                        );
 
-                                        $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $qtiDependency->getIdentifier()));
+                                        $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);
+                                        
+                                        $rdfItem = $itemReport->getData();
+
+                                        if ($rdfItem) {
+                                            $reportCtx->items[$assessmentItemRefId] = $rdfItem;
+                                            $reportCtx->itemQtiResources[$resourceIdentifier] = $rdfItem;
+                                            $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
+
+                                            $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $resourceIdentifier));
+                                        }
+                                        else {
+
+                                            if (! $itemReport->getMessage()) {
+                                                $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $resourceIdentifier));
+                                            }
+                                            $itemReport->setType(common_report_Report::TYPE_ERROR);
+                                            $itemError = ($itemError === false) ? true : $itemError;
+                                        }
+
+                                        $report->add($itemReport);
                                     }
                                     else {
-
-                                        if (! $itemReport->getMessage()) {
-                                            $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $qtiDependency->getIdentifier()));
-                                        }
-                                        $itemReport->setType(common_report_Report::TYPE_ERROR);
-                                        $itemError = ($itemError === false) ? true : $itemError;
+                                        $reportCtx->items[$assessmentItemRefId] = $alreadyImportedTestItemFiles[$qtiFile];
                                     }
-
-                                    $report->add($itemReport);
-                                }
-                                else {
-                                    $reportCtx->items[$assessmentItemRefId] = $alreadyImportedTestItemFiles[$qtiFile];
+                                } else {
+                                    // Ignored (possibily because imported in another test of the same package).
+                                    $reportCtx->items[$assessmentItemRefId] = $ignoreQtiResources[$resourceIdentifier];
+                                    $report->add(
+                                        new common_report_Report(
+                                            common_report_Report::TYPE_SUCCESS,
+                                            __('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $resourceIdentifier)
+                                        )
+                                    );
                                 }
                             }
                         }
