@@ -132,7 +132,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         return $this->serviceContext;
     }
-    
+
     /**
      * Checks the security token.
      * @throws \common_Exception
@@ -327,7 +327,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Provides the map of the test items
      */
@@ -381,7 +381,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Provides the definition data and the state for a list of items
      */
@@ -393,14 +393,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         if (!is_array($itemIdentifier)) {
             $itemIdentifier = [$itemIdentifier];
         }
-        
+
         try {
 
             if (!$this->runnerService->getTestConfig()->getConfigValue('itemCaching.enabled')) {
                 \common_Logger::w("Attempt to disclose the next items without the configuration");
                 throw new \common_exception_Unauthorized();
             }
-            
+
             $response = [];
             foreach ($itemIdentifier as $itemId) {
                 //load item data
@@ -602,12 +602,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                
+
                 if ($serviceContext->containsAdaptive()) {
                     // Force map update.
-                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext, true);
                 }
-                
+
             }
 
             \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
@@ -655,10 +655,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                
+
                 if ($serviceContext->containsAdaptive()) {
                     // Force map update.
-                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext, true);
                 }
             }
 
@@ -710,10 +710,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                
+
                 if ($serviceContext->containsAdaptive()) {
                     // Force map update.
-                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext, true);
                 }
             }
 
@@ -811,10 +811,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                
+
                 if ($serviceContext->containsAdaptive()) {
                     // Force map update.
-                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext, true);
                 }
             }
 
@@ -898,47 +898,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
-     * Logging the test
-     */
-    public function log()
-    {
-        $code = 200;
-
-        $logData = $this->getRequestParameter('logData');
-
-        $type = isset($logData['type']) ? $logData['type'] : '';
-        $message = isset($logData['message']) ? $logData['message'] : '';
-
-        try {
-            $this->checkSecurityToken();
-            $serviceContext = $this->getServiceContext();
-            if ($this->hasRequestParameter('itemDefinition')) {
-                $itemRef = $this->runnerService->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
-            } else {
-                $itemRef = null;
-            }
-
-            if ($type && $message) {
-                $this->runnerService->storeTraceVariable(
-                    $serviceContext,
-                    $itemRef,
-                    $type,
-                    $message
-                );
-            }
-
-            $response = [
-                'success' => true
-            ];
-
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
-        }
-
-        $this->returnJson($response, $code);
-    }
-    /**
      * allow client to store information about the test, the section or the item
      */
     public function storeTraceData(){
@@ -954,7 +913,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $itemRef = null;
             }
-            
+
             $stored = 0;
             $size   = count($traceData);
 

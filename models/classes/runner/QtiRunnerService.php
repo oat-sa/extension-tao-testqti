@@ -387,9 +387,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The number of remaining attempts for the current item.
                 $response['remainingAttempts'] = $session->getCurrentRemainingAttempts();
 
-                // The number of current attempt (1 for the first time ...)
-                $response['attempt'] = $itemSession['numAttempts']->getValue();
-
                 // Duration of the current item attempt
                 $response['attemptDuration'] = TestRunnerUtils::getDurationWithMicroseconds($session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER));
 
@@ -398,19 +395,19 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // The identifier of the current item.
                 $response['itemIdentifier'] = $itemRef->getIdentifier();
-
-                // The definition of the current item (HREF)
-                $response['itemDefinition'] = $itemRef->getHref();
-
-                //deprecated key
-                $response['itemUri'] = $itemRef->getHref();
+                
+                // The number of current attempt (1 for the first time ...)
+                $response['attempt'] = ($context->isAdaptive()) ? $context->getCatAttempts($response['itemIdentifier']) + 1 : $itemSession['numAttempts']->getValue();
 
                 // The state of the current AssessmentTestSession.
                 $response['itemSessionState'] = $itemSession->getState();
 
                 // Whether the current item is adaptive.
                 $response['isAdaptive'] = $session->isCurrentAssessmentItemAdaptive();
-                
+
+                // Whether the current section is adaptive.
+                $response['isCatAdaptive'] = $context->isAdaptive();
+
                 // Whether the test map must be updated.
                 // TODO: detect if the map need to be updated and set the flag
                 $response['needMapUpdate'] = false;
@@ -425,7 +422,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
 
                 // The current item answered state
-                $response['itemAnswered'] = ($context->isAdaptive()) ? true : TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
+                $response['itemAnswered'] = TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
 
                 // Time constraints.
                 $response['timeConstraints'] = $this->buildTimeConstraints($context);
@@ -455,7 +452,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['isDeepestSectionVisible'] = $currentSection->isVisible();
 
                 // If the candidate is allowed to move backward e.g. first item of the test.
-                $response['canMoveBackward'] = $session->canMoveBackward();
+                $response['canMoveBackward'] = $context->canMoveBackward();
 
                 //Number of rubric blocks
                 $response['numberRubrics'] = count($currentItem->getRubricBlockRefs());
@@ -500,23 +497,29 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Gets the map of the test items
      * @param RunnerServiceContext $context
+     * @param bool $partial the full testMap or only the current section
      * @return array
      * @throws \common_Exception
      */
-    public function getTestMap(RunnerServiceContext $context)
+    public function getTestMap(RunnerServiceContext $context, $partial = false)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $map = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
-            return $map->getMap($context, $this->getTestConfig());
-        } else {
-            throw new \common_exception_InvalidArgumentType(
-                'QtiRunnerService',
-                'getTestMap',
-                0,
-                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
-                $context
-            );
+            $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
+
+            if ($partial) {
+                return $mapService->getScopedMap($context, $this->getTestConfig());
+            }
+
+            return $mapService->getMap($context, $this->getTestConfig());
         }
+
+        throw new \common_exception_InvalidArgumentType(
+            'QtiRunnerService',
+            'getTestMap',
+            0,
+            'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+            $context
+        );
     }
 
     /**
@@ -773,20 +776,25 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $session->beginItemSession();
                     $session->beginAttempt();
                     $session->endAttempt($responses);
-                    $score = $session->getVariable('SCORE');
+                    
                     $assessmentItem = $session->getAssessmentItem();
                     $assessmentItemIdentifier = $assessmentItem->getIdentifier();
+                    $score = $session->getVariable('SCORE');
                     $output = $context->getLastCatItemOutput();
                     
-                    $output[$assessmentItemIdentifier] = new ItemResult(
-                        $assessmentItemIdentifier,
+                    if ($score !== null) {
+                        $output[$assessmentItemIdentifier] = new ItemResult(
+                            $assessmentItemIdentifier,
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
                                 $score->getValue()->getValue()
                             )
                         );
-                        
+                    } else {
+                        \common_Logger::i("No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an adaptive section.");
+                    }
+                    
                     $context->persistLastCatItemOutput($output);
                     
                     // Send results to TAO Results.
@@ -796,15 +804,27 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $hrefParts = explode('|', $assessmentItem->getHref());
                     $sessionId = $context->getTestSession()->getSessionId();
                     $itemIdentifier = $assessmentItem->getIdentifier();
-                    $transmissionId = "${sessionId}.${itemIdentifier}.0";
+                    
+                    // Deal with attempts.
+                    $attempt = $context->getCatAttempts($itemIdentifier);
+                    $transmissionId = "${sessionId}.${itemIdentifier}.${attempt}";
+                    
+                    $attempt++;
                     
                     foreach ($session->getAllVariables() as $var) {
+                        if ($var->getIdentifier() === 'numAttempts') {
+                            $var->setValue(new \qtism\common\datatypes\QtiInteger($attempt));
+                        }
+                        
                         $variables[] = $var;
                     }
                     
                     $resultTransmitter->transmitItemVariable($variables, $transmissionId, $hrefParts[0], $hrefParts[2]);
+                    $context->persistCatAttempts($itemIdentifier, $attempt);
                     
+                    $context->getTestSession()->endAttempt(new State(), true);
                 } else {
+                    // Non adaptive case.
                     $session->endAttempt($responses, true);
                 }
                 
@@ -1364,27 +1384,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function buildTimeConstraints(RunnerServiceContext $context)
     {
-        $constraints = array();
+        $constraints = [];
 
-        /* @var TestSession $session */
         $session = $context->getTestSession();
-
-        foreach ($session->getRegularTimeConstraints() as $tc) {
-            $maxTimeSeconds = $this->getTimeLimitsFromSession($session, $tc->getSource()->getQtiClassName());
-
-            $timeRemaining = $tc->getMaximumRemainingTime();
-            if ($timeRemaining !== false) {
-                $source = $tc->getSource();
-                $identifier = $source->getIdentifier();
-                $seconds = TestRunnerUtils::getDurationWithMicroseconds($timeRemaining);
-                $constraints[] = array(
-                    'label' => method_exists($source, 'getTitle') ? $source->getTitle() : $identifier,
-                    'source' => $identifier,
-                    'seconds' => $seconds,
-                    'extraTime' => $tc->getTimer()->getExtraTime($maxTimeSeconds),
-                    'allowLateSubmission' => $tc->allowLateSubmission(),
-                    'qtiClassName' => $source->getQtiClassName()
-                );
+        foreach ($session->getRegularTimeConstraints() as $constraint) {
+            if ($constraint->getMaximumRemainingTime() != false) {
+                $constraints[] = $constraint;
             }
         }
 
@@ -1458,6 +1463,56 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
                 'storeTraceVariable',
+                0,
+                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
+                $context
+            );
+        }
+    }
+
+    /**
+     * Stores outcome variable related to an item, a test or a section
+     *
+     * @param RunnerServiceContext $context
+     * @param $itemUri
+     * @param $variableIdentifier
+     * @param $variableValue
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function storeOutcomeVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            if (!is_string($variableValue) && !is_numeric($variableValue)) {
+                $variableValue = json_encode($variableValue);
+            }
+
+            $metaVariable = new \taoResultServer_models_classes_OutcomeVariable();
+            $metaVariable->setIdentifier($variableIdentifier);
+            $metaVariable->setBaseType('string');
+            $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
+            $metaVariable->setValue($variableValue);
+
+            $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+
+            $testUri = $context->getTestDefinitionUri();
+            $sessionId = $context->getTestSession()->getSessionId();
+
+            if (!is_null($itemUri)) {
+                $currentItem = $context->getCurrentAssessmentItemRef();
+                $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+
+                $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
+                $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+            } else {
+                $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+            }
+
+            return true;
+        } else {
+            throw new \common_exception_InvalidArgumentType(
+                'QtiRunnerService',
+                'storeOutcomeVariable',
                 0,
                 'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
                 $context

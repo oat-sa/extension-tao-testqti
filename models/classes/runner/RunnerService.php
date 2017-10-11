@@ -67,10 +67,11 @@ interface RunnerService
     /**
      * Gets the map of the test items
      * @param RunnerServiceContext $context
+     * @param bool $partial the full testMap or only the current section
      * @return array
      * @throws \common_Exception
      */
-    public function getTestMap(RunnerServiceContext $context);
+    public function getTestMap(RunnerServiceContext $context, $partial = false);
 
     /**
      * Gets the rubrics related to the current session state

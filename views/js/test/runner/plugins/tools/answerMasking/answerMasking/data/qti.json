@@ -1,6 +1,6 @@
 {
     "identifier": "i14932063269505416",
-    "serial": "item_5900a4afdfa31374760595",
+    "serial": "item_59b69361f416b365764837",
     "qtiClass": "assessmentItem",
     "attributes": {
         "identifier": "i14932063269505416",
@@ -10,15 +10,15 @@
         "adaptive": false,
         "timeDependent": false,
         "toolName": "TAO",
-        "toolVersion": "3.1.0-sprint15",
+        "toolVersion": "3.2.0-sprint59.5",
         "class": ""
     },
     "body": {
-        "serial": "container_containeritembody_5900a4afdf9ff630290553",
-        "body": "\n    <div class=\"grid-row\">\n      <div class=\"col-12\">\n        {{interaction_choiceinteraction_5900a4afe6051965862495}}\n      <\/div>\n    <\/div>\n    <div class=\"grid-row\">\n      <div class=\"col-12\">\n        {{interaction_choiceinteraction_5900a4afe9c23720300505}}\n      <\/div>\n    <\/div>\n    <div class=\"grid-row\">\n      <div class=\"col-12\">\n        {{interaction_choiceinteraction_5900a4afec3ad479946369}}\n      <\/div>\n    <\/div>\n  ",
+        "serial": "container_containeritembody_59b69361f4155999541250",
+        "body": "\n    <div class=\"grid-row\">\n      <div class=\"col-12\">\n        {{interaction_choiceinteraction_59b693620137d817824581}}\n      <\/div>\n    <\/div>\n    <div class=\"grid-row\">\n      <div class=\"col-12\">\n        {{interaction_choiceinteraction_59b6936201c06657211986}}\n      <\/div>\n    <\/div>\n    <div class=\"grid-row\">\n      <div class=\"col-12\">\n        {{interaction_choiceinteraction_59b693620237b969767169}}\n      <\/div>\n    <\/div>\n  ",
         "elements": {
-            "interaction_choiceinteraction_5900a4afe6051965862495": {
-                "serial": "interaction_choiceinteraction_5900a4afe6051965862495",
+            "interaction_choiceinteraction_59b693620137d817824581": {
+                "serial": "interaction_choiceinteraction_59b693620137d817824581",
                 "qtiClass": "choiceInteraction",
                 "attributes": {
                     "responseIdentifier": "RESPONSE",
@@ -28,12 +28,12 @@
                     "orientation": "vertical"
                 },
                 "debug": {
-                    "relatedItem": "item_5900a4afdfa31374760595"
+                    "relatedItem": "item_59b69361f416b365764837"
                 },
                 "choices": {
-                    "choice_simplechoice_5900a4afe7cfc770621330": {
+                    "choice_simplechoice_59b693620182c888560690": {
                         "identifier": "choice_1",
-                        "serial": "choice_simplechoice_5900a4afe7cfc770621330",
+                        "serial": "choice_simplechoice_59b693620182c888560690",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_1",
@@ -41,20 +41,20 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afe8346878020481",
+                            "serial": "container_containerstatic_59b693620190e090011547",
                             "body": "choice #1.1",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     },
-                    "choice_simplechoice_5900a4afe89b5169765589": {
+                    "choice_simplechoice_59b693620199f374897651": {
                         "identifier": "choice_2",
-                        "serial": "choice_simplechoice_5900a4afe89b5169765589",
+                        "serial": "choice_simplechoice_59b693620199f374897651",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_2",
@@ -62,20 +62,20 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afe89f1261520893",
+                            "serial": "container_containerstatic_59b69362019b8977524391",
                             "body": "choice #1.2",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     },
-                    "choice_simplechoice_5900a4afe92a4955790204": {
+                    "choice_simplechoice_59b6936201a63602427780": {
                         "identifier": "choice_3",
-                        "serial": "choice_simplechoice_5900a4afe92a4955790204",
+                        "serial": "choice_simplechoice_59b6936201a63602427780",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_3",
@@ -83,29 +83,29 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afe930a793030440",
+                            "serial": "container_containerstatic_59b6936201a85284251675",
                             "body": "choice #1.3",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     }
                 },
                 "prompt": {
-                    "serial": "container_containerstatic_5900a4afe71b6155580928",
+                    "serial": "container_containerstatic_59b693620165a161213647",
                     "body": "\n            <p>Choice interaction #1<\/p>\n          ",
                     "elements": {},
                     "debug": {
-                        "relatedItem": "item_5900a4afdfa31374760595"
+                        "relatedItem": "item_59b69361f416b365764837"
                     }
                 }
             },
-            "interaction_choiceinteraction_5900a4afe9c23720300505": {
-                "serial": "interaction_choiceinteraction_5900a4afe9c23720300505",
+            "interaction_choiceinteraction_59b6936201c06657211986": {
+                "serial": "interaction_choiceinteraction_59b6936201c06657211986",
                 "qtiClass": "choiceInteraction",
                 "attributes": {
                     "responseIdentifier": "RESPONSE_1",
@@ -115,12 +115,12 @@
                     "orientation": "vertical"
                 },
                 "debug": {
-                    "relatedItem": "item_5900a4afdfa31374760595"
+                    "relatedItem": "item_59b69361f416b365764837"
                 },
                 "choices": {
-                    "choice_simplechoice_5900a4afea613287208696": {
+                    "choice_simplechoice_59b6936201e4d640226364": {
                         "identifier": "choice_4",
-                        "serial": "choice_simplechoice_5900a4afea613287208696",
+                        "serial": "choice_simplechoice_59b6936201e4d640226364",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_4",
@@ -128,20 +128,20 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afea689174700307",
-                            "body": "choice #2.1",
+                            "serial": "container_containerstatic_59b6936201eaa636114670",
+                            "body": "choice #2.1<br\/>choice #2.1",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     },
-                    "choice_simplechoice_5900a4afeb067827347266": {
+                    "choice_simplechoice_59b6936201fe8961338393": {
                         "identifier": "choice_5",
-                        "serial": "choice_simplechoice_5900a4afeb067827347266",
+                        "serial": "choice_simplechoice_59b6936201fe8961338393",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_5",
@@ -149,20 +149,20 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afeb0cf236536191",
+                            "serial": "container_containerstatic_59b693620201d728557165",
                             "body": "choice #2.2<br\/>choice #2.2<br\/>choice #2.2",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     },
-                    "choice_simplechoice_5900a4afeb98c710068969": {
+                    "choice_simplechoice_59b693620228b879908543": {
                         "identifier": "choice_6",
-                        "serial": "choice_simplechoice_5900a4afeb98c710068969",
+                        "serial": "choice_simplechoice_59b693620228b879908543",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_6",
@@ -170,29 +170,29 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afeb9ec179785382",
+                            "serial": "container_containerstatic_59b69362022ce365833959",
                             "body": "choice #2.3",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     }
                 },
                 "prompt": {
-                    "serial": "container_containerstatic_5900a4afe9d1f951457604",
+                    "serial": "container_containerstatic_59b6936201ccd213822397",
                     "body": "\n            <p>Choice interaction #2<\/p>\n          ",
                     "elements": {},
                     "debug": {
-                        "relatedItem": "item_5900a4afdfa31374760595"
+                        "relatedItem": "item_59b69361f416b365764837"
                     }
                 }
             },
-            "interaction_choiceinteraction_5900a4afec3ad479946369": {
-                "serial": "interaction_choiceinteraction_5900a4afec3ad479946369",
+            "interaction_choiceinteraction_59b693620237b969767169": {
+                "serial": "interaction_choiceinteraction_59b693620237b969767169",
                 "qtiClass": "choiceInteraction",
                 "attributes": {
                     "responseIdentifier": "RESPONSE_2",
@@ -202,12 +202,12 @@
                     "orientation": "vertical"
                 },
                 "debug": {
-                    "relatedItem": "item_5900a4afdfa31374760595"
+                    "relatedItem": "item_59b69361f416b365764837"
                 },
                 "choices": {
-                    "choice_simplechoice_5900a4afecc72613913015": {
+                    "choice_simplechoice_59b693620246e485587998": {
                         "identifier": "choice_7",
-                        "serial": "choice_simplechoice_5900a4afecc72613913015",
+                        "serial": "choice_simplechoice_59b693620246e485587998",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_7",
@@ -215,20 +215,20 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afecccf545005258",
-                            "body": "choice #3.1<br\/>choice #3.1",
+                            "serial": "container_containerstatic_59b6936202486685470493",
+                            "body": "Le terme \u00ab tao\u00efsme \u00bb recouvre des textes, des auteurs, des croyances et pratiques, et m\u00eame des ph\u00e9nom\u00e8nes historiques qui ont pu se r\u00e9clamer les uns des autres, r\u00e9partis sur 2 500 ans d\u2019histoire ; il est difficile d\u2019en offrir un portrait unifi\u00e9 de l\u2019ext\u00e9rieur.",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     },
-                    "choice_simplechoice_5900a4afed4c0982066523": {
+                    "choice_simplechoice_59b69362024f0568033316": {
                         "identifier": "choice_8",
-                        "serial": "choice_simplechoice_5900a4afed4c0982066523",
+                        "serial": "choice_simplechoice_59b69362024f0568033316",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_8",
@@ -236,20 +236,20 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afed51c109485302",
-                            "body": "choice #3.2",
+                            "serial": "container_containerstatic_59b6936202504945678644",
+                            "body": "La cat\u00e9gorie \u00ab tao \u00bb est n\u00e9e sous la dynastie Han (-206~220), bien apr\u00e8s la r\u00e9daction des premiers textes, du besoin de classer les fonds des biblioth\u00e8ques princi\u00e8res et imp\u00e9riales. D\u00e0o ji\u0101 \u9053\u5bb6 ou d\u00e0o ji\u00e0o \u9053\u6559, \u00ab \u00e9cole tao\u00efste \u00bb, distingue \u00e0 l\u2019\u00e9poque une des \u00e9coles philosophiques de la p\u00e9riode des Royaumes combattants (-500~-220). \u00c9cole est ici \u00e0 entendre dans son sens grec, voire pythagoricien, d\u2019une communaut\u00e9 de pens\u00e9e s\u2019adonnant aussi \u00e0 une vie philosophique ; n\u2019y voir qu\u2019un courant intellectuel est un anachronisme moderne.",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     },
-                    "choice_simplechoice_5900a4afedd50250483556": {
+                    "choice_simplechoice_59b693620256a736756490": {
                         "identifier": "choice_9",
-                        "serial": "choice_simplechoice_5900a4afedd50250483556",
+                        "serial": "choice_simplechoice_59b693620256a736756490",
                         "qtiClass": "simpleChoice",
                         "attributes": {
                             "identifier": "choice_9",
@@ -257,39 +257,38 @@
                             "showHide": "show"
                         },
                         "body": {
-                            "serial": "container_containerstatic_5900a4afeddd5987961618",
-                            "body": "choice #3.3",
+                            "serial": "container_containerstatic_59b693620257e125877894",
+                            "body": "Mais cette \u00e9cole ne fut sans doute que virtuelle, car ses auteurs, dans la mesure o\u00f9 ils ont vraiment exist\u00e9, ne se connaissaient pas forc\u00e9ment, et certains textes sont attribu\u00e9s \u00e0 diff\u00e9rentes \u00e9coles selon les catalogues. De plus, les auteurs r\u00e9unis a posteriori sous la m\u00eame rubrique \u00ab Tao\u00efsme \u00bb peuvent avoir sur leurs orientations fondamentales des vues tout \u00e0 fait oppos\u00e9es : le Laozi contient les principes d'une recherche de l'immortalit\u00e9 alors que le Zhuangzi la critique comme une vanit\u00e9 ; le Laozi est en partie fait de conseils \u00e0 l'usage du Prince alors que le Zhuangzi est tr\u00e8s critique \u00e0 l'\u00e9gard de l'action politique, etc. Le Tao\u00efsme est donc essentiellement pluriel.",
                             "elements": {},
                             "debug": {
-                                "relatedItem": "item_5900a4afdfa31374760595"
+                                "relatedItem": "item_59b69361f416b365764837"
                             }
                         },
                         "debug": {
-                            "relatedItem": "item_5900a4afdfa31374760595"
+                            "relatedItem": "item_59b69361f416b365764837"
                         }
                     }
                 },
                 "prompt": {
-                    "serial": "container_containerstatic_5900a4afec4c3577722547",
+                    "serial": "container_containerstatic_59b69362023d5250613325",
                     "body": "\n            <p>Choice interaction #3<\/p>\n          ",
                     "elements": {},
                     "debug": {
-                        "relatedItem": "item_5900a4afdfa31374760595"
+                        "relatedItem": "item_59b69361f416b365764837"
                     }
                 }
             }
         },
         "debug": {
-            "relatedItem": "item_5900a4afdfa31374760595"
+            "relatedItem": "item_59b69361f416b365764837"
         }
     },
     "debug": {
-        "relatedItem": "item_5900a4afdfa31374760595"
+        "relatedItem": "item_59b69361f416b365764837"
     },
     "namespaces": {
         "": "http:\/\/www.imsglobal.org\/xsd\/imsqti_v2p1",
         "m": "http:\/\/www.w3.org\/1998\/Math\/MathML",
-        "xml": "http:\/\/www.w3.org\/XML\/1998\/namespace",
         "xsi": "http:\/\/www.w3.org\/2001\/XMLSchema-instance"
     },
     "schemaLocations": {
@@ -297,9 +296,9 @@
     },
     "stylesheets": {},
     "outcomes": {
-        "outcomedeclaration_5900a4afe3daa049892814": {
+        "outcomedeclaration_59b6936200d78408593962": {
             "identifier": "SCORE",
-            "serial": "outcomedeclaration_5900a4afe3daa049892814",
+            "serial": "outcomedeclaration_59b6936200d78408593962",
             "qtiClass": "outcomeDeclaration",
             "attributes": {
                 "identifier": "SCORE",
@@ -307,15 +306,15 @@
                 "baseType": "float"
             },
             "debug": {
-                "relatedItem": "item_5900a4afdfa31374760595"
+                "relatedItem": "item_59b69361f416b365764837"
             },
             "defaultValue": null
         }
     },
     "responses": {
-        "responsedeclaration_5900a4afe2ea8143289824": {
+        "responsedeclaration_59b69362009f7638468296": {
             "identifier": "RESPONSE",
-            "serial": "responsedeclaration_5900a4afe2ea8143289824",
+            "serial": "responsedeclaration_59b69362009f7638468296",
             "qtiClass": "responseDeclaration",
             "attributes": {
                 "identifier": "RESPONSE",
@@ -323,8 +322,9 @@
                 "baseType": "identifier"
             },
             "debug": {
-                "relatedItem": "item_5900a4afdfa31374760595"
+                "relatedItem": "item_59b69361f416b365764837"
             },
+            "defaultValue": [],
             "mapping": [],
             "areaMapping": [],
             "howMatch": "http:\/\/www.imsglobal.org\/question\/qti_v2p1\/rptemplates\/match_correct",
@@ -334,9 +334,9 @@
             },
             "feedbackRules": {}
         },
-        "responsedeclaration_5900a4afe3973616921102": {
+        "responsedeclaration_59b6936200c27310152316": {
             "identifier": "RESPONSE_1",
-            "serial": "responsedeclaration_5900a4afe3973616921102",
+            "serial": "responsedeclaration_59b6936200c27310152316",
             "qtiClass": "responseDeclaration",
             "attributes": {
                 "identifier": "RESPONSE_1",
@@ -344,8 +344,9 @@
                 "baseType": "identifier"
             },
             "debug": {
-                "relatedItem": "item_5900a4afdfa31374760595"
+                "relatedItem": "item_59b69361f416b365764837"
             },
+            "defaultValue": [],
             "mapping": [],
             "areaMapping": [],
             "howMatch": "http:\/\/www.imsglobal.org\/question\/qti_v2p1\/rptemplates\/match_correct",
@@ -355,9 +356,9 @@
             },
             "feedbackRules": {}
         },
-        "responsedeclaration_5900a4afe3a5a092070868": {
+        "responsedeclaration_59b6936200c72482114256": {
             "identifier": "RESPONSE_2",
-            "serial": "responsedeclaration_5900a4afe3a5a092070868",
+            "serial": "responsedeclaration_59b6936200c72482114256",
             "qtiClass": "responseDeclaration",
             "attributes": {
                 "identifier": "RESPONSE_2",
@@ -365,8 +366,9 @@
                 "baseType": "identifier"
             },
             "debug": {
-                "relatedItem": "item_5900a4afdfa31374760595"
+                "relatedItem": "item_59b69361f416b365764837"
             },
+            "defaultValue": [],
             "mapping": [],
             "areaMapping": [],
             "howMatch": "http:\/\/www.imsglobal.org\/question\/qti_v2p1\/rptemplates\/match_correct",
@@ -379,11 +381,11 @@
     },
     "feedbacks": {},
     "responseProcessing": {
-        "serial": "response_templatesdriven_5900a4aff0cb7980189033",
+        "serial": "response_templatesdriven_59b6936202ddc791431907",
         "qtiClass": "responseProcessing",
         "attributes": [],
         "debug": {
-            "relatedItem": "item_5900a4afdfa31374760595"
+            "relatedItem": "item_59b69361f416b365764837"
         },
         "processingType": "templateDriven",
         "responseRules": [

@@ -19,6 +19,8 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
+use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\event\ItemOfflineEvent;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
@@ -39,7 +41,8 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
     const OFFLINE_VARIABLE = 'offline';
 
-    protected $start;
+    /** @var double The timestamp of current action */
+    protected $time;
 
     /** @var integer The timestamp of action */
     protected $timestamp;
@@ -72,11 +75,12 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
         if(!is_null($itemRef)){
             $hrefParts = explode('|', $itemRef);
-            return $this->getRunnerService()->storeTraceVariable($serviceContext, $hrefParts[0], self::OFFLINE_VARIABLE, true);
+            $event = new ItemOfflineEvent($serviceContext->getTestSession(), $hrefParts[0]);
+            $this->getServiceLocator()->get(EventManager::SERVICE_ID)->trigger($event);
+            return true;
         }
 
         return false;
-
     }
 
     /**
@@ -119,23 +123,23 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     }
 
     /**
-     * Get the timestamp of current action start
+     * Get the timestamp of current action in seconds
      *
-     * @return mixed
+     * @return double $time
      */
-    public function getStart()
+    public function getTime()
     {
-        return $this->start;
+        return $this->time;
     }
 
     /**
-     * Set the timestamp of current action start
+     * Set the timestamp of current action in seconds
      *
-     * @param mixed $start
+     * @param double $time
      */
-    public function setStart($start)
+    public function setTime($time)
     {
-        $this->start = $start;
+        $this->time = $time;
     }
 
     /**

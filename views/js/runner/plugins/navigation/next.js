@@ -142,10 +142,6 @@ define([
                     unansweredOnly:     unansweredOnly
                 });
 
-                function enable() {
-                    testRunner.trigger('enablenav enabletools');
-                }
-
                 if(self.getState('enabled') !== false) {
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
@@ -155,8 +151,7 @@ define([
                             messages.getExitMessage(
                                 __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
                                 warningScope, testRunner),
-                            _.partial(triggerNextAction, context), // if the test taker accept
-                            enable  // if the test taker refuse
+                            _.partial(triggerNextAction, context) // if the test taker accept
                         );
 
                     } else if (warningHelper.shouldWarnBeforeNext()) {
@@ -164,8 +159,7 @@ define([
                         testRunner.trigger(
                             'confirm.next',
                             __('You are about to go to the next item. Click OK to continue and go to the next item.'),
-                            _.partial(triggerNextAction, context), // if the test taker accept
-                            enable  // if the test taker refuse
+                            _.partial(triggerNextAction, context) // if the test taker accept
                         );
 
                     } else {
