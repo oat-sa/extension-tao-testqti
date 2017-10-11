@@ -106,6 +106,9 @@ define([
             //configuration params, that comes on every request/params
             this.requestConfig = {};
 
+            //scheduled action promises which supposed to be resolved after action synchronization.
+            this.actionPromises = {};
+
             /**
              * Get the item cache size from the test data
              * @returns {Number} the cache size
@@ -183,10 +186,7 @@ define([
                 var testMap     = this.getDataHolder().get('testMap');
 
                 var storeAction  = function storeAction(){
-                    return self.actiontStore.push(
-                        action,
-                        self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
-                    );
+                    self.scheduleAction(action, _.defaults(actionParams || {}, self.requestConfig));
                 };
 
                 //we just block those actions and the end of the test
@@ -235,10 +235,18 @@ define([
              * @returns {Promise} resolves with the action result
              */
             this.scheduleAction = function scheduleAction(action, actionParams) {
-                return self.actiontStore.push(
-                    action,
-                    self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
-                );
+                actionParams.actionId = action + '_' + (new Date()).getTime();
+                return new Promise(function (resolve) {
+                    self.actiontStore.push(
+                        action,
+                        self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
+                    ).then(function () {
+                        resolve({
+                            action : action,
+                            params : actionParams
+                        });
+                    });
+                });
             };
 
             /**
@@ -271,10 +279,18 @@ define([
                     var request;
                     if (communicationConfig.syncActions && communicationConfig.syncActions.indexOf(action) >= 0) {
                         request = new Promise(function(resolve) {
-                            self.scheduleAction(action, actionParams).then(function(){
+                            self.scheduleAction(action, actionParams).then(function(actionData){
+                                self.actionPromises[actionData.params.actionId] = resolve;
                                 if (!deferred) {
                                     self.syncOfflineData().then(function (result) {
-                                        resolve(result);
+                                        _.forEach(result, function (actionResult) {
+                                            var actionId = actionResult.requestParameters && actionResult.requestParameters.actionId ?
+                                                actionResult.requestParameters.actionId : null;
+
+                                            if (actionId && self.actionPromises[actionId]) {
+                                                self.actionPromises[actionId](actionResult);
+                                            }
+                                        });
                                     });
                                 }
                             });

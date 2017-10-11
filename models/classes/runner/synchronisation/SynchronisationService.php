@@ -70,7 +70,7 @@ class SynchronisationService extends ConfigurableService
         $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
         $elapsed = $now - $last;
         if ($duration > $elapsed) {
-            throw new \common_exception_InconsistentData('Client duration exceed the elapsed server time!');
+            //throw new \common_exception_InconsistentData('Client duration exceed the elapsed server time!');
         }
         
         // the actions should be chronological
@@ -97,6 +97,7 @@ class SynchronisationService extends ConfigurableService
 
             $responseAction['name'] = $action->getName();
             $responseAction['timestamp'] = $action->getTimeStamp();
+            $responseAction['requestParameters'] = $action->getRequestParameters();
 
             $response[] = $responseAction;
 

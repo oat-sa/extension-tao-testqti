@@ -1599,21 +1599,21 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('16.1.0');
         }
-        
+
         $this->skip('16.1.0', '16.1.1');
-        
+
         if ($this->isVersion('16.1.1')) {
             $this->getServiceManager()->register(
-                PhpCodeCompilationDataService::SERVICE_ID, 
+                PhpCodeCompilationDataService::SERVICE_ID,
                 new PhpCodeCompilationDataService()
             );
-            
+
             $this->setVersion('16.2.0');
         }
 
-        $this->skip('16.2.0', '16.2.1');
+        $this->skip('16.2.0', '16.2.2');
 
-        if ($this->isVersion('16.2.1')) {
+        if ($this->isVersion('16.2.2')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['bootstrap']['communication']['syncActions'] = ['move', 'skip', 'storeTraceData', 'timeout', 'exitTest'];
