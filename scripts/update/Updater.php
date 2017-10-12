@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\tao\model\TaoOntology;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
@@ -284,7 +285,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isBetween('2.16.0','2.17.0')) {
             AclProxy::applyRule(new AccessRule(
                 AccessRule::GRANT,
-                INSTANCE_ROLE_DELIVERY,
+				TaoOntology::PROPERTY_INSTANCE_ROLE_DELIVERY,
                 ['ext' => 'taoQtiTest' , 'mod' => 'Runner']
             ));
 
@@ -1599,21 +1600,21 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('16.1.0');
         }
-        
+
         $this->skip('16.1.0', '16.1.1');
-        
+
         if ($this->isVersion('16.1.1')) {
             $this->getServiceManager()->register(
-                PhpCodeCompilationDataService::SERVICE_ID, 
+                PhpCodeCompilationDataService::SERVICE_ID,
                 new PhpCodeCompilationDataService()
             );
-            
+
             $this->setVersion('16.2.0');
         }
 
-        $this->skip('16.2.0', '16.2.1');
-      
-        if ($this->isVersion('16.2.1')) {
+        $this->skip('16.2.0', '16.3.2');
+
+        if ($this->isVersion('16.3.2')) {
 
             $registry = PluginRegistry::getRegistry();
             $registry->register(
@@ -1630,7 +1631,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 )
             );
 
-            $this->setVersion('16.2.2');
+            $this->setVersion('16.3.3');
         }
     }
 }
