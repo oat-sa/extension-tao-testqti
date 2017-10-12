@@ -14,23 +14,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
- */
-/**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
  */
 
 namespace oat\taoQtiTest\models\runner\time;
 
-use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStorageJsonFormat;
 use oat\taoTests\models\runner\time\TimeStorage;
 
 /**
  * Class QtiTimeStorage
  * @package oat\taoQtiTest\models\runner\time
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@taotesting.com>
  */
-class QtiTimeStorage implements TimeStorage
+class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
 {
+    use QtiTimeStorageFormatAwareTrait;
+    
     /**
      * Prefix used to identify the data slot in the storage
      */
@@ -109,17 +108,6 @@ class QtiTimeStorage implements TimeStorage
     protected function getStorageService()
     {
         return \tao_models_classes_service_StateStorage::singleton();
-    }
-
-    /**
-     * @return QtiTimeStorageFormat
-     */
-    protected function getStorageFormat()
-    {
-        if (!$this->storageFormat) {
-            $this->storageFormat = new QtiTimeStorageJsonFormat();
-        }
-        return $this->storageFormat;
     }
 
     /**
