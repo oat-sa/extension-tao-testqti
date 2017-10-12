@@ -174,6 +174,66 @@ define([
         },
 
         /**
+         * Install step : add new methods
+         *
+         * @this {runner} the runner context, not the provider
+         * @returns {Promise} to chain
+         */
+        install : function install(){
+
+            /**
+             *  - reindex and build the jump table
+             *  - patch the current testMap if a partial map is set
+             *
+             * @param {Object} testMap - the testMap to build
+             * @param {Boolean} [updateStats = false] - if we need to update the stats of the current item
+             * @returns {runner} chains
+             */
+            this.buildTestMap = function buildTestMap(testMap, updateStats){
+                var newMap;
+
+                if(testMap){
+                    if(testMap.scope && testMap.scope !== 'test'){
+                        newMap = mapHelper.patch(this.getTestMap(), testMap);
+                    } else {
+                        newMap = mapHelper.reindex(testMap);
+                    }
+                    if(updateStats){
+                        newMap = this.updateStats(newMap);
+                    }
+                    return this.setTestMap(newMap);
+                }
+                return this;
+            };
+
+            /**
+             * Update current based on the context
+             *
+             * @param {Object} testMap - the testMap to update
+             * @returns {Object} the updated testMap
+             */
+            this.updateStats = function updateStats(testMap){
+                var testContext = this.getTestContext();
+                var states = this.getTestData().states;
+                var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+
+                if(item && states && testContext && testContext.state === states.interacting){
+
+                    //flag as viewed, always
+                    item.viewed = true;
+
+                    //flag as answered only if a response has been set
+                    if (!_.isUndefined(testContext.itemAnswered)) {
+                        item.answered = testContext.itemAnswered;
+                    }
+
+                    return mapHelper.updateItemStats(testMap, testContext.itemPosition);
+                }
+                return testMap;
+            };
+        },
+
+        /**
          * Initialization of the provider, called during test runner init phase.
          *
          * We install behaviors during this phase (ie. even handlers)
@@ -192,7 +252,8 @@ define([
             function getItemResults() {
                 var results = {};
                 var context = self.getTestContext();
-                if(context && self.itemRunner){
+                var states = self.getTestData().states;
+                if(context && self.itemRunner && context.itemSessionState <= states.interacting){
                     results = {
                         itemResponse   : self.itemRunner.getResponses(),
                         itemState      : self.itemRunner.getState()
@@ -246,20 +307,26 @@ define([
                             })
                             .catch(submitError);
                     } else {
-                        context.itemAnswered = currentItemHelper.isAnswered(self);
+                        if (action === 'skip') {
+                            context.itemAnswered = false;
+                        } else {
+                            context.itemAnswered = currentItemHelper.isAnswered(self);
+                        }
                         resolve();
                     }
                 });
 
                 feedbackPromise.then(function(){
-
-                    updateStats();
+                    // ensure the current item answer state is correctly set
+                    var item = mapHelper.getItemAt(self.getTestMap(), context.itemPosition);
+                    if (item) {
+                        item.answered = context.itemAnswered;
+                    }
 
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
                         self.off('.'+action);
-
 
                         self.getProxy()
                             .callItemAction(context.itemIdentifier, action, params)
@@ -276,10 +343,10 @@ define([
                                 }
 
                                 if (results.testMap) {
-                                    self.setTestMap(results.testMap);
+                                    self.buildTestMap(results.testMap, true);
+                                } else {
+                                    self.setTestMap(self.updateStats(self.getTestMap()));
                                 }
-
-                                updateStats();
 
                                 load();
                             })
@@ -295,7 +362,6 @@ define([
              * Load the next action: load the current item or call finish based the test state
              */
             function load(){
-
                 var context = self.getTestContext();
                 var states = self.getTestData().states;
                 if(context.state <= states.interacting){
@@ -303,32 +369,6 @@ define([
                 } else if (context.state === states.closed){
                     self.finish();
                 }
-            }
-
-            /**
-             * Update the stats on the TestMap
-             */
-            function updateStats(){
-
-                var context = self.getTestContext();
-                var testMap = self.getTestMap();
-                var states = self.getTestData().states;
-                var item = mapHelper.getItemAt(testMap, context.itemPosition);
-
-                if(!item || context.state !== states.interacting){
-                    return;
-                }
-
-                //flag as viewed, always
-                item.viewed = true;
-
-                //flag as answered only if a response has been set
-                if ("undefined" !== typeof context.itemAnswered) {
-                    item.answered = context.itemAnswered;
-                }
-
-                //update the map stats, then reassign the map
-                self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             }
 
             areaBroker.setComponent('toolbox', toolboxFactory());
@@ -424,8 +464,7 @@ define([
                             self.trigger('error', err);
                         });
                 })
-                .on('renderitem', function(){
-
+                .on('loaditem', function(){
                     var context = this.getTestContext();
                     var states = this.getTestData().itemStates;
                     var warning = false;
@@ -438,9 +477,6 @@ define([
                         var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
                         return item && item.label ? item.label : context.itemIdentifier;
                     };
-
-                    this.trigger('enablenav enabletools');
-
 
                     //The item is rendered but in a state that prevents us from interacting
                     if (context.isTimeout) {
@@ -460,6 +496,15 @@ define([
                         self.disableItem(context.itemIdentifier);
                         self.trigger('warning', warning);
                     }
+
+                })
+                .on('renderitem', function(){
+                    var context = this.getTestContext();
+
+                    if(!this.getItemState(context.itemIdentifier, 'disabled')){
+                        this.trigger('enabletools');
+                    }
+                    this.trigger('enablenav');
                 })
                 .on('resumeitem', function(){
                     this.trigger('enableitem enablenav');
@@ -499,7 +544,7 @@ define([
                 }).then(function(results){
                     self.setTestData(results.testData);
                     self.setTestContext(results.testContext);
-                    self.setTestMap(results.testMap);
+                    self.buildTestMap(results.testMap, true);
 
                     //check if we need to trigger a storeChange
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){

@@ -26,6 +26,7 @@ use qtism\common\datatypes\QtiDuration;
 use qtism\data\NavigationMode;
 use qtism\data\QtiComponent;
 use qtism\runtime\tests\TimeConstraint;
+use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
 /**
  * Class QtiTimeConstraint
@@ -34,7 +35,7 @@ use qtism\runtime\tests\TimeConstraint;
  *
  * @package oat\taoQtiTest\models\runner\time
  */
-class QtiTimeConstraint extends TimeConstraint
+class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
 {
     /**
      * @var QtiTimer
@@ -124,6 +125,41 @@ class QtiTimeConstraint extends TimeConstraint
             return ($remaining->isNegative() === true) ? new QtiDuration('PT0S') : $remaining;
         } else {
             return false;
+        }
+    }
+
+
+    /**
+     * Serialize the constraint the expected way by the TestContext and the TestMap
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $maxTimeSeconds = null;
+        $source = $this->getSource();
+        $identifier = $source->getIdentifier();
+        $timeRemaining = $this->getMaximumRemainingTime();
+        if ($timeRemaining !== false) {
+
+            $label = method_exists($source, 'getTitle') ? $source->getTitle() : $identifier;
+            $seconds = TestRunnerUtils::getDurationWithMicroseconds($timeRemaining);
+            if ($source->getTimeLimits()->hasMaxTime()) {
+                $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);
+            }
+            $extraTime = null;
+            if (!is_null($this->getTimer()) && $source->getTimeLimits()->hasMaxTime()){
+                $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);
+                $extraTime = $this->getTimer()->getExtraTime($maxTimeSeconds);
+            }
+
+            return [
+                'label'               => $label,
+                'source'              => $identifier,
+                'seconds'             => $seconds,
+                'extraTime'           => $extraTime,
+                'allowLateSubmission' => $this->allowLateSubmission(),
+                'qtiClassName'        => $source->getQtiClassName()
+            ];
         }
     }
 }
