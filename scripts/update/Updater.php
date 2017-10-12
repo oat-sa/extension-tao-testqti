@@ -1611,9 +1611,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('16.2.0');
         }
 
-        $this->skip('16.2.0', '16.2.2');
+        $this->skip('16.2.0', '16.2.3');
 
-        if ($this->isVersion('16.2.2')) {
+        if ($this->isVersion('16.2.3')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['bootstrap']['communication']['syncActions'] = ['move', 'skip', 'storeTraceData', 'timeout', 'exitTest'];
