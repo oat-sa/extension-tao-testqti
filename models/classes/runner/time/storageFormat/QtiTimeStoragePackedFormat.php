@@ -209,7 +209,7 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
      * @param mixed $data
      * @return string
      */
-    public function encode(&$data)
+    public function encode($data)
     {
         if (is_array($data)) {
             $encodedData = [
@@ -236,7 +236,7 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
      * @param string $data
      * @return mixed
      */
-    public function decode(&$data)
+    public function decode($data)
     {
         $decodedData = json_decode($data, true);
 

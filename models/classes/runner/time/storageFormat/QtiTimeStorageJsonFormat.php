@@ -38,7 +38,7 @@ class QtiTimeStorageJsonFormat implements QtiTimeStorageFormat
      * @param mixed $data
      * @return string
      */
-    public function encode(&$data)
+    public function encode($data)
     {
         return json_encode($data);
     }
@@ -48,7 +48,7 @@ class QtiTimeStorageJsonFormat implements QtiTimeStorageFormat
      * @param string $data
      * @return mixed
      */
-    public function decode(&$data)
+    public function decode($data)
     {
         $decodedData = json_decode($data, true);
 

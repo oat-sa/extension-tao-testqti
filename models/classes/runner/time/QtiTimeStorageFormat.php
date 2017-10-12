@@ -35,12 +35,12 @@ interface QtiTimeStorageFormat
      * @param mixed $data
      * @return string
      */
-    public function encode(&$data);
+    public function encode($data);
 
     /**
      * Decode a string encoded with the managed format.
      * @param string $data
      * @return mixed
      */
-    public function decode(&$data); 
+    public function decode($data); 
 }
