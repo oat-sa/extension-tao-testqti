@@ -247,15 +247,19 @@ define([
             return overlay
                 .on('render', function() {
                     var self = this,
-                        $element = this.getElement();
+                        $element = this.getElement(),
+                        // captures touch and mouse
+                        // also fixes issue with IE not capturing 'mousedown' etc
+                        pointerEventsPrefix = window.PointerEvent ? 'pointer' : 'mouse';
+
 
                     $element
                         .addClass('line-reader-overlay ' + overlayConfig.id)
-                        .on('mousedown', function() {
+                        .on(pointerEventsPrefix + 'down', function() {
                             bringAllToFront();
                             self.transformOverlay();
                         })
-                        .on('mouseup', function() {
+                        .on(pointerEventsPrefix + 'up', function() {
                             self.restoreOverlay();
                         });
 

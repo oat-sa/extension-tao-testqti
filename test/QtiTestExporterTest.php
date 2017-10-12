@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\test;
 
+use oat\tao\model\TaoOntology;
 use oat\tao\test\TaoPhpUnitTestRunner;
 use \taoQtiTest_models_classes_QtiTestService;
 use \taoQtiTest_models_classes_export_TestExport;
@@ -73,7 +74,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
         $this->assertInstanceOf('core_kernel_classes_Resource', $qtiTest);
 
         $type = current($qtiTest->getTypes());
-        $this->assertEquals(TAO_TEST_CLASS, $type->getUri());
+        $this->assertEquals(TaoOntology::TEST_CLASS_URI, $type->getUri());
 
         return $qtiTest;
     }

@@ -65,8 +65,6 @@ define([
 
                 if ( isInteracting && testContext.enableAllowSkipping && !testContext.allowSkipping ) {
 
-                    this.trigger('disablenav disabletools');
-
                     return new Promise(function (resolve, reject) {
                         if(_.size(currentItemHelper.getDeclarations(self)) === 0){
                             return resolve();

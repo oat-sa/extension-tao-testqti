@@ -62,8 +62,6 @@ define([
                 var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
 
                 if ( isInteracting && testContext.enableValidateResponses &&  testContext.validateResponses) {
-                    this.trigger('disablenav disabletools');
-
                     return new Promise(function (resolve, reject) {
                         if(_.size(currentItemHelper.getDeclarations(self)) === 0){
                             return resolve();
