@@ -19,6 +19,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\tao\model\state\StateStorage;
 use oat\taoTests\models\runner\time\TimeStorage;
 
 /**
@@ -58,6 +59,11 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
      * @var QtiTimeStorageFormat
      */
     protected $storageFormat;
+
+    /**
+     * @var StateStorage
+     */
+    protected $storageService;
 
     /**
      * QtiTimeStorage constructor.
@@ -103,11 +109,23 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
 
     /**
      * Gets the StateStorage service
-     * @return \tao_models_classes_service_StateStorage
+     * @return StateStorage
      */
-    protected function getStorageService()
+    public function getStorageService()
     {
-        return \tao_models_classes_service_StateStorage::singleton();
+        if (!$this->storageService) {
+            $this->storageService = \tao_models_classes_service_StateStorage::singleton();
+        }
+        return $this->storageService;
+    }
+
+    /**
+     * Sets the StateStorage service
+     * @param StateStorage $storageService
+     */
+    public function setStorageService(StateStorage $storageService)
+    {
+        $this->storageService = $storageService;
     }
 
     /**
@@ -117,12 +135,11 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
      */
     public function store($data)
     {
-        $json = $this->getStorageFormat()->encode($data);
-
-        $this->cache[$this->testSessionId] = &$json;
-
-        $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $json);
-        \common_Logger::d(sprintf('QtiTimer: Stored %d bytes into state storage', strlen($json)));
+        $this->cache[$this->testSessionId] = &$data;
+        $encodedData = $this->getStorageFormat()->encode($data);
+        
+        $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $encodedData);
+        \common_Logger::d(sprintf('QtiTimer: Stored %d bytes into state storage', strlen($encodedData)));
 
         return $this;
     }

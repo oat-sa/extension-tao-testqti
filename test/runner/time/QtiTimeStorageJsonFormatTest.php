@@ -58,12 +58,25 @@ class QtiTimeStorageJsonFormatTest extends TaoPhpUnitTestRunner
     /**
      * Test the dataset decoding with QtiTimeStorageJsonFormat::decode
      */
-    public function testDecode()
+    public function testDecodeJson()
     {
         $format = new QtiTimeStorageJsonFormat();
         $this->assertInstanceOf(QtiTimeStorageFormat::class, $format);
 
         $input = $this->getFullJson();
+        $decoded = $format->decode($input);
+        $this->assertEquals($this->getTimeLine(), $decoded);
+    }
+
+    /**
+     * Test the dataset decoding with QtiTimeStorageJsonFormat::decode
+     */
+    public function testDecodeSerialize()
+    {
+        $format = new QtiTimeStorageJsonFormat();
+        $this->assertInstanceOf(QtiTimeStorageFormat::class, $format);
+
+        $input = serialize($this->getTimeLine());
         $decoded = $format->decode($input);
         $this->assertEquals($this->getTimeLine(), $decoded);
     }

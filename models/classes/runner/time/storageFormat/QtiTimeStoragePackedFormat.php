@@ -187,14 +187,20 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
     public function encode(&$data)
     {
         if (is_array($data)) {
-            $data[self::STORAGE_KEY_FORMAT] = $this->getFormat();
-            $data[self::STORAGE_KEY_VERSION] = $this->getVersion();
+            $encodedData = [
+                self::STORAGE_KEY_FORMAT => $this->getFormat(),
+                self::STORAGE_KEY_VERSION => $this->getVersion(),
+            ];
 
             foreach ($data as $key => &$value) {
                 if ($value instanceof TimeLine) {
-                    $data[$key] = $this->packTimeLine($value);
+                    $encodedData[$key] = $this->packTimeLine($value);
+                } else {
+                    $encodedData[$key] = &$value;
                 }
             }
+            
+            return json_encode($encodedData);
         }
 
         return json_encode($data);

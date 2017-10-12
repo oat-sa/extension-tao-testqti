@@ -59,12 +59,25 @@ class QtiTimeStoragePackedFormatTest extends TaoPhpUnitTestRunner
     /**
      * Test the decoding of legacy format with QtiTimeStorageJsonFormat::decode
      */
-    public function testDecodeLegacy()
+    public function testDecodeJson()
     {
         $format = new QtiTimeStoragePackedFormat();
         $this->assertInstanceOf(QtiTimeStorageFormat::class, $format);
 
         $input = $this->getFullJson();
+        $decoded = $format->decode($input);
+        $this->assertEquals($this->getTimeLine(), $decoded);
+    }
+
+    /**
+     * Test the decoding of legacy format with QtiTimeStorageJsonFormat::decode
+     */
+    public function testDecodeSerialize()
+    {
+        $format = new QtiTimeStoragePackedFormat();
+        $this->assertInstanceOf(QtiTimeStorageFormat::class, $format);
+
+        $input = serialize($this->getTimeLine());
         $decoded = $format->decode($input);
         $this->assertEquals($this->getTimeLine(), $decoded);
     }
@@ -135,7 +148,7 @@ class QtiTimeStoragePackedFormatTest extends TaoPhpUnitTestRunner
      */
     private function getPackedJson()
     {
-        return '{"timeLine":{"index":{"Item1":[0,1,2,3],"Item1#0":[0,1,2,3],"Item1#0-1":[0,1,2,3],"Item2":[4,5,6,7],"Item2#0":[4,5,6,7],"Item2#0-1":[4,5,6,7],"Item3":[8,9,10,11],"Item3#0":[8,9,10,11],"Item3#0-1":[8,9,10,11]},"tags":["Test1","TestPart1","TestSection1"],"points":[[2,1,1507706410.8289],[2,2,1507706424.3663],[1,1,1507706412.2481],[1,2,1507706422.947],[2,1,1507706424.8342],[2,2,1507706525.0912],[1,1,1507706427.1259],[1,2,1507706522.7994],[2,1,1507706525.682],[2,2,1507706640.9469],[1,1,1507706526.4789],[1,2,1507706640.1501]]},"extraTime":0,"extendedTime":0,"extraTimeLine":[],"consumedExtraTime":0,"format":"pack","version":1}';
+        return '{"format":"pack","version":1,"timeLine":{"index":{"Item1":[0,1,2,3],"Item1#0":[0,1,2,3],"Item1#0-1":[0,1,2,3],"Item2":[4,5,6,7],"Item2#0":[4,5,6,7],"Item2#0-1":[4,5,6,7],"Item3":[8,9,10,11],"Item3#0":[8,9,10,11],"Item3#0-1":[8,9,10,11]},"tags":["Test1","TestPart1","TestSection1"],"points":[[2,1,1507706410.8289],[2,2,1507706424.3663],[1,1,1507706412.2481],[1,2,1507706422.947],[2,1,1507706424.8342],[2,2,1507706525.0912],[1,1,1507706427.1259],[1,2,1507706522.7994],[2,1,1507706525.682],[2,2,1507706640.9469],[1,1,1507706526.4789],[1,2,1507706640.1501]]},"extraTime":0,"extendedTime":0,"extraTimeLine":[],"consumedExtraTime":0}';
     }
 
     /**
