@@ -69,7 +69,6 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
     public function testStore()
     {
         $storage = new QtiTimeStorage($this->testSessionId, $this->userId);
-        $storage->setStorageFormat(new QtiTimeStorageJsonFormat());
         $buffer = [];
         $this->mockStorage($storage, $buffer);
 
@@ -84,7 +83,6 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
     public function testLoad()
     {
         $storage = new QtiTimeStorage($this->testSessionId, $this->userId);
-        $storage->setStorageFormat(new QtiTimeStorageJsonFormat());
         $buffer = [];
         $this->mockStorage($storage, $buffer);
 
@@ -115,14 +113,13 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
         $prophet = new Prophet();
         $prophecy = $prophet->prophesize(StateStorage::class);
         $prophecy->get(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            var_export($buffer[$args[0]][$args[1]]);
             return $buffer[$args[0]][$args[1]];
         });
         $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            //var_export($args[2]);
             $buffer[$args[0]][$args[1]] = $args[2];
         });
         $storage->setStorageService($prophecy->reveal());
+        $storage->setStorageFormat(new QtiTimeStorageJsonFormat());
     }
 
     /**
