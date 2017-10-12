@@ -502,8 +502,6 @@ define([
                 traceData: JSON.stringify(variables)
             };
 
-            deferred = !!deferred;
-
             return this.requestNetworkThenOffline(
                 this.configStorage.getTestActionUrl(action),
                 action,
@@ -521,7 +519,6 @@ define([
          *                      Any error will be provided if rejected.
          */
         callTestAction: function callTestAction(action, params, deferred) {
-            deferred = !!deferred;
             return this.requestNetworkThenOffline(
                 this.configStorage.getTestActionUrl(action),
                 action,
@@ -543,7 +540,6 @@ define([
             var self = this;
 
             var testMap = this.getDataHolder().get('testMap');
-            deferred = !!deferred;
 
             //update the item state
             if(params.itemState){
