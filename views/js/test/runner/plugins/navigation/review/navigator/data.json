@@ -250,7 +250,6 @@
     "isAdaptive": false,
     "isLinear": false,
     "attempt": 1,
-    "attemptDuration": 16,
     "isTimeout": false,
     "itemIdentifier": "item-1",
     "itemSessionState": 1,
