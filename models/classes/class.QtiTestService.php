@@ -63,6 +63,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     
     const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
 
+    const INSTANCE_FORMAL_PARAM_TEST_DEFINITION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition';
+    const INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
+
+    const TEST_COMPILED_FILENAME = 'compact-test.php';
+    const TEST_COMPILED_META_FILENAME = 'test-meta.php';
+    const TEST_COMPILED_INDEX = 'test-index.json';
+    const TEST_COMPILED_HREF_INDEX_FILE_PREFIX = 'assessment-item-ref-href-index-';
+    const TEST_COMPILED_HREF_INDEX_FILE_EXTENSION = '.idx';
+
+    const TEST_REMOTE_FOLDER = 'tao-qtitest-remote';
+    const TEST_RENDERING_STATE_NAME = 'taoQtiTestState';
+    const TEST_BASE_PATH_NAME = 'taoQtiBasePath';
+    const TEST_PLACEHOLDER_BASE_URI = 'tao://qti-directory';
+    const TEST_VIEWS_NAME = 'taoQtiViews';
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
      */
@@ -765,7 +779,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
             );
         }
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::TEST_TESTCONTENT_PROP));
+        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_CONTENT));
 
         if (!is_null($file)) {
             return $this->getFileReferenceSerializer()->unserializeFile($file->getUri());
@@ -905,7 +919,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
             );
         }
-        $dir = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::TEST_TESTCONTENT_PROP));
+        $dir = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_CONTENT));
         
         if (!is_null($dir)) {
             return $this->getFileReferenceSerializer()->unserialize($dir);
@@ -1038,7 +1052,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         }
 
         $directory = $this->getFileReferenceSerializer()->serialize($dir);
-        $test->editPropertyValues($this->getProperty(TestService::TEST_TESTCONTENT_PROP), $directory);
+        $test->editPropertyValues($this->getProperty(TestService::PROPERTY_TEST_CONTENT), $directory);
         return $dir;
     }
 
@@ -1049,13 +1063,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     public function deleteContent(core_kernel_classes_Resource $test)
     {
-        $content = $test->getOnePropertyValue($this->getProperty(TestService::TEST_TESTCONTENT_PROP));
+        $content = $test->getOnePropertyValue($this->getProperty(TestService::PROPERTY_TEST_CONTENT));
 
         if (!is_null($content)) {
             $dir = $this->getFileReferenceSerializer()->unserialize($content);
             $dir->deleteSelf();
             $this->getFileReferenceSerializer()->cleanUp($content);
-            $test->removePropertyValue($this->getProperty(TestService::TEST_TESTCONTENT_PROP), $content);
+            $test->removePropertyValue($this->getProperty(TestService::PROPERTY_TEST_CONTENT), $content);
         }
     }
 
