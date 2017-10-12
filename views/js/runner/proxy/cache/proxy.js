@@ -278,7 +278,7 @@ define([
                 var runRequestThenOffline = function runRequestThenOffline(){
                     var request;
                     if (communicationConfig.syncActions && communicationConfig.syncActions.indexOf(action) >= 0) {
-                        request = new Promise(function(resolve) {
+                        request = new Promise(function(resolve, reject) {
                             self.scheduleAction(action, actionParams).then(function(actionData){
                                 self.actionPromises[actionData.params.actionId] = resolve;
                                 if (!deferred) {
@@ -291,8 +291,12 @@ define([
                                                 self.actionPromises[actionId](actionResult);
                                             }
                                         });
+                                    }).catch(function (reason) {
+                                        reject(reason);
                                     });
                                 }
+                            }).catch(function (reason) {
+                                reject(reason);
                             });
                         });
                     } else {
