@@ -78,6 +78,11 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
     const STORAGE_KEY_TIMELINE_POINTS = 'points';
 
     /**
+     * The storage key for the timestamp reference in the packed format
+     */
+    const STORAGE_KEY_TIMELINE_EPOCH = 'epoch';
+
+    /**
      * The type of format managed by this class
      */
     const STORAGE_FORMAT = 'pack';
@@ -106,24 +111,38 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
     }
 
     /**
+     * The reference value used to compress the timestamps
+     * @return int
+     */
+    public function getEpoch()
+    {
+        // align the reference value with the timestamp of today morning.
+        $today = time();
+        return $today - $today % 86400; 
+    }
+
+    /**
      * Packs a TimeLine in order to reduce the storage footprint
      * @param TimeLine $timeLine
      * @return array
      */
     protected function packTimeLine(&$timeLine)
     {
+        $epoch = $this->getEpoch();
         $data = [
             self::STORAGE_KEY_TIMELINE_INDEX => [],
             self::STORAGE_KEY_TIMELINE_TAGS => [],
             self::STORAGE_KEY_TIMELINE_POINTS => [],
+            self::STORAGE_KEY_TIMELINE_EPOCH => $epoch,
         ];
 
         // Will split tags from the list of TimePoint, and put them into a dedicated index.
         // The other TimePoint info are put in a simple array with predictable order, this way: [target, type, timestamp].
+        // To save more space a reference value is removed from each timestamp.
         $index = 0;
         foreach ($timeLine->getPoints() as &$point) {
             /** @var TimePoint $point */
-            $data[self::STORAGE_KEY_TIMELINE_POINTS][$index] = [$point->getTarget(), $point->getType(), $point->getTimestamp()];
+            $data[self::STORAGE_KEY_TIMELINE_POINTS][$index] = [$point->getTarget(), $point->getType(), round($point->getTimestamp() - $epoch, 6)];
 
             foreach ($point->getTags() as &$tag) {
                 $data[self::STORAGE_KEY_TIMELINE_INDEX][$tag][] = $index;
@@ -158,10 +177,16 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
 
         // the stored data can be packed or not
         if (isset($data[self::STORAGE_KEY_TIMELINE_POINTS])) {
+            // get the reference value used to compress the timestamps
+            $epoch = 0;
+            if (isset($data[self::STORAGE_KEY_TIMELINE_EPOCH])) {
+                $epoch = $data[self::STORAGE_KEY_TIMELINE_EPOCH];
+            }
+            
             // rebuild the TimeLine from the list of stored TimePoint
             $tags = $data[self::STORAGE_KEY_TIMELINE_TAGS];
             foreach ($data[self::STORAGE_KEY_TIMELINE_POINTS] as &$dataPoint) {
-                $point = new TimePoint($tags, $dataPoint[2], $dataPoint[1], $dataPoint[0]);
+                $point = new TimePoint($tags, $dataPoint[2] + $epoch, $dataPoint[1], $dataPoint[0]);
                 $timeLine->add($point);
             }
 

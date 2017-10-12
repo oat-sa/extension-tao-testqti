@@ -134,7 +134,76 @@ class QtiTimeStorageJsonFormatTest extends TaoPhpUnitTestRunner
      */
     private function getFullJson()
     {
-        return '{"timeLine":[{"ts":1507706410.8289,"type":1,"target":2,"tags":["Test1","TestPart1","TestSection1","Item1","Item1#0","Item1#0-1"]},{"ts":1507706424.3663,"type":2,"target":2,"tags":["Test1","TestPart1","TestSection1","Item1","Item1#0","Item1#0-1"]},{"ts":1507706412.2481,"type":1,"target":1,"tags":["Test1","TestPart1","TestSection1","Item1","Item1#0","Item1#0-1"]},{"ts":1507706422.947,"type":2,"target":1,"tags":["Test1","TestPart1","TestSection1","Item1","Item1#0","Item1#0-1"]},{"ts":1507706424.8342,"type":1,"target":2,"tags":["Test1","TestPart1","TestSection1","Item2","Item2#0","Item2#0-1"]},{"ts":1507706525.0912,"type":2,"target":2,"tags":["Test1","TestPart1","TestSection1","Item2","Item2#0","Item2#0-1"]},{"ts":1507706427.1259,"type":1,"target":1,"tags":["Test1","TestPart1","TestSection1","Item2","Item2#0","Item2#0-1"]},{"ts":1507706522.7994,"type":2,"target":1,"tags":["Test1","TestPart1","TestSection1","Item2","Item2#0","Item2#0-1"]},{"ts":1507706525.682,"type":1,"target":2,"tags":["Test1","TestPart1","TestSection1","Item3","Item3#0","Item3#0-1"]},{"ts":1507706640.9469,"type":2,"target":2,"tags":["Test1","TestPart1","TestSection1","Item3","Item3#0","Item3#0-1"]},{"ts":1507706526.4789,"type":1,"target":1,"tags":["Test1","TestPart1","TestSection1","Item3","Item3#0","Item3#0-1"]},{"ts":1507706640.1501,"type":2,"target":1,"tags":["Test1","TestPart1","TestSection1","Item3","Item3#0","Item3#0-1"]}],"extraTime":0,"extendedTime":0,"extraTimeLine":[],"consumedExtraTime":0}';
+        $tags1 = ['Test1', 'TestPart1', 'TestSection1', 'Item1', 'Item1#0', 'Item1#0-1'];
+        $tags2 = ['Test1', 'TestPart1', 'TestSection1', 'Item2', 'Item2#0', 'Item2#0-1'];
+        $tags3 = ['Test1', 'TestPart1', 'TestSection1', 'Item3', 'Item3#0', 'Item3#0-1'];
+        return json_encode([
+            'timeLine' => [[
+                'ts' => 1507706410.8289001,
+                'type' => 1,
+                'target' => 2,
+                'tags' => $tags1
+            ], [
+                'ts' => 1507706424.3663001,
+                'type' => 2,
+                'target' => 2,
+                'tags' => $tags1
+            ], [
+                'ts' => 1507706412.2481,
+                'type' => 1,
+                'target' => 1,
+                'tags' => $tags1
+            ], [
+                'ts' => 1507706422.947,
+                'type' => 2,
+                'target' => 1,
+                'tags' => $tags1
+            ], [
+                'ts' => 1507706424.8341999,
+                'type' => 1,
+                'target' => 2,
+                'tags' => $tags2
+            ], [
+                'ts' => 1507706525.0912001,
+                'type' => 2,
+                'target' => 2,
+                'tags' => $tags2
+            ], [
+                'ts' => 1507706427.1259,
+                'type' => 1,
+                'target' => 1,
+                'tags' => $tags2
+            ], [
+                'ts' => 1507706522.7994001,
+                'type' => 2,
+                'target' => 1,
+                'tags' => $tags2
+            ], [
+                'ts' => 1507706525.6819999,
+                'type' => 1,
+                'target' => 2,
+                'tags' => $tags3
+            ], [
+                'ts' => 1507706640.9468999,
+                'type' => 2,
+                'target' => 2,
+                'tags' => $tags3
+            ], [
+                'ts' => 1507706526.4789,
+                'type' => 1,
+                'target' => 1,
+                'tags' => $tags3
+            ], [
+                'ts' => 1507706640.1501,
+                'type' => 2,
+                'target' => 1,
+                'tags' => $tags3
+            ]],
+            'extraTime' => 0,
+            'extendedTime' => 0,
+            'extraTimeLine' => [],
+            'consumedExtraTime' => 0
+        ]);
     }
 }
 
