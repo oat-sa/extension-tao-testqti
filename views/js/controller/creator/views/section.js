@@ -54,9 +54,10 @@ function(
      *
      * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
      * @param {Object} sectionModel - the data model to bind to the test section
+     * @param {Object} partModel - the parent data model to inherit
      * @param {jQueryElement} $section - the section to set up
      */
-    function setUp (modelOverseer, sectionModel, partModel, $section){
+    function setUp (modelOverseer, sectionModel, partModel, $section) {
 
         var $actionContainer = $('h2', $section);
         var config = modelOverseer.getConfig();
@@ -65,7 +66,7 @@ function(
         if (!sectionModel.itemSessionControl) {
             sectionModel.itemSessionControl = {};
         }
-        _.merge(sectionModel.itemSessionControl, partModel.itemSessionControl);
+        _.defaults(sectionModel.itemSessionControl, partModel.itemSessionControl);
 
         if(!_.isEmpty(config.routes.blueprintsById)){
             sectionModel.hasBlueprint = true;
@@ -167,8 +168,7 @@ function(
          * @fires modelOverseer#item-add
          */
         function acceptItemRefs(){
-            var $selected;
-            var $itemsPanel     = $('.test-creator-items .item-selection');
+            var $itemsPanel = $('.test-creator-items .item-selection');
 
             //the item selector trigger a select event
             $itemsPanel.on('itemselect.creator', function(e, selection){
@@ -227,7 +227,7 @@ function(
                         itemRefModel = sectionModel.sectionParts[index];
 
                         //initialize the new item ref
-                        itemRefView.setUp(modelOverseer, itemRefModel, $itemRef);
+                        itemRefView.setUp(modelOverseer, itemRefModel, sectionModel, $itemRef);
 
                         /**
                          * @event modelOverseer#item-add

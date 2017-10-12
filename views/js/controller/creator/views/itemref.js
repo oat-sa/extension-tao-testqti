@@ -56,9 +56,10 @@ function(
      *
      * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
      * @param {Object} refModel - the data model to bind to the item ref
+     * @param {Object} sectionModel - the parent data model to inherit
      * @param {jQueryElement} $itemRef - the itemRef element to set up
      */
-    function setUp (modelOverseer, refModel, sectionModel, $itemRef){
+    function setUp (modelOverseer, refModel, sectionModel, $itemRef) {
 
         var $actionContainer = $('.actions', $itemRef);
 
@@ -66,7 +67,7 @@ function(
         if (!refModel.itemSessionControl) {
             refModel.itemSessionControl = {};
         }
-        _.merge(refModel.itemSessionControl, sectionModel.itemSessionControl);
+        _.defaults(refModel.itemSessionControl, sectionModel.itemSessionControl);
 
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
