@@ -224,10 +224,10 @@ class taoQtiTest_helpers_Utils {
         $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[0]);
         
         $compilationDataService = ServiceManager::getServiceManager()->get(CompilationDataService::SERVICE_ID);
-        
+
         return $compilationDataService->readPhpCompilationData(
             $directory,
-            TAOQTITEST_COMPILED_FILENAME
+            taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME
         );
     }
 }
