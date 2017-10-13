@@ -18,6 +18,9 @@
  *               
  * 
  */
+/**
+ * @deprecated
+ */
 $todefine = array(
     // Ontology references.
     'INSTANCE_QTITEST_TESTRUNNERSERVICE' => 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner',
