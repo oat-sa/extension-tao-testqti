@@ -127,10 +127,10 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         if ($this->isRangeOpen($range)) {
             // unclosed range found, auto closing
             // auto generate the timestamp for the missing END point, one microsecond earlier
-            \common_Logger::t('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
-            $point = new TimePoint($tags, $timestamp - (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
-            $this->timeLine->add($point);
-            $range[] = $point;
+            //\common_Logger::t('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
+            //$point = new TimePoint($tags, $this->getFirstTimestamp() + (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
+            $this->timeLine->remove($tags);
+            //$range[] = $point;
         }
         $this->checkTimestampCoherence($range, $timestamp);
 

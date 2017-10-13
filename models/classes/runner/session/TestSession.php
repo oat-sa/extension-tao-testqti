@@ -194,14 +194,14 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     public function initItemTimer($timestamp = null)
     {
-        if (is_null($timestamp)) {
-            $timestamp = microtime(true);
-        }
+        //if (is_null($timestamp)) {
+            //$timestamp = microtime(true);
+        //}
 
         // try to close existing time range if any, in order to be sure the test will start or restart a new range.
         // if the range is already closed, a message will be added to the log
-        $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->end($tags, $timestamp)->save();
+        //$tags = $this->getItemTags($this->getCurrentRouteItem());
+        //$this->getTimer()->end($tags, $timestamp)->save();
     }
 
     /**
