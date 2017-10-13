@@ -32,20 +32,40 @@ use oat\taoTests\models\runner\time\TimePoint;
  *
  * Applied format:
  *
+ * ```
  * {
+ *      // For each tags set an index that points to each linked timestamps.
+ *      // Each index value is the offset of the timestamp in the "points" array.
  *      "index": {
  *          "tag1": [0, 1, 2, 6, ...],
  *          "tag2": [0, 2, 4, ...],
  *          ...
  *          "tagN": [100, 101, 110, 111, ...],
  *      },
- *      "points: [
- *          [target, type, timestamp],
- *          [target, type, timestamp],
+ * 
+ *      // A list of tags that applies for all timestamps.
+ *      "tags": [
+ *          "global-tag-1",
+ *          "global-tag-2",
  *          ...
- *          [target, type, timestamp]
- *      ]
+ *          "global-tag-N",
+ *      ],
+ * 
+ *      // A flat list of timestamps, their tags are moved into the index map.
+ *      // Each timestamp is reduced by a reference value to minimize the final size.
+ *      "points": [
+ *          [target, type, timestamp - todayTimestamp],
+ *          [target, type, timestamp - todayTimestamp],
+ *          ...
+ *          [target, type, timestamp - todayTimestamp]
+ *      ],
+ * 
+ *      // The arbitrary reference value that has been used to reduce the timestamps.
+ *      // Usually it is the timestamp of today morning at 00:00. 
+ *      // (could be improved to be based on the assessment start time)
+ *      "epoch": todayTimestamp
  * }
+ * ```
  *
  * @package oat\taoQtiTest\models\runner\time\storageFormat
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
@@ -118,7 +138,7 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
     {
         // align the reference value with the timestamp of today morning.
         $today = time();
-        return $today - $today % 86400; 
+        return $today - $today % 86400;
     }
 
     /**
@@ -182,7 +202,7 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
             if (isset($data[self::STORAGE_KEY_TIMELINE_EPOCH])) {
                 $epoch = $data[self::STORAGE_KEY_TIMELINE_EPOCH];
             }
-            
+
             // rebuild the TimeLine from the list of stored TimePoint
             $tags = $data[self::STORAGE_KEY_TIMELINE_TAGS];
             foreach ($data[self::STORAGE_KEY_TIMELINE_POINTS] as &$dataPoint) {
@@ -224,7 +244,7 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
                     $encodedData[$key] = &$value;
                 }
             }
-            
+
             return json_encode($encodedData);
         }
 
@@ -245,25 +265,27 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
             $decodedData = unserialize($data);
         }
 
-        if (is_array($decodedData) && isset($decodedData[self::STORAGE_KEY_FORMAT])) {
-            if ($decodedData[self::STORAGE_KEY_FORMAT] != $this->getFormat()) {
-                \common_Logger::w(sprintf('QtiTimeStorage: wrong decoder applied! (Expected: %s, Applied: %s)', $decodedData[self::STORAGE_KEY_FORMAT], $this->getFormat()));
-            }
-
-            foreach ($decodedData as $key => &$value) {
-                if (is_array($value)) {
-                    $decodedData[$key] = $this->unpackTimeLine($value);
+        if (is_array($decodedData)) {
+            if (isset($decodedData[self::STORAGE_KEY_FORMAT])) {
+                if ($decodedData[self::STORAGE_KEY_FORMAT] != $this->getFormat()) {
+                    \common_Logger::w(sprintf('QtiTimeStorage: wrong decoder applied! (Expected: %s, Applied: %s)', $decodedData[self::STORAGE_KEY_FORMAT], $this->getFormat()));
                 }
-            }
-            
-            unset($decodedData[self::STORAGE_KEY_FORMAT]);
-            unset($decodedData[self::STORAGE_KEY_VERSION]);
-        } else {
-            foreach ($decodedData as $key => &$value) {
-                if (is_array($value)) {
-                    $timeLine = new QtiTimeLine();
-                    $timeLine->fromArray($value);
-                    $decodedData[$key] = $timeLine;
+
+                foreach ($decodedData as $key => &$value) {
+                    if (is_array($value)) {
+                        $decodedData[$key] = $this->unpackTimeLine($value);
+                    }
+                }
+
+                unset($decodedData[self::STORAGE_KEY_FORMAT]);
+                unset($decodedData[self::STORAGE_KEY_VERSION]);
+            } else {
+                foreach ($decodedData as $key => &$value) {
+                    if (is_array($value)) {
+                        $timeLine = new QtiTimeLine();
+                        $timeLine->fromArray($value);
+                        $decodedData[$key] = $timeLine;
+                    }
                 }
             }
         }

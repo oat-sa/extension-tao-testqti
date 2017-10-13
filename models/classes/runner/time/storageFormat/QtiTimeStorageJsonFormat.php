@@ -25,9 +25,9 @@ use oat\taoQtiTest\models\runner\time\QtiTimeStorageFormat;
 
 /**
  * Class QtiTimeStorageJsonFormat.
- * 
+ *
  * Encode/decode QtiTimer using JSON format.
- * 
+ *
  * @package oat\taoQtiTest\models\runner\time\storageFormat
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
@@ -57,14 +57,16 @@ class QtiTimeStorageJsonFormat implements QtiTimeStorageFormat
             $decodedData = unserialize($data);
         }
 
-        foreach ($decodedData as $key => &$value) {
-            if (is_array($value)) {
-                $timeLine = new QtiTimeLine();
-                $timeLine->fromArray($value);
-                $decodedData[$key] = $timeLine;
+        if (is_array($decodedData)) {
+            foreach ($decodedData as $key => &$value) {
+                if (is_array($value)) {
+                    $timeLine = new QtiTimeLine();
+                    $timeLine->fromArray($value);
+                    $decodedData[$key] = $timeLine;
+                }
             }
         }
-        
+
         return $decodedData;
     }
 }
