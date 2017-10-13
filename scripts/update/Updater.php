@@ -1616,9 +1616,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('16.2.0');
         }
 
-        $this->skip('16.2.0', '16.3.2');
+        $this->skip('16.2.0', '16.3.3');
 
-        if ($this->isVersion('16.3.2')) {
+        if ($this->isVersion('16.3.3')) {
             $qtiTimerFactory = new QtiTimerFactory([
                 QtiTimerFactory::OPTION_TIMER_CLASS => QtiTimer::class,
                 QtiTimerFactory::OPTION_STORAGE_CLASS => QtiTimeStorage::class,
