@@ -14,23 +14,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
- */
-/**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
  */
 
 namespace oat\taoQtiTest\models\runner\time;
 
-use oat\taoTests\models\runner\time\InvalidDataException;
+use oat\tao\model\state\StateStorage;
 use oat\taoTests\models\runner\time\TimeStorage;
 
 /**
  * Class QtiTimeStorage
  * @package oat\taoQtiTest\models\runner\time
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@taotesting.com>
  */
-class QtiTimeStorage implements TimeStorage
+class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
 {
+    use QtiTimeStorageFormatAwareTrait;
+    
     /**
      * Prefix used to identify the data slot in the storage
      */
@@ -53,6 +53,17 @@ class QtiTimeStorage implements TimeStorage
      * @var string
      */
     protected $userId;
+
+    /**
+     * The encoder for the storage format 
+     * @var QtiTimeStorageFormat
+     */
+    protected $storageFormat;
+
+    /**
+     * @var StateStorage
+     */
+    protected $storageService;
 
     /**
      * QtiTimeStorage constructor.
@@ -90,7 +101,6 @@ class QtiTimeStorage implements TimeStorage
     /**
      * Gets the user key to access the storage
      * @return string
-     * @throws \common_exception_Error
      */
     protected function getUserKey()
     {
@@ -99,42 +109,52 @@ class QtiTimeStorage implements TimeStorage
 
     /**
      * Gets the StateStorage service
-     * @return \tao_models_classes_service_StateStorage
+     * @return StateStorage
      */
-    protected function getStorageService()
+    public function getStorageService()
     {
-        return \tao_models_classes_service_StateStorage::singleton();
+        if (!$this->storageService) {
+            $this->storageService = \tao_models_classes_service_StateStorage::singleton();
+        }
+        return $this->storageService;
+    }
+
+    /**
+     * Sets the StateStorage service
+     * @param StateStorage $storageService
+     */
+    public function setStorageService(StateStorage $storageService)
+    {
+        $this->storageService = $storageService;
     }
 
     /**
      * Stores the timer data
-     * @param string $data
+     * @param array $data
      * @return TimeStorage
-     * @throws InvalidDataException
-     * @throws \common_exception_Error
      */
     public function store($data)
     {
-        if (!is_string($data)) {
-            throw new InvalidDataException('The timer data to store are not valid!');
-        }
-
-        $this->cache[$this->testSessionId] = $data;
-
-        $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $data);
+        $this->cache[$this->testSessionId] = &$data;
+        $encodedData = $this->getStorageFormat()->encode($data);
+        
+        $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $encodedData);
+        \common_Logger::d(sprintf('QtiTimer: Stored %d bytes into state storage', strlen($encodedData)));
 
         return $this;
     }
 
     /**
      * Loads the timer data from the storage
-     * @return string
-     * @throws \common_exception_Error
+     * @return array
      */
     public function load()
     {
         if (!isset($this->cache[$this->testSessionId])) {
-            $this->cache[$this->testSessionId] = $this->getStorageService()->get($this->getUserKey(), $this->getStorageKey());
+            $encodedData = $this->getStorageService()->get($this->getUserKey(), $this->getStorageKey());
+            \common_Logger::d(sprintf('QtiTimer: Loaded %d bytes from state storage', strlen($encodedData)));
+
+            $this->cache[$this->testSessionId] = $this->getStorageFormat()->decode($encodedData);
         }
 
         return $this->cache[$this->testSessionId];

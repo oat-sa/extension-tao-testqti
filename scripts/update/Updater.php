@@ -33,6 +33,10 @@ use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
+use oat\taoQtiTest\models\runner\time\QtiTimer;
+use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
+use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -1613,5 +1617,17 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('16.2.0', '16.3.3');
+
+        if ($this->isVersion('16.3.3')) {
+            $qtiTimerFactory = new QtiTimerFactory([
+                QtiTimerFactory::OPTION_TIMER_CLASS => QtiTimer::class,
+                QtiTimerFactory::OPTION_STORAGE_CLASS => QtiTimeStorage::class,
+                QtiTimerFactory::OPTION_STORAGE_FORMAT_CLASS => QtiTimeStoragePackedFormat::class,
+            ]);
+
+            $this->getServiceManager()->register(QtiTimerFactory::SERVICE_ID, $qtiTimerFactory);
+
+            $this->setVersion('17.0.0');
+        }
     }
 }

@@ -557,36 +557,6 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     }
 
     /**
-     * Test the QtiTimer::load() when stored data has been serialized using PHP serialize()
-     * @dataProvider linearTestPointsProvider
-     */
-    public function testLoadPhpSerialized($regularPoints, $extraPoints)
-    {
-        $timer = new QtiTimer();
-        
-        $extraTime = 10;
-        $consumedTime = 5;
-        $timeLine = new QtiTimeLine($regularPoints);
-        $extraTimeLine = new QtiTimeLine($extraPoints);
-        
-        $dataStorage = serialize([
-            QtiTimer::STORAGE_KEY_TIME_LINE => $timeLine,
-            QtiTimer::STORAGE_KEY_EXTRA_TIME => $extraTime,
-            QtiTimer::STORAGE_KEY_EXTRA_TIME_LINE => $extraTimeLine,
-            QtiTimer::STORAGE_KEY_CONSUMED_EXTRA_TIME => $consumedTime,
-        ]);
-        $storage = $this->getTimeStorage($dataStorage);
-        $timer->setStorage($storage);
-        $timer->load();
-
-        $this->assertEquals($extraTime, $timer->getExtraTime());
-        $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
-        
-        $this->assertEquals($timeLine->getPoints(), $this->getTimeLine($timer)->getPoints());
-        $this->assertEquals($extraTimeLine->getPoints(), $this->getExtraTimeLine($timer)->getPoints());
-    }
-
-    /**
      * @expectedException \oat\taoTests\models\runner\time\InvalidStorageException
      */
     public function testLoadInvalidStorageException()
@@ -922,7 +892,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $prophecy->load()->will(function () use (&$buffer) {
             return $buffer;
         });
-        $prophecy->store(Argument::type('string'))->will(function ($args) use (&$buffer) {
+        $prophecy->store(Argument::type('array'))->will(function ($args) use (&$buffer) {
             $buffer = $args[0];
         });
         return $prophecy->reveal();
