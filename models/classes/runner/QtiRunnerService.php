@@ -387,9 +387,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The number of remaining attempts for the current item.
                 $response['remainingAttempts'] = $session->getCurrentRemainingAttempts();
 
-                // Duration of the current item attempt
-                $response['attemptDuration'] = TestRunnerUtils::getDurationWithMicroseconds($session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER));
-
                 // Whether or not the current step is timed out.
                 $response['isTimeout'] = $session->isTimeout();
 
