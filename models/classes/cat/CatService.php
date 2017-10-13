@@ -35,6 +35,7 @@ use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
+use oat\taoQtiTest\models\CompilationDataService;
 
 /**
  * Computerized Adaptive Testing Service
@@ -132,10 +133,14 @@ class CatService extends ConfigurableService
      */
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
     {
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php"));
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $filename = "adaptive-assessment-item-ref-${identifier}";
         
-        return $doc->getDocumentComponent();
+        return $compilationDataService->readPhpCompilationData(
+            $privateCompilationDirectory,
+            "${filename}.php",
+            "${filename}"
+        );
     }
     
     /**
@@ -169,10 +174,16 @@ class CatService extends ConfigurableService
         $urlinfo = parse_url($placeholder->getHref());
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
         
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $filename = "adaptive-assessment-section-${adaptiveSectionId}";
         
-        return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
+        $component = $compilationDataService->readPhpCompilationData(
+            $privateCompilationDirectory,
+            "${filename}.php",
+            $filename
+        );
+
+        return $component->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
     /**
@@ -291,7 +302,7 @@ class CatService extends ConfigurableService
         $itemReferences = $adaptSection->getItemReferences();
         $dependencies = $sectionsParts->getKeys();
 
-        if ($catDiff = array_diff($itemReferences, $dependencies)) {
+        if ($catDiff = array_diff($dependencies, $itemReferences)) {
             throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
         }
 

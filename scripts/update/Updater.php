@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\tao\model\TaoOntology;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
@@ -32,6 +33,10 @@ use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
+use oat\taoQtiTest\models\runner\time\QtiTimer;
+use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
+use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -58,6 +63,7 @@ use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
+use oat\taoQtiTest\models\PhpCodeCompilationDataService;
 use oat\tao\scripts\update\OntologyUpdater;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
@@ -283,7 +289,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isBetween('2.16.0','2.17.0')) {
             AclProxy::applyRule(new AccessRule(
                 AccessRule::GRANT,
-                INSTANCE_ROLE_DELIVERY,
+				TaoOntology::PROPERTY_INSTANCE_ROLE_DELIVERY,
                 ['ext' => 'taoQtiTest' , 'mod' => 'Runner']
             ));
 
@@ -1578,7 +1584,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('13.2.0', '14.1.4');
 
-        if($this->isVersion('14.1.4')){
+        if($this->isVersion('14.1.4')) {
             /** @var CreatorItems $creatorItemsService */
             $creatorItemsService = $this->getServiceManager()->get(CreatorItems::SERVICE_ID);
             $creatorItemsService->setOption(CreatorItems::ITEM_MODEL_SEARCH_OPTION, CreatorItems::ITEM_MODEL_QTI_URI);
@@ -1591,12 +1597,37 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('14.1.5', '16.0.1');
 
-        if($this->isVersion('16.0.1')){
+        if($this->isVersion('16.0.1')) {
 
             // Update the synchronisation service
             $this->runExtensionScript(SetSynchronisationService::class);
 
             $this->setVersion('16.1.0');
+        }
+
+        $this->skip('16.1.0', '16.1.1');
+
+        if ($this->isVersion('16.1.1')) {
+            $this->getServiceManager()->register(
+                PhpCodeCompilationDataService::SERVICE_ID,
+                new PhpCodeCompilationDataService()
+            );
+
+            $this->setVersion('16.2.0');
+        }
+
+        $this->skip('16.2.0', '16.3.3');
+
+        if ($this->isVersion('16.3.3')) {
+            $qtiTimerFactory = new QtiTimerFactory([
+                QtiTimerFactory::OPTION_TIMER_CLASS => QtiTimer::class,
+                QtiTimerFactory::OPTION_STORAGE_CLASS => QtiTimeStorage::class,
+                QtiTimerFactory::OPTION_STORAGE_FORMAT_CLASS => QtiTimeStoragePackedFormat::class,
+            ]);
+
+            $this->getServiceManager()->register(QtiTimerFactory::SERVICE_ID, $qtiTimerFactory);
+
+            $this->setVersion('17.0.0');
         }
     }
 }

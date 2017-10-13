@@ -236,7 +236,7 @@
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
-                {{__ 'If the candidate can skip the item, without submitting a response.'}}
+                {{__ 'If the candidate can skip the item, without submitting a response (default is true).'}}
                 </div>
             </div>
         </div>

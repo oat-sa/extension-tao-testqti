@@ -6,6 +6,7 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\action\Action;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\tao\model\TaoOntology;
 use oat\taoQtiItem\model\qti\exception\ExtractException;
 use oat\taoQtiItem\model\qti\exception\ParsingException;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -134,6 +135,6 @@ class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
      */
     protected function getDestinationClass()
     {
-        return $this->getClass(TAO_TEST_CLASS);
+        return $this->getClass(TaoOntology::TEST_CLASS_URI);
     }
 }

@@ -387,9 +387,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // The number of remaining attempts for the current item.
                 $response['remainingAttempts'] = $session->getCurrentRemainingAttempts();
 
-                // Duration of the current item attempt
-                $response['attemptDuration'] = TestRunnerUtils::getDurationWithMicroseconds($session->getTimerDuration($session->getItemAttemptTag($currentItem), TimePoint::TARGET_SERVER));
-
                 // Whether or not the current step is timed out.
                 $response['isTimeout'] = $session->isTimeout();
 
@@ -776,20 +773,25 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $session->beginItemSession();
                     $session->beginAttempt();
                     $session->endAttempt($responses);
-                    $score = $session->getVariable('SCORE');
+                    
                     $assessmentItem = $session->getAssessmentItem();
                     $assessmentItemIdentifier = $assessmentItem->getIdentifier();
+                    $score = $session->getVariable('SCORE');
                     $output = $context->getLastCatItemOutput();
                     
-                    $output[$assessmentItemIdentifier] = new ItemResult(
-                        $assessmentItemIdentifier,
+                    if ($score !== null) {
+                        $output[$assessmentItemIdentifier] = new ItemResult(
+                            $assessmentItemIdentifier,
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
                                 $score->getValue()->getValue()
                             )
                         );
-                        
+                    } else {
+                        \common_Logger::i("No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an adaptive section.");
+                    }
+                    
                     $context->persistLastCatItemOutput($output);
                     
                     // Send results to TAO Results.

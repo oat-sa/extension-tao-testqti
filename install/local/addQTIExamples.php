@@ -18,11 +18,13 @@
  *               
  */
 
+use oat\tao\model\TaoOntology;
+
 $testClass = taoQtiTest_models_classes_QtiTestService::singleton()->getRootClass();
 $file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'qtiv2p1Examples.zip';
 
 try {
-    $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests(new core_kernel_classes_Class(TAO_TEST_CLASS), $file);
+    $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests(new core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI), $file);
 }
 catch (Exception $e){
     common_Logger::e('An error occured while importing QTI Test Example. The system reported the following error: ' . $e->getMessage());
