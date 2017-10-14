@@ -1629,5 +1629,28 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('17.0.0');
         }
+
+        if ($this->isVersion('17.0.0')) {
+            $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $ext->setConfig('requirejsbundles', array(
+                array(
+                    'name' => 'taoqtitest_bundle',
+                    'path' => ROOT_URL . 'taoQtiTest/views/dist/controllers.min',
+                    'modules' => array()
+                ),
+                array(
+                    'name' => 'taoqtitest_runner_bundle',
+                    'path' => ROOT_URL . 'taoQtiTest/views/dist/controllers.min',
+                    'modules' => array()
+                ),
+                array(
+                    'name' => 'taoqtitest_plugins_bundle',
+                    'path' => ROOT_URL . 'taoQtiTest/views/dist/controllers.min',
+                    'modules' => array()
+                ),
+            ));
+
+            $this->setVersion('18.0.0');
+        }
     }
 }
