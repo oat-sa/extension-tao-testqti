@@ -1,31 +1,36 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     'use strict';
 
-    var root        = grunt.option('root');
-    var libs        = grunt.option('mainlibs');
-    var ext         = require(root + '/tao/views/build/tasks/helpers/extensions')(grunt, root);
-    var out         = 'output';
+    var ext;
+    var itemRuntime;
+    var libs = grunt.option('mainlibs');
+    var out  = 'output';
+    var paths;
+    var root = grunt.option('root');
+    var testPlugins;
+    var testRuntime;
 
-    var paths = {
-        'taoTests':                    root + '/taoTests/views/js',
-        'taoQtiTest':                  root + '/taoQtiTest/views/js',
-        'taoQtiTestCss':               root + '/taoQtiTest/views/css',
-        'taoQtiItem':                  root + '/taoQtiItem/views/js',
-        'taoQtiItemCss':               root + '/taoQtiItem/views/css',
-        'taoItems':                    root + '/taoItems/views/js',
-        'qtiCustomInteractionContext': root + '/taoQtiItem/views/js/runtime/qtiCustomInteractionContext',
-        'qtiInfoControlContext':       root + '/taoQtiItem/views/js/runtime/qtiInfoControlContext',
+    ext   = require(root + '/tao/views/build/tasks/helpers/extensions')(grunt, root);
+    paths = {
+        taoTests:                    root + '/taoTests/views/js',
+        taoQtiTest:                  root + '/taoQtiTest/views/js',
+        taoQtiTestCss:               root + '/taoQtiTest/views/css',
+        taoQtiItem:                  root + '/taoQtiItem/views/js',
+        taoQtiItemCss:               root + '/taoQtiItem/views/css',
+        taoItems:                    root + '/taoItems/views/js',
+        qtiCustomInteractionContext: root + '/taoQtiItem/views/js/runtime/qtiCustomInteractionContext',
+        qtiInfoControlContext:       root + '/taoQtiItem/views/js/runtime/qtiInfoControlContext',
     };
 
-    var itemRuntime = ext.getExtensionSources('taoQtiItem', ['views/js/qtiItem/core/**/*.js', 'views/js/qtiCommonRenderer/renderers/**/*.js',  'views/js/qtiCommonRenderer/helpers/**/*.js'], true);
-    var testRuntime = ext.getExtensionSources('taoQtiTest', ['views/js/runner/**/*.js'], true);
-    var testPlugins = ext.getExtensionSources('taoQtiTest', ['views/js/runner/plugins/**/*.js'], true);
+    itemRuntime = ext.getExtensionSources('taoQtiItem', ['views/js/qtiItem/core/**/*.js', 'views/js/qtiCommonRenderer/renderers/**/*.js',  'views/js/qtiCommonRenderer/helpers/**/*.js'], true);
+    testPlugins = ext.getExtensionSources('taoQtiTest', ['views/js/runner/plugins/**/*.js'], true);
+    testRuntime = ext.getExtensionSources('taoQtiTest', ['views/js/runner/**/*.js'], true);
 
     grunt.config.merge({
 
         /**
-        * Compile tao files into a bundle
-        */
+         * Compile into a bundle
+         */
         requirejs : {
             taoqtitestbundle : {
                 options: {
@@ -59,6 +64,9 @@ module.exports = function(grunt) {
             }
         },
 
+        /**
+         * Copy bundles to /dist
+         */
         copy : {
             taoqtitestbundle : {
                 files: [
