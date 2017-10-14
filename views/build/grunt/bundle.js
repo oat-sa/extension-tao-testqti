@@ -1,12 +1,14 @@
 module.exports = function (grunt) {
     'use strict';
 
+    var copy      = grunt.config('copy') || {};
     var ext;
     var itemRuntime;
-    var libs = grunt.option('mainlibs');
-    var out  = 'output';
+    var libs      = grunt.option('mainlibs');
+    var out       = 'output';
     var paths;
-    var root = grunt.option('root');
+    var requirejs = grunt.config('requirejs') || {};
+    var root      = grunt.option('root');
     var testPlugins;
     var testRuntime;
 
@@ -26,67 +28,61 @@ module.exports = function (grunt) {
     testPlugins = ext.getExtensionSources('taoQtiTest', ['views/js/runner/plugins/**/*.js'], true);
     testRuntime = ext.getExtensionSources('taoQtiTest', ['views/js/runner/**/*.js'], true);
 
-    grunt.config.merge({
-
-        /**
-         * Compile into a bundle
-         */
-        requirejs : {
-            taoqtitestbundle : {
-                options: {
-                    paths : paths,
-                    dir : out,
-                    modules : [{
-                        name: 'taoQtiTest/controller/routes',
-                        include : ext.getExtensionsControllers(['taoQtiTest']),
-                        exclude : ['mathJax','taoQtiTest/controller/runner/runner'].concat(libs)
-                    }]
-                }
-            },
-            qtitestrunner : {
-                options: {
-                    paths : paths,
-                    include: ['lib/require', 'loader/bootstrap'].concat(testRuntime).concat(itemRuntime),
-                    excludeShallow : ['mathJax', 'ckeditor'].concat(testPlugins),
-                    exclude : ['json!i18ntr/messages.json'],
-                    name: "taoQtiTest/controller/runner/runner",
-                    out: out + "/qtiTestRunner.min.js"
-                }
-            },
-            taoqtitestplugins : {
-                options: {
-                    paths : paths,
-                    include: testPlugins,
-                    excludeShallow : ['mathJax'],
-                    exclude : ['json!i18ntr/messages.json'].concat(libs),
-                    out: out + "/testPlugins.min.js"
-                }
-            }
-        },
-
-        /**
-         * Copy bundles to /dist
-         */
-        copy : {
-            taoqtitestbundle : {
-                files: [
-                    { src: [out + '/taoQtiTest/controller/routes.js'],  dest: root + '/taoQtiTest/views/js/controllers.min.js' },
-                    { src: [out + '/taoQtiTest/controller/routes.js.map'],  dest: root + '/taoQtiTest/views/js/controllers.min.js.map' },
-                    { src: [out + '/qtiTestRunner.min.js'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js' },
-                    { src: [out + '/qtiTestRunner.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js.map' },
-                    { src: [out + '/testPlugins.min.js'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js' },
-                    { src: [out + '/testPlugins.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js.map' }
-                ]
-            }
+    /**
+     * Compile into a bundle
+     */
+    requirejs.taoqtitest_bundle = {
+        options: {
+            exclude: ['mathJax','taoQtiTest/controller/runner/runner'].concat(libs),
+            include: ext.getExtensionsControllers(['taoQtiTest']),
+            out: out + '/taoQtiTest/controllers.min.js',
+            paths: paths,
         }
-    });
+    };
+
+    requirejs.taoqtitest_runner_bundle = {
+        options: {
+            exclude: ['json!i18ntr/messages.json'],
+            excludeShallow: ['mathJax', 'ckeditor'].concat(testPlugins),
+            include: ['lib/require', 'loader/bootstrap', 'taoQtiTest/controller/runner/runner'].concat(testRuntime).concat(itemRuntime),
+            out: out + '/taoQtiTest/qtiTestRunner.min.js',
+            paths: paths,
+        }
+    };
+
+    requirejs.taoqtitest_plugins_bundle = {
+        options: {
+            exclude: ['json!i18ntr/messages.json'].concat(libs),
+            excludeShallow: ['mathJax'],
+            include: testPlugins,
+            out: out + '/taoQtiTest/testPlugins.min.js',
+            paths: paths,
+        }
+    };
+
+    /**
+     * Copy bundles to /dist
+     */
+    copy.taoqtitest_bundle = {
+        files: [
+            { src: [out + '/taoQtiTest/controller/routes.js'],     dest: root + '/taoQtiTest/views/dist/controllers.min.js' },
+            { src: [out + '/taoQtiTest/controller/routes.js.map'], dest: root + '/taoQtiTest/views/dist/controllers.min.js.map' },
+            { src: [out + '/taoQtiTest/qtiTestRunner.min.js'],     dest: root + '/taoQtiTest/views/dist/qtiTestRunner.min.js' },
+            { src: [out + '/taoQtiTest/qtiTestRunner.min.js.map'], dest: root + '/taoQtiTest/views/dist/qtiTestRunner.min.js.map' },
+            { src: [out + '/taoQtiTest/testPlugins.min.js'],       dest: root + '/taoQtiTest/views/dist/testPlugins.min.js' },
+            { src: [out + '/taoQtiTest/testPlugins.min.js.map'],   dest: root + '/taoQtiTest/views/dist/testPlugins.min.js.map' }
+        ]
+    };
+
+    grunt.config('requirejs', requirejs);
+    grunt.config('copy', copy);
 
     // bundle task
     grunt.registerTask('taoqtitestbundle', [
         'clean:bundle',
-        'requirejs:taoqtitestbundle',
-        'requirejs:qtitestrunner',
-        'requirejs:taoqtitestplugins',
-        'copy:taoqtitestbundle'
+        'requirejs:taoqtitest_bundle',
+        'requirejs:taoqtitest_runner_bundle',
+        'requirejs:taoqtitest_plugins_bundle',
+        'copy:taoqtitest_bundle'
     ]);
 };
