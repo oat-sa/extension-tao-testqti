@@ -29,7 +29,7 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '17.0.0',
+    'version'     => '18.0.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=6.5.0',
@@ -64,7 +64,8 @@ return array(
             \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,
             \oat\taoQtiTest\scripts\install\SetSynchronisationService::class,
             \oat\taoQtiTest\scripts\install\SyncChannelInstaller::class,
-		    RegisterTestContainer::class
+            RegisterTestContainer::class,
+            \oat\taoQtiTest\scripts\install\SetRequireJSBundlesConfig::class,
         )
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
