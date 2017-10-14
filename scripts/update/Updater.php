@@ -1668,7 +1668,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 ),
                 array(
                     'name' => 'taoqtitest_runner_bundle',
-                    'path' => ROOT_URL . 'taoQtiTest/views/dist/controllers.min',
+                    'path' => ROOT_URL . 'taoQtiTest/views/dist/qtiTestRunner.min',
                     'modules' => array(
                         'taoQtiTest/controller/runner/runner',
                         'taoQtiTest/runner/config/assetManager',
@@ -1694,7 +1694,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 ),
                 array(
                     'name' => 'taoqtitest_plugins_bundle',
-                    'path' => ROOT_URL . 'taoQtiTest/views/dist/controllers.min',
+                    'path' => ROOT_URL . 'taoQtiTest/views/dist/testPlugins.min',
                     'modules' => array(
                         'taoQtiTest/runner/plugins/content/accessibility/keyNavigation',
                         'taoQtiTest/runner/plugins/content/dialog/dialog',
