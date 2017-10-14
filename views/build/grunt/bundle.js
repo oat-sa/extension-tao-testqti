@@ -9,22 +9,28 @@ module.exports = function (grunt) {
     var paths;
     var requirejs = grunt.config('requirejs') || {};
     var root      = grunt.option('root');
+    var taoItems;
+    var taoTests;
     var testPlugins;
     var testRuntime;
 
     ext   = require(root + '/tao/views/build/tasks/helpers/extensions')(grunt, root);
     paths = {
-        taoTests:                    root + '/taoTests/views/js',
-        taoQtiTest:                  root + '/taoQtiTest/views/js',
-        taoQtiTestCss:               root + '/taoQtiTest/views/css',
-        taoQtiItem:                  root + '/taoQtiItem/views/js',
-        taoQtiItemCss:               root + '/taoQtiItem/views/css',
-        taoItems:                    root + '/taoItems/views/js',
         qtiCustomInteractionContext: root + '/taoQtiItem/views/js/runtime/qtiCustomInteractionContext',
         qtiInfoControlContext:       root + '/taoQtiItem/views/js/runtime/qtiInfoControlContext',
+        taoItems:                    root + '/taoItems/views/js',
+        taoItemsCss:                 root + '/taoItems/views/css',
+        taoQtiItem:                  root + '/taoQtiItem/views/js',
+        taoQtiItemCss:               root + '/taoQtiItem/views/css',
+        taoQtiTest:                  root + '/taoQtiTest/views/js',
+        taoQtiTestCss:               root + '/taoQtiTest/views/css',
+        taoTests:                    root + '/taoTests/views/js',
+        taoTestsCss:                 root + '/taoTests/views/css',
     };
 
     itemRuntime = ext.getExtensionSources('taoQtiItem', ['views/js/qtiItem/core/**/*.js', 'views/js/qtiCommonRenderer/renderers/**/*.js',  'views/js/qtiCommonRenderer/helpers/**/*.js'], true);
+    taoItems    = ext.getExtensionSources('taoItems', ['views/js/**/*.js']);
+    taoTests    = ext.getExtensionSources('taoTests', ['views/js/**/*.js']);
     testPlugins = ext.getExtensionSources('taoQtiTest', ['views/js/runner/plugins/**/*.js'], true);
     testRuntime = ext.getExtensionSources('taoQtiTest', ['views/js/runner/**/*.js'], true);
 
@@ -42,9 +48,9 @@ module.exports = function (grunt) {
 
     requirejs.taoqtitest_runner_bundle = {
         options: {
-            exclude: ['json!i18ntr/messages.json'],
-            excludeShallow: ['mathJax', 'ckeditor'].concat(testPlugins),
-            include: ['lib/require', 'loader/bootstrap', 'taoQtiTest/controller/runner/runner'].concat(testRuntime).concat(itemRuntime),
+            exclude: ['json!i18ntr/messages.json', 'mathJax'].concat(libs).concat(itemRuntime).concat(taoItems).concat(taoTests),
+            excludeShallow: testPlugins,
+            include: ['lib/require', 'loader/bootstrap', 'taoQtiTest/controller/runner/runner'].concat(testRuntime),
             out: out + '/taoQtiTest/qtiTestRunner.min.js',
             paths: paths,
         }
@@ -52,8 +58,7 @@ module.exports = function (grunt) {
 
     requirejs.taoqtitest_plugins_bundle = {
         options: {
-            exclude: ['json!i18ntr/messages.json'].concat(libs),
-            excludeShallow: ['mathJax'],
+            exclude: ['json!i18ntr/messages.json', 'mathJax'].concat(libs).concat(['taoTests/runner/plugin']),
             include: testPlugins,
             out: out + '/taoQtiTest/testPlugins.min.js',
             paths: paths,
@@ -65,8 +70,8 @@ module.exports = function (grunt) {
      */
     copy.taoqtitest_bundle = {
         files: [
-            { src: [out + '/taoQtiTest/controller/routes.js'],     dest: root + '/taoQtiTest/views/dist/controllers.min.js' },
-            { src: [out + '/taoQtiTest/controller/routes.js.map'], dest: root + '/taoQtiTest/views/dist/controllers.min.js.map' },
+            { src: [out + '/taoQtiTest/controllers.min.js'],       dest: root + '/taoQtiTest/views/dist/controllers.min.js' },
+            { src: [out + '/taoQtiTest/controllers.min.js.map'],   dest: root + '/taoQtiTest/views/dist/controllers.min.js.map' },
             { src: [out + '/taoQtiTest/qtiTestRunner.min.js'],     dest: root + '/taoQtiTest/views/dist/qtiTestRunner.min.js' },
             { src: [out + '/taoQtiTest/qtiTestRunner.min.js.map'], dest: root + '/taoQtiTest/views/dist/qtiTestRunner.min.js.map' },
             { src: [out + '/taoQtiTest/testPlugins.min.js'],       dest: root + '/taoQtiTest/views/dist/testPlugins.min.js' },
