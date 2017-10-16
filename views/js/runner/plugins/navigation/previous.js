@@ -118,12 +118,19 @@ define([
             function doPrevious(previousItemWarning) {
                 var context = testRunner.getTestContext();
 
+                function enableNav() {
+                    testRunner.trigger('disablenav');
+                }
+
+                testRunner.trigger('disablenav');
+
                 if(self.getState('enabled') !== false){
                     if (previousItemWarning && context.remainingAttempts !== -1) {
                         testRunner.trigger(
                             'confirm.previous',
                             __('You are about to go to the previous item. Click OK to continue and go to the previous item.'),
-                            testRunner.previous // if the test taker accept
+                            testRunner.previous, // if the test taker accept
+                            enableNav()          // if he refuses
                         );
 
                     } else {
@@ -138,7 +145,7 @@ define([
             });
 
             if(testConfig.allowShortcuts && pluginShortcuts.trigger){
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function() {
                     if (canDoPrevious() && self.getState('enabled') === true) {
                         testRunner.trigger('nav-previous', [true]);
                     }
