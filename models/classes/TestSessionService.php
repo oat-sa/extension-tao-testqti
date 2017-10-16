@@ -22,7 +22,10 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
+use oat\taoDelivery\model\delivery\DeliveryInterface;
+use oat\taoDelivery\model\delivery\DeliveryServiceInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
@@ -77,10 +80,17 @@ class TestSessionService extends ConfigurableService
                 $session->setUserUri($userId);
             }
 
-            $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP));
+            //
+            if ($compiledDelivery instanceof \core_kernel_classes_Resource) {
+                $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP))->getUri();
+            } else {
+                /** @var DeliveryServiceInterface $deliveryService */
+                $deliveryService = $this->getServiceManager()->get(DeliveryServiceInterface::SERVICE_ID);
+                $resultServerUri = $deliveryService->getResultServer($compiledDelivery->literal);
+            }
             $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
-            $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
-            $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
+            $resultServer->setValue('resultServerUri', $resultServerUri);
+            $resultServer->setValue('resultServerObject', array($resultServerUri => $resultServerObject));
             $resultServer->setValue('resultServer_deliveryResultIdentifier', $sessionId);
         } else {
             $session = null;
@@ -199,7 +209,9 @@ class TestSessionService extends ConfigurableService
     public function getRuntimeInputParameters(DeliveryExecution $deliveryExecution)
     {
         $compiledDelivery = $deliveryExecution->getDelivery();
-        $runtime = $this->getServiceLocator()->get(AssignmentService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
+        $deliveryId = $compiledDelivery instanceof \core_kernel_classes_Resource ? $compiledDelivery->getUri() : $compiledDelivery->literal;
+        // $runtime = $this->getServiceLocator()->get(AssignmentService::SERVICE_ID)->getRuntime($deliveryId);
+        $runtime = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID)->getRuntime($deliveryId);
         $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
 
         return $inputParameters;
