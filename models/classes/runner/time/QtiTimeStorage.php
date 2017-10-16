@@ -53,13 +53,7 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
      * @var string
      */
     protected $userId;
-
-    /**
-     * The encoder for the storage format 
-     * @var QtiTimeStorageFormat
-     */
-    protected $storageFormat;
-
+    
     /**
      * @var StateStorage
      */
