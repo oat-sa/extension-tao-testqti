@@ -142,6 +142,12 @@ define([
                     unansweredOnly:     unansweredOnly
                 });
 
+                function enableNav() {
+                    testRunner.trigger('enablenav');
+                }
+
+                testRunner.trigger('disablenav');
+
                 if(self.getState('enabled') !== false) {
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
@@ -150,14 +156,16 @@ define([
                             messages.getExitMessage(
                                 __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
                                 warningScope, testRunner),
-                            _.partial(triggerNextAction, context) // if the test taker accept
+                            _.partial(triggerNextAction, context), // if the test taker accept
+                            enableNav                              // if he refuse
                         );
 
                     } else if (warningHelper.shouldWarnBeforeNext()) {
                         testRunner.trigger(
                             'confirm.next',
                             __('You are about to go to the next item. Click OK to continue and go to the next item.'),
-                            _.partial(triggerNextAction, context) // if the test taker accept
+                            _.partial(triggerNextAction, context), // if the test taker accept
+                            enableNav                              // if he refuse
                         );
 
                     } else {
