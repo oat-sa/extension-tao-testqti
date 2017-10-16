@@ -100,7 +100,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     {
         if (!$this->timer) {
             $qtiTimerFactory = $this->getServiceLocator()->get(QtiTimerFactory::SERVICE_ID);
-            $this->timer = $qtiTimerFactory->getTimer($this, $this);
+            $this->timer = $qtiTimerFactory->getTimer($this->getSessionId(), $this->getUserUri());
         }
         return $this->timer;
     }

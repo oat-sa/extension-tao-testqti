@@ -21,11 +21,9 @@
 namespace oat\taoQtiTest\models\runner\time;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiTest\models\runner\session\UserUriAware;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStorageJsonFormat;
 use oat\taoTests\models\runner\time\Timer;
 use oat\taoTests\models\runner\time\TimeStorage;
-use qtism\runtime\tests\AssessmentTestSession;
 
 /**
  * Class QtiTimerFactory
@@ -77,16 +75,16 @@ class QtiTimerFactory extends ConfigurableService
     }
 
     /**
-     * @param AssessmentTestSession $testSession
-     * @param UserUriAware $userUriAware
+     * @param string $testSessionId
+     * @param string $userUri
      * @return Timer
      * @throws \Exception
      */
-    public function getTimer(AssessmentTestSession $testSession, UserUriAware $userUriAware)
+    public function getTimer($testSessionId, $userUri)
     {
         /* @var TimeStorage $timerStorage */
         $storageClass = $this->getStorageClass();
-        $timerStorage = new $storageClass($testSession->getSessionId(), $userUriAware->getUserUri());
+        $timerStorage = new $storageClass($testSessionId, $userUri);
         
         if ($timerStorage instanceof QtiTimeStorageFormatAware) {
             $storageFormatClass = $this->getStorageFormatClass();
