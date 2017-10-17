@@ -302,7 +302,7 @@ class CatService extends ConfigurableService
         $itemReferences = $adaptSection->getItemReferences();
         $dependencies = $sectionsParts->getKeys();
 
-        if ($catDiff = array_diff($itemReferences, $dependencies)) {
+        if ($catDiff = array_diff($dependencies, $itemReferences)) {
             throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
         }
 

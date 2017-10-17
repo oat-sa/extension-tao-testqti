@@ -85,7 +85,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                     partModel.assessmentSections[index] = {};
                 }
 
-                sectionView.setUp(modelOverseer, areaBroker, partModel.assessmentSections[index], $section);
+                sectionView.setUp(modelOverseer, areaBroker, partModel.assessmentSections[index], partModel, $section);
             });
         }
 
@@ -124,7 +124,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                         sectionModel = partModel.assessmentSections[index];
 
                         //initialize the new test part
-                        sectionView.setUp(modelOverseer, areaBroker, sectionModel, $section);
+                        sectionView.setUp(modelOverseer, areaBroker, sectionModel, partModel, $section);
 
                         /**
                          * @event modelOverseer#section-add

@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDeliveryRdf\model\DeliveryContainerService;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
@@ -77,7 +78,7 @@ class TestSessionService extends ConfigurableService
                 $session->setUserUri($userId);
             }
 
-            $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP));
+            $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(DeliveryContainerService::PROPERTY_RESULT_SERVER));
             $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
             $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
             $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
