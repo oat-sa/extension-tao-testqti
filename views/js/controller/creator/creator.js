@@ -74,7 +74,7 @@ define([
             'itemSelectorPanel':    $container.find('.test-creator-items'),
             'contentCreatorPanel':  $container.find('.test-creator-content'),
             'propertyPanel':        $container.find('.test-creator-props'),
-            'qtiElementProperties': $container.find('.qti-widget-properties')
+            'elementPropertyPanel': $container.find('.qti-widget-properties')
         });
     };
 
