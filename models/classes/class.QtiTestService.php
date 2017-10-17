@@ -1010,7 +1010,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
         $dir = $this->getDefaultDir()->getDirectory(md5($test->getUri()));
         if ($dir->exists() && $preventOverride === true) {
-            throw new common_exception_InconsistentData('Data dir fir test '.$test->getUri().' already exists');
+            throw new common_exception_InconsistentData('Data directory for test ' . $test->getUri() . ' already exists.');
         }
 
         $file = $dir->getFile(self::TAOQTITEST_FILENAME);
