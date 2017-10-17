@@ -167,13 +167,11 @@ define([
             };
 
             /**
-             * Offline ? We try to do the action anyway :
-             *  1. Save the data to the actionStore
-             *  2. Try to navigate offline, or just say 'ok'
+             * Offline ? We try to navigate offline, or just say 'ok'
              *
              * @param {String} action - the action name (ie. move, skip, timeout)
              * @param {Object} actionParams - the parameters sent along the action
-             * @returns {Promise} resolves with the action result
+             * @returns {Object} action result
              */
             this.offlineAction = function offlineAction(action, actionParams){
                 var testNavigator;
@@ -185,10 +183,6 @@ define([
                 var testData    = this.getDataHolder().get('testData');
                 var testContext = this.getDataHolder().get('testContext');
                 var testMap     = this.getDataHolder().get('testMap');
-
-                // var storeAction  = function storeAction(){
-                //     self.scheduleAction(action, _.defaults(actionParams || {}, self.requestConfig));
-                // };
 
                 //we just block those actions and the end of the test
                 if( _.contains(blockingActions, action) ||
@@ -209,24 +203,12 @@ define([
 
                     //we are really not able to navigate
                     if(!newTestContext || !newTestContext.itemIdentifier || !self.hasItem(newTestContext.itemIdentifier)){
-                        //storeAction();
                         throw offlineNavError;
                     }
 
-                    // return this.scheduleAction(action, actionParams).then(function(){
-                    //     return {
-                    //         success : true,
-                    //         testContext : newTestContext
-                    //     };
-                    // });
                     result.testContext = newTestContext;
                 }
 
-                // return this.scheduleAction(action, actionParams).then(function(){
-                //     return {
-                //         success : true
-                //     };
-                // });
                 return result;
             };
 
@@ -262,7 +244,7 @@ define([
                         reject(reason);
                     });
                 });
-            }
+            };
 
             /**
              * Schedule an action do be done with next call
@@ -375,11 +357,12 @@ define([
                     })
                     .catch(function(err){
                         if (self.isConnectivityError(err)) {
-                            self.setOffself.setOffline('communicator');
+                            self.setOffline('communicator');
                             _.forEach(actions, function (action) {
                                 self.actiontStore.push(action.action, action.parameters);
                             });
                         }
+                        throw err;
                     });
                 });
             };
