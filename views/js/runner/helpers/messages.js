@@ -22,9 +22,8 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/runner/helpers/map',
-    'taoQtiTest/runner/helpers/stats',
-    'taoQtiTest/runner/helpers/currentItem'
-], function (_, __, mapHelper, statsHelper, currentItemHelper) {
+    'taoQtiTest/runner/helpers/stats'
+], function (_, __, mapHelper, statsHelper) {
     'use strict';
 
     /**
@@ -59,15 +58,10 @@ define([
         var unansweredCount = stats && (stats.questions - stats.answered);
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';
-        var map = runner.getTestMap();
-        var jump = mapHelper.getJump(map, runner.getTestContext().itemPosition);
-        var belowSections;
 
         if (scope === 'section' || scope === 'testSection'){
             if (unansweredCount === 0) {
-                itemsCountMessage += __('You answered all %s question(s) in this section',
-                    stats.questions.toString()
-                );
+                itemsCountMessage = __('You answered all %s question(s) in this section', stats.questions.toString());
             } else {
                 itemsCountMessage = __('You answered only %s of the %s question(s) in this section',
                     stats.answered.toString(),
@@ -75,26 +69,11 @@ define([
                 );
             }
             if (flaggedCount) {
-                itemsCountMessage += ', ';
-                itemsCountMessage +=  __('and flagged %s of them', flaggedCount.toString());
+                itemsCountMessage += ', ' + __('and flagged %s of them', flaggedCount.toString());
             }
         } else if(scope === 'test') {
-            //collect statistics from below sections
-            belowSections = getNextSections(map, jump.section);
-
-            _.forEach(belowSections, function (section) {
-                _.forEach(mapHelper.getSectionStats(runner.getTestMap(), section.id), function (sectionStats, statsKey){
-                    stats[statsKey] += sectionStats;
-                });
-            });
-
-            unansweredCount = stats && (stats.questions - stats.answered);
-            flaggedCount = stats && stats.flagged;
-
             if (unansweredCount === 0) {
-                itemsCountMessage = __('You answered all %s question(s) in this test',
-                    stats.questions.toString()
-                );
+                itemsCountMessage = __('You answered all %s question(s) in this test', stats.questions.toString());
             } else {
                 itemsCountMessage = __('You have %s unanswered question(s)', unansweredCount.toString());
             }
@@ -103,9 +82,7 @@ define([
             }
         } else if(scope === 'part') {
             if (unansweredCount === 0) {
-                itemsCountMessage = __('You answered all %s question(s)',
-                    stats.questions.toString()
-                );
+                itemsCountMessage = __('You answered all %s question(s)', stats.questions.toString());
             } else {
                 itemsCountMessage = __('You have %s unanswered question(s)', unansweredCount.toString());
             }
@@ -118,29 +95,6 @@ define([
             itemsCountMessage += '.';
         }
         return itemsCountMessage;
-    }
-
-    /**
-     * Return sections below current.
-     * @param map
-     * @param currentSectionId
-     * @return {Object}
-     */
-    function getNextSections(map, currentSectionId) {
-        var sections = mapHelper.getSections(map),
-            result = {},
-            below = false;
-
-        _.forEach(sections, function (section) {
-            if (below) {
-                result[section.id] = section;
-            }
-            if (section.id === currentSectionId) {
-                below = true;
-            }
-        });
-
-        return result;
     }
 
     return {
