@@ -472,6 +472,17 @@
     $qtiCreatorMiniTlbBorderColor: rgb(221, 221, 221);
     $qtiCreatorMiniTlbBgColor: #fff;
 
+    .qti-widget-properties {
+        .panel {
+            padding: 0 5px;
+
+            h3 {
+                font-size: 1.17em;
+                padding: 0;
+            }
+        }
+    }
+
     %mini-tlb {
         display: none; //initially hidden
         position: absolute;
