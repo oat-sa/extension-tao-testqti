@@ -191,6 +191,7 @@ define([
                 var extension = communication.extension || this.getServiceExtension();
                 var controller = communication.controller || this.getServiceController();
                 var action = communication.action;
+                var syncActions = communication.syncActions || [];
 
                 // build the service address from the provided config
                 // it can be overwritten by a full url from the config
@@ -201,7 +202,7 @@ define([
                 });
 
                 // append the address of the remote service to target
-                var params = _.merge(communication.params || {}, {
+                var params = _.merge({}, communication.params || {}, {
                     service: communication.service || service
                 });
 
@@ -218,7 +219,8 @@ define([
                 return {
                     enabled: communication.enabled,
                     type: communication.type,
-                    params: params
+                    params: params,
+                    syncActions: syncActions
                 };
             }
         };
