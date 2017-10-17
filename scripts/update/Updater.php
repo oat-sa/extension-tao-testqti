@@ -32,6 +32,7 @@ use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
@@ -1638,6 +1639,22 @@ class Updater extends \common_ext_ExtensionUpdater {
             $config['bootstrap']['communication']['syncActions'] = ['move', 'skip', 'storeTraceData', 'timeout', 'exitTest'];
             $extension->setConfig('testRunner', $config);
             $this->setVersion('17.1.0');
+        }
+
+        if ($this->isVersion('17.1.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap']['communication']['syncActions'][] = 'getNextItemData';
+            $extension->setConfig('testRunner', $config);
+
+            /** @var SynchronisationService $synchronisationService */
+            $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
+            $actions = $synchronisationService->getAvailableActions();
+            $actions['getNextItemData'] = NextItemData::class;
+            $synchronisationService->setAvailableActions($actions);
+            $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
+
+            $this->setVersion('17.2.0');
         }
     }
 }
