@@ -178,6 +178,7 @@ define([
             this.offlineAction = function offlineAction(action, actionParams){
                 var testNavigator;
                 var newTestContext;
+                var result = {success : true};
 
                 var blockingActions = ['exitTest', 'timeout'];
 
@@ -185,15 +186,15 @@ define([
                 var testContext = this.getDataHolder().get('testContext');
                 var testMap     = this.getDataHolder().get('testMap');
 
-                var storeAction  = function storeAction(){
-                    self.scheduleAction(action, _.defaults(actionParams || {}, self.requestConfig));
-                };
+                // var storeAction  = function storeAction(){
+                //     self.scheduleAction(action, _.defaults(actionParams || {}, self.requestConfig));
+                // };
 
                 //we just block those actions and the end of the test
                 if( _.contains(blockingActions, action) ||
                     ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
 
-                    storeAction();
+                    // storeAction();
                     throw offlineExitError;
                 }
 
@@ -208,44 +209,78 @@ define([
 
                     //we are really not able to navigate
                     if(!newTestContext || !newTestContext.itemIdentifier || !self.hasItem(newTestContext.itemIdentifier)){
-                        storeAction();
+                        //storeAction();
                         throw offlineNavError;
                     }
 
-                    return this.scheduleAction(action, actionParams).then(function(){
-                        return {
-                            success : true,
-                            testContext : newTestContext
-                        };
-                    });
+                    // return this.scheduleAction(action, actionParams).then(function(){
+                    //     return {
+                    //         success : true,
+                    //         testContext : newTestContext
+                    //     };
+                    // });
+                    result.testContext = newTestContext;
                 }
 
-                return this.scheduleAction(action, actionParams).then(function(){
-                    return {
-                        success : true
-                    };
-                });
+                // return this.scheduleAction(action, actionParams).then(function(){
+                //     return {
+                //         success : true
+                //     };
+                // });
+                return result;
             };
+
+            /**
+             * Process action which should be sent using message channel.
+             *
+             * @param action
+             * @param actionParams
+             * @param deferred
+             * @return {Promise} resolves with the action result
+             */
+            this.processSyncAction = function processSyncAction(action, actionParams, deferred) {
+                return new Promise(function(resolve, reject) {
+                    self.scheduleAction(action, actionParams).then(function(actionData){
+                        self.actionPromises[actionData.params.actionId] = resolve;
+                        if (!deferred) {
+                            self.syncData().then(function (result) {
+                                if (self.isOnline()) {
+                                    _.forEach(result, function (actionResult) {
+                                        var actionId = actionResult.requestParameters && actionResult.requestParameters.actionId ?
+                                            actionResult.requestParameters.actionId : null;
+
+                                        if (actionId && self.actionPromises[actionId]) {
+                                            self.actionPromises[actionId](actionResult);
+                                        }
+                                    });
+                                }
+                            }).catch(function (reason) {
+                                reject(reason);
+                            });
+                        }
+                    }).catch(function (reason) {
+                        reject(reason);
+                    });
+                });
+            }
 
             /**
              * Schedule an action do be done with next call
              *
              * @param {String} action - the action name (ie. move, skip, timeout)
              * @param {Object} actionParams - the parameters sent along the action
-             * @returns {Promise} resolves with the action result
+             * @returns {Promise} resolves with the action data
              */
             this.scheduleAction = function scheduleAction(action, actionParams) {
                 actionParams.actionId = action + '_' + (new Date()).getTime();
-                return new Promise(function (resolve) {
-                    self.actiontStore.push(
-                        action,
-                        self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
-                    ).then(function () {
-                        resolve({
-                            action : action,
-                            params : actionParams
-                        });
-                    });
+                return self.actiontStore.push(
+                    action,
+                    self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
+                ).then(function () {
+                    return {
+                        action : action,
+                        params : actionParams
+                    };
                 });
             };
 
@@ -275,35 +310,16 @@ define([
                 var communicationConfig = self.configStorage.getCommunicationConfig();
 
                 //perform the request, but fallback on offline if the request itself fails
-                var runRequestThenOffline = function runRequestThenOffline(){
+                var runRequestThenOffline = function runRequestThenOffline() {
                     var request;
                     if (communicationConfig.syncActions && communicationConfig.syncActions.indexOf(action) >= 0) {
-                        request = new Promise(function(resolve, reject) {
-                            self.scheduleAction(action, actionParams).then(function(actionData){
-                                self.actionPromises[actionData.params.actionId] = resolve;
-                                if (!deferred) {
-                                    self.syncOfflineData().then(function (result) {
-                                        _.forEach(result, function (actionResult) {
-                                            var actionId = actionResult.requestParameters && actionResult.requestParameters.actionId ?
-                                                actionResult.requestParameters.actionId : null;
-
-                                            if (actionId && self.actionPromises[actionId]) {
-                                                self.actionPromises[actionId](actionResult);
-                                            }
-                                        });
-                                    }).catch(function (reason) {
-                                        reject(reason);
-                                    });
-                                }
-                            }).catch(function (reason) {
-                                reject(reason);
-                            });
-                        });
+                        request = self.processSyncAction(action, actionParams, deferred);
                     } else {
                         //action is not synchronizable
                         //fallback to direct request
                         request = self.request(url, actionParams);
                     }
+
                     return request.then(function(result){
                         if (self.isOffline()) {
                             return self.offlineAction(action, actionParams);
@@ -317,23 +333,24 @@ define([
                     });
                 };
 
-                if(this.isOffline()){
+                if (this.isOffline()) {
                     //try the telemetry action, just in case
                     return this
                         .telemetry(testContext.itemIdentifier, 'up')
                         .then(function(){
-                            //if the up request succeed,
-                            // we ask for action sync, and we run the request
-                            if(self.isOnline()){
-                                return self.syncOfflineData().then(function(){
-                                    return runRequestThenOffline();
-                                });
+                            //if the up request succeed, we run the request
+                            if (self.isOnline()) {
+                                return runRequestThenOffline();
                             }
-                            return self.offlineAction(action, actionParams);
+                            return self.scheduleAction(action, actionParams).then(function (){
+                                return self.offlineAction(action, actionParams);
+                            });
                         })
                         .catch(function(err){
-                            if(self.isConnectivityError(err)){
-                                return self.offlineAction(action, actionParams);
+                            if (self.isConnectivityError(err)) {
+                                return self.scheduleAction(action, actionParams).then(function (){
+                                    return self.offlineAction(action, actionParams);
+                                });
                             }
                             throw err;
                         });
@@ -347,15 +364,22 @@ define([
              * Flush and synchronize actions collected while offline
              * @returns {Promise} resolves with the action result
              */
-            this.syncOfflineData = function syncOfflineData(){
+            this.syncData = function syncData(){
+                var actions;
                 return this.queue.serie(function(){
                     return self.actiontStore.flush().then(function(data){
+                        actions = data;
                         if(data && data.length){
                             return self.send('sync', data);
                         }
                     })
                     .catch(function(err){
-                        self.trigger('error', err);
+                        if (self.isConnectivityError(err)) {
+                            self.setOffself.setOffline('communicator');
+                            _.forEach(actions, function (action) {
+                                self.actiontStore.push(action.action, action.parameters);
+                            });
+                        }
                     });
                 });
             };
@@ -385,11 +409,11 @@ define([
 
             //we resync as soon as the connection is back
             this.on('reconnect', function(){
-                return this.syncOfflineData();
+                return this.syncData();
             });
 
             //if some actions remains unsynced
-            this.syncOfflineData();
+            this.syncData();
 
             //run the init
             return qtiServiceProxy.init.call(this, config, params);
