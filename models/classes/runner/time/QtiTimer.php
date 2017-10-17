@@ -362,6 +362,21 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     }
 
     /**
+     * Exports the internal state to an array
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            self::STORAGE_KEY_TIME_LINE => $this->timeLine,
+            self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
+            self::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
+            self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine,
+            self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
+        ];
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
@@ -370,21 +385,13 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return [
-            self::STORAGE_KEY_TIME_LINE => $this->timeLine->toArray(),
-            self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
-            self::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
-            self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine->toArray(),
-            self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
-        ];
+        return $this->toArray();
     }
 
     /**
      * Saves the data to the storage
      * @return Timer
      * @throws InvalidStorageException
-     * @throws InvalidDataException
-     * @throws \common_exception_Error
      */
     public function save()
     {
@@ -392,7 +399,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
         
-        $this->storage->store(json_encode($this));
+        $this->storage->store($this->toArray());
         
         return $this;
     }
@@ -418,7 +425,6 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      * @return Timer
      * @throws InvalidStorageException
      * @throws InvalidDataException
-     * @throws \common_exception_Error
      */
     public function load()
     {
@@ -427,45 +433,40 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         }
         
         $data = $this->storage->load();
-        
-        if (isset($data)) {
-            $refined = json_decode($data, true);
-            if (is_null($refined) && $data) {
-                $refined = unserialize($data);
 
-                if (!is_array($refined)) {
-                    $refined = [
-                        self::STORAGE_KEY_TIME_LINE => $refined,
-                    ];
-                }
+        if (isset($data)) {
+            if (!is_array($data)) {
+                $data = [
+                    self::STORAGE_KEY_TIME_LINE => $data,
+                ];
             }
 
-            if (isset($refined[self::STORAGE_KEY_TIME_LINE])) {
-                $this->timeLine = $this->unserializeTimeLine($refined[self::STORAGE_KEY_TIME_LINE]);
+            if (isset($data[self::STORAGE_KEY_TIME_LINE])) {
+                $this->timeLine = $this->unserializeTimeLine($data[self::STORAGE_KEY_TIME_LINE]);
             } else {
                 $this->timeLine = new QtiTimeLine();
             }
 
-            if (isset($refined[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
-                $this->extraTimeLine = $this->unserializeTimeLine($refined[self::STORAGE_KEY_EXTRA_TIME_LINE]);
+            if (isset($data[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
+                $this->extraTimeLine = $this->unserializeTimeLine($data[self::STORAGE_KEY_EXTRA_TIME_LINE]);
             } else {
                 $this->extraTimeLine = new QtiTimeLine();
             }
             
-            if (isset($refined[self::STORAGE_KEY_EXTRA_TIME])) {
-                $this->extraTime = $refined[self::STORAGE_KEY_EXTRA_TIME];
+            if (isset($data[self::STORAGE_KEY_EXTRA_TIME])) {
+                $this->extraTime = $data[self::STORAGE_KEY_EXTRA_TIME];
             } else {
                 $this->extraTime = 0;
             }
 
-            if (isset($refined[self::STORAGE_KEY_EXTENDED_TIME])) {
-                $this->extendedTime = $refined[self::STORAGE_KEY_EXTENDED_TIME];
+            if (isset($data[self::STORAGE_KEY_EXTENDED_TIME])) {
+                $this->extendedTime = $data[self::STORAGE_KEY_EXTENDED_TIME];
             } else {
                 $this->extendedTime = 0;
             }
             
-            if (isset($refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
-                $this->consumedExtraTime = $refined[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
+            if (isset($data[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
+                $this->consumedExtraTime = $data[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
             } else {
                 $this->consumedExtraTime = 0;
             }
