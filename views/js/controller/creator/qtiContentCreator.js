@@ -84,7 +84,7 @@ define([
 
             // destroying ckInstance on editor close
             creatorContext.on('creatorclose.' + editorId, function() {
-                self.destroy($container);
+                self.destroy(creatorContext, $container);
             });
 
             $container.data('editorId', editorId);
