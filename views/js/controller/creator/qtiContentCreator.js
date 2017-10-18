@@ -29,12 +29,12 @@ define([
 ], function(_, $, uuid, qtiCommonRenderer, containerEditor) {
     'use strict';
 
-    var $document = $(document);
-
     return {
-        create: function create(modelOverseer, areaBroker, $container, options) {
+        create: function create(creatorContext, $container, options) {
             var self = this,
-                editorId = uuid();
+                editorId = uuid(),
+                areaBroker = creatorContext.getAreaBroker(),
+                modelOverseer = creatorContext.getModelOverseer();
 
             var removePlugins = [
                     'magicline',
@@ -83,7 +83,7 @@ define([
             });
 
             // destroying ckInstance on editor close
-            $document.on('creatorclose.' + editorId, function() {
+            creatorContext.on('creatorclose.' + editorId, function() {
                 self.destroy($container);
             });
 
@@ -93,10 +93,10 @@ define([
         /**
          * @returns {Promise} - when editor is destroyed
          */
-        destroy: function destroy($container) {
+        destroy: function destroy(creatorContext, $container) {
             var editorId = $container.data('editorId');
             if (editorId) {
-                $document.off('.' + editorId);
+                creatorContext.off('.' + editorId);
             }
             return containerEditor.destroy($container);
         }

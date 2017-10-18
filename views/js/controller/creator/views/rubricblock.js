@@ -105,12 +105,12 @@ define([
                 var html = ensureWrap(Dom2QtiEncoder.encode(content));
 
                 // Destroy any existing CKEditor instance
-                qtiContentCreator.destroy($rubricBlockContent).then(function() {
+                qtiContentCreator.destroy(creatorContext, $rubricBlockContent).then(function() {
                     // update the editor content
                     $rubricBlockContent.html(html);
 
                     // Re-create the Qti-ckEditor instance
-                    qtiContentCreator.create(modelOverseer, areaBroker, $rubricBlockContent, {
+                    qtiContentCreator.create(creatorContext, $rubricBlockContent, {
                         change: function change(editorContent) {
                             editorToModel(editorContent);
                         }
@@ -292,7 +292,7 @@ define([
             // destroy CK instance on rubric bloc deletion.
             // todo: find a way to destroy CK upon destroying rubric bloc parent section/part
             bindEvent($rubricBlock, 'delete', function() {
-                qtiContentCreator.destroy($rubricBlockContent);
+                qtiContentCreator.destroy(creatorContext, $rubricBlockContent);
             });
 
             $rubricBlockContent.on('editorfocus', function() {

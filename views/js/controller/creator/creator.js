@@ -86,6 +86,7 @@ define([
             var $container = $('#test-creator');
             var $saver = $('#saver');
             var binder, binderOptions, modelOverseer;
+            var creatorContext;
 
             self.identifiers = [];
 
@@ -99,7 +100,9 @@ define([
             //back button
             $('#authoringBack').on('click', function(e){
                 e.preventDefault();
-                $(document).trigger('creatorclose');
+                if (creatorContext) {
+                    creatorContext.trigger('creatorclose');
+                }
                 window.history.back();
             });
 
@@ -108,7 +111,7 @@ define([
 
             // forwards some binder events to the model overseer
             $container.on('change.binder delete.binder', function (e, model) {
-                if (e.namespace === 'binder' && model) {
+                if (e.namespace === 'binder' && model && modelOverseer) {
                     modelOverseer.trigger(e.type, model);
                 }
             });
@@ -150,8 +153,6 @@ define([
             binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
-                    var creatorContext;
-
                     //extract ids
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);
 
