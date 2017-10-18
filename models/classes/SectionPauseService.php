@@ -38,4 +38,16 @@ class SectionPauseService extends ConfigurableService
     {
         return false;
     }
+
+    /**
+     * Check if we can move backward : when leaving a pausable section,
+     * we can't move backward.
+     *
+     * @param TestSession $session
+     * @return bool
+     */
+    public function canMoveBackward(TestSession $session = null)
+    {
+        return true;
+    }
 }
