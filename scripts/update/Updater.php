@@ -1639,5 +1639,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
             $this->setVersion('17.2.0');
         }
+        
+        $this->skip('17.2.0', '17.2.1');
     }
 }
