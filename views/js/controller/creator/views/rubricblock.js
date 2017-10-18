@@ -43,11 +43,13 @@ define([
         /**
          * Set up a rubric block: init action behaviors. Called for each one.
          *
-         * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
+         * @param {Object} creatorContext
          * @param {Object} rubricModel - the rubric block data
          * @param {jQueryElement} $rubricBlock - the rubric block to set up
          */
-        setUp: function setUp(modelOverseer, areaBroker, rubricModel, $rubricBlock) {
+        setUp: function setUp(creatorContext, rubricModel, $rubricBlock) {
+            var modelOverseer = creatorContext.getModelOverseer();
+            var areaBroker = creatorContext.getAreaBroker();
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
 
             /**

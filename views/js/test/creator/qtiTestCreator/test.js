@@ -37,7 +37,7 @@ define([
 
     QUnit
         .cases([
-            { title: 'loadTestModel' },
+            { title: 'setTestModel' },
             { title: 'getAreaBroker' },
             { title: 'getModelOverseer' },
 
@@ -78,10 +78,27 @@ define([
         modelOverseer = testCreator.getModelOverseer();
         assert.ok(_.isUndefined(modelOverseer), 'modelOverseer is not created without model');
 
-        testCreator.loadTestModel({});
+        testCreator.setTestModel({});
         modelOverseer = testCreator.getModelOverseer();
 
         assert.ok(_.isObject(modelOverseer), 'modelOverseer has been created');
+    });
+
+    QUnit.test('Forward config to modelOverseer', function(assert) {
+        var config = {
+                option1: 'value1',
+                option2: 'value2'
+            },
+            testCreator = qtiTestCreatorFactory($(fixtureContainer), config),
+            modelOverseer;
+
+        QUnit.expect(2);
+
+        testCreator.setTestModel({});
+        modelOverseer = testCreator.getModelOverseer();
+
+        assert.ok(_.isObject(modelOverseer), 'modelOverseer has been created');
+        assert.deepEqual(modelOverseer.getConfig(), config, 'config has been forwarded to modelOverseer');
     });
 
     QUnit.test('Creates areaBroker', function(assert) {

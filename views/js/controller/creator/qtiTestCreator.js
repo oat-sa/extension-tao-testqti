@@ -29,46 +29,46 @@ define([
 ], function($, eventifier, areaBrokerFactory, modelOverseerFactory) {
     'use strict';
 
-    var $container,
-        model,
-        areaBroker,
-        modelOverseer;
-
-    /**
-     * Create the model overseer with the given model
-     * @returns {modelOverseer}
-     */
-    function loadModelOverseer() {
-        if (! modelOverseer && model) {
-            modelOverseer = modelOverseerFactory(model);
-        }
-        return modelOverseer;
-    }
-
-    /**
-     * Set up the areaBroker mapping from the actual DOM
-     * @returns {areaBroker} already mapped
-     */
-    function loadAreaBroker(){
-        if (! areaBroker) {
-            areaBroker = areaBrokerFactory($container, {
-                'creator': $container,
-                'itemSelectorPanel': $container.find('.test-creator-items'),
-                'contentCreatorPanel': $container.find('.test-creator-content'),
-                'propertyPanel': $container.find('.test-creator-props'),
-                'elementPropertyPanel': $container.find('.qti-widget-properties')
-            });
-        }
-        return areaBroker;
-    }
-
-
     /**
      * @param {jQuery} $creatorContainer - root DOM element containing the creator
+     * @param {Object} config - options that will be forwareded to the modelOverseer Factory
      * @returns {Object}
      */
-    function testCreatorFactory($creatorContainer) {
+    function testCreatorFactory($creatorContainer, config) {
         var testCreator;
+
+        var $container,
+            model,
+            areaBroker,
+            modelOverseer;
+
+        /**
+         * Create the model overseer with the given model
+         * @returns {modelOverseer}
+         */
+        function loadModelOverseer() {
+            if (! modelOverseer && model) {
+                modelOverseer = modelOverseerFactory(model, config);
+            }
+            return modelOverseer;
+        }
+
+        /**
+         * Set up the areaBroker mapping from the actual DOM
+         * @returns {areaBroker} already mapped
+         */
+        function loadAreaBroker(){
+            if (! areaBroker) {
+                areaBroker = areaBrokerFactory($container, {
+                    'creator': $container,
+                    'itemSelectorPanel': $container.find('.test-creator-items'),
+                    'contentCreatorPanel': $container.find('.test-creator-content'),
+                    'propertyPanel': $container.find('.test-creator-props'),
+                    'elementPropertyPanel': $container.find('.qti-widget-properties')
+                });
+            }
+            return areaBroker;
+        }
 
         if (! ($creatorContainer instanceof $)) {
             throw new TypeError('a valid $container must be given');
@@ -77,7 +77,7 @@ define([
         $container = $creatorContainer;
 
         testCreator = {
-            loadTestModel: function loadTestModel(m) {
+            setTestModel: function setTestModel(m) {
                 model = m;
             },
 

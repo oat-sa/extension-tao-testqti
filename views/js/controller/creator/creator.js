@@ -26,8 +26,7 @@ define([
     'i18n',
     'ui/feedback',
     'core/databindcontroller',
-    'taoQtiTest/controller/creator/areaBroker',
-    'taoQtiTest/controller/creator/modelOverseer',
+    'taoQtiTest/controller/creator/qtiTestCreator',
     'taoQtiTest/controller/creator/views/item',
     'taoQtiTest/controller/creator/views/test',
     'taoQtiTest/controller/creator/views/testpart',
@@ -47,9 +46,9 @@ define([
     __,
     feedback,
     DataBindController,
-    areaBrokerFactory,
-    modelOverseerFactory,
-    itemView, testView,
+    qtiTestCreatorFactory,
+    itemView,
+    testView,
     testPartView,
     sectionView,
     itemrefView,
@@ -62,21 +61,6 @@ define([
     ){
 
     'use strict';
-
-    /**
-     * Set up the areaBroker mapping from the actual DOM
-     * @returns {areaBroker} already mapped
-     */
-    var loadAreaBroker = function loadAreaBroker(){
-        var $container = $('#test-creator');
-        return areaBrokerFactory($container, {
-            'creator'   :         $container,
-            'itemSelectorPanel':    $container.find('.test-creator-items'),
-            'contentCreatorPanel':  $container.find('.test-creator-content'),
-            'propertyPanel':        $container.find('.test-creator-props'),
-            'elementPropertyPanel': $container.find('.qti-widget-properties')
-        });
-    };
 
     /**
      * The test creator controller is the main entry point
@@ -102,7 +86,6 @@ define([
             var $container = $('#test-creator');
             var $saver = $('#saver');
             var binder, binderOptions, modelOverseer;
-            var areaBroker = loadAreaBroker();
 
             self.identifiers = [];
 
@@ -167,16 +150,19 @@ define([
             binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
+                    var creatorContext;
+
                     //extract ids
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);
 
-                    // the model must be wrapped in order to share more (events, internal states, and more)
-                    modelOverseer = modelOverseerFactory(model, {
+                    creatorContext = qtiTestCreatorFactory($container, {
                         uri : options.uri,
                         identifiers : self.identifiers,
                         labels : options.labels,
                         routes : options.routes
                     });
+                    creatorContext.setTestModel(model);
+                    modelOverseer = creatorContext.getModelOverseer();
 
                     //detect the scoring mode
                     scoringHelper.init(modelOverseer);
@@ -187,7 +173,7 @@ define([
                     validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers), true);
 
                     //once model is loaded, we set up the test view
-                    testView(modelOverseer, areaBroker);
+                    testView(creatorContext);
 
                     //listen for changes to update available actions
                     testPartView.listenActionState();

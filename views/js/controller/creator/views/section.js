@@ -52,14 +52,15 @@ function(
     /**
      * Set up a section: init action behaviors. Called for each section.
      *
-     * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
+     * @param {Object} creatorContext
      * @param {Object} sectionModel - the data model to bind to the test section
      * @param {Object} partModel - the parent data model to inherit
      * @param {jQueryElement} $section - the section to set up
      */
-    function setUp (modelOverseer, areaBroker, sectionModel, partModel, $section) {
+    function setUp (creatorContext, sectionModel, partModel, $section) {
 
         var $actionContainer = $('h2', $section);
+        var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
 
         // set item session control to use test part options if section level isn't set
@@ -155,7 +156,7 @@ function(
                     sectionModel.sectionParts[index] = {};
                 }
 
-                itemRefView.setUp(modelOverseer, sectionModel.sectionParts[index], sectionModel, $itemRef);
+                itemRefView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, $itemRef);
                 $itemRef.find('.title').text(
                     config.labels[uri.encode($itemRef.data('uri'))]
                 );
@@ -227,7 +228,7 @@ function(
                         itemRefModel = sectionModel.sectionParts[index];
 
                         //initialize the new item ref
-                        itemRefView.setUp(modelOverseer, itemRefModel, sectionModel, $itemRef);
+                        itemRefView.setUp(creatorContext, itemRefModel, sectionModel, $itemRef);
 
                         /**
                          * @event modelOverseer#item-add
@@ -275,7 +276,7 @@ function(
                     sectionModel.rubricBlocks[index] = {};
                 }
 
-                rubricBlockView.setUp(modelOverseer, areaBroker, sectionModel.rubricBlocks[index], $rubricBlock);
+                rubricBlockView.setUp(creatorContext, sectionModel.rubricBlocks[index], $rubricBlock);
             });
 
             //opens the rubric blocks section if they are there.
@@ -312,7 +313,7 @@ function(
                     rubricModel = sectionModel.rubricBlocks[index] || {};
 
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
-                    rubricBlockView.setUp(modelOverseer, areaBroker, rubricModel, $rubricBlock);
+                    rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
 
                     /**
                      * @event modelOverseer#rubric-add
