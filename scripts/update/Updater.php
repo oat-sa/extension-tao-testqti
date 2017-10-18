@@ -1631,14 +1631,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.0.0');
         }
 
-        $this->skip('17.0.0', '17.0.2');
+        $this->skip('17.0.0', '17.1.0');
 
-        if ($this->isVersion('17.0.2')) {
+        if ($this->isVersion('17.1.0')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['bootstrap']['communication']['syncActions'] = ['move', 'skip', 'storeTraceData', 'timeout', 'exitTest'];
             $extension->setConfig('testRunner', $config);
-            $this->setVersion('17.1.0');
+            $this->setVersion('17.2.0');
         }
 
         if ($this->isVersion('17.1.0')) {

@@ -1001,14 +1001,16 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      *
      * @param core_kernel_classes_Resource $test
      * @param boolean $createTestFile Whether or not create an empty QTI XML test file. Default is (boolean) true.
+     * @param boolean $preventOverride Prevent data to be overriden Default is (boolean) true.
      * @return Directory the content directory
      * @throws taoQtiTest_models_classes_QtiTestServiceException If a runtime error occurs while creating the test content.
+     * @throws \common_exception_InconsistentData In case of trying to override existing data.
      */
-    public function createContent(core_kernel_classes_Resource $test, $createTestFile = true) {
+    public function createContent(core_kernel_classes_Resource $test, $createTestFile = true, $preventOverride = true) {
 
         $dir = $this->getDefaultDir()->getDirectory(md5($test->getUri()));
-        if ($dir->exists()) {
-            throw new common_exception_InconsistentData('Data dir fir test '.$test->getUri().' already exists');
+        if ($dir->exists() && $preventOverride === true) {
+            throw new common_exception_InconsistentData('Data directory for test ' . $test->getUri() . ' already exists.');
         }
 
         $file = $dir->getFile(self::TAOQTITEST_FILENAME);
