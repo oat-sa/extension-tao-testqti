@@ -18,8 +18,7 @@
  */
 
 /**
- * Updates testRunner data
- *
+ * In charge of updating testRunner's data
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
@@ -29,36 +28,62 @@ define([
 ], function (_, mapHelper) {
     'use strict';
 
-    return function dataUpdater(testDataHolder){
+    /**
+     * Get the updater
+     * @param {Map} testDataHolder - the data holder
+     * @returns {dataUpdater}
+     * @throws {TypeError} if the data holder is not or incorrectly set
+     */
+    return function dataUpdaterFactory(testDataHolder){
 
         if(!testDataHolder || !_.isFunction(testDataHolder.get) || !_.isFunction(testDataHolder.set)){
             throw new TypeError('A data holder is mandatory for the udpater');
         }
 
+        /**
+         * Exposes the methods to update test data
+         * @typedef {Objtec} dataUpdater
+         */
         return {
+
+            /**
+             * Update test data from a dataSet (usually thei raw data given by the proxy).
+             * If the dataSet is a collection, we use only the last machting object.
+             * @param {Object|Object[]} dataSet - object[s] that contains or not testData, testContext & testMap
+             */
             update : function update(dataSet) {
                 var self = this;
-                var isContextual = function isContextual(response){
-                    return _.isPlainObject(response.testContext) ||
-                           _.isPlainObject(response.testData)  ||
-                           _.isPlainObject(response.testMap);
+
+                /**
+                 * Check if a collection's item contains test contextual data
+                 * @param {Object} contextualData
+                 * @returns {Boolean}
+                 */
+                var isContextual = function isContextual(contextualData){
+                    return contextualData && (
+                           _.isPlainObject(contextualData.testContext) ||
+                           _.isPlainObject(contextualData.testData)  ||
+                           _.isPlainObject(contextualData.testMap) );
                 };
 
-                var updateData = function updateData(response){
+                /**
+                 * Update the test data from contextual data
+                 * @param {Object} contextualData
+                 */
+                var updateData = function updateData(contextualData){
                     var builtTestMap;
                     var updatedTestMap;
 
-
-                    if(response){
-                        if(_.isPlainObject(response.testData)){
-                            testDataHolder.set('testData', response.testData);
+                    if(contextualData){
+                        if(_.isPlainObject(contextualData.testData)){
+                            testDataHolder.set('testData', contextualData.testData);
                         }
-                        if(_.isPlainObject(response.testContext)){
-                            testDataHolder.set('testContext', response.testContext);
+                        if(_.isPlainObject(contextualData.testContext)){
+                            testDataHolder.set('testContext', contextualData.testContext);
                         }
-                        if(_.isPlainObject(response.testMap)){
+                        if(_.isPlainObject(contextualData.testMap)){
                             //the received map is not complete and should be "built"
-                            builtTestMap  = self.buildTestMap(response.testMap);
+                            builtTestMap  = self.buildTestMap(contextualData.testMap);
                             if(builtTestMap){
                                 testDataHolder.set('testMap', builtTestMap);
                             }

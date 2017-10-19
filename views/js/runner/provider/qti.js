@@ -372,6 +372,8 @@ define([
 
                     context.isTimeout = true;
 
+                    this.setTestContext(context);
+
                     this.disableItem(context.itemIdentifier);
 
                     computeNext(

@@ -72,6 +72,7 @@ define([
             newContext = _.defaults({
                 itemIdentifier : newItem.id,
                 itemPosition   : position,
+                itemAnswered   : newItem.answered,
 
                 //FIXME numberPresented can be late
                 numberPresented : testMap.stats.viewed,
