@@ -31,12 +31,13 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
     /**
      * Set up a test part: init action behaviors. Called for each test part.
      *
-     * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
+     * @param {Object} creatorContext
      * @param {Object} partModel - the data model to bind to the test part
      * @param {jQueryElement} $testPart - the testpart container to set up
      */
-    function setUp (modelOverseer, partModel, $testPart){
+    function setUp (creatorContext, partModel, $testPart){
         var $actionContainer = $('h1', $testPart);
+        var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
 
         //run setup methods
@@ -85,7 +86,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                     partModel.assessmentSections[index] = {};
                 }
 
-                sectionView.setUp(modelOverseer, partModel.assessmentSections[index], partModel, $section);
+                sectionView.setUp(creatorContext, partModel.assessmentSections[index], partModel, $section);
             });
         }
 
@@ -124,7 +125,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                         sectionModel = partModel.assessmentSections[index];
 
                         //initialize the new test part
-                        sectionView.setUp(modelOverseer, sectionModel, partModel, $section);
+                        sectionView.setUp(creatorContext, sectionModel, partModel, $section);
 
                         /**
                          * @event modelOverseer#section-add

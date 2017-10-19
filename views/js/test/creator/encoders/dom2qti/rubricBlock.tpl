@@ -11,4 +11,5 @@
     From the first prototype delivery to the U.S. Navy in 1940, to final delivery in 1953
     to the French, 12,571 F4U Corsairs were manufactured by Vought,[1] in 16 separate models,
     in the longest production run of any piston-engined fighter in U.S. history (1942–53).€</p>
+    <p><printedVariable identifier="SCORE_TOTAL" base="10" powerForm="false" delimiter=";" mappingIndicator="=" format="%2g" index="-1" field="test"/></p>
 </div>

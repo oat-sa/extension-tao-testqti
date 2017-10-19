@@ -41,7 +41,7 @@ class SynchronisationService extends ConfigurableService
      * @param $data
      * @param $serviceContext QtiRunnerServiceContext
      * @return array
-     * @throws \common_exception_InconsistentData
+     * @throws 
      */
     public function process($data, $serviceContext)
     {
@@ -55,24 +55,10 @@ class SynchronisationService extends ConfigurableService
 
         // first, extract the actions and build usable instances
         $actions = [];
-        $duration = 0;
         foreach ($data as $entry) {
-            $action = $this->resolve($entry);
-            $actions[] = $action;
-            
-            if ($action->hasRequestParameter('itemDuration')) {
-                $duration += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
-            }
+            $actions[] = $this->resolve($entry);
         }
-        
-        // ensure the total duration of actions to sync is comprised within the elapsed time since the last sync.
-        $now = microtime(true);
         $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
-        $elapsed = $now - $last;
-        if ($duration > $elapsed) {
-            throw new \common_exception_InconsistentData('Client duration exceed the elapsed server time!');
-        }
-        
         // the actions should be chronological
         usort($actions, function($a, $b) {
            return $a->getTimestamp() - $b->getTimestamp(); 
@@ -97,6 +83,7 @@ class SynchronisationService extends ConfigurableService
 
             $responseAction['name'] = $action->getName();
             $responseAction['timestamp'] = $action->getTimeStamp();
+            $responseAction['requestParameters'] = $action->getRequestParameters();
 
             $response[] = $responseAction;
 

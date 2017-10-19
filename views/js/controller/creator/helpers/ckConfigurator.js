@@ -18,7 +18,7 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
-define(['ui/ckeditor/ckConfigurator', 'mathJax'], function(ckConfigurator, mathJax) {
+define(['ui/ckeditor/ckConfigurator', 'mathJax'], function(ckConfigurator) {
     'use strict';
 
     /**
