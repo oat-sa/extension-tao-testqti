@@ -28,11 +28,12 @@ define([
     'taoQtiTest/runner/navigator/navigator',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
+    'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
     'taoQtiTest/runner/proxy/cache/actionStore',
     'taoQtiTest/runner/proxy/cache/assetLoader'
-], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
+], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, dataUpdater, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
     'use strict';
 
     /**
@@ -108,6 +109,9 @@ define([
 
             //scheduled action promises which supposed to be resolved after action synchronization.
             this.actionPromises = {};
+
+            //let's you update test data (testData, testContext and testMap)
+            this.dataUpdater = dataUpdater(this.getDataHolder());
 
             /**
              * Get the item cache size from the test data
@@ -188,7 +192,6 @@ define([
                 if( _.contains(blockingActions, action) ||
                     ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
 
-                    // storeAction();
                     throw offlineExitError;
                 }
 
@@ -379,6 +382,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         init: function init(config, params) {
+            var self = this;
 
             if(!this.getDataHolder()){
                 throw new Error('Unable to retrieve test runners data holder');
@@ -392,7 +396,9 @@ define([
 
             //we resync as soon as the connection is back
             this.on('reconnect', function(){
-                return this.syncData();
+                return this.syncData().then(function(responses){
+                    self.dataUpdater(responses);
+                });
             });
 
             //if some actions remains unsynced
