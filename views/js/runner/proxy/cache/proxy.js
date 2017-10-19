@@ -211,7 +211,7 @@ define([
 
                     result.testContext = newTestContext;
                 }
-
+10
                 return result;
             };
 
@@ -397,7 +397,9 @@ define([
             //we resync as soon as the connection is back
             this.on('reconnect', function(){
                 return this.syncData().then(function(responses){
-                    self.dataUpdater(responses);
+                    self.dataUpdater.update(responses);
+                }).catch(function(err){
+                    self.trigger('error', err);
                 });
             });
 
