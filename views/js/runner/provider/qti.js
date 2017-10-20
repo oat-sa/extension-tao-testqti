@@ -81,7 +81,7 @@ define([
         //provider name
         name : 'qti',
 
-        /**Object
+        /**
          * Initialize and load the area broker with a correct mapping
          * @returns {areaBroker}
          */

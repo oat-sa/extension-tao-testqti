@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technlogies SA
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA
  *
  */
 
@@ -42,13 +42,13 @@ define([
 
         /**
          * Exposes the methods to update test data
-         * @typedef {Objtec} dataUpdater
+         * @typedef {Object} dataUpdater
          */
         return {
 
             /**
-             * Update test data from a dataSet (usually thei raw data given by the proxy).
-             * If the dataSet is a collection, we use only the last machting object.
+             * Update test data from a dataSet (usually their raw data given by the proxy).
+             * If the dataSet is a collection, we use only the last matching object.
              * @param {Object|Object[]} dataSet - object[s] that contains or not testData, testContext & testMap
              */
             update : function update(dataSet) {
@@ -125,7 +125,7 @@ define([
             },
 
             /**
-             * Update current based on the context
+             * Update current map stats based on the context
              *
              * @param {Object} testMap - the testMap to update
              * @returns {Object} the updated testMap
