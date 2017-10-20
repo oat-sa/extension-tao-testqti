@@ -212,7 +212,7 @@ define([
                     result.testContext = newTestContext;
                 }
 
-                self.markActionAsOffline(actionParams.actionId);
+                self.markActionAsOffline(actionParams);
 
                 return result;
             };
@@ -378,18 +378,10 @@ define([
              * @param actionId
              * @return {Promise}
              */
-            this.markActionAsOffline = function markActionAsOffline(actionId) {
+            this.markActionAsOffline = function markActionAsOffline(actionParams) {
+                actionParams.offline = true;
                 return this.queue.serie(function(){
-                    return self.actiontStore.flush().then(function(data){
-                        if (data && data.length) {
-                            _.forEach(data, function (action) {
-                                if (action.parameters.actionId === actionId) {
-                                    action.parameters.offline = true;
-                                }
-                                self.actiontStore.push(action.action, action.parameters);
-                            });
-                        }
-                    });
+                    return self.actiontStore.update(self.prepareParams(_.defaults(actionParams || {}, self.requestConfig)));
                 });
             };
         },

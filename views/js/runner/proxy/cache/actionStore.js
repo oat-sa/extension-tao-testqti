@@ -81,6 +81,22 @@ define([
                         });
                     });
                 });
+            },
+
+            /**
+             * update action parameters
+             * @param params
+             * @returns {Promise} resolves when the action is stored
+             */
+            update : function update(params) {
+                _.forEach(actionQueue, function (action) {
+                    if (action.parameters.actionId === params.actionId) {
+                        action.parameters = params;
+                    }
+                });
+                return store(storeId).then(function(actionStore) {
+                    return actionStore.setItem(storeKey, actionQueue);
+                });
             }
         };
     };
