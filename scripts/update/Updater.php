@@ -1641,7 +1641,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.2.0');
         }
 
-        if ($this->isVersion('17.1.0')) {
+        $this->skip('17.2.0', '17.5.1');
+
+        if ($this->isVersion('17.5.1')) {
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['bootstrap']['communication']['syncActions'][] = 'getNextItemData';
@@ -1654,7 +1656,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $synchronisationService->setAvailableActions($actions);
             $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
 
-            $this->setVersion('17.2.0');
+            $this->setVersion('17.6.0');
         }
     }
 }

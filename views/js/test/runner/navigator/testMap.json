@@ -20,7 +20,7 @@
               "index": 1,
               "occurrence": 0,
               "remainingAttempts": -1,
-              "answered": false,
+              "answered": true,
               "flagged": false,
               "viewed": true,
               "informational": false
@@ -34,7 +34,7 @@
               "index": 2,
               "occurrence": 0,
               "remainingAttempts": -1,
-              "answered": false,
+              "answered": true,
               "flagged": false,
               "viewed": false,
               "informational": false

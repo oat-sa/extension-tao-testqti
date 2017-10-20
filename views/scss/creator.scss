@@ -396,25 +396,11 @@
                         background-color: $uiGeneralContentBg;
                         padding: 4px;
                         border: solid 1px $uiGeneralContentBg;
-                        margin: 0;
+                        margin: 30px 0 0 0;
                         min-height: 30px;
-                        overflow: hidden;
 
                         .grid-row{
                             display: block;
-                        }
-                        .mini-tlb {
-                           position: absolute;
-                           top: -8px;
-                           right: 26px;
-                           background-color: $uiGeneralContentBg;
-                           padding: 4px 6px;
-                           border: solid 1px $uiGeneralContentBorder;
-                           margin: 0;
-                           z-index: 600;
-                           .tlb-button{
-                                cursor: pointer;
-                           }
                         }
                     }
                     .actions{
@@ -474,6 +460,167 @@
                     @include transition;
                 }
             }
+        }
+    }
+
+
+    // QTI Widget authoring related-styles
+    // Those styles have been copied from taoQtiItem extension for TAO-5146.
+    // They could be factorised at some point if more and more of the QTI Authoring framework starts leaking from taoQtiItem
+
+    $qtiCreatorMiniTlbIconColor: rgb(34, 34, 34);
+    $qtiCreatorMiniTlbBorderColor: rgb(221, 221, 221);
+    $qtiCreatorMiniTlbBgColor: #fff;
+
+    .qti-widget-properties {
+        .panel {
+            padding: 0 5px;
+
+            h3 {
+                font-size: 1.17em;
+                padding: 0;
+            }
+
+            input[type="checkbox"] {
+                width: auto;
+            }
+        }
+    }
+
+    %mini-tlb {
+        display: none; //initially hidden
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0;
+        margin-bottom: 5px;
+        overflow: hidden;
+        z-index: 5000;
+        @include font-size(13, true);
+
+        border: 1px $qtiCreatorMiniTlbBorderColor solid !important;
+        list-style-type: none;
+        cursor: pointer !important;
+        border-radius: 0;
+        background-color: $qtiCreatorMiniTlbBgColor;
+
+        [class^="icon-"], [class*=" icon-"] {
+            @include font-size(16);
+            position: relative;
+            top: 4px;
+            color: $qtiCreatorMiniTlbIconColor;
+        }
+
+        .tlb-button {
+            width: 26px;
+            height: 24px;
+            text-align: center;
+            cursor: pointer;
+            margin: 0;
+            display: inline-block;
+            color: $qtiCreatorMiniTlbIconColor !important;
+            [class^="icon-"], [class*=" icon-"] {
+                font-size: 14px !important;
+            }
+            &:hover {
+                background-color: $info;
+                [class^="icon-"], [class*=" icon-"] {
+                    color: $qtiCreatorMiniTlbBgColor;
+                }
+                color: $uiClickableHoverBg !important;
+            }
+            &.active {
+                color: $info !important;
+            }
+        }
+    }
+
+    .widget-box {
+        border: 1px solid transparent;
+        position: relative;
+
+        &.widget-inline {
+            display: inline-block;
+            position: relative;
+
+            &.hover {
+                cursor: pointer;
+                border: 1px solid whiten($info, .5);
+            }
+            &.edit-active {
+                cursor: default;
+                z-index: 9;
+                border: 1px solid whiten($info, .2);
+                -webkit-box-shadow: 1px 1px 3px 1px whiten($info, .2);
+                box-shadow: 1px 1px 3px 1px whiten($info, .2);
+            }
+
+            [class^="icon-"], [class*=" icon-"] {
+                width: 100%;
+            }
+        }
+        .mini-tlb {
+            @extend %mini-tlb;
+
+            position: absolute !important;
+            top: -2px !important;
+            right: -32px !important;
+            .tlb-button {
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 24px !important;
+                width: 24px !important;
+            }
+
+        }
+    }
+
+    .dummy-element {
+        position: relative;
+        min-width: 50px;
+        @include simple-border();
+        background-color: #eee;
+        font-style: italic;
+        color: white;
+        padding: 0;
+        display: inline-block;
+        line-height: 24px;
+        cursor: default;
+        [class^="icon-"], [class*=" icon-"] {
+            font-size: inherit;
+            line-height: inherit;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            position: relative;
+            top: -2px;
+        }
+        & ~ span.mini-tlb[data-edit]{
+            position: absolute !important;
+            top: -2px !important;
+            right: -30px !important;
+            .tlb-button {
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 24px !important;
+                width: 24px !important;
+            }
+        }
+        .mini-tlb[data-edit]{
+            right:-32px !important;
+        }
+    }
+
+    // Printed Variable specific style
+    .widget-box.widget-printedVariable {
+        background-color: $uiClickableDefaultBg;
+        border: 1px solid $uiGeneralContentBorder;
+        padding: 2px 3px;
+        font-size: 11px;
+        font-weight: bold;
+
+        &.edit-active {
+            background-color: $lightBlueGrey;
         }
     }
 }

@@ -122,11 +122,15 @@ define([
                 })
                 .on('renderitem', function() {
                     var testContext = testRunner.getTestContext();
-                    highlighter.restoreHighlight(testContext.itemIdentifier);
+                    if(isEnabled()){
+                        highlighter.restoreHighlight(testContext.itemIdentifier);
+                    }
                 })
                 .on('beforeunloaditem', function() {
                     var testContext = testRunner.getTestContext();
-                    highlighter.saveHighlight(testContext.itemIdentifier);
+                    if(isEnabled()){
+                        highlighter.saveHighlight(testContext.itemIdentifier);
+                    }
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();

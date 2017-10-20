@@ -80,6 +80,29 @@ define([
         },
 
         /**
+         * Return the list of remaining sections.
+         * @param {Object} map - The assessment test map
+         * @param {String} sectionId - The next sections will be gathered once this sectionId has been reached
+         * @returns {Object} the next sections
+         */
+        getNextSections: function getNextSections(map, sectionId) {
+            var sections = this.getSections(map),
+                result = {},
+                canList = false;
+
+            _.forEach(sections, function (section) {
+                if (canList) {
+                    result[section.id] = section;
+                }
+                if (section.id === sectionId) {
+                    canList = true;
+                }
+            });
+
+            return result;
+        },
+
+        /**
          * Gets the jump at a particular position
          * @param {Object} map - The assessment test map
          * @param {Number} position - The position of the item

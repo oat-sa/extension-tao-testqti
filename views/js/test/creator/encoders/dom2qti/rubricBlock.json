@@ -123,6 +123,32 @@
             "class": "",
             "lang": "",
             "label": ""
+        },
+        {
+            "qti-type": "p",
+            "xmlBase": "",
+            "content": [
+                {
+                    "qti-type": "printedVariable",
+                    "xmlBase": "",
+                    "identifier": "SCORE_TOTAL",
+                    "base": 10,
+                    "powerForm": false,
+                    "delimiter": ";",
+                    "mappingIndicator": "=",
+                    "format": "%2g",
+                    "index": -1,
+                    "field": "test",
+                    "id": "",
+                    "class": "",
+                    "lang": "",
+                    "label": ""
+                }
+            ],
+            "id": "",
+            "class": "",
+            "lang": "",
+            "label": ""
         }
     ]
 }]
