@@ -1,0 +1,42 @@
+{
+  "state": 1,
+  "navigationMode": 1,
+  "submissionMode": 0,
+  "remainingAttempts": -1,
+  "isAdaptive": false,
+  "isLinear": false,
+  "attempt": 1,
+  "isTimeout": false,
+  "itemIdentifier": "item-1",
+  "itemSessionState": 1,
+  "needMapUpdate": false,
+  "isLast": false,
+  "itemPosition": 0,
+  "itemFlagged": false,
+  "itemAnswered": false,
+  "timeConstraints": [],
+  "extraTime": {
+    "total": 0,
+    "consumed": 0,
+    "remaining": 0
+  },
+  "testPartId": "testPart-1",
+  "sectionId": "assessmentSection-1",
+  "sectionTitle": "Basic section",
+  "sectionPause": false,
+  "numberItems": 17,
+  "numberCompleted": 0,
+  "numberPresented": 1,
+  "considerProgress": true,
+  "isDeepestSectionVisible": true,
+  "canMoveBackward": false,
+  "numberRubrics": 0,
+  "preventEmptyResponses": false,
+  "hasFeedbacks": false,
+  "options": {
+    "allowComment": false,
+    "allowSkipping": true,
+    "exitButton": false,
+    "logoutButton": false
+  }
+}

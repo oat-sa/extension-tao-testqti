@@ -1,0 +1,25 @@
+{
+  "title": "Test 12",
+  "identifier": "Test-12",
+  "className": "assessmentTest",
+  "toolName": "tao",
+  "exclusivelyLinear": false,
+  "hasTimeLimits": false,
+  "states": {
+    "initial": 0,
+    "interacting": 1,
+    "modalFeedback": 2,
+    "suspended": 3,
+    "closed": 4
+  },
+  "itemStates": {
+    "initial": 0,
+    "interacting": 1,
+    "modalFeedback": 2,
+    "suspended": 3,
+    "closed": 4,
+    "solution": 5,
+    "review": 6,
+    "notSelected": 255
+  }
+}
