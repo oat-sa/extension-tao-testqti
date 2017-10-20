@@ -19,11 +19,12 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+    'core/collections',
     'taoQtiTest/runner/provider/dataUpdater',
     'json!taoQtiTest/test/runner/dataUpdater/testData.json',
     'json!taoQtiTest/test/runner/dataUpdater/testMap.json',
     'json!taoQtiTest/test/runner/dataUpdater/testContext.json'
-], function(dataUpdaterFactory, testData, testMap, testContext) {
+], function(collections, dataUpdaterFactory, testData, testMap, testContext) {
     'use strict';
 
 
@@ -36,7 +37,7 @@ define([
     });
 
     QUnit.test('factory', function(assert) {
-        var holderMock = new Map();
+        var holderMock = new collections.Map();
 
         QUnit.expect(4);
 
@@ -60,17 +61,18 @@ define([
         title: 'updateStats'
     }])
     .test('Method ', function(data, assert) {
+        var holderMock = new collections.Map();
+
         QUnit.expect(1);
 
-        assert.equal(typeof dataUpdaterFactory(new Map())[data.title], 'function', 'The instance exposes a "' + data.title + '" method');
+        assert.equal(typeof dataUpdaterFactory(holderMock)[data.title], 'function', 'The instance exposes a "' + data.title + '" method');
     });
 
 
     QUnit.module('Behavior');
 
     QUnit.test('update from a single object', function(assert) {
-
-        var holderMock = new Map();
+        var holderMock = new collections.Map();
         var dataSet = {
             testData : {
                 foo : 'testData'
@@ -101,8 +103,7 @@ define([
 
 
     QUnit.test('update from a multiple objects', function(assert) {
-
-        var holderMock = new Map();
+        var holderMock = new collections.Map();
         var dataSet = [{
             testData : {
                 foo : 'testDoo'
@@ -153,7 +154,7 @@ define([
             testMap : testMap
         };
 
-        var holderMock = new Map();
+        var holderMock = new collections.Map();
         holderMock.set('testData', testData);
 
         QUnit.expect(9);
