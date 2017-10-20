@@ -452,23 +452,26 @@ define([
                 //don't run a request if not needed
                 if (self.isOnline() && missing.length) {
                     _.delay(function(){
-                        self.request(self.configStorage.getTestActionUrl('getNextItemData'), {itemDefinition: missing})
-                            .then(function(response){
-                                if (response && response.items) {
-                                    _.forEach(response.items, function (item) {
-                                        if (item && item.itemIdentifier) {
+                        self.requestNetworkThenOffline(
+                            self.configStorage.getTestActionUrl('getNextItemData'),
+                            'getNextItemData',
+                            {itemDefinition: missing},
+                            false
+                        ).then(function(response){
+                            if (response && response.items) {
+                                _.forEach(response.items, function (item) {
+                                    if (item && item.itemIdentifier) {
+                                        //store the response and start caching assets
+                                        self.itemStore.set(item.itemIdentifier, item);
 
-                                            //store the response and start caching assets
-                                            self.itemStore.set(item.itemIdentifier, item);
-
-                                            if (item.baseUrl && item.itemData && item.itemData.assets) {
-                                                assetLoader(item.baseUrl, item.itemData.assets);
-                                            }
+                                        if (item.baseUrl && item.itemData && item.itemData.assets) {
+                                            assetLoader(item.baseUrl, item.itemData.assets);
                                         }
-                                    });
-                                }
-                            })
-                            .catch(_.noop);
+                                    }
+                                });
+                            }
+                        }).catch(_.noop);
+
                     }, loadNextDelay);
                 }
             };

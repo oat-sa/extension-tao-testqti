@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 
 /**
@@ -38,10 +39,11 @@ use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 class SetSynchronisationService extends InstallAction
 {
     /**
-     * Register 5 actions as available for SynchronisationService
+     * Register actions as available for SynchronisationService
      *
      * @param $params
      * @return \common_report_Report
+     * @throws
      */
     public function __invoke($params)
     {
@@ -59,7 +61,8 @@ class SetSynchronisationService extends InstallAction
             'move' => Move::class,
             'skip' => Skip::class,
             'storeTraceData' => StoreTraceData::class,
-            'timeout' => Timeout::class
+            'timeout' => Timeout::class,
+            'getNextItemData' => NextItemData::class
         ];
 
         $service->setAvailableActions(array_merge($actions, $newActions));
