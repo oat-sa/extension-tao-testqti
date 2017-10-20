@@ -212,6 +212,8 @@ define([
                     result.testContext = newTestContext;
                 }
 
+                self.markActionAsOffline(actionParams.actionId);
+
                 return result;
             };
 
@@ -366,6 +368,27 @@ define([
                             });
                         }
                         throw err;
+                    });
+                });
+            };
+
+            /**
+             * Mark action as performed in offline mode
+             *
+             * @param actionId
+             * @return {Promise}
+             */
+            this.markActionAsOffline = function markActionAsOffline(actionId) {
+                return this.queue.serie(function(){
+                    return self.actiontStore.flush().then(function(data){
+                        if (data && data.length) {
+                            _.forEach(data, function (action) {
+                                if (action.parameters.actionId === actionId) {
+                                    action.parameters.offline = true;
+                                }
+                                self.actiontStore.push(action.action, action.parameters);
+                            });
+                        }
                     });
                 });
             };
