@@ -128,6 +128,37 @@ class StorageManager extends ConfigurableService
     }
 
     /**
+     * Persists a cache entry and update its status.
+     *
+     * @param string $key
+     * @return bool
+     */
+    protected function persistCacheEntry($key)
+    {
+        $success = true;
+        if (isset($this->cache[$key])) {
+            $cache = $this->cache[$key];
+
+            switch ($cache['state']) {
+                case self::STATE_PENDING_WRITE:
+                    $success = $this->getStorage()->set($cache['userId'], $cache['callId'], $cache['data']);
+                    if ($success) {
+                        $this->cache[$key]['state'] = self::STATE_ALIGNED;
+                    }
+                    break;
+
+                case self::STATE_PENDING_DELETE:
+                    $success = $this->getStorage()->del($cache['userId'], $cache['callId']);
+                    if ($success) {
+                        unset($this->cache[$key]);
+                    }
+                    break;
+            }
+        }
+        return $success;
+    }
+
+    /**
      * @return StateStorage
      */
     public function getStorage()
@@ -219,25 +250,22 @@ class StorageManager extends ConfigurableService
     /**
      * Sends the changes to the storage.
      *
+     * @param string $userId
+     * @param string $callId
      * @return bool
      */
-    public function persist()
+    public function persist($userId = null, $callId = null)
     {
+        if ($userId && $callId) {
+            $keys = [$this->getCacheKey($userId, $callId)];
+        } else {
+            $keys = array_keys($this->cache);
+        }
+        
         $success = true;
-        $storage = $this->getStorage();
-        foreach ($this->cache as $cache) {
-            switch ($cache['state']) {
-                case self::STATE_PENDING_WRITE:
-                    if (!$storage->set($cache['userId'], $cache['callId'], $cache['data'])) {
-                        $success = false;
-                    }
-                    break;
-
-                case self::STATE_PENDING_DELETE:
-                    if (!$storage->del($cache['userId'], $cache['callId'])) {
-                        $success = false;
-                    }
-                    break;
+        foreach ($keys as $key) {
+            if (!$this->persistCacheEntry($key)) {
+                $success = false;
             }
         }
         return $success;

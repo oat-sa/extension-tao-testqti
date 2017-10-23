@@ -291,8 +291,7 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $storageManager->setServiceLocator($this->getServiceManagerProphecy([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
-
-
+        
         $this->assertEquals(true, $storageManager->has($userId, $callId));
         $this->assertEquals($data1, $storageManager->get($userId, $callId));
 
@@ -320,5 +319,113 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $this->assertEquals(true, $storageManager->persist());
 
         $this->assertEquals($expectedBuffer2, $buffer);
+    }
+
+    /**
+     * Test the StorageManager::persist(userId, callId) method
+     */
+    public function testPersistEntry()
+    {
+        $data1 = 'this is a test';
+        $data2 = 'this is another test';
+        $userId = 'user123';
+        $callId = '456';
+        $buffer = [
+            $userId => [
+                $callId => $data1
+            ]
+        ];
+
+        $expectedBuffer0 = $buffer;
+
+        $expectedBuffer1 = [
+            $userId => [
+                $callId => $data1
+            ],
+            'foo' => [
+                'bar' => 'foo bar'
+            ]
+        ];
+        
+        $expectedBuffer2 = [
+            $userId => [
+                $callId => $data2
+            ],
+            'foo' => [
+                'bar' => 'foo bar'
+            ]
+        ];
+
+        $expectedBuffer3 = [
+            $userId => [
+                $callId => $data2
+            ]
+        ];
+
+        $prophet = new Prophet();
+        $prophecy = $prophet->prophesize(StateStorage::class);
+        $prophecy->get(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
+            if (isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]])) {
+                return $buffer[$args[0]][$args[1]];
+            }
+            return null;
+        });
+        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
+            $buffer[$args[0]][$args[1]] = $args[2];
+            return true;
+        });
+        $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
+            return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
+        });
+        $prophecy->del(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
+            if (isset($buffer[$args[0]])) {
+                if (isset($buffer[$args[0]][$args[1]])) {
+                    unset($buffer[$args[0]][$args[1]]);
+                }
+                if (empty($buffer[$args[0]])) {
+                    unset($buffer[$args[0]]);
+                }
+            }
+            return true;
+        });
+
+        $mockStorage = $prophecy->reveal();
+
+        $storageManager = new StorageManager([]);
+        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+            StateStorage::SERVICE_ID => $mockStorage
+        ]));
+
+        $this->assertEquals(true, $storageManager->has($userId, $callId));
+        $this->assertEquals($data1, $storageManager->get($userId, $callId));
+
+        $this->assertEquals(true, $storageManager->set($userId, $callId, $data2));
+        $this->assertEquals($data2, $storageManager->get($userId, $callId));
+
+        $this->assertEquals(false, $storageManager->has('foo', 'bar'));
+        $this->assertEquals(null, $storageManager->get('foo', 'bar'));
+        $this->assertEquals(true, $storageManager->set('foo', 'bar', 'foo bar'));
+        $this->assertEquals(true, $storageManager->has('foo', 'bar'));
+        $this->assertEquals('foo bar', $storageManager->get('foo', 'bar'));
+
+        $this->assertEquals($expectedBuffer0, $buffer);
+
+        $this->assertEquals(true, $storageManager->persist('foo', 'bar'));
+
+        $this->assertEquals($expectedBuffer1, $buffer);
+
+        $this->assertEquals(true, $storageManager->del('foo', 'bar'));
+        $this->assertEquals(false, $storageManager->has('foo', 'bar'));
+        $this->assertEquals(null, $storageManager->get('foo', 'bar'));
+
+        $this->assertEquals($expectedBuffer1, $buffer);
+
+        $this->assertEquals(true, $storageManager->persist($userId, $callId));
+
+        $this->assertEquals($expectedBuffer2, $buffer);
+        
+        $this->assertEquals(true, $storageManager->persist());
+
+        $this->assertEquals($expectedBuffer3, $buffer);
     }
 }
