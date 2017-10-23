@@ -28,6 +28,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
@@ -50,7 +51,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     protected $serviceContext;
 
-
     /**
      * taoQtiTest_actions_Runner constructor.
      */
@@ -60,6 +60,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         // Prevent anything to be cached by the client.
         TestRunnerUtils::noHttpClientCache();
+    }
+
+    /**
+     * @return StorageManager
+     */
+    protected function getStorageManager()
+    {
+        return $this->getServiceManager()->get(StorageManager::SERVICE_ID);
     }
 
     /**
@@ -93,9 +101,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         // auto append platform messages, if any
         if ($this->serviceContext && !isset($data['messages'])) {
-            /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
-            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
-            $data['messages'] = $communicationService->processOutput($this->serviceContext);
+            try {
+                /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
+                $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
+                $data['messages'] = $communicationService->processOutput($this->serviceContext);
+            } catch (common_Exception $e) {
+                $data = $this->getErrorResponse($e);
+                $httpStatus = $this->getErrorCode($e);
+            }
         }
 
         return parent::returnJson($data, $httpStatus);
@@ -276,7 +289,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -301,6 +314,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -325,6 +339,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -349,6 +364,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -379,6 +395,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -416,6 +433,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -423,6 +441,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * Create the item definition response for a given item
      * @param string $itemIdentifier the item id
      * @return array the item data
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_InvalidArgumentType
      */
     protected function getItemData($itemIdentifier)
     {
@@ -565,6 +586,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -625,6 +647,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -673,6 +696,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -729,6 +753,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -763,6 +788,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -788,6 +814,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -823,6 +850,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -866,6 +894,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -892,6 +921,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -934,6 +964,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -980,6 +1011,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
+        $this->getStorageManager()->persist();
         $this->returnJson($response, $code, false);
     }
 }
