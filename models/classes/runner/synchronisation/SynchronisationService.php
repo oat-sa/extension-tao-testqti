@@ -54,12 +54,32 @@ class SynchronisationService extends ConfigurableService
         }
 
         // first, extract the actions and build usable instances
+        // also compute the total duration to synchronise
         $actions = [];
+        $duration = 0;
         foreach ($data as $entry) {
-            $actions[] = $this->resolve($entry);
+            $action = $this->resolve($entry);
+            $actions[] = $action;
+
+            if ($action->hasRequestParameter('itemDuration')) {
+                $duration += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
+            }
         }
+        
+        // determine the start timestamp of the actions:
+        // - check if the total duration of actions to sync is comprised within
+        //   the elapsed time since the last TimePoint.
+        // - otherwise compute the start timestamp from now minus the duration
+        //   (caution! this could introduce inconsistency in the TimeLine as the ranges could be interlaced) 
+        $now = microtime(true);
         $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
-        // the actions should be chronological
+        $elapsed = $now - $last;
+        if ($duration > $elapsed) {
+            \common_Logger::t('Ignoring the last timestamp to take into account the actual duration to sync. Could introduce TimeLine inconsistency!');
+            $last = $now - $duration;
+        }
+
+        // ensure the actions are in chronological order
         usort($actions, function($a, $b) {
            return $a->getTimestamp() - $b->getTimestamp(); 
         });

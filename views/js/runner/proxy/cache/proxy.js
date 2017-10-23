@@ -28,11 +28,12 @@ define([
     'taoQtiTest/runner/navigator/navigator',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
+    'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
     'taoQtiTest/runner/proxy/cache/actionStore',
     'taoQtiTest/runner/proxy/cache/assetLoader'
-], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
+], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, dataUpdater, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
     'use strict';
 
     /**
@@ -108,6 +109,9 @@ define([
 
             //scheduled action promises which supposed to be resolved after action synchronization.
             this.actionPromises = {};
+
+            //let's you update test data (testData, testContext and testMap)
+            this.dataUpdater = dataUpdater(this.getDataHolder());
 
             /**
              * Get the item cache size from the test data
@@ -188,7 +192,6 @@ define([
                 if( _.contains(blockingActions, action) ||
                     ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
 
-                    // storeAction();
                     throw offlineExitError;
                 }
 
@@ -208,6 +211,8 @@ define([
 
                     result.testContext = newTestContext;
                 }
+
+                self.markActionAsOffline(actionParams);
 
                 return result;
             };
@@ -366,6 +371,20 @@ define([
                     });
                 });
             };
+
+            /**
+             * Mark action as performed in offline mode
+             * Action to mark as offline will be defined by actionParams.actionId parameter value.
+             *
+             * @param {Object} actionParams - the action parameters
+             * @return {Promise}
+             */
+            this.markActionAsOffline = function markActionAsOffline(actionParams) {
+                actionParams.offline = true;
+                return this.queue.serie(function(){
+                    return self.actiontStore.update(self.prepareParams(_.defaults(actionParams || {}, self.requestConfig)));
+                });
+            };
         },
 
         /**
@@ -379,6 +398,7 @@ define([
          *                      Any error will be provided if rejected.
          */
         init: function init(config, params) {
+            var self = this;
 
             if(!this.getDataHolder()){
                 throw new Error('Unable to retrieve test runners data holder');
@@ -392,7 +412,11 @@ define([
 
             //we resync as soon as the connection is back
             this.on('reconnect', function(){
-                return this.syncData();
+                return this.syncData().then(function(responses){
+                    self.dataUpdater.update(responses);
+                }).catch(function(err){
+                    self.trigger('error', err);
+                });
             });
 
             //if some actions remains unsynced
@@ -444,23 +468,26 @@ define([
                 //don't run a request if not needed
                 if (self.isOnline() && missing.length) {
                     _.delay(function(){
-                        self.request(self.configStorage.getTestActionUrl('getNextItemData'), {itemDefinition: missing})
-                            .then(function(response){
-                                if (response && response.items) {
-                                    _.forEach(response.items, function (item) {
-                                        if (item && item.itemIdentifier) {
+                        self.requestNetworkThenOffline(
+                            self.configStorage.getTestActionUrl('getNextItemData'),
+                            'getNextItemData',
+                            {itemDefinition: missing},
+                            false
+                        ).then(function(response){
+                            if (response && response.items) {
+                                _.forEach(response.items, function (item) {
+                                    if (item && item.itemIdentifier) {
+                                        //store the response and start caching assets
+                                        self.itemStore.set(item.itemIdentifier, item);
 
-                                            //store the response and start caching assets
-                                            self.itemStore.set(item.itemIdentifier, item);
-
-                                            if (item.baseUrl && item.itemData && item.itemData.assets) {
-                                                assetLoader(item.baseUrl, item.itemData.assets);
-                                            }
+                                        if (item.baseUrl && item.itemData && item.itemData.assets) {
+                                            assetLoader(item.baseUrl, item.itemData.assets);
                                         }
-                                    });
-                                }
-                            })
-                            .catch(_.noop);
+                                    }
+                                });
+                            }
+                        }).catch(_.noop);
+
                     }, loadNextDelay);
                 }
             };
