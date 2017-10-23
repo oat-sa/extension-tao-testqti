@@ -84,8 +84,8 @@ define([
             },
 
             /**
-             * update action parameters
-             * @param params
+             * Update action parameters. Action to update will be defined by params.actionId parameter value.
+             * @param {Object} params - the action parameters
              * @returns {Promise} resolves when the action is stored
              */
             update : function update(params) {

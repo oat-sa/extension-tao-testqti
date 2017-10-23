@@ -374,8 +374,9 @@ define([
 
             /**
              * Mark action as performed in offline mode
+             * Action to mark as offline will be defined by actionParams.actionId parameter value.
              *
-             * @param actionId
+             * @param {Object} actionParams - the action parameters
              * @return {Promise}
              */
             this.markActionAsOffline = function markActionAsOffline(actionParams) {
