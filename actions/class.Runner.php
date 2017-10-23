@@ -99,16 +99,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
         }
 
-        // auto append platform messages, if any
-        if ($this->serviceContext && !isset($data['messages'])) {
-            try {
+        try {
+            // auto append platform messages, if any
+            if ($this->serviceContext && !isset($data['messages'])) {
                 /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
                 $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
                 $data['messages'] = $communicationService->processOutput($this->serviceContext);
-            } catch (common_Exception $e) {
-                $data = $this->getErrorResponse($e);
-                $httpStatus = $this->getErrorCode($e);
             }
+            
+            // ensure the state storage is properly updated
+            $this->getStorageManager()->persist();
+        } catch (common_Exception $e) {
+            $data = $this->getErrorResponse($e);
+            $httpStatus = $this->getErrorCode($e);
         }
 
         return parent::returnJson($data, $httpStatus);
@@ -289,7 +292,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -314,7 +316,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -339,7 +340,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -364,7 +364,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -395,7 +394,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -433,7 +431,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -586,7 +583,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -647,7 +643,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -696,7 +691,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -753,7 +747,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -788,7 +781,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -814,7 +806,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -850,7 +841,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -894,7 +884,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -921,7 +910,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -964,7 +952,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code);
     }
 
@@ -1011,7 +998,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->getStorageManager()->persist();
         $this->returnJson($response, $code, false);
     }
 }
