@@ -81,6 +81,22 @@ define([
                         });
                     });
                 });
+            },
+
+            /**
+             * Update action parameters. Action to update will be defined by params.actionId parameter value.
+             * @param {Object} params - the action parameters
+             * @returns {Promise} resolves when the action is stored
+             */
+            update : function update(params) {
+                _.forEach(actionQueue, function (action) {
+                    if (action.parameters.actionId === params.actionId) {
+                        action.parameters = params;
+                    }
+                });
+                return store(storeId).then(function(actionStore) {
+                    return actionStore.setItem(storeKey, actionQueue);
+                });
             }
         };
     };
