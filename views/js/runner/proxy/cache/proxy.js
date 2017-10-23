@@ -212,6 +212,8 @@ define([
                     result.testContext = newTestContext;
                 }
 
+                self.markActionAsOffline(actionParams);
+
                 return result;
             };
 
@@ -367,6 +369,20 @@ define([
                         }
                         throw err;
                     });
+                });
+            };
+
+            /**
+             * Mark action as performed in offline mode
+             * Action to mark as offline will be defined by actionParams.actionId parameter value.
+             *
+             * @param {Object} actionParams - the action parameters
+             * @return {Promise}
+             */
+            this.markActionAsOffline = function markActionAsOffline(actionParams) {
+                actionParams.offline = true;
+                return this.queue.serie(function(){
+                    return self.actiontStore.update(self.prepareParams(_.defaults(actionParams || {}, self.requestConfig)));
                 });
             };
         },
