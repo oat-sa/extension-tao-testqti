@@ -33,8 +33,11 @@ class SelectAdaptiveNextItemEvent implements Event
     /** @var string Current item id */
     protected $currentItemId;
 
-    /** @var array Item ids of the next items. */
+    /** @var array Item ids of the next shadow items. */
     protected $catItemIds;
+
+    /** @var array Item ids of the previous shadow items. */
+    protected $previousCatItemIds;
 
     /** @var AssessmentTestSession */
     protected $testSession;
@@ -48,12 +51,19 @@ class SelectAdaptiveNextItemEvent implements Event
      * @param AssessmentTestSession $testSession
      * @param $currentItemId
      * @param array|null $catItemIds
+     * @param array|null $previousCatItemsIds
      * @param bool $isShadowItem
      */
-    public function __construct(AssessmentTestSession $testSession, $currentItemId, array $catItemIds = null, $isShadowItem = false)
-    {
+    public function __construct(
+        AssessmentTestSession $testSession,
+        $currentItemId,
+        array $catItemIds = null,
+        array $previousCatItemsIds = null,
+        $isShadowItem = false
+    ) {
         $this->currentItemId = $currentItemId;
         $this->catItemIds = $catItemIds;
+        $this->previousCatItemIds = $previousCatItemsIds;
         $this->testSession = $testSession;
         $this->isShadowItem = $isShadowItem;
     }
@@ -102,6 +112,16 @@ class SelectAdaptiveNextItemEvent implements Event
     public function getCatItemIds()
     {
         return $this->catItemIds;
+    }
+
+    /**
+     * Returns the item ids of the previous item shadow.
+     *
+     * @return array|null
+     */
+    public function getPreviousCatItemIds()
+    {
+        return $this->previousCatItemIds;
     }
 
     /**

@@ -569,6 +569,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $lastOutput = $this->getLastCatItemOutput();
             $catSession = $this->getCatSession();
 
+            $previousShadowItems = $catSession->getTestMap();
             try {
                 $selection = $catSession->getTestMap(array_values($lastOutput));
                 if (!$this->saveAdaptiveResults($catSession)) {
@@ -577,11 +578,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 $isShadowItem = false;
             } catch (CatEngineException $e) {
                 \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
-                $selection = $catSession->getTestMap();
+                $selection = $previousShadowItems;
                 $isShadowItem = true;
             }
 
-            $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection, $isShadowItem);
+            $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection, $previousShadowItems, $isShadowItem);
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
             if (is_array($selection) && count($selection) == 0) {
