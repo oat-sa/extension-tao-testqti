@@ -167,19 +167,6 @@ class QtiTestListenerService extends ConfigurableService
                 $stateMigrationService->removeState($userId, $extendedStorageId);
                 \common_Logger::t('Extended State archived for user : ' . $userId . ' and storageId : ' . $extendedStorageId);
             }
-            $keys = [
-                ExtendedStateService::VAR_REVIEW, 
-                ExtendedStateService::VAR_EVENTS_QUEUE, 
-                ExtendedStateService::VAR_HREF_INDEX, 
-                ExtendedStateService::VAR_CAT
-            ];
-            foreach($keys as $key) {
-                $extendedStorageId = ExtendedStateService::getStorageKeyFromTestSessionId($sessionId, $key);
-                if ($stateMigrationService->archive($userId, $extendedStorageId)) {
-                    $stateMigrationService->removeState($userId, $extendedStorageId);
-                    \common_Logger::t('Extended State Key archived for user : ' . $userId . ' and storageId : ' . $extendedStorageId);
-                }   
-            }
         }
     }
 }
