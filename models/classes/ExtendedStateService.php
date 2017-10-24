@@ -20,7 +20,9 @@
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\state\StateStorage;
 use oat\taoDelivery\model\execution\ServiceProxy;
+use oat\taoQtiTest\models\runner\ExtendedState;
 use oat\taoQtiTest\models\runner\StorageManager;
 
 /**
@@ -30,16 +32,8 @@ class ExtendedStateService extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
 
-    const STORAGE_PREFIX = 'extra_';
-
-    const VAR_REVIEW = 'review';
-    const VAR_STORE_ID = 'client_store_id';
-    const VAR_EVENTS_QUEUE = 'events_queue';
-    const VAR_CAT = 'cat';
-    const VAR_HREF_INDEX = 'item_href_index';
-
-    protected $cache = null;
-    protected $deliveryExecutions = null;
+    protected $cache = [];
+    protected $deliveryExecutions = [];
 
     /**
      * @var StateStorage
@@ -84,44 +78,20 @@ class ExtendedStateService extends ConfigurableService
     }
 
     /**
-     * Retrieves extended state information
-     * @param string $testSessionId
-     * @return array
-     * @throws \common_Exception
+     * @param $testSessionId
+     * @return ExtendedState
+     * @throws \common_exception_Error
      */
-    protected function getExtra($testSessionId)
+    public function getExtendedState($testSessionId)
     {
         if (!isset($this->cache[$testSessionId])) {
-            $userUri = $this->getSessionUserUri($testSessionId);
-            $callId = self::getStorageKeyFromTestSessionId($testSessionId);
-            $data = $this->getStorageService()->get($userUri, $callId);
-            if ($data) {
-                $data = json_decode($data, true);
-                if (is_null($data)) {
-                    throw new \common_exception_InconsistentData('Unable to decode extra for test session '.$testSessionId);
-                }
-            } else {
-                $data = array(
-                    self::VAR_REVIEW => array()
-                );
-            }
-            $this->cache[$testSessionId] = $data;
+            $extendedState = new ExtendedState($testSessionId, $this->getSessionUserUri($testSessionId));
+            $this->getServiceManager()->propagate($extendedState);
+            $extendedState->setStorage($this->getStorageService());
+            $extendedState->load();
+            $this->cache[$testSessionId] = $extendedState;
         }
         return $this->cache[$testSessionId];
-    }
-
-    /**
-     * Stores extended state information
-     * @param string $testSessionId
-     * @param array $extra
-     * @throws \common_Exception
-     */
-    protected function saveExtra($testSessionId, $extra)
-    {
-        $this->cache[$testSessionId] = $extra;
-        $userUri = $this->getSessionUserUri($testSessionId);
-        $callId = self::getStorageKeyFromTestSessionId($testSessionId);
-        $this->getStorageService()->set($userUri, $callId, json_encode($extra));
     }
 
     /**
@@ -131,9 +101,9 @@ class ExtendedStateService extends ConfigurableService
      */
     public function persist($testSessionId)
     {
-        $userUri = $this->getSessionUserUri($testSessionId);
-        $callId = self::getStorageKeyFromTestSessionId($testSessionId);
-        $this->getStorageService()->persist($userUri, $callId);
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->save();
+        $this->getStorageService()->persist($extendedState->getTestSessionId(), $extendedState->getUserId());
     }
 
     /**
@@ -145,10 +115,9 @@ class ExtendedStateService extends ConfigurableService
      */
     public function setItemFlag($testSessionId, $itemRef, $flag)
     {
-        $extra = $this->getExtra($testSessionId);
-        $extra[self::VAR_REVIEW][$itemRef] = $flag;
-
-        $this->saveExtra($testSessionId, $extra);
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->setItemFlag($itemRef, $flag);
+        $extendedState->save();
     }
 
     /**
@@ -160,10 +129,8 @@ class ExtendedStateService extends ConfigurableService
      */
     public function getItemFlag($testSessionId, $itemRef)
     {
-        $extra = $this->getExtra($testSessionId);
-        return isset($extra[self::VAR_REVIEW][$itemRef])
-            ? $extra[self::VAR_REVIEW][$itemRef]
-            : false;
+        $extendedState = $this->getExtendedState($testSessionId);
+        return $extendedState->getItemFlag($itemRef);
     }
 
     /**
@@ -174,9 +141,9 @@ class ExtendedStateService extends ConfigurableService
      */
     public function setStoreId($testSessionId, $storeId)
     {
-        $extra = $this->getExtra($testSessionId);
-        $extra[self::VAR_STORE_ID] = $storeId;
-        $this->saveExtra($testSessionId, $extra);
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->setStoreId($storeId);
+        $extendedState->save();
     }
 
     /**
@@ -187,8 +154,8 @@ class ExtendedStateService extends ConfigurableService
      */
     public function getStoreId($testSessionId)
     {
-        $extra = $this->getExtra($testSessionId);
-        return isset($extra[self::VAR_STORE_ID]) ? $extra[self::VAR_STORE_ID] : false;
+        $extendedState = $this->getExtendedState($testSessionId);
+        return $extendedState->getStoreId();
     }
 
     /**
@@ -201,20 +168,9 @@ class ExtendedStateService extends ConfigurableService
      */
     public function addEvent($testSessionId, $eventName, $data = null)
     {
-        $extra = $this->getExtra($testSessionId);
-
-        $eventId = uniqid('event', true);
-
-        $extra[self::VAR_EVENTS_QUEUE][$eventId] = [
-            'id' => $eventId,
-            'timestamp' => microtime(true),
-            'user' => \common_session_SessionManager::getSession()->getUserUri(),
-            'type' => $eventName,
-            'data' => $data,
-        ];
-
-        $this->saveExtra($testSessionId, $extra);
-
+        $extendedState = $this->getExtendedState($testSessionId);
+        $eventId = $extendedState->addEvent($eventName, $data);
+        $extendedState->save();
         return $eventId;
     }
 
@@ -226,14 +182,8 @@ class ExtendedStateService extends ConfigurableService
      */
     public function getEvents($testSessionId)
     {
-        $extra = $this->getExtra($testSessionId);
-
-        if (isset($extra[self::VAR_EVENTS_QUEUE])) {
-            $events = $extra[self::VAR_EVENTS_QUEUE];
-        } else {
-            $events = [];
-        }
-        return $events;
+        $extendedState = $this->getExtendedState($testSessionId);
+        return $extendedState->getEvents();
     }
 
     /**
@@ -244,20 +194,9 @@ class ExtendedStateService extends ConfigurableService
      */
     public function removeEvents($testSessionId, $ids = [])
     {
-        $extra = $this->getExtra($testSessionId);
-        $toSave = false;
-        if (isset($extra[self::VAR_EVENTS_QUEUE])) {
-            foreach ($ids as $id) {
-                if (isset($extra[self::VAR_EVENTS_QUEUE][$id])) {
-                    unset($extra[self::VAR_EVENTS_QUEUE][$id]);
-                    $toSave = true;
-                }
-            }
-        }
-
-        if($toSave){
-            $this->saveExtra($testSessionId, $extra);
-        }
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->removeEvents($ids);
+        $extendedState->save();
     }
 
     /**
@@ -267,13 +206,9 @@ class ExtendedStateService extends ConfigurableService
      */
     public function clearEvents($testSessionId)
     {
-        $extra = $this->getExtra($testSessionId);
-
-        if(isset($extra[self::VAR_EVENTS_QUEUE]) && !empty($extra[self::VAR_EVENTS_QUEUE])){
-            $extra[self::VAR_EVENTS_QUEUE] = [];
-            $this->saveExtra($testSessionId, $extra);
-        }
-
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->clearEvents();
+        $extendedState->save();
     }
 
     /**
@@ -285,9 +220,9 @@ class ExtendedStateService extends ConfigurableService
      */
     public function storeItemHrefIndex($testSessionId, $table)
     {
-        $extra = $this->getExtra($testSessionId);
-        $extra[self::VAR_HREF_INDEX] = $table;
-        $this->saveExtra($testSessionId, $extra);
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->setItemHrefIndex($table);
+        $extendedState->save();
     }
 
     /**
@@ -299,27 +234,8 @@ class ExtendedStateService extends ConfigurableService
      */
     public function loadItemHrefIndex($testSessionId)
     {
-        $extra = $this->getExtra($testSessionId);
-
-        if (isset($extra[self::VAR_HREF_INDEX])) {
-            $table = $extra[self::VAR_HREF_INDEX];
-        } else {
-            $table = [];
-        }
-        return $table;
-    }
-    
-    /**
-     * Storage Key from Test Session Id
-     *
-     * Returns the Storage Key corresponding to a given $testSessionId
-     *
-     * @param string $testSessionId
-     * @return string
-     */
-    public static function getStorageKeyFromTestSessionId($testSessionId)
-    {
-        return self::STORAGE_PREFIX . $testSessionId;
+        $extendedState = $this->getExtendedState($testSessionId);
+        return $extendedState->getItemHrefIndex();
     }
 
     /**
@@ -335,9 +251,9 @@ class ExtendedStateService extends ConfigurableService
      */
     public function setCatValue($testSessionId, $assessmentSectionId, $key, $value)
     {
-        $extra = $this->getExtra($testSessionId);
-        $extra[self::VAR_CAT][$assessmentSectionId][$key] = $value;
-        $this->saveExtra($testSessionId, $extra);
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->setCatValue($assessmentSectionId, $key, $value);
+        $extendedState->save();
     }
 
     /**
@@ -353,8 +269,8 @@ class ExtendedStateService extends ConfigurableService
      */
     public function getCatValue($testSessionId, $assessmentSectionId, $key)
     {
-        $extra = $this->getExtra($testSessionId);
-        return (isset($extra[self::VAR_CAT]) && isset($extra[self::VAR_CAT][$assessmentSectionId]) && isset($extra[self::VAR_CAT][$assessmentSectionId][$key])) ? $extra[self::VAR_CAT][$assessmentSectionId][$key] : null;
+        $extendedState = $this->getExtendedState($testSessionId);
+        return $extendedState->getCatValue($assessmentSectionId, $key);
     }
 
     /**
@@ -367,11 +283,8 @@ class ExtendedStateService extends ConfigurableService
      */
     public function removeCatValue($testSessionId, $assessmentSectionId, $key)
     {
-        $extra = $this->getExtra($testSessionId);
-        if (isset($extra[self::VAR_CAT]) && isset($extra[self::VAR_CAT][$assessmentSectionId]) && isset($extra[self::VAR_CAT][$assessmentSectionId][$key])) {
-            unset($extra[self::VAR_CAT][$assessmentSectionId][$key]);
-        }
-
-        $this->saveExtra($testSessionId, $extra);
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->removeCatValue($assessmentSectionId, $key);
+        $extendedState->save();
     }
 }
