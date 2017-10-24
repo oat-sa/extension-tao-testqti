@@ -61,7 +61,9 @@ class Timeout extends TestRunnerAction
 
             $this->saveItemResponses();
 
-            $this->setOffline();
+            if ($this->getRequestParameter('offline') === true) {
+                $this->setOffline();
+            }
 
             $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref);
 
