@@ -315,7 +315,7 @@ define([
 
             $window.on('resize' + ns, _.throttle(function() {
                 testRunner.trigger('collapseTools');
-            }, 100));
+            }, 40));
 
             testRunner
                 .after('renderitem loaditem', function() {
