@@ -192,7 +192,7 @@ define([
             }
 
             function expandPossible(extraWidth) {
-                return (getToolbarWidth() + extraWidth) <= getAvailableWidth();
+                return (getToolbarWidth() + extraWidth) < getAvailableWidth();
             }
 
             function getAvailableWidth() {
