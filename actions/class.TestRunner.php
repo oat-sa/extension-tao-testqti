@@ -37,6 +37,7 @@ use oat\taoQtiItem\helpers\QtiRunner;
 use oat\taoQtiTest\models\TestSessionMetaData;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\taoQtiTest\models\runner\StorageManager;
 use oat\oatbox\service\ServiceManager;
 
 /**
@@ -63,13 +64,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
      * @var AssessmentTest
      */
     private $testDefinition = null;
-    
-    /**
-     * The TAO Resource describing the test to be run.
-     * 
-     * @var core_kernel_classes_Resource
-     */
-    private $testResource = null;
     
     /**
      * The current AbstractStorage object.
@@ -375,6 +369,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         
         common_Logger::t("Persisting QTI Assessment Test Session '${sessionId}'...");
 	    $this->getStorage()->persist($testSession);
+	    $this->getServiceManager()->get(StorageManager::SERVICE_ID)->persist();
     }
 
     /**
