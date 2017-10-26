@@ -28,6 +28,7 @@ use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
+use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
@@ -1682,5 +1683,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('17.8.0', '17.9.0');
+        
+        if ($this->isVersion('17.9.0')) {
+            $storageManager = new StorageManager();
+            $this->getServiceManager()->register(StorageManager::SERVICE_ID, $storageManager);
+            $this->setVersion('17.10.0');
+        }
     }
 }
