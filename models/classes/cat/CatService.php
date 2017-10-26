@@ -73,13 +73,13 @@ class CatService extends ConfigurableService
 
     const IS_SHADOW_ITEM = 'is-shadow-item';
 
-    private $engines = [];
-    
-    private $sectionMapCache = [];
-    
-    private $catSection = [];
+    protected $engines = [];
 
-    private $catSession = [];
+    protected $sectionMapCache = [];
+
+    protected $catSection = [];
+
+    protected $catSession = [];
     
     /**
      * Returns the Adaptive Engine
