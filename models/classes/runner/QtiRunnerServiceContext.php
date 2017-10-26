@@ -569,6 +569,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $lastOutput = $this->getLastCatItemOutput();
             $catSession = $this->getCatSession();
 
+            $preSelection = $catSession->getTestMap();
+
             try {
                 $selection = $catSession->getTestMap(array_values($lastOutput));
                 if (!$this->saveAdaptiveResults($catSession)) {
@@ -581,7 +583,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 $isShadowItem = true;
             }
 
-            $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $selection, $isShadowItem);
+            $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $preSelection, $selection, $isShadowItem);
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
             if (is_array($selection) && count($selection) == 0) {
