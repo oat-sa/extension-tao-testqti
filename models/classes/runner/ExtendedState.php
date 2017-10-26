@@ -21,7 +21,6 @@ namespace oat\taoQtiTest\models\runner;
 
 use oat\oatbox\service\ServiceManagerAwareInterface;
 use oat\oatbox\service\ServiceManagerAwareTrait;
-use oat\tao\model\state\StateStorage;
 
 /**
  * Manage the flagged items
@@ -53,7 +52,7 @@ class ExtendedState implements ServiceManagerAwareInterface
     protected $state = [];
 
     /**
-     * @var StateStorage
+     * @var StorageManager
      */
     protected $storage;
 
@@ -105,8 +104,8 @@ class ExtendedState implements ServiceManagerAwareInterface
     }
     
     /**
-     * Gets the StateStorage service
-     * @return StateStorage
+     * Gets the StorageManager service
+     * @return StorageManager
      */
     public function getStorage()
     {
@@ -117,8 +116,8 @@ class ExtendedState implements ServiceManagerAwareInterface
     }
 
     /**
-     * Sets the StateStorage service
-     * @param StateStorage $storage
+     * Sets the StorageManager service
+     * @param StorageManager $storage
      * @return ExtendedState
      */
     public function setStorage($storage)
