@@ -76,6 +76,11 @@ class Move extends TestRunnerAction
 
             if ($result) {
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
+
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
+                }
             }
 
             \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());

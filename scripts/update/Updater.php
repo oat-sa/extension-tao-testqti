@@ -1663,9 +1663,31 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('17.6.0', '17.7.1');
 
         if ($this->isVersion('17.7.1')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(
+                TestPlugin::fromArray(
+                    [
+                        'id' => 'collapser',
+                        'name' => 'Collapser',
+                        'module' => 'taoQtiTest/runner/plugins/content/responsiveness/collapser',
+                        'description' => 'Reduce the size of the tools when the available space is not enough',
+                        'category' => 'content',
+                        'active' => true,
+                        'tags' => [ 'core' ]
+                    ]
+                )
+            );
+
+            $this->setVersion('17.8.0');
+        }
+
+        $this->skip('17.8.0', '17.9.0');
+        
+        if ($this->isVersion('17.9.0')) {
             $storageManager = new StorageManager();
             $this->getServiceManager()->register(StorageManager::SERVICE_ID, $storageManager);
-            $this->setVersion('17.8.0');
+            $this->setVersion('17.10.0');
         }
     }
 }

@@ -49,10 +49,6 @@ class SynchronisationService extends ConfigurableService
             throw new \common_exception_InconsistentData('No action to check. Processing action requires data.');
         }
 
-        if($serviceContext instanceof QtiRunnerServiceContext){
-            $serviceContext->setSyncingMode(true);
-        }
-
         // first, extract the actions and build usable instances
         // also compute the total duration to synchronise
         $actions = [];
@@ -95,6 +91,9 @@ class SynchronisationService extends ConfigurableService
                 $action->setTime($last);
 
                 $action->setServiceContext($serviceContext);
+                if ($serviceContext instanceof QtiRunnerServiceContext) {
+                    $serviceContext->setSyncingMode($action->getRequestParameter('offline'));
+                }
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
                 $responseAction = ['error' => $e->getMessage()];
