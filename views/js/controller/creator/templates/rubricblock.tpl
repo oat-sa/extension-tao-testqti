@@ -16,5 +16,5 @@
             </div>
         </div>
     </div>
-    <div class="rubricblock-content" contenteditable></div>
+    <div class="rubricblock-content"></div>
 </li>

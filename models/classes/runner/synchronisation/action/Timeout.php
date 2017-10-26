@@ -61,7 +61,9 @@ class Timeout extends TestRunnerAction
 
             $this->saveItemResponses();
 
-            $this->setOffline();
+            if ($this->getRequestParameter('offline') === true) {
+                $this->setOffline();
+            }
 
             $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref);
 
@@ -71,6 +73,10 @@ class Timeout extends TestRunnerAction
 
             if ($result) {
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
+                }
             }
 
             if($start == true){

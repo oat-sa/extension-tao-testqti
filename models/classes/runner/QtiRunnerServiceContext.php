@@ -31,6 +31,7 @@ use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\SectionPauseService;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
@@ -765,38 +766,43 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $catAttempts
         );
     }
-    
+
     /**
      * Can Move Backward
-     * 
+     *
      * Whether or not the Test Taker is able to navigate backward.
      * This implementation takes the CAT sections into consideration.
-     * 
+     *
      * @return boolean
      */
     public function canMoveBackward()
     {
+        $moveBack = false;
+        $session  = $this->getTestSession();
         if ($this->isAdaptive()) {
             $positionInCatSession = array_search(
                 $this->getCurrentCatItemId(),
                 $this->getShadowTest()
             );
-            
+
             if ($positionInCatSession === 0) {
                 // First item in cat section.
-                if ($this->getTestSession()->getRoute()->getPosition() === 0) {
-                    
-                    return false;
-                } else {
-                    
-                    return $this->getTestSession()->getPreviousRouteItem()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
+                if ($session->getRoute()->getPosition() !== 0) {
+                    $moveBack = $session->getPreviousRouteItem()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
                 }
             } else {
-                return $this->getTestSession()->getRoute()->current()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
+                $moveBack = $session->getRoute()->current()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
             }
         } else {
-            return $this->getTestSession()->canMoveBackward();
+            $moveBack = $session->canMoveBackward();
+
+            //check also if the sectionPause prevents you from moving backward
+            if($moveBack){
+                $moveBack = $this->getServiceManager()->get(SectionPauseService::SERVICE_ID)->canMoveBackward($session);
+            }
         }
+
+        return $moveBack;
     }
 
     /**

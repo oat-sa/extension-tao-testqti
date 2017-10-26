@@ -32,6 +32,7 @@ use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
@@ -1630,6 +1631,56 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.0.0');
         }
 
-        $this->skip('17.0.0', '17.2.0');
+        $this->skip('17.0.0', '17.1.0');
+
+        if ($this->isVersion('17.1.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap']['communication']['syncActions'] = ['move', 'skip', 'storeTraceData', 'timeout', 'exitTest'];
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('17.2.0');
+        }
+
+        $this->skip('17.2.0', '17.5.1');
+
+        if ($this->isVersion('17.5.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap']['communication']['syncActions'][] = 'getNextItemData';
+            $extension->setConfig('testRunner', $config);
+
+            /** @var SynchronisationService $synchronisationService */
+            $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
+            $actions = $synchronisationService->getAvailableActions();
+            $actions['getNextItemData'] = NextItemData::class;
+            $synchronisationService->setAvailableActions($actions);
+            $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
+
+            $this->setVersion('17.6.0');
+        }
+
+        $this->skip('17.6.0', '17.7.1');
+
+        if ($this->isVersion('17.7.1')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(
+                TestPlugin::fromArray(
+                    [
+                        'id' => 'collapser',
+                        'name' => 'Collapser',
+                        'module' => 'taoQtiTest/runner/plugins/content/responsiveness/collapser',
+                        'description' => 'Reduce the size of the tools when the available space is not enough',
+                        'category' => 'content',
+                        'active' => true,
+                        'tags' => [ 'core' ]
+                    ]
+                )
+            );
+
+            $this->setVersion('17.8.0');
+        }
+
+        $this->skip('17.8.0', '17.9.0');
     }
 }

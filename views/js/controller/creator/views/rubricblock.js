@@ -28,22 +28,11 @@ define([
     'util/namespace',
     'taoQtiTest/controller/creator/views/actions',
     'helpers',
-    'ckeditor',
     'taoQtiTest/controller/creator/encoders/dom2qti',
-    'taoQtiTest/controller/creator/helpers/ckConfigurator',
-    'taoQtiTest/controller/creator/helpers/qtiElement'
-], function ($, _, __, hider, dialogAlert, namespaceHelper, actions, helpers, ckeditor, Dom2QtiEncoder, ckConfigurator, qtiElementHelper) { // qtiClasses, creatorRenderer, XmlRenderer, simpleParser){
+    'taoQtiTest/controller/creator/helpers/qtiElement',
+    'taoQtiTest/controller/creator/qtiContentCreator'
+], function ($, _, __, hider, dialogAlert, namespaceHelper, actions, helpers, Dom2QtiEncoder, qtiElementHelper, qtiContentCreator) {
     'use strict';
-
-    //compute ckeditor config only once
-    var ckConfig = ckConfigurator.getConfig(ckeditor, 'qtiBlock');
-
-    function filterPlugin(plugin) {
-        return _.contains(['taoqtiimage', 'taoqtimedia', 'taoqtimaths', 'taoqtiinclude'], plugin);
-    }
-
-    ckConfig.plugins = _.reject(ckConfig.plugins.split(','), filterPlugin).join(',');
-    ckConfig.extraPlugins = _.reject(ckConfig.extraPlugins.split(','), filterPlugin).join(',');
 
     /**
      * The rubriclockView setup RB related components and behavior
@@ -54,15 +43,14 @@ define([
         /**
          * Set up a rubric block: init action behaviors. Called for each one.
          *
-         * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
+         * @param {Object} creatorContext
          * @param {Object} rubricModel - the rubric block data
          * @param {jQueryElement} $rubricBlock - the rubric block to set up
          */
-        setUp: function setUp(modelOverseer, rubricModel, $rubricBlock) {
-            //we need to synchronize the ck elt with an hidden elt that has data-binding
+        setUp: function setUp(creatorContext, rubricModel, $rubricBlock) {
+            var modelOverseer = creatorContext.getModelOverseer();
+            var areaBroker = creatorContext.getAreaBroker();
             var $rubricBlockContent = $('.rubricblock-content', $rubricBlock);
-            var syncRubricBlockContent = _.debounce(editorToModel, 100);
-            var editor;
 
             /**
              * Bind a listener only related to this rubric.
@@ -95,10 +83,10 @@ define([
             /**
              * Forwards the editor content into the model
              */
-            function editorToModel() {
+            function editorToModel(html) {
                 var rubric = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock', 'content');
                 var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
-                var content = Dom2QtiEncoder.decode(ensureWrap($rubricBlockContent.html()));
+                var content = Dom2QtiEncoder.decode(ensureWrap(html));
 
                 if (wrapper) {
                     wrapper.content = content;
@@ -111,11 +99,23 @@ define([
              * Forwards the model content into the editor
              */
             function modelToEditor() {
-                var rubric = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock', 'content');
+                var rubric = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock', 'content') || {};
                 var wrapper = qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content');
                 var content = wrapper ? wrapper.content : rubric.content;
                 var html = ensureWrap(Dom2QtiEncoder.encode(content));
-                $rubricBlockContent.html(html);
+
+                // Destroy any existing CKEditor instance
+                qtiContentCreator.destroy(creatorContext, $rubricBlockContent).then(function() {
+                    // update the editor content
+                    $rubricBlockContent.html(html);
+
+                    // Re-create the Qti-ckEditor instance
+                    qtiContentCreator.create(creatorContext, $rubricBlockContent, {
+                        change: function change(editorContent) {
+                            editorToModel(editorContent);
+                        }
+                    });
+                });
             }
 
             /**
@@ -253,7 +253,7 @@ define([
                 }
             }
 
-            rubricModel.orderIndex = rubricModel.index + 1;
+            rubricModel.orderIndex = (rubricModel.index || 0) + 1;
             rubricModel.uid = _.uniqueId('rb');
             rubricModel.feedback = {
                 activated: !!qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content'),
@@ -289,9 +289,15 @@ define([
 
             modelToEditor();
 
-            editor = ckeditor.inline($rubricBlockContent[0], ckConfig);
-            editor.on('change', function () {
-                syncRubricBlockContent();
+            // destroy CK instance on rubric bloc deletion.
+            // todo: find a way to destroy CK upon destroying rubric bloc parent section/part
+            bindEvent($rubricBlock, 'delete', function() {
+                qtiContentCreator.destroy(creatorContext, $rubricBlockContent);
+            });
+
+            $rubricBlockContent.on('editorfocus', function() {
+                // close all properties forms and turn off their related button
+                areaBroker.getPropertyPanelArea().children('.props').hide().trigger('propclose.propview');
             });
         }
     };

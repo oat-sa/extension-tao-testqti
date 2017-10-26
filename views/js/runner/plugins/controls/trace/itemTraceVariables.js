@@ -113,7 +113,7 @@ define([
                             var context = testRunner.getTestContext();
                             return testRunner.getProxy().callItemAction(context.itemIdentifier, 'storeTraceData', {
                                 traceData: JSON.stringify(variables)
-                            });
+                            }, true);
                         })
 
                         .before('finish', function () {

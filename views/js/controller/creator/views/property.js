@@ -129,9 +129,10 @@ function($, ui, DataBinder, templates){
         * @private
         */
         function propValidation() {
+            var $togglers;
             $view.on('validated.group', function(e, isValid){
                 if(e.namespace === 'group'){
-                    var $togglers = $('#test-creator .property-toggler, #saver');
+                    $togglers = $('#test-creator .property-toggler, #saver');
                     if(isValid === true){
                         $togglers.removeClass('disabled');
                     } else {
@@ -140,7 +141,7 @@ function($, ui, DataBinder, templates){
                 }
             });
             $view.groupValidator();
-         }
+        }
 
         return {
             open : open,
@@ -153,5 +154,5 @@ function($, ui, DataBinder, templates){
         };
     };
 
-   return propView;
+    return propView;
 });
