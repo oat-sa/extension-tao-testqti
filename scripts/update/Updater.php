@@ -1689,5 +1689,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(StorageManager::SERVICE_ID, $storageManager);
             $this->setVersion('17.10.0');
         }
+
+        $this->skip('17.10.0', '17.10.1');
     }
 }
