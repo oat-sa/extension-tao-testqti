@@ -1690,6 +1690,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.10.0');
         }
 
-        $this->skip('17.10.0', '17.10.2');
+        $this->skip('17.10.0', '17.11.0');
     }
 }
