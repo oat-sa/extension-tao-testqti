@@ -629,10 +629,15 @@ class CatService extends ConfigurableService
      */
     protected function alterTimeoutCallValue(array $options)
     {
+        $timeoutValue = null;
         if ($this->isInitialCall === true) {
-            $timeoutValue = $this->getOption(self::OPTION_INITIAL_CALL_TIMEOUT);
+            if ($this->hasOption(self::OPTION_INITIAL_CALL_TIMEOUT)) {
+                $timeoutValue = $this->getOption(self::OPTION_INITIAL_CALL_TIMEOUT);
+            }
         } else {
-            $timeoutValue = $this->getOption(self::OPTION_NEXT_ITEM_CALL_TIMEOUT);
+            if ($this->hasOption(self::OPTION_NEXT_ITEM_CALL_TIMEOUT)) {
+                $timeoutValue = $this->getOption(self::OPTION_NEXT_ITEM_CALL_TIMEOUT);
+            }
         }
 
         if (!is_null($timeoutValue)) {
