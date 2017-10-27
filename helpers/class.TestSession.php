@@ -293,9 +293,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         $testUri = $this->getTest()->getUri();
         $sessionId = $this->getSessionId();
 
-        $this->getResultTransmitter()->transmitTestVariable($this->getAllVariables()->getArrayCopy(), $sessionId, $testUri);
-
         common_Logger::t("Submitting test result related to test '" . $testUri . "'.");
+
+        $this->getResultTransmitter()->transmitTestVariable($this->getAllVariables()->getArrayCopy(), $sessionId, $testUri);
     }
     
     /**
