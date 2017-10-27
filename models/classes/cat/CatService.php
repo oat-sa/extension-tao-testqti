@@ -643,8 +643,7 @@ class CatService extends ConfigurableService
         if (!is_null($timeoutValue)) {
             $options[self::OPTION_ENGINE_CLIENT]['options']['http_client_options']['timeout'] = $timeoutValue;
         }
-
-        \common_Logger::i(print_r($options,true));
+        
         return $options;
     }
 
