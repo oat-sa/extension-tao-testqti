@@ -37,7 +37,12 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 class QtiRunnerMessageService extends ConfigurableService implements RunnerMessageService
 {
     const SERVICE_ID = 'taoQtiTest/QtiRunnerMessageService';
-    
+
+    const PAUSED_STATE_MESSAGE = 'The assessment has been suspended. To resume your assessment, please relaunch it.';
+    const TERMINATED_STATE_MESSAGE = 'The assessment has been terminated. You cannot interact with it anymore.';
+    const INITIAL_STATE_MESSAGE = 'The assessment has been created but is not already running.';
+    const RUNNING_STATE_MESSAGE = 'The assessment is still running.';
+
     /**
      * Gets a message related to the state of the assessment test session
      * @param mixed $testSession
@@ -78,7 +83,7 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
      */
     protected function getPausedStateMessage(AssessmentTestSession $testSession)
     {
-        return __('The assessment has been suspended. To resume your assessment, please relaunch it.');
+        return static::PAUSED_STATE_MESSAGE;
     }
 
     /**
@@ -88,7 +93,7 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
      */
     protected function getTerminatedStateMessage(AssessmentTestSession $testSession)
     {
-        return __('The assessment has been terminated. You cannot interact with it anymore.');
+        return static::TERMINATED_STATE_MESSAGE;
     }
 
     /**
@@ -98,7 +103,7 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
      */
     protected function getInitialStateMessage(AssessmentTestSession $testSession)
     {
-        return __('The assessment has been created but is not already running.');
+        return static::INITIAL_STATE_MESSAGE;
     }
 
     /**
@@ -108,6 +113,6 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
      */
     protected function getRunningStateMessages(AssessmentTestSession $testSession)
     {
-        return __('The assessment is still running.');
+        return static::RUNNING_STATE_MESSAGE;
     }
 }

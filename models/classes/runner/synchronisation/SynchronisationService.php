@@ -41,7 +41,7 @@ class SynchronisationService extends ConfigurableService
      * @param $data
      * @param $serviceContext QtiRunnerServiceContext
      * @return array
-     * @throws \common_exception_InconsistentData
+     * @throws 
      */
     public function process($data, $serviceContext)
     {
@@ -49,31 +49,33 @@ class SynchronisationService extends ConfigurableService
             throw new \common_exception_InconsistentData('No action to check. Processing action requires data.');
         }
 
-        if($serviceContext instanceof QtiRunnerServiceContext){
-            $serviceContext->setSyncingMode(true);
-        }
-
         // first, extract the actions and build usable instances
+        // also compute the total duration to synchronise
         $actions = [];
         $duration = 0;
         foreach ($data as $entry) {
             $action = $this->resolve($entry);
             $actions[] = $action;
-            
+
             if ($action->hasRequestParameter('itemDuration')) {
                 $duration += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
             }
         }
         
-        // ensure the total duration of actions to sync is comprised within the elapsed time since the last sync.
+        // determine the start timestamp of the actions:
+        // - check if the total duration of actions to sync is comprised within
+        //   the elapsed time since the last TimePoint.
+        // - otherwise compute the start timestamp from now minus the duration
+        //   (caution! this could introduce inconsistency in the TimeLine as the ranges could be interlaced) 
         $now = microtime(true);
         $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
         $elapsed = $now - $last;
         if ($duration > $elapsed) {
-            throw new \common_exception_InconsistentData('Client duration exceed the elapsed server time!');
+            \common_Logger::t('Ignoring the last timestamp to take into account the actual duration to sync. Could introduce TimeLine inconsistency!');
+            $last = $now - $duration;
         }
-        
-        // the actions should be chronological
+
+        // ensure the actions are in chronological order
         usort($actions, function($a, $b) {
            return $a->getTimestamp() - $b->getTimestamp(); 
         });
@@ -89,6 +91,9 @@ class SynchronisationService extends ConfigurableService
                 $action->setTime($last);
 
                 $action->setServiceContext($serviceContext);
+                if ($serviceContext instanceof QtiRunnerServiceContext) {
+                    $serviceContext->setSyncingMode($action->getRequestParameter('offline'));
+                }
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
                 $responseAction = ['error' => $e->getMessage()];
@@ -97,6 +102,7 @@ class SynchronisationService extends ConfigurableService
 
             $responseAction['name'] = $action->getName();
             $responseAction['timestamp'] = $action->getTimeStamp();
+            $responseAction['requestParameters'] = $action->getRequestParameters();
 
             $response[] = $responseAction;
 

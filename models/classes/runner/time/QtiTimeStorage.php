@@ -117,7 +117,7 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
      * Sets the StateStorage service
      * @param StateStorage $storageService
      */
-    public function setStorageService(StateStorage $storageService)
+    public function setStorageService($storageService)
     {
         $this->storageService = $storageService;
     }

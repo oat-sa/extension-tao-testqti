@@ -17,7 +17,7 @@
     </section>
 
 <!-- test editor  -->
-    <section class="test-creator-test test-creator-area">
+    <section class="test-creator-test test-creator-area test-creator-content">
         <div class="action-bar plain content-action-bar horizontal-action-bar">
             <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
                 <li id="saver" class="btn-info small">
@@ -59,8 +59,9 @@
         <div class="action-bar plain content-action-bar horizontal-action-bar">
 
         </div>
-       <h1><?=__('Properties')?></h1>
-    </section
+        <h1><?=__('Properties')?></h1>
+        <div class="qti-widget-properties"></div>
+    </section>
 
 </div>
 <script type="text/javascript">

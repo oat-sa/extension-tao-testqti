@@ -22,18 +22,38 @@
 define([
     'jquery',
     'lodash',
-    'taoQtiTest/controller/creator/helpers/qtiElement'
-], function ($, _, qtiElementHelper) {
+    'taoQtiTest/controller/creator/helpers/qtiElement',
+    'taoQtiTest/controller/creator/helpers/baseType'
+], function ($, _, qtiElementHelper, baseType) {
     'use strict';
 
     /**
-     * A mapping of QTI-XML node names in order to keep the camel case form
+     * A mapping of QTI-XML node and attributes names in order to keep the camel case form
      * @type {Object}
      */
     var normalizedNodes = {
         feedbackblock: 'feedbackBlock',
         outcomeidentifier: 'outcomeIdentifier',
-        showhide: 'showHide'
+        showhide: 'showHide',
+        printedvariable: 'printedVariable',
+        powerform: 'powerForm',
+        mappingindicator: 'mappingIndicator'
+    };
+
+    /**
+     * Some Nodes have attributes that needs typing during decoding.
+     * @type {Object}
+     */
+    var typedAttributes = {
+        printedVariable: {
+            identifier:       baseType.getConstantByName('identifier'),
+            powerForm:        baseType.getConstantByName('boolean'),
+            base:             baseType.getConstantByName('intOrIdentifier'),
+            index:            baseType.getConstantByName('intOrIdentifier'),
+            delimiter:        baseType.getConstantByName('string'),
+            field:            baseType.getConstantByName('string'),
+            mappingIndicator: baseType.getConstantByName('string')
+        }
     };
 
     /**
@@ -58,7 +78,7 @@ define([
      */
     function attrToStr(attributes) {
         return _.reduce(attributes, function (acc, value, key) {
-            if (_.isNumber(value) || (_.isString(value) && !_.isEmpty(value))) {
+            if (_.isNumber(value) || _.isBoolean(value) || (_.isString(value) && !_.isEmpty(value))) {
                 return acc + ' ' + key + '="' + value + '" ';
             }
             return acc;
@@ -73,7 +93,7 @@ define([
      * @returns {String}
      */
     function normalizeNodeName(nodeName) {
-        var normalized = nodeName.toLocaleLowerCase();
+        var normalized = (nodeName) ? nodeName.toLocaleLowerCase() : '';
         return normalizedNodes[normalized] || normalized;
     }
 
@@ -90,7 +110,8 @@ define([
          * @returns {String}
          */
         encode: function (modelValue) {
-            var self = this;
+            var self = this,
+                startTag;
 
             if (_.isArray(modelValue)) {
                 return _.reduce(modelValue, function (result, value) {
@@ -100,7 +121,7 @@ define([
                 if (modelValue['qti-type'] === 'textRun') {
                     return modelValue.content;
                 }
-                var startTag = '<' + modelValue['qti-type'] + attrToStr(getAttributes(modelValue));
+                startTag = '<' + modelValue['qti-type'] + attrToStr(getAttributes(modelValue));
                 if (modelValue.content) {
                     return startTag + '>' + self.encode(modelValue.content) + '</' + modelValue['qti-type'] + '>';
                 } else {
@@ -119,6 +140,7 @@ define([
             var self = this;
             var $nodeValue = (nodeValue instanceof $) ? nodeValue : $(nodeValue);
             var result = [];
+            var nodeName;
 
             _.forEach($nodeValue, function (elt) {
                 var object;
@@ -130,7 +152,9 @@ define([
                         }));
                     }
                 } else if (elt.nodeType === 1) {
-                    object = _.merge(qtiElementHelper.create(normalizeNodeName(elt.nodeName), {
+                    nodeName = normalizeNodeName(elt.nodeName);
+
+                    object = _.merge(qtiElementHelper.create(nodeName, {
                         'id': '',
                         'class': '',
                         'xmlBase': '',
@@ -138,8 +162,13 @@ define([
                         'label': ''
                     }),
                     _.transform(elt.attributes, function (acc, value) {
-                        if (value.nodeName) {
-                            acc[normalizeNodeName(value.nodeName)] = value.nodeValue;
+                        var attrName = normalizeNodeName(value.nodeName);
+                        if (attrName) {
+                            if (typedAttributes[nodeName] && typedAttributes[nodeName][attrName]) {
+                                acc[attrName] = baseType.getValue(typedAttributes[nodeName][attrName], value.nodeValue);
+                            } else {
+                                acc[attrName] = value.nodeValue;
+                            }
                         }
                     }));
                     if (elt.childNodes.length > 0) {

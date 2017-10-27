@@ -112,7 +112,7 @@ define([
     QUnit.test('is moving to the next item over a testPart', function(assert) {
         var updatedContext;
 
-        QUnit.expect(5);
+        QUnit.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context3, testMap).nextItem();
 
@@ -121,6 +121,7 @@ define([
         assert.equal(updatedContext.sectionId, 'assessmentSection-6', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-2', 'The updated context contains the correct test part id');
         assert.equal(updatedContext.isLinear, true, 'The updated context contains the correct isLinear option');
+        assert.equal(updatedContext.itemAnswered, false, 'The item has not been answered');
     });
 
     QUnit.test('is moving to the next item over timed sections', function(assert) {
@@ -160,12 +161,13 @@ define([
     QUnit.test('is moving to the previous item inside a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(4);
+        QUnit.expect(5);
 
         updatedContext = testNavigator(testData, testContexts.context2, testMap).previousItem();
 
         assert.equal(updatedContext.itemIdentifier, 'item-2', 'The updated context contains the correct item identifier');
         assert.equal(updatedContext.itemPosition, 1, 'The updated context contains the correct item position');
+        assert.equal(updatedContext.itemAnswered, true, 'The item has already been answered');
         assert.equal(updatedContext.sectionId, 'assessmentSection-1', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
     });

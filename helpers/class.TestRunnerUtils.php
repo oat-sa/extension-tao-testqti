@@ -21,7 +21,6 @@
 use oat\taoQtiTest\models\runner\RunnerService;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
-use qtism\data\View;
 use qtism\runtime\common\Container;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;

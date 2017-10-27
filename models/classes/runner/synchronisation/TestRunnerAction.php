@@ -111,6 +111,16 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     }
 
     /**
+     * Get action input parameters
+     *
+     * @return mixed
+     */
+    public function getRequestParameters()
+    {
+        return $this->parameters;
+    }
+
+    /**
      * Check get the $name from parameters array, false if does not exist
      *
      * @param $name

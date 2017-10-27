@@ -63,7 +63,9 @@ class Move extends TestRunnerAction
 
             $this->saveItemResponses(false);
 
-            $this->setOffline();
+            if ($this->getRequestParameter('offline') === true) {
+                $this->setOffline();
+            }
 
             $serviceContext->getTestSession()->initItemTimer($this->getTime());
             $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
@@ -74,6 +76,11 @@ class Move extends TestRunnerAction
 
             if ($result) {
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
+
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
+                }
             }
 
             \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
