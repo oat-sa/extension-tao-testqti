@@ -292,11 +292,10 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     protected function submitTestResults() {
         $testUri = $this->getTest()->getUri();
         $sessionId = $this->getSessionId();
-        
-        foreach ($this->getAllVariables() as $var) {
-            common_Logger::t("Submitting test result '" . $var->getIdentifier() . "' related to test '" . $testUri . "'.");
-            $this->getResultTransmitter()->transmitTestVariable($var, $sessionId, $testUri);
-        }
+
+        common_Logger::t("Submitting test result related to test '" . $testUri . "'.");
+
+        $this->getResultTransmitter()->transmitTestVariable($this->getAllVariables()->getArrayCopy(), $sessionId, $testUri);
     }
     
     /**
