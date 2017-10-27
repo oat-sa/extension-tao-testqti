@@ -1683,7 +1683,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('17.8.0', '17.9.0');
-        
+
         if ($this->isVersion('17.9.0')) {
             $storageManager = new StorageManager();
             $this->getServiceManager()->register(StorageManager::SERVICE_ID, $storageManager);
