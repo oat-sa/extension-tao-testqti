@@ -48,8 +48,18 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
             foreach ($iterator as $delivery) {
                 
                 $deliveryUri = $delivery->getUri();
-                
-                $runtime = $runtimeService->getRuntime($deliveryUri);
+                try{
+                    $runtime = $runtimeService->getRuntime($deliveryUri);
+                }catch (\Exception $exception){
+                    $failCount++;
+                    $report->add(
+                        new Report(
+                            Report::TYPE_ERROR,
+                            "Skipping '${$deliveryUri}''. Exception " . $exception->getMessage()
+                        )
+                    );
+                    continue;
+                }
                 $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
                 list($privateId, $publicId) = explode('|', $inputParameters['QtiTestCompilation'], 2);
                 $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($privateId);
