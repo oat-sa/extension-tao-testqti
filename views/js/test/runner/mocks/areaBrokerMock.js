@@ -21,9 +21,9 @@
 define([
     'jquery',
     'lodash',
-    'taoTests/runner/areaBroker',
+    'tao/test/core/areaBroker/mock/areaBrokerMock',
     'taoQtiTest/runner/ui/toolbox/toolbox'
-], function ($, _, areaBrokerFactory, toolboxFactory) {
+], function ($, _, areaBrokerMockFactory, toolboxFactory) {
     'use strict';
 
     /**
@@ -46,12 +46,6 @@ define([
     ];
 
     /**
-     * A counter utilised to generate the mock identifiers
-     * @type {Number}
-     */
-    var mockId = 0;
-
-    /**
      * Builds and returns a new areaBroker with dedicated areas.
      * @param config.$brokerContainer - where to create the area broker - default to #qunit-fixture
      * @param {String[]} config.areas - A list of areas to create, or...
@@ -59,37 +53,13 @@ define([
      * @returns {areaBroker} - Returns the new areaBroker
      */
     function areaBrokerMock(config) {
-        var $areaBrokerDom = $('<div />').attr('id', 'area-broker-mock-' + (mockId++)).addClass('test-runner');
 
-        config = config || {};
+        config = _.defaults(config || {}, {
+            defaultAreas: defaultAreas,
+            id: 'test-runner'
+        });
 
-        if (!config.mapping) {
-            config.mapping = {};
-            if (!config.areas) {
-                config.areas = defaultAreas;
-            } else {
-                config.areas = _.keys(_.merge(_.object(config.areas), _.object(defaultAreas)));
-            }
-
-            _.forEach(config.areas, function (areaId) {
-                config.mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($areaBrokerDom);
-            });
-
-        } else {
-            _.union(defaultAreas, (config.areas || [])).forEach(function(areaId) {
-                // create missing areas
-                if (!config.mapping[areaId]) {
-                    config.mapping[areaId] = $('<div />').addClass('test-area').addClass(areaId).appendTo($areaBrokerDom);
-                }
-            });
-        }
-
-        if (! config.$brokerContainer) {
-            config.$brokerContainer = $('#qunit-fixture');
-        }
-        config.$brokerContainer.append($areaBrokerDom);
-
-        areaBroker = areaBrokerFactory($areaBrokerDom, config.mapping);
+        areaBroker = areaBrokerMockFactory(config);
 
         areaBroker.setComponent('toolbox', toolboxFactory().init());
 
