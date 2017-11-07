@@ -1040,6 +1040,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
+            if ($context->isAdaptive()) {
+                \common_Logger::t("Select next item before timeout");
+                $context->selectAdaptiveNextItem();
+            }
             try {
                 $session->closeTimer($ref, $scope);
                 $session->checkTimeLimits(false, true, false);
@@ -1073,6 +1077,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
             \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+
+            if ($context->isAdaptive()) {
+                \common_Logger::t("Select next item before test exit");
+                $context->selectAdaptiveNextItem();
+            }
 
             $event = new TestExitEvent($session);
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);

@@ -36,6 +36,7 @@ use qtism\runtime\tests\RouteItem;
 use qtism\runtime\tests\TimeConstraint;
 use qtism\runtime\tests\TimeConstraintCollection;
 use taoQtiTest_helpers_TestSession;
+use oat\oatbox\log\LoggerAwareTrait;
 
 /**
  * TestSession override
@@ -44,6 +45,8 @@ use taoQtiTest_helpers_TestSession;
  */
 class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 {
+    use LoggerAwareTrait;
+
     /**
      * The Timer bound to the test session
      * @var QtiTimer
@@ -237,7 +240,11 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             if (!is_null($duration)) {
                 $duration = floatval($duration);
             }
-            $timer->adjust($tags, $duration);
+            try {
+                $timer->adjust($tags, $duration);
+            } catch (\oat\taoTests\models\runner\time\TimeException $e) {
+                $this->logAlert($e->getMessage());
+            }
         }
         
         if (is_numeric($consumedExtraTime) && !is_null($consumedExtraTime)) {
