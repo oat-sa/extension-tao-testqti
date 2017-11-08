@@ -43,6 +43,10 @@ use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
 use taoQtiTest_models_classes_QtiTestService;
+use oat\libCat\result\variable\OutcomeVariable;
+use oat\libCat\result\variable\ResponseVariable;
+use oat\libCat\result\variable\TemplateVariable;
+use oat\libCat\result\variable\TraceVariable;
 
 /**
  * Class QtiRunnerServiceContext
@@ -806,45 +810,140 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * Save the Cat service result.
-     * If there is no result, skip
-     * Otherwise tergister the values as Test outcome variables
+     * Save the Cat service result, tests and items
      *
      * @param CatSession $catSession
      * @return bool
      */
     protected function saveAdaptiveResults(CatSession $catSession)
     {
-        /** @var ResultVariable[] $resultVariables */
-        $resultVariables = $catSession->getResults();
-        if (empty($resultVariables)) {
-            \common_Logger::t('No Cat results to store.');
+        if (!$this->saveAdaptiveItemResults($catSession) || !$this->saveAdaptiveTestResults($catSession) ) {
+            return false;
+        }
+        \common_Logger::i('Cat service results stored as outcome variable.');
+        return true;
+    }
+
+    /**
+     * Save the Cat service result for test
+     *
+     * If there is no result, skip
+     * Otherwise register the values as Test variables
+     *
+     * @param CatSession $catSession
+     * @return bool
+     */
+    protected function saveAdaptiveTestResults(CatSession $catSession)
+    {
+        /** @var ResultVariable[] $testResultVariables */
+        $testResultVariables = $catSession->getResults();
+        if (empty($testResultVariables)) {
+            \common_Logger::t('No Test Cat results to store.');
             return true;
+        }
+
+        foreach ($testResultVariables as $resultVariable) {
+            if (!$this->storeVariable($resultVariable)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Save the Cat service result for items
+     *
+     * If there is no result, skip
+     * Otherwise register the values as Item variables
+     *
+     * @param CatSession $catSession
+     * @return bool
+     */
+    protected function saveAdaptiveItemResults(CatSession $catSession)
+    {
+        /** @var ResultVariable[] $itemResultVariables */
+        $itemResultVariables = $catSession->getResults(CatSession::ITEM_RESULTS_SCOPE);
+        if (empty($itemResultVariables)) {
+            \common_Logger::t('No Item Cat results to store.');
+            return true;
+        }
+
+        $itemRef = $this->getCurrentCatItemId();
+        if (is_null($itemRef)) {
+            \common_Logger::t('No Item Cat to associate result.');
+            return true;
+        }
+
+        foreach ($itemResultVariables as $resultVariable) {
+            if (!$this->storeVariable($resultVariable, $this->getCurrentCatItemId())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Store a Cat Result variable
+     *
+     * If item ref is null, it's a test variable. Variable name is concatenated with current session id
+     * If item ref is not null, it's an item variable.
+     *
+     * ResultVariable can have different implementation used to know which kind of variable is:
+     *  - TraceVariable
+     *  - ResponseVariable
+     *  - TemplateVariable
+     *  - OutcomeVariable
+     *
+     * Use the runner service to store the variable
+     *
+     * @param ResultVariable $variable
+     * @param null $itemRef
+     * @return bool
+     */
+    protected function storeVariable(ResultVariable $variable, $itemRef = null)
+    {
+        $variableName = $variable->getId();
+        if (is_null($itemRef)) {
+            $sectionId = $this
+                ->getTestSession()
+                ->getRoute()
+                ->current()
+                ->getAssessmentSection()
+                ->getIdentifier();
+            $variableName = $sectionId . '-' . $variableName;
+        }
+
+        switch (get_class($variable)) {
+            case TraceVariable::class:
+                $storeMethod = 'storeTraceVariable';
+                break;
+            case ResponseVariable::class:
+                $storeMethod = 'storeResponseVariable';
+                break;
+            case TemplateVariable::class:
+                $storeMethod = null;
+                break;
+            case OutcomeVariable::class:
+            default:
+                $storeMethod = 'storeOutcomeVariable';
+                break;
+        }
+
+        if (is_null($storeMethod)) {
+            \common_Logger::w('Variable of type ' . get_class($variable). ' is not implemented in ' . __METHOD__);
+            return false;
         }
 
         /** @var QtiRunnerService $runnerService */
         $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
-        foreach ($resultVariables as $resultVariable) {
-            try {
-                $sectionId = $this
-                    ->getTestSession()
-                    ->getRoute()
-                    ->current()
-                    ->getAssessmentSection()
-                    ->getIdentifier();
-                $runnerService->storeOutcomeVariable(
-                    $this,
-                    null,
-                    $sectionId . '-' . $resultVariable->getId(),
-                    $resultVariable->getValue()
-                );
-            } catch (\common_Exception $e) {
-                return false;
-            }
+        try {
+            \common_Logger::e($itemRef);
+            return call_user_func_array(array($runnerService, $storeMethod), array($this, $itemRef, $variableName, $variable->getValue()));
+        } catch (\common_Exception $e) {
+            return false;
         }
-        \common_Logger::i('Cat service results stored as outcome variable.');
-
-        return true;
     }
 
     /**
