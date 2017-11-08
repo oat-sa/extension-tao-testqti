@@ -42,7 +42,7 @@ class ExtendedStateService extends ConfigurableService
 
     /**
      * Gets the StateStorage service
-     * @return StateStorage
+     * @return StorageManager
      */
     public function getStorageService()
     {

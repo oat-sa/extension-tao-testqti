@@ -256,12 +256,14 @@ class StorageManager extends ConfigurableService
      */
     public function persist($userId = null, $callId = null)
     {
+        $keys = [];
+
         if ($userId && $callId) {
             $keys = [$this->getCacheKey($userId, $callId)];
-        } else {
-            $keys = array_keys($this->cache);
         }
-        
+
+        $keys = array_merge(array_keys($this->cache), $keys);
+
         $success = true;
         foreach ($keys as $key) {
             if (!$this->persistCacheEntry($key)) {
