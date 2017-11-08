@@ -103,7 +103,7 @@ class ExtendedStateService extends ConfigurableService
     {
         $extendedState = $this->getExtendedState($testSessionId);
         $extendedState->save();
-        $this->getStorageService()->persist($extendedState->getTestSessionId(), $extendedState->getUserId());
+        $this->getStorageService()->persist($extendedState->getUserId(), $extendedState->getStorageKey());
     }
 
     /**
