@@ -261,7 +261,7 @@ class StorageManager extends ConfigurableService
         } else {
             $keys = array_keys($this->cache);
         }
-        
+
         $success = true;
         foreach ($keys as $key) {
             if (!$this->persistCacheEntry($key)) {
