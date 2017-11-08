@@ -939,7 +939,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         /** @var QtiRunnerService $runnerService */
         $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
         try {
-            \common_Logger::e($itemRef);
             return call_user_func_array(array($runnerService, $storeMethod), array($this, $itemRef, $variableName, $variable->getValue()));
         } catch (\common_Exception $e) {
             return false;
