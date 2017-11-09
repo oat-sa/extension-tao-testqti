@@ -577,18 +577,16 @@ define([
         callItemAction: function callItemAction(itemIdentifier, action, params, deferred) {
             var self = this;
 
-            var testMap = this.getDataHolder().get('testMap');
 
             //update the item state
             if(params.itemState){
                 self.updateState(itemIdentifier, params.itemState);
             }
 
-            //check if we have already the item for the action we are going to perform
             self.getItemFromStore = (
-                (navigationHelper.isMovingToNextItem(action, params) && self.hasNextItem(itemIdentifier)) ||
-                (navigationHelper.isMovingToPreviousItem(action, params) && self.hasPreviousItem(itemIdentifier)) ||
-                (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(testMap,  params.ref)))
+                navigationHelper.isMovingToNextItem(action, params) ||
+                navigationHelper.isMovingToPreviousItem(action, params) ||
+                navigationHelper.isJumpingToItem(action, params)
             );
 
             //as we will pick the next item from the store ensure the next request will start the timer
