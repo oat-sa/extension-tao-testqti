@@ -184,7 +184,7 @@ define([
                     assert.ok($container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next have been collapsed');
 
                     collapsedBtns = 4;
-                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) + 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
@@ -203,7 +203,7 @@ define([
                     assert.ok(! $container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next have been expanded');
 
                     collapsedBtns = 3;
-                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) + 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
@@ -222,7 +222,7 @@ define([
                     assert.ok(! $container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next have been expanded');
 
                     collapsedBtns = 1;
-                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) + 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
@@ -240,7 +240,7 @@ define([
                     assert.ok(! $container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been expanded');
                     assert.ok(! $container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next have been expanded');
 
-                    newWidth = ALL_EXPANDED;
+                    newWidth = ALL_EXPANDED + 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
@@ -403,7 +403,7 @@ define([
                     assert.ok($container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button has been collapsed');
 
                     collapsedBtns = 4;
-                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) + 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
@@ -423,7 +423,7 @@ define([
                     assert.ok(! $container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button has been expanded');
 
                     collapsedBtns = 3;
-                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) + 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
@@ -443,7 +443,7 @@ define([
                     assert.ok(! $container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button has been expanded');
 
                     collapsedBtns = 1;
-                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns);
+                    newWidth = ALL_EXPANDED - (TEXT_WIDTH * collapsedBtns) + 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
@@ -464,7 +464,7 @@ define([
                     assert.ok(! $container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button has been expanded');
 
 
-                    newWidth = ALL_EXPANDED;
+                    newWidth = ALL_EXPANDED + 1;
                     $actionsBar.width(newWidth);
                     runner.trigger('collapseTools');
                     break;
@@ -588,7 +588,7 @@ define([
                             assert.ok(! $container.find('[data-control="five"]').hasClass(noLabelCls), 'button5 remains expanded');
                         }
 
-                        $actionsBar.width(ALL_EXPANDED);
+                        $actionsBar.width(ALL_EXPANDED + 1);
                         runner.trigger('collapseTools');
                         break;
                     }
