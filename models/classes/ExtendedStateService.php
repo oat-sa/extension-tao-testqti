@@ -42,7 +42,7 @@ class ExtendedStateService extends ConfigurableService
 
     /**
      * Gets the StateStorage service
-     * @return StateStorage
+     * @return StorageManager
      */
     public function getStorageService()
     {
@@ -103,7 +103,7 @@ class ExtendedStateService extends ConfigurableService
     {
         $extendedState = $this->getExtendedState($testSessionId);
         $extendedState->save();
-        $this->getStorageService()->persist($extendedState->getTestSessionId(), $extendedState->getUserId());
+        $this->getStorageService()->persist($extendedState->getUserId(), $extendedState->getStorageKey());
     }
 
     /**

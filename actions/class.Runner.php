@@ -197,7 +197,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
                         $messageService = $this->getServiceManager()->get(QtiRunnerMessageService::SERVICE_ID);
-                        $response['message'] = $messageService->getStateMessage($this->serviceContext->getTestSession());
+                        $response['message'] = __($messageService->getStateMessage($this->serviceContext->getTestSession()));
                     }
                     $response['type'] = 'TestState';
                     break;
