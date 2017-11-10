@@ -35,11 +35,17 @@ define([
     'use strict';
 
     /**
+     * The public name of the plugin
+     * @type {String}
+     */
+    var pluginName = 'itemThemeSwitcher';
+
+    /**
      * Returns the configured plugin
      */
     return pluginFactory({
 
-        name: 'itemThemeSwitcher',
+        name: pluginName,
 
         /**
          * Installation of the plugin (called before init)
@@ -77,6 +83,7 @@ define([
              */
             function changeTheme(themeId) {
                 var $qtiItem = $('.qti-item');
+                var previousTheme = state.selectedTheme;
                 state.selectedTheme = themeId;
 
                 if ($qtiItem) {
@@ -86,6 +93,10 @@ define([
                 }
                 if (self.storage) {
                     self.storage.setItem('itemThemeId', themeId);
+                }
+
+                if (previousTheme !== state.selectedTheme) {
+                    testRunner.trigger('themechange', state.selectedTheme, previousTheme);
                 }
             }
 
@@ -111,13 +122,14 @@ define([
                 title: __('Change the current color preset'),
                 icon: 'contrast',
                 text: __('Contrast')
-            });
-
-            this.menuButton.on('click', function (e) {
+            }).on('click', function (e) {
                 e.preventDefault();
                 testRunner.trigger('tool-themeswitcher-toggle');
+            }).on('openmenu', function() {
+                testRunner.trigger('plugin-open.' + pluginName, state.selectedTheme);
+            }).on('closemenu', function() {
+                testRunner.trigger('plugin-close.' + pluginName, state.selectedTheme);
             });
-
 
             // register menu entries
             state.availableThemes.forEach(function (theme) {
@@ -182,7 +194,7 @@ define([
                     }
                 });
 
-            return storeFactory('itemThemeSwitcher-' + testRunner.getConfig().serviceCallId)
+            return storeFactory(pluginName + '-' + testRunner.getConfig().serviceCallId)
                 .then(function (itemThemesStore) {
                     if (self.shouldClearStorage) {
                         return itemThemesStore.clear().then(function () {

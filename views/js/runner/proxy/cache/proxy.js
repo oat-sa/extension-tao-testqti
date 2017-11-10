@@ -576,7 +576,6 @@ define([
          */
         callItemAction: function callItemAction(itemIdentifier, action, params, deferred) {
             var self = this;
-
             var testMap = this.getDataHolder().get('testMap');
 
             //update the item state
@@ -591,8 +590,11 @@ define([
                 (navigationHelper.isJumpingToItem(action, params) && self.hasItem(mapHelper.getItemIdentifier(testMap,  params.ref)))
             );
 
-            //as we will pick the next item from the store ensure the next request will start the timer
-            if (self.getItemFromStore) {
+            //If item action is move to another item ensure the next request will start the timer
+            if (navigationHelper.isMovingToNextItem(action, params) ||
+                navigationHelper.isMovingToPreviousItem(action, params) ||
+                navigationHelper.isJumpingToItem(action, params)
+            ) {
                 params.start = true;
             }
 

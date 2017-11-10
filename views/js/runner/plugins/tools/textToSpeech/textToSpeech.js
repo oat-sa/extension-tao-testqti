@@ -23,7 +23,8 @@ define([
     'ui/component',
     'tpl!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
     'css!taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech',
-    'nouislider'
+    'nouislider',
+    'mathJax'
 ], function (
     $,
     _,
