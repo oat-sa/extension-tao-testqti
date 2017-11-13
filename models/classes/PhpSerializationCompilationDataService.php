@@ -3,6 +3,7 @@
 namespace oat\taoQtiTest\models;
 
 use qtism\data\QtiComponent;
+use qtism\data\AssessmentItemRef;
 
 /**
  * PHP Serialization Compilation Data Service.
@@ -16,9 +17,13 @@ class PhpSerializationCompilationDataService extends CompilationDataService
     public function writePhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
         // Clone the component to make sure observers are not saved.
+        if ($object instanceof AssessmentItemRef) {
+            $object = clone $object;
+        }
+        
         $compilationDirectory->write(
             $path,
-            serialize(clone $object)
+            serialize($object)
         );
     }
     
