@@ -15,9 +15,10 @@ class PhpSerializationCompilationDataService extends CompilationDataService
 {
     public function writePhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
+        // Clone the component to make sure observers are not saved.
         $compilationDirectory->write(
             $path,
-            serialize($object)
+            serialize(clone $object)
         );
     }
     
