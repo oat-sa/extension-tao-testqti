@@ -77,10 +77,6 @@ class CatService extends ConfigurableService
 
     const IS_SHADOW_ITEM = 'is-shadow-item';
 
-    const THETA = 'CURRENT_THETA';
-
-    const THETA_SE = 'CURRENT_THETA_SE';
-
     private $engines = [];
     
     private $sectionMapCache = [];
