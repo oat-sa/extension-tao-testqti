@@ -1691,9 +1691,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.10.0');
         }
 
-        $this->skip('17.10.0', '17.15.4');
+        $this->skip('17.10.0', '17.16.0');
 
-        if ($this->isVersion('17.15.4')) {
+        if ($this->isVersion('17.16.0')) {
 
             $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
             $actions = $synchronisationService->getAvailableActions();
@@ -1701,7 +1701,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $synchronisationService->setAvailableActions($actions);
             $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
 
-            $this->setVersion('17.16.0');
+            $this->setVersion('17.17.0');
         }
     }
 }
