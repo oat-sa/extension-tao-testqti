@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
@@ -1691,5 +1692,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('17.10.0', '17.15.4');
+
+        if ($this->isVersion('17.15.4')) {
+
+            $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
+            $actions = $synchronisationService->getAvailableActions();
+            $actions['pause'] = Pause::class;
+            $synchronisationService->setAvailableActions($actions);
+            $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
+
+            $this->setVersion('17.16.0');
+        }
     }
 }
