@@ -222,7 +222,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
             switch (true) {
                 case $e instanceof CatEngineNotFoundException:
-                    $response['code'] = 404;
+                    $response['code'] = $e->getCode();
                     $response['type'] = 'CatEngine';
                     $response['message'] = $e->getMessage();
                     break;
