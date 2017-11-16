@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
 use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\event\ItemOfflineEvent;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -220,6 +221,11 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
             }
 
             switch (true) {
+                case $e instanceof CatEngineNotFoundException:
+                    $response['code'] = 404;
+                    $response['type'] = 'CatEngine';
+                    $response['message'] = $e->getMessage();
+                    break;
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {

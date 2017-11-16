@@ -37,7 +37,8 @@ define([
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
-    'tpl!taoQtiTest/runner/provider/layout'
+    'tpl!taoQtiTest/runner/provider/layout',
+    'ui/waitingDialog/waitingDialog'
 ], function(
     $,
     _,
@@ -55,7 +56,8 @@ define([
     toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
-    layoutTpl) {
+    layoutTpl,
+    waitingDialog) {
     'use strict';
 
     //the asset strategies
@@ -73,6 +75,9 @@ define([
         header:     $('.title-box', $layout)
     });
 
+    var echoDelayUpdate = 15;
+    var echoPauseLimit = 120;
+    var echoExceptionName = 'CatEngine';
     /**
      * A Test runner provider to be registered against the runner
      */
@@ -226,7 +231,8 @@ define([
              * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
             function computeNext(action, params, loadPromise){
-
+                var dialog = false;
+                var time = 0;
                 var context = self.getTestContext();
 
                 //catch server errors
@@ -237,6 +243,42 @@ define([
                             err.message || __('An error occurred during results submission. Please retry.'),
                             load
                         );
+                    } else if (err.type === echoExceptionName) {
+                        if (!dialog && time < echoPauseLimit) {
+                            dialog = waitingDialog({
+                                message : '',
+                                waitContent : __('Sorry, but our test generation system cannot load your next items.\n Please wait while we retry for 2 minutes.'),
+                                proceedButtonText: __('Continue your test'),
+                                proceedContent : __('Success! Your next items have loaded. Thank you for your patience.')
+                            })
+                            .on('proceed', function(){
+                                self.trigger('enableitem');
+                            })
+                            .on('render', function(){
+                                self.trigger('disableitem');
+                            });
+                        } else if (dialog && time >= echoPauseLimit) {
+                            dialog.destroy();
+                            dialog = waitingDialog({
+                                message : '',
+                                waitContent : __('Please wait while we retry for 2 minutes.'),
+                                proceedButtonText: __('Relaunch myTest'),
+                                proceedContent : __('Unfortunately, our test delivery system still cannot load your next items, so we paused your test.\n' +
+                                    'Please notify your proctor now, who will authorize you to relaunch your test. If the system is able to load your next items, you will continue testing where you left off.')
+                            })
+                                .on('proceed', function(){
+                                    self.trigger('pause');
+                                })
+                                .on('render', function(){
+                                    dialog.endWait();
+                                });
+                        }
+                        if (time < echoPauseLimit) {
+                            setTimeout(function(){
+                                self.trigger('unloaditem.' + action);
+                                time = time + echoDelayUpdate;
+                            }, echoDelayUpdate * 1000);
+                        }
                     } else {
                         self.trigger('error', err);
                     }
@@ -277,27 +319,26 @@ define([
                 feedbackPromise.then(function(){
                     // ensure the answered state of the current item is correctly set and the stats are aligned
                     self.setTestMap(self.dataUpdater.updateStats());
-
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
-                        self.off('.'+action);
-
                         self.getProxy()
                             .callItemAction(context.itemIdentifier, action, params)
                             .then(function(results){
-                                loadPromise = loadPromise || Promise.resolve();
-
-                                return loadPromise.then(function(){
-                                    return results;
-                                });
-                            })
-                            .then(function(results){
-
-                                //update testData, testContext and build testMap
-                                self.dataUpdater.update(results);
-
-                                load();
+                                if (results.success === false) {
+                                    submitError(results);
+                                } else {
+                                    self.off('.'+action);
+                                    loadPromise = loadPromise || Promise.resolve();
+                                    loadPromise.then(function(){
+                                        self.dataUpdater.update(results);
+                                        load();
+                                    });
+                                    if (dialog) {
+                                        dialog.endWait();
+                                        self.trigger('disableitem');
+                                    }
+                                }
                             })
                             .catch(submitError);
                     });
