@@ -38,7 +38,8 @@ define([
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
     'tpl!taoQtiTest/runner/provider/layout',
-    'ui/waitingDialog/waitingDialog'
+    'ui/waitingDialog/waitingDialog',
+    'core/timer'
 ], function(
     $,
     _,
@@ -57,7 +58,8 @@ define([
     qtiItemRunner,
     assetManagerFactory,
     layoutTpl,
-    waitingDialog) {
+    waitingDialog,
+    timerFactory) {
     'use strict';
 
     //the asset strategies
@@ -233,6 +235,7 @@ define([
             function computeNext(action, params, loadPromise){
                 var dialog = false;
                 var time = 0;
+                var timeout = 0;
                 var context = self.getTestContext();
 
                 //catch server errors
@@ -274,10 +277,11 @@ define([
                                 });
                         }
                         if (time < echoPauseLimit) {
+                            timeout = Math.ceil(Math.random() * echoDelayUpdate);
                             setTimeout(function(){
                                 self.trigger('unloaditem.' + action);
-                                time = time + echoDelayUpdate;
-                            }, echoDelayUpdate * 1000);
+                                time = time + timeout;
+                            }, timeout * 1000);
                         }
                     } else {
                         self.trigger('error', err);
