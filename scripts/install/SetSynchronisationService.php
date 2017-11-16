@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\install;
 use oat\oatbox\extension\InstallAction;
 use oat\taoQtiTest\models\runner\synchronisation\action\ExitTest;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
@@ -57,11 +58,12 @@ class SetSynchronisationService extends InstallAction
         }
 
         $newActions = [
-            'exitTest' => ExitTest::class,
-            'move' => Move::class,
-            'skip' => Skip::class,
-            'storeTraceData' => StoreTraceData::class,
-            'timeout' => Timeout::class,
+            'exitTest'        => ExitTest::class,
+            'move'            => Move::class,
+            'pause'           => Pause::class,
+            'skip'            => Skip::class,
+            'storeTraceData'  => StoreTraceData::class,
+            'timeout'         => Timeout::class,
             'getNextItemData' => NextItemData::class
         ];
 
