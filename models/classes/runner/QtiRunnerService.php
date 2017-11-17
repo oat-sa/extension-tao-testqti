@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
@@ -58,7 +59,7 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
-use oat\libCat\result\ItemResult;
+use oat\libCat\result\bkp;
 use oat\libCat\result\ResultVariable;
 
 /**
@@ -1439,25 +1440,31 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function storeTraceVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
     {
-        if ($context instanceof QtiRunnerServiceContext) {
-            if (!is_string($variableValue) && !is_numeric($variableValue)) {
-                $variableValue = json_encode($variableValue);
-            }
-            $metaVariable = new \taoResultServer_models_classes_TraceVariable();
-            $metaVariable->setIdentifier($variableIdentifier);
-            $metaVariable->setBaseType('string');
-            $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
-            $metaVariable->setTrace($variableValue);
-            return $this->storeVariable($context, $itemUri, $metaVariable);
-        } else {
-            throw new \common_exception_InvalidArgumentType(
-                __CLASS__,
-                __FUNCTION__,
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
+        $this->assertQtiRunnerServiceContext($context);
+        $metaVariable = $this->getTraceVariable($variableIdentifier, $variableValue);
+        return $this->storeVariable($context, $itemUri, $metaVariable);
+    }
+
+    /**
+     * Create a trace variable from variable identifier and value
+     *
+     * @param $variableIdentifier
+     * @param $variableValue
+     * @return \taoResultServer_models_classes_TraceVariable
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getTraceVariable($variableIdentifier, $variableValue)
+    {
+        if (!is_string($variableValue) && !is_numeric($variableValue)) {
+            $variableValue = json_encode($variableValue);
         }
+        $metaVariable = new \taoResultServer_models_classes_TraceVariable();
+        $metaVariable->setIdentifier($variableIdentifier);
+        $metaVariable->setBaseType('string');
+        $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
+        $metaVariable->setTrace($variableValue);
+
+        return $metaVariable;
     }
 
     /**
@@ -1472,25 +1479,31 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function storeOutcomeVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
     {
-        if ($context instanceof QtiRunnerServiceContext) {
-            if (!is_string($variableValue) && !is_numeric($variableValue)) {
-                $variableValue = json_encode($variableValue);
-            }
-            $metaVariable = new \taoResultServer_models_classes_OutcomeVariable();
-            $metaVariable->setIdentifier($variableIdentifier);
-            $metaVariable->setBaseType('string');
-            $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
-            $metaVariable->setValue($variableValue);
-            return $this->storeVariable($context, $itemUri, $metaVariable);
-        } else {
-            throw new \common_exception_InvalidArgumentType(
-                __CLASS__,
-                __FUNCTION__,
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
+        $this->assertQtiRunnerServiceContext($context);
+        $metaVariable = $this->getOutcomeVariable($variableIdentifier, $variableValue);
+        return $this->storeVariable($context, $itemUri, $metaVariable);
+    }
+
+    /**
+     * Create an outcome variable from variable identifier and value
+     *
+     * @param $variableIdentifier
+     * @param $variableValue
+     * @return \taoResultServer_models_classes_OutcomeVariable
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getOutcomeVariable($variableIdentifier, $variableValue)
+    {
+        if (!is_string($variableValue) && !is_numeric($variableValue)) {
+            $variableValue = json_encode($variableValue);
         }
+        $metaVariable = new \taoResultServer_models_classes_OutcomeVariable();
+        $metaVariable->setIdentifier($variableIdentifier);
+        $metaVariable->setBaseType('string');
+        $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
+        $metaVariable->setValue($variableValue);
+
+        return $metaVariable;
     }
 
     /**
@@ -1505,17 +1518,72 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function storeResponseVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
     {
-        if ($context instanceof QtiRunnerServiceContext) {
-            if (!is_string($variableValue) && !is_numeric($variableValue)) {
-                $variableValue = json_encode($variableValue);
-            }
-            $metaVariable = new \taoResultServer_models_classes_ResponseVariable();
-            $metaVariable->setIdentifier($variableIdentifier);
-            $metaVariable->setBaseType('string');
-            $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
-            $metaVariable->setValue($variableValue);
-            return $this->storeVariable($context, $itemUri, $metaVariable);
+        $this->assertQtiRunnerServiceContext($context);
+        $metaVariable = $this->getResponseVariable($variableIdentifier, $variableValue);
+        return $this->storeVariable($context, $itemUri, $metaVariable);
+    }
+
+    /**
+     * Create a response variable from variable identifier and value
+     *
+     * @param $variableIdentifier
+     * @param $variableValue
+     * @return \taoResultServer_models_classes_ResponseVariable
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getResponseVariable($variableIdentifier, $variableValue)
+    {
+        if (!is_string($variableValue) && !is_numeric($variableValue)) {
+            $variableValue = json_encode($variableValue);
+        }
+        $metaVariable = new \taoResultServer_models_classes_ResponseVariable();
+        $metaVariable->setIdentifier($variableIdentifier);
+        $metaVariable->setBaseType('string');
+        $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
+        $metaVariable->setValue($variableValue);
+
+        return $metaVariable;
+    }
+
+    /**
+     * Store a set of result variables to the result server
+     *
+     * @param QtiRunnerServiceContext $context
+     * @param $itemUri
+     * @param $metaVariables
+     * @return bool
+     * @throws \Exception
+     */
+    public function storeVariables(
+        QtiRunnerServiceContext $context,
+        $itemUri,
+        $metaVariables
+    ) {
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $testUri = $context->getTestDefinitionUri();
+        $sessionId = $context->getTestSession()->getSessionId();
+
+        if (!is_null($itemUri)) {
+            $currentItem = $context->getCurrentAssessmentItemRef();
+            $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+            $transmissionId = $sessionId . '.' . $currentItem . '.' . $currentOccurrence;
+            $resultServer->storeItemVariableSet($testUri, $itemUri, $metaVariables, $transmissionId);
         } else {
+            $resultServer->storeTestVariableSet($testUri, $metaVariables, $sessionId);
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the given RunnerServiceContext is a QtiRunnerServiceContext
+     *
+     * @param RunnerServiceContext $context
+     * @throws \common_exception_InvalidArgumentType
+     */
+    protected function assertQtiRunnerServiceContext(RunnerServiceContext $context)
+    {
+        if (!$context instanceof QtiRunnerServiceContext) {
             throw new \common_exception_InvalidArgumentType(
                 __CLASS__,
                 __FUNCTION__,
