@@ -39,7 +39,6 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
-use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\QtiString as QtismString;
@@ -431,7 +430,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // Current Section title.
                 $response['sectionId'] = $currentSection->getIdentifier();
                 $response['sectionTitle'] = $currentSection->getTitle();
-                $response['sectionPause'] = $this->getServiceManager()->get(SectionPauseService::SERVICE_ID)->isPausable($session);
 
                 // Number of items composing the test session.
                 $response['numberItems'] = $route->count();
