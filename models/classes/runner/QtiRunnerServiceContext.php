@@ -849,6 +849,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
             if ($result instanceof ItemResult) {
                 $itemId = $result->getItemRefId();
+                if (empty($itemId)) {
+                    \common_Logger::t('**** No Cat result variables to store.');
+                    return true;
+                }
             } else {
                 $itemId = null;
                 $sectionId = $this

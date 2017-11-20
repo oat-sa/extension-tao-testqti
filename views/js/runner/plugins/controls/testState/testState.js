@@ -44,7 +44,8 @@ define([
                     var data = res && res.data;
 
                     // test has been closed/suspended => redirect to the index page after message acknowledge
-                    if (data && data.type && data.type === 'TestState') {
+                    if (data && data.type && data.type === 'TestState' && !testRunner.getState('closedOrSuspended')) {
+
                         // spread the world about the reason of the leave
                         testRunner.setState('closedOrSuspended', true);
 
