@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\runner;
 
 use oat\libCat\CatSession;
 use oat\libCat\Exception\CatEngineException;
+use oat\libCat\result\AbstractResult;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\TestResult;
 use oat\taoQtiTest\helpers\TestSessionMemento;
@@ -837,7 +838,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 return true;
             }
 
-            if (!$result instanceof TestResult) {
+            if (!$result instanceof AbstractResult) {
                 throw new \common_Exception(__FUNCTION__ . ' requires a CAT result to store it.');
             }
 
