@@ -239,11 +239,27 @@ define([
              * Click to pronounce
              */
             clickToSpeak: function clickToSpeak() {
+                var self = this;
+
                 options.enableClickToSpeak = !options.enableClickToSpeak;
 
                 this._exec('enableClickToSpeak', options.enableClickToSpeak);
                 this._exec('enableContinuousReading', !options.enableClickToSpeak); // continuous reading is off when click to speak is on
                 this.trigger('clickToSpeak');
+
+                //adding each item a special class by presence of which normal click handling could be prevented and passed to click-to-speak handling
+                $('.qti-item').each(function() {
+                    var $_self = $(this);
+                    $_self.toggleClass('prevent-click-handler');
+                });
+
+                //we should disable click-to-speak while navigating through test, if it was enabled on some item page
+                //just to ensure that after other item load click-to-speak will function normally, and tao click handlers won't work on item-part click
+                $('.navi-box').on('click', 'a', function() {
+                    if ($('.qti-item.prevent-click-handler').length > 0) {
+                        self.clickToSpeak();
+                    }
+                });
 
                 return this;
             }
@@ -345,11 +361,11 @@ define([
                 animate: true,
                 connected: true,
                 range: {
-                    min: 0,
-                    max: 100
+                    min: 25,
+                    max: 55
                 },
                 start: speed,
-                step: 10
+                step: 15
             })
             .on('change', this.setSpeed);
         })
