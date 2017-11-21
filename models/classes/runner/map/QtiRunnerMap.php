@@ -241,6 +241,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
                         'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
+                        'categories' => $itemRef->getCategories()->getArrayCopy()
                     ];
 
                     if ($checkInformational) {
