@@ -361,8 +361,8 @@ define([
                 animate: true,
                 connected: true,
                 range: {
-                    min: 25,
-                    max: 55
+                    min: 0,
+                    max: 100
                 },
                 start: speed,
                 step: 15
