@@ -104,7 +104,7 @@ define([
                         warning: reason
                     });
                 }
-                //window.location = url;
+                window.location = url;
             };
 
             /**
