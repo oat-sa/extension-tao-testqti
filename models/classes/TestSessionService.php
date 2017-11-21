@@ -77,10 +77,11 @@ class TestSessionService extends ConfigurableService
             if ($session instanceof UserUriAware) {
                 $session->setUserUri($userId);
             }
-
-            $resultServerObject = new \taoResultServer_models_classes_ResultServer(ResultServerService::SERVICE_ID);
-            $resultServer->setValue('resultServerUri', ResultServerService::SERVICE_ID);
-            $resultServer->setValue('resultServerObject', [ResultServerService::SERVICE_ID => $resultServerObject]);
+            $resultServerService = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+            $resultStorage = $resultServerService->getResultStorage($deliveryExecution->getDelivery()->getUri());
+            $resultServerObject = new \taoResultServer_models_classes_ResultServer(get_class($resultStorage));
+            $resultServer->setValue('resultServerUri', get_class($resultStorage));
+            $resultServer->setValue('resultServerObject', [get_class($resultStorage) => $resultServerObject]);
             $resultServer->setValue('resultServer_deliveryResultIdentifier', $sessionId);
         } else {
             $session = null;
