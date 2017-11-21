@@ -335,11 +335,11 @@ define([
                             return self.offlineAction(action, actionParams);
                         }
                         return result;
-                    }).catch(function(result){
-                        if (self.isOffline()) {
+                    }).catch(function(error){
+                        if (self.isConnectivityError(error) && self.isOffline()) {
                             return self.offlineAction(action, actionParams);
                         }
-                        return result;
+                        throw error;
                     });
                 };
 
