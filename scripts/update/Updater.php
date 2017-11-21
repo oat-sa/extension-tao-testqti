@@ -1701,7 +1701,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $synchronisationService->setAvailableActions($actions);
             $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
 
-            $this->setVersion('17.17.0');
+            $this->setVersion('17.17.1');
         }
     }
 }
