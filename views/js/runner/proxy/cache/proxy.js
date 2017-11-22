@@ -328,6 +328,12 @@ define([
                         //action is not synchronizable
                         //fallback to direct request
                         request = self.request(url, actionParams);
+                        request.then(function(result){
+                            if (self.isOffline()) {
+                                return self.scheduleAction(action, actionParams);
+                            }
+                            return result;
+                        });
                     }
 
                     return request.then(function(result){
