@@ -285,17 +285,20 @@ define([
                             .callItemAction(context.itemIdentifier, action, params)
                             .then(function(results){
                                 if (results.success === false && results.type === testDataConfig.echoExceptionName) {
-                                    catEngineWarning.show()
-                                        .on('proceedarning', function(){
+                                    catEngineWarning
+                                        .off('.warning')
+                                        .on('proceed.warning', function(){
                                             self.trigger('enableitem');
                                         })
-                                        .on('renderarning', function(){
+                                        .on('render.warning', function(){
                                             self.trigger('disableitem');
                                         })
-                                        .on('proceedpausewarning', function(){
+                                        .on('proceedpause.warning', function(){
                                             self.trigger('pause');
-                                        });
-                                    catEngineWarning.recheck(self, 'unloaditem.' + action);
+                                        })
+                                        .on('recheck.warning', function () {
+                                            self.trigger('unloaditem.' + action);
+                                        }).show();
                                 } else {
                                     self.off('.'+action);
                                     loadPromise = loadPromise || Promise.resolve();
@@ -303,10 +306,10 @@ define([
                                         self.dataUpdater.update(results);
                                         load();
                                     });
-                                    catEngineWarning.finish()
-                                        .on('disableitemwarning', function () {
+                                    catEngineWarning
+                                        .on('disableitem.warning', function () {
                                             self.trigger('disableitem');
-                                        });
+                                        }).finish();
                                 }
                             })
                             .catch(submitError);

@@ -68,10 +68,10 @@ define([
                         proceedContent : proceedContent
                     })
                         .on('proceed', function(){
-                            self.trigger('proceedarning');
+                            self.trigger('proceed.warning');
                         })
                         .on('render', function(){
-                            self.trigger('renderarning');
+                            self.trigger('render.warning');
                         });
                 } else if (dialog && time >= config.echoPauseLimit) {
                     dialog.destroy();
@@ -82,28 +82,26 @@ define([
                         proceedContent : proceedContentError
                     })
                         .on('proceed', function(){
-                            self.trigger('proceedpausewarning');
+                            self.trigger('proceedpause.warning');
                         })
                         .on('render', function(){
                             dialog.endWait();
                         });
                 }
-                return self;
-            },
-            recheck: function recheck(runner, event) {
                 if (time < config.echoPauseLimit) {
                     timeout = Math.ceil(Math.random() * config.echoDelayUpdate);
                     setTimeout(function(){
-                        runner.trigger(event);
                         time = time + timeout;
+                        self.trigger('recheck.warning');
                     }, timeout * 1000);
                 }
+                return self;
             },
             finish: function finish() {
                 var self = this;
                 if (dialog && dialog.is('waiting')) {
                     dialog.endWait();
-                    self.trigger('disableitemwarning');
+                    self.trigger('disableitem.warning');
                 }
                 return self;
             }
