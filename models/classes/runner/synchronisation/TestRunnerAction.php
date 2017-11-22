@@ -233,7 +233,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
                         $messageService = $this->getServiceLocator()->get(QtiRunnerMessageService::SERVICE_ID);
-                        $response['message'] = $messageService->getStateMessage($this->getServiceContext()->getTestSession());
+                        $response['message'] = __($messageService->getStateMessage($this->getServiceContext()->getTestSession()));
                     }
                     $response['type'] = 'TestState';
                     break;
