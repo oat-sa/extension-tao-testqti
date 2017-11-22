@@ -248,15 +248,14 @@ define([
                 this.trigger('clickToSpeak');
 
                 //adding each item a special class by presence of which normal click handling could be prevented and passed to click-to-speak handling
-                $('.qti-item').each(function() {
-                    var $_self = $(this);
-                    $_self.toggleClass('prevent-click-handler');
+                options['$contentArea'].find('.qti-item').each(function() {
+                    $(this).toggleClass('prevent-click-handler');
                 });
 
                 //we should disable click-to-speak while navigating through test, if it was enabled on some item page
                 //just to ensure that after other item load click-to-speak will function normally, and tao click handlers won't work on item-part click
-                $('.navi-box').on('click', 'a', function() {
-                    if ($('.qti-item.prevent-click-handler').length > 0) {
+                options['$navigationArea'].on('click', 'a', function() {
+                    if (options['$contentArea'].find('.qti-item.prevent-click-handler').length > 0) {
                         self.clickToSpeak();
                     }
                 });
@@ -365,7 +364,7 @@ define([
                     max: 100
                 },
                 start: speed,
-                step: 15
+                step: 15 //actual step for speed slider, so the values will be 0,15,30,etc,etc,100.
             })
             .on('change', this.setSpeed);
         })
