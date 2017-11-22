@@ -38,7 +38,7 @@ define([
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
     'tpl!taoQtiTest/runner/provider/layout',
-    'taoQtiTest/runner/helpers/testGeneration'
+    'taoQtiTest/runner/ui/catEngineWarning'
 ], function(
     $,
     _,
@@ -57,7 +57,7 @@ define([
     qtiItemRunner,
     assetManagerFactory,
     layoutTpl,
-    testGenerationHelper) {
+    catEngineWarningFactory) {
     'use strict';
 
     //the asset strategies
@@ -203,7 +203,6 @@ define([
          */
         init : function init(){
             var self = this;
-
             /**
              * Retrieve the item results
              * @returns {Object} the results
@@ -229,7 +228,8 @@ define([
              */
             function computeNext(action, params, loadPromise){
                 var context = self.getTestContext();
-
+                var testDataConfig = self.getTestData().config.catEngineWarning;
+                var catEngineWarning = catEngineWarningFactory(testDataConfig);
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -284,8 +284,18 @@ define([
                         self.getProxy()
                             .callItemAction(context.itemIdentifier, action, params)
                             .then(function(results){
-                                if (results.success === false) {
-                                    testGenerationHelper.showDialog(results.type, action, self);
+                                if (results.success === false && results.type === testDataConfig.echoExceptionName) {
+                                    catEngineWarning.show()
+                                        .on('proceedarning', function(){
+                                            self.trigger('enableitem');
+                                        })
+                                        .on('renderarning', function(){
+                                            self.trigger('disableitem');
+                                        })
+                                        .on('proceedpausewarning', function(){
+                                            self.trigger('pause');
+                                        });
+                                    catEngineWarning.recheck(self, 'unloaditem.' + action);
                                 } else {
                                     self.off('.'+action);
                                     loadPromise = loadPromise || Promise.resolve();
@@ -293,7 +303,10 @@ define([
                                         self.dataUpdater.update(results);
                                         load();
                                     });
-                                    testGenerationHelper.finishDialog(self);
+                                    catEngineWarning.finish()
+                                        .on('disableitemwarning', function () {
+                                            self.trigger('disableitem');
+                                        });
                                 }
                             })
                             .catch(submitError);

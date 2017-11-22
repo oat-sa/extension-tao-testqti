@@ -16,15 +16,16 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 /**
- * This helper show waitingDialog for cat engine service
+ * This component show waitingDialog for cat engine service
  *
  * @author Aleksej Tikhanovich <aleksej@taotesting.com>
  */
 define([
     'lodash',
     'i18n',
-    'ui/waitingDialog/waitingDialog'
-], function (_, __, waitingDialog) {
+    'ui/waitingDialog/waitingDialog',
+    'ui/component'
+], function (_, __, waitingDialog, component) {
     'use strict';
 
     var waitContentMessage = __('Sorry, but our test generation system cannot load your next items.\n Please wait while we retry for 2 minutes.');
@@ -36,27 +37,30 @@ define([
     var proceedContentError = __('Unfortunately, our test delivery system still cannot load your next items, so we paused your test.\n' +
         'Please notify your proctor now, who will authorize you to relaunch your test. If the system is able to load your next items, you will continue testing where you left off.');
 
-    var dialog = false;
-    var time = 0;
-    var timeout = 0;
+    var _defaults = {
+        echoDelayUpdate: 15,
+        echoPauseLimit: 120
+    };
 
     /**
-     * @typedef {Object} testGenerationHelper
+     * @typedef {Object} catEngineWarningFactory
      */
-    var testGenerationHelper = {
-        showDialog : function showDialog (type, recheckAction, runner) {
-            var testData = runner.getTestData();
-            var config = testData.config;
-            var catEngineWarning = config.catEngineWarning;
-            var echoDelayUpdate = catEngineWarning['echoDelayUpdate'] ? catEngineWarning['echoDelayUpdate'] : 0;
-            var echoPauseLimit = catEngineWarning['echoPauseLimit'] ? catEngineWarning['echoPauseLimit'] : 0;
-            var echoExceptionName = catEngineWarning['echoExceptionName'] ? catEngineWarning['echoExceptionName'] : '';
+    var catEngineWarningFactory = function catEngineWarningFactory(config) {
+        var catEngineWarning;
+        var dialog = false;
+        var time = 0;
+        var timeout = 0;
 
-            if (type === echoExceptionName) {
+        config = _.defaults(config || {}, _defaults);
+
+        catEngineWarning = {
+            show: function show() {
+                var self = this;
+
                 if (dialog && !dialog.is('waiting')) {
                     dialog = false;
                 }
-                if (!dialog && time < echoPauseLimit) {
+                if (!dialog && time < config.echoPauseLimit) {
                     dialog = waitingDialog({
                         message : '',
                         waitContent : waitContentMessage,
@@ -64,12 +68,12 @@ define([
                         proceedContent : proceedContent
                     })
                         .on('proceed', function(){
-                            runner.trigger('enableitem');
+                            self.trigger('proceedarning');
                         })
                         .on('render', function(){
-                            runner.trigger('disableitem');
+                            self.trigger('renderarning');
                         });
-                } else if (dialog && time >= echoPauseLimit) {
+                } else if (dialog && time >= config.echoPauseLimit) {
                     dialog.destroy();
                     dialog = waitingDialog({
                         message : '',
@@ -78,28 +82,34 @@ define([
                         proceedContent : proceedContentError
                     })
                         .on('proceed', function(){
-                            runner.trigger('pause');
+                            self.trigger('proceedpausewarning');
                         })
                         .on('render', function(){
                             dialog.endWait();
                         });
                 }
-                if (time < echoPauseLimit) {
-                    timeout = Math.ceil(Math.random() * echoDelayUpdate);
+                return self;
+            },
+            recheck: function recheck(runner, event) {
+                if (time < config.echoPauseLimit) {
+                    timeout = Math.ceil(Math.random() * config.echoDelayUpdate);
                     setTimeout(function(){
-                        runner.trigger('unloaditem.' + recheckAction);
+                        runner.trigger(event);
                         time = time + timeout;
                     }, timeout * 1000);
                 }
+            },
+            finish: function finish() {
+                var self = this;
+                if (dialog && dialog.is('waiting')) {
+                    dialog.endWait();
+                    self.trigger('disableitemwarning');
+                }
+                return self;
             }
-        },
-        finishDialog: function isVisible(runner) {
-            if (dialog && dialog.is('waiting')) {
-                dialog.endWait();
-                runner.trigger('disableitem');
-            }
-        }
+        };
+        return component(catEngineWarning).init(config);
     };
 
-    return testGenerationHelper;
+    return catEngineWarningFactory;
 });
