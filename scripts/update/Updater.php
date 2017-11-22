@@ -1718,5 +1718,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('17.18.0');
         }
+      
+        $this->skip('17.18.0', '17.18.1');
     }
 }
