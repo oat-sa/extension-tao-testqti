@@ -973,7 +973,7 @@ msgid "The assessment has been terminated."
 msgstr "La evaluación finalizó."
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "La evaluación finalizó. Ya no puede interactuar con ella."
+msgstr "La evaluación se ha terminado. Ya no puede interactuar con él."
 
 msgid "The assessment is still running."
 msgstr "La evaluación sigue ejecutándose."
