@@ -37,14 +37,17 @@ define([
         var map = runner.getTestMap(),
             context = runner.getTestContext(),
             stats = _.clone(mapHelper.getScopeStats(map, context.itemPosition, scope)),
+            item = mapHelper.getItemAt(map, context.itemPosition),
+            isItemCurrentlyAnswered;
 
+        if (!item.informational) {
             isItemCurrentlyAnswered = currentItemHelper.isAnswered(runner);
+            if (!isItemCurrentlyAnswered && context.itemAnswered) {
+                stats.answered--;
 
-        if (!isItemCurrentlyAnswered && context.itemAnswered) {
-            stats.answered--;
-
-        } else if (isItemCurrentlyAnswered && !context.itemAnswered) {
-            stats.answered++;
+            } else if (isItemCurrentlyAnswered && !context.itemAnswered) {
+                stats.answered++;
+            }
         }
 
         return stats;
