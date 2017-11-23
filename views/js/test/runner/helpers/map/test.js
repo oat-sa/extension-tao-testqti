@@ -332,7 +332,7 @@ define([
         var part = mapHelper.getItemPart(map, 8);
         var stats = mapHelper.getTestStats(map);
 
-        QUnit.expect(39);
+        QUnit.expect(59);
 
         assert.equal(item.informational, false, 'The item is not informational');
         assert.equal(item.answered, false, 'The item is not answered at this time');
@@ -357,33 +357,60 @@ define([
         assert.equal(section.stats.viewed, 0, 'There is no viewed item at this time in the section');
         assert.equal(section.stats.total, 2, 'There is 2 items at this time in the section');
 
-        item.informational = true;
         item.answered = true;
         item.flagged = true;
         item.viewed = true;
 
         assert.equal(mapHelper.updateItemStats(map, 8), map, 'The map helper updateItemStats returns the map');
 
-        assert.equal(item.informational, true, 'The item is now informational');
+        assert.equal(item.informational, false, 'The item is still not informational');
         assert.equal(item.answered, true, 'The item is now answered');
         assert.equal(item.flagged, true, 'The item is now flagged');
         assert.equal(item.viewed, true, 'The item is now viewed');
 
         stats = mapHelper.getTestStats(map);
-        assert.equal(stats.questions, 8, 'There is 8 questions at this time in the test');
+        assert.equal(stats.questions, 9, 'There is still 9 questions at this time in the test');
         assert.equal(stats.answered, 1, 'There is one answered item at this time in the test');
         assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the test');
         assert.equal(stats.viewed, 2, 'There is two viewed items at this time in the test');
         assert.equal(stats.total, 10, 'There is 10 items at this time in the test');
 
-        assert.equal(part.stats.questions, 3, 'There is 3 questions at this time in the part');
+        assert.equal(part.stats.questions, 4, 'There is 4 questions at this time in the part');
         assert.equal(part.stats.answered, 1, 'There is one answered item at this time in the part');
         assert.equal(part.stats.flagged, 1, 'There is one flagged item at this time in the part');
         assert.equal(part.stats.viewed, 1, 'There is one viewed item at this time in the part');
         assert.equal(part.stats.total, 4, 'There is 4 items at this time in the part');
 
-        assert.equal(section.stats.questions, 1, 'There is 1 questions at this time in the section');
+        assert.equal(section.stats.questions, 2, 'There is 2 questions at this time in the section');
         assert.equal(section.stats.answered, 1, 'There is one answered item at this time in the section');
+        assert.equal(section.stats.flagged, 1, 'There is one flagged item at this time in the section');
+        assert.equal(section.stats.viewed, 1, 'There is one viewed item at this time in the section');
+        assert.equal(section.stats.total, 2, 'There is 2 items at this time in the section');
+
+        item.informational = true;
+
+        assert.equal(mapHelper.updateItemStats(map, 8), map, 'The map helper updateItemStats returns the map');
+
+        assert.equal(item.informational, true, 'The item is now informational');
+        assert.equal(item.answered, true, 'The item is still answered, but it should be ignored since it is informational');
+        assert.equal(item.flagged, true, 'The item is still flagged');
+        assert.equal(item.viewed, true, 'The item is still viewed');
+
+        stats = mapHelper.getTestStats(map);
+        assert.equal(stats.questions, 8, 'There is 8 questions at this time in the test');
+        assert.equal(stats.answered, 0, 'There is no answered item at this time in the test');
+        assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the test');
+        assert.equal(stats.viewed, 2, 'There is two viewed items at this time in the test');
+        assert.equal(stats.total, 10, 'There is 10 items at this time in the test');
+
+        assert.equal(part.stats.questions, 3, 'There is 3 questions at this time in the part');
+        assert.equal(part.stats.answered, 0, 'There is no answered item at this time in the part');
+        assert.equal(part.stats.flagged, 1, 'There is one flagged item at this time in the part');
+        assert.equal(part.stats.viewed, 1, 'There is one viewed item at this time in the part');
+        assert.equal(part.stats.total, 4, 'There is 4 items at this time in the part');
+
+        assert.equal(section.stats.questions, 1, 'There is 1 questions at this time in the section');
+        assert.equal(section.stats.answered, 0, 'There is no answered item at this time in the section');
         assert.equal(section.stats.flagged, 1, 'There is one flagged item at this time in the section');
         assert.equal(section.stats.viewed, 1, 'There is one viewed item at this time in the section');
         assert.equal(section.stats.total, 2, 'There is 2 items at this time in the section');
@@ -395,7 +422,7 @@ define([
         var section = mapHelper.getItemSection(mapSample, 6);
         var stats;
 
-        QUnit.expect(19);
+        QUnit.expect(29);
 
         assert.equal(item.informational, false, 'The item is not informational');
         assert.equal(item.answered, false, 'The item is not answered at this time');
@@ -408,7 +435,6 @@ define([
         assert.equal(section.stats.viewed, 0, 'There is no viewed item at this time in the section');
         assert.equal(section.stats.total, 2, 'There is 2 items at this time in the section');
 
-        item.informational = true;
         item.answered = true;
         item.flagged = true;
         item.viewed = true;
@@ -417,13 +443,30 @@ define([
 
         assert.equal(typeof stats, 'object', 'The map helper computeItemStats returns an object');
 
-        assert.equal(item.informational, true, 'The item is now informational');
+        assert.equal(item.informational, false, 'The item is still not informational');
         assert.equal(item.answered, true, 'The item is now answered');
         assert.equal(item.flagged, true, 'The item is now flagged');
         assert.equal(item.viewed, true, 'The item is now viewed');
 
-        assert.equal(stats.questions, 1, 'There is one question at this time in the computed stats');
+        assert.equal(stats.questions, 2, 'There is still 2 question at this time in the computed stats');
         assert.equal(stats.answered, 1, 'There is one answered item at this time in the computed stats');
+        assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the computed stats');
+        assert.equal(stats.viewed, 1, 'There is one viewed item at this time in the computed stats');
+        assert.equal(stats.total, 2, 'There is 2 items at this time in the computed stats');
+
+        item.informational = true;
+
+        stats = mapHelper.computeItemStats(section.items);
+
+        assert.equal(typeof stats, 'object', 'The map helper computeItemStats returns an object');
+
+        assert.equal(item.informational, true, 'The item is now informational');
+        assert.equal(item.answered, true, 'The item is still answered, but it should be ignored since it is informational');
+        assert.equal(item.flagged, true, 'The item is now flagged');
+        assert.equal(item.viewed, true, 'The item is now viewed');
+
+        assert.equal(stats.questions, 1, 'There is now one question at this time in the computed stats');
+        assert.equal(stats.answered, 0, 'There is no answered item at this time in the computed stats');
         assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the computed stats');
         assert.equal(stats.viewed, 1, 'There is one viewed item at this time in the computed stats');
         assert.equal(stats.total, 2, 'There is 2 items at this time in the computed stats');
