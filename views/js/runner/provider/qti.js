@@ -37,7 +37,8 @@ define([
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
-    'tpl!taoQtiTest/runner/provider/layout'
+    'tpl!taoQtiTest/runner/provider/layout',
+    'taoQtiTest/runner/ui/catEngineWarning'
 ], function(
     $,
     _,
@@ -55,7 +56,8 @@ define([
     toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
-    layoutTpl) {
+    layoutTpl,
+    catEngineWarningFactory) {
     'use strict';
 
     //the asset strategies
@@ -201,7 +203,6 @@ define([
          */
         init : function init(){
             var self = this;
-
             /**
              * Retrieve the item results
              * @returns {Object} the results
@@ -226,9 +227,9 @@ define([
              * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
             function computeNext(action, params, loadPromise){
-
                 var context = self.getTestContext();
-
+                var testDataConfig = self.getTestData().config.catEngineWarning;
+                var catEngineWarning = catEngineWarningFactory(testDataConfig);
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -277,27 +278,39 @@ define([
                 feedbackPromise.then(function(){
                     // ensure the answered state of the current item is correctly set and the stats are aligned
                     self.setTestMap(self.dataUpdater.updateStats());
-
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
-                        self.off('.'+action);
-
                         self.getProxy()
                             .callItemAction(context.itemIdentifier, action, params)
                             .then(function(results){
-                                loadPromise = loadPromise || Promise.resolve();
-
-                                return loadPromise.then(function(){
-                                    return results;
-                                });
-                            })
-                            .then(function(results){
-
-                                //update testData, testContext and build testMap
-                                self.dataUpdater.update(results);
-
-                                load();
+                                if (results.success === false && results.type === testDataConfig.echoExceptionName) {
+                                    catEngineWarning
+                                        .off('.warning')
+                                        .on('proceed.warning', function(){
+                                            self.trigger('enableitem');
+                                        })
+                                        .on('render.warning', function(){
+                                            self.trigger('disableitem');
+                                        })
+                                        .on('proceedpause.warning', function(){
+                                            self.trigger('pause');
+                                        })
+                                        .on('recheck.warning', function () {
+                                            self.trigger('unloaditem.' + action);
+                                        }).show();
+                                } else {
+                                    self.off('.'+action);
+                                    loadPromise = loadPromise || Promise.resolve();
+                                    loadPromise.then(function(){
+                                        self.dataUpdater.update(results);
+                                        load();
+                                    });
+                                    catEngineWarning
+                                        .on('disableitem.warning', function () {
+                                            self.trigger('disableitem');
+                                        }).finish();
+                                }
                             })
                             .catch(submitError);
                     });

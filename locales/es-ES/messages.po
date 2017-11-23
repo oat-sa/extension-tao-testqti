@@ -870,7 +870,7 @@ msgid "Show the solution once the answer is submitted."
 msgstr "Mostrar la solución antes de que la respuesta sea enviada."
 
 msgid "Show timers"
-msgstr ""
+msgstr "Muestra el temporizado"
 
 msgid "Show/Hide the review screen"
 msgstr "Mostrar/esconder la pantalla de revisión"

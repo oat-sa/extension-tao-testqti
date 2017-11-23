@@ -1704,6 +1704,21 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.17.0');
         }
       
-        $this->skip('17.17.0', '17.17.5');
+        $this->skip('17.17.0', '17.17.6');
+
+        if ($this->isVersion('17.17.6')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['catEngineWarning'] = [
+                'echoDelayUpdate' => 15,
+                'echoPauseLimit' => 120,
+                'echoExceptionName' => 'CatEngine'
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('17.18.0');
+        }
+
+        $this->skip('17.18.0', '17.18.2');
     }
 }
