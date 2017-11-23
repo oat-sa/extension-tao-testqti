@@ -23,8 +23,10 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\libCat\CatSession;
+use oat\libCat\exception\CatEngineConnectivityException;
 use oat\libCat\Exception\CatEngineException;
 use oat\taoQtiTest\helpers\TestSessionMemento;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
@@ -577,6 +579,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                     \common_Logger::w('Unable to save CatService results.');
                 }
                 $isShadowItem = false;
+            } catch (CatEngineConnectivityException $e) {
+                throw new CatEngineNotFoundException($e->getMessage(), null);
             } catch (CatEngineException $e) {
                 \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
                 $selection = $catSession->getTestMap();
