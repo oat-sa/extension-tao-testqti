@@ -221,11 +221,6 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
             }
 
             switch (true) {
-                case $e instanceof CatEngineNotFoundException:
-                    $response['code'] = $e->getCode();
-                    $response['type'] = 'catEngine';
-                    $response['message'] = $e->getMessage();
-                    break;
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
