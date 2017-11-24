@@ -37,8 +37,7 @@ define([
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
-    'tpl!taoQtiTest/runner/provider/layout',
-    'taoQtiTest/runner/ui/catEngineWarning'
+    'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
     _,
@@ -56,8 +55,7 @@ define([
     toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
-    layoutTpl,
-    catEngineWarningFactory) {
+    layoutTpl) {
     'use strict';
 
     //the asset strategies
@@ -228,8 +226,6 @@ define([
              */
             function computeNext(action, params, loadPromise){
                 var context = self.getTestContext();
-                var testDataConfig = self.getTestData().config.catEngineWarning;
-                var catEngineWarning = catEngineWarningFactory(testDataConfig);
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -281,36 +277,23 @@ define([
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
+                        self.off('.'+action);
+
                         self.getProxy()
                             .callItemAction(context.itemIdentifier, action, params)
                             .then(function(results){
-                                if (results.success === false && results.type === testDataConfig.echoExceptionName) {
-                                    catEngineWarning
-                                        .off('.warning')
-                                        .on('proceed.warning', function(){
-                                            self.trigger('enableitem');
-                                        })
-                                        .on('render.warning', function(){
-                                            self.trigger('disableitem');
-                                        })
-                                        .on('proceedpause.warning', function(){
-                                            self.trigger('pause');
-                                        })
-                                        .on('recheck.warning', function () {
-                                            self.trigger('unloaditem.' + action);
-                                        }).show();
-                                } else {
-                                    self.off('.'+action);
-                                    loadPromise = loadPromise || Promise.resolve();
-                                    loadPromise.then(function(){
-                                        self.dataUpdater.update(results);
-                                        load();
-                                    });
-                                    catEngineWarning
-                                        .on('disableitem.warning', function () {
-                                            self.trigger('disableitem');
-                                        }).finish();
-                                }
+                                loadPromise = loadPromise || Promise.resolve();
+
+                                return loadPromise.then(function(){
+                                    return results;
+                                });
+                            })
+                            .then(function(results){
+
+                                //update testData, testContext and build testMap
+                                self.dataUpdater.update(results);
+
+                                load();
                             })
                             .catch(submitError);
                     });
