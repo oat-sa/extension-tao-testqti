@@ -589,12 +589,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
             $this->persistCatSession($catSession);
-            if ((is_array($selection) && count($selection) == 0) || $selection === null) {
-                \common_Logger::d('No new CAT item selection.');
-                return null;
-            } else {
+            if (is_array($selection) && count($selection) > 0) {
                 \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
                 return $selection[0];
+            } else {
+                \common_Logger::d('No new CAT item selection.');
+                return null;
             }
         }
     }
