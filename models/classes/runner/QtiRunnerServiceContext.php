@@ -588,13 +588,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $preSelection, $selection, $isShadowItem);
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
-            if (is_array($selection) && count($selection) == 0) {
-                \common_Logger::d('No new CAT item selection.');
-                return null;
-            } else {
-                $this->persistCatSession($catSession);
+            $this->persistCatSession($catSession);
+            if (is_array($selection) && count($selection) > 0) {
                 \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
                 return $selection[0];
+            } else {
+                \common_Logger::d('No new CAT item selection.');
+                return null;
             }
         }
     }
