@@ -579,8 +579,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                     \common_Logger::w('Unable to save CatService results.');
                 }
                 $isShadowItem = false;
-            } catch (CatEngineConnectivityException $e) {
-                throw new CatEngineNotFoundException($e->getMessage(), null);
             } catch (CatEngineException $e) {
                 \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
                 $selection = $catSession->getTestMap();
