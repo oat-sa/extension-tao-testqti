@@ -1703,7 +1703,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('17.17.0');
         }
-      
+
         $this->skip('17.17.0', '17.17.6');
 
         if ($this->isVersion('17.17.6')) {
@@ -1719,6 +1719,17 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.18.0');
         }
 
-        $this->skip('17.18.0', '17.18.3');
+        $this->skip('17.18.0', '17.18.2');
+
+        if ($this->isVersion('17.18.2')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            unset($config['catEngineWarning']);
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('17.19.0');
+        }
+
+        $this->skip('17.19.0', '17.20.1');
     }
 }
