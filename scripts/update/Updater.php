@@ -1730,7 +1730,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.19.0');
         }
 
-        $this->skip('17.19.0', '17.19.2');
-
+        $this->skip('17.19.0', '17.20.0');
     }
 }
