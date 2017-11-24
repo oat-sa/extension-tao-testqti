@@ -24,7 +24,6 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'core/store',
     'core/promise',
     'core/cachedStore',
     'taoTests/runner/areaBroker',
@@ -37,12 +36,12 @@ define([
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
+    'taoQtiTest/runner/provider/testStore',
     'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
     _,
     __,
-    store,
     Promise,
     cachedStore,
     areaBrokerFactory,
@@ -55,6 +54,7 @@ define([
     toolboxFactory,
     qtiItemRunner,
     assetManagerFactory,
+    testStoreFactory,
     layoutTpl) {
     'use strict';
 
@@ -182,12 +182,28 @@ define([
          * @returns {Promise} to chain
          */
         install : function install(){
+            var self = this;
 
             /**
              * Delegates the udpate of testMap, testContext and testData
              * to a 3rd part component, the dataUpdater.
              */
             this.dataUpdater = dataUpdater(this.getDataHolder());
+
+            this.testStore = testStoreFactory(this.getConfig().serviceCallId);
+
+            /**
+             * Install the store into the plugins
+             */
+            _.forEach(this.getPlugins(), function(plugin){
+                plugin.getStore = function getStore( isVolatile ){
+                    var storeName = plugin.getName();
+                    if(isVolatile){
+                        self.testStore.setStoreAsVolatile(storeName);
+                    }
+                    return self.testStore.getStore(storeName);
+                };
+            });
         },
 
         /**
@@ -201,6 +217,7 @@ define([
          */
         init : function init(){
             var self = this;
+
             /**
              * Retrieve the item results
              * @returns {Object} the results
@@ -225,7 +242,9 @@ define([
              * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
             function computeNext(action, params, loadPromise){
+
                 var context = self.getTestContext();
+
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -475,7 +494,7 @@ define([
             }
 
             //get the current store identifier to send it along with the init call
-            return store.getIdentifier().then(function(storeId){
+            return this.testStore.getStorageIdentifier().then(function(storeId){
 
                 //load data and current context in parallel at initialization
                 return self.getProxy().init({
@@ -488,9 +507,12 @@ define([
 
                         /**
                          * We have changed the local storage engine (could be a browser change)
+                         * @deprecated
                          * @event runner/provider/qti#storechange
                          */
                         self.trigger('storechange');
+
+                        self.testStore.clearVolatileStores();
                     }
                 });
             });

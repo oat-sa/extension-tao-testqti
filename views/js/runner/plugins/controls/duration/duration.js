@@ -64,17 +64,21 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
+            //this.getStore().then(function(storeName){
+                //console.log('Within the plugin getStore : ' + storeName);
+            //});
+
             //where the duration of attempts are stored
-            return store('duration-' + testRunner.getConfig().serviceCallId)
-                .then(function(durationStore) {
-                    if (self.shouldClearStorage) {
-                        return durationStore.clear().then(function() {
-                            return durationStore;
-                        });
-                    }
-                    return durationStore;
-                })
-                .then(function(durationStore) {
+            //return store('duration-' + testRunner.getConfig().serviceCallId)
+                //.then(function(durationStore) {
+                    //if (self.shouldClearStorage) {
+                        //return durationStore.clear().then(function() {
+                            //return durationStore;
+                        //});
+                    //}
+                    //return durationStore;
+                //})
+            //return this.getStore().then(function(durationStore) {
 
                     /**
                      * Gets the duration of a particular item from the store
@@ -86,7 +90,7 @@ define([
                             return Promise.reject(new Error('Is it really an attempt id, like "itemid#attempt"'));
                         }
 
-                        return durationStore.getItem(attemptId);
+                        return self.getStore().getItem(attemptId);
                     }
 
                     //one stopwatch to count the time
@@ -106,13 +110,14 @@ define([
                             //store by attempt
                             var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
 
-                            durationStore.getItem(itemAttemptId).then(function(duration){
+                            getItemDuration(itemAttemptId).then(function(duration){
                                 var elapsed = self.stopwatch.tick();
                                 duration = _.isNumber(duration) ? duration : 0;
                                 elapsed = _.isNumber(elapsed) && elapsed > 0 ? (elapsed / 1000) : 0;
 
                                 //store the last duration
-                                durationStore.setItem(itemAttemptId, duration + elapsed);
+                                self.getStore().setItem(itemAttemptId, duration + elapsed);
+                                //self.getStore().getItem(attemptId);
                             });
                         },
                         interval: refresh,
@@ -149,27 +154,27 @@ define([
 
                         .on('move skip exit timeout error disableitem', function(){
                             self.disable();
-                        })
+                        //})
 
                         /**
                           * @event duration.get
                           * @param {String} attemptId - the attempt id to get the duration for
                           * @param {getDuration} getDuration - a receiver callback
                           */
-                        .on('plugin-get.duration', function(e, attemptId, getDuration) {
-                            if (_.isFunction(getDuration)) {
-                                getDuration(getItemDuration(attemptId));
-                            }
-                        })
+                        //.on('plugin-get.duration', function(e, attemptId, getDuration) {
+                            //if (_.isFunction(getDuration)) {
+                                //getDuration(getItemDuration(attemptId));
+                            //}
+                        //})
 
-                        .before('finish', function() {
-                            return new Promise(function(resolve) {
-                                durationStore.removeStore()
-                                    .then(resolve)
-                                    .catch(resolve);
-                            });
+                        //.before('finish', function() {
+                            //return new Promise(function(resolve) {
+                                //durationStore.removeStore()
+                                    //.then(resolve)
+                                    //.catch(resolve);
+                            //});
                         });
-                });
+                //});
         },
 
         /**
