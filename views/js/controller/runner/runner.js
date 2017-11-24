@@ -125,7 +125,7 @@ define([
 
                 if(err.code === 403) {
                     //we just leave if any 403 occurs
-                    return exit();
+                    return exit(displayMessage);
                 }
                 feedback().error(displayMessage, { timeout : -1 });
             };

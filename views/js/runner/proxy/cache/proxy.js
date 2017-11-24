@@ -81,6 +81,22 @@ define([
     );
 
     /**
+     * When we are unable to navigate offline
+     * @type {Error}
+     */
+    var offlinePauseError = _.assign(
+        new Error(__('The test has been paused, we are unable to connect to the server.')),
+        {
+            success : false,
+            source: 'navigator',
+            purpose: 'proxy',
+            type: 'pause',
+            code : 404
+        }
+    );
+
+
+    /**
      * Overrides the qtiServiceProxy with the precaching behavior
      * @extends taoQtiTest/runner/proxy/qtiServiceProxy
      */
@@ -188,10 +204,17 @@ define([
                 var testContext = this.getDataHolder().get('testContext');
                 var testMap     = this.getDataHolder().get('testMap');
 
+
+                if( action === 'pause' ) {
+                    if(actionParams.reason){
+                        offlinePauseError.data = actionParams.reason;
+                    }
+                    throw offlinePauseError;
+                }
+
                 //we just block those actions and the end of the test
                 if( _.contains(blockingActions, action) ||
                     ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
-
                     throw offlineExitError;
                 }
 
@@ -305,6 +328,12 @@ define([
                         //action is not synchronizable
                         //fallback to direct request
                         request = self.request(url, actionParams);
+                        request.then(function(result){
+                            if (self.isOffline()) {
+                                return self.scheduleAction(action, actionParams);
+                            }
+                            return result;
+                        });
                     }
 
                     return request.then(function(result){
@@ -312,11 +341,11 @@ define([
                             return self.offlineAction(action, actionParams);
                         }
                         return result;
-                    }).catch(function(result){
-                        if (self.isOffline()) {
+                    }).catch(function(error){
+                        if (self.isConnectivityError(error) && self.isOffline()) {
                             return self.offlineAction(action, actionParams);
                         }
-                        return result;
+                        throw error;
                     });
                 };
 

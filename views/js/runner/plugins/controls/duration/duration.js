@@ -121,20 +121,17 @@ define([
 
                     //change plugin state
                     testRunner
-                        .after('renderitem enableitem', function() {
+
+                        .after('renderitem', function(){
                             self.enable();
                         })
-
-                        .before('move disableitem skip error', function() {
-                            if (self.getState('enabled')) {
-                                self.disable();
-                            }
+                        .on('enableitem', function() {
+                            self.enable();
                         })
 
                         .before('move skip exit timeout', function() {
                             var context = testRunner.getTestContext();
                             var itemAttemptId = context.itemIdentifier + '#' + context.attempt;
-
 
                             return getItemDuration(itemAttemptId).then(function(duration) {
                                 var params = {
@@ -150,11 +147,15 @@ define([
                             });
                         })
 
+                        .on('move skip exit timeout error disableitem', function(){
+                            self.disable();
+                        })
+
                         /**
-                            * @event duration.get
-                            * @param {String} attemptId - the attempt id to get the duration for
-                            * @param {getDuration} getDuration - a receiver callback
-                            */
+                          * @event duration.get
+                          * @param {String} attemptId - the attempt id to get the duration for
+                          * @param {getDuration} getDuration - a receiver callback
+                          */
                         .on('plugin-get.duration', function(e, attemptId, getDuration) {
                             if (_.isFunction(getDuration)) {
                                 getDuration(getItemDuration(attemptId));
@@ -183,16 +184,20 @@ define([
          * Enables the duration count
          */
         enable: function enable() {
-            this.polling.start();
-            this.stopwatch.resume();
+            if (!this.getState('enabled')) {
+                this.polling.start();
+                this.stopwatch.resume();
+            }
         },
 
         /**
          * Disables the duration count
          */
         disable: function disable() {
-            this.polling.stop();
-            this.stopwatch.pause();
+            if (this.getState('enabled')) {
+                this.polling.stop();
+                this.stopwatch.pause();
+            }
         }
     });
 });

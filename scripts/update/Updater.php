@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
@@ -1690,6 +1691,45 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.10.0');
         }
 
-        $this->skip('17.10.0', '17.15.4');
+        $this->skip('17.10.0', '17.16.0');
+
+        if ($this->isVersion('17.16.0')) {
+
+            $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
+            $actions = $synchronisationService->getAvailableActions();
+            $actions['pause'] = Pause::class;
+            $synchronisationService->setAvailableActions($actions);
+            $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
+
+            $this->setVersion('17.17.0');
+        }
+
+        $this->skip('17.17.0', '17.17.6');
+
+        if ($this->isVersion('17.17.6')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['catEngineWarning'] = [
+                'echoDelayUpdate' => 15,
+                'echoPauseLimit' => 120,
+                'echoExceptionName' => 'CatEngine'
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('17.18.0');
+        }
+
+        $this->skip('17.18.0', '17.18.2');
+
+        if ($this->isVersion('17.18.2')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            unset($config['catEngineWarning']);
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('17.19.0');
+        }
+
+        $this->skip('17.19.0', '17.21.1');
     }
 }

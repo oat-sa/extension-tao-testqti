@@ -39,21 +39,20 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
-use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
-use qtism\data\AssessmentTest;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
+use qtism\runtime\common\Utils;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use qtism\runtime\tests\RouteItem;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
@@ -419,7 +418,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
 
                 // The current item answered state
-                $response['itemAnswered'] = TestRunnerUtils::isItemCompleted($currentItem, $itemSession);
+                $response['itemAnswered'] = $this->isItemCompleted($context, $currentItem, $itemSession);
 
                 // Time constraints.
                 $response['timeConstraints'] = $this->buildTimeConstraints($context);
@@ -431,7 +430,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // Current Section title.
                 $response['sectionId'] = $currentSection->getIdentifier();
                 $response['sectionTitle'] = $currentSection->getTitle();
-                $response['sectionPause'] = $this->getServiceManager()->get(SectionPauseService::SERVICE_ID)->isPausable($session);
 
                 // Number of items composing the test session.
                 $response['numberItems'] = $route->count();
@@ -599,7 +597,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getItemState(RunnerServiceContext $context, $itemRef)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $serviceService = $this->getServiceManager()->get('tao/stateStorage');
+            $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
             $stateId = $this->getStateId($context, $itemRef);
             $state = is_null($userUri) ? null : $serviceService->get($userUri, $stateId);
@@ -634,7 +632,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function setItemState(RunnerServiceContext $context, $itemRef, $state)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $serviceService = $this->getServiceManager()->get('tao/stateStorage');
+            $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
             $stateId = $this->getStateId($context, $itemRef);
             if(!isset($state)){
@@ -1212,6 +1210,56 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         return true;
+    }
+
+    /**
+     * Checks if an item has been completed
+     * @param RunnerServiceContext $context
+     * @param RouteItem $routeItem
+     * @param AssessmentItemSession $itemSession
+     * @param bool $partially (optional) Whether or not consider partially responded sessions as responded.
+     * @return bool
+     * @throws \common_Exception
+     */
+    public function isItemCompleted(RunnerServiceContext $context, $routeItem, $itemSession, $partially = true) {
+        if ($context instanceof QtiRunnerServiceContext && $context->isAdaptive()) {
+            $itemIdentifier = $context->getCurrentAssessmentItemRef()->getIdentifier();
+            $itemState = $this->getItemState($context, $itemIdentifier);
+            if ($itemState !== null) {
+                // as the item comes from a CAT section, it is simpler to load the responses from the state
+                $itemResponse = [];
+                foreach ($itemState as $key => $value) {
+                    if (isset($value['response'])) {
+                        $itemResponse[$key] = $value['response'];
+                    }
+                }
+                $responses = $this->parsesItemResponse($context, $itemIdentifier, $itemResponse);
+                
+                // fork of AssessmentItemSession::isResponded()
+                $excludedResponseVariables = array('numAttempts', 'duration');
+                foreach ($responses as $var) {
+
+                    if ($var instanceof ResponseVariable && in_array($var->getIdentifier(), $excludedResponseVariables) === false) {
+                        $value = $var->getValue();
+                        $defaultValue = $var->getDefaultValue();
+
+                        if (Utils::isNull($value) === true) {
+                            if (Utils::isNull($defaultValue) === (($partially) ? false : true)) {
+                                return (($partially) ? true : false);
+                            }
+                        } else {
+                            if ($value->equals($defaultValue) === (($partially) ? false : true)) {
+                                return (($partially) ? true : false);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return (($partially) ? false : true);
+        } else {
+            return TestRunnerUtils::isItemCompleted($routeItem, $itemSession, $partially);
+        }
     }
 
     /**

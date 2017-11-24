@@ -201,7 +201,6 @@ define([
          */
         init : function init(){
             var self = this;
-
             /**
              * Retrieve the item results
              * @returns {Object} the results
@@ -226,9 +225,7 @@ define([
              * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
             function computeNext(action, params, loadPromise){
-
                 var context = self.getTestContext();
-
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -277,7 +274,6 @@ define([
                 feedbackPromise.then(function(){
                     // ensure the answered state of the current item is correctly set and the stats are aligned
                     self.setTestMap(self.dataUpdater.updateStats());
-
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
@@ -388,32 +384,24 @@ define([
                     );
                 })
                 .on('pause', function(data){
-                    var pause;
 
                     this.setState('closedOrSuspended', true);
 
-                    if (!this.getState('disconnected')) {
-                        // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause', {
-                            reason: {
-                                reasons: data && data.reasons,
-                                comment : data && data.message
-                            }
+                    this.getProxy().callTestAction('pause', {
+                        reason: {
+                            reasons: data && data.reasons,
+                            comment : data && data.message
+                        }
+                    })
+                    .then(function() {
+                        self.trigger('leave', {
+                            code: self.getTestData().states.suspended,
+                            message: data && data.message
                         });
-                    } else {
-                        pause = Promise.resolve();
-                    }
-
-                    pause
-                        .then(function() {
-                            self.trigger('leave', {
-                                code: self.getTestData().states.suspended,
-                                message: data && data.message
-                            });
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
-                        });
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
                 })
                 .on('loaditem', function(){
                     var context = this.getTestContext();
