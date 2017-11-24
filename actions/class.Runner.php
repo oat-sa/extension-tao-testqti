@@ -193,6 +193,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             switch (true) {
+                case $e instanceof \oat\libCat\exception\CatEngineConnectivityException:
+                    $response['type'] = 'catEngine';
+                    $response['message'] = $e->getMessage();
+                    break;
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
@@ -288,6 +292,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->runnerService->persist($serviceContext);
         } catch (common_Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
+        } catch (\Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
