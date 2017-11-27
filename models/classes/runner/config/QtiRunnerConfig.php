@@ -62,6 +62,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             // build the test config using the new notation
             $config = [
                 'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
+                'catEngineWarning' => isset($rawConfig['catEngineWarning']) ? $rawConfig['catEngineWarning'] : null,
                 'progressIndicator' => [
                     'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
                     'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,

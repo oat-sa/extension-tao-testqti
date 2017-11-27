@@ -410,9 +410,10 @@ define([
             return _.reduce(items, function accStats(acc, item) {
                 if (!item.informational) {
                     acc.questions++;
-                }
-                if (item.answered) {
-                    acc.answered++;
+
+                    if (item.answered) {
+                        acc.answered++;
+                    }
                 }
                 if (item.flagged) {
                     acc.flagged++;

@@ -487,7 +487,7 @@ class CatService extends ConfigurableService
             $result = !$items ? [] : json_decode($items);
         }
 
-        return $result;
+        return is_array($result) ? $result : [];
     }
 
     /**

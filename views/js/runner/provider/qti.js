@@ -201,7 +201,6 @@ define([
          */
         init : function init(){
             var self = this;
-
             /**
              * Retrieve the item results
              * @returns {Object} the results
@@ -226,9 +225,7 @@ define([
              * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
             function computeNext(action, params, loadPromise){
-
                 var context = self.getTestContext();
-
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -277,7 +274,6 @@ define([
                 feedbackPromise.then(function(){
                     // ensure the answered state of the current item is correctly set and the stats are aligned
                     self.setTestMap(self.dataUpdater.updateStats());
-
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){

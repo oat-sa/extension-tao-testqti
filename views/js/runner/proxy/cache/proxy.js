@@ -328,6 +328,12 @@ define([
                         //action is not synchronizable
                         //fallback to direct request
                         request = self.request(url, actionParams);
+                        request.then(function(result){
+                            if (self.isOffline()) {
+                                return self.scheduleAction(action, actionParams);
+                            }
+                            return result;
+                        });
                     }
 
                     return request.then(function(result){
@@ -335,11 +341,11 @@ define([
                             return self.offlineAction(action, actionParams);
                         }
                         return result;
-                    }).catch(function(result){
-                        if (self.isOffline()) {
+                    }).catch(function(error){
+                        if (self.isConnectivityError(error) && self.isOffline()) {
                             return self.offlineAction(action, actionParams);
                         }
-                        return result;
+                        throw error;
                     });
                 };
 
