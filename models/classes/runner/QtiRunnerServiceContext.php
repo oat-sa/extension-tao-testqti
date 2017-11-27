@@ -566,36 +566,39 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function selectAdaptiveNextItem()
     {
-        if( ! $this->syncingMode ) {
-            $lastItemId = $this->getCurrentCatItemId();
-            $lastOutput = $this->getLastCatItemOutput();
-            $catSession = $this->getCatSession();
+        $lastItemId = $this->getCurrentCatItemId();
+        $lastOutput = $this->getLastCatItemOutput();
+        $catSession = $this->getCatSession();
 
-            $preSelection = $catSession->getTestMap();
+        $preSelection = $catSession->getTestMap();
 
-            try {
+        try {
+            if (!$this->syncingMode) {
                 $selection = $catSession->getTestMap(array_values($lastOutput));
                 if (!$this->saveAdaptiveResults($catSession)) {
                     \common_Logger::w('Unable to save CatService results.');
                 }
                 $isShadowItem = false;
-            } catch (CatEngineException $e) {
-                \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
+            } else {
                 $selection = $catSession->getTestMap();
                 $isShadowItem = true;
             }
+        } catch (CatEngineException $e) {
+            \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
+            $selection = $catSession->getTestMap();
+            $isShadowItem = true;
+        }
 
-            $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $preSelection, $selection, $isShadowItem);
-            $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+        $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $preSelection, $selection, $isShadowItem);
+        $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
-            $this->persistCatSession($catSession);
-            if (is_array($selection) && count($selection) > 0) {
-                \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
-                return $selection[0];
-            } else {
-                \common_Logger::d('No new CAT item selection.');
-                return null;
-            }
+        $this->persistCatSession($catSession);
+        if (is_array($selection) && count($selection) > 0) {
+            \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
+            return $selection[0];
+        } else {
+            \common_Logger::d('No new CAT item selection.');
+            return null;
         }
     }
     
