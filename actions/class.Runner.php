@@ -25,6 +25,8 @@ use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
+use oat\libCat\exception\CatEngineConnectivityException;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -193,7 +195,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             switch (true) {
-                case $e instanceof \oat\libCat\exception\CatEngineConnectivityException:
+                case $e instanceof CatEngineConnectivityException:
+                case $e instanceof CatEngineNotFoundException:
                     $response['type'] = 'catEngine';
                     $response['message'] = $e->getMessage();
                     break;
