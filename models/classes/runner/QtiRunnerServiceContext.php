@@ -148,7 +148,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
         $sessionStateService->resumeSession($this->getTestSession());
         
-        $this->retrieveTestMeta();
         $this->retrieveItemIndex();
     }
 
@@ -220,15 +219,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * Retrieves the QTI Test Definition meta-data array stored into the private compilation directory.
+     * @deprecated
      */
     protected function retrieveTestMeta() 
     {
-        $directories = $this->getCompilationDirectory();
-        $data = $directories['private']->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME);
-        $data = str_replace('<?php', '', $data);
-        $data = str_replace('?>', '', $data);
-        $this->testMeta = eval($data);
     }
     
     /**
@@ -316,6 +310,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getTestMeta()
     {
+        if (!isset($this->testMeta)) {
+            $directories = $this->getCompilationDirectory();
+            $data = $directories['private']->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME);
+            $data = str_replace('<?php', '', $data);
+            $data = str_replace('?>', '', $data);
+            $this->testMeta = eval($data);
+        }
         return $this->testMeta;
     }
     
