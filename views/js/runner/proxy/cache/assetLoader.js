@@ -28,6 +28,10 @@ define([
 ], function(_, assetManagerFactory, urlUtil){
     'use strict';
 
+    //keep references to preloaded images attached
+    //in order to prevent garbage collection of cached images
+    var images = {};
+
     //get the same asset manager than the test runner
     var assetManager = assetManagerFactory();
 
@@ -41,8 +45,9 @@ define([
          * @param {String} url - the url of the image to preload
          */
         img : function preloadImage(url){
-            if('Image' in window){
-                new Image().src = url;
+            if('Image' in window && !images[url]){
+                images[url] = new Image();
+                images[url].src = url;
             }
         },
 
