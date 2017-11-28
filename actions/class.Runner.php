@@ -174,9 +174,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     /**
      * Gets an error response object
      * @param Exception [$e] Optional exception from which extract the error context
+     * @param array $prevResponse Response before catch
      * @return array
      */
-    protected function getErrorResponse($e = null) {
+    protected function getErrorResponse($e = null, $prevResponse = []) {
         $response = [
             'success' => false,
             'type' => 'error',
@@ -197,7 +198,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             switch (true) {
                 case $e instanceof CatEngineConnectivityException:
                 case $e instanceof CatEngineNotFoundException:
+                    $response = array_merge($response, $prevResponse);
                     $response['type'] = 'catEngine';
+                    $response['code'] = 200;
+                    $response['testMap'] = [];
                     $response['message'] = $e->getMessage();
                     break;
                 case $e instanceof QtiRunnerClosedException:
@@ -234,6 +238,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = 500;
 
             switch (true) {
+                case $e instanceof CatEngineConnectivityException:
+                case $e instanceof CatEngineNotFoundException:
                 case $e instanceof QtiRunnerEmptyResponsesException:
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
@@ -289,13 +295,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if ($result) {
                 $response['testData'] = $this->runnerService->getTestData($serviceContext);
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
                 $response['lastStoreId'] = $lastStoreId;
+                $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
             }
 
             $this->runnerService->persist($serviceContext);
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
+            $response = $this->getErrorResponse($e, $response);
             $code = $this->getErrorCode($e);
         } catch (\Exception $e) {
             $response = $this->getErrorResponse($e);

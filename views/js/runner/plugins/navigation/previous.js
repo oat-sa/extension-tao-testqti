@@ -62,6 +62,11 @@ define([
                 var previousSection;
                 var previousPart;
 
+                // check TestMap if empty
+                if (Object.keys(testMap).length === 0 && testMap.constructor === Object) {
+                    return false;
+                }
+
                 //first item of the test
                 if (navigationHelper.isFirst(testMap, context.itemIdentifier)) {
                     return false;
