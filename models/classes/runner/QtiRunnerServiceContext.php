@@ -23,13 +23,11 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\libCat\CatSession;
-use oat\libCat\exception\CatEngineConnectivityException;
 use oat\libCat\Exception\CatEngineException;
 use oat\libCat\result\AbstractResult;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\TestResult;
 use oat\taoQtiTest\helpers\TestSessionMemento;
-use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
@@ -480,10 +478,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $rawData = json_decode($itemOutput, true);
             foreach ($rawData as $result) {
                 $itemIdentifier = $result['identifier'];
-                $variables= [];
-                foreach ($result['outcomeVariables'] as $outcomeVariable) {
-                    $outcomeVariable['variableType'] = ResultVariable::OUTCOME_VARIABLE;
-                    $variables[] = ResultVariable::restore($outcomeVariable);
+                $variables = [];
+                foreach ($result['variables'] as $variable) {
+                    if (empty($variable)) {
+                        continue;
+                    }
+                    $variables[] = ResultVariable::restore($variable);
                 }
                 $output[$itemIdentifier] = new ItemResult($itemIdentifier, $variables);
             }
@@ -574,7 +574,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
             $preSelection = $catSession->getTestMap();
             try {
+
                 $selection = $catSession->getTestMap(array_values($lastOutput));
+
+
                 if (!$this->saveAdaptiveResults($catSession)) {
                     \common_Logger::w('Unable to save CatService results.');
                 }
@@ -815,7 +818,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     protected function saveAdaptiveResults(CatSession $catSession)
     {
-        return $this->storeResult($catSession->getTestResults()) && $this->storeResult($catSession->getItemResults());
+        return $this->storeResult($catSession->getTestResult()) && $this->storeResult($catSession->getItemResults());
     }
 
     /**
@@ -825,11 +828,15 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * After converted them to taoResultServer variables
      * Use the runner service to store the variables
      *
-     * @param $result
+     * @param $results
      * @return bool
      */
-    protected function storeResult($result)
+    protected function storeResult($results)
     {
+        if (!is_array($results)) {
+            $results = [$results];
+        }
+
         /** @var QtiRunnerService $runnerService */
         $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
 
