@@ -1,0 +1,207 @@
+{
+  "parts": {
+    "testPart-1": {
+      "id": "testPart-1",
+      "label": "testPart-1",
+      "position": 0,
+      "isLinear": false,
+      "sections": {
+        "assessmentSection-1": {
+          "id": "assessmentSection-1",
+          "label": "Section 1",
+          "position": 0,
+          "items": {
+            "item-1": {
+              "id": "item-1",
+              "label": "Item 1",
+              "position": 0,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": true,
+              "answered": false,
+              "flagged": false,
+              "viewed": true
+            },
+            "item-2": {
+              "id": "item-2",
+              "label": "Item 2",
+              "position": 1,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            },
+            "item-3": {
+              "id": "item-3",
+              "label": "Item 3",
+              "position": 2,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            }
+          },
+          "stats": {
+            "questions": 2,
+            "answered": 0,
+            "flagged": 0,
+            "viewed": 1,
+            "total": 3
+          }
+        },
+        "assessmentSection-2": {
+          "id": "assessmentSection-2",
+          "label": "Section 2",
+          "position": 3,
+          "items": {
+            "item-4": {
+              "id": "item-4",
+              "label": "Item 1",
+              "position": 3,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            },
+            "item-5": {
+              "id": "item-5",
+              "label": "Item 2",
+              "position": 4,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            },
+            "item-6": {
+              "id": "item-6",
+              "label": "Item 3",
+              "position": 5,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            }
+          },
+          "stats": {
+            "questions": 3,
+            "answered": 0,
+            "flagged": 0,
+            "viewed": 0,
+            "total": 3
+          }
+        }
+      },
+      "stats": {
+        "questions": 5,
+        "answered": 0,
+        "flagged": 0,
+        "viewed": 1,
+        "total": 6
+      }
+    },
+    "testPart-2": {
+      "id": "testPart-2",
+      "label": "testPart-2",
+      "position": 6,
+      "isLinear": false,
+      "sections": {
+        "assessmentSection-3": {
+          "id": "assessmentSection-3",
+          "label": "Section 1",
+          "position": 6,
+          "items": {
+            "item-7": {
+              "id": "item-7",
+              "label": "Item 1",
+              "position": 6,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            },
+            "item-8": {
+              "id": "item-8",
+              "label": "Item 2",
+              "position": 7,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            }
+          },
+          "stats": {
+            "questions": 2,
+            "answered": 0,
+            "flagged": 0,
+            "viewed": 0,
+            "total": 2
+          }
+        },
+        "assessmentSection-4": {
+          "id": "assessmentSection-4",
+          "label": "Section 2",
+          "position": 8,
+          "items": {
+            "item-9": {
+              "id": "item-9",
+              "label": "Item 1",
+              "position": 8,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            },
+            "item-10": {
+              "id": "item-10",
+              "label": "Item 2",
+              "position": 9,
+              "occurrence": 0,
+              "remainingAttempts": -1,
+              "informational": false,
+              "answered": false,
+              "flagged": false,
+              "viewed": false
+            }
+          },
+          "stats": {
+            "questions": 2,
+            "answered": 0,
+            "flagged": 0,
+            "viewed": 0,
+            "total": 2
+          }
+        }
+      },
+      "stats": {
+        "questions": 4,
+        "answered": 0,
+        "flagged": 0,
+        "viewed": 0,
+        "total": 4
+      }
+    }
+  },
+  "stats": {
+    "questions": 9,
+    "answered": 0,
+    "flagged": 0,
+    "viewed": 1,
+    "total": 10
+  }
+}

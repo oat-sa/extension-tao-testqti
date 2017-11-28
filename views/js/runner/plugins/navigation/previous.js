@@ -30,8 +30,9 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoQtiTest/runner/helpers/navigation',
+    'taoQtiTest/runner/helpers/map',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, pluginFactory, shortcut, namespaceHelper, navigationHelper, buttonTpl){
+], function ($, _, __, hider, pluginFactory, shortcut, namespaceHelper, navigationHelper, mapHelper, buttonTpl){
     'use strict';
 
     /**
@@ -58,14 +59,40 @@ define([
             var canDoPrevious = function canDoPrevious() {
                 var testMap = testRunner.getTestMap();
                 var context = testRunner.getTestContext();
-                var canMove = !navigationHelper.isFirst(testMap, context.itemIdentifier);
+                var previousSection;
+                var previousPart;
 
-                //when entering an adaptive section,
-                //you can't leave the section from the beginning
-                if (canMove && context.isCatAdaptive) {
-                    canMove = !navigationHelper.isFirstOf(testMap, context.itemIdentifier, 'section');
+                //first item of the test
+                if (navigationHelper.isFirst(testMap, context.itemIdentifier)) {
+                    return false;
                 }
-                return canMove && context.isLinear === false && context.canMoveBackward === true;
+
+                //first item of a section
+                if (navigationHelper.isFirstOf(testMap, context.itemIdentifier, 'section')) {
+
+                    //when entering an adaptive section,
+                    //you can't leave the section from the beginning
+                    if(context.isCatAdaptive){
+                        return false;
+                    }
+
+                    //if the previous section is adaptive or a timed section
+                    previousSection = mapHelper.getItemSection(testMap, context.itemPosition - 1);
+                    if(previousSection.isCatAdaptive || (previousSection.timeConstraint && !context.options.noExitTimedSectionWarning) ){
+                        return false;
+                    }
+                }
+
+                if (navigationHelper.isFirstOf(testMap, context.itemIdentifier, 'part')) {
+
+                    //if the previous part is linear, we don't enter it too
+                    previousPart = mapHelper.getItemPart(testMap, context.itemPosition - 1);
+                    if(previousPart.isLinear){
+                        return false;
+                    }
+
+                }
+                return context.isLinear === false && context.canMoveBackward === true;
             };
 
             /**
@@ -91,19 +118,19 @@ define([
             function doPrevious(previousItemWarning) {
                 var context = testRunner.getTestContext();
 
-                function enable() {
-                    testRunner.trigger('enablenav enabletools');
+                function enableNav() {
+                    testRunner.trigger('disablenav');
                 }
 
-                if(self.getState('enabled') !== false){
-                    testRunner.trigger('disablenav disabletools');
+                testRunner.trigger('disablenav');
 
+                if(self.getState('enabled') !== false){
                     if (previousItemWarning && context.remainingAttempts !== -1) {
                         testRunner.trigger(
                             'confirm.previous',
                             __('You are about to go to the previous item. Click OK to continue and go to the previous item.'),
                             testRunner.previous, // if the test taker accept
-                            enable  // if the test taker refuse
+                            enableNav()          // if he refuses
                         );
 
                     } else {
@@ -118,7 +145,7 @@ define([
             });
 
             if(testConfig.allowShortcuts && pluginShortcuts.trigger){
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function() {
                     if (canDoPrevious() && self.getState('enabled') === true) {
                         testRunner.trigger('nav-previous', [true]);
                     }

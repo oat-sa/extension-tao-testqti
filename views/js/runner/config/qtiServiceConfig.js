@@ -146,31 +146,31 @@ define([
 
             /**
              * Gets an URL of a service action related to a particular item
-             * @param {String} uri - The URI of the item
+             * @param {String} itemIdentifier - The URI of the item
              * @param {String} action - the name of the action to request
              * @returns {String} - Returns the URL
              */
-            getItemActionUrl : function getItemActionUrl(uri, action) {
+            getItemActionUrl : function getItemActionUrl(itemIdentifier, action) {
                 return helpers._url(action, this.getServiceController(), this.getServiceExtension(), {
                     testDefinition : this.getTestDefinition(),
                     testCompilation : this.getTestCompilation(),
                     testServiceCallId : this.getServiceCallId(),
-                    itemDefinition : uri
+                    itemDefinition : itemIdentifier
                 });
             },
 
             /**
              * Gets an URL of a telemetry signal related to a particular item
-             * @param {String} uri - The URI of the item
+             * @param {String} itemIdentifier - The URI of the item
              * @param {String} signal - the name of the signal to request
              * @returns {String} - Returns the URL
              */
-            getTelemetryUrl : function getTelemetryUrl(uri, signal) {
+            getTelemetryUrl : function getTelemetryUrl(itemIdentifier, signal) {
                 return helpers._url(signal, this.getServiceController(), this.getServiceExtension(), {
                     testDefinition : this.getTestDefinition(),
                     testCompilation : this.getTestCompilation(),
                     testServiceCallId : this.getServiceCallId(),
-                    itemDefinition : uri
+                    itemDefinition : itemIdentifier
                 });
             },
 
@@ -191,6 +191,7 @@ define([
                 var extension = communication.extension || this.getServiceExtension();
                 var controller = communication.controller || this.getServiceController();
                 var action = communication.action;
+                var syncActions = communication.syncActions || [];
 
                 // build the service address from the provided config
                 // it can be overwritten by a full url from the config
@@ -201,7 +202,7 @@ define([
                 });
 
                 // append the address of the remote service to target
-                var params = _.merge(communication.params || {}, {
+                var params = _.merge({}, communication.params || {}, {
                     service: communication.service || service
                 });
 
@@ -218,7 +219,8 @@ define([
                 return {
                     enabled: communication.enabled,
                     type: communication.type,
-                    params: params
+                    params: params,
+                    syncActions: syncActions
                 };
             }
         };

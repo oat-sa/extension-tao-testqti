@@ -26,7 +26,7 @@ define([
     'taoQtiTest/provider/testItems',
     'ui/resource/selector',
     'ui/feedback'
-], function($, __, loggerFactory, testItemProviderFactory, resourceSelectorFactory, feedback){
+], function($, __, loggerFactory, testItemProviderFactory, resourceSelector, feedback){
     'use strict';
 
    /**
@@ -57,7 +57,7 @@ define([
 
         var selectorConfig = {
             type : __('items'),
-            multiple : true
+            selectionMode : resourceSelector.selectionModes.multiple
         };
 
         //load the classes hierarchy
@@ -76,7 +76,7 @@ define([
             })
             .then(function(){
                 //set up the resource selector
-                resourceSelectorFactory($container, selectorConfig)
+                resourceSelector($container, selectorConfig)
                     .on('render', function(){
                         var self = this;
                         $container.on('itemselected.creator', function(){

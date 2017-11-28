@@ -22,8 +22,9 @@ define([
     'lodash',
     'helpers',
     'taoQtiTest/runner/helpers/map',
-    'json!taoQtiTest/test/runner/helpers/map/map.json'
-], function(_, helpers, mapHelper, mapSample) {
+    'json!taoQtiTest/test/runner/helpers/map/map.json',
+    'json!taoQtiTest/test/runner/helpers/map/light-map.json'
+], function(_, helpers, mapHelper, mapSample, lightMapSample) {
     'use strict';
 
     QUnit.module('helpers/map');
@@ -35,13 +36,14 @@ define([
     });
 
 
-    var mapHelperApi = [
+    QUnit.cases([
         { title : 'getJumps' },
         { title : 'getParts' },
         { title : 'getJump' },
         { title : 'getPart' },
         { title : 'getSection' },
         { title : 'getSections' },
+        { title : 'getNextSections' },
         { title : 'getItem' },
         { title : 'getTestStats' },
         { title : 'getPartStats' },
@@ -55,15 +57,15 @@ define([
         { title : 'each' },
         { title : 'updateItemStats' },
         { title : 'computeItemStats' },
-        { title : 'computeStats' }
-    ];
+        { title : 'computeStats' },
+        { title : 'patch' },
+        { title : 'reindex' },
+        { title : 'createJumpTable' },
 
-    QUnit
-        .cases(mapHelperApi)
-        .test('helpers/map API ', function(data, assert) {
-            QUnit.expect(1);
-            assert.equal(typeof mapHelper[data.title], 'function', 'The map helper expose a "' + data.title + '" function');
-        });
+    ]).test('helpers/map API ', function(data, assert) {
+        QUnit.expect(1);
+        assert.equal(typeof mapHelper[data.title], 'function', 'The map helper expose a "' + data.title + '" function');
+    });
 
 
     QUnit.test('helpers/map.getJumps', function(assert) {
@@ -128,11 +130,21 @@ define([
         assert.equal(mapHelper.getSection(), undefined, 'The map helper getSection does not provide any section when the map does not exist');
     });
 
+
     QUnit.test('helpers/map.getSections', function(assert) {
-        //QUnit.expect(3);
-        assert.deepEqual(mapHelper.getSections(mapSample), _.extend({}, mapSample.parts['testPart-1'].sections, mapSample.parts['testPart-2'].sections), 'The map helper getSection provides the right section');
+        QUnit.expect(3);
+        assert.deepEqual(mapHelper.getSections(mapSample), _.extend({}, mapSample.parts['testPart-1'].sections, mapSample.parts['testPart-2'].sections), 'The map helper getSection provides the right sections');
         assert.deepEqual(mapHelper.getSections({}), {}, 'The map helper getSection does not provide any section when the map is wrong');
         assert.deepEqual(mapHelper.getSections(), {}, 'The map helper getSection does not provide any section when the map does not exist');
+    });
+
+
+    QUnit.test('helpers/map.getNextSections', function(assert) {
+        QUnit.expect(4);
+        assert.deepEqual(mapHelper.getNextSections(mapSample, 'assessmentSection-3'), _.omit(mapSample.parts['testPart-2'].sections, 'assessmentSection-3'), 'The map helper getSection provides the right sections');
+        assert.deepEqual(mapHelper.getNextSections(mapSample, 'foo'), {}, 'The map helper getSection does not provide any section when the section does not exist');
+        assert.deepEqual(mapHelper.getNextSections({}, 'foo'), {}, 'The map helper getSection does not provide any section when the map is wrong');
+        assert.deepEqual(mapHelper.getNextSections(), {}, 'The map helper getSection does not provide any section when the map does not exist');
     });
 
 
@@ -320,7 +332,7 @@ define([
         var part = mapHelper.getItemPart(map, 8);
         var stats = mapHelper.getTestStats(map);
 
-        QUnit.expect(39);
+        QUnit.expect(59);
 
         assert.equal(item.informational, false, 'The item is not informational');
         assert.equal(item.answered, false, 'The item is not answered at this time');
@@ -345,33 +357,60 @@ define([
         assert.equal(section.stats.viewed, 0, 'There is no viewed item at this time in the section');
         assert.equal(section.stats.total, 2, 'There is 2 items at this time in the section');
 
-        item.informational = true;
         item.answered = true;
         item.flagged = true;
         item.viewed = true;
 
         assert.equal(mapHelper.updateItemStats(map, 8), map, 'The map helper updateItemStats returns the map');
 
-        assert.equal(item.informational, true, 'The item is now informational');
+        assert.equal(item.informational, false, 'The item is still not informational');
         assert.equal(item.answered, true, 'The item is now answered');
         assert.equal(item.flagged, true, 'The item is now flagged');
         assert.equal(item.viewed, true, 'The item is now viewed');
 
         stats = mapHelper.getTestStats(map);
-        assert.equal(stats.questions, 8, 'There is 8 questions at this time in the test');
+        assert.equal(stats.questions, 9, 'There is still 9 questions at this time in the test');
         assert.equal(stats.answered, 1, 'There is one answered item at this time in the test');
         assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the test');
         assert.equal(stats.viewed, 2, 'There is two viewed items at this time in the test');
         assert.equal(stats.total, 10, 'There is 10 items at this time in the test');
 
-        assert.equal(part.stats.questions, 3, 'There is 3 questions at this time in the part');
+        assert.equal(part.stats.questions, 4, 'There is 4 questions at this time in the part');
         assert.equal(part.stats.answered, 1, 'There is one answered item at this time in the part');
         assert.equal(part.stats.flagged, 1, 'There is one flagged item at this time in the part');
         assert.equal(part.stats.viewed, 1, 'There is one viewed item at this time in the part');
         assert.equal(part.stats.total, 4, 'There is 4 items at this time in the part');
 
-        assert.equal(section.stats.questions, 1, 'There is 1 questions at this time in the section');
+        assert.equal(section.stats.questions, 2, 'There is 2 questions at this time in the section');
         assert.equal(section.stats.answered, 1, 'There is one answered item at this time in the section');
+        assert.equal(section.stats.flagged, 1, 'There is one flagged item at this time in the section');
+        assert.equal(section.stats.viewed, 1, 'There is one viewed item at this time in the section');
+        assert.equal(section.stats.total, 2, 'There is 2 items at this time in the section');
+
+        item.informational = true;
+
+        assert.equal(mapHelper.updateItemStats(map, 8), map, 'The map helper updateItemStats returns the map');
+
+        assert.equal(item.informational, true, 'The item is now informational');
+        assert.equal(item.answered, true, 'The item is still answered, but it should be ignored since it is informational');
+        assert.equal(item.flagged, true, 'The item is still flagged');
+        assert.equal(item.viewed, true, 'The item is still viewed');
+
+        stats = mapHelper.getTestStats(map);
+        assert.equal(stats.questions, 8, 'There is 8 questions at this time in the test');
+        assert.equal(stats.answered, 0, 'There is no answered item at this time in the test');
+        assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the test');
+        assert.equal(stats.viewed, 2, 'There is two viewed items at this time in the test');
+        assert.equal(stats.total, 10, 'There is 10 items at this time in the test');
+
+        assert.equal(part.stats.questions, 3, 'There is 3 questions at this time in the part');
+        assert.equal(part.stats.answered, 0, 'There is no answered item at this time in the part');
+        assert.equal(part.stats.flagged, 1, 'There is one flagged item at this time in the part');
+        assert.equal(part.stats.viewed, 1, 'There is one viewed item at this time in the part');
+        assert.equal(part.stats.total, 4, 'There is 4 items at this time in the part');
+
+        assert.equal(section.stats.questions, 1, 'There is 1 questions at this time in the section');
+        assert.equal(section.stats.answered, 0, 'There is no answered item at this time in the section');
         assert.equal(section.stats.flagged, 1, 'There is one flagged item at this time in the section');
         assert.equal(section.stats.viewed, 1, 'There is one viewed item at this time in the section');
         assert.equal(section.stats.total, 2, 'There is 2 items at this time in the section');
@@ -383,7 +422,7 @@ define([
         var section = mapHelper.getItemSection(mapSample, 6);
         var stats;
 
-        QUnit.expect(19);
+        QUnit.expect(29);
 
         assert.equal(item.informational, false, 'The item is not informational');
         assert.equal(item.answered, false, 'The item is not answered at this time');
@@ -396,7 +435,6 @@ define([
         assert.equal(section.stats.viewed, 0, 'There is no viewed item at this time in the section');
         assert.equal(section.stats.total, 2, 'There is 2 items at this time in the section');
 
-        item.informational = true;
         item.answered = true;
         item.flagged = true;
         item.viewed = true;
@@ -405,13 +443,30 @@ define([
 
         assert.equal(typeof stats, 'object', 'The map helper computeItemStats returns an object');
 
-        assert.equal(item.informational, true, 'The item is now informational');
+        assert.equal(item.informational, false, 'The item is still not informational');
         assert.equal(item.answered, true, 'The item is now answered');
         assert.equal(item.flagged, true, 'The item is now flagged');
         assert.equal(item.viewed, true, 'The item is now viewed');
 
-        assert.equal(stats.questions, 1, 'There is one question at this time in the computed stats');
+        assert.equal(stats.questions, 2, 'There is still 2 question at this time in the computed stats');
         assert.equal(stats.answered, 1, 'There is one answered item at this time in the computed stats');
+        assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the computed stats');
+        assert.equal(stats.viewed, 1, 'There is one viewed item at this time in the computed stats');
+        assert.equal(stats.total, 2, 'There is 2 items at this time in the computed stats');
+
+        item.informational = true;
+
+        stats = mapHelper.computeItemStats(section.items);
+
+        assert.equal(typeof stats, 'object', 'The map helper computeItemStats returns an object');
+
+        assert.equal(item.informational, true, 'The item is now informational');
+        assert.equal(item.answered, true, 'The item is still answered, but it should be ignored since it is informational');
+        assert.equal(item.flagged, true, 'The item is now flagged');
+        assert.equal(item.viewed, true, 'The item is now viewed');
+
+        assert.equal(stats.questions, 1, 'There is now one question at this time in the computed stats');
+        assert.equal(stats.answered, 0, 'There is no answered item at this time in the computed stats');
         assert.equal(stats.flagged, 1, 'There is one flagged item at this time in the computed stats');
         assert.equal(stats.viewed, 1, 'There is one viewed item at this time in the computed stats');
         assert.equal(stats.total, 2, 'There is 2 items at this time in the computed stats');
@@ -473,5 +528,199 @@ define([
         assert.equal(section.stats.flagged, 2, 'There is two flagged items at this time in the section');
         assert.equal(section.stats.viewed, 2, 'There is two viewed items at this time in the section');
         assert.equal(section.stats.total, 2, 'There is two items at this time in the section');
+    });
+
+    QUnit.test('reindex', function(assert){
+        var map = _.cloneDeep(lightMapSample);
+        var item1;
+        var item8;
+
+        QUnit.expect(20);
+
+        assert.equal(typeof map.jumps, 'undefined', 'There is no jump table');
+
+        item1 = map.parts['testPart-1'].sections['assessmentSection-1'].items['item-1'];
+        assert.equal(item1.position, 0, 'The 1st item position is correct');
+        assert.equal(typeof item1.positionInPart, 'undefined', 'The positionInPart property is missing');
+        assert.equal(typeof item1.positionInSection, 'undefined', 'The positionInSection property is missing');
+        assert.equal(typeof item1.index, 'undefined', 'The index property is missing');
+
+        item8 = map.parts['testPart-2'].sections['assessmentSection-3'].items['item-8'];
+        assert.equal(item8.position, 7, 'The 8th item position is correct');
+        assert.equal(typeof item8.positionInPart, 'undefined', 'The positionInPart property is missing');
+        assert.equal(typeof item8.positionInSection, 'undefined', 'The positionInSection property is missing');
+        assert.equal(typeof item8.index, 'undefined', 'The index property is missing');
+
+        map = mapHelper.reindex(map);
+
+        assert.equal(map.jumps.length, 10, 'There is a jump table with the correct size');
+        assert.deepEqual(map.jumps[0], {
+            identifier: 'item-1',
+            section: 'assessmentSection-1',
+            part: 'testPart-1',
+            position: 0
+        },  'There 1st jump is correct');
+        assert.deepEqual(map.jumps[7], {
+            identifier: 'item-8',
+            section: 'assessmentSection-3',
+            part: 'testPart-2',
+            position: 7
+        },  'There 8th jump is correct');
+
+        item1 = map.parts['testPart-1'].sections['assessmentSection-1'].items['item-1'];
+        assert.equal(item1.position, 0, 'The 1st item position is correct');
+        assert.equal(item1.positionInPart, 0, 'The positionInPart property is correct');
+        assert.equal(item1.positionInSection, 0, 'The positionInSection property is correct');
+        assert.equal(item1.index, 1, 'The index property is correct');
+
+        item8 = map.parts['testPart-2'].sections['assessmentSection-3'].items['item-8'];
+        assert.equal(item8.position, 7, 'The 8th item position is correct');
+        assert.equal(item8.positionInPart, 1, 'The positionInPart property is correct');
+        assert.equal(item8.positionInSection, 1, 'The positionInSection property is correct');
+        assert.equal(item8.index, 2, 'The index property is correct');
+    });
+
+    QUnit.test('createJumpTable', function(assert){
+        var map = _.cloneDeep(lightMapSample);
+
+        QUnit.expect(4);
+
+        assert.equal(typeof map.jumps, 'undefined', 'There is no jump table');
+
+        map = mapHelper.createJumpTable(map);
+
+        assert.equal(map.jumps.length, 10, 'There is a jump table with the correct size');
+        assert.deepEqual(map.jumps[0], {
+            identifier: 'item-1',
+            section: 'assessmentSection-1',
+            part: 'testPart-1',
+            position: 0
+        },  'There 1st jump is correct');
+        assert.deepEqual(map.jumps[7], {
+            identifier: 'item-8',
+            section: 'assessmentSection-3',
+            part: 'testPart-2',
+            position: 7
+        },  'There 8th jump is correct');
+    });
+
+    QUnit.test('patch section', function(assert){
+        var section3;
+        var section4;
+
+        var map = _.cloneDeep(lightMapSample);
+        var patchStats = {
+            questions: 3,
+            answered: 0,
+            flagged: 0,
+            viewed: 0,
+            total: 3
+        };
+
+        var patch = {
+            scope : 'section',
+            parts: {
+                'testPart-2': {
+                    position: 6,
+                    sections: {
+                        'assessmentSection-3': {
+                            id: 'assessmentSection-3',
+                            label: 'Section 1',
+                            position: 6,
+                            items: {
+                                'item-17': {
+                                    id: 'item-17',
+                                    label: 'Item 17',
+                                    position: 6,
+                                    occurrence: 0,
+                                    remainingAttempts: -1,
+                                    informational: false,
+                                    answered: false,
+                                    flagged: false,
+                                    viewed: false
+                                },
+                                'item-18': {
+                                    id: 'item-18',
+                                    label: 'Item 18',
+                                    position: 7,
+                                    occurrence: 0,
+                                    remainingAttempts: -1,
+                                    informational: false,
+                                    answered: false,
+                                    flagged: false,
+                                    viewed: false
+                                },
+                                'item-19': {
+                                    id: 'item-19',
+                                    label: 'Item 18',
+                                    position: 8,
+                                    occurrence: 0,
+                                    remainingAttempts: -1,
+                                    informational: false,
+                                    answered: false,
+                                    flagged: false,
+                                    viewed: false
+                                }
+                            },
+                            stats: patchStats
+                        }
+                    },
+                    stats: patchStats
+                }
+            },
+            stats: patchStats
+        };
+        QUnit.expect(21);
+
+        assert.equal(typeof map.jumps, 'undefined', 'There is no jump table');
+
+        section3 = map.parts['testPart-2'].sections['assessmentSection-3'];
+        assert.equal(typeof section3.items['item-8'], 'object', 'The 3rd section has the item 8');
+        assert.equal(typeof section3.items['item-18'], 'undefined', 'The 3rd section has not the item 18');
+        assert.equal(section3.items['item-8'].position, 7);
+
+        section4 = map.parts['testPart-2'].sections['assessmentSection-4'];
+        assert.equal(section4.items['item-9'].position, 8);
+
+        assert.equal(section3.stats.total, 2);
+        assert.equal(map.parts['testPart-2'].stats.total, 4);
+        assert.equal(map.stats.total, 10);
+
+        map = mapHelper.patch(map, patch);
+
+        assert.equal(map.jumps.length, 11, 'There is a jump table with the correct size');
+        assert.deepEqual(map.jumps[0], {
+            identifier: 'item-1',
+            section: 'assessmentSection-1',
+            part: 'testPart-1',
+            position: 0
+        },  'There 1st jump is correct');
+        assert.deepEqual(map.jumps[8], {
+            identifier: 'item-19',
+            section: 'assessmentSection-3',
+            part: 'testPart-2',
+            position: 8
+        },  'There 9th jump is correct');
+        assert.deepEqual(map.jumps[10], {
+            identifier: 'item-10',
+            section: 'assessmentSection-4',
+            part: 'testPart-2',
+            position: 10
+        },  'There 10th jump is correct');
+
+        section3 = map.parts['testPart-2'].sections['assessmentSection-3'];
+        assert.equal(typeof section3.items['item-8'], 'undefined', 'The 3rd section has not the item 8');
+        assert.equal(typeof section3.items['item-18'], 'object', 'The 3rd section has now the item 18');
+        assert.equal(section3.items['item-17'].position, 6, 'The update fix the positions');
+        assert.equal(section3.items['item-18'].position, 7, 'The update fix the positions');
+        assert.equal(section3.items['item-19'].position, 8, 'The update fix the positions');
+
+        section4 = map.parts['testPart-2'].sections['assessmentSection-4'];
+        assert.equal(section4.items['item-9'].position, 9, 'Positions have been updated');
+
+        assert.equal(section3.stats.total, 3, 'The stats have been updated');
+        assert.equal(map.parts['testPart-2'].stats.total, 5, 'The stats have been updated');
+        assert.equal(map.stats.total, 11, 'The stats have been updated');
+
     });
 });

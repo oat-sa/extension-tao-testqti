@@ -25,6 +25,7 @@ use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\runner\ExtendedState;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -161,13 +162,11 @@ class QtiTestListenerService extends ConfigurableService
 
         if (!in_array(self::ARCHIVE_EXCLUDE_EXTRA, $archivingExclusions)) {
             // Remove Extended State
-            // Remove Extended State
-            $extendedStorageId = ExtendedStateService::getStorageKeyFromTestSessionId($sessionId);
+            $extendedStorageId = ExtendedState::getStorageKeyFromTestSessionId($sessionId);
             if ($stateMigrationService->archive($userId, $extendedStorageId)) {
                 $stateMigrationService->removeState($userId, $extendedStorageId);
                 \common_Logger::t('Extended State archived for user : ' . $userId . ' and storageId : ' . $extendedStorageId);
             }
-
         }
     }
 }

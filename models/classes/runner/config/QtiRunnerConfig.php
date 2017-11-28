@@ -23,6 +23,7 @@
 namespace oat\taoQtiTest\models\runner\config;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
 /**
@@ -61,6 +62,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             // build the test config using the new notation
             $config = [
                 'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
+                'catEngineWarning' => isset($rawConfig['catEngineWarning']) ? $rawConfig['catEngineWarning'] : null,
                 'progressIndicator' => [
                     'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
                     'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
@@ -156,6 +158,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             'exitButton'        => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session, $context),
             'logoutButton'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session),
             'validateResponses' => \taoQtiTest_helpers_TestRunnerUtils::doesValidateResponses($session),
+            'sectionPause'      => $this->getServiceManager()->get(SectionPauseService::SERVICE_ID)->couldBePaused($session)
         ];
 
         // get the options from the categories owned by the current item

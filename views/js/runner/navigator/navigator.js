@@ -69,11 +69,10 @@ define([
             isLeavingTestPart = (newTestPart.id !== testContext.testPartId);
 
             //guess the new testContext data
-            newContext = {
+            newContext = _.defaults({
                 itemIdentifier : newItem.id,
-                itemUri        : newItem.definition,
-                itemDefinition : newItem.definition,
                 itemPosition   : position,
+                itemAnswered   : newItem.answered,
 
                 //FIXME numberPresented can be late
                 numberPresented : testMap.stats.viewed,
@@ -85,7 +84,6 @@ define([
                 //FIXME maintain attempts
                 //FIXME attempts can be incorrect (based on last known value)
                 remainingAttempts : (newItem.remainingAttempts > -1) ? newItem.remainingAttempts - 1 : -1,
-                attemptDuration   : 0,
 
                 sectionId:       newSection.id,
                 sectionTitle:    newSection.label,
@@ -93,7 +91,7 @@ define([
                 isLinear:        newTestPart.isLinear,
                 isLast:          navigationHelper.isLast(testMap, newItem.id),
                 canMoveBackward: !newTestPart.isLinear && !navigationHelper.isFirst(testMap, newItem.id)
-            };
+            }, testContext);
 
             //if the section is different, we don't keep the rubric blocks
             if(isLeavingSection){
@@ -102,11 +100,21 @@ define([
             }
 
             //remove timers if they're not on the same scope
-            newContext.timeConstraints = _.filter(testContext.timeConstraints, function(constraint){
+            newContext.timeConstraints = _.reject(testContext.timeConstraints, function(constraint){
                 return constraint.qtiClassName === 'assessmentItemRef' ||
-                       isLeavingSection && constraint.qtiClassName === 'assessmentSection' ||
-                       isLeavingTestPart && constraint.qtiClassName === 'testPart';
+                       (isLeavingSection && constraint.qtiClassName === 'assessmentSection') ||
+                       (isLeavingTestPart && constraint.qtiClassName === 'testPart');
             });
+
+            if(newItem.timeConstraint){
+                newContext.timeConstraints.push(newItem.timeConstraint);
+            }
+            if(isLeavingSection && newSection.timeConstraint){
+                newContext.timeConstraints.push(newSection.timeConstraint);
+            }
+            if(isLeavingTestPart && newTestPart.timeConstraint){
+                newContext.timeConstraints.push(newTestPart.timeConstraint);
+            }
 
             return newContext;
         };
@@ -140,7 +148,7 @@ define([
              * @returns {Object} the new test context
              */
             nextItem : function nextItem(){
-                return  _.merge({}, testContext, buildContextFromPosition(testContext.itemPosition + 1));
+                return  buildContextFromPosition(testContext.itemPosition + 1);
             },
 
             /**
@@ -148,7 +156,7 @@ define([
              * @returns {Object} the new test context
              */
             previousItem : function previsousItem(){
-                return _.merge({}, testContext, buildContextFromPosition(testContext.itemPosition - 1));
+                return buildContextFromPosition(testContext.itemPosition - 1);
             },
 
             /**
@@ -157,7 +165,9 @@ define([
              */
             nextSection : function nextSection(){
                 var sectionStats = mapHelper.getSectionStats(testMap, testContext.sectionId);
-                return _.merge({}, testContext, buildContextFromPosition(sectionStats.total));
+                var section      = mapHelper.getSection(testMap, testContext.sectionId);
+
+                return buildContextFromPosition(section.position + sectionStats.total);
             },
 
             /**
@@ -166,7 +176,7 @@ define([
              * @returns {Object} the new test context
              */
             jumpItem : function jumpItem(position){
-                return _.merge({}, testContext, buildContextFromPosition(position));
+                return buildContextFromPosition(position);
             }
         };
     };

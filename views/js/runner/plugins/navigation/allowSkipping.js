@@ -38,12 +38,7 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/currentItem'
-], function(
-    _,
-    __,
-    pluginFactory,
-    currentItemHelper
-) {
+], function(_, __, pluginFactory, currentItemHelper) {
     'use strict';
 
     /**
@@ -63,40 +58,36 @@ define([
          * @returns {this}
          */
         init: function init() {
-            var testRunner = this.getTestRunner();
+            this.getTestRunner().before('move', function () {
+                var self = this;
+                var testContext = this.getTestContext();
+                var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
 
-            testRunner
-            .before('move', function () {
-                var testContext = testRunner.getTestContext();
-
-                if (testContext.enableAllowSkipping && !testContext.allowSkipping) {
-                    this.trigger('disablenav disabletools');
+                if ( isInteracting && testContext.enableAllowSkipping && !testContext.allowSkipping ) {
 
                     return new Promise(function (resolve, reject) {
-                        if(_.size(currentItemHelper.getDeclarations(testRunner)) === 0){
+                        if(_.size(currentItemHelper.getDeclarations(self)) === 0){
                             return resolve();
                         }
-                        if (currentItemHelper.isAnswered(testRunner, true)) {
+                        if (currentItemHelper.isAnswered(self, true)) {
                             return resolve();
                         }
 
-                        if (!testRunner.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
-                            testRunner.setState('alerted.notallowed', true);
-                            testRunner.trigger(
+                        if (!self.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
+                            self.setState('alerted.notallowed', true);
+                            self.trigger(
                                 'alert.notallowed',
                                 __('A response to this item is required.'),
                                 function () {
-                                    testRunner.trigger('resumeitem');
+                                    self.trigger('resumeitem');
                                     reject();
-                                    testRunner.setState('alerted.notallowed', false);
+                                    self.setState('alerted.notallowed', false);
                                 }
                             );
                         }
                     });
                 }
             });
-
-            return this;
         }
     });
 });

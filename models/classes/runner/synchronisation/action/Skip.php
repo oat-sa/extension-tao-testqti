@@ -53,9 +53,11 @@ class Skip extends TestRunnerAction
 
         try {
             $serviceContext = $this->getServiceContext();
-            $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $this->getStart());
+            $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $this->getTime());
 
-            $this->setOffline();
+            if ($this->getRequestParameter('offline') === true) {
+                $this->setOffline();
+            }
 
             $result = $this->getRunnerService()->skip($serviceContext, $scope, $ref);
 
@@ -65,12 +67,16 @@ class Skip extends TestRunnerAction
 
             if ($result) {
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
+                }
             }
 
             if ($start == true) {
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getStart());
+                $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
             }
         } catch (\Exception $e) {
             $response = $this->getErrorResponse($e);

@@ -30,6 +30,7 @@ define([
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
+    'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
@@ -47,6 +48,7 @@ define([
     areaBrokerFactory,
     proxyFactory,
     probeOverseerFactory,
+    dataUpdater,
     currentItemHelper,
     mapHelper,
     navigationHelper,
@@ -174,6 +176,21 @@ define([
         },
 
         /**
+         * Install step : install new methods/behavior
+         *
+         * @this {runner} the runner context, not the provider
+         * @returns {Promise} to chain
+         */
+        install : function install(){
+
+            /**
+             * Delegates the udpate of testMap, testContext and testData
+             * to a 3rd part component, the dataUpdater.
+             */
+            this.dataUpdater = dataUpdater(this.getDataHolder());
+        },
+
+        /**
          * Initialization of the provider, called during test runner init phase.
          *
          * We install behaviors during this phase (ie. even handlers)
@@ -184,7 +201,6 @@ define([
          */
         init : function init(){
             var self = this;
-
             /**
              * Retrieve the item results
              * @returns {Object} the results
@@ -192,7 +208,8 @@ define([
             function getItemResults() {
                 var results = {};
                 var context = self.getTestContext();
-                if(context && self.itemRunner){
+                var states = self.getTestData().states;
+                if(context && self.itemRunner && context.itemSessionState <= states.interacting){
                     results = {
                         itemResponse   : self.itemRunner.getResponses(),
                         itemState      : self.itemRunner.getState()
@@ -208,9 +225,7 @@ define([
              * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
             function computeNext(action, params, loadPromise){
-
                 var context = self.getTestContext();
-
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -246,20 +261,23 @@ define([
                             })
                             .catch(submitError);
                     } else {
-                        context.itemAnswered = currentItemHelper.isAnswered(self);
+                        if (action === 'skip') {
+                            context.itemAnswered = false;
+                        } else {
+                            context.itemAnswered = currentItemHelper.isAnswered(self);
+                        }
+                        self.setTestContext(context);
                         resolve();
                     }
                 });
 
                 feedbackPromise.then(function(){
-
-                    updateStats();
-
+                    // ensure the answered state of the current item is correctly set and the stats are aligned
+                    self.setTestMap(self.dataUpdater.updateStats());
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
                         self.off('.'+action);
-
 
                         self.getProxy()
                             .callItemAction(context.itemIdentifier, action, params)
@@ -271,15 +289,9 @@ define([
                                 });
                             })
                             .then(function(results){
-                                if(results.testContext){
-                                    self.setTestContext(results.testContext);
-                                }
 
-                                if (results.testMap) {
-                                    self.setTestMap(results.testMap);
-                                }
-
-                                updateStats();
+                                //update testData, testContext and build testMap
+                                self.dataUpdater.update(results);
 
                                 load();
                             })
@@ -295,7 +307,6 @@ define([
              * Load the next action: load the current item or call finish based the test state
              */
             function load(){
-
                 var context = self.getTestContext();
                 var states = self.getTestData().states;
                 if(context.state <= states.interacting){
@@ -303,32 +314,6 @@ define([
                 } else if (context.state === states.closed){
                     self.finish();
                 }
-            }
-
-            /**
-             * Update the stats on the TestMap
-             */
-            function updateStats(){
-
-                var context = self.getTestContext();
-                var testMap = self.getTestMap();
-                var states = self.getTestData().states;
-                var item = mapHelper.getItemAt(testMap, context.itemPosition);
-
-                if(!item || context.state !== states.interacting){
-                    return;
-                }
-
-                //flag as viewed, always
-                item.viewed = true;
-
-                //flag as answered only if a response has been set
-                if ("undefined" !== typeof context.itemAnswered) {
-                    item.answered = context.itemAnswered;
-                }
-
-                //update the map stats, then reassign the map
-                self.setTestMap(mapHelper.updateItemStats(testMap, context.itemPosition));
             }
 
             areaBroker.setComponent('toolbox', toolboxFactory());
@@ -383,6 +368,8 @@ define([
 
                     context.isTimeout = true;
 
+                    this.setTestContext(context);
+
                     this.disableItem(context.itemIdentifier);
 
                     computeNext(
@@ -397,35 +384,26 @@ define([
                     );
                 })
                 .on('pause', function(data){
-                    var pause;
 
                     this.setState('closedOrSuspended', true);
 
-                    if (!this.getState('disconnected')) {
-                        // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause', {
-                            reason: {
-                                reasons: data && data.reasons,
-                                comment : data && data.message
-                            }
+                    this.getProxy().callTestAction('pause', {
+                        reason: {
+                            reasons: data && data.reasons,
+                            comment : data && data.message
+                        }
+                    })
+                    .then(function() {
+                        self.trigger('leave', {
+                            code: self.getTestData().states.suspended,
+                            message: data && data.message
                         });
-                    } else {
-                        pause = Promise.resolve();
-                    }
-
-                    pause
-                        .then(function() {
-                            self.trigger('leave', {
-                                code: self.getTestData().states.suspended,
-                                message: data && data.message
-                            });
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
-                        });
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
                 })
-                .on('renderitem', function(){
-
+                .on('loaditem', function(){
                     var context = this.getTestContext();
                     var states = this.getTestData().itemStates;
                     var warning = false;
@@ -438,9 +416,6 @@ define([
                         var item = mapHelper.getItem(self.getTestMap(), context.itemIdentifier);
                         return item && item.label ? item.label : context.itemIdentifier;
                     };
-
-                    this.trigger('enablenav enabletools');
-
 
                     //The item is rendered but in a state that prevents us from interacting
                     if (context.isTimeout) {
@@ -460,6 +435,15 @@ define([
                         self.disableItem(context.itemIdentifier);
                         self.trigger('warning', warning);
                     }
+
+                })
+                .on('renderitem', function(){
+                    var context = this.getTestContext();
+
+                    if(!this.getItemState(context.itemIdentifier, 'disabled')){
+                        this.trigger('enabletools');
+                    }
+                    this.trigger('enablenav');
                 })
                 .on('resumeitem', function(){
                     this.trigger('enableitem enablenav');
@@ -497,15 +481,13 @@ define([
                 return self.getProxy().init({
                     storeId : storeId
                 }).then(function(results){
-                    self.setTestData(results.testData);
-                    self.setTestContext(results.testContext);
-                    self.setTestMap(results.testMap);
+                    self.dataUpdater.update(results);
 
                     //check if we need to trigger a storeChange
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
 
                         /**
-                         * We are changed the local storage engine (could be a browser change)
+                         * We have changed the local storage engine (could be a browser change)
                          * @event runner/provider/qti#storechange
                          */
                         self.trigger('storechange');

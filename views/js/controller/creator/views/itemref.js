@@ -54,13 +54,21 @@ function(
     /**
      * Set up an item ref: init action behaviors. Called for each one.
      *
-     * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
+     * @param {Object} creatorContext
      * @param {Object} refModel - the data model to bind to the item ref
+     * @param {Object} sectionModel - the parent data model to inherit
      * @param {jQueryElement} $itemRef - the itemRef element to set up
      */
-    function setUp (modelOverseer, refModel, $itemRef){
+    function setUp (creatorContext, refModel, sectionModel, $itemRef) {
 
+        var modelOverseer = creatorContext.getModelOverseer();
         var $actionContainer = $('.actions', $itemRef);
+
+        // set item session control to use test part options if section level isn't set
+        if (!refModel.itemSessionControl) {
+            refModel.itemSessionControl = {};
+        }
+        _.defaults(refModel.itemSessionControl, sectionModel.itemSessionControl);
 
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');

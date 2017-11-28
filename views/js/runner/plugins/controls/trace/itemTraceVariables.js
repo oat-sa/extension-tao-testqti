@@ -89,13 +89,13 @@ define([
                                 ITEM_START_TIME_CLIENT: timestamp()
                             };
 
-                            tracesStore.getItem(context.itemUri)
+                            tracesStore.getItem(context.itemIdentifier)
                                 .then(function (data) {
                                     if (data) {
                                         _.merge(variables, data);
                                     }
 
-                                    return tracesStore.setItem(context.itemUri, variables);
+                                    return tracesStore.setItem(context.itemIdentifier, variables);
                                 })
                                 .catch(onError);
                         })
@@ -106,14 +106,14 @@ define([
                             variables.ITEM_END_TIME_CLIENT = timestamp();
                             variables.ITEM_TIMEZONE = moment().utcOffset(moment().utcOffset()).format('Z');
 
-                            return tracesStore.setItem(context.itemUri, variables).catch(onError);
+                            return tracesStore.setItem(context.itemIdentifier, variables).catch(onError);
                         })
 
                         .before('unloaditem', function () {
                             var context = testRunner.getTestContext();
                             return testRunner.getProxy().callItemAction(context.itemIdentifier, 'storeTraceData', {
                                 traceData: JSON.stringify(variables)
-                            });
+                            }, true);
                         })
 
                         .before('finish', function () {

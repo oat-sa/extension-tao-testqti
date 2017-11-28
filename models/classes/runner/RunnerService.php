@@ -33,6 +33,11 @@ use qtism\data\AssessmentItemRef;
  */
 interface RunnerService
 {
+    const INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
+
+    const INSTANCE_TEST_ITEM_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner';
+
+    const INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId';
     /**
      * Initializes the delivery execution session
      * @param RunnerServiceContext $context
@@ -67,10 +72,11 @@ interface RunnerService
     /**
      * Gets the map of the test items
      * @param RunnerServiceContext $context
+     * @param bool $partial the full testMap or only the current section
      * @return array
      * @throws \common_Exception
      */
-    public function getTestMap(RunnerServiceContext $context);
+    public function getTestMap(RunnerServiceContext $context, $partial = false);
 
     /**
      * Gets the rubrics related to the current session state

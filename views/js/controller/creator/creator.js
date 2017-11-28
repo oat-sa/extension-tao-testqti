@@ -24,10 +24,9 @@ define([
     'lodash',
     'helpers',
     'i18n',
-    'html5-history-api',
     'ui/feedback',
     'core/databindcontroller',
-    'taoQtiTest/controller/creator/modelOverseer',
+    'taoQtiTest/controller/creator/qtiTestCreator',
     'taoQtiTest/controller/creator/views/item',
     'taoQtiTest/controller/creator/views/test',
     'taoQtiTest/controller/creator/views/testpart',
@@ -45,11 +44,11 @@ define([
     _,
     helpers,
     __,
-    history,
     feedback,
     DataBindController,
-    modelOverseerFactory,
-    itemView, testView,
+    qtiTestCreatorFactory,
+    itemView,
+    testView,
     testPartView,
     sectionView,
     itemrefView,
@@ -87,6 +86,7 @@ define([
             var $container = $('#test-creator');
             var $saver = $('#saver');
             var binder, binderOptions, modelOverseer;
+            var creatorContext;
 
             self.identifiers = [];
 
@@ -100,10 +100,10 @@ define([
             //back button
             $('#authoringBack').on('click', function(e){
                 e.preventDefault();
-
-                if (history) {
-                    history.back();
+                if (creatorContext) {
+                    creatorContext.trigger('creatorclose');
                 }
+                window.history.back();
             });
 
             //set up the ItemView, give it a configured loadItems ref
@@ -111,7 +111,7 @@ define([
 
             // forwards some binder events to the model overseer
             $container.on('change.binder delete.binder', function (e, model) {
-                if (e.namespace === 'binder' && model) {
+                if (e.namespace === 'binder' && model && modelOverseer) {
                     modelOverseer.trigger(e.type, model);
                 }
             });
@@ -156,13 +156,14 @@ define([
                     //extract ids
                     self.identifiers = qtiTestHelper.extractIdentifiers(model);
 
-                    // the model must be wrapped in order to share more (events, internal states, and more)
-                    modelOverseer = modelOverseerFactory(model, {
+                    creatorContext = qtiTestCreatorFactory($container, {
                         uri : options.uri,
                         identifiers : self.identifiers,
                         labels : options.labels,
                         routes : options.routes
                     });
+                    creatorContext.setTestModel(model);
+                    modelOverseer = creatorContext.getModelOverseer();
 
                     //detect the scoring mode
                     scoringHelper.init(modelOverseer);
@@ -173,7 +174,7 @@ define([
                     validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers), true);
 
                     //once model is loaded, we set up the test view
-                    testView(modelOverseer);
+                    testView(creatorContext);
 
                     //listen for changes to update available actions
                     testPartView.listenActionState();

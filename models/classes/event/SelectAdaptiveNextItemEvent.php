@@ -36,6 +36,9 @@ class SelectAdaptiveNextItemEvent implements Event
     /** @var array Item ids of the next items. */
     protected $catItemIds;
 
+    /** @var array Item ids which were used to give current item identifier. */
+    protected $preCatItemIds;
+
     /** @var AssessmentTestSession */
     protected $testSession;
 
@@ -47,12 +50,14 @@ class SelectAdaptiveNextItemEvent implements Event
      *
      * @param AssessmentTestSession $testSession
      * @param $currentItemId
+     * @param array|null $preCatItemIds
      * @param array|null $catItemIds
      * @param bool $isShadowItem
      */
-    public function __construct(AssessmentTestSession $testSession, $currentItemId, array $catItemIds = null, $isShadowItem = false)
+    public function __construct(AssessmentTestSession $testSession, $currentItemId, array $preCatItemIds = null, array $catItemIds = null, $isShadowItem = false)
     {
         $this->currentItemId = $currentItemId;
+        $this->preCatItemIds = $preCatItemIds;
         $this->catItemIds = $catItemIds;
         $this->testSession = $testSession;
         $this->isShadowItem = $isShadowItem;
@@ -102,6 +107,16 @@ class SelectAdaptiveNextItemEvent implements Event
     public function getCatItemIds()
     {
         return $this->catItemIds;
+    }
+
+    /**
+     * Returns the item ids given from cat engine to select current item (from previous call).
+     *
+     * @return array|null
+     */
+    public function getPreCatItemIds()
+    {
+        return $this->preCatItemIds;
     }
 
     /**

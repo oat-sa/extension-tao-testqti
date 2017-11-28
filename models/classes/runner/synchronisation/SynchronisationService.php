@@ -30,12 +30,18 @@ class SynchronisationService extends ConfigurableService
     const ACTIONS_OPTION = 'actions';
 
     /**
+     * Typical amount of time added on TimePoints to avoid timestamp collisions.
+     * This value will be used to adjust intervals between moves in the synced time line.
+     */
+    const TIMEPOINT_INTERVAL = .001;
+
+    /**
      * Wrap the process to appropriate action and aggregate results
      *
      * @param $data
      * @param $serviceContext QtiRunnerServiceContext
-     * @return string
-     * @throws \common_exception_InconsistentData
+     * @return array
+     * @throws 
      */
     public function process($data, $serviceContext)
     {
@@ -43,20 +49,51 @@ class SynchronisationService extends ConfigurableService
             throw new \common_exception_InconsistentData('No action to check. Processing action requires data.');
         }
 
+        // first, extract the actions and build usable instances
+        // also compute the total duration to synchronise
         $actions = [];
+        $duration = 0;
         foreach ($data as $entry) {
-            $actions[] = $this->resolve($entry);
+            $action = $this->resolve($entry);
+            $actions[] = $action;
+
+            if ($action->hasRequestParameter('itemDuration')) {
+                $duration += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
+            }
+        }
+        
+        // determine the start timestamp of the actions:
+        // - check if the total duration of actions to sync is comprised within
+        //   the elapsed time since the last TimePoint.
+        // - otherwise compute the start timestamp from now minus the duration
+        //   (caution! this could introduce inconsistency in the TimeLine as the ranges could be interlaced) 
+        $now = microtime(true);
+        $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
+        $elapsed = $now - $last;
+        if ($duration > $elapsed) {
+            \common_Logger::t('Ignoring the last timestamp to take into account the actual duration to sync. Could introduce TimeLine inconsistency!');
+            $last = $now - $duration;
         }
 
-        $this->initTimers($actions);
+        // ensure the actions are in chronological order
+        usort($actions, function($a, $b) {
+           return $a->getTimestamp() - $b->getTimestamp(); 
+        });
 
         $response = [];
 
         /** @var TestRunnerAction $action */
         foreach( $actions as $action) {
-
             try {
+                if ($action->hasRequestParameter('itemDuration')) {
+                    $last += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
+                }
+                $action->setTime($last);
+
                 $action->setServiceContext($serviceContext);
+                if ($serviceContext instanceof QtiRunnerServiceContext) {
+                    $serviceContext->setSyncingMode($action->getRequestParameter('offline'));
+                }
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
                 $responseAction = ['error' => $e->getMessage()];
@@ -65,6 +102,7 @@ class SynchronisationService extends ConfigurableService
 
             $responseAction['name'] = $action->getName();
             $responseAction['timestamp'] = $action->getTimeStamp();
+            $responseAction['requestParameters'] = $action->getRequestParameters();
 
             $response[] = $responseAction;
 
@@ -75,7 +113,7 @@ class SynchronisationService extends ConfigurableService
 
         $this->getRunnerService()->persist($serviceContext);
 
-        return json_encode($response, JSON_PRETTY_PRINT);
+        return $response;
     }
 
     /**
@@ -131,30 +169,6 @@ class SynchronisationService extends ConfigurableService
         }
 
         return $this->getServiceManager()->propagate(new $actionClass($actionName, $data['timestamp'], $data['parameters']));
-    }
-
-    /**
-     * Set the action start timers:
-     *
-     * $start = snow - sitemDuration
-     * Start by the last action to have a consistent QtiTimeLine
-     * Add 1 ms to start to avoid collision
-     *
-     * @param TestRunnerAction[] $actions
-     */
-    protected function initTimers(array &$actions)
-    {
-        $last = microtime(true);
-        /** @var TestRunnerAction $action */
-        foreach (array_reverse($actions) as &$action) {
-
-            if ($duration = $action->hasRequestParameter('itemDuration')) {
-                $start = $last - $duration;
-                $last = $start;
-                $action->setStart($start+1);
-            }
-
-        }
     }
 
     /**

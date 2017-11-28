@@ -30,6 +30,17 @@ class SectionPauseService extends ConfigurableService
     const SERVICE_ID = 'taoQtiTest/SectionPauseService';
 
     /**
+     * Checked the given session could be paused at some point
+     * (in other words : is section pause enabled)
+     * @param $session
+     * @return bool
+     */
+    public function couldBePaused(TestSession $session = null)
+    {
+        return false;
+    }
+
+    /**
      * Checked that section can be paused
      * @param $session
      * @return bool
@@ -37,5 +48,17 @@ class SectionPauseService extends ConfigurableService
     public function isPausable(TestSession $session = null)
     {
         return false;
+    }
+
+    /**
+     * Check if we can move backward : when leaving a pausable section,
+     * we can't move backward.
+     *
+     * @param TestSession $session
+     * @return bool
+     */
+    public function canMoveBackward(TestSession $session = null)
+    {
+        return true;
     }
 }

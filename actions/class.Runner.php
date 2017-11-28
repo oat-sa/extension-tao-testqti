@@ -25,9 +25,12 @@ use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
+use oat\libCat\exception\CatEngineConnectivityException;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
@@ -50,7 +53,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     protected $serviceContext;
 
-
     /**
      * taoQtiTest_actions_Runner constructor.
      */
@@ -60,6 +62,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         // Prevent anything to be cached by the client.
         TestRunnerUtils::noHttpClientCache();
+    }
+
+    /**
+     * @return StorageManager
+     */
+    protected function getStorageManager()
+    {
+        return $this->getServiceManager()->get(StorageManager::SERVICE_ID);
     }
 
     /**
@@ -91,11 +101,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
         }
 
-        // auto append platform messages, if any
-        if ($this->serviceContext && !isset($data['messages'])) {
-            /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
-            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
-            $data['messages'] = $communicationService->processOutput($this->serviceContext);
+        try {
+            // auto append platform messages, if any
+            if ($this->serviceContext && !isset($data['messages'])) {
+                /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
+                $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
+                $data['messages'] = $communicationService->processOutput($this->serviceContext);
+            }
+            
+            // ensure the state storage is properly updated
+            $this->getStorageManager()->persist();
+        } catch (common_Exception $e) {
+            $data = $this->getErrorResponse($e);
+            $httpStatus = $this->getErrorCode($e);
         }
 
         return parent::returnJson($data, $httpStatus);
@@ -132,7 +150,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         return $this->serviceContext;
     }
-    
+
     /**
      * Checks the security token.
      * @throws \common_Exception
@@ -177,11 +195,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             switch (true) {
+                case $e instanceof CatEngineConnectivityException:
+                case $e instanceof CatEngineNotFoundException:
+                    $response['type'] = 'catEngine';
+                    $response['message'] = $e->getMessage();
+                    break;
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
                         $messageService = $this->getServiceManager()->get(QtiRunnerMessageService::SERVICE_ID);
-                        $response['message'] = $messageService->getStateMessage($this->serviceContext->getTestSession());
+                        $response['message'] = __($messageService->getStateMessage($this->serviceContext->getTestSession()));
                     }
                     $response['type'] = 'TestState';
                     break;
@@ -274,8 +297,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
+        } catch (\Exception $e) {
+            $response = $this->getErrorResponse($e);
+            $code = $this->getErrorCode($e);
         }
-
 
         $this->returnJson($response, $code);
     }
@@ -327,7 +352,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Provides the map of the test items
      */
@@ -381,7 +406,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->returnJson($response, $code);
     }
-    
+
     /**
      * Provides the definition data and the state for a list of items
      */
@@ -393,14 +418,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         if (!is_array($itemIdentifier)) {
             $itemIdentifier = [$itemIdentifier];
         }
-        
+
         try {
 
             if (!$this->runnerService->getTestConfig()->getConfigValue('itemCaching.enabled')) {
                 \common_Logger::w("Attempt to disclose the next items without the configuration");
                 throw new \common_exception_Unauthorized();
             }
-            
+
             $response = [];
             foreach ($itemIdentifier as $itemId) {
                 //load item data
@@ -423,6 +448,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * Create the item definition response for a given item
      * @param string $itemIdentifier the item id
      * @return array the item data
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_InvalidArgumentType
      */
     protected function getItemData($itemIdentifier)
     {
@@ -602,12 +630,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                
+
                 if ($serviceContext->containsAdaptive()) {
                     // Force map update.
-                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext, true);
                 }
-                
+
             }
 
             \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
@@ -653,10 +681,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                
+
                 if ($serviceContext->containsAdaptive()) {
                     // Force map update.
-                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext, true);
                 }
             }
 
@@ -708,10 +736,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                
+
                 if ($serviceContext->containsAdaptive()) {
                     // Force map update.
-                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext, true);
                 }
             }
 
@@ -809,10 +837,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($result) {
                 $response['testContext'] = $this->runnerService->getTestContext($serviceContext);
-                
+
                 if ($serviceContext->containsAdaptive()) {
                     // Force map update.
-                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
+                    $response['testMap'] = $this->runnerService->getTestMap($serviceContext, true);
                 }
             }
 
@@ -911,7 +939,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $itemRef = null;
             }
-            
+
             $stored = 0;
             $size   = count($traceData);
 

@@ -78,7 +78,8 @@ class TestStateChannel implements ServiceLocatorAwareInterface, CommunicationCha
                 }
 
                 if (isset($event['data']['message'])) {
-                    $message = $event['data']['message'];
+                    //translate the message to the current user language.
+                    $message = __($event['data']['message']);
                 } else {
                     $message = $messageService->getStateMessage($context->getTestSession());
                     \common_Logger::w('The message is missing from the ' . self::CHANNEL_NAME . ' event context');

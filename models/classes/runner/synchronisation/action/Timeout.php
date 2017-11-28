@@ -53,7 +53,7 @@ class Timeout extends TestRunnerAction
             $serviceContext = $this->getServiceContext(false);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getStart());
+                $this->endItemTimer($this->getTime());
                 $this->saveItemState();
             }
 
@@ -61,7 +61,9 @@ class Timeout extends TestRunnerAction
 
             $this->saveItemResponses();
 
-            $this->setOffline();
+            if ($this->getRequestParameter('offline') === true) {
+                $this->setOffline();
+            }
 
             $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref);
 
@@ -71,13 +73,17 @@ class Timeout extends TestRunnerAction
 
             if ($result) {
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
+                }
             }
 
             if($start == true){
 
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getStart());
+                $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
             }
 
         } catch (\Exception $e) {
