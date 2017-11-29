@@ -21,7 +21,10 @@
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['lodash'], function(_) {
+define([
+    'lodash',
+    'core/store'
+], function(_, store) {
     'use strict';
 
     /**
@@ -34,12 +37,14 @@ define(['lodash'], function(_) {
     /**
      * Create an item store
      * @param {Number} [maxSize = 10] - the store limit
+     * @param {Boolean} [preload] - do we preload items when storing them
      * @returns {itemStore}
      */
-    return function itemStoreFactory(maxSize) {
+    return function itemStoreFactory(maxSize, preload) {
 
-        //where items are stores, in an array
-        var store = [];
+        //in memory storage
+        var itemStorage = store('item-cache', store.backends.memory);
+        var index = [];
 
         if(! _.isNumber(maxSize)){
             maxSize = defaultConfig.maxSize;
@@ -53,16 +58,10 @@ define(['lodash'], function(_) {
             /**
              * Get the item form the given key/id/uri
              * @param {String} key - something identifier
-             * @returns {Object} the item
+             * @returns {Promise<Object>} the item
              */
             get: function get(key) {
-                var content = _.find(store, {
-                    key : key
-                });
-                if(content && content.data){
-                    return content.data;
-                }
-                return false;
+                return itemStorage.getItem(key);
             },
 
             /**
@@ -71,9 +70,7 @@ define(['lodash'], function(_) {
              * @returns {Boolean}
              */
             has: function has(key) {
-                return _.some(store, {
-                    key : key
-                });
+                return _.contains(index, key);
             },
 
             /**
@@ -83,37 +80,44 @@ define(['lodash'], function(_) {
              * @returns {itemStore} chains
              */
             set: function set(key, value) {
-                store.push({
-                    key: key,
-                    data: value
-                });
-
-                if (store.length > 1 && store.length > maxSize) {
-                    store.shift();
+                if(this.has(key)){
+                    return Promise.resolve(true);
                 }
-                return this;
+                return itemStorage.setItem(key, value)
+                    .then(function(updated){
+                        if(updated){
+                            index.push(key);
+                        }
+
+                        //do we reach the limit ? then remove one
+                        if (index.length > 1 && index.length > maxSize) {
+                            return index.shift();
+                        }
+                    })
+                    .then(function(toRemove){
+                        if(_.isString(toRemove) && !_.isEmpty(toRemove)) {
+                            return itemStorage.removeItem(toRemove);
+                        }
+                    });
             },
 
             /**
              * Remove the item from the store
              * @param {String} key - something identifier
-             * @returns {Boolean} if an item was acually removed
+             * @returns {Promise} resolves once removed
              */
             remove: function remove(key) {
-
-                var evens = _.remove(store, {
-                    key : key
-                });
-                return evens.length;
+                _.remove(index, key);
+                return itemStorage.removeItem(key);
             },
 
             /**
              * Clear the store
-             * @returns {itemStore} chains
+             * @returns {Promise}
              */
             clear: function clear() {
-                store = [];
-                return this;
+                index = [];
+                return itemStorage.clear();
             }
         };
     };
