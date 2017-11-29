@@ -63,7 +63,7 @@ define([
                 var previousPart;
 
                 // check TestMap if empty
-                if (Object.keys(testMap).length === 0 && testMap.constructor === Object) {
+                if( _.isPlainObject(testMap) && _.size(testMap) === 0){
                     return false;
                 }
 
