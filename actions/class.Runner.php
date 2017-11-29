@@ -304,7 +304,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $response = $this->getErrorResponse($e, $response);
             $code = $this->getErrorCode($e);
         } catch (\Exception $e) {
-            $response = $this->getErrorResponse($e);
+            $response = $this->getErrorResponse($e, $response);
             $code = $this->getErrorCode($e);
         }
 
