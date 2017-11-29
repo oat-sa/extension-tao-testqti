@@ -472,23 +472,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->getCatSection()->getSectionId(),
             'cat-item-output'
         );
-        
-        if (!$itemOutput) {
-            $output = [];
-        } else {
-            $rawData = json_decode($itemOutput, true);
-            foreach ($rawData as $result) {
-                $itemIdentifier = $result['identifier'];
-                $variables = [];
-                \common_Logger::w(print_r($result, true));
 
-                foreach ($result['outcomeVariables'] as $variable) {
-                    if (empty($variable)) {
-                        continue;
-                    }
-                    $variables[] = ResultVariable::restore($variable);
-                }
-                $output[$itemIdentifier] = new ItemResult($itemIdentifier, $variables);
+        $output = [];
+
+        if (!is_null($itemOutput)) {
+            $rawData = json_decode($itemOutput, true);
+
+            foreach ($rawData as $result) {
+                /** @var ItemResult $itemResult */
+                $itemResult = ItemResult::restore($result);
+                $output[$itemResult->getItemRefId()] = $itemResult;
             }
         }
         
