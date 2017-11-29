@@ -480,7 +480,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             foreach ($rawData as $result) {
                 $itemIdentifier = $result['identifier'];
                 $variables = [];
-                foreach ($result['variables'] as $variable) {
+                \common_Logger::w(print_r($result, true));
+
+                foreach ($result['outcomeVariables'] as $variable) {
                     if (empty($variable)) {
                         continue;
                     }
@@ -843,49 +845,54 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         /** @var QtiRunnerService $runnerService */
         $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
 
+        $success = true;
         try {
+            foreach ($results as $result) {
 
-            if (empty($result)) {
-                \common_Logger::t('No CAT result to store');
-                return true;
-            }
-
-            if (!$result instanceof AbstractResult) {
-                throw new \common_Exception(__FUNCTION__ . ' requires a CAT result to store it.');
-            }
-
-            $variables = $this->convertCatVariables($result->getVariables());
-            if (empty($variables)) {
-                \common_Logger::t('No Cat result variables to store.');
-                return true;
-            }
-
-            if ($result instanceof ItemResult) {
-                $itemId = $result->getItemRefId();
-                if (empty($itemId)) {
-                    return true;
+                if (empty($result)) {
+                    \common_Logger::w('No CAT result to store');
+                    continue;
                 }
-            } else {
-                $itemId = null;
-                $sectionId = $this
-                    ->getTestSession()
-                    ->getRoute()
-                    ->current()
-                    ->getAssessmentSection()
-                    ->getIdentifier();
-                /** @var \taoResultServer_models_classes_Variable $variable */
-                foreach ($variables as $variable) {
-                    $variable->setIdentifier($sectionId . '-' . $variable->getIdentifier());
+
+                if (!$result instanceof AbstractResult) {
+                    throw new \common_Exception(__FUNCTION__ . ' requires a CAT result to store it.');
+                }
+
+                $variables = $this->convertCatVariables($result->getVariables());
+                if (empty($variables)) {
+                    \common_Logger::t('No Cat result variables to store.');
+                    continue;
+                }
+
+                if ($result instanceof ItemResult) {
+                    $itemId = $result->getItemRefId();
+                    if (empty($itemId)) {
+                        continue;
+                    }
+                } else {
+                    $itemId = null;
+                    $sectionId = $this
+                        ->getTestSession()
+                        ->getRoute()
+                        ->current()
+                        ->getAssessmentSection()
+                        ->getIdentifier();
+                    /** @var \taoResultServer_models_classes_Variable $variable */
+                    foreach ($variables as $variable) {
+                        $variable->setIdentifier($sectionId . '-' . $variable->getIdentifier());
+                    }
+                }
+
+                if (!$runnerService->storeVariables($this, $itemId, $variables)) {
+                    $success = false;
                 }
             }
-
-            return $runnerService->storeVariables($this, $itemId, $variables);
-
         } catch (\Exception $e) {
             \common_Logger::w('An error has occurred during CAT result storing: ' . $e->getMessage());
-            return false;
+            $success = false;
         }
 
+        return $success;
     }
 
     /**
