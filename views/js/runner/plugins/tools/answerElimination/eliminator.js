@@ -53,20 +53,6 @@ define([
      */
     var actionPrefix = 'tool-' + pluginName + '-';
 
-
-    /**
-     * Some default options for the plugin
-     * @type {Object}
-     */
-    var defaultConfig = {
-        // when hiding the buttons, don't remove existing eliminations
-        removeEliminationsOnClose: false,
-        // when showing the buttons, restore previously set eliminations
-        restoreEliminationsOnOpen: false
-    };
-
-
-
     /**
      * Returns the configured plugin
      */
@@ -84,7 +70,6 @@ define([
             var $container = testRunner.getAreaBroker().getContentArea().parent();
             var testConfig = testRunner.getTestData().config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
-            var config     = _.defaults(_.clone((testConfig.plugins || {})[pluginName]) || {}, defaultConfig);
 
             // register the button in the toolbox
             this.button = this.getAreaBroker().getToolbox().createEntry({
@@ -145,17 +130,15 @@ define([
                 self.button.turnOn();
                 self.trigger('start');
 
-                if(config.restoreEliminationsOnOpen) {
-                    $choices.each(function() {
-                        var input = this.querySelector('.real-label input');
-                        if(this.dataset.wasEliminated) {
-                            this.dataset.wasEliminated = null;
-                            this.classList.add('eliminated');
-                            input.setAttribute('disabled', 'disabled');
-                            input.checked = false;
-                        }
-                    });
-                }
+                $choices.each(function() {
+                    var input = this.querySelector('.real-label input');
+                    if(this.dataset.wasEliminated) {
+                        this.dataset.wasEliminated = null;
+                        this.classList.add('eliminated');
+                        input.setAttribute('disabled', 'disabled');
+                        input.checked = false;
+                    }
+                });
             }
 
             function disableEliminator() {

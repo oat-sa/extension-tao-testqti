@@ -677,6 +677,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->checkSecurityToken();
             $serviceContext = $this->runnerService->initServiceContext($this->getServiceContext());
 
+            $this->saveItemState();
+
             $this->endItemTimer();
 
             $result = $this->runnerService->skip($serviceContext, $scope, $ref);

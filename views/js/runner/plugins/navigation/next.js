@@ -151,6 +151,7 @@ define([
                 if(self.getState('enabled') !== false) {
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
+                        testRunner.trigger('disablenav disabletools');
                         testRunner.trigger(
                             'confirm.endTest',
                             messages.getExitMessage(
@@ -161,6 +162,7 @@ define([
                         );
 
                     } else if (warningHelper.shouldWarnBeforeNext()) {
+                        testRunner.trigger('disablenav disabletools');
                         testRunner.trigger(
                             'confirm.next',
                             __('You are about to go to the next item. Click OK to continue and go to the next item.'),
