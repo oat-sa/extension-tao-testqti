@@ -31,9 +31,8 @@ define([
     'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
-    'taoQtiTest/runner/proxy/cache/actionStore',
-    'taoQtiTest/runner/proxy/cache/assetLoader'
-], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, dataUpdater, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
+    'taoQtiTest/runner/proxy/cache/actionStore'
+], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, dataUpdater, qtiServiceProxy, itemStoreFactory, actionStoreFactory) {
     'use strict';
 
     /**
@@ -112,7 +111,7 @@ define([
             qtiServiceProxy.install.call(this);
 
             //we keep items here
-            this.itemStore = itemStoreFactory(cacheSize);
+            this.itemStore = itemStoreFactory(cacheSize, true);
 
             //where we keep actions
             this.actiontStore = null;
@@ -146,16 +145,18 @@ define([
              * Update the item state in the store
              * @param {String} itemIdentifier - the item identifier
              * @param {Object} state - the state of the item
-             * @returns {Boolean}
+             * @returns {Promise}
              */
-            this.updateState = function updateState(itemIdentifier, state) {
-                var itemData;
-                if (this.itemStore.has(itemIdentifier)) {
-                    itemData = this.itemStore.get(itemIdentifier);
-                    itemData.itemState = state;
-                    this.itemStore.set(itemIdentifier, itemData);
-                }
-            };
+            //this.updateState = function updateState(itemIdentifier, state) {
+                //if (this.itemStore.has(itemIdentifier)) {
+                    //return this.itemStore.get(itemIdentifier).then(function(itemData){
+                        //if(itemData){
+                            //itemData.itemState = state;
+                            //return self.itemStore.set(itemIdentifier, itemData);
+                        //}
+                    //});
+                //}
+            //};
 
             /**
              * Check whether we have the item in the store
@@ -497,6 +498,7 @@ define([
                 //don't run a request if not needed
                 if (self.isOnline() && missing.length) {
                     _.delay(function(){
+                        console.log('LOAD NEXT');
                         self.requestNetworkThenOffline(
                             self.configStorage.getTestActionUrl('getNextItemData'),
                             'getNextItemData',
@@ -507,11 +509,8 @@ define([
                                 _.forEach(response.items, function (item) {
                                     if (item && item.itemIdentifier) {
                                         //store the response and start caching assets
+                                        console.log('store', item.itemIdentifier);
                                         self.itemStore.set(item.itemIdentifier, item);
-
-                                        if (item.baseUrl && item.itemData && item.itemData.assets) {
-                                            assetLoader(item.baseUrl, item.itemData.assets);
-                                        }
                                     }
                                 });
                             }
@@ -550,7 +549,9 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItem: function submitItem(itemIdentifier, state, response, params) {
-            this.updateState(itemIdentifier, state);
+            this.itemStore.update(itemIdentifier, {
+                itemState : state
+            });
             return qtiServiceProxy.submitItem.call(this, itemIdentifier, state, response, params);
         },
 
@@ -609,7 +610,9 @@ define([
 
             //update the item state
             if(params.itemState){
-                self.updateState(itemIdentifier, params.itemState);
+                this.itemStore.update(itemIdentifier, {
+                    itemState : params.itemState
+                });
             }
 
             //check if we have already the item for the action we are going to perform

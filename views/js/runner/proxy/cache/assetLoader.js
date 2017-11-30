@@ -66,30 +66,37 @@ define([
         }
     };
 
-    /**
-     * Run the asset preload
-     * @param {String} baseUrl - item baseUrl
-     * @param {Object} assets - assets per types :  img : ['url1', 'url2' ]
-     */
-    return function preload(baseUrl, assets) {
+    return {
 
-        if(assets && _.size(assets) > 0){
+        /**
+         * Run the asset preload
+         * @param {String} baseUrl - item baseUrl
+         * @param {Object} assets - assets per types :  img : ['url1', 'url2' ]
+         */
+        preload : function preload(baseUrl, assets) {
 
-            assetManager.setData('baseUrl', baseUrl);
+            if(assets && _.size(assets) > 0){
 
-            _.forEach(assets, function(assetList, type){
-                if(_.isFunction(loaders[type]) && _.size(assetList) > 0 ){
-                    _(assetList)
-                        .filter(function(url){
-                            //filter base64 (also it seems sometimes we just have base64 data, without the protocol...)
-                            return !urlUtil.isBase64(url) && /\.[a-zA-Z]+$/.test(url);
-                        })
-                        .map(assetManager.resolve, assetManager)
-                        .forEach(function(url){
-                            loaders[type](url);
-                        });
-                }
-            });
+                assetManager.setData('baseUrl', baseUrl);
+
+                _.forEach(assets, function(assetList, type){
+                    if(_.isFunction(loaders[type]) && _.size(assetList) > 0 ){
+                        _(assetList)
+                            .filter(function(url){
+                                //filter base64 (also it seems sometimes we just have base64 data, without the protocol...)
+                                return !urlUtil.isBase64(url) && /\.[a-zA-Z]+$/.test(url);
+                            })
+                            .map(assetManager.resolve, assetManager)
+                            .forEach(function(url){
+                                loaders[type](url);
+                            });
+                    }
+                });
+            }
+        },
+
+        unload : function unload(item){
+
         }
     };
 });

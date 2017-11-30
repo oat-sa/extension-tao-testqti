@@ -1,0 +1,253 @@
+{
+  "baseUrl": "/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/",
+  "itemData": {
+    "type": "qti",
+    "data": {
+      "identifier": "i151186041650418659",
+      "serial": "item_5a1ec351a5d62120868614",
+      "qtiClass": "assessmentItem",
+      "attributes": {
+        "identifier": "i151186041650418659",
+        "title": "28 days later",
+        "label": "28 days later",
+        "xml:lang": "en-US",
+        "adaptive": false,
+        "timeDependent": false,
+        "toolName": "TAO",
+        "toolVersion": "3.3.0-sprint65",
+        "class": ""
+      },
+      "body": {
+        "serial": "container_containeritembody_5a1ec351a5d4b259137619",
+        "body": "<div class=\"grid-row\"><div class=\"col-6\"><p>{{img_5a1ec351a641d865671194}}</p></div><div class=\"col-6\">{{interaction_choiceinteraction_5a1ec351a5fd3576702228}}</div></div>",
+        "elements": {
+          "interaction_choiceinteraction_5a1ec351a5fd3576702228": {
+            "serial": "interaction_choiceinteraction_5a1ec351a5fd3576702228",
+            "qtiClass": "choiceInteraction",
+            "attributes": {
+              "responseIdentifier": "RESPONSE",
+              "shuffle": true,
+              "maxChoices": 1,
+              "minChoices": 0,
+              "orientation": "vertical"
+            },
+            "debug": {
+              "relatedItem": "item_5a1ec351a5d62120868614"
+            },
+            "choices": {
+              "choice_simplechoice_5a1ec351a6110760445429": {
+                "identifier": "choice_1",
+                "serial": "choice_simplechoice_5a1ec351a6110760445429",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_1",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_5a1ec351a6138331094882",
+                  "body": "Chemical weapons",
+                  "elements": [],
+                  "debug": {
+                    "relatedItem": "item_5a1ec351a5d62120868614"
+                  }
+                },
+                "debug": {
+                  "relatedItem": "item_5a1ec351a5d62120868614"
+                }
+              },
+              "choice_simplechoice_5a1ec351a61ad284276518": {
+                "identifier": "choice_2",
+                "serial": "choice_simplechoice_5a1ec351a61ad284276518",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_2",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_5a1ec351a61c5290599068",
+                  "body": "Infected monkeys",
+                  "elements": [],
+                  "debug": {
+                    "relatedItem": "item_5a1ec351a5d62120868614"
+                  }
+                },
+                "debug": {
+                  "relatedItem": "item_5a1ec351a5d62120868614"
+                }
+              },
+              "choice_simplechoice_5a1ec351a6230310598947": {
+                "identifier": "choice_3",
+                "serial": "choice_simplechoice_5a1ec351a6230310598947",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_3",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_5a1ec351a6248154300695",
+                  "body": "Aliens material",
+                  "elements": [],
+                  "debug": {
+                    "relatedItem": "item_5a1ec351a5d62120868614"
+                  }
+                },
+                "debug": {
+                  "relatedItem": "item_5a1ec351a5d62120868614"
+                }
+              },
+              "choice_simplechoice_5a1ec351a62b0719532280": {
+                "identifier": "choice_4",
+                "serial": "choice_simplechoice_5a1ec351a62b0719532280",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_4",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_5a1ec351a62c7719334143",
+                  "body": "Mad scientist experiments",
+                  "elements": [],
+                  "debug": {
+                    "relatedItem": "item_5a1ec351a5d62120868614"
+                  }
+                },
+                "debug": {
+                  "relatedItem": "item_5a1ec351a5d62120868614"
+                }
+              },
+              "choice_simplechoice_5a1ec351a632d535850362": {
+                "identifier": "choice_5",
+                "serial": "choice_simplechoice_5a1ec351a632d535850362",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_5",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_5a1ec351a6344126218671",
+                  "body": "We don't know",
+                  "elements": [],
+                  "debug": {
+                    "relatedItem": "item_5a1ec351a5d62120868614"
+                  }
+                },
+                "debug": {
+                  "relatedItem": "item_5a1ec351a5d62120868614"
+                }
+              }
+            },
+            "prompt": {
+              "serial": "container_containerstatic_5a1ec351a6051469649543",
+              "body": "<div><strong>What's the root cause of the pandemic in \"28 days later\" </strong>?</div>",
+              "elements": [],
+              "debug": {
+                "relatedItem": "item_5a1ec351a5d62120868614"
+              }
+            }
+          },
+          "img_5a1ec351a641d865671194": {
+            "serial": "img_5a1ec351a641d865671194",
+            "qtiClass": "img",
+            "attributes": {
+              "src": "28-days.jpg",
+              "alt": "28 days",
+              "width": "100%"
+            },
+            "debug": {
+              "relatedItem": "item_5a1ec351a5d62120868614"
+            }
+          }
+        },
+        "debug": {
+          "relatedItem": "item_5a1ec351a5d62120868614"
+        }
+      },
+      "debug": {
+        "relatedItem": "item_5a1ec351a5d62120868614"
+      },
+      "namespaces": {
+        "": "http://www.imsglobal.org/xsd/imsqti_v2p2",
+        "m": "http://www.w3.org/1998/Math/MathML",
+        "xsi": "http://www.w3.org/2001/XMLSchema-instance"
+      },
+      "schemaLocations": {
+        "http://www.imsglobal.org/xsd/imsqti_v2p2": "http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2.xsd"
+      },
+      "stylesheets": [],
+      "outcomes": {
+        "outcomedeclaration_5a1ec351a5eb3227424580": {
+          "identifier": "SCORE",
+          "serial": "outcomedeclaration_5a1ec351a5eb3227424580",
+          "qtiClass": "outcomeDeclaration",
+          "attributes": {
+            "identifier": "SCORE",
+            "cardinality": "single",
+            "baseType": "float",
+            "normalMaximum": 1
+          },
+          "debug": {
+            "relatedItem": "item_5a1ec351a5d62120868614"
+          },
+          "defaultValue": null
+        },
+        "outcomedeclaration_5a1ec351a5eea360663210": {
+          "identifier": "MAXSCORE",
+          "serial": "outcomedeclaration_5a1ec351a5eea360663210",
+          "qtiClass": "outcomeDeclaration",
+          "attributes": {
+            "identifier": "MAXSCORE",
+            "cardinality": "single",
+            "baseType": "float"
+          },
+          "debug": {
+            "relatedItem": "item_5a1ec351a5d62120868614"
+          },
+          "defaultValue": "1"
+        }
+      },
+      "responses": {
+        "responsedeclaration_5a1ec351a5e41611341815": {
+          "identifier": "RESPONSE",
+          "serial": "responsedeclaration_5a1ec351a5e41611341815",
+          "qtiClass": "responseDeclaration",
+          "attributes": {
+            "identifier": "RESPONSE",
+            "cardinality": "single",
+            "baseType": "identifier"
+          },
+          "debug": {
+            "relatedItem": "item_5a1ec351a5d62120868614"
+          },
+          "defaultValue": []
+        }
+      },
+      "feedbacks": [],
+      "apipAccessibility": ""
+    },
+    "assets": {
+      "img": {
+        "28-days.jpg": "28-days.jpg"
+      }
+    }
+  },
+  "itemState": {
+    "RESPONSE": {
+      "response": {
+        "base": null
+      },
+      "order": [
+        "choice_3",
+        "choice_4",
+        "choice_5",
+        "choice_1",
+        "choice_2"
+      ]
+    }
+  },
+  "itemIdentifier": "item-1"
+}

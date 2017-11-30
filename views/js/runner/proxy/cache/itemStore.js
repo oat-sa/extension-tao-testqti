@@ -23,8 +23,9 @@
  */
 define([
     'lodash',
-    'core/store'
-], function(_, store) {
+    'core/store',
+    'taoQtiTest/runner/proxy/cache/itemPreloader'
+], function(_, store, itemPreloader) {
     'use strict';
 
     /**
@@ -43,12 +44,16 @@ define([
     return function itemStoreFactory(maxSize, preload) {
 
         //in memory storage
-        var itemStorage = store('item-cache', store.backends.memory);
+        var getStore = function getStore(){
+            return store('item-cache', store.backends.memory);
+        };
+
         var index = [];
 
         if(! _.isNumber(maxSize)){
             maxSize = defaultConfig.maxSize;
         }
+        //maxSize = 3;
 
         /**
          * @typedef itemStore
@@ -61,7 +66,9 @@ define([
              * @returns {Promise<Object>} the item
              */
             get: function get(key) {
-                return itemStorage.getItem(key);
+                return getStore().then(function(itemStorage){
+                    return itemStorage.getItem(key);
+                });
             },
 
             /**
@@ -76,39 +83,79 @@ define([
             /**
              * Add/Set an item into the store, under the given key
              * @param {String} key - something identifier
-             * @param {Object} value - the item
-             * @returns {itemStore} chains
+             * @param {Object} item - the item
+             * @returns {Promise<Boolean>} chains
              */
-            set: function set(key, value) {
-                if(this.has(key)){
-                    return Promise.resolve(true);
-                }
-                return itemStorage.setItem(key, value)
-                    .then(function(updated){
-                        if(updated){
-                            index.push(key);
-                        }
+            set: function set(key, item) {
+                var self = this;
+                return getStore().then(function(itemStorage){
+                    return itemStorage.setItem(key, item)
+                        .then(function(updated){
+                            if(updated){
+                                if(!_.contains(index, key)){
+                                    index.push(key);
+                                }
 
-                        //do we reach the limit ? then remove one
-                        if (index.length > 1 && index.length > maxSize) {
-                            return index.shift();
-                        }
-                    })
-                    .then(function(toRemove){
-                        if(_.isString(toRemove) && !_.isEmpty(toRemove)) {
-                            return itemStorage.removeItem(toRemove);
-                        }
+                                if(preload){
+                                    _.defer(function(){
+                                        itemPreloader.preload(item);
+                                    });
+                                }
+                            }
+
+                            //do we reach the limit ? then remove one
+                            if (index.length > 1 && index.length > maxSize) {
+                                return self.remove(index[0]).then(function(removed){
+                                    return updated && removed;
+                                });
+                            }
+                            return updated;
+                        });
+                });
+            },
+
+            /**
+             * Update some data of a store item
+             * @param {String} key - something identifier
+             * @param {Object} updateData - will get merged into the item data
+             * @returns {Promise<Boolean>} resolves with the update status
+             */
+            update : function update(key, updateData){
+                if (this.has(key) && _.isPlainObject(updateData)) {
+                    return getStore().then(function(itemStorage){
+                        return itemStorage.getItem(key).then(function(itemData){
+                            if(_.isPlainObject(itemData)){
+                                return itemStorage.setItem(key, _.merge(itemData, updateData));
+                            }
+                        });
                     });
+                }
+                return Promise.resolve(false);
             },
 
             /**
              * Remove the item from the store
              * @param {String} key - something identifier
-             * @returns {Promise} resolves once removed
+             * @returns {Promise<Boolean>} resolves once removed
              */
             remove: function remove(key) {
-                _.remove(index, key);
-                return itemStorage.removeItem(key);
+                if(this.has(key)){
+                    return getStore().then(function(itemStorage){
+
+                        index = _.without(index, key);
+
+                        return itemStorage.getItem(key)
+                            .then(function(item){
+                                _.defer(function(){
+                                    itemPreloader.unload(item);
+                                });
+                            })
+                            .then(function(){
+                                return itemStorage.removeItem(key);
+                            });
+                    });
+                }
+                return Promise.resolve(false);
             },
 
             /**
@@ -116,8 +163,10 @@ define([
              * @returns {Promise}
              */
             clear: function clear() {
-                index = [];
-                return itemStorage.clear();
+                return getStore().then(function(itemStorage){
+                    index = [];
+                    return itemStorage.clear();
+                });
             }
         };
     };
