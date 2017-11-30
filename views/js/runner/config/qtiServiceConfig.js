@@ -46,7 +46,8 @@ define([
         testCompilation : true,
         serviceCallId : true,
         bootstrap : false,
-        timeout : false
+        timeout : false,
+        tenantName : false
     };
 
     /**

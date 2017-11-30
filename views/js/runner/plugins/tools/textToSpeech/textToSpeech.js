@@ -360,8 +360,8 @@ define([
                 animate: true,
                 connected: true,
                 range: {
-                    min: 0,
-                    max: 100
+                    min: 25, //textHelp guys requested us to choose only three speeds for caching purposes, so 25/40/55 (Slow/Normal/Fast) were selected
+                    max: 55
                 },
                 start: speed,
                 step: 15 //actual step for speed slider, so the values will be 0,15,30,etc,etc,100.

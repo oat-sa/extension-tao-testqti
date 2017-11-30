@@ -109,13 +109,28 @@ define([
                     self.enable();
                     self.ttsButton.show();
 
+                    var bookId;
+                    //If we are in multi-tenant context then we choose tenantName as bookId for caching
+                    //in other cases - deliveryUri will be used as bookId for caching on textHelp side
+                    if (typeof config.tenantName !== typeof undefined && config.tenantName && config.tenantName !== null) {
+                        bookId = config.tenantName;
+                    } else {
+                        bookId = config.serviceCallId;
+                    }
+
                     self.tts.updateTexthelpCache(
-                        config.serviceCallId,
+                        bookId,
                         this.itemRunner._item.attributes.identifier
                     );
                 }
             })
             .on('disabletools unloaditem', function () {
+                var context = testRunner.getTestContext();
+                if (context.options.textToSpeech) {
+                    //textHelp requested stopping of running playback on item unload
+                    self.tts.stop();
+                }
+
                 self.disable();
             });
 

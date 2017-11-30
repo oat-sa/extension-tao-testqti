@@ -19,6 +19,7 @@
 
 namespace oat\taoQtiTest\models\container;
 
+use oat\tao\model\service\ContainerService;
 use oat\taoDelivery\model\container\delivery\AbstractContainer;
 use oat\taoDelivery\helper\container\DeliveryClientContainer as ClientExecution;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -65,6 +66,15 @@ class QtiTestDeliveryContainer extends AbstractContainer
         $container->setData('serviceCallId', $execution->getIdentifier());
         $container->setData('deliveryExecution', $execution->getIdentifier());
         $container->setData('deliveryServerConfig', []);
+
+        //setting tenantId/Name if it exists (and we are in multi-tenant context)
+        //as for now it is needed for textHelp caching as a bookId
+        $tenantService = $this->getServiceLocator()->get(ContainerService::SERVICE_ID);
+
+        $tenantName = method_exists($tenantService, 'getTenantName') ? $tenantService->getTenantName() : false;
+
+        $container->setData('tenantName', $tenantName);
+
         return $container;
     }
 }
