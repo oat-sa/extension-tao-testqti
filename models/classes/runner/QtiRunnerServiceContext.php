@@ -26,7 +26,6 @@ use oat\libCat\CatSession;
 use oat\libCat\Exception\CatEngineException;
 use oat\libCat\result\AbstractResult;
 use oat\libCat\result\ItemResult;
-use oat\libCat\result\TestResult;
 use oat\taoQtiTest\helpers\TestSessionMemento;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
