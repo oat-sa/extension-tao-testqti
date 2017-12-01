@@ -815,7 +815,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     protected function saveAdaptiveResults(CatSession $catSession)
     {
-        return $this->storeResult($catSession->getTestResult()) && $this->storeResult($catSession->getItemResults());
+        return $this->storeResult(array_merge([$catSession->getTestResult()], $catSession->getItemResults()));
     }
 
     /**
