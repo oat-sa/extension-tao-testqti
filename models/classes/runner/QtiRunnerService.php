@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\runner;
 use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use \oat\taoQtiTest\models\ExtendedStateService;
@@ -1644,24 +1645,28 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * Store a result variable to the result server
      *
      * @param QtiRunnerServiceContext $context
-     * @param $itemUri
+     * @param $itemId
      * @param \taoResultServer_models_classes_Variable $metaVariable
      * @return bool
+     * @throws \common_exception_NotImplemented
      */
     protected function storeVariable(
         QtiRunnerServiceContext $context,
-        $itemUri,
+        $itemId,
         \taoResultServer_models_classes_Variable $metaVariable
     ) {
         $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
         $testUri = $context->getTestDefinitionUri();
         $sessionId = $context->getTestSession()->getSessionId();
 
-        if (!is_null($itemUri)) {
-            $currentItem = $context->getCurrentAssessmentItemRef();
+        if (!is_null($itemId)) {
+            if ($itemId != $context->getCurrentAssessmentItemRef()) {
+                throw new \common_exception_NotImplemented('Variables can be stored only for the current item');
+            }
             $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
-            $transmissionId = $sessionId . '.' . $currentItem . '.' . $currentOccurrence;
-            $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+
+            $transmissionId = $sessionId . '.' . $itemId . '.' . $currentOccurrence;
+            $resultServer->storeItemVariable($testUri, $itemId, $metaVariable, $transmissionId);
         } else {
             $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
         }
