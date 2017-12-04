@@ -1611,9 +1611,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $sessionId = $context->getTestSession()->getSessionId();
 
         if (!is_null($itemUri)) {
-            $currentItem = $context->getCurrentAssessmentItemRef();
             $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
-            $transmissionId = $sessionId . '.' . $currentItem . '.' . $currentOccurrence;
+            $transmissionId = $sessionId . '.' . $itemUri . '.' . $currentOccurrence;
             $resultServer->storeItemVariableSet($testUri, $itemUri, $metaVariables, $transmissionId);
         } else {
             $resultServer->storeTestVariableSet($testUri, $metaVariables, $sessionId);
