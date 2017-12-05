@@ -841,11 +841,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         try {
             foreach ($results as $result) {
 
-                if (empty($result)) {
-                    \common_Logger::w('No CAT result to store');
-                    continue;
-                }
-
                 if (!$result instanceof AbstractResult) {
                     throw new \common_Exception(__FUNCTION__ . ' requires a CAT result to store it.');
                 }
@@ -861,8 +856,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                     if (empty($itemId)) {
                         continue;
                     }
+                    $itemUri = explode('|', $this->getCurrentAssessmentItemRef()->getHref())[0];
                 } else {
-                    $itemId = null;
+                    $itemUri = $itemId = null;
                     $sectionId = $this
                         ->getTestSession()
                         ->getRoute()
@@ -875,7 +871,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                     }
                 }
 
-                if (!$runnerService->storeVariables($this, $itemId, $variables)) {
+                if (!$runnerService->storeVariables($this, $itemUri, $variables, $itemId)) {
                     $success = false;
                 }
             }

@@ -1597,29 +1597,79 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * Store a set of result variables to the result server
      *
      * @param QtiRunnerServiceContext $context
-     * @param $itemUri
-     * @param $metaVariables
+     * @param string $itemUri This is the item uri
+     * @param \taoResultServer_models_classes_Variable[] $metaVariables
+     * @param null $itemId The assessment item ref id (optional)
      * @return bool
      * @throws \Exception
+     * @throws \common_exception_NotImplemented If the given $itemId is not the current assessment item ref
      */
     public function storeVariables(
         QtiRunnerServiceContext $context,
         $itemUri,
-        $metaVariables
+        $metaVariables,
+        $itemId = null
     ) {
         $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
         $testUri = $context->getTestDefinitionUri();
-        $sessionId = $context->getTestSession()->getSessionId();
 
         if (!is_null($itemUri)) {
-            $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
-            $transmissionId = $sessionId . '.' . $itemUri . '.' . $currentOccurrence;
-            $resultServer->storeItemVariableSet($testUri, $itemUri, $metaVariables, $transmissionId);
+            $resultServer->storeItemVariableSet($testUri, $itemUri, $metaVariables, $this->getTransmissionId($context, $itemId));
         } else {
-            $resultServer->storeTestVariableSet($testUri, $metaVariables, $sessionId);
+            $resultServer->storeTestVariableSet($testUri, $metaVariables, $context->getTestSession()->getSessionId());
         }
 
         return true;
+    }
+
+    /**
+     * Store a result variable to the result server
+     *
+     * @param QtiRunnerServiceContext $context
+     * @param string $itemUri This is the item identifier
+     * @param \taoResultServer_models_classes_Variable $metaVariable
+     * @param null $itemId The assessment item ref id (optional)
+     * @return bool
+     * @throws \common_exception_NotImplemented If the given $itemId is not the current assessment item ref
+     */
+    protected function storeVariable(
+        QtiRunnerServiceContext $context,
+        $itemUri,
+        \taoResultServer_models_classes_Variable $metaVariable,
+        $itemId = null
+    ) {
+        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        $testUri = $context->getTestDefinitionUri();
+
+        if (!is_null($itemUri)) {
+            $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
+        } else {
+            $resultServer->storeTestVariable($testUri, $metaVariable, $context->getTestSession()->getSessionId());
+        }
+
+        return true;
+    }
+
+    /**
+     * Build the transmission based on context and item ref id to store Item variables
+     *
+     * @param QtiRunnerServiceContext $context
+     * @param null $itemId The item ref identifier
+     * @return string The transmission id to store item variables
+     * @throws \common_exception_NotImplemented If the given $itemId is not the current assessment item ref
+     */
+    protected function getTransmissionId(QtiRunnerServiceContext $context, $itemId = null)
+    {
+        if (is_null($itemId)) {
+            $itemId = $context->getCurrentAssessmentItemRef();
+        } elseif ($itemId != $context->getCurrentAssessmentItemRef()) {
+            throw new \common_exception_NotImplemented('Item variables can be stored only for the current item');
+        }
+
+        $sessionId = $context->getTestSession()->getSessionId();
+        $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
+
+        return $sessionId . '.' . $itemId . '.' . $currentOccurrence;
     }
 
     /**
@@ -1639,39 +1689,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $context
             );
         }
-    }
-
-    /**
-     * Store a result variable to the result server
-     *
-     * @param QtiRunnerServiceContext $context
-     * @param $itemId
-     * @param \taoResultServer_models_classes_Variable $metaVariable
-     * @return bool
-     * @throws \common_exception_NotImplemented
-     */
-    protected function storeVariable(
-        QtiRunnerServiceContext $context,
-        $itemId,
-        \taoResultServer_models_classes_Variable $metaVariable
-    ) {
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
-        $testUri = $context->getTestDefinitionUri();
-        $sessionId = $context->getTestSession()->getSessionId();
-
-        if (!is_null($itemId)) {
-            if ($itemId != $context->getCurrentAssessmentItemRef()) {
-                throw new \common_exception_NotImplemented('Variables can be stored only for the current item');
-            }
-            $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
-
-            $transmissionId = $sessionId . '.' . $itemId . '.' . $currentOccurrence;
-            $resultServer->storeItemVariable($testUri, $itemId, $metaVariable, $transmissionId);
-        } else {
-            $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
-        }
-
-        return true;
     }
 
     /**
