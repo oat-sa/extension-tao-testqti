@@ -109,14 +109,9 @@ define([
                     self.enable();
                     self.ttsButton.show();
 
-                    var bookId;
                     //If we are in multi-tenant context then we choose tenantName as bookId for caching
                     //in other cases - deliveryUri will be used as bookId for caching on textHelp side
-                    if (typeof config.tenantName !== typeof undefined && config.tenantName && config.tenantName !== null) {
-                        bookId = config.tenantName;
-                    } else {
-                        bookId = config.serviceCallId;
-                    }
+                    var bookId = config.tenantName ? config.tenantName : config.serviceCallId;
 
                     self.tts.updateTexthelpCache(
                         bookId,
