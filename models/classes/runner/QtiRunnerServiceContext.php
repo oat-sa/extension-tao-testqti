@@ -825,7 +825,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * After converted them to taoResultServer variables
      * Use the runner service to store the variables
      *
-     * @param $results
+     * @param AbstractResult[] $results
      * @return bool
      */
     protected function storeResult($results)
