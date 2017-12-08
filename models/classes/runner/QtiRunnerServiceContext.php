@@ -828,12 +828,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @param AbstractResult[] $results
      * @return bool
      */
-    protected function storeResult($results)
+    protected function storeResult(array $results)
     {
-        if (!is_array($results)) {
-            $results = [$results];
-        }
-
         /** @var QtiRunnerService $runnerService */
         $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
 
@@ -853,10 +849,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
                 if ($result instanceof ItemResult) {
                     $itemId = $result->getItemRefId();
-                    if (empty($itemId)) {
-                        continue;
-                    }
-                    $itemUri = explode('|', $this->getCurrentAssessmentItemRef()->getHref())[0];
+                    $itemUri = $this->getItemUriFromCurrentAssessmentRef();
                 } else {
                     $itemUri = $itemId = null;
                     $sectionId = $this
@@ -928,6 +921,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         }
 
         return $convertedVariables;
+    }
+
+    /**
+     * Get item uri of current assessment item ref depending on the test $context.
+     *
+     * @return string The uri
+     */
+    protected function getItemUriFromCurrentAssessmentRef()
+    {
+        return explode('|', $this->getCurrentAssessmentItemRef()->getHref())[0];
     }
 
     /**
