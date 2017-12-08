@@ -142,23 +142,6 @@ define([
             };
 
             /**
-             * Update the item state in the store
-             * @param {String} itemIdentifier - the item identifier
-             * @param {Object} state - the state of the item
-             * @returns {Promise}
-             */
-            //this.updateState = function updateState(itemIdentifier, state) {
-                //if (this.itemStore.has(itemIdentifier)) {
-                    //return this.itemStore.get(itemIdentifier).then(function(itemData){
-                        //if(itemData){
-                            //itemData.itemState = state;
-                            //return self.itemStore.set(itemIdentifier, itemData);
-                        //}
-                    //});
-                //}
-            //};
-
-            /**
              * Check whether we have the item in the store
              * @param {String} itemIdentifier - the item identifier
              * @returns {Boolean}
@@ -498,18 +481,16 @@ define([
                 //don't run a request if not needed
                 if (self.isOnline() && missing.length) {
                     _.delay(function(){
-                        console.log('LOAD NEXT');
                         self.requestNetworkThenOffline(
                             self.configStorage.getTestActionUrl('getNextItemData'),
                             'getNextItemData',
-                            {itemDefinition: missing},
+                            { itemDefinition: missing },
                             false
                         ).then(function(response){
                             if (response && response.items) {
                                 _.forEach(response.items, function (item) {
                                     if (item && item.itemIdentifier) {
                                         //store the response and start caching assets
-                                        console.log('store', item.itemIdentifier);
                                         self.itemStore.set(item.itemIdentifier, item);
                                     }
                                 });
@@ -524,7 +505,7 @@ define([
             if (this.getItemFromStore && this.itemStore.has(itemIdentifier)) {
                 loadNextItem();
 
-                return Promise.resolve(this.itemStore.get(itemIdentifier));
+                return this.itemStore.get(itemIdentifier);
             }
 
             return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params)
@@ -549,10 +530,13 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItem: function submitItem(itemIdentifier, state, response, params) {
-            this.itemStore.update(itemIdentifier, {
+            var self = this;
+            return this.itemStore.update(itemIdentifier, {
                 itemState : state
+            })
+            .then(function(){
+                return qtiServiceProxy.submitItem.call(self, itemIdentifier, state, response, params);
             });
-            return qtiServiceProxy.submitItem.call(this, itemIdentifier, state, response, params);
         },
 
 
@@ -606,11 +590,12 @@ define([
          */
         callItemAction: function callItemAction(itemIdentifier, action, params, deferred) {
             var self = this;
+            var updateStatePromise = Promise.resolve();
             var testMap = this.getDataHolder().get('testMap');
 
             //update the item state
             if(params.itemState){
-                this.itemStore.update(itemIdentifier, {
+                updateStatePromise = this.itemStore.update(itemIdentifier, {
                     itemState : params.itemState
                 });
             }
@@ -630,12 +615,14 @@ define([
                 params.start = true;
             }
 
-            return this.requestNetworkThenOffline(
-                this.configStorage.getItemActionUrl(itemIdentifier, action),
-                action,
-                _.merge({ itemDefinition : itemIdentifier }, params),
-                deferred
-            );
+            return updateStatePromise.then(function(){
+                return self.requestNetworkThenOffline(
+                    self.configStorage.getItemActionUrl(itemIdentifier, action),
+                    action,
+                    _.merge({ itemDefinition : itemIdentifier }, params),
+                    deferred
+                );
+            });
         }
     }, qtiServiceProxy);
 });
