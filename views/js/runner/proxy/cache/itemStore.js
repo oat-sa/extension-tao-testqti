@@ -53,7 +53,6 @@ define([
         if(! _.isNumber(maxSize)){
             maxSize = defaultConfig.maxSize;
         }
-        //maxSize = 3;
 
         /**
          * @typedef itemStore
