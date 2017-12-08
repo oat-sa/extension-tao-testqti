@@ -79,12 +79,13 @@ define([
         });
     });
 
-    QUnit.asyncTest('preload an item', function(assert){
+    QUnit.asyncTest('preload and unload an item', function(assert){
         var p;
-        QUnit.expect(4);
+        var styleSheet;
+        QUnit.expect(10);
 
-        p = itemPreloader.preload(itemData);
 
+        //hack the Image element to assert the load
         window.Image = function(){
             assert.ok(true, 'A new image is created');
         };
@@ -93,9 +94,32 @@ define([
                 assert.equal(url, '/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/28-days.jpg');
             }
         });
+
+        styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
+
+        assert.equal(styleSheet, null, 'The item stylesheet is not loaded');
+
+        p = itemPreloader.preload(itemData);
         assert.ok(p instanceof Promise);
+
         p.then(function(result){
             assert.ok(result, 'Preloaded');
+
+            styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
+            assert.ok(styleSheet instanceof HTMLLinkElement, 'The item stylesheet is loaded');
+            assert.equal(styleSheet.getAttribute('rel'), 'prefetch', 'The item stylesheet is prefetched');
+            assert.equal(styleSheet.getAttribute('disabled'), 'true', 'The item stylesheet is disabled');
+        })
+        .then(function(){
+            return itemPreloader.unload(itemData);
+        })
+        .then(function(result){
+            assert.ok(result, 'Unloaded');
+
+            styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
+
+            assert.equal(styleSheet, null, 'The item stylesheet is now removed');
+
             QUnit.start();
         })
         .catch(function(err){

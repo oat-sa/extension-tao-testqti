@@ -4,7 +4,7 @@
     "type": "qti",
     "data": {
       "identifier": "i151186041650418659",
-      "serial": "item_5a1ec351a5d62120868614",
+      "serial": "item_5a2a55fe72795593195717",
       "qtiClass": "assessmentItem",
       "attributes": {
         "identifier": "i151186041650418659",
@@ -18,11 +18,11 @@
         "class": ""
       },
       "body": {
-        "serial": "container_containeritembody_5a1ec351a5d4b259137619",
-        "body": "<div class=\"grid-row\"><div class=\"col-6\"><p>{{img_5a1ec351a641d865671194}}</p></div><div class=\"col-6\">{{interaction_choiceinteraction_5a1ec351a5fd3576702228}}</div></div>",
+        "serial": "container_containeritembody_5a2a55fe7278d623968179",
+        "body": "\n    <div class=\"grid-row\">\n      <div class=\"col-6\">\n        <p>\n          {{img_5a2a55fe72d72730366395}}\n        <\/p>\n      <\/div>\n      <div class=\"col-6\">\n        {{interaction_choiceinteraction_5a2a55fe729b2687243714}}\n      <\/div>\n    <\/div>\n  ",
         "elements": {
-          "interaction_choiceinteraction_5a1ec351a5fd3576702228": {
-            "serial": "interaction_choiceinteraction_5a1ec351a5fd3576702228",
+          "interaction_choiceinteraction_5a2a55fe729b2687243714": {
+            "serial": "interaction_choiceinteraction_5a2a55fe729b2687243714",
             "qtiClass": "choiceInteraction",
             "attributes": {
               "responseIdentifier": "RESPONSE",
@@ -32,12 +32,12 @@
               "orientation": "vertical"
             },
             "debug": {
-              "relatedItem": "item_5a1ec351a5d62120868614"
+              "relatedItem": "item_5a2a55fe72795593195717"
             },
             "choices": {
-              "choice_simplechoice_5a1ec351a6110760445429": {
+              "choice_simplechoice_5a2a55fe72aad088343010": {
                 "identifier": "choice_1",
-                "serial": "choice_simplechoice_5a1ec351a6110760445429",
+                "serial": "choice_simplechoice_5a2a55fe72aad088343010",
                 "qtiClass": "simpleChoice",
                 "attributes": {
                   "identifier": "choice_1",
@@ -45,20 +45,20 @@
                   "showHide": "show"
                 },
                 "body": {
-                  "serial": "container_containerstatic_5a1ec351a6138331094882",
+                  "serial": "container_containerstatic_5a2a55fe72ac7808138434",
                   "body": "Chemical weapons",
                   "elements": [],
                   "debug": {
-                    "relatedItem": "item_5a1ec351a5d62120868614"
+                    "relatedItem": "item_5a2a55fe72795593195717"
                   }
                 },
                 "debug": {
-                  "relatedItem": "item_5a1ec351a5d62120868614"
+                  "relatedItem": "item_5a2a55fe72795593195717"
                 }
               },
-              "choice_simplechoice_5a1ec351a61ad284276518": {
+              "choice_simplechoice_5a2a55fe72b30567760403": {
                 "identifier": "choice_2",
-                "serial": "choice_simplechoice_5a1ec351a61ad284276518",
+                "serial": "choice_simplechoice_5a2a55fe72b30567760403",
                 "qtiClass": "simpleChoice",
                 "attributes": {
                   "identifier": "choice_2",
@@ -66,20 +66,20 @@
                   "showHide": "show"
                 },
                 "body": {
-                  "serial": "container_containerstatic_5a1ec351a61c5290599068",
+                  "serial": "container_containerstatic_5a2a55fe72b44421121657",
                   "body": "Infected monkeys",
                   "elements": [],
                   "debug": {
-                    "relatedItem": "item_5a1ec351a5d62120868614"
+                    "relatedItem": "item_5a2a55fe72795593195717"
                   }
                 },
                 "debug": {
-                  "relatedItem": "item_5a1ec351a5d62120868614"
+                  "relatedItem": "item_5a2a55fe72795593195717"
                 }
               },
-              "choice_simplechoice_5a1ec351a6230310598947": {
+              "choice_simplechoice_5a2a55fe72baf909790371": {
                 "identifier": "choice_3",
-                "serial": "choice_simplechoice_5a1ec351a6230310598947",
+                "serial": "choice_simplechoice_5a2a55fe72baf909790371",
                 "qtiClass": "simpleChoice",
                 "attributes": {
                   "identifier": "choice_3",
@@ -87,20 +87,20 @@
                   "showHide": "show"
                 },
                 "body": {
-                  "serial": "container_containerstatic_5a1ec351a6248154300695",
+                  "serial": "container_containerstatic_5a2a55fe72bc3029423651",
                   "body": "Aliens material",
                   "elements": [],
                   "debug": {
-                    "relatedItem": "item_5a1ec351a5d62120868614"
+                    "relatedItem": "item_5a2a55fe72795593195717"
                   }
                 },
                 "debug": {
-                  "relatedItem": "item_5a1ec351a5d62120868614"
+                  "relatedItem": "item_5a2a55fe72795593195717"
                 }
               },
-              "choice_simplechoice_5a1ec351a62b0719532280": {
+              "choice_simplechoice_5a2a55fe72c26513083181": {
                 "identifier": "choice_4",
-                "serial": "choice_simplechoice_5a1ec351a62b0719532280",
+                "serial": "choice_simplechoice_5a2a55fe72c26513083181",
                 "qtiClass": "simpleChoice",
                 "attributes": {
                   "identifier": "choice_4",
@@ -108,20 +108,20 @@
                   "showHide": "show"
                 },
                 "body": {
-                  "serial": "container_containerstatic_5a1ec351a62c7719334143",
+                  "serial": "container_containerstatic_5a2a55fe72c3a069244532",
                   "body": "Mad scientist experiments",
                   "elements": [],
                   "debug": {
-                    "relatedItem": "item_5a1ec351a5d62120868614"
+                    "relatedItem": "item_5a2a55fe72795593195717"
                   }
                 },
                 "debug": {
-                  "relatedItem": "item_5a1ec351a5d62120868614"
+                  "relatedItem": "item_5a2a55fe72795593195717"
                 }
               },
-              "choice_simplechoice_5a1ec351a632d535850362": {
+              "choice_simplechoice_5a2a55fe72c99718938362": {
                 "identifier": "choice_5",
-                "serial": "choice_simplechoice_5a1ec351a632d535850362",
+                "serial": "choice_simplechoice_5a2a55fe72c99718938362",
                 "qtiClass": "simpleChoice",
                 "attributes": {
                   "identifier": "choice_5",
@@ -129,29 +129,29 @@
                   "showHide": "show"
                 },
                 "body": {
-                  "serial": "container_containerstatic_5a1ec351a6344126218671",
+                  "serial": "container_containerstatic_5a2a55fe72cad490867256",
                   "body": "We don't know",
                   "elements": [],
                   "debug": {
-                    "relatedItem": "item_5a1ec351a5d62120868614"
+                    "relatedItem": "item_5a2a55fe72795593195717"
                   }
                 },
                 "debug": {
-                  "relatedItem": "item_5a1ec351a5d62120868614"
+                  "relatedItem": "item_5a2a55fe72795593195717"
                 }
               }
             },
             "prompt": {
-              "serial": "container_containerstatic_5a1ec351a6051469649543",
-              "body": "<div><strong>What's the root cause of the pandemic in \"28 days later\" </strong>?</div>",
+              "serial": "container_containerstatic_5a2a55fe729f9774256326",
+              "body": "\n            <div><strong>What's the root cause of the pandemic in \"28 days later\" <\/strong>?<\/div>\n            <div>\u00a0<\/div>\n            <div>\u00a0<\/div>\n          ",
               "elements": [],
               "debug": {
-                "relatedItem": "item_5a1ec351a5d62120868614"
+                "relatedItem": "item_5a2a55fe72795593195717"
               }
             }
           },
-          "img_5a1ec351a641d865671194": {
-            "serial": "img_5a1ec351a641d865671194",
+          "img_5a2a55fe72d72730366395": {
+            "serial": "img_5a2a55fe72d72730366395",
             "qtiClass": "img",
             "attributes": {
               "src": "28-days.jpg",
@@ -159,30 +159,44 @@
               "width": "100%"
             },
             "debug": {
-              "relatedItem": "item_5a1ec351a5d62120868614"
+              "relatedItem": "item_5a2a55fe72795593195717"
             }
           }
         },
         "debug": {
-          "relatedItem": "item_5a1ec351a5d62120868614"
+          "relatedItem": "item_5a2a55fe72795593195717"
         }
       },
       "debug": {
-        "relatedItem": "item_5a1ec351a5d62120868614"
+        "relatedItem": "item_5a2a55fe72795593195717"
       },
       "namespaces": {
-        "": "http://www.imsglobal.org/xsd/imsqti_v2p2",
-        "m": "http://www.w3.org/1998/Math/MathML",
-        "xsi": "http://www.w3.org/2001/XMLSchema-instance"
+        "": "http:\/\/www.imsglobal.org\/xsd\/imsqti_v2p2",
+        "m": "http:\/\/www.w3.org\/1998\/Math\/MathML",
+        "xsi": "http:\/\/www.w3.org\/2001\/XMLSchema-instance"
       },
       "schemaLocations": {
-        "http://www.imsglobal.org/xsd/imsqti_v2p2": "http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2.xsd"
+        "http:\/\/www.imsglobal.org\/xsd\/imsqti_v2p2": "http:\/\/www.imsglobal.org\/xsd\/qti\/qtiv2p2\/imsqti_v2p2.xsd"
       },
-      "stylesheets": [],
+      "stylesheets": {
+        "stylesheet_5a2a55fe72810057707265": {
+          "serial": "stylesheet_5a2a55fe72810057707265",
+          "qtiClass": "stylesheet",
+          "attributes": {
+            "href": "tao-user-styles.css",
+            "type": "text\/css",
+            "media": "all",
+            "title": ""
+          },
+          "debug": {
+            "relatedItem": "item_5a2a55fe72795593195717"
+          }
+        }
+      },
       "outcomes": {
-        "outcomedeclaration_5a1ec351a5eb3227424580": {
+        "outcomedeclaration_5a2a55fe728b7900920078": {
           "identifier": "SCORE",
-          "serial": "outcomedeclaration_5a1ec351a5eb3227424580",
+          "serial": "outcomedeclaration_5a2a55fe728b7900920078",
           "qtiClass": "outcomeDeclaration",
           "attributes": {
             "identifier": "SCORE",
@@ -191,13 +205,13 @@
             "normalMaximum": 1
           },
           "debug": {
-            "relatedItem": "item_5a1ec351a5d62120868614"
+            "relatedItem": "item_5a2a55fe72795593195717"
           },
           "defaultValue": null
         },
-        "outcomedeclaration_5a1ec351a5eea360663210": {
+        "outcomedeclaration_5a2a55fe728e5416774659": {
           "identifier": "MAXSCORE",
-          "serial": "outcomedeclaration_5a1ec351a5eea360663210",
+          "serial": "outcomedeclaration_5a2a55fe728e5416774659",
           "qtiClass": "outcomeDeclaration",
           "attributes": {
             "identifier": "MAXSCORE",
@@ -205,15 +219,15 @@
             "baseType": "float"
           },
           "debug": {
-            "relatedItem": "item_5a1ec351a5d62120868614"
+            "relatedItem": "item_5a2a55fe72795593195717"
           },
           "defaultValue": "1"
         }
       },
       "responses": {
-        "responsedeclaration_5a1ec351a5e41611341815": {
+        "responsedeclaration_5a2a55fe72856894444892": {
           "identifier": "RESPONSE",
-          "serial": "responsedeclaration_5a1ec351a5e41611341815",
+          "serial": "responsedeclaration_5a2a55fe72856894444892",
           "qtiClass": "responseDeclaration",
           "attributes": {
             "identifier": "RESPONSE",
@@ -221,7 +235,7 @@
             "baseType": "identifier"
           },
           "debug": {
-            "relatedItem": "item_5a1ec351a5d62120868614"
+            "relatedItem": "item_5a2a55fe72795593195717"
           },
           "defaultValue": []
         }
@@ -232,22 +246,15 @@
     "assets": {
       "img": {
         "28-days.jpg": "28-days.jpg"
+      },
+      "css": {
+        "tao-user-styles.css": "tao-user-styles.css"
       }
     }
   },
-  "itemState": {
-    "RESPONSE": {
-      "response": {
-        "base": null
-      },
-      "order": [
-        "choice_3",
-        "choice_4",
-        "choice_5",
-        "choice_1",
-        "choice_2"
-      ]
-    }
-  },
-  "itemIdentifier": "item-1"
+  "itemState": {},
+  "itemIdentifier": "item-1",
+  "success": true,
+  "token": "cc09ab0b37060683a28a5a8c225f06e6a3d8172a",
+  "messages": []
 }

@@ -17,7 +17,7 @@
  */
 
 /**
- * Pre load an item's assets
+ * (Pre)load an item and it's assets.
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
@@ -77,7 +77,7 @@ define([
          * Remove images ref so they can be garbage collected
          * @param {String} url - the url of the image to unload
          */
-        img : function preloadImage(url){
+        img : function unloadImage(url){
             _.remove(images[url]);
         },
 
@@ -85,7 +85,7 @@ define([
          * Remove prefteched CSS link tag
          * @param {String} url - the url of the css to unload
          */
-        css : function preloadCss(url){
+        css : function unloadCss(url){
             var link = document.querySelector('head link[rel="prefetch"][href="' + url + '"]');
             if(link){
                 document.querySelector('head').removeChild(link);
@@ -124,6 +124,10 @@ define([
         });
     };
 
+    /**
+     * Item Preloader
+     * @type {Object}
+     */
     return {
 
         /**
@@ -197,6 +201,7 @@ define([
                             _.forEach(assets, unloaders[type]);
                         }
                     });
+                    return true;
                 });
             }
             return Promise.resolve(false);
