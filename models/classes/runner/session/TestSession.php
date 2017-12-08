@@ -276,7 +276,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         }
 
         if (!isset($this->durationCache[$durationKey])) {
-            $duration = round($this->getTimer()->compute($identifier, $target), 6);
+            $duration = round($this->getTimer()->compute($identifier, $target));
             $this->durationCache[$durationKey] = new QtiDuration('PT' . $duration . 'S');
         }
 
