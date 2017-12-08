@@ -849,7 +849,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
                 if ($result instanceof ItemResult) {
                     $itemId = $result->getItemRefId();
-                    $itemUri = $this->getItemUriFromCurrentAssessmentRef();
+                    $itemUri = $this->getItemUriFromRefId($itemId);
                 } else {
                     $itemUri = $itemId = null;
                     $sectionId = $this
@@ -924,13 +924,17 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * Get item uri of current assessment item ref depending on the test $context.
+     * Get item uri associated to the given $itemId.
      *
      * @return string The uri
      */
-    protected function getItemUriFromCurrentAssessmentRef()
+    protected function getItemUriFromRefId($itemId)
     {
-        return explode('|', $this->getCurrentAssessmentItemRef()->getHref())[0];
+        $ref = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAssessmentItemRefByIdentifier(
+            $this->getCompilationDirectory()['private'],
+            $itemId
+        );
+        return explode('|', $ref->getHref())[0];
     }
 
     /**
