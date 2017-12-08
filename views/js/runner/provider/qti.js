@@ -329,9 +329,13 @@ define([
                 })
                 .on('move', function(direction, scope, position){
 
+                    // get the item results/state before disabling the tools
+                    // otherwise the state could be partially lost for tools that clean up when disabling
+                    var itemResults = getItemResults();
+
                     this.trigger('disablenav disabletools');
 
-                    computeNext('move', _.merge(getItemResults(), {
+                    computeNext('move', _.merge(itemResults, {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
