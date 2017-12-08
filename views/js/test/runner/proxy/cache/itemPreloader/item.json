@@ -19,7 +19,7 @@
       },
       "body": {
         "serial": "container_containeritembody_5a2a55fe7278d623968179",
-        "body": "\n    <div class=\"grid-row\">\n      <div class=\"col-6\">\n        <p>\n          {{img_5a2a55fe72d72730366395}}\n        <\/p>\n      <\/div>\n      <div class=\"col-6\">\n        {{interaction_choiceinteraction_5a2a55fe729b2687243714}}\n      <\/div>\n    <\/div>\n  ",
+        "body": " <div class=\"grid-row\"><div class=\"col-6\"><p>{{img_5a2a55fe72d72730366395}}<\/p><\/div><div class=\"col-6\">{{interaction_choiceinteraction_5a2a55fe729b2687243714}}<\/div><\/div>",
         "elements": {
           "interaction_choiceinteraction_5a2a55fe729b2687243714": {
             "serial": "interaction_choiceinteraction_5a2a55fe729b2687243714",
@@ -30,9 +30,6 @@
               "maxChoices": 1,
               "minChoices": 0,
               "orientation": "vertical"
-            },
-            "debug": {
-              "relatedItem": "item_5a2a55fe72795593195717"
             },
             "choices": {
               "choice_simplechoice_5a2a55fe72aad088343010": {
@@ -47,13 +44,7 @@
                 "body": {
                   "serial": "container_containerstatic_5a2a55fe72ac7808138434",
                   "body": "Chemical weapons",
-                  "elements": [],
-                  "debug": {
-                    "relatedItem": "item_5a2a55fe72795593195717"
-                  }
-                },
-                "debug": {
-                  "relatedItem": "item_5a2a55fe72795593195717"
+                  "elements": []
                 }
               },
               "choice_simplechoice_5a2a55fe72b30567760403": {
@@ -68,13 +59,7 @@
                 "body": {
                   "serial": "container_containerstatic_5a2a55fe72b44421121657",
                   "body": "Infected monkeys",
-                  "elements": [],
-                  "debug": {
-                    "relatedItem": "item_5a2a55fe72795593195717"
-                  }
-                },
-                "debug": {
-                  "relatedItem": "item_5a2a55fe72795593195717"
+                  "elements": []
                 }
               },
               "choice_simplechoice_5a2a55fe72baf909790371": {
@@ -89,13 +74,7 @@
                 "body": {
                   "serial": "container_containerstatic_5a2a55fe72bc3029423651",
                   "body": "Aliens material",
-                  "elements": [],
-                  "debug": {
-                    "relatedItem": "item_5a2a55fe72795593195717"
-                  }
-                },
-                "debug": {
-                  "relatedItem": "item_5a2a55fe72795593195717"
+                  "elements": []
                 }
               },
               "choice_simplechoice_5a2a55fe72c26513083181": {
@@ -110,13 +89,7 @@
                 "body": {
                   "serial": "container_containerstatic_5a2a55fe72c3a069244532",
                   "body": "Mad scientist experiments",
-                  "elements": [],
-                  "debug": {
-                    "relatedItem": "item_5a2a55fe72795593195717"
-                  }
-                },
-                "debug": {
-                  "relatedItem": "item_5a2a55fe72795593195717"
+                  "elements": []
                 }
               },
               "choice_simplechoice_5a2a55fe72c99718938362": {
@@ -131,23 +104,14 @@
                 "body": {
                   "serial": "container_containerstatic_5a2a55fe72cad490867256",
                   "body": "We don't know",
-                  "elements": [],
-                  "debug": {
-                    "relatedItem": "item_5a2a55fe72795593195717"
-                  }
-                },
-                "debug": {
-                  "relatedItem": "item_5a2a55fe72795593195717"
+                  "elements": []
                 }
               }
             },
             "prompt": {
               "serial": "container_containerstatic_5a2a55fe729f9774256326",
-              "body": "\n            <div><strong>What's the root cause of the pandemic in \"28 days later\" <\/strong>?<\/div>\n            <div>\u00a0<\/div>\n            <div>\u00a0<\/div>\n          ",
-              "elements": [],
-              "debug": {
-                "relatedItem": "item_5a2a55fe72795593195717"
-              }
+              "body": "<div><strong>What's the root cause of the pandemic in \"28 days later\" <\/strong>?<\/div><div>\u00a0<\/div><div>\u00a0<\/div>",
+              "elements": []
             }
           },
           "img_5a2a55fe72d72730366395": {
@@ -157,18 +121,9 @@
               "src": "28-days.jpg",
               "alt": "28 days",
               "width": "100%"
-            },
-            "debug": {
-              "relatedItem": "item_5a2a55fe72795593195717"
             }
           }
-        },
-        "debug": {
-          "relatedItem": "item_5a2a55fe72795593195717"
         }
-      },
-      "debug": {
-        "relatedItem": "item_5a2a55fe72795593195717"
       },
       "namespaces": {
         "": "http:\/\/www.imsglobal.org\/xsd\/imsqti_v2p2",
@@ -187,9 +142,6 @@
             "type": "text\/css",
             "media": "all",
             "title": ""
-          },
-          "debug": {
-            "relatedItem": "item_5a2a55fe72795593195717"
           }
         }
       },
@@ -204,9 +156,6 @@
             "baseType": "float",
             "normalMaximum": 1
           },
-          "debug": {
-            "relatedItem": "item_5a2a55fe72795593195717"
-          },
           "defaultValue": null
         },
         "outcomedeclaration_5a2a55fe728e5416774659": {
@@ -217,9 +166,6 @@
             "identifier": "MAXSCORE",
             "cardinality": "single",
             "baseType": "float"
-          },
-          "debug": {
-            "relatedItem": "item_5a2a55fe72795593195717"
           },
           "defaultValue": "1"
         }
@@ -233,9 +179,6 @@
             "identifier": "RESPONSE",
             "cardinality": "single",
             "baseType": "identifier"
-          },
-          "debug": {
-            "relatedItem": "item_5a2a55fe72795593195717"
           },
           "defaultValue": []
         }
