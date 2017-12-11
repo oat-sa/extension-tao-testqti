@@ -31,9 +31,8 @@ define([
     'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
-    'taoQtiTest/runner/proxy/cache/actionStore',
-    'taoQtiTest/runner/proxy/cache/assetLoader'
-], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, dataUpdater, qtiServiceProxy, itemStoreFactory, actionStoreFactory, assetLoader) {
+    'taoQtiTest/runner/proxy/cache/actionStore'
+], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, dataUpdater, qtiServiceProxy, itemStoreFactory, actionStoreFactory) {
     'use strict';
 
     /**
@@ -112,7 +111,7 @@ define([
             qtiServiceProxy.install.call(this);
 
             //we keep items here
-            this.itemStore = itemStoreFactory(cacheSize);
+            this.itemStore = itemStoreFactory(cacheSize, true);
 
             //where we keep actions
             this.actiontStore = null;
@@ -140,21 +139,6 @@ define([
                     cacheAmount = parseInt(testData.config.itemCaching.amount, 10) || cacheAmount;
                 }
                 return cacheAmount;
-            };
-
-            /**
-             * Update the item state in the store
-             * @param {String} itemIdentifier - the item identifier
-             * @param {Object} state - the state of the item
-             * @returns {Boolean}
-             */
-            this.updateState = function updateState(itemIdentifier, state) {
-                var itemData;
-                if (this.itemStore.has(itemIdentifier)) {
-                    itemData = this.itemStore.get(itemIdentifier);
-                    itemData.itemState = state;
-                    this.itemStore.set(itemIdentifier, itemData);
-                }
             };
 
             /**
@@ -500,7 +484,7 @@ define([
                         self.requestNetworkThenOffline(
                             self.configStorage.getTestActionUrl('getNextItemData'),
                             'getNextItemData',
-                            {itemDefinition: missing},
+                            { itemDefinition: missing },
                             false
                         ).then(function(response){
                             if (response && response.items) {
@@ -508,10 +492,6 @@ define([
                                     if (item && item.itemIdentifier) {
                                         //store the response and start caching assets
                                         self.itemStore.set(item.itemIdentifier, item);
-
-                                        if (item.baseUrl && item.itemData && item.itemData.assets) {
-                                            assetLoader(item.baseUrl, item.itemData.assets);
-                                        }
                                     }
                                 });
                             }
@@ -525,7 +505,7 @@ define([
             if (this.getItemFromStore && this.itemStore.has(itemIdentifier)) {
                 loadNextItem();
 
-                return Promise.resolve(this.itemStore.get(itemIdentifier));
+                return this.itemStore.get(itemIdentifier);
             }
 
             return this.request(this.configStorage.getItemActionUrl(itemIdentifier, 'getItem'), params)
@@ -550,8 +530,13 @@ define([
          *                      Any error will be provided if rejected.
          */
         submitItem: function submitItem(itemIdentifier, state, response, params) {
-            this.updateState(itemIdentifier, state);
-            return qtiServiceProxy.submitItem.call(this, itemIdentifier, state, response, params);
+            var self = this;
+            return this.itemStore.update(itemIdentifier, {
+                itemState : state
+            })
+            .then(function(){
+                return qtiServiceProxy.submitItem.call(self, itemIdentifier, state, response, params);
+            });
         },
 
 
@@ -605,11 +590,14 @@ define([
          */
         callItemAction: function callItemAction(itemIdentifier, action, params, deferred) {
             var self = this;
+            var updateStatePromise = Promise.resolve();
             var testMap = this.getDataHolder().get('testMap');
 
             //update the item state
             if(params.itemState){
-                self.updateState(itemIdentifier, params.itemState);
+                updateStatePromise = this.itemStore.update(itemIdentifier, {
+                    itemState : params.itemState
+                });
             }
 
             //check if we have already the item for the action we are going to perform
@@ -627,12 +615,14 @@ define([
                 params.start = true;
             }
 
-            return this.requestNetworkThenOffline(
-                this.configStorage.getItemActionUrl(itemIdentifier, action),
-                action,
-                _.merge({ itemDefinition : itemIdentifier }, params),
-                deferred
-            );
+            return updateStatePromise.then(function(){
+                return self.requestNetworkThenOffline(
+                    self.configStorage.getItemActionUrl(itemIdentifier, action),
+                    action,
+                    _.merge({ itemDefinition : itemIdentifier }, params),
+                    deferred
+                );
+            });
         }
     }, qtiServiceProxy);
 });
