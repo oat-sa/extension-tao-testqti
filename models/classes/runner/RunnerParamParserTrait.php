@@ -78,10 +78,10 @@ trait RunnerParamParserTrait
      * Get the Service Context
      * WARNING, there is not CSRF token check
      *
-     * @param bool $check
      * @return QtiRunnerServiceContext
+     * @throws \common_Exception
      */
-    protected function getServiceContext($check = true)
+    protected function getServiceContext()
     {
         if (!$this->serviceContext) {
 
@@ -90,7 +90,7 @@ trait RunnerParamParserTrait
             $testCompilation = $this->getRequestParameter('testCompilation');
 
             $this->serviceContext = $this->getRunnerService()->getServiceContext(
-                $testDefinition, $testCompilation, $testExecution, $check
+                $testDefinition, $testCompilation, $testExecution
             );
         }
 

@@ -59,6 +59,7 @@ use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
+use oat\taoResultServer\models\classes\ResultServerService;
 
 /**
  * Class QtiRunnerService
@@ -1322,7 +1323,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function comment(RunnerServiceContext $context, $comment)
     {
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        /** @var ResultServerService $resultService */
+        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+
         $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($resultServer);
 
         // prepare transmission Id for result server.
@@ -1496,8 +1499,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $metaVariable->setBaseType('string');
             $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
             $metaVariable->setTrace($variableValue);
-
-            $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+            $executionIdentifier = $context->getTestExecutionUri();
+            /** @var ResultServerService $resultServer */
+            $resultServer =$this->getServiceManager()->get(ResultServerService::SERVICE_ID); //taoResultServer_models_classes_ResultServerStateFull::singleton();
 
             $testUri = $context->getTestDefinitionUri();
             $sessionId = $context->getTestSession()->getSessionId();
@@ -1507,9 +1511,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
                 $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
-                $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+                $resultServer->getResultServer($executionIdentifier)->getStorageInterface()->storeItemVariable($executionIdentifier, $testUri, $itemUri, $metaVariable, $transmissionId);
             } else {
-                $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+                $resultServer->getResultServer($executionIdentifier)->getStorageInterface()->storeTestVariable($executionIdentifier, $testUri, $metaVariable, $sessionId);
             }
 
             return true;
@@ -1547,7 +1551,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
             $metaVariable->setValue($variableValue);
 
-            $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+            /** @var ResultServerService $resultServer */
+            $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+
 
             $testUri = $context->getTestDefinitionUri();
             $sessionId = $context->getTestSession()->getSessionId();
@@ -1557,9 +1563,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $currentOccurrence = $context->getTestSession()->getCurrentAssessmentItemRefOccurence();
 
                 $transmissionId = "${sessionId}.${currentItem}.${currentOccurrence}";
-                $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+                $resultServer->getResultServer($sessionId)->getStorageInterface()->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
             } else {
-                $resultServer->storeTestVariable($testUri, $metaVariable, $sessionId);
+                $resultServer->getResultServer($sessionId)->getStorageInterface()->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
             }
 
             return true;

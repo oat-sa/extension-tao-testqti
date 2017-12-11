@@ -18,6 +18,7 @@
  *
  */
 
+use oat\taoResultServer\models\classes\ResultServerService;
 use qtism\runtime\common\ProcessingException;
 use qtism\runtime\processing\OutcomeProcessingEngine;
 use qtism\data\rules\OutcomeRuleCollection;
@@ -62,7 +63,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     /**
      * The ResultServer to be used to transmit Item and Test results.
      * 
-     * @var taoResultServer_models_classes_ResultServerStateFull
+     * @var ResultServerService
      */
     private $resultServer;
     
@@ -94,14 +95,14 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
 
     /**
      * Create a new TAO QTI Test Session.
-     * 
+     *
      * @param AssessmentTest $assessmentTest The AssessmentTest object representing the QTI test definition.
-     * @param AbstractSessionManager $sessionManager The manager to be used to create new AssessmentItemSession objects.
+     * @param AbstractSessionManager $manager The manager to be used to create new AssessmentItemSession objects.
      * @param Route $route The Route (sequence of items) to be taken by the candidate for this test session.
-     * @param taoResultServer_models_classes_ResultServerStateFull $resultServer The Result Server where Item and Test Results must be sent to.
+     * @param ResultServerService $resultServer The Result Server where Item and Test Results must be sent to.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the test.
      */
-    public function __construct(AssessmentTest $assessmentTest, AbstractSessionManager $manager, Route $route, taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
+    public function __construct(AssessmentTest $assessmentTest, AbstractSessionManager $manager, Route $route, ResultServerService $resultServer, core_kernel_classes_Resource $test) {
         parent::__construct($assessmentTest, $manager, $route);
         $this->setResultServer($resultServer);
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
@@ -111,16 +112,16 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     /**
      * Set the ResultServer to be used to transmit Item and Test results.
      * 
-     * @param taoResultServer_models_classes_ResultServerStateFull $resultServer
+     * @param ResultServerService $resultServer
      */
-    protected function setResultServer(taoResultServer_models_classes_ResultServerStateFull $resultServer) {
+    protected function setResultServer(ResultServerService $resultServer) {
         $this->resultServer = $resultServer;
     }
     
     /**
      * Get the ResultServer in use to transmit Item and Test results.
      * 
-     * @return taoResultServer_models_classes_ResultServerStateFull
+     * @return ResultServerService
      */
     protected function getResultServer() {
         return $this->resultServer;
@@ -161,7 +162,13 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     public function getTest() {
         return $this->test;
     }
-    
+
+    /**
+     * @param AssessmentItemSession $itemSession
+     * @param int $occurence
+     * @throws AssessmentTestSessionException
+     * @throws taoQtiTest_helpers_TestSessionException
+     */
     protected function submitItemResults(AssessmentItemSession $itemSession, $occurence = 0) {
         parent::submitItemResults($itemSession, $occurence);
         
@@ -202,14 +209,15 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
         }
     }
-    
+
     /**
      * QTISM endTestSession method overriding.
-     * 
+     *
      * It consists of including an additional processing when the test ends,
-     * in order to send the LtiOutcome 
-     * 
+     * in order to send the LtiOutcome
+     *
      * @see http://www.imsglobal.org/lis/ Outcome Management Service
+     * @throws AssessmentTestSessionException
      * @throws taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs whil transmitting/processing the result.
      */
     public function endTestSession() {
@@ -249,7 +257,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     /**
      * Rewind the test to its first position
      * @param boolean $allowTimeout Whether or not it is allowed to jump if the timeLimits in force of the jump target are not respected.
+     * @throws \UnexpectedValueException
      * @throws AssessmentTestSessionException If $position is out of the Route bounds or the jump is not allowed because of time constraints.
+     * @throws \qtism\runtime\tests\AssessmentItemSessionException
      */
     public function rewind($allowTimeout = false)
     {

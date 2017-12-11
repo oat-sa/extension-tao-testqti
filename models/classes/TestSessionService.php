@@ -48,18 +48,20 @@ class TestSessionService extends ConfigurableService
     /**
      * Loads a test session into the memory cache
      * @param DeliveryExecution $deliveryExecution
+     * @throws \common_exception_NotFound
+     * @throws \common_ext_ExtensionException
      */
     protected function loadSession(DeliveryExecution $deliveryExecution)
     {
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
-
-        $compiledDelivery = $deliveryExecution->getDelivery();
+        $session = null;
         $inputParameters = $this->getRuntimeInputParameters($deliveryExecution);
 
         $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
         $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
+        /** @var ResultServerService $resultService */
+        $resultService = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
 
-        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultService, $testResource);
 
         $userId = $deliveryExecution->getUserIdentifier();
 
@@ -77,14 +79,6 @@ class TestSessionService extends ConfigurableService
             if ($session instanceof UserUriAware) {
                 $session->setUserUri($userId);
             }
-            $resultServerService = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
-            $resultStorage = $resultServerService->getResultStorage($deliveryExecution->getDelivery()->getUri());
-            $resultServerObject = new \taoResultServer_models_classes_ResultServer(get_class($resultStorage));
-            $resultServer->setValue('resultServerUri', get_class($resultStorage));
-            $resultServer->setValue('resultServerObject', [get_class($resultStorage) => $resultServerObject]);
-            $resultServer->setValue('resultServer_deliveryResultIdentifier', $sessionId);
-        } else {
-            $session = null;
         }
 
         /** @var \tao_models_classes_service_FileStorage $fileStorage */

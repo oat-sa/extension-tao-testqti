@@ -22,6 +22,8 @@ namespace oat\taoQtiTest\models;
 
 use oat\dtms\DateTime;
 use DateTimeZone;
+use oat\oatbox\service\ServiceManager;
+use oat\taoResultServer\models\classes\ResultServerService;
 use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -93,7 +95,9 @@ class TestSessionMetaData
     public function save(array $metaData, RouteItem $routeItem = null, $assessmentSectionId = null)
     {
         $testUri = $this->session->getTest()->getUri();
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        /** @var ResultServerService $resultServer */
+        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+
 
         foreach ($metaData as $type => $data) {
             foreach ($data as $key => $value) {
@@ -112,16 +116,18 @@ class TestSessionMetaData
                     $sessionId = $this->session->getSessionId();
 
                     $transmissionId = "${sessionId}.${itemRef}.${occurence}";
-                    $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+                    $resultServer->getResultServer($sessionId)->getStorageInterface()->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
-                    $resultServer->storeTestVariable($testUri, $metaVariable, $this->session->getSessionId());
+                    $sessionId = $this->session->getSessionId();
+                    $resultServer->getResultServer($sessionId)->getStorageInterface()->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
                 } elseif (strcasecmp($type, 'SECTION') === 0) {
                     //suffix section variables with _{SECTION_IDENTIFIER}
                     if ($assessmentSectionId === null) {
-                    $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
+                        $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
                     }
                     $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
-                    $resultServer->storeTestVariable($testUri, $metaVariable, $this->session->getSessionId());
+                    $sessionId = $this->session->getSessionId();
+                    $resultServer->getResultServer($sessionId)->getStorageInterface()->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
                 }
             }
         }
@@ -197,8 +203,10 @@ class TestSessionMetaData
         $itemStartTime = null;
 
         $ssid         = $this->getTestSession()->getSessionId();
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
-        $collection   = $resultServer->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
+        /** @var ResultServerService $resultServer */
+        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+
+        $collection   = $resultServer->getResultServer($ssid)->getStorageInterface()->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
 
         foreach ($collection as $vars) {
             foreach ($vars as $var) {
@@ -234,5 +242,10 @@ class TestSessionMetaData
         $parts = explode('|', $href);
 
         return $parts[0];
+    }
+
+    private function getServiceManager()
+    {
+        return ServiceManager::getServiceManager();
     }
 }
