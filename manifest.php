@@ -35,7 +35,7 @@ return array(
         'taoTests'   => '>=6.7.0',
         'taoQtiItem' => '>=11.1.2',
         'tao'        => '>=14.9.0',
-        'generis'    => '>=3.36.0',
+        'generis'    => '>=5.0.0',
         'taoDelivery' => '>=7.5.0',
         'taoItems'   => '>=5.1.0'
     ),
