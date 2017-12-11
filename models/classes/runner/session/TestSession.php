@@ -258,10 +258,11 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Gets the timer duration for a particular identifier
      * @param string|array $identifier
      * @param int $target
+     * @param int $secondsToRoundPrecision
      * @return Duration
-     * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
+     * @throws \oat\taoTests\models\runner\time\TimeException
      */
-    public function getTimerDuration($identifier, $target = 0)
+    public function getTimerDuration($identifier, $target = 0, $secondsToRoundPrecision = 6)
     {
         if (!$target) {
             $target = $this->getTimerTarget();
@@ -276,7 +277,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         }
 
         if (!isset($this->durationCache[$durationKey])) {
-            $duration = round($this->getTimer()->compute($identifier, $target), 6);
+            $duration = round($this->getTimer()->compute($identifier, $target), $secondsToRoundPrecision);
             $this->durationCache[$durationKey] = new QtiDuration('PT' . $duration . 'S');
         }
 
