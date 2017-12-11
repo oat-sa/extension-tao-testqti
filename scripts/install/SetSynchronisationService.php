@@ -22,9 +22,11 @@ namespace oat\taoQtiTest\scripts\install;
 use oat\oatbox\extension\InstallAction;
 use oat\taoQtiTest\models\runner\synchronisation\action\ExitTest;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 
 /**
@@ -38,10 +40,11 @@ use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 class SetSynchronisationService extends InstallAction
 {
     /**
-     * Register 5 actions as available for SynchronisationService
+     * Register actions as available for SynchronisationService
      *
      * @param $params
      * @return \common_report_Report
+     * @throws
      */
     public function __invoke($params)
     {
@@ -55,11 +58,13 @@ class SetSynchronisationService extends InstallAction
         }
 
         $newActions = [
-            'exitTest' => ExitTest::class,
-            'move' => Move::class,
-            'skip' => Skip::class,
-            'storeTraceData' => StoreTraceData::class,
-            'timeout' => Timeout::class
+            'exitTest'        => ExitTest::class,
+            'move'            => Move::class,
+            'pause'           => Pause::class,
+            'skip'            => Skip::class,
+            'storeTraceData'  => StoreTraceData::class,
+            'timeout'         => Timeout::class,
+            'getNextItemData' => NextItemData::class
         ];
 
         $service->setAvailableActions(array_merge($actions, $newActions));

@@ -23,11 +23,12 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDeliveryRdf\model\DeliveryContainerService;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
+use oat\taoResultServer\models\classes\ResultServerService;
 
 /**
  * Interface TestSessionService
@@ -76,11 +77,11 @@ class TestSessionService extends ConfigurableService
             if ($session instanceof UserUriAware) {
                 $session->setUserUri($userId);
             }
-
-            $resultServerUri = $compiledDelivery->getOnePropertyValue(new \core_kernel_classes_Property(TAO_DELIVERY_RESULTSERVER_PROP));
-            $resultServerObject = new \taoResultServer_models_classes_ResultServer($resultServerUri, array());
-            $resultServer->setValue('resultServerUri', $resultServerUri->getUri());
-            $resultServer->setValue('resultServerObject', array($resultServerUri->getUri() => $resultServerObject));
+            $resultServerService = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+            $resultStorage = $resultServerService->getResultStorage($deliveryExecution->getDelivery()->getUri());
+            $resultServerObject = new \taoResultServer_models_classes_ResultServer(get_class($resultStorage));
+            $resultServer->setValue('resultServerUri', get_class($resultStorage));
+            $resultServer->setValue('resultServerObject', [get_class($resultStorage) => $resultServerObject]);
             $resultServer->setValue('resultServer_deliveryResultIdentifier', $sessionId);
         } else {
             $session = null;

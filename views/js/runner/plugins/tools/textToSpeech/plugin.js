@@ -65,7 +65,8 @@ define([
                 var stacker = stackerFactory('test-runner');
 
                 self.tts = ttsFactory({
-                    $contentArea: testRunner.getAreaBroker().getContentArea()
+                    $contentArea: testRunner.getAreaBroker().getContentArea(),
+                    $navigationArea: testRunner.getAreaBroker().getNavigationArea()
                 })
                 .render(self.ttsButton.getElement())
                 .disable() // disable & hide by default

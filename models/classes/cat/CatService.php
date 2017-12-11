@@ -35,6 +35,7 @@ use qtism\runtime\tests\RouteItem;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\InitializeAdaptiveSessionEvent;
+use oat\taoQtiTest\models\CompilationDataService;
 
 /**
  * Computerized Adaptive Testing Service
@@ -64,6 +65,10 @@ class CatService extends ConfigurableService
 
     const OPTION_ENGINE_CLIENT = 'client';
 
+    const OPTION_INITIAL_CALL_TIMEOUT = 'initialCallTimeout';
+
+    const OPTION_NEXT_ITEM_CALL_TIMEOUT = 'nextItemCallTimeout';
+
     const QTI_2X_ADAPTIVE_XML_NAMESPACE = 'http://www.taotesting.com/xsd/ais_v1p0p0';
     
     const CAT_ADAPTIVE_IDS_PROPERTY = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections';
@@ -79,11 +84,14 @@ class CatService extends ConfigurableService
     private $catSection = [];
 
     private $catSession = [];
-    
+
+    protected $isInitialCall = false;
+
     /**
      * Returns the Adaptive Engine
      * 
      * Returns an CatEngine implementation object.
+     * If it is the initial call, change endpoint name to differentiate it from nextItem call
      *
      * @param string $endpoint
      * @return CatEngine
@@ -91,7 +99,13 @@ class CatService extends ConfigurableService
      */
     public function getEngine($endpoint)
     {
-        if (!isset($this->engines[$endpoint])) {
+        if ($this->isInitialCall == true) {
+            $endpointCached = $endpoint . '-init';
+        } else {
+            $endpointCached = $endpoint;
+        }
+
+        if (!isset($this->engines[$endpointCached])) {
             $endPoints = $this->getOption(self::OPTION_ENGINE_ENDPOINTS);
             
             if (!empty($endPoints[$endpoint])) {
@@ -99,13 +113,14 @@ class CatService extends ConfigurableService
             
                 $class = $engineOptions[self::OPTION_ENGINE_CLASS];
                 $args = $engineOptions[self::OPTION_ENGINE_ARGS];
+                $args = $this->alterTimeoutCallValue($args);
                 $url = isset($engineOptions[self::OPTION_ENGINE_URL])
                     ? $engineOptions[self::OPTION_ENGINE_URL]
                     : $endpoint;
                 array_unshift($args, $endpoint);
 
                 try {
-                    $this->engines[$endpoint] = new $class($url, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
+                    $this->engines[$endpointCached] = new $class($url, $this->getCatEngineVersion($args), $this->getCatEngineClient($args));
                 } catch (\Exception $e) {
                     \common_Logger::e('Fail to connect to CAT endpoint : ' . $e->getMessage());
                     throw new CatEngineNotFoundException('CAT Engine for endpoint "' . $endpoint . '" is misconfigured.', $endpoint, 0, $e);
@@ -114,12 +129,12 @@ class CatService extends ConfigurableService
             }
         }
         
-        if (empty($this->engines[$endpoint])) {
+        if (empty($this->engines[$endpointCached])) {
             // No configured endpoint found.
             throw new CatEngineNotFoundException("CAT Engine for endpoint '${endpoint}' is not configured.", $endpoint);
         }
         
-        return $this->engines[$endpoint];
+        return $this->engines[$endpointCached];
     }
     
     /**
@@ -132,10 +147,14 @@ class CatService extends ConfigurableService
      */
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
     {
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-item-ref-${identifier}.php"));
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $filename = "adaptive-assessment-item-ref-${identifier}";
         
-        return $doc->getDocumentComponent();
+        return $compilationDataService->readPhpCompilationData(
+            $privateCompilationDirectory,
+            "${filename}.php",
+            "${filename}"
+        );
     }
     
     /**
@@ -169,10 +188,16 @@ class CatService extends ConfigurableService
         $urlinfo = parse_url($placeholder->getHref());
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
         
-        $doc = new PhpDocument();
-        $doc->loadFromString($privateCompilationDirectory->read("adaptive-assessment-section-${adaptiveSectionId}.php"));
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $filename = "adaptive-assessment-section-${adaptiveSectionId}";
         
-        return $doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
+        $component = $compilationDataService->readPhpCompilationData(
+            $privateCompilationDirectory,
+            "${filename}.php",
+            $filename
+        );
+
+        return $component->getComponentsByClassName('assessmentItemRef')->getArrayCopy();
     }
     
     /**
@@ -291,7 +316,7 @@ class CatService extends ConfigurableService
         $itemReferences = $adaptSection->getItemReferences();
         $dependencies = $sectionsParts->getKeys();
 
-        if ($catDiff = array_diff($itemReferences, $dependencies)) {
+        if ($catDiff = array_diff($dependencies, $itemReferences)) {
             throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
         }
 
@@ -396,13 +421,21 @@ class CatService extends ConfigurableService
             return false;
         }
     }
-    
+
+    /**
+     * If it is the initial call, reload cat section from $this->catSection cache
+     *
+     * @param AssessmentTestSession $testSession
+     * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
+     * @param RouteItem|null $routeItem
+     * @return mixed
+     */
     public function getCatSection(AssessmentTestSession $testSession, \tao_models_classes_service_StorageDirectory $compilationDirectory, RouteItem $routeItem = null)
     {
         $routeItem = $routeItem ? $routeItem : $testSession->getRoute()->current();
         $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
         
-        if (!isset($this->catSection[$sectionId])) {
+        if (!isset($this->catSection[$sectionId]) || $this->isInitialCall === true) {
 
             // No retrieval trial yet.
             $adaptiveSectionMap = $this->getAdaptiveSectionMap($compilationDirectory);
@@ -454,7 +487,7 @@ class CatService extends ConfigurableService
             $result = !$items ? [] : json_decode($items);
         }
 
-        return $result;
+        return is_array($result) ? $result : [];
     }
 
     /**
@@ -479,6 +512,9 @@ class CatService extends ConfigurableService
 
     /**
      * Get the current CAT Session Object.
+     *
+     * If it catSession from tao is not set, set the $this->isInitialCall to true
+     *
      * @param AssessmentTestSession $testSession
      * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
      * @param RouteItem|null $routeItem
@@ -505,6 +541,9 @@ class CatService extends ConfigurableService
                     \common_Logger::d("CAT Session '" . $this->catSession[$catSectionId]->getTestTakerSessionId() . "' for CAT Section '${catSectionId}' restored.");
                 } else {
                     // First time the session is required, let's initialize it.
+                    $this->isInitialCall = true;
+                    // Rebuild the catSection to be able to alter call options
+                    $catSection = $this->getCatSection($testSession, $compilationDirectory, $routeItem);
                     $this->catSession[$catSectionId] = $catSection->initSession();
                     $assessmentSection = $routeItem ? $routeItem->getAssessmentSection() : $testSession->getCurrentAssessmentSection();
 
@@ -578,4 +617,34 @@ class CatService extends ConfigurableService
         
         return (isset($catAttempts[$identifier])) ? $catAttempts[$identifier] : 0;
     }
+
+    /**
+     * Alter the timeout value for engine params
+     *
+     * Get the timeout value from options following if it is for initial or nextItem call
+     * If it's not specified in the config, do not alter the $options
+     *
+     * @param array $options
+     * @return array
+     */
+    protected function alterTimeoutCallValue(array $options)
+    {
+        $timeoutValue = null;
+        if ($this->isInitialCall === true) {
+            if ($this->hasOption(self::OPTION_INITIAL_CALL_TIMEOUT)) {
+                $timeoutValue = $this->getOption(self::OPTION_INITIAL_CALL_TIMEOUT);
+            }
+        } else {
+            if ($this->hasOption(self::OPTION_NEXT_ITEM_CALL_TIMEOUT)) {
+                $timeoutValue = $this->getOption(self::OPTION_NEXT_ITEM_CALL_TIMEOUT);
+            }
+        }
+
+        if (!is_null($timeoutValue)) {
+            $options[self::OPTION_ENGINE_CLIENT]['options']['http_client_options']['timeout'] = $timeoutValue;
+        }
+        
+        return $options;
+    }
+
 }

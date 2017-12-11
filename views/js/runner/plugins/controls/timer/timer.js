@@ -279,6 +279,9 @@ define([
                             //timer exists
                             if(timerExists && displayedTimers[type].id() === timerConfig.id){
                                 setRemainingTime(timerConfig, timers[type]);
+                                if (timerConfig.remaining !== timers[type]) {
+                                    displayedTimers[type].val(timerConfig.remaining).refresh();
+                                }
                                 return resolve();
                             } else {
                                 removeTimer(type);
@@ -302,11 +305,11 @@ define([
                     );
                 });
                 return Promise
-                        .all(timerUpdatePromises)
-                        .then(function(data){
-                            toggleToggler();
-                            return data;
-                        });
+                    .all(timerUpdatePromises)
+                    .then(function(data){
+                        toggleToggler();
+                        return data;
+                    });
             };
 
             /**
@@ -476,14 +479,12 @@ define([
                             var config = testDataBeforeMove && testDataBeforeMove.config;
                             var timerConfig = config && config.timer || {};
                             var options = context && context.options || {};
-                            type = type ? type : 'next';
-
                             var movePromise = new Promise(function(resolve, reject) {
                                 // endTestWarning has already been displayed, so we don't repeat the warning
                                 if (context.isLast && options.endTestWarning) {
                                     resolve();
                                     // display a message if we exit a timed section
-                                } else if (leaveTimedSection(type, scope, position) && !options.noExitTimedSectionWarning && !timerConfig.keepUpToTimeout) {
+                                } else if (leaveTimedSection(type || 'next', scope, position) && !options.noExitTimedSectionWarning && !timerConfig.keepUpToTimeout) {
                                     testRunner.trigger(
                                         'confirm.exittimed',
                                         messages.getExitMessage(exitMessage, 'section', testRunner),

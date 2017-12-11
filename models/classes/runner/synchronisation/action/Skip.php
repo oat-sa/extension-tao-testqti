@@ -55,7 +55,9 @@ class Skip extends TestRunnerAction
             $serviceContext = $this->getServiceContext();
             $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $this->getTime());
 
-            $this->setOffline();
+            if ($this->getRequestParameter('offline') === true) {
+                $this->setOffline();
+            }
 
             $result = $this->getRunnerService()->skip($serviceContext, $scope, $ref);
 
@@ -65,6 +67,10 @@ class Skip extends TestRunnerAction
 
             if ($result) {
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
+                if ($serviceContext->containsAdaptive()) {
+                    // Force map update.
+                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
+                }
             }
 
             if ($start == true) {

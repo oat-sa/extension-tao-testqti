@@ -28,11 +28,18 @@ use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
+use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
+use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
+use oat\taoQtiTest\models\runner\time\QtiTimer;
+use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
+use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
@@ -59,6 +66,7 @@ use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
+use oat\taoQtiTest\models\PhpCodeCompilationDataService;
 use oat\tao\scripts\update\OntologyUpdater;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
@@ -1579,7 +1587,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('13.2.0', '14.1.4');
 
-        if($this->isVersion('14.1.4')){
+        if($this->isVersion('14.1.4')) {
             /** @var CreatorItems $creatorItemsService */
             $creatorItemsService = $this->getServiceManager()->get(CreatorItems::SERVICE_ID);
             $creatorItemsService->setOption(CreatorItems::ITEM_MODEL_SEARCH_OPTION, CreatorItems::ITEM_MODEL_QTI_URI);
@@ -1592,7 +1600,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('14.1.5', '16.0.1');
 
-        if($this->isVersion('16.0.1')){
+        if($this->isVersion('16.0.1')) {
 
             // Update the synchronisation service
             $this->runExtensionScript(SetSynchronisationService::class);
@@ -1601,5 +1609,127 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('16.1.0', '16.1.1');
+
+        if ($this->isVersion('16.1.1')) {
+            $this->getServiceManager()->register(
+                PhpCodeCompilationDataService::SERVICE_ID,
+                new PhpCodeCompilationDataService()
+            );
+
+            $this->setVersion('16.2.0');
+        }
+
+        $this->skip('16.2.0', '16.3.3');
+
+        if ($this->isVersion('16.3.3')) {
+            $qtiTimerFactory = new QtiTimerFactory([
+                QtiTimerFactory::OPTION_TIMER_CLASS => QtiTimer::class,
+                QtiTimerFactory::OPTION_STORAGE_CLASS => QtiTimeStorage::class,
+                QtiTimerFactory::OPTION_STORAGE_FORMAT_CLASS => QtiTimeStoragePackedFormat::class,
+            ]);
+
+            $this->getServiceManager()->register(QtiTimerFactory::SERVICE_ID, $qtiTimerFactory);
+
+            $this->setVersion('17.0.0');
+        }
+
+        $this->skip('17.0.0', '17.1.0');
+
+        if ($this->isVersion('17.1.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap']['communication']['syncActions'] = ['move', 'skip', 'storeTraceData', 'timeout', 'exitTest'];
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('17.2.0');
+        }
+
+        $this->skip('17.2.0', '17.5.1');
+
+        if ($this->isVersion('17.5.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap']['communication']['syncActions'][] = 'getNextItemData';
+            $extension->setConfig('testRunner', $config);
+
+            /** @var SynchronisationService $synchronisationService */
+            $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
+            $actions = $synchronisationService->getAvailableActions();
+            $actions['getNextItemData'] = NextItemData::class;
+            $synchronisationService->setAvailableActions($actions);
+            $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
+
+            $this->setVersion('17.6.0');
+        }
+
+        $this->skip('17.6.0', '17.7.1');
+
+        if ($this->isVersion('17.7.1')) {
+
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(
+                TestPlugin::fromArray(
+                    [
+                        'id' => 'collapser',
+                        'name' => 'Collapser',
+                        'module' => 'taoQtiTest/runner/plugins/content/responsiveness/collapser',
+                        'description' => 'Reduce the size of the tools when the available space is not enough',
+                        'category' => 'content',
+                        'active' => true,
+                        'tags' => [ 'core' ]
+                    ]
+                )
+            );
+
+            $this->setVersion('17.8.0');
+        }
+
+        $this->skip('17.8.0', '17.9.0');
+
+        if ($this->isVersion('17.9.0')) {
+            $storageManager = new StorageManager();
+            $this->getServiceManager()->register(StorageManager::SERVICE_ID, $storageManager);
+            $this->setVersion('17.10.0');
+        }
+
+        $this->skip('17.10.0', '17.16.0');
+
+        if ($this->isVersion('17.16.0')) {
+
+            $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
+            $actions = $synchronisationService->getAvailableActions();
+            $actions['pause'] = Pause::class;
+            $synchronisationService->setAvailableActions($actions);
+            $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
+
+            $this->setVersion('17.17.0');
+        }
+
+        $this->skip('17.17.0', '17.17.6');
+
+        if ($this->isVersion('17.17.6')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['catEngineWarning'] = [
+                'echoDelayUpdate' => 15,
+                'echoPauseLimit' => 120,
+                'echoExceptionName' => 'CatEngine'
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('17.18.0');
+        }
+
+        $this->skip('17.18.0', '17.18.2');
+
+        if ($this->isVersion('17.18.2')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            unset($config['catEngineWarning']);
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('17.19.0');
+        }
+
+        $this->skip('17.19.0', '17.23.0');
     }
 }

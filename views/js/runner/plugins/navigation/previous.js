@@ -62,6 +62,11 @@ define([
                 var previousSection;
                 var previousPart;
 
+                // check TestMap if empty
+                if( _.isPlainObject(testMap) && _.size(testMap) === 0){
+                    return false;
+                }
+
                 //first item of the test
                 if (navigationHelper.isFirst(testMap, context.itemIdentifier)) {
                     return false;
@@ -118,19 +123,19 @@ define([
             function doPrevious(previousItemWarning) {
                 var context = testRunner.getTestContext();
 
-                function enable() {
-                    testRunner.trigger('enablenav enabletools');
+                function enableNav() {
+                    testRunner.trigger('disablenav');
                 }
 
-                if(self.getState('enabled') !== false){
-                    testRunner.trigger('disablenav disabletools');
+                testRunner.trigger('disablenav');
 
+                if(self.getState('enabled') !== false){
                     if (previousItemWarning && context.remainingAttempts !== -1) {
                         testRunner.trigger(
                             'confirm.previous',
                             __('You are about to go to the previous item. Click OK to continue and go to the previous item.'),
                             testRunner.previous, // if the test taker accept
-                            enable  // if the test taker refuse
+                            enableNav()          // if he refuses
                         );
 
                     } else {
@@ -145,7 +150,7 @@ define([
             });
 
             if(testConfig.allowShortcuts && pluginShortcuts.trigger){
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function() {
                     if (canDoPrevious() && self.getState('enabled') === true) {
                         testRunner.trigger('nav-previous', [true]);
                     }

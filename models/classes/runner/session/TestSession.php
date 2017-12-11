@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA
+ * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA
  *
  */
 
@@ -24,7 +24,7 @@ use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
-use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\Duration;
@@ -36,6 +36,7 @@ use qtism\runtime\tests\RouteItem;
 use qtism\runtime\tests\TimeConstraint;
 use qtism\runtime\tests\TimeConstraintCollection;
 use taoQtiTest_helpers_TestSession;
+use oat\oatbox\log\LoggerAwareTrait;
 
 /**
  * TestSession override
@@ -44,6 +45,8 @@ use taoQtiTest_helpers_TestSession;
  */
 class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
 {
+    use LoggerAwareTrait;
+
     /**
      * The Timer bound to the test session
      * @var QtiTimer
@@ -95,15 +98,12 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     /**
      * Gets the Timer bound to the test session
      * @return QtiTimer
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
-     * @throws \oat\taoTests\models\runner\time\InvalidStorageException
      */
     public function getTimer()
     {
         if (!$this->timer) {
-            $this->timer = new QtiTimer();
-            $this->timer->setStorage(new QtiTimeStorage($this->getSessionId(), $this->getUserUri()));
-            $this->timer->load();
+            $qtiTimerFactory = $this->getServiceLocator()->get(QtiTimerFactory::SERVICE_ID);
+            $this->timer = $qtiTimerFactory->getTimer($this->getSessionId(), $this->getUserUri());
         }
         return $this->timer;
     }
@@ -240,7 +240,11 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             if (!is_null($duration)) {
                 $duration = floatval($duration);
             }
-            $timer->adjust($tags, $duration);
+            try {
+                $timer->adjust($tags, $duration);
+            } catch (\oat\taoTests\models\runner\time\TimeException $e) {
+                $this->logAlert($e->getMessage());
+            }
         }
         
         if (is_numeric($consumedExtraTime) && !is_null($consumedExtraTime)) {

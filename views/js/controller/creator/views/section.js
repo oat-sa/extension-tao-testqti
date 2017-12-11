@@ -52,14 +52,22 @@ function(
     /**
      * Set up a section: init action behaviors. Called for each section.
      *
-     * @param {modelOverseer} modelOverseer - the test model overseer. Should also provide some config entries
+     * @param {Object} creatorContext
      * @param {Object} sectionModel - the data model to bind to the test section
+     * @param {Object} partModel - the parent data model to inherit
      * @param {jQueryElement} $section - the section to set up
      */
-    function setUp (modelOverseer, sectionModel, $section){
+    function setUp (creatorContext, sectionModel, partModel, $section) {
 
         var $actionContainer = $('h2', $section);
+        var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
+
+        // set item session control to use test part options if section level isn't set
+        if (!sectionModel.itemSessionControl) {
+            sectionModel.itemSessionControl = {};
+        }
+        _.defaults(sectionModel.itemSessionControl, partModel.itemSessionControl);
 
         if(!_.isEmpty(config.routes.blueprintsById)){
             sectionModel.hasBlueprint = true;
@@ -148,7 +156,7 @@ function(
                     sectionModel.sectionParts[index] = {};
                 }
 
-                itemRefView.setUp(modelOverseer, sectionModel.sectionParts[index], $itemRef);
+                itemRefView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, $itemRef);
                 $itemRef.find('.title').text(
                     config.labels[uri.encode($itemRef.data('uri'))]
                 );
@@ -161,8 +169,7 @@ function(
          * @fires modelOverseer#item-add
          */
         function acceptItemRefs(){
-            var $selected;
-            var $itemsPanel     = $('.test-creator-items .item-selection');
+            var $itemsPanel = $('.test-creator-items .item-selection');
 
             //the item selector trigger a select event
             $itemsPanel.on('itemselect.creator', function(e, selection){
@@ -221,7 +228,7 @@ function(
                         itemRefModel = sectionModel.sectionParts[index];
 
                         //initialize the new item ref
-                        itemRefView.setUp(modelOverseer, itemRefModel, $itemRef);
+                        itemRefView.setUp(creatorContext, itemRefModel, sectionModel, $itemRef);
 
                         /**
                          * @event modelOverseer#item-add
@@ -269,7 +276,7 @@ function(
                     sectionModel.rubricBlocks[index] = {};
                 }
 
-                rubricBlockView.setUp(modelOverseer, sectionModel.rubricBlocks[index], $rubricBlock);
+                rubricBlockView.setUp(creatorContext, sectionModel.rubricBlocks[index], $rubricBlock);
             });
 
             //opens the rubric blocks section if they are there.
@@ -303,10 +310,10 @@ function(
                 var index, rubricModel;
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
                     index = $rubricBlock.data('bind-index');
-                    rubricModel = sectionModel.rubricBlocks[index];
+                    rubricModel = sectionModel.rubricBlocks[index] || {};
 
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
-                    rubricBlockView.setUp(modelOverseer, rubricModel, $rubricBlock);
+                    rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
 
                     /**
                      * @event modelOverseer#rubric-add

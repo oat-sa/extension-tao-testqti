@@ -135,7 +135,6 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $maxTimeSeconds = null;
         $source = $this->getSource();
         $identifier = $source->getIdentifier();
         $timeRemaining = $this->getMaximumRemainingTime();
@@ -143,9 +142,6 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
 
             $label = method_exists($source, 'getTitle') ? $source->getTitle() : $identifier;
             $seconds = TestRunnerUtils::getDurationWithMicroseconds($timeRemaining);
-            if ($source->getTimeLimits()->hasMaxTime()) {
-                $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);
-            }
             $extraTime = null;
             if (!is_null($this->getTimer()) && $source->getTimeLimits()->hasMaxTime()){
                 $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);

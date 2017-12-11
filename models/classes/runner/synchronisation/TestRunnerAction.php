@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
 use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\event\ItemOfflineEvent;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -39,7 +40,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     use RunnerParamParserTrait;
 
 
-    const OFFLINE_VARIABLE = 'offline';
+    const OFFLINE_VARIABLE = 'OFFLINE_ITEM';
 
     /** @var double The timestamp of current action */
     protected $time;
@@ -70,12 +71,11 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
         $serviceContext = $this->getServiceContext();
         $itemRef = ($this->hasRequestParameter('itemDefinition'))
-            ? $this->getItemRef($this->getRequestParameter('itemDefinition'))
+            ? $this->getRequestParameter('itemDefinition')
             : null;
 
         if(!is_null($itemRef)){
-            $hrefParts = explode('|', $itemRef);
-            $event = new ItemOfflineEvent($serviceContext->getTestSession(), $hrefParts[0]);
+            $event = new ItemOfflineEvent($serviceContext->getTestSession(), $itemRef);
             $this->getServiceLocator()->get(EventManager::SERVICE_ID)->trigger($event);
             return true;
         }
@@ -109,6 +109,16 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     public function hasRequestParameter($name)
     {
         return isset($this->parameters[$name]);
+    }
+
+    /**
+     * Get action input parameters
+     *
+     * @return mixed
+     */
+    public function getRequestParameters()
+    {
+        return $this->parameters;
     }
 
     /**
@@ -215,7 +225,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
                         $messageService = $this->getServiceLocator()->get(QtiRunnerMessageService::SERVICE_ID);
-                        $response['message'] = $messageService->getStateMessage($this->getServiceContext()->getTestSession());
+                        $response['message'] = __($messageService->getStateMessage($this->getServiceContext()->getTestSession()));
                     }
                     $response['type'] = 'TestState';
                     break;

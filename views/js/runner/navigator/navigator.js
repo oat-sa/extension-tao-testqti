@@ -72,6 +72,7 @@ define([
             newContext = _.defaults({
                 itemIdentifier : newItem.id,
                 itemPosition   : position,
+                itemAnswered   : newItem.answered,
 
                 //FIXME numberPresented can be late
                 numberPresented : testMap.stats.viewed,
@@ -83,7 +84,6 @@ define([
                 //FIXME maintain attempts
                 //FIXME attempts can be incorrect (based on last known value)
                 remainingAttempts : (newItem.remainingAttempts > -1) ? newItem.remainingAttempts - 1 : -1,
-                attemptDuration   : 0,
 
                 sectionId:       newSection.id,
                 sectionTitle:    newSection.label,

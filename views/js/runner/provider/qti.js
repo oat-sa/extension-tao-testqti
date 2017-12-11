@@ -30,6 +30,7 @@ define([
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
+    'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
@@ -47,6 +48,7 @@ define([
     areaBrokerFactory,
     proxyFactory,
     probeOverseerFactory,
+    dataUpdater,
     currentItemHelper,
     mapHelper,
     navigationHelper,
@@ -174,7 +176,7 @@ define([
         },
 
         /**
-         * Install step : add new methods
+         * Install step : install new methods/behavior
          *
          * @this {runner} the runner context, not the provider
          * @returns {Promise} to chain
@@ -182,55 +184,10 @@ define([
         install : function install(){
 
             /**
-             *  - reindex and build the jump table
-             *  - patch the current testMap if a partial map is set
-             *
-             * @param {Object} testMap - the testMap to build
-             * @param {Boolean} [updateStats = false] - if we need to update the stats of the current item
-             * @returns {runner} chains
+             * Delegates the udpate of testMap, testContext and testData
+             * to a 3rd part component, the dataUpdater.
              */
-            this.buildTestMap = function buildTestMap(testMap, updateStats){
-                var newMap;
-
-                if(testMap){
-                    if(testMap.scope && testMap.scope !== 'test'){
-                        newMap = mapHelper.patch(this.getTestMap(), testMap);
-                    } else {
-                        newMap = mapHelper.reindex(testMap);
-                    }
-                    if(updateStats){
-                        newMap = this.updateStats(newMap);
-                    }
-                    return this.setTestMap(newMap);
-                }
-                return this;
-            };
-
-            /**
-             * Update current based on the context
-             *
-             * @param {Object} testMap - the testMap to update
-             * @returns {Object} the updated testMap
-             */
-            this.updateStats = function updateStats(testMap){
-                var testContext = this.getTestContext();
-                var states = this.getTestData().states;
-                var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
-
-                if(item && states && testContext && testContext.state === states.interacting){
-
-                    //flag as viewed, always
-                    item.viewed = true;
-
-                    //flag as answered only if a response has been set
-                    if (!_.isUndefined(testContext.itemAnswered)) {
-                        item.answered = testContext.itemAnswered;
-                    }
-
-                    return mapHelper.updateItemStats(testMap, testContext.itemPosition);
-                }
-                return testMap;
-            };
+            this.dataUpdater = dataUpdater(this.getDataHolder());
         },
 
         /**
@@ -244,7 +201,6 @@ define([
          */
         init : function init(){
             var self = this;
-
             /**
              * Retrieve the item results
              * @returns {Object} the results
@@ -269,9 +225,7 @@ define([
              * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
             function computeNext(action, params, loadPromise){
-
                 var context = self.getTestContext();
-
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -312,12 +266,14 @@ define([
                         } else {
                             context.itemAnswered = currentItemHelper.isAnswered(self);
                         }
+                        self.setTestContext(context);
                         resolve();
                     }
                 });
 
                 feedbackPromise.then(function(){
-
+                    // ensure the answered state of the current item is correctly set and the stats are aligned
+                    self.setTestMap(self.dataUpdater.updateStats());
                     //to be sure load start after unload...
                     //we add an intermediate ns event on unload
                     self.on('unloaditem.' + action, function(){
@@ -333,15 +289,9 @@ define([
                                 });
                             })
                             .then(function(results){
-                                if(results.testContext){
-                                    self.setTestContext(results.testContext);
-                                }
 
-                                if (results.testMap) {
-                                    self.buildTestMap(results.testMap, true);
-                                } else {
-                                    self.setTestMap(self.updateStats(self.getTestMap()));
-                                }
+                                //update testData, testContext and build testMap
+                                self.dataUpdater.update(results);
 
                                 load();
                             })
@@ -379,9 +329,13 @@ define([
                 })
                 .on('move', function(direction, scope, position){
 
+                    // get the item results/state before disabling the tools
+                    // otherwise the state could be partially lost for tools that clean up when disabling
+                    var itemResults = getItemResults();
+
                     this.trigger('disablenav disabletools');
 
-                    computeNext('move', _.merge(getItemResults(), {
+                    computeNext('move', _.merge(itemResults, {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
@@ -418,6 +372,8 @@ define([
 
                     context.isTimeout = true;
 
+                    this.setTestContext(context);
+
                     this.disableItem(context.itemIdentifier);
 
                     computeNext(
@@ -432,32 +388,24 @@ define([
                     );
                 })
                 .on('pause', function(data){
-                    var pause;
 
                     this.setState('closedOrSuspended', true);
 
-                    if (!this.getState('disconnected')) {
-                        // will notify the server that the test was auto paused
-                        pause = self.getProxy().callTestAction('pause', {
-                            reason: {
-                                reasons: data && data.reasons,
-                                comment : data && data.message
-                            }
+                    this.getProxy().callTestAction('pause', {
+                        reason: {
+                            reasons: data && data.reasons,
+                            comment : data && data.message
+                        }
+                    })
+                    .then(function() {
+                        self.trigger('leave', {
+                            code: self.getTestData().states.suspended,
+                            message: data && data.message
                         });
-                    } else {
-                        pause = Promise.resolve();
-                    }
-
-                    pause
-                        .then(function() {
-                            self.trigger('leave', {
-                                code: self.getTestData().states.suspended,
-                                message: data && data.message
-                            });
-                        })
-                        .catch(function(err){
-                            self.trigger('error', err);
-                        });
+                    })
+                    .catch(function(err){
+                        self.trigger('error', err);
+                    });
                 })
                 .on('loaditem', function(){
                     var context = this.getTestContext();
@@ -537,15 +485,13 @@ define([
                 return self.getProxy().init({
                     storeId : storeId
                 }).then(function(results){
-                    self.setTestData(results.testData);
-                    self.setTestContext(results.testContext);
-                    self.buildTestMap(results.testMap, true);
+                    self.dataUpdater.update(results);
 
                     //check if we need to trigger a storeChange
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
 
                         /**
-                         * We are changed the local storage engine (could be a browser change)
+                         * We have changed the local storage engine (could be a browser change)
                          * @event runner/provider/qti#storechange
                          */
                         self.trigger('storechange');

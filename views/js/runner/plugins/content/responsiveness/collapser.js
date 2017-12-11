@@ -18,7 +18,10 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  * @author Christophe Noël <christophe@taotesting.com>
+ * @author Dieter Raber <dieter@taotesting.com>
  */
+
+
 define([
     'lodash',
     'jquery',
@@ -50,6 +53,13 @@ define([
      */
     var labelHiddenCls = 'no-tool-label';
 
+
+    /**
+     * Name of the  CSS class for separators
+     * @type {string}
+     */
+    var separatorCls = 'separator';
+
     /**
      * Default plugin options
      * @type {Object}
@@ -74,7 +84,7 @@ define([
          * ];
          * @type {String[]}
          */
-        collaspeOrder: []
+        collapseOrder: []
     };
 
     var $window = $(window);
@@ -106,53 +116,24 @@ define([
 
             var allCollapsibles,
                 availableWidth,
-                previousAvailableWidth,
-                totalExtraWidth;
+                previousAvailableWidth;
 
             /**
              * Get a reference of all collapsibles
              */
             function buildCollapsiblesList() {
-                // use the given order to build the collapsibles list
-                if (shouldCollapseInOrder()) {
-                    allCollapsibles = config.collapseOrder.map(function(selector) {
-                        var $elements = $(selector).not('.' + labelHiddenCls); // some buttons are collapsed by configuration: we should leave them alone
-                        var extraWidth = 0;
 
-                        if ($elements.length) {
-                            $elements.each(function() {
-                                extraWidth += getExtraWidth($(this));
-                            });
-                            return {
-                                $elements: $elements,
-                                extraWidth: extraWidth
-                            };
-                        }
-                        return false;
-                    });
-
-                    allCollapsibles = _.compact(allCollapsibles);
-
-                // collapsibles will be either tools and/or nav whole blocks depending on configuration
-                } else {
-                    allCollapsibles = [];
-                    if (config.collapseTools) {
-                        allCollapsibles.push({
-                            $elements: $toolbox,
-                            extraWidth: getExtraWidth($toolbox)
-                        });
-                    }
-                    if (config.collapseNavigation) {
-                        allCollapsibles.push({
-                            $elements: $navigation,
-                            extraWidth: getExtraWidth($navigation)
-                        });
-                    }
-
-                    totalExtraWidth = allCollapsibles.reduce(function(total, collapsible) {
-                        total += collapsible.extraWidth;
-                        return total;
-                    }, 0);
+                // use the given order to build the collapsibles list or generate on in natural order
+                if(config.collapseInOrder && config.collapseOrder.length) {
+                    allCollapsibles = getCollapsiblesFromConfig();
+                }
+                // get values from DOM, grouped by prefix
+                else if(config.collapseInOrder) {
+                    allCollapsibles = getSortedCollapsiblesFromDom();
+                }
+                // get all in one chunk
+                else {
+                    allCollapsibles = getUnsortedCollapsiblesFromDom();
                 }
             }
 
@@ -179,35 +160,9 @@ define([
             function toggleCollapsibles() {
                 availableWidth = getAvailableWidth();
 
-                if (availableWidth < previousAvailableWidth) {
-                    if (shouldCollapseInOrder()) {
-                        collapseInOrder();
-                    } else {
-                        collapseAll(collapseNeeded());
-                    }
-                } else {
-
-                    if (shouldCollapseInOrder()) {
-                        expandInOrder();
-                    } else {
-                        expandAll();
-                    }
-                }
+                availableWidth < previousAvailableWidth ? collapseInOrder() : expandInOrder();
 
                 previousAvailableWidth = availableWidth;
-            }
-
-            function shouldCollapseInOrder() {
-                return config.collapseInOrder && _.isArray(config.collapseOrder) && config.collapseOrder.length;
-            }
-
-            function collapseAll(yes) {
-                if (config.collapseTools) {
-                    $toolbox.toggleClass(collapseCls, yes);
-                }
-                if (config.collapseNavigation) {
-                    $navigation.toggleClass(collapseCls, yes);
-                }
             }
 
             function collapseInOrder() {
@@ -224,15 +179,6 @@ define([
                 return getToolbarWidth() > getAvailableWidth();
             }
 
-
-            function expandAll() {
-                if (expandPossible(totalExtraWidth)) {
-                    allCollapsibles.forEach(function(collapsible) {
-                        collapsible.$elements.removeClass(collapseCls);
-                    });
-                }
-            }
-
             function expandInOrder() {
                 _.forEachRight(allCollapsibles, function(toExpand) {
                     if (toExpand.$elements.hasClass(collapseCls)) {
@@ -246,28 +192,137 @@ define([
             }
 
             function expandPossible(extraWidth) {
-                return (getToolbarWidth() + extraWidth) <= getAvailableWidth();
+                return (getToolbarWidth() + extraWidth) < getAvailableWidth();
             }
 
             function getAvailableWidth() {
-                return $actionsBar.width();
+                // Scrollbars are commonly between ~12px and ~18px in width. Subtracting 20px from the available width
+                // makes sure that scrollbars are always taken in account. The worst case scenario is that the buttons
+                // start to collapse, although they would still have had 20px available.
+                return $actionsBar.width() - 20;
             }
 
             function getToolbarWidth() {
                 return $toolbox.outerWidth(true) + $navigation.outerWidth(true);
             }
 
+            /**
+             * Parse DOM for controls that can be collapsed
+             * @returns {*|jQuery|HTMLElement}
+             */
+            function getControlsFromDom() {
+                var $controls = $(),
+                    selector = '>ul>[data-control]';
+
+                if(config.collapseTools) {
+                    $controls = $controls.add($toolbox.find(selector).not('.' + labelHiddenCls).not('.' + separatorCls));
+                }
+
+                if(config.collapseNavigation) {
+                    $controls = $controls.add($navigation.find(selector).not('.' + labelHiddenCls).not('.' + separatorCls));
+                }
+
+                return $controls;
+            }
+
+            /**
+             * Get allCollapsibles based on configuration
+             *
+             * @returns {Array}
+             */
+            function getCollapsiblesFromConfig() {
+
+                return _.compact(config.collapseOrder.map(function(selector) {
+                    // some buttons are collapsed by configuration, some other are only separators: we should leave them alone
+                    var $elements = $(selector).not('.' + labelHiddenCls).not('.' + separatorCls);
+                    var extraWidth = 0;
+
+                    if ($elements.length) {
+                        $elements.each(function() {
+                            extraWidth += getExtraWidth($(this));
+                        });
+                        return {
+                            $elements: $elements,
+                            extraWidth: extraWidth
+                        };
+                    }
+                    return false;
+                }));
+            }
+
+            /**
+             * Get allCollapsibles based on DOM
+             * Build the collapse order from the left to the right, related elements are grouped.
+             *
+             * @returns {Array}
+             */
+            function getSortedCollapsiblesFromDom() {
+
+                var $elements = getControlsFromDom(),
+                    _allCollapsibles = [],
+                    order = {};
+
+                // group items by prefix
+                // eg. zoomIn and zoomOut -> zoom
+                $elements.each(function() {
+                    var ctrl = this.dataset.control,
+                        // re makes group `foo` from `foo-bar`, `fooBar` and `foo_bar`
+                        // if we do not have a prefix use the control name as key to ensure uniqueness
+                        key = ctrl.substring(0, ctrl.search(/[A-Z-_]/)) || ctrl;
+
+                    order[key] = order[key] || $();
+                    order[key] = order[key].add($(this));
+                });
+
+                // move items to allCollapsibles
+                _.forOwn(order, function($elements) {
+                    var extraWidth = 0;
+                    $elements.each(function() {
+                        extraWidth += getExtraWidth($(this));
+                    });
+                    _allCollapsibles.push({
+                        $elements: $elements,
+                        extraWidth: extraWidth
+                    })
+                });
+
+                return _.compact(_allCollapsibles);
+            }
+
+            /**
+             * Get allCollapsibles based on DOM, all buttons will be collapsed at once
+             *
+             * @returns {Array}
+             */
+            function getUnsortedCollapsiblesFromDom() {
+                var $elements = getControlsFromDom(),
+                    _allCollapsibles = [],
+                    extraWidth = 0;
+
+                $elements.each(function() {
+                    extraWidth += getExtraWidth($(this));
+                });
+
+                _allCollapsibles.push({
+                    $elements: $elements,
+                    extraWidth: extraWidth
+                });
+
+                return _.compact(_allCollapsibles);
+            }
+
 
 
             $window.on('resize' + ns, _.throttle(function() {
                 testRunner.trigger('collapseTools');
-            }, 100));
+            }, 40));
 
             testRunner
                 .after('renderitem loaditem', function() {
                     previousAvailableWidth = Infinity;
 
                     buildCollapsiblesList();
+
                     testRunner.trigger('collapseTools');
                 })
                 .on('collapseTools' + ns, function() {
