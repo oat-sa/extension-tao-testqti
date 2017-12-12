@@ -1622,9 +1622,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $testUri = $context->getTestDefinitionUri();
 
         if (!is_null($itemUri)) {
-            $storageInterface->storeItemVariableSet($testUri, $itemUri, $metaVariables, $this->getTransmissionId($context, $itemId));
+            $storageInterface->storeItemVariables($sessionId, $testUri, $itemUri, $metaVariables, $this->getTransmissionId($context, $itemId));
         } else {
-            $storageInterface->storeTestVariableSet($testUri, $metaVariables, $sessionId);
+            $storageInterface->storeTestVariables($sessionId, $testUri, $metaVariables, $sessionId);
         }
 
         return true;
@@ -1646,13 +1646,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         \taoResultServer_models_classes_Variable $metaVariable,
         $itemId = null
     ) {
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        /** @var ResultServerService $resultServer */
+        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+        $sessionId = $context->getTestSession()->getSessionId();
+        $storage = $resultServer->getResultServer($sessionId)->getStorageInterface();
+
         $testUri = $context->getTestDefinitionUri();
 
         if (!is_null($itemUri)) {
-            $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
+            $storage->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
         } else {
-            $resultServer->storeTestVariable($testUri, $metaVariable, $context->getTestSession()->getSessionId());
+            $storage->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
         }
 
         return true;
