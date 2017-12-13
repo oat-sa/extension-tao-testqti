@@ -72,9 +72,10 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     /**
      * Set the result server to be used by tao_helpers_TestSession created by the factory.
      *
-     * @param taoResultServer_models_classes_ResultServerStateFull $resultServer
+     * @param \oat\taoResultServer\models\classes\ResultServerService $resultServer
      */
-    public function setResultServer( $resultServer) {
+    public function setResultServer($resultServer)
+    {
         $this->resultServer = $resultServer;
     }
 
@@ -83,7 +84,8 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      *
      * @return \oat\taoResultServer\models\classes\ResultServerService
      */
-    public function getResultServer() {
+    public function getResultServer()
+    {
         return $this->resultServer;
     }
     
