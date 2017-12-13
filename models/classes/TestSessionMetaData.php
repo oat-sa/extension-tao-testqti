@@ -116,10 +116,10 @@ class TestSessionMetaData
                     $sessionId = $this->session->getSessionId();
 
                     $transmissionId = "${sessionId}.${itemRef}.${occurence}";
-                    $resultServer->getResultServer($sessionId)->getStorageInterface()->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
+                    $resultServer->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
                     $sessionId = $this->session->getSessionId();
-                    $resultServer->getResultServer($sessionId)->getStorageInterface()->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+                    $resultServer->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
                 } elseif (strcasecmp($type, 'SECTION') === 0) {
                     //suffix section variables with _{SECTION_IDENTIFIER}
                     if ($assessmentSectionId === null) {
@@ -127,7 +127,7 @@ class TestSessionMetaData
                     }
                     $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
                     $sessionId = $this->session->getSessionId();
-                    $resultServer->getResultServer($sessionId)->getStorageInterface()->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+                    $resultServer->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
                 }
             }
         }
