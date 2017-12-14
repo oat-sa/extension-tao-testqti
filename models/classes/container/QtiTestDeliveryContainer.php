@@ -67,14 +67,6 @@ class QtiTestDeliveryContainer extends AbstractContainer
         $container->setData('deliveryExecution', $execution->getIdentifier());
         $container->setData('deliveryServerConfig', []);
 
-        //setting tenantId/Name if it exists (and we are in multi-tenant context)
-        //as for now it is needed for textHelp caching as a bookId
-        $tenantService = $this->getServiceLocator()->get(ContainerService::SERVICE_ID);
-
-        $tenantName = method_exists($tenantService, 'getTenantName') ? $tenantService->getTenantName() : false;
-
-        $container->setData('tenantName', $tenantName);
-
         return $container;
     }
 }

@@ -111,7 +111,17 @@ define([
 
                     //If we are in multi-tenant context then we choose tenantName as bookId for caching
                     //in other cases - deliveryUri will be used as bookId for caching on textHelp side
-                    var bookId = config.tenantName ? config.tenantName : config.serviceCallId;
+                    var testData = testRunner.getTestData() || {};
+                    var testConfig = testData.config || {};
+                    var testPlugins = testConfig.plugins || {};
+                    var TtsConfig = testPlugins.textToSpeech || {};
+
+                    var tenantName = false;
+                    if (TtsConfig.hasOwnProperty('tenantName')) {
+                        tenantName = TtsConfig['tenantName'];
+                    }
+
+                    var bookId = tenantName ? tenantName : config.serviceCallId;
 
                     self.tts.updateTexthelpCache(
                         bookId,
@@ -121,7 +131,7 @@ define([
             })
             .on('disabletools unloaditem', function () {
                 var context = testRunner.getTestContext();
-                if (context.options.textToSpeech) {
+                if (context.options.textToSpeech && typeof self.tts !== typeof undefined) {
                     //textHelp requested stopping of running playback on item unload
                     self.tts.stop();
                 }
