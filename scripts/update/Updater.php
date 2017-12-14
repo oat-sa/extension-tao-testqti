@@ -76,6 +76,8 @@ use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\libCat\custom\EchoAdaptEngine;
+use oat\taoTests\models\runner\providers\ProviderRegistry;
+use oat\taoTests\models\runner\providers\TestProvider;
 
 /**
  *
@@ -1731,5 +1733,26 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('17.19.0', '17.23.0');
+        
+        if ($this->isVersion('17.23.0')) {
+
+            $registry = ProviderRegistry::getRegistry();
+            $registry->register(
+                TestProvider::fromArray(
+                    [
+                        'id' => 'qti',
+                        'name' => 'QTI runner',
+                        'module' => 'taoQtiTest/runner/provider/qti',
+                        'bundle' => 'taoQtiTest/loader/testProviders.min',
+                        'description' => 'QTI implementation of the test runner',
+                        'category' => 'runner',
+                        'active' => true,
+                        'tags' => [ 'core', 'qti', 'runner' ]
+                    ]
+                )
+            );
+
+            $this->setVersion('17.24.0');
+        }
     }
 }
