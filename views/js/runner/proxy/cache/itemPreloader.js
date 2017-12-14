@@ -37,6 +37,9 @@ define([
     //get the same asset manager than the test runner
     var assetManager = assetManagerFactory();
 
+    //create a DOM fragment to attach assets
+    var fragment = document.createDocumentFragment();
+
     /**
      * Asset loaders per supported asset types
      */
@@ -64,7 +67,18 @@ define([
 
             //be safe in case preload is not supported
             link.setAttribute('disabled', true);
+
+            //with prefetch we attach the <link> tag to the real <head>
             document.querySelector('head').appendChild(link);
+        },
+
+        audio : function preloadAudio(url){
+
+            var audio = document.createElement('audio');
+            audio.preload = 'auto';
+            audio.src = url;
+
+            fragment.appendChild(audio);
         }
     };
 
@@ -90,8 +104,15 @@ define([
             if(link){
                 document.querySelector('head').removeChild(link);
             }
-        }
+        },
 
+        audio : function preloadAudio(url){
+
+            var audio = fragment.querySelector('audio[src="' + url + '"]');
+            if(audio){
+                fragment.removeChild(audio);
+            }
+        }
     };
 
     /**
@@ -105,13 +126,15 @@ define([
 
             assetManager.setData('baseUrl', baseUrl);
 
+            console.log(assets);
+
             return resolve(
                 _.reduce(assets, function(acc, assetList, type){
 
                     var resolved = _(assetList)
                         .filter(function(url){
                             //filter base64 (also it seems sometimes we just have base64 data, without the protocol...)
-                            return !urlUtil.isBase64(url) && /\.[a-zA-Z]+$/.test(url);
+                            return !urlUtil.isBase64(url) && /\.[a-zA-Z0-9]+$/.test(url);
                         })
                         .map(assetManager.resolve, assetManager)
                         .value();
@@ -165,6 +188,7 @@ define([
             var assetLoad = function assetLoad(){
                 return resolveAssets(item.baseUrl, item.itemData.assets).then(function(resolved){
                     _.forEach(resolved, function(assets, type){
+                        console.log(type, assets);
                         if(_.isFunction(loaders[type])){
                             _.forEach(assets, loaders[type]);
                         }
