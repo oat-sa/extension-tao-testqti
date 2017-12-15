@@ -168,12 +168,12 @@ define([
             /**
              * Load the providers dynamically
              * @param {Object[]} providers - the collection of providers to load
-             * @returns {Promise} resolves with the list of loaded plugins
+             * @returns {Promise} resolves with the list of loaded providers
              */
             var loadProviders = function loadProviders(providers){
 
                 return providerLoaderFactory()
-                    .addList(providers)
+                    .addList(_.filter(providers, {category: 'runner'}))
                     .load(context.bundle);
             };
 
