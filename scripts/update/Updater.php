@@ -1743,7 +1743,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                         'id' => 'qti',
                         'name' => 'QTI runner',
                         'module' => 'taoQtiTest/runner/provider/qti',
-                        'bundle' => 'taoQtiTest/loader/testProviders.min',
+                        'bundle' => 'taoQtiTest/loader/qtiTestRunner.min',
                         'description' => 'QTI implementation of the test runner',
                         'category' => 'runner',
                         'active' => true,
