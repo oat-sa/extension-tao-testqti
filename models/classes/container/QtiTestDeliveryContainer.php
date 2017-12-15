@@ -19,7 +19,6 @@
 
 namespace oat\taoQtiTest\models\container;
 
-use oat\tao\model\service\ContainerService;
 use oat\taoDelivery\model\container\delivery\AbstractContainer;
 use oat\taoDelivery\helper\container\DeliveryClientContainer as ClientExecution;
 use oat\taoDelivery\model\execution\DeliveryExecution;
