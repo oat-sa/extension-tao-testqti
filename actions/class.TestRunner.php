@@ -20,7 +20,7 @@
  * 
  */
 
-use oat\taoResultServer\models\classes\ResultServerService;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -280,12 +280,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
     protected function beforeAction($notifyError = true) {
         // Controller initialization.
         $this->retrieveTestDefinition($this->getRequestParameter('QtiTestCompilation'));
-        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+
+        /** @var QtiRunnerService $deliverServerService */
+        $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
+        $deliveryStore = $deliverServerService->getResultStore($this->getRequestParameter('serviceCallId'));
 
         // Initialize storage and test session.
         $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
-        
-        $sessionManager = new taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+
+        $sessionManager = new taoQtiTest_helpers_SessionManager($deliveryStore, $testResource);
         $userUri = common_session_SessionManager::getSession()->getUserUri();
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         
@@ -814,9 +817,6 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 	public function comment() {
         if ($this->beforeAction()) {
             $testSession = $this->getTestSession();
-            /** @var ResultServerService $resultService */
-            $resultService = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
-            $transmitter = new taoQtiCommon_helpers_ResultTransmitter($resultService);
 
             // prepare transmission Id for result server.
             $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
@@ -827,10 +827,16 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             // retrieve comment's intrinsic value.
             $comment = $this->getRequestParameter('comment');
 
+            /** @var QtiRunnerService $deliverServerService */
+            $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
+            $deliveryStore = $deliverServerService->getResultStore($sessionId);
+
             // build variable and send it.
             $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
             $testUri = $testSession->getTest()->getUri();
             $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new QtismString($comment));
+
+            $transmitter = new taoQtiCommon_helpers_ResultTransmitter($deliveryStore);
             $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
         }
 	}

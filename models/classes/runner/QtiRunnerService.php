@@ -23,9 +23,9 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\libCat\result\ItemResult;
+use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
-use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use \oat\taoQtiTest\models\ExtendedStateService;
@@ -1324,17 +1324,16 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function comment(RunnerServiceContext $context, $comment)
     {
-        /** @var ResultServerService $resultService */
-        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
-
-        $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($resultServer);
-
         // prepare transmission Id for result server.
         $testSession = $context->getTestSession();
         $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
         $occurrence = $testSession->getCurrentAssessmentItemRefOccurence();
         $sessionId = $testSession->getSessionId();
         $transmissionId = "${sessionId}.${item}.${occurrence}";
+
+        $deliveryStore = $this->getResultStore($sessionId);
+
+        $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($deliveryStore);
 
         // build variable and send it.
         $itemUri = TestRunnerUtils::getCurrentItemUri($testSession);
@@ -1613,17 +1612,16 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $metaVariables,
         $itemId = null
     ) {
-        /** @var ResultServerService $resultServer */
-        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
-
         $sessionId = $context->getTestSession()->getSessionId();
+
+        $deliveryStore = $this->getResultStore($sessionId);
 
         $testUri = $context->getTestDefinitionUri();
 
         if (!is_null($itemUri)) {
-            $resultServer->storeItemVariables($sessionId, $testUri, $itemUri, $metaVariables, $this->getTransmissionId($context, $itemId));
+            $deliveryStore->storeItemVariables($sessionId, $testUri, $itemUri, $metaVariables, $this->getTransmissionId($context, $itemId));
         } else {
-            $resultServer->storeTestVariables($sessionId, $testUri, $metaVariables, $sessionId);
+            $deliveryStore->storeTestVariables($sessionId, $testUri, $metaVariables, $sessionId);
         }
 
         return true;
@@ -1645,16 +1643,16 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         \taoResultServer_models_classes_Variable $metaVariable,
         $itemId = null
     ) {
-        /** @var ResultServerService $resultServer */
-        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
         $sessionId = $context->getTestSession()->getSessionId();
 
         $testUri = $context->getTestDefinitionUri();
 
+        $deliveryStore = $this->getResultStore($sessionId);
+
         if (!is_null($itemUri)) {
-            $resultServer->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
+            $deliveryStore->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
         } else {
-            $resultServer->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+            $deliveryStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
         }
 
         return true;
@@ -1843,5 +1841,21 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         return $maxTimeSeconds;
+    }
+
+    /**
+     * @param $deliveryExecution
+     * @return \oat\taoResultServer\models\classes\ResultManagement|\taoResultServer_models_classes_ReadableResultStorage|\taoResultServer_models_classes_WritableResultStorage
+     * @throws \common_exception_Error
+     */
+    public function getResultStore($deliveryExecution)
+    {
+        if (!$deliveryExecution instanceof DeliveryExecutionInterface) {
+            $deliveryExecution = ServiceProxy::singleton()->getDeliveryExecution($deliveryExecution);
+        }
+        $compiledDelivery = $deliveryExecution->getDelivery();
+        /** @var ResultServerService $resultService */
+        $resultService = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+        return $resultService->getResultStorage($compiledDelivery->getUri());
     }
 }

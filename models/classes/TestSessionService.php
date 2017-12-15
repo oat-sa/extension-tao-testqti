@@ -23,7 +23,7 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
-use oat\taoDeliveryRdf\model\DeliveryContainerService;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
@@ -58,10 +58,11 @@ class TestSessionService extends ConfigurableService
 
         $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
         $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
-        /** @var ResultServerService $resultService */
-        $resultService = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+        /** @var QtiRunnerService $deliverServerService */
+        $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
+        $deliveryStore = $deliverServerService->getResultStore($deliveryExecution);
 
-        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultService, $testResource);
+        $sessionManager = new \taoQtiTest_helpers_SessionManager($deliveryStore, $testResource);
 
         $userId = $deliveryExecution->getUserIdentifier();
 

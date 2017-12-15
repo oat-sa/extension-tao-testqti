@@ -51,6 +51,7 @@ use oat\taoTests\models\event\TestExecutionResumedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use oat\taoQtiTest\helpers\TestSessionMemento;
+use taoResultServer_models_classes_WritableResultStorage as WritableResultStorage;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -62,8 +63,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     
     /**
      * The ResultServer to be used to transmit Item and Test results.
-     * 
-     * @var ResultServerService
+     *
+     * @var WritableResultStorage
      */
     private $resultServer;
     
@@ -99,10 +100,11 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @param AssessmentTest $assessmentTest The AssessmentTest object representing the QTI test definition.
      * @param AbstractSessionManager $manager The manager to be used to create new AssessmentItemSession objects.
      * @param Route $route The Route (sequence of items) to be taken by the candidate for this test session.
-     * @param ResultServerService $resultServer The Result Server where Item and Test Results must be sent to.
+     * @param WritableResultStorage $resultServer The Result Server where Item and Test Results must be sent to.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the test.
      */
-    public function __construct(AssessmentTest $assessmentTest, AbstractSessionManager $manager, Route $route, ResultServerService $resultServer, core_kernel_classes_Resource $test) {
+    public function __construct(AssessmentTest $assessmentTest, AbstractSessionManager $manager, Route $route, WritableResultStorage $resultServer, core_kernel_classes_Resource $test)
+    {
         parent::__construct($assessmentTest, $manager, $route);
         $this->setResultServer($resultServer);
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
@@ -111,17 +113,18 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     
     /**
      * Set the ResultServer to be used to transmit Item and Test results.
-     * 
-     * @param ResultServerService $resultServer
+     *
+     * @param WritableResultStorage $resultServer
      */
-    protected function setResultServer(ResultServerService $resultServer) {
+    protected function setResultServer(WritableResultStorage $resultServer)
+    {
         $this->resultServer = $resultServer;
     }
     
     /**
      * Get the ResultServer in use to transmit Item and Test results.
-     * 
-     * @return ResultServerService
+     *
+     * @return WritableResultStorage
      */
     protected function getResultServer() {
         return $this->resultServer;

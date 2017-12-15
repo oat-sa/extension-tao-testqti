@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models;
 use oat\dtms\DateTime;
 use DateTimeZone;
 use oat\oatbox\service\ServiceManager;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoResultServer\models\classes\ResultServerService;
 use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
@@ -95,13 +96,16 @@ class TestSessionMetaData
     public function save(array $metaData, RouteItem $routeItem = null, $assessmentSectionId = null)
     {
         $testUri = $this->session->getTest()->getUri();
-        /** @var ResultServerService $resultServer */
-        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+        /** @var QtiRunnerService $deliverServerService */
+        $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
 
 
         foreach ($metaData as $type => $data) {
             foreach ($data as $key => $value) {
                 $metaVariable = $this->getVariable($key, $value);
+                $sessionId = $this->session->getSessionId();
+
+                $deliveryStore = $deliverServerService->getResultStore($sessionId);
 
                 if (strcasecmp($type, 'ITEM') === 0) {
                     if ($routeItem === null) {
@@ -113,21 +117,18 @@ class TestSessionMetaData
                     }
 
                     $itemUri = $this->getItemUri($itemRef);
-                    $sessionId = $this->session->getSessionId();
 
                     $transmissionId = "${sessionId}.${itemRef}.${occurence}";
-                    $resultServer->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
+                    $deliveryStore->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
-                    $sessionId = $this->session->getSessionId();
-                    $resultServer->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+                    $deliveryStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
                 } elseif (strcasecmp($type, 'SECTION') === 0) {
                     //suffix section variables with _{SECTION_IDENTIFIER}
                     if ($assessmentSectionId === null) {
                         $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
                     }
                     $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
-                    $sessionId = $this->session->getSessionId();
-                    $resultServer->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+                    $deliveryStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
                 }
             }
         }
@@ -203,10 +204,11 @@ class TestSessionMetaData
         $itemStartTime = null;
 
         $ssid         = $this->getTestSession()->getSessionId();
-        /** @var ResultServerService $resultServer */
-        $resultServer = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
+        /** @var QtiRunnerService $deliverServerService */
+        $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
+        $deliveryStore = $deliverServerService->getResultStore($ssid);
 
-        $collection   = $resultServer->getResultServer($ssid)->getStorageInterface()->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
+        $collection = $deliveryStore->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
 
         foreach ($collection as $vars) {
             foreach ($vars as $var) {
