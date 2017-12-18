@@ -25,33 +25,42 @@ define([
     'lodash',
     'core/store',
     'taoQtiTest/runner/proxy/cache/itemPreloader'
-], function(_, store, itemPreloader) {
+], function(_, store, itemPreloaderFactory) {
     'use strict';
 
     /**
      * The default number of items to store
      */
     var defaultConfig = {
-        maxSize: 10
+        maxSize: 10,
+        preload : false
     };
 
     /**
      * Create an item store
-     * @param {Number} [maxSize = 10] - the store limit
-     * @param {Boolean} [preload] - do we preload items when storing them
+     * @param {Object} [options]
+     * @param {Number} [options.maxSize = 10] - the store limit
+     * @param {Boolean} [options.preload] - do we preload items when storing them
+     * @param {String} [options.testId] - the unique identifier of the test instance, required if preload is true
+     *
      * @returns {itemStore}
      */
-    return function itemStoreFactory(maxSize, preload) {
+    return function itemStoreFactory(options) {
+
+        var config = _.defaults(options || {}, defaultConfig);
 
         //in memory storage
         var getStore = function getStore(){
             return store('item-cache', store.backends.memory);
         };
 
+        //maintain an index to resolve existence synchronously
         var index = [];
 
-        if(! _.isNumber(maxSize)){
-            maxSize = defaultConfig.maxSize;
+
+        var itemPreloader;
+        if(config.preload){
+            itemPreloader = itemPreloaderFactory(_.pick(config, ['testId']));
         }
 
         /**
@@ -95,7 +104,7 @@ define([
                                     index.push(key);
                                 }
 
-                                if(preload){
+                                if(config.preload){
                                     _.defer(function(){
                                         itemPreloader.preload(item);
                                     });
@@ -103,7 +112,7 @@ define([
                             }
 
                             //do we reach the limit ? then remove one
-                            if (index.length > 1 && index.length > maxSize) {
+                            if (index.length > 1 && index.length > config.maxSize) {
                                 return self.remove(index[0]).then(function(removed){
                                     return updated && removed;
                                 });
@@ -145,9 +154,11 @@ define([
 
                         return itemStorage.getItem(key)
                             .then(function(item){
-                                _.defer(function(){
-                                    itemPreloader.unload(item);
-                                });
+                                if(config.preload){
+                                    _.defer(function(){
+                                        itemPreloader.unload(item);
+                                    });
+                                }
                             })
                             .then(function(){
                                 return itemStorage.removeItem(key);
