@@ -18,7 +18,8 @@
  *
  */
 
-use oat\taoResultServer\models\classes\ResultServerService;
+use oat\taoQtiTest\models\event\LtiOutcomeReadyEvent;
+use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use qtism\runtime\common\ProcessingException;
 use qtism\runtime\processing\OutcomeProcessingEngine;
 use qtism\data\rules\OutcomeRuleCollection;
@@ -51,7 +52,6 @@ use oat\taoTests\models\event\TestExecutionResumedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use oat\taoQtiTest\helpers\TestSessionMemento;
-use taoResultServer_models_classes_WritableResultStorage as WritableResultStorage;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -64,7 +64,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     /**
      * The ResultServer to be used to transmit Item and Test results.
      *
-     * @var WritableResultStorage
+     * @var ResultStorageWrapper
      */
     private $resultServer;
     
@@ -100,10 +100,10 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
      * @param AssessmentTest $assessmentTest The AssessmentTest object representing the QTI test definition.
      * @param AbstractSessionManager $manager The manager to be used to create new AssessmentItemSession objects.
      * @param Route $route The Route (sequence of items) to be taken by the candidate for this test session.
-     * @param WritableResultStorage $resultServer The Result Server where Item and Test Results must be sent to.
+     * @param ResultStorageWrapper $resultServer The Result Server where Item and Test Results must be sent to.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the test.
      */
-    public function __construct(AssessmentTest $assessmentTest, AbstractSessionManager $manager, Route $route, WritableResultStorage $resultServer, core_kernel_classes_Resource $test)
+    public function __construct(AssessmentTest $assessmentTest, AbstractSessionManager $manager, Route $route, ResultStorageWrapper $resultServer, core_kernel_classes_Resource $test)
     {
         parent::__construct($assessmentTest, $manager, $route);
         $this->setResultServer($resultServer);
@@ -114,9 +114,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     /**
      * Set the ResultServer to be used to transmit Item and Test results.
      *
-     * @param WritableResultStorage $resultServer
+     * @param ResultStorageWrapper $resultServer
      */
-    protected function setResultServer(WritableResultStorage $resultServer)
+    protected function setResultServer(ResultStorageWrapper $resultServer)
     {
         $this->resultServer = $resultServer;
     }
@@ -124,7 +124,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     /**
      * Get the ResultServer in use to transmit Item and Test results.
      *
-     * @return WritableResultStorage
+     * @return ResultStorageWrapper
      */
     protected function getResultServer() {
         return $this->resultServer;
@@ -240,6 +240,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $varIdentifier = $var->getIdentifier();
         
             common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
+            $this->getEventManager()->trigger(new LtiOutcomeReadyEvent($var, $this->getSessionId(), $testUri));
             $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
             
         }

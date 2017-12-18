@@ -177,9 +177,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         /** @var ResultServerService $resultServer */
         /** @var QtiRunnerService $deliverServerService */
         $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-        $deliveryStore = $deliverServerService->getResultStore($this->getTestExecutionUri());
+        $resultStore = $deliverServerService->getResultStore($this->getTestExecutionUri());
         $testResource = new \core_kernel_classes_Resource($this->getTestDefinitionUri());
-        $sessionManager = new \taoQtiTest_helpers_SessionManager($deliveryStore, $testResource);
+        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
