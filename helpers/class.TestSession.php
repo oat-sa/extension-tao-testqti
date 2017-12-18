@@ -18,7 +18,6 @@
  *
  */
 
-use oat\taoQtiTest\models\event\LtiOutcomeReadyEvent;
 use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use qtism\runtime\common\ProcessingException;
 use qtism\runtime\processing\OutcomeProcessingEngine;
@@ -240,7 +239,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
             $varIdentifier = $var->getIdentifier();
         
             common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
-            $this->getEventManager()->trigger(new LtiOutcomeReadyEvent($var, $this->getSessionId(), $testUri));
             $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
             
         }
