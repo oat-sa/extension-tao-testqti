@@ -1651,7 +1651,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $resultStore = $this->getResultStore($sessionId);
 
         if (!is_null($itemUri)) {
-            $resultStore->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
+            $resultStore->storeItemVariable($testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
         } else {
             $resultStore->storeTestVariable($testUri, $metaVariable, $sessionId);
         }
