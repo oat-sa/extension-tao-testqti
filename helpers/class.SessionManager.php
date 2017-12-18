@@ -18,6 +18,7 @@
  *
  */
 
+use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use qtism\runtime\tests\AbstractSessionManager;
 use qtism\runtime\tests\TestResultsSubmission;
 use qtism\runtime\tests\Route;
@@ -26,7 +27,6 @@ use qtism\runtime\tests\AssessmentItemSession;
 use qtism\data\AssessmentTest;
 use qtism\data\IAssessmentItem;
 use qtism\common\datatypes\QtiDuration;
-use taoResultServer_models_classes_WritableResultStorage as WritableResultStorage;
 
 /**
  * A TAO specific implementation of QTISM's AbstractSessionManager.
@@ -44,7 +44,7 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     /**
      * The result server to be used by tao_helpers_TestSession created by the factory.
      *
-     * @var WritableResultStorage
+     * @var ResultStorageWrapper
      */
     private $resultServer;
     
@@ -58,12 +58,12 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     /**
      * Create a new SessionManager object.
      *
-     * @param WritableResultStorage $resultServer The ResultServer to be set to the AssessmentTestSession to be built.
+     * @param ResultStorageWrapper $resultServer The ResultServer to be set to the AssessmentTestSession to be built.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
      * @throws \InvalidArgumentException
      * @throws common_Exception
      */
-    public function __construct(WritableResultStorage $resultServer, core_kernel_classes_Resource $test)
+    public function __construct(ResultStorageWrapper $resultServer, core_kernel_classes_Resource $test)
     {
         parent::__construct();
         $this->setAcceptableLatency(new QtiDuration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
@@ -74,9 +74,9 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     /**
      * Set the result server to be used by tao_helpers_TestSession created by the factory.
      *
-     * @param WritableResultStorage $resultServer
+     * @param ResultStorageWrapper $resultServer
      */
-    public function setResultServer(WritableResultStorage $resultServer)
+    public function setResultServer(ResultStorageWrapper $resultServer)
     {
         $this->resultServer = $resultServer;
     }
@@ -84,7 +84,7 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     /**
      * Get the result server to be used by tao_helpers_TestSession created by the factory.
      *
-     * @return WritableResultStorage
+     * @return ResultStorageWrapper
      */
     public function getResultServer()
     {

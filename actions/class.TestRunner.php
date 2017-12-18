@@ -283,12 +283,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
         /** @var QtiRunnerService $deliverServerService */
         $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-        $deliveryStore = $deliverServerService->getResultStore($this->getRequestParameter('serviceCallId'));
+        $resultStore = $deliverServerService->getResultStore($this->getRequestParameter('serviceCallId'));
 
         // Initialize storage and test session.
         $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
 
-        $sessionManager = new taoQtiTest_helpers_SessionManager($deliveryStore, $testResource);
+        $sessionManager = new taoQtiTest_helpers_SessionManager($resultStore, $testResource);
         $userUri = common_session_SessionManager::getSession()->getUserUri();
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         
@@ -829,14 +829,14 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
 
             /** @var QtiRunnerService $deliverServerService */
             $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-            $deliveryStore = $deliverServerService->getResultStore($sessionId);
+            $resultStore = $deliverServerService->getResultStore($sessionId);
 
             // build variable and send it.
             $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
             $testUri = $testSession->getTest()->getUri();
             $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new QtismString($comment));
 
-            $transmitter = new taoQtiCommon_helpers_ResultTransmitter($deliveryStore);
+            $transmitter = new taoQtiCommon_helpers_ResultTransmitter($resultStore);
             $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
         }
 	}

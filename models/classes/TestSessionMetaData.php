@@ -105,7 +105,7 @@ class TestSessionMetaData
                 $metaVariable = $this->getVariable($key, $value);
                 $sessionId = $this->session->getSessionId();
 
-                $deliveryStore = $deliverServerService->getResultStore($sessionId);
+                $resultStore = $deliverServerService->getResultStore($sessionId);
 
                 if (strcasecmp($type, 'ITEM') === 0) {
                     if ($routeItem === null) {
@@ -119,16 +119,16 @@ class TestSessionMetaData
                     $itemUri = $this->getItemUri($itemRef);
 
                     $transmissionId = "${sessionId}.${itemRef}.${occurence}";
-                    $deliveryStore->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
+                    $resultStore->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
-                    $deliveryStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+                    $resultStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
                 } elseif (strcasecmp($type, 'SECTION') === 0) {
                     //suffix section variables with _{SECTION_IDENTIFIER}
                     if ($assessmentSectionId === null) {
                         $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
                     }
                     $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
-                    $deliveryStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+                    $resultStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
                 }
             }
         }
@@ -206,9 +206,9 @@ class TestSessionMetaData
         $ssid         = $this->getTestSession()->getSessionId();
         /** @var QtiRunnerService $deliverServerService */
         $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-        $deliveryStore = $deliverServerService->getResultStore($ssid);
+        $resultStore = $deliverServerService->getResultStore($ssid);
 
-        $collection = $deliveryStore->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
+        $collection = $resultStore->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
 
         foreach ($collection as $vars) {
             foreach ($vars as $var) {

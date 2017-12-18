@@ -42,6 +42,7 @@ use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\TestSessionService;
+use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
@@ -1331,9 +1332,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $sessionId = $testSession->getSessionId();
         $transmissionId = "${sessionId}.${item}.${occurrence}";
 
-        $deliveryStore = $this->getResultStore($sessionId);
+        $resultStore = $this->getResultStore($sessionId);
 
-        $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($deliveryStore);
+        $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($resultStore);
 
         // build variable and send it.
         $itemUri = TestRunnerUtils::getCurrentItemUri($testSession);
@@ -1614,14 +1615,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     ) {
         $sessionId = $context->getTestSession()->getSessionId();
 
-        $deliveryStore = $this->getResultStore($sessionId);
+        $resultStore = $this->getResultStore($sessionId);
 
         $testUri = $context->getTestDefinitionUri();
 
         if (!is_null($itemUri)) {
-            $deliveryStore->storeItemVariables($sessionId, $testUri, $itemUri, $metaVariables, $this->getTransmissionId($context, $itemId));
+            $resultStore->storeItemVariables($sessionId, $testUri, $itemUri, $metaVariables, $this->getTransmissionId($context, $itemId));
         } else {
-            $deliveryStore->storeTestVariables($sessionId, $testUri, $metaVariables, $sessionId);
+            $resultStore->storeTestVariables($sessionId, $testUri, $metaVariables, $sessionId);
         }
 
         return true;
@@ -1647,12 +1648,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         $testUri = $context->getTestDefinitionUri();
 
-        $deliveryStore = $this->getResultStore($sessionId);
+        $resultStore = $this->getResultStore($sessionId);
 
         if (!is_null($itemUri)) {
-            $deliveryStore->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
+            $resultStore->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
         } else {
-            $deliveryStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+            $resultStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
         }
 
         return true;
@@ -1845,17 +1846,18 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * @param $deliveryExecution
-     * @return \oat\taoResultServer\models\classes\ResultManagement|\taoResultServer_models_classes_ReadableResultStorage|\taoResultServer_models_classes_WritableResultStorage
+     * @return ResultStorageWrapper
      * @throws \common_exception_Error
      */
     public function getResultStore($deliveryExecution)
     {
+        //@todo check if cache should be used here
         if (!$deliveryExecution instanceof DeliveryExecutionInterface) {
             $deliveryExecution = ServiceProxy::singleton()->getDeliveryExecution($deliveryExecution);
         }
         $compiledDelivery = $deliveryExecution->getDelivery();
         /** @var ResultServerService $resultService */
         $resultService = $this->getServiceManager()->get(ResultServerService::SERVICE_ID);
-        return $resultService->getResultStorage($compiledDelivery->getUri());
+        return new ResultStorageWrapper($deliveryExecution->getIdentifier(), $resultService->getResultStorage($compiledDelivery->getUri()));
     }
 }

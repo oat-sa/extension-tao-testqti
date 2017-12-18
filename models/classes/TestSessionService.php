@@ -60,9 +60,9 @@ class TestSessionService extends ConfigurableService
         $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
         /** @var QtiRunnerService $deliverServerService */
         $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-        $deliveryStore = $deliverServerService->getResultStore($deliveryExecution);
+        $resultStore = $deliverServerService->getResultStore($deliveryExecution);
 
-        $sessionManager = new \taoQtiTest_helpers_SessionManager($deliveryStore, $testResource);
+        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $userId = $deliveryExecution->getUserIdentifier();
 
