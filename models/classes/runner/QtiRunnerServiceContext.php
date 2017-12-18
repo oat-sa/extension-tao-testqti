@@ -26,6 +26,7 @@ use oat\libCat\CatSession;
 use oat\libCat\Exception\CatEngineException;
 use oat\libCat\result\AbstractResult;
 use oat\libCat\result\ItemResult;
+use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\helpers\TestSessionMemento;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
@@ -174,10 +175,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     protected function initStorage()
     {
-        /** @var ResultServerService $resultServer */
-        /** @var QtiRunnerService $deliverServerService */
-        $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-        $resultStore = $deliverServerService->getResultStore($this->getTestExecutionUri());
+        /** @var DeliveryServerService $deliveryServerService */
+        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+        $resultStore = $deliveryServerService->getResultStoreWrapper($this->getTestExecutionUri());
         $testResource = new \core_kernel_classes_Resource($this->getTestDefinitionUri());
         $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 

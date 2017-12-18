@@ -20,13 +20,9 @@
 
 namespace oat\taoQtiTest\models;
 
-use oat\dtms\DateTime;
-use DateTimeZone;
 use oat\oatbox\service\ServiceManager;
-use oat\taoQtiTest\models\runner\QtiRunnerService;
-use oat\taoResultServer\models\classes\ResultServerService;
+use oat\taoDelivery\model\execution\DeliveryServerService;
 use qtism\data\AssessmentItemRef;
-use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
@@ -96,8 +92,8 @@ class TestSessionMetaData
     public function save(array $metaData, RouteItem $routeItem = null, $assessmentSectionId = null)
     {
         $testUri = $this->session->getTest()->getUri();
-        /** @var QtiRunnerService $deliverServerService */
-        $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
+        /** @var DeliveryServerService $deliveryServerService */
+        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
 
 
         foreach ($metaData as $type => $data) {
@@ -105,7 +101,7 @@ class TestSessionMetaData
                 $metaVariable = $this->getVariable($key, $value);
                 $sessionId = $this->session->getSessionId();
 
-                $resultStore = $deliverServerService->getResultStore($sessionId);
+                $resultStore = $deliveryServerService->getResultStoreWrapper($sessionId);
 
                 if (strcasecmp($type, 'ITEM') === 0) {
                     if ($routeItem === null) {

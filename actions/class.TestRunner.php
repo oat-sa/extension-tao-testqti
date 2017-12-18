@@ -20,7 +20,7 @@
  * 
  */
 
-use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoDelivery\model\execution\DeliveryServerService;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -281,9 +281,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         // Controller initialization.
         $this->retrieveTestDefinition($this->getRequestParameter('QtiTestCompilation'));
 
-        /** @var QtiRunnerService $deliverServerService */
-        $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-        $resultStore = $deliverServerService->getResultStore($this->getRequestParameter('serviceCallId'));
+        /** @var DeliveryServerService $deliveryServerService */
+        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+        $resultStore = $deliveryServerService->getResultStoreWrapper($this->getRequestParameter('serviceCallId'));
 
         // Initialize storage and test session.
         $testResource = new core_kernel_classes_Resource($this->getRequestParameter('QtiTestDefinition'));
@@ -827,9 +827,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
             // retrieve comment's intrinsic value.
             $comment = $this->getRequestParameter('comment');
 
-            /** @var QtiRunnerService $deliverServerService */
-            $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-            $resultStore = $deliverServerService->getResultStore($sessionId);
+            /** @var DeliveryServerService $deliveryServerService */
+            $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+            $resultStore = $deliveryServerService->getResultStoreWrapper($sessionId);
 
             // build variable and send it.
             $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
