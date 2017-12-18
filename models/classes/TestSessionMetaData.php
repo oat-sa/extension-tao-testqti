@@ -119,16 +119,16 @@ class TestSessionMetaData
                     $itemUri = $this->getItemUri($itemRef);
 
                     $transmissionId = "${sessionId}.${itemRef}.${occurence}";
-                    $resultStore->storeItemVariable($sessionId, $testUri, $itemUri, $metaVariable, $transmissionId);
+                    $resultStore->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
-                    $resultStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+                    $resultStore->storeTestVariable($testUri, $metaVariable, $sessionId);
                 } elseif (strcasecmp($type, 'SECTION') === 0) {
                     //suffix section variables with _{SECTION_IDENTIFIER}
                     if ($assessmentSectionId === null) {
                         $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
                     }
                     $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
-                    $resultStore->storeTestVariable($sessionId, $testUri, $metaVariable, $sessionId);
+                    $resultStore->storeTestVariable($testUri, $metaVariable, $sessionId);
                 }
             }
         }
@@ -172,64 +172,6 @@ class TestSessionMetaData
     public function getTestSession()
     {
         return $this->session;
-    }
-
-    /**
-     * Retrieve information about passed items
-     * @return DateTime
-     * @throws \common_exception_Error
-     */
-    public function getStartSectionTime()
-    {
-        $itemResults        = array();
-        $assessmentItemsRef = $this->getTestSession()->getCurrentAssessmentSection()->getComponentsByClassName('assessmentItemRef');
-
-        /** @var ExtendedAssessmentItemRef $itemRef */
-        foreach ($assessmentItemsRef as $itemRef) {
-            $itemResults[] = $this->getItemStartTime($itemRef);
-        }
-        $sectionStart = min(array_filter($itemResults));
-
-        return $sectionStart;
-    }
-
-    /**
-     * @param AssessmentItemRef $itemRef
-     *
-     * @return DateTime
-     */
-    public function getItemStartTime($itemRef)
-    {
-        $itemResults   = array();
-        $itemStartTime = null;
-
-        $ssid         = $this->getTestSession()->getSessionId();
-        /** @var QtiRunnerService $deliverServerService */
-        $deliverServerService = $this->getServiceManager()->get(QtiRunnerService::SERVICE_ID);
-        $resultStore = $deliverServerService->getResultStore($ssid);
-
-        $collection = $resultStore->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
-
-        foreach ($collection as $vars) {
-            foreach ($vars as $var) {
-                if ($var->variable instanceof taoResultServer_models_classes_TraceVariable && $var->variable->getIdentifier() === 'ITEM_START_TIME_SERVER') {
-                    $itemResults[] = $var->variable->getValue();
-                }
-            }
-        }
-
-        $itemResults = array_map(function ($ts) {
-            $itemStart = (new DateTime('now', new DateTimeZone('UTC')));
-            $itemStart->setTimestamp($ts);
-
-            return $itemStart;
-        }, $itemResults);
-
-        if ( ! empty( $itemResults )) {
-            $itemStartTime = min($itemResults);
-        }
-
-        return $itemStartTime;
     }
 
     /**
