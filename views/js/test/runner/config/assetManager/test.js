@@ -57,8 +57,5 @@ define([
         assert.equal(typeof assetManager.addStrategy, 'function', 'The asset manager has the correct methods');
         assert.equal(typeof assetManager.resolve, 'function', 'The asset manager has the correct methods');
         assert.equal(assetManager._strategies.length, 4, 'The asset manager comes with configured strategies');
-
-
-
     });
 });
