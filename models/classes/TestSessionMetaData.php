@@ -20,10 +20,9 @@
 
 namespace oat\taoQtiTest\models;
 
-use oat\dtms\DateTime;
-use DateTimeZone;
+use oat\oatbox\service\ServiceManager;
+use oat\taoDelivery\model\execution\DeliveryServerService;
 use qtism\data\AssessmentItemRef;
-use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\common\enums\Cardinality;
 use Context;
@@ -93,11 +92,16 @@ class TestSessionMetaData
     public function save(array $metaData, RouteItem $routeItem = null, $assessmentSectionId = null)
     {
         $testUri = $this->session->getTest()->getUri();
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        /** @var DeliveryServerService $deliveryServerService */
+        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+
 
         foreach ($metaData as $type => $data) {
             foreach ($data as $key => $value) {
                 $metaVariable = $this->getVariable($key, $value);
+                $sessionId = $this->session->getSessionId();
+
+                $resultStore = $deliveryServerService->getResultStoreWrapper($sessionId);
 
                 if (strcasecmp($type, 'ITEM') === 0) {
                     if ($routeItem === null) {
@@ -109,19 +113,18 @@ class TestSessionMetaData
                     }
 
                     $itemUri = $this->getItemUri($itemRef);
-                    $sessionId = $this->session->getSessionId();
 
                     $transmissionId = "${sessionId}.${itemRef}.${occurence}";
-                    $resultServer->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
+                    $resultStore->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
-                    $resultServer->storeTestVariable($testUri, $metaVariable, $this->session->getSessionId());
+                    $resultStore->storeTestVariable($testUri, $metaVariable, $sessionId);
                 } elseif (strcasecmp($type, 'SECTION') === 0) {
                     //suffix section variables with _{SECTION_IDENTIFIER}
                     if ($assessmentSectionId === null) {
-                    $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
+                        $assessmentSectionId = $this->session->getCurrentAssessmentSection()->getIdentifier();
                     }
                     $metaVariable->setIdentifier($key . '_' . $assessmentSectionId);
-                    $resultServer->storeTestVariable($testUri, $metaVariable, $this->session->getSessionId());
+                    $resultStore->storeTestVariable($testUri, $metaVariable, $sessionId);
                 }
             }
         }
@@ -168,61 +171,6 @@ class TestSessionMetaData
     }
 
     /**
-     * Retrieve information about passed items
-     * @return DateTime
-     * @throws \common_exception_Error
-     */
-    public function getStartSectionTime()
-    {
-        $itemResults        = array();
-        $assessmentItemsRef = $this->getTestSession()->getCurrentAssessmentSection()->getComponentsByClassName('assessmentItemRef');
-
-        /** @var ExtendedAssessmentItemRef $itemRef */
-        foreach ($assessmentItemsRef as $itemRef) {
-            $itemResults[] = $this->getItemStartTime($itemRef);
-        }
-        $sectionStart = min(array_filter($itemResults));
-
-        return $sectionStart;
-    }
-
-    /**
-     * @param AssessmentItemRef $itemRef
-     *
-     * @return DateTime
-     */
-    public function getItemStartTime($itemRef)
-    {
-        $itemResults   = array();
-        $itemStartTime = null;
-
-        $ssid         = $this->getTestSession()->getSessionId();
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
-        $collection   = $resultServer->getVariables("{$ssid}.{$itemRef->getIdentifier()}.{$this->getTestSession()->getCurrentAssessmentItemRefOccurence()}");
-
-        foreach ($collection as $vars) {
-            foreach ($vars as $var) {
-                if ($var->variable instanceof taoResultServer_models_classes_TraceVariable && $var->variable->getIdentifier() === 'ITEM_START_TIME_SERVER') {
-                    $itemResults[] = $var->variable->getValue();
-                }
-            }
-        }
-
-        $itemResults = array_map(function ($ts) {
-            $itemStart = (new DateTime('now', new DateTimeZone('UTC')));
-            $itemStart->setTimestamp($ts);
-
-            return $itemStart;
-        }, $itemResults);
-
-        if ( ! empty( $itemResults )) {
-            $itemStartTime = min($itemResults);
-        }
-
-        return $itemStartTime;
-    }
-
-    /**
      * Get the URI referencing the Assessment Item (in the knowledge base)
      *
      * @param AssessmentItemRef $itemRef
@@ -234,5 +182,10 @@ class TestSessionMetaData
         $parts = explode('|', $href);
 
         return $parts[0];
+    }
+
+    private function getServiceManager()
+    {
+        return ServiceManager::getServiceManager();
     }
 }
