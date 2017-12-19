@@ -485,7 +485,11 @@ define([
                 return self.getProxy().init({
                     storeId : storeId
                 }).then(function(results){
+
                     self.dataUpdater.update(results);
+
+                    //set the plugin config from the test data
+                    self.dataUpdater.updatePluginsConfig(self.getPlugins());
 
                     //check if we need to trigger a storeChange
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
