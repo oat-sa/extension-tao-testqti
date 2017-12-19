@@ -40,12 +40,25 @@ define([
         assetPortableElement
     ];
 
+    //keep reference per test id
+    var assetManagers = {};
+
     /**
      * Gives access to a configured assetManagerFactory
+     * @param {String} testId - a unique identifier for the test instance
      * @returns {assetManagerFactory}
      */
-    return function getAssetManager(){
-        return assetManagerFactory(defaultStrategies, { baseUrl: '' });
+    return function getAssetManager(testId){
+        var assetManager;
+
+        if(typeof assetManagers[testId] !== 'undefined'){
+            assetManager = assetManagers[testId];
+        } else {
+            assetManager = assetManagerFactory(defaultStrategies, { baseUrl: '' });
+            assetManagers[testId] = assetManager;
+        }
+
+        return assetManager;
     };
 });
 

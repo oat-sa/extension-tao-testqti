@@ -54,12 +54,11 @@ define([
     navigationHelper,
     toolboxFactory,
     qtiItemRunner,
-    assetManagerFactory,
+    getAssetManager,
     layoutTpl) {
     'use strict';
 
-    //the asset strategies
-    var assetManager = assetManagerFactory();
+
 
     var $layout = $(layoutTpl());
 
@@ -182,6 +181,7 @@ define([
          * @returns {Promise} to chain
          */
         install : function install(){
+
 
             /**
              * Delegates the udpate of testMap, testContext and testData
@@ -554,6 +554,10 @@ define([
          */
         renderItem : function renderItem(itemIdentifier, itemData){
             var self = this;
+
+            var config = this.getConfig();
+
+            var assetManager = getAssetManager(config.serviceCallId);
 
             var changeState = function changeState(){
                 self.setItemState(itemIdentifier, 'changed', true);
