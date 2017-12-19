@@ -18,6 +18,8 @@
 */
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
+use oat\generis\model\data\event\ResourceUpdated;
+use oat\oatbox\event\EventManager;
 
 /**
  *  QTI test Creator Controller.
@@ -86,6 +88,9 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
                     $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 
                     $saved = $qtiTestService->saveJsonTest($test, $parameters['model']);
+
+                    $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
+                    $eventManager->trigger(new ResourceUpdated($test));
 
                     //save the blueprint if the extension is installed
                     if(common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')){
