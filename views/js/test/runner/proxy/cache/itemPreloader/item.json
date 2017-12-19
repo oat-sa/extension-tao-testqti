@@ -192,6 +192,9 @@
       },
       "css": {
         "tao-user-styles.css": "tao-user-styles.css"
+      },
+      "audio" : {
+        "sample.mp3": "sample.mp3"
       }
     }
   },
