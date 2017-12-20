@@ -156,6 +156,22 @@ define([
                     }
                 }
                 return updatedTestMap;
+            },
+
+            /**
+             * Let's you update the plugins configuration from when filling testData
+             * @param {plugin[]} plugins - the test runner plugins
+             */
+            updatePluginsConfig : function updatePluginsConfig(plugins){
+
+                var testData = testDataHolder.get('testData');
+                if(plugins && testData && testData.config && testData.config.plugins){
+                    _.forEach(testData.config.plugins, function(config, pluginName){
+                        if(_.isPlainObject(plugins[pluginName]) && _.isFunction(plugins[pluginName].setConfig) && _.isPlainObject(config)){
+                            plugins[pluginName].setConfig(config);
+                        }
+                    });
+                }
             }
         };
     };
