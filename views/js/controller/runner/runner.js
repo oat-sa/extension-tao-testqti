@@ -29,6 +29,7 @@ define([
     'core/promise',
     'core/communicator',
     'core/communicator/poll',
+    'core/communicator/request',
     'core/logger',
     'layout/loading-bar',
     'ui/feedback',
@@ -38,7 +39,7 @@ define([
     'core/pluginLoader',
     'util/url',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, context, Promise, communicator, pollProvider, loggerFactory, loadingBar, feedback,
+], function ($, _, __, context, Promise, communicator, pollProvider, requestProvider, loggerFactory, loadingBar, feedback,
              runner, qtiProvider, proxyLoader, pluginLoaderFactory, urlUtil) {
     'use strict';
 
@@ -61,6 +62,7 @@ define([
      */
     runner.registerProvider('qti', qtiProvider);
     communicator.registerProvider('poll', pollProvider);
+    communicator.registerProvider('request', requestProvider);
 
     /**
      * The runner controller
