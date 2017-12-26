@@ -287,6 +287,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $result = $this->runnerService->init($serviceContext);
+            $this->runnerService->persist($serviceContext);
 
             $response = [
                 'success' => $result,
@@ -299,7 +300,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testMap'] = $this->runnerService->getTestMap($serviceContext);
             }
 
-            $this->runnerService->persist($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e, $response);
             $code = $this->getErrorCode($e);
