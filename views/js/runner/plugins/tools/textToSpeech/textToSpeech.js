@@ -76,7 +76,8 @@ define([
                 setVolumeValue:          '$rw_setVolumeValue',
                 stopSpeech:              '$rw_stopSpeech',
                 tagSentences:            '$rw_tagSentences',
-                userParameters:          '$rw_userParameters'
+                userParameters:          '$rw_userParameters',
+                setCurrentTarget:        '$rw_setCurrentTarget'
             }
         };
         var speed;
