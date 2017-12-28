@@ -1733,9 +1733,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.19.0');
         }
 
-        $this->skip('17.19.0', '18.4.0');
+        $this->skip('17.19.0', '18.4.1');
 
-        if ($this->isVersion('18.4.0')) {
+        if ($this->isVersion('18.4.1')) {
             /** @var TaskLogInterface|ConfigurableService $taskLogService */
             $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
 
