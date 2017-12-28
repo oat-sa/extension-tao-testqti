@@ -30,7 +30,8 @@ define([
     'helpers',
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'taoQtiTest/controller/creator/helpers/qtiElement',
-    'taoQtiTest/controller/creator/qtiContentCreator'
+    'taoQtiTest/controller/creator/qtiContentCreator',
+    'ckeditor',
 ], function ($, _, __, hider, dialogAlert, namespaceHelper, actions, helpers, Dom2QtiEncoder, qtiElementHelper, qtiContentCreator) {
     'use strict';
 
@@ -298,6 +299,11 @@ define([
             $rubricBlockContent.on('editorfocus', function() {
                 // close all properties forms and turn off their related button
                 areaBroker.getPropertyPanelArea().children('.props').hide().trigger('propclose.propview');
+            });
+
+            //change position of CKeditor toolbar on scroll
+            areaBroker.getContentCreatorPanelArea().find('.test-content').on('scroll', function () {
+                CKEDITOR.document.getWindow().fire('scroll');
             });
         }
     };

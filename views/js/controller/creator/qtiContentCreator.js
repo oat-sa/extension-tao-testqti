@@ -79,7 +79,8 @@ define([
                     }
                 },
                 change: options.change || _.noop,
-                resetRenderer: true
+                resetRenderer: true,
+                autofocus: false
             });
 
             // destroying ckInstance on editor close
