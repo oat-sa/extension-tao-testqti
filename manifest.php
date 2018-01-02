@@ -18,8 +18,17 @@
  *
  */
 
+use oat\taoQtiItem\scripts\install\SetUpQueueTasks;
+use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
+use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
+use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
+use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
+use oat\taoQtiTest\scripts\install\RegisterTestImporters;
+use oat\taoQtiTest\scripts\install\SetSynchronisationService;
+use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -57,15 +66,16 @@ return array(
             'oat\\taoQtiTest\\scripts\\install\\RegisterTestMetadataExporter',
             'oat\\taoQtiTest\\scripts\\install\\CreateTestSessionFilesystem',
             RegisterQtiFlysystemManager::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestImporters::class,
-            \oat\taoQtiTest\scripts\install\SetupEventListeners::class,
-            \oat\taoQtiTest\scripts\install\RegisterCreatorServices::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService::class,
-            \oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders::class,
-            \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,
-            \oat\taoQtiTest\scripts\install\SetSynchronisationService::class,
-            \oat\taoQtiTest\scripts\install\SyncChannelInstaller::class,
-		    RegisterTestContainer::class
+            RegisterTestImporters::class,
+            SetupEventListeners::class,
+            RegisterCreatorServices::class,
+            RegisterTestCategoryPresetProviderService::class,
+            RegisterQtiCategoryPresetProviders::class,
+            RegisterSectionPauseService::class,
+            SetSynchronisationService::class,
+            SyncChannelInstaller::class,
+		    RegisterTestContainer::class,
+            SetUpQueueTasks::class
         )
 	),
 	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
