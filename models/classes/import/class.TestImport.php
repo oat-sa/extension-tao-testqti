@@ -55,16 +55,14 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
      * (non-PHPdoc)
      * @see tao_models_classes_import_ImportHandler::import()
      */
-    public function import($class, $form) {
-		
+    public function import($class, $form)
+    {
         try {
-            $fileInfo = $form->getValue('source');
-
-            if(isset($fileInfo['uploaded_file'])){
+            if (isset($form['fly_file'])) {
 
                 /** @var  UploadService $uploadService */
                 $uploadService = ServiceManager::getServiceManager()->get(UploadService::SERVICE_ID);
-                $uploadedFile = $uploadService->getUploadedFile($fileInfo['uploaded_file']);
+                $uploadedFile = $uploadService->getUploadDir()->getFile($form['fly_file']);
 
                 // The zip extraction is a long process that can exceed the 30s timeout
                 helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
@@ -72,7 +70,7 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
                 $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);
                 
                 helpers_TimeOutHelper::reset();
-                $uploadService->remove($uploadService->getUploadedFlyFile($fileInfo['uploaded_file']));
+                $uploadService->remove($uploadedFile);
             } else {
                 throw new common_exception_Error('No source file for import');
             }
@@ -82,5 +80,4 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
             return common_report_Report::createFailure($e->getMessage());
         }
     }
-
 }
