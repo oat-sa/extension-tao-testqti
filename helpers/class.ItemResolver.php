@@ -68,7 +68,7 @@ class taoQtiTest_helpers_ItemResolver implements Resolver {
         $raw = $this->service->getXmlByRdfItem($this->getResource($url));
         $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';
 
-        $raw = preg_replace("/<xi:include(?:.*)>/u", '', $raw);
+        $raw = preg_replace("/<xi:include(?:.*?)>/u", '', $raw);
         
         file_put_contents($tmpfile, $raw);
         
