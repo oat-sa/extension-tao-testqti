@@ -148,13 +148,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @return QtiRunnerServiceContext
      * @throws \common_Exception
      */
-    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri)
+    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri, $userUri = null)
     {
         // create a service context based on the provided URI
         // initialize the test session and related objects
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
         $serviceContext->setServiceManager($this->getServiceManager());
         $serviceContext->setTestConfig($this->getTestConfig());
+        $serviceContext->setUserUri($userUri);
 
         $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
         $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage(), $serviceContext->getCompilationDirectory());

@@ -119,6 +119,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     private $syncingMode = false;
 
     /**
+     * @var string
+     */
+    private $userUri;
+
+    /**
      * QtiRunnerServiceContext constructor.
      * 
      * @param string $testDefinitionUri
@@ -182,7 +187,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
+        $userUri = $this->getUserUri();
 
 
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
@@ -370,6 +375,27 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getItemIndex($id) 
     {
         return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
+    }
+
+
+    /**
+     * @return string
+     * @throws \common_exception_Error
+     */
+    public function getUserUri()
+    {
+        if ($this->userUri === null) {
+            $this->userUri = \common_session_SessionManager::getSession()->getUserUri();
+        }
+        return $this->userUri;
+    }
+
+    /**
+     * @param string $userUri
+     */
+    public function setUserUri($userUri)
+    {
+        $this->userUri = $userUri;
     }
 
     /**
