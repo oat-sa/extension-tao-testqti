@@ -172,60 +172,26 @@ define([
                 var progressScopeCounter = {
                     test : {
                         total : function(){
-                            if (testMap && testMap.parts) {
-                                return _.reduce(testMap.parts, function (accPart, part) {
-                                    return _.reduce(part.sections, function (accSection, section) {
-                                        return accSection + mapHelper.computeItemStats(section.items).questions;
-                                    }, accPart);
-                                }, 0);
-                            }
-                            return 0;
+                            return mapHelper.getTestStats(testMap).questions;
                         },
                         position : function(){
-                            if (testMap && testMap.parts) {
-                                return _.reduce(testMap.parts, function (accPart, part) {
-                                    return _.reduce(part.sections, function (accSection, section) {
-                                        return accSection + mapHelper.computeItemStats(section.items).questionsViewed;
-                                    }, accPart);
-                                }, 0);
-                            }
-                            return 0;
+                            return mapHelper.getTestStats(testMap).questionsViewed;
                         }
                     },
                     testPart : {
                         total : function(){
-                            var testPart = getTestPart();
-                            if(testPart){
-                                return _.reduce(testMap.parts[testContext.testPartId].sections, function(acc, section){
-                                    return acc + mapHelper.computeItemStats(section.items).questions;
-                                }, 0);
-                            }
-                            return 0;
+                            return mapHelper.getPartStats(testMap, getTestPart().id).questions;
                         },
                         position : function(){
-                            var testPart = getTestPart();
-                            if(testPart){
-                                return _.reduce(testMap.parts[testContext.testPartId].sections, function(acc, section){
-                                    return acc + mapHelper.computeItemStats(section.items).questionsViewed;
-                                }, 0);
-                            }
-                            return 0;
+                            return mapHelper.getPartStats(testMap, getTestPart().id).questionsViewed;
                         }
                     },
                     testSection : {
                         total : function(){
-                            var testSection = getTestSection();
-                            if(testSection){
-                                return mapHelper.computeItemStats(testSection.items).questions;
-                            }
-                            return 0;
+                            return mapHelper.getSectionStats(testMap, getTestSection().id).questions;
                         },
                         position : function(){
-                            var testSection = getTestSection();
-                            if(testSection && testSection.items[testContext.itemIdentifier]){
-                                return mapHelper.computeItemStats(testSection.items).questionsViewed;
-                            }
-                            return 0;
+                            return mapHelper.getSectionStats(testMap, getTestSection().id).questionsViewed;
                         }
                     }
                 };
@@ -278,7 +244,7 @@ define([
                 var testMap = testRunner.getTestMap();
                 var progressData = progressUpdater(testContext, testMap, progressConfig);
                 var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
-                if (item && item.informational) {
+                if (item && item.informational && progressConfig.indicator === 'questions') {
                     self.$element.hide();
                 } else {
                     self.$element.show();
