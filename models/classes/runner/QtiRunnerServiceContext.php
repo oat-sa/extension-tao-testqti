@@ -35,7 +35,7 @@ use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\SectionPauseService;
-use oat\taoResultServer\models\classes\ResultServerService;
+use oat\tao\helpers\UserHelper;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
@@ -189,7 +189,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         $userUri = $this->getUserUri();
 
-
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $storageClassName = $config['test-session-storage'];
         $this->storage = new $storageClassName($sessionManager, $seeker, $userUri);
@@ -209,7 +208,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             \common_Logger::d("Instantiating QTI Assessment Test Session");
             $this->setTestSession($storage->instantiate($this->getTestDefinition(), $sessionId));
 
-            $testTaker = \common_session_SessionManager::getSession()->getUser();
+            $testTaker = UserHelper::getUser($this->getUserUri());
             \taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         }
         else {
