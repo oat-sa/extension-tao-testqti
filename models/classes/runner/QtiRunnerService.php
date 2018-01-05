@@ -145,6 +145,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param string $testDefinitionUri The URI of the test
      * @param string $testCompilationUri The URI of the compiled delivery
      * @param string $testExecutionUri The URI of the delivery execution
+     * @param string $userUri User identifier. If null current user will be used
      * @return QtiRunnerServiceContext
      * @throws \common_Exception
      */
