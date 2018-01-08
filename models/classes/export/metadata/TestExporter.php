@@ -165,6 +165,9 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
     {
         if (! $this->itemExporter) {
             $this->itemExporter = $this->getServiceManager()->get(SimpleExporter::SERVICE_ID);
+            if ($this->hasOption(self::OPTION_FILE_NAME)) {
+                $this->itemExporter->setOption(SimpleExporter::OPTION_FILE_LOCATION, $this->getOption(self::OPTION_FILE_NAME));
+            }
         }
         return $this->itemExporter;
     }

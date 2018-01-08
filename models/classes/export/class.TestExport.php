@@ -19,6 +19,7 @@
  *
  */
 
+use common_report_Report as Report;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
 
@@ -64,7 +65,7 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
      */
     public function export($formValues, $destination)
     {
-        $report = common_report_Report::createSuccess();
+        $report = Report::createInfo();
 
         if (isset($formValues['filename']) === true) {
 
@@ -89,26 +90,29 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
                 foreach ($instances as $instance) {
                     $testResource = new core_kernel_classes_Resource($instance);
                     $testExporter = $this->createExporter($testResource, $zip, $manifest);
-                    common_Logger::d('Export ' . $instance);
                     $subReport = $testExporter->export();
-                    if ($report->getType() !== common_report_Report::TYPE_ERROR &&
-                        ($subReport->containsError() || $subReport->getType() === common_report_Report::TYPE_ERROR)
+                    if ($report->getType() !== Report::TYPE_ERROR &&
+                        ($subReport->containsError() || $subReport->getType() === Report::TYPE_ERROR)
                     ) {
-                        $report->setType(common_report_Report::TYPE_ERROR);
+                        $report->setType(Report::TYPE_ERROR);
                         $report->setMessage(__('Not all test could be exported'));
                     }
                     $report->add($subReport);
+                }
+
+                if ($report->getType() != Report::TYPE_ERROR) {
+                    $report->setType(Report::TYPE_SUCCESS);
+                    $report->setMessage(__('Package exported.'));
                 }
 
                 $report->setData($path);
                 $zip->close();
 
             } else {
-                common_Logger::w("No instance in form to export");
-
+                $report->add(Report::createFailure(("No instance in form to export")));
             }
         } else {
-            common_Logger::w("Missing filename for QTI Test export using Export Handler '" . __CLASS__ . "'.");
+            $report->add(Report::createFailure(("Missing filename for QTI Test export using Export Handler '" . __CLASS__ . "'.")));
         }
 
         return $report;

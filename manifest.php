@@ -47,7 +47,7 @@ return array(
         'generis'    => '>=5.11.0',
         'taoDelivery' => '>=8.1.0',
         'taoItems'   => '>=5.4.1',
-        'taoTaskQueue' => '>=0.13.1'
+        'taoTaskQueue' => '>=0.14.0'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'

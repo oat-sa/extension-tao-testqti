@@ -20,6 +20,8 @@
 
 namespace oat\taoQtiTest\models\export\metadata;
 
+use common_report_Report as Report;
+use oat\generis\model\fileReference\UrlFileSerializer;
 use \oat\taoQtiItem\model\Export\ItemMetadataByClassExportHandler;
 use oat\taoQtiItem\model\flyExporter\extractor\ExtractorException;
 
@@ -30,11 +32,19 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
         return 'QTI Test Metadata';
     }
 
-    public function export($formValues, $destPath)
+    public function export($formValues, $destination)
     {
+        $report = Report::createInfo();
+
         if (isset($formValues['filename']) && isset($formValues['uri'])) {
             try {
+                $fileName = $formValues['filename'].'_'.time().'.csv';
+                if(!\tao_helpers_File::securityCheck($fileName, true)){
+                    throw new \Exception('Unauthorized file name');
+                }
+
                 $instance = new \core_kernel_classes_Resource(\tao_helpers_Uri::decode($formValues['uri']));
+
                 /** @var \core_kernel_classes_Resource $model */
                 $model = \taoQtiTest_models_classes_QtiTestService::singleton()->getTestModel($instance);
                 if ($model->getUri() != \taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI) {
@@ -42,14 +52,33 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
                 }
 
                 /** @var TestExporter $exporterService */
-                $exporterService = $this->getServiceManager()->get(TestMetadataExporter::SERVICE_ID);
-                $this->output(
-                    $exporterService->export($formValues['uri']),
-                    $formValues['filename']
-                );
+                $exporterService = $this->getServiceLocator()->get(TestMetadataExporter::SERVICE_ID);
+                $exporterService->setOption(TestMetadataExporter::OPTION_FILE_NAME, 'metadataExport/'. $fileName);
+
+                $file = $exporterService->export($formValues['uri']);
+
+                $uriSerializer = new UrlFileSerializer();
+                $uriSerializer->setServiceLocator($this->getServiceLocator());
+
+                $serial = $uriSerializer->serialize($file);
+
+                $report->setData($serial);
+                $report->setType(Report::TYPE_SUCCESS);
+                $report->setMessage(__('Metadata are successfully exported.'));
+
             } catch (ExtractorException $e) {
-                return \common_report_Report::createFailure('Selected object does not have any item to export.');
+                $report = Report::createFailure('Selected object does not have any item to export.');
+            }
+        } else {
+            if (!isset($formValues['filename'])) {
+                $report->add(Report::createFailure('Missing filename for export using ' . __CLASS__));
+            }
+
+            if (!isset($formValues['classUri'])) {
+                $report->add(Report::createFailure('Missing classUri for export using ' . __CLASS__));
             }
         }
+
+        return $report;
     }
 }
