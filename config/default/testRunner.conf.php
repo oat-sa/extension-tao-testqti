@@ -44,6 +44,7 @@ return array(
      * Tells what type of progress bar to use? Can be:
      * - percentage : Classic progress bar displaying the percentage of answered items
      * - position : Progress bar displaying the position of the current item within the test session
+     * - questions : Progress bar displaying and count only on questions which should be answered (for example informational items will be missed)
      * @type string
      */
     'progress-indicator' => 'percentage',
