@@ -104,14 +104,18 @@ define([
         /**
          * Installs the proxy
          */
-        install : function install(){
+        install : function install(config){
             var self = this;
 
             //install the parent proxy
             qtiServiceProxy.install.call(this);
 
             //we keep items here
-            this.itemStore = itemStoreFactory(cacheSize, true);
+            this.itemStore = itemStoreFactory({
+                maxSize : cacheSize,
+                preload : true,
+                testId  : config.serviceCallId
+            });
 
             //where we keep actions
             this.actiontStore = null;

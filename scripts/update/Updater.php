@@ -1732,9 +1732,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.19.0');
         }
 
-        $this->skip('17.19.0', '17.23.0');
-        
-        if ($this->isVersion('17.23.0')) {
+        $this->skip('17.19.0', '18.5.1');
+
+        if ($this->isVersion('18.5.1')) {
 
             $registry = ProviderRegistry::getRegistry();
             $registry->register(
@@ -1752,7 +1752,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 )
             );
 
-            $this->setVersion('17.24.0');
+            $this->setVersion('18.6.0');
         }
     }
 }

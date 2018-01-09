@@ -53,13 +53,12 @@ define([
         assert.notEqual(dataUpdaterFactory(holderMock), dataUpdaterFactory(holderMock), "The factory creates new objects");
     });
 
-    QUnit.cases([{
-        title: 'update'
-    }, {
-        title: 'buildTestMap'
-    }, {
-        title: 'updateStats'
-    }])
+    QUnit.cases([
+        { title: 'update' },
+        { title: 'buildTestMap' },
+        { title: 'updateStats' },
+        { title: 'updatePluginsConfig' }
+    ])
     .test('Method ', function(data, assert) {
         var holderMock = new collections.Map();
 
@@ -174,5 +173,61 @@ define([
         assert.equal(typeof holderMock.get('testMap').jumps, 'object', 'The jump table does exists');
         assert.equal(holderMock.get('testMap').jumps.length, 10, 'The jump table is complete');
         assert.equal(holderMock.get('testMap').stats.total, 10, 'The stats reflects the jump table');
+    });
+
+    QUnit.test('update plugins config', function(assert){
+        var plugins = {
+            'foo' : {
+                setConfig : function setConfig(config){
+                    assert.equal(config.feature1, true);
+                    assert.equal(config.feature2, false);
+                },
+                getName : function getName(){
+                    return 'foo';
+                }
+            },
+            'bar' : {
+                setConfig : function setConfig(config){
+                    assert.deepEqual(config.feature1, ['A', 'B']);
+                    assert.equal(config.feature2, 12 * 10);
+                },
+                getName : function getName(){
+                    return 'bar';
+                }
+            },
+            'noz' : {
+                setConfig : function setConfig(config){
+                    assert.ok(false, 'This plugin should not be configured');
+                },
+                getName : function getName(){
+                    return 'noz';
+                }
+            }
+        };
+
+        var dataUpdater;
+
+        var holderMock = new collections.Map();
+
+        holderMock.set('testData', {
+            config : {
+                plugins : {
+                    foo : {
+                       feature1: true,
+                       feature2 : false
+                    },
+                    bar : {
+                        feature1: ['A', 'B'],
+                        feature2 : 12 * 10
+                    },
+                }
+            }
+        });
+
+        QUnit.expect(4);
+
+        dataUpdater = dataUpdaterFactory(holderMock);
+
+        dataUpdater.updatePluginsConfig(plugins);
     });
 });

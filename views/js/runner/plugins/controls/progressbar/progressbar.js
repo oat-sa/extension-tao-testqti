@@ -26,9 +26,10 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/map',
     'tpl!taoQtiTest/runner/plugins/controls/progressbar/progressbar',
     'ui/progressbar'
-], function ($, _, __, pluginFactory, progressTpl){
+], function ($, _, __, pluginFactory, mapHelper, progressTpl){
     'use strict';
 
     /**
@@ -142,6 +143,69 @@ define([
                         __('Item %d of %d', currentPosition, total) :
                         __('Item %d', currentPosition)
                 };
+            },
+
+            /**
+             * Updates the progress bar displaying the questions only
+             * ( for example informational items won't be counted and will be without progress bar)
+             * @param {Object} testContext The progression context
+             * @returns {{ratio: number, label: string}}
+             */
+            questions : function position() {
+
+                //get the current test part in the map
+                var getTestPart = function getTestPart(){
+                    if(testMap && testMap.parts){
+                        return testMap.parts[testContext.testPartId];
+                    }
+                };
+
+                //get the current test section in the map
+                var getTestSection = function getTestSection() {
+                    var testPart = getTestPart();
+                    if(testPart && testPart.sections){
+                        return testPart.sections[testContext.sectionId];
+                    }
+                };
+
+                //provides you the methods to get total and position by scope
+                var progressScopeCounter = {
+                    test : {
+                        total : function(){
+                            return mapHelper.getTestStats(testMap).questions;
+                        },
+                        position : function(){
+                            return mapHelper.getTestStats(testMap).questionsViewed;
+                        }
+                    },
+                    testPart : {
+                        total : function(){
+                            return mapHelper.getPartStats(testMap, getTestPart().id).questions;
+                        },
+                        position : function(){
+                            return mapHelper.getPartStats(testMap, getTestPart().id).questionsViewed;
+                        }
+                    },
+                    testSection : {
+                        total : function(){
+                            return mapHelper.getSectionStats(testMap, getTestSection().id).questions;
+                        },
+                        position : function(){
+                            return mapHelper.getSectionStats(testMap, getTestSection().id).questionsViewed;
+                        }
+                    }
+                };
+
+                var counter = progressScopeCounter[progressConfig.scope] || progressScopeCounter.test;
+                var total = counter.total();
+                var currentPosition = counter.position();
+
+                return {
+                    ratio : total > 0 ? Math.floor(currentPosition / total * 100) : 0,
+                    label : progressConfig.showTotal ?
+                        __('Item %d of %d', currentPosition, total) :
+                        __('Item %d', currentPosition)
+                };
             }
         };
         return updater[progressConfig.indicator]();
@@ -164,6 +228,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData   = testRunner.getTestData();
             var config     = testData.config.progressIndicator || {};
+            var self       = this;
 
             var progressConfig = {
                 indicator: config.type || 'percentage',
@@ -175,10 +240,18 @@ define([
              * Update the progress bar
              */
             var update = function update (){
-                var progressData = progressUpdater(testRunner.getTestContext(), testRunner.getTestMap(), progressConfig);
-                if(progressData && $progressLabel && $progressControl){
-                    $progressLabel.text(progressData.label);
-                    $progressControl.progressbar('value', progressData.ratio);
+                var testContext = testRunner.getTestContext();
+                var testMap = testRunner.getTestMap();
+                var progressData = progressUpdater(testContext, testMap, progressConfig);
+                var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+                if (item && item.informational && progressConfig.indicator === 'questions') {
+                    self.$element.hide();
+                } else {
+                    self.$element.show();
+                    if (progressData && $progressLabel && $progressControl) {
+                        $progressLabel.text(progressData.label);
+                        $progressControl.progressbar('value', progressData.ratio);
+                    }
                 }
             };
 

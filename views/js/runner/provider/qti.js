@@ -54,12 +54,11 @@ define([
     navigationHelper,
     toolboxFactory,
     qtiItemRunner,
-    assetManagerFactory,
+    getAssetManager,
     layoutTpl) {
     'use strict';
 
-    //the asset strategies
-    var assetManager = assetManagerFactory();
+
 
     var $layout = $(layoutTpl());
 
@@ -182,6 +181,7 @@ define([
          * @returns {Promise} to chain
          */
         install : function install(){
+
 
             /**
              * Delegates the udpate of testMap, testContext and testData
@@ -485,7 +485,11 @@ define([
                 return self.getProxy().init({
                     storeId : storeId
                 }).then(function(results){
+
                     self.dataUpdater.update(results);
+
+                    //set the plugin config from the test data
+                    self.dataUpdater.updatePluginsConfig(self.getPlugins());
 
                     //check if we need to trigger a storeChange
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
@@ -550,6 +554,10 @@ define([
          */
         renderItem : function renderItem(itemIdentifier, itemData){
             var self = this;
+
+            var config = this.getConfig();
+
+            var assetManager = getAssetManager(config.serviceCallId);
 
             var changeState = function changeState(){
                 self.setItemState(itemIdentifier, 'changed', true);

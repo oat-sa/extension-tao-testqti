@@ -26,6 +26,7 @@ use oat\libCat\CatSession;
 use oat\libCat\Exception\CatEngineException;
 use oat\libCat\result\AbstractResult;
 use oat\libCat\result\ItemResult;
+use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\helpers\TestSessionMemento;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
@@ -34,6 +35,7 @@ use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\SectionPauseService;
+use oat\tao\helpers\UserHelper;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
@@ -117,28 +119,26 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     private $syncingMode = false;
 
     /**
+     * @var string
+     */
+    private $userUri;
+
+    /**
      * QtiRunnerServiceContext constructor.
      * 
      * @param string $testDefinitionUri
      * @param string $testCompilationUri
      * @param string $testExecutionUri
-     * @throws \common_Exception
      */
     public function __construct($testDefinitionUri, $testCompilationUri, $testExecutionUri)
     {
         $this->testDefinitionUri = $testDefinitionUri;
         $this->testCompilationUri = $testCompilationUri;
         $this->testExecutionUri = $testExecutionUri;
-
-        $this->initCompilationDirectory();
-        $this->initTestDefinition();
-        $this->initStorage();
-        $this->initTestSession();
     }
 
     /**
      * Starts the context
-     * @throws \common_Exception
      */
     public function init()
     {
@@ -176,16 +176,18 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Loads the storage
      * @throws \common_exception_Error
+     * @throws \common_ext_ExtensionException
      */
     protected function initStorage()
     {
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        /** @var DeliveryServerService $deliveryServerService */
+        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+        $resultStore = $deliveryServerService->getResultStoreWrapper($this->getTestExecutionUri());
         $testResource = new \core_kernel_classes_Resource($this->getTestDefinitionUri());
-        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
-
+        $userUri = $this->getUserUri();
 
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $storageClassName = $config['test-session-storage'];
@@ -206,7 +208,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             \common_Logger::d("Instantiating QTI Assessment Test Session");
             $this->setTestSession($storage->instantiate($this->getTestDefinition(), $sessionId));
 
-            $testTaker = \common_session_SessionManager::getSession()->getUser();
+            $testTaker = UserHelper::getUser($this->getUserUri());
             \taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         }
         else {
@@ -264,14 +266,20 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Gets the session storage
      * @return AbstractQtiBinaryStorage
+     * @throws \common_exception_Error
+     * @throws \common_ext_ExtensionException
      */
     public function getStorage()
     {
+        if (!$this->storage) {
+            $this->initStorage();
+        }
         return $this->storage;
     }
 
     /**
      * @return EventManager
+     * @throws \Zend\ServiceManager\Exception\ServiceNotFoundException
      */
     protected function getEventManager() {
         return $this->getServiceLocator()->get(EventManager::SERVICE_ID);
@@ -279,9 +287,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * @return \taoQtiTest_helpers_SessionManager
+     * @throws \common_exception_Error
+     * @throws \common_ext_ExtensionException
      */
     public function getSessionManager()
     {
+        if (null === $this->sessionManager){
+            $this->initStorage();
+        }
         return $this->sessionManager;
     }
 
@@ -291,6 +304,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getTestDefinition()
     {
+        if (null === $this->testDefinition) {
+            $this->initTestDefinition();
+        }
         return $this->testDefinition;
     }
 
@@ -300,6 +316,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getCompilationDirectory()
     {
+        if (null === $this->compilationDirectory) {
+            $this->initCompilationDirectory();
+        }
         return $this->compilationDirectory;
     }
 
@@ -357,6 +376,27 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
     }
 
+
+    /**
+     * @return string
+     * @throws \common_exception_Error
+     */
+    public function getUserUri()
+    {
+        if ($this->userUri === null) {
+            $this->userUri = \common_session_SessionManager::getSession()->getUserUri();
+        }
+        return $this->userUri;
+    }
+
+    /**
+     * @param string $userUri
+     */
+    public function setUserUri($userUri)
+    {
+        $this->userUri = $userUri;
+    }
+
     /**
      * Gets a particular value from item index
      * @param string $id
@@ -391,7 +431,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         
         return $catEngine;
     }
-    
+
+    public function getTestSession()
+    {
+        if (!$this->testSession){
+            $this->initTestSession();
+        }
+        return parent::getTestSession(); // TODO: Change the autogenerated stub
+    }
+
+
     /**
      * Get the current CAT Session Object.
      * 

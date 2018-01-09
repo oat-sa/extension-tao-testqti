@@ -24,21 +24,36 @@
 define([
     'core/promise',
     'taoQtiTest/runner/proxy/cache/itemPreloader',
+    'taoQtiTest/runner/config/assetManager',
     'json!taoQtiTest/test/runner/proxy/cache/itemPreloader/item.json'
-], function(Promise, itemPreloader, itemData) {
+], function(Promise, itemPreloaderFactory, getAssetManager, itemData) {
     'use strict';
+
+    var options = {
+        testId : 'test-foo'
+    };
 
     QUnit.module('API');
 
 
     QUnit.test('module', function (assert){
-        QUnit.expect(1);
+        QUnit.expect(3);
 
-        assert.equal(typeof itemPreloader, 'object', "The module exposes an object");
+        assert.equal(typeof itemPreloaderFactory, 'function', "The module exposes a function");
+        assert.equal(typeof itemPreloaderFactory(options), 'object', "The module is a factory");
+        assert.notDeepEqual(itemPreloaderFactory(options), itemPreloaderFactory(options), "The factory creates new instances");
     });
 
     QUnit.test('api', function (assert){
-        QUnit.expect(2);
+        var itemPreloader;
+
+        QUnit.expect(3);
+
+        assert.throws(function(){
+            itemPreloaderFactory();
+        }, TypeError, 'The testId option is mandatory');
+
+        itemPreloader = itemPreloaderFactory(options);
 
         assert.equal(typeof itemPreloader.preload, 'function', "The module exposes the method preload");
         assert.equal(typeof itemPreloader.unload, 'function', "The  module exposes the method unload");
@@ -66,7 +81,7 @@ define([
         var p;
         QUnit.expect(2);
 
-        p = itemPreloader.preload(data.item);
+        p = itemPreloaderFactory(options).preload(data.item);
 
         assert.ok(p instanceof Promise);
         p.then(function(result){
@@ -80,10 +95,12 @@ define([
     });
 
     QUnit.asyncTest('preload and unload an item', function(assert){
+        var itemPreloader;
         var p;
         var styleSheet;
-        QUnit.expect(10);
+        var assetManager = getAssetManager(options.testId);
 
+        QUnit.expect(11);
 
         //hack the Image element to assert the load
         window.Image = function(){
@@ -98,7 +115,9 @@ define([
         styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
 
         assert.equal(styleSheet, null, 'The item stylesheet is not loaded');
+        assert.ok( ! /^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
 
+        itemPreloader = itemPreloaderFactory(options);
         p = itemPreloader.preload(itemData);
         assert.ok(p instanceof Promise);
 
@@ -107,8 +126,9 @@ define([
 
             styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
             assert.ok(styleSheet instanceof HTMLLinkElement, 'The item stylesheet is loaded');
-            assert.equal(styleSheet.getAttribute('rel'), 'prefetch', 'The item stylesheet is prefetched');
-            assert.equal(styleSheet.getAttribute('disabled'), 'true', 'The item stylesheet is disabled');
+
+
+            assert.ok(/^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample resolves through a blob');
         })
         .then(function(){
             return itemPreloader.unload(itemData);
@@ -119,6 +139,7 @@ define([
             styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
 
             assert.equal(styleSheet, null, 'The item stylesheet is now removed');
+            assert.ok( ! /^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
 
             QUnit.start();
         })

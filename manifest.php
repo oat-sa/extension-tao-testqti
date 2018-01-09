@@ -29,15 +29,15 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '17.24.0',
+    'version'     => '18.6.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=6.9.0',
-        'taoQtiItem' => '>=11.1.2',
-        'tao'        => '>=14.12.0',
-        'generis'    => '>=5.0.0',
-        'taoDelivery' => '>=7.5.0',
-        'taoItems'   => '>=5.1.0'
+        'taoQtiItem' => '>=12.0.0',
+        'tao'        => '>=15.2.0',
+        'generis'    => '>=5.11.0',
+        'taoDelivery' => '>=8.1.0',
+        'taoItems'   => '>=5.4.1',
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'

@@ -29,6 +29,7 @@ define([
     'core/promise',
     'core/communicator',
     'core/communicator/poll',
+    'core/communicator/request',
     'core/logger',
     'core/pluginLoader',
     'core/providerLoader',
@@ -46,6 +47,7 @@ define([
     Promise,
     communicator,
     pollProvider,
+    requestProvider,
     loggerFactory,
     pluginLoaderFactory,
     providerLoaderFactory,
@@ -83,6 +85,7 @@ define([
      * TODO provider registration should be loaded dynamically
      */
     communicator.registerProvider('poll', pollProvider);
+    communicator.registerProvider('request', requestProvider);
 
     /**
      * The runner controller
