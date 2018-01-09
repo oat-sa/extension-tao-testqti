@@ -56,6 +56,7 @@
           },
           "stats": {
             "questions": 2,
+            "questionsViewed": 0,
             "answered": 0,
             "flagged": 0,
             "viewed": 1,
@@ -112,6 +113,7 @@
           },
           "stats": {
             "questions": 3,
+            "questionsViewed": 0,
             "answered": 0,
             "flagged": 0,
             "viewed": 0,
@@ -121,6 +123,7 @@
       },
       "stats": {
         "questions": 5,
+        "questionsViewed": 0,
         "answered": 0,
         "flagged": 0,
         "viewed": 1,
@@ -169,6 +172,7 @@
           },
           "stats": {
             "questions": 2,
+            "questionsViewed": 0,
             "answered": 0,
             "flagged": 0,
             "viewed": 0,
@@ -211,6 +215,7 @@
           },
           "stats": {
             "questions": 2,
+            "questionsViewed": 0,
             "answered": 0,
             "flagged": 0,
             "viewed": 0,
@@ -220,6 +225,7 @@
       },
       "stats": {
         "questions": 4,
+        "questionsViewed": 0,
         "answered": 0,
         "flagged": 0,
         "viewed": 0,
@@ -301,6 +307,7 @@
   ],
   "stats": {
     "questions": 9,
+    "questionsViewed": 0,
     "answered": 0,
     "flagged": 0,
     "viewed": 1,

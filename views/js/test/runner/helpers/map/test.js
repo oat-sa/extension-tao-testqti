@@ -236,6 +236,7 @@ define([
             parts: {},
             stats: {
                 questions: 0,
+                questionsViewed: 0,
                 answered: 0,
                 flagged: 0,
                 viewed: 0,
@@ -245,6 +246,7 @@ define([
         var expectedEmpty = {
             stats: {
                 questions: 0,
+                questionsViewed: 0,
                 answered: 0,
                 flagged: 0,
                 viewed: 0,
