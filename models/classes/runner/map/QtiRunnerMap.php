@@ -319,6 +319,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 'flagged' => 0,
                 'viewed' => 0,
                 'total' => 0,
+                'questionsViewed' => 0,
             ];
         }
 
@@ -327,6 +328,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
             if (!empty($itemInfos['answered'])) {
                 $target['stats']['answered'] ++;
+            }
+
+            if (!empty($itemInfos['viewed'])) {
+                $target['stats']['questionsViewed'] ++;
             }
         }
 
