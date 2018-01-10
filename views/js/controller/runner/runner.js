@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -31,16 +31,32 @@ define([
     'core/communicator/poll',
     'core/communicator/request',
     'core/logger',
+    'core/pluginLoader',
+    'core/providerLoader',
     'layout/loading-bar',
     'ui/feedback',
-    'taoTests/runner/runner',
-    'taoQtiTest/runner/provider/qti',
-    'taoQtiTest/runner/proxy/loader',
-    'core/pluginLoader',
     'util/url',
+    'taoTests/runner/runner',
+    'taoQtiTest/runner/proxy/loader',
     'css!taoQtiTestCss/new-test-runner'
-], function ($, _, __, context, Promise, communicator, pollProvider, requestProvider, loggerFactory, loadingBar, feedback,
-             runner, qtiProvider, proxyLoader, pluginLoaderFactory, urlUtil) {
+], function (
+    $,
+    _,
+    __,
+    context,
+    Promise,
+    communicator,
+    pollProvider,
+    requestProvider,
+    loggerFactory,
+    pluginLoaderFactory,
+    providerLoaderFactory,
+    loadingBar,
+    feedback,
+    urlUtil,
+    runner,
+    proxyLoader
+) {
     'use strict';
 
     /**
@@ -53,14 +69,21 @@ define([
         'serviceCallId',
         'bootstrap',
         'exitUrl',
-        'plugins'
+        'plugins',
+        'providers'
     ];
 
     /**
-     * TODO provider registration should be loaded dynamically
-     * the same way the proxy and the plugins are loaded
+     * Some defaults options
+     * @type {Object}
      */
-    runner.registerProvider('qti', qtiProvider);
+    var defaults = {
+        provider: 'qti'
+    };
+
+    /**
+     * TODO provider registration should be loaded dynamically
+     */
     communicator.registerProvider('poll', pollProvider);
     communicator.registerProvider('request', requestProvider);
 
@@ -79,12 +102,13 @@ define([
          * @param {Object}   options.bootstrap - contains the extension and the controller to call
          * @param {String}   options.exitUrl - the full URL where to return at the final end of the test
          * @param {Object[]} options.plugins - the collection of plugins to load
+         * @param {Object[]} options.providers - the collection of providers to load
          */
         start: function start(options) {
-
+            var runnerOptions = _.defaults({}, options, defaults);
             var exitReason;
             var $container = $('.runner');
-            var logger     = loggerFactory('controller/runner', { runnerOptions : options });
+            var logger     = loggerFactory('controller/runner', { runnerOptions : runnerOptions });
 
             /**
              * Does the option exists ?
@@ -92,7 +116,7 @@ define([
              * @returns {Boolean}
              */
             var hasOption = function hasOption(name){
-                return typeof options[name] !== 'undefined';
+                return typeof runnerOptions[name] !== 'undefined';
             };
 
             /**
@@ -100,7 +124,7 @@ define([
              * @param {String} [reason] - to add a warning once left
              */
             var exit = function exit(reason){
-                var url = options.exitUrl;
+                var url = runnerOptions.exitUrl;
                 if (reason) {
                     url = urlUtil.build(url, {
                         warning: reason
@@ -140,8 +164,20 @@ define([
             var loadPlugins = function loadPlugins(plugins){
 
                 return pluginLoaderFactory()
-                        .addList(plugins)
-                        .load(context.bundle);
+                    .addList(plugins)
+                    .load(context.bundle);
+            };
+
+            /**
+             * Load the providers dynamically
+             * @param {Object[]} providers - the collection of providers to load
+             * @returns {Promise} resolves with the list of loaded providers
+             */
+            var loadProviders = function loadProviders(providers){
+
+                return providerLoaderFactory()
+                    .addList(_.filter(providers, {category: 'runner'}))
+                    .load(context.bundle);
             };
 
             /**
@@ -162,22 +198,28 @@ define([
             //load the plugins and the proxy provider
             Promise
                 .all([
-                    loadPlugins(options.plugins),
+                    loadProviders(runnerOptions.providers),
+                    loadPlugins(runnerOptions.plugins),
                     loadProxy()
                 ])
                 .then(function (results) {
 
-                    var plugins = results[0];
-                    var proxyProviderName = results[1];
+                    var providers = results[0];
+                    var plugins = results[1];
+                    var proxyProviderName = results[2];
 
-                    var config = _.omit(options, 'plugins');
+                    var config = _.omit(runnerOptions, ['plugins', 'providers']);
                     config.proxyProvider = proxyProviderName;
                     config.renderTo      = $container;
 
-                    logger.debug({ config: config, plugins: plugins}, 'Start test runner');
+                    logger.debug({ config: config, plugins: plugins, providers: providers}, 'Start test runner');
+
+                    _.forEach(providers, function(provider) {
+                        runner.registerProvider(provider.name, provider);
+                    });
 
                     //instantiate the QtiTestRunner
-                    runner('qti', plugins, config)
+                    runner(config.provider, plugins, config)
                         .on('error', onError)
                         .on('ready', function () {
                             _.defer(function () {
