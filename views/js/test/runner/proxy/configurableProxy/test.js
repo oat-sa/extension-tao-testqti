@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2018 (original work) Open Assessment Technologies SA ;
  */
 /**
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
@@ -25,11 +25,11 @@ define([
     'core/communicator',
     'test/mocks/ajax',
     'taoTests/runner/proxy',
-    'taoQtiTest/runner/proxy/qtiServiceProxy'
-], function($, _, urlUtil, communicatorFactory, ajaxMock, proxyFactory, qtiServiceProxy) {
+    'taoQtiTest/runner/proxy/configurableProxy'
+], function($, _, urlUtil, communicatorFactory, ajaxMock, proxyFactory, configurableProxyFactory) {
     'use strict';
 
-    QUnit.module('qtiServiceProxy');
+    QUnit.module('configurableProxyFactory');
 
     // backup/restore ajax method between each test
     QUnit.testStart(function () {
@@ -41,16 +41,20 @@ define([
 
 
     QUnit.test('module', function(assert) {
-        QUnit.expect(6);
-        assert.equal(typeof qtiServiceProxy, 'object', "The qtiServiceProxy module exposes an object");
+        QUnit.expect(7);
+        assert.equal(typeof configurableProxyFactory, 'function', "The configurableProxyFactory module exposes a function");
         assert.equal(typeof proxyFactory, 'function', "The proxyFactory module exposes a function");
         assert.equal(typeof proxyFactory.registerProvider, 'function', "The proxyFactory module exposes a registerProvider method");
         assert.equal(typeof proxyFactory.getProvider, 'function', "The proxyFactory module exposes a getProvider method");
 
-        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+        assert.throws(function() {
+            configurableProxyFactory();
+        }, 'The configurableProxyFactory should raise an error if the configProxy is not valid');
 
-        assert.equal(typeof proxyFactory('qtiServiceProxy'), 'object', "The proxyFactory factory has registered the qtiServiceProxy definition and produces an instance");
-        assert.notStrictEqual(proxyFactory('qtiServiceProxy'), proxyFactory('qtiServiceProxy'), "The proxyFactory factory provides a different instance of qtiServiceProxy on each call");
+        proxyFactory.registerProvider('configurableProxy', configurableProxyFactory(_.noop));
+
+        assert.equal(typeof proxyFactory('configurableProxy'), 'object', "The proxyFactory factory has registered the configurableProxyFactory definition and produces an instance");
+        assert.notStrictEqual(proxyFactory('configurableProxy'), proxyFactory('configurableProxy'), "The proxyFactory factory provides a different instance of configurableProxyFactory on each call");
     });
 
 
@@ -71,8 +75,11 @@ define([
             { title : 'loadCommunicator' }
         ])
         .test('proxy API ', function(data, assert) {
+            var instance = configurableProxyFactory(_.noop);
+
             QUnit.expect(1);
-            assert.equal(typeof qtiServiceProxy[data.title], 'function', 'The qtiServiceProxy definition exposes a "' + data.title + '" function');
+
+            assert.equal(typeof instance[data.title], 'function', 'The configurableProxy exposes a "' + data.title + '" function');
         });
 
 
@@ -102,34 +109,32 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.init ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.init ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route('init', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                serviceCallId : initConfig.serviceCallId
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + 'init';
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 6 : 7);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
                 assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
             });
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -171,26 +176,29 @@ define([
         });
 
 
-    QUnit.asyncTest('qtiServiceProxy.destroy', function(assert) {
+    QUnit.asyncTest('configurableProxyFactory.destroy', function(assert) {
         var initConfig = {
-            testDefinition: 'http://tao.dev/mockTestDefinition#123',
-            testCompilation: 'http://tao.dev/mockTestCompilation#123',
-            serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-            bootstrap: {
-                serviceController: 'MockRunner',
-                serviceExtension: 'MockExtension'
-            }
+            testDefinition: 'http://tao.dev/mockTestDefinition#123'
         };
-
+        var baseUrl = 'http://tao.dev/';
         var proxy, result;
+
+        function configFactory() {
+            return {
+                getTestActionUrl: function(action) {
+                    return baseUrl + action;
+                },
+                getTimeout: _.noop
+            }
+        }
 
         QUnit.expect(5);
 
-        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+        proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
         ajaxMock.mock(true);
 
-        proxy = proxyFactory('qtiServiceProxy', initConfig);
+        proxy = proxyFactory('configurableProxyFactory', initConfig);
 
         proxy.install();
 
@@ -261,32 +269,30 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.getTestData ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.getTestData ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route('getTestData', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                serviceCallId : initConfig.serviceCallId
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + 'getTestData';
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 6 : 7);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -367,32 +373,30 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.getTestContext ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.getTestContext ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route('getTestContext', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                serviceCallId : initConfig.serviceCallId
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + 'getTestContext';
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 6 : 7);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -472,32 +476,30 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.getTestMap ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.getTestMap ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route('getTestMap', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                serviceCallId : initConfig.serviceCallId
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + 'getTestMap';
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 6 : 7);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -588,32 +590,30 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.sendVariables ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.sendVariables ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route('storeTraceData', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                serviceCallId : initConfig.serviceCallId
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + 'storeTraceData';
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 7 : 8);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -705,32 +705,30 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.callTestAction ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.callTestAction ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                serviceCallId : initConfig.serviceCallId
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + caseData.action;
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 8 : 9);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -820,33 +818,33 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.getItem ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.getItem ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route('getItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                testServiceCallId : initConfig.serviceCallId,
-                itemDefinition : caseData.uri
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + 'getItem?item=' + caseData.uri;
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getItemActionUrl: function(itemRef, action) {
+                        return baseUrl + action + '?item=' + itemRef;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 7 : 8);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -935,33 +933,33 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.submitItem ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.submitItem ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route('submitItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                testServiceCallId : initConfig.serviceCallId,
-                itemDefinition : caseData.uri
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + 'submitItem?item=' + caseData.uri;
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getItemActionUrl: function(itemRef, action) {
+                        return baseUrl + action + '?item=' + itemRef;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 9 : 10);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -1058,33 +1056,33 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.callItemAction ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.callItemAction ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                testServiceCallId : initConfig.serviceCallId,
-                itemDefinition : caseData.uri
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + caseData.action + '?item=' + caseData.uri;
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getItemActionUrl: function(itemRef, action) {
+                        return baseUrl + action + '?item=' + itemRef;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect('object' !== typeof caseData.response ? 9 : 10);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -1179,33 +1177,33 @@ define([
             ajaxSuccess: false,
             success: false
         }])
-        .asyncTest('qtiServiceProxy.telemetry ', function(caseData, assert) {
+        .asyncTest('configurableProxyFactory.telemetry ', function(caseData, assert) {
             var initConfig = {
-                testDefinition: 'http://tao.dev/mockTestDefinition#123',
-                testCompilation: 'http://tao.dev/mockTestCompilation#123',
-                serviceCallId: 'http://tao.dev/mockServiceCallId#123',
-                bootstrap: {
-                    serviceController: 'MockRunner',
-                    serviceExtension: 'MockExtension'
-                }
+                testDefinition: 'http://tao.dev/mockTestDefinition#123'
             };
-
-            var expectedUrl = urlUtil.route(caseData.signal, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
-                testDefinition : initConfig.testDefinition,
-                testCompilation : initConfig.testCompilation,
-                testServiceCallId : initConfig.serviceCallId,
-                itemDefinition : caseData.uri
-            });
-
+            var baseUrl = 'http://tao.dev/';
+            var expectedUrl = baseUrl + caseData.signal + '?item=' + caseData.uri;
             var proxy, result;
+
+            function configFactory() {
+                return {
+                    getTestActionUrl: function(action) {
+                        return baseUrl + action;
+                    },
+                    getTelemetryUrl: function(itemRef, signal) {
+                        return baseUrl + signal + '?item=' + itemRef;
+                    },
+                    getTimeout: _.noop
+                }
+            }
 
             QUnit.expect(11);
 
-            proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+            proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
             ajaxMock.mock(true);
 
-            proxy = proxyFactory('qtiServiceProxy', initConfig);
+            proxy = proxyFactory('configurableProxyFactory', initConfig);
 
             proxy.install();
 
@@ -1259,7 +1257,8 @@ define([
         });
 
 
-    QUnit.asyncTest('qtiServiceProxy.getCommunicator #enabled', function(assert) {
+    QUnit.asyncTest('configurableProxyFactory.getCommunicator #enabled', function(assert) {
+        var baseUrl = 'http://tao.dev/';
         var initConfig = {
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
             testCompilation: 'http://tao.dev/mockTestCompilation#123',
@@ -1306,14 +1305,31 @@ define([
 
         var proxy;
 
+        function configFactory() {
+            return {
+                getTestActionUrl: function(action) {
+                    return baseUrl + action;
+                },
+                getCommunicationConfig: function() {
+                    return {
+                        enabled: initConfig.bootstrap.communication.enabled,
+                        type: initConfig.bootstrap.communication.type,
+                        params: initConfig.bootstrap.communication.params,
+                        syncActions: []
+                    };
+                },
+                getTimeout: _.noop
+            }
+        }
+
         QUnit.expect(8);
 
         communicatorFactory.registerProvider(initConfig.bootstrap.communication.type, mockCommunicator);
-        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+        proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
         ajaxMock.mock(true);
 
-        proxy = proxyFactory('qtiServiceProxy', initConfig);
+        proxy = proxyFactory('configurableProxyFactory', initConfig);
 
         proxy.install();
 
@@ -1344,7 +1360,8 @@ define([
     });
 
 
-    QUnit.asyncTest('qtiServiceProxy.getCommunicator #disabled', function(assert) {
+    QUnit.asyncTest('configurableProxyFactory.getCommunicator #disabled', function(assert) {
+        var baseUrl = 'http://tao.dev/';
         var initConfig = {
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
             testCompilation: 'http://tao.dev/mockTestCompilation#123',
@@ -1369,13 +1386,30 @@ define([
 
         var proxy;
 
+        function configFactory() {
+            return {
+                getTestActionUrl: function(action) {
+                    return baseUrl + action;
+                },
+                getCommunicationConfig: function() {
+                    return {
+                        enabled: initConfig.bootstrap.communication.enabled,
+                        type: initConfig.bootstrap.communication.type,
+                        params: initConfig.bootstrap.communication.params,
+                        syncActions: []
+                    };
+                },
+                getTimeout: _.noop
+            }
+        }
+
         QUnit.expect(3);
 
-        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+        proxyFactory.registerProvider('configurableProxyFactory', configurableProxyFactory(configFactory));
 
         ajaxMock.mock(true);
 
-        proxy = proxyFactory('qtiServiceProxy', initConfig);
+        proxy = proxyFactory('configurableProxyFactory', initConfig);
 
         proxy.install();
 
