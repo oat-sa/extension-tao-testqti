@@ -20,6 +20,7 @@ module.exports = function(grunt) {
     var itemRuntime = ext.getExtensionSources('taoQtiItem', ['views/js/qtiItem/core/**/*.js', 'views/js/qtiCommonRenderer/renderers/**/*.js',  'views/js/qtiCommonRenderer/helpers/**/*.js'], true);
     var testRuntime = ext.getExtensionSources('taoQtiTest', ['views/js/runner/**/*.js'], true);
     var testPlugins = ext.getExtensionSources('taoQtiTest', ['views/js/runner/plugins/**/*.js'], true);
+    var qtiPreviewer = ext.getExtensionSources('taoQtiTest', ['views/js/previewer/**/*.js'], true);
 
     grunt.config.merge({
 
@@ -56,6 +57,15 @@ module.exports = function(grunt) {
                     exclude : ['json!i18ntr/messages.json'].concat(libs),
                     out: out + "/testPlugins.min.js"
                 }
+            },
+            qtipreviewer : {
+                options: {
+                    paths : paths,
+                    include: ['lib/require', 'loader/bootstrap'].concat(qtiPreviewer).concat(itemRuntime),
+                    excludeShallow : ['mathJax', 'ckeditor'].concat(testPlugins),
+                    exclude : ['json!i18ntr/messages.json'],
+                    out: out + "/qtiPreviewer.min.js"
+                }
             }
         },
 
@@ -67,7 +77,9 @@ module.exports = function(grunt) {
                     { src: [out + '/qtiTestRunner.min.js'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js' },
                     { src: [out + '/qtiTestRunner.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js.map' },
                     { src: [out + '/testPlugins.min.js'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js' },
-                    { src: [out + '/testPlugins.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js.map' }
+                    { src: [out + '/testPlugins.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js.map' },
+                    { src: [out + '/qtiPreviewer.min.js'],  dest: root + '/taoQtiTest/views/js/loader/qtiPreviewer.min.js' },
+                    { src: [out + '/qtiPreviewer.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/qtiPreviewer.min.js.map' }
                 ]
             }
         }
@@ -79,6 +91,7 @@ module.exports = function(grunt) {
         'requirejs:taoqtitestbundle',
         'requirejs:qtitestrunner',
         'requirejs:taoqtitestplugins',
+        'requirejs:qtipreviewer',
         'copy:taoqtitestbundle'
     ]);
 };
