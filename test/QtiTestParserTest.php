@@ -122,6 +122,7 @@ class QtiTestParserTest extends TaoPhpUnitTestRunner
      */
     public function testQtiTextCompilerCompile($compiler)
     {
+        $compiler->setServiceLocator($this->getServiceLocator());
         $report = $compiler->compile();
         $this->assertEquals($report->getType(), common_report_Report::TYPE_ERROR);
         $serviceCall = $report->getData();
