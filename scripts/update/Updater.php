@@ -1755,6 +1755,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('18.6.0');
         }
 
-        $this->skip('18.6.0', '18.7.1');
+        $this->skip('18.6.0', '18.8.0');
     }
 }
