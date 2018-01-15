@@ -53,13 +53,10 @@ define([
     navigationHelper,
     toolboxFactory,
     qtiItemRunner,
-    assetManagerFactory,
+    getAssetManager,
     testStoreFactory,
     layoutTpl) {
     'use strict';
-
-    //the asset strategies
-    var assetManager = assetManagerFactory();
 
     var $layout = $(layoutTpl());
 
@@ -348,9 +345,13 @@ define([
                 })
                 .on('move', function(direction, scope, position){
 
+                    // get the item results/state before disabling the tools
+                    // otherwise the state could be partially lost for tools that clean up when disabling
+                    var itemResults = getItemResults();
+
                     this.trigger('disablenav disabletools');
 
-                    computeNext('move', _.merge(getItemResults(), {
+                    computeNext('move', _.merge(itemResults, {
                         direction : direction,
                         scope     : scope || 'item',
                         ref       : position
@@ -500,7 +501,11 @@ define([
                 return self.getProxy().init({
                     storeId : storeId
                 }).then(function(results){
+
                     self.dataUpdater.update(results);
+
+                    //set the plugin config from the test data
+                    self.dataUpdater.updatePluginsConfig(self.getPlugins());
 
                     //check if we need to trigger a storeChange
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
@@ -568,6 +573,10 @@ define([
          */
         renderItem : function renderItem(itemIdentifier, itemData){
             var self = this;
+
+            var config = this.getConfig();
+
+            var assetManager = getAssetManager(config.serviceCallId);
 
             var changeState = function changeState(){
                 self.setItemState(itemIdentifier, 'changed', true);

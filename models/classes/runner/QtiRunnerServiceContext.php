@@ -23,10 +23,11 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\libCat\CatSession;
-use oat\libCat\exception\CatEngineConnectivityException;
 use oat\libCat\Exception\CatEngineException;
+use oat\libCat\result\AbstractResult;
+use oat\libCat\result\ItemResult;
+use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\helpers\TestSessionMemento;
-use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
@@ -34,6 +35,7 @@ use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\SectionPauseService;
+use oat\tao\helpers\UserHelper;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
@@ -42,7 +44,6 @@ use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
-use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
 use taoQtiTest_models_classes_QtiTestService;
 
@@ -118,28 +119,26 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     private $syncingMode = false;
 
     /**
+     * @var string
+     */
+    private $userUri;
+
+    /**
      * QtiRunnerServiceContext constructor.
      * 
      * @param string $testDefinitionUri
      * @param string $testCompilationUri
      * @param string $testExecutionUri
-     * @throws \common_Exception
      */
     public function __construct($testDefinitionUri, $testCompilationUri, $testExecutionUri)
     {
         $this->testDefinitionUri = $testDefinitionUri;
         $this->testCompilationUri = $testCompilationUri;
         $this->testExecutionUri = $testExecutionUri;
-
-        $this->initCompilationDirectory();
-        $this->initTestDefinition();
-        $this->initStorage();
-        $this->initTestSession();
     }
 
     /**
      * Starts the context
-     * @throws \common_Exception
      */
     public function init()
     {
@@ -148,7 +147,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
         $sessionStateService->resumeSession($this->getTestSession());
         
-        $this->retrieveTestMeta();
         $this->retrieveItemIndex();
     }
 
@@ -178,16 +176,18 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Loads the storage
      * @throws \common_exception_Error
+     * @throws \common_ext_ExtensionException
      */
     protected function initStorage()
     {
-        $resultServer = \taoResultServer_models_classes_ResultServerStateFull::singleton();
+        /** @var DeliveryServerService $deliveryServerService */
+        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+        $resultStore = $deliveryServerService->getResultStoreWrapper($this->getTestExecutionUri());
         $testResource = new \core_kernel_classes_Resource($this->getTestDefinitionUri());
-        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultServer, $testResource);
+        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
-
+        $userUri = $this->getUserUri();
 
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $storageClassName = $config['test-session-storage'];
@@ -208,7 +208,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             \common_Logger::d("Instantiating QTI Assessment Test Session");
             $this->setTestSession($storage->instantiate($this->getTestDefinition(), $sessionId));
 
-            $testTaker = \common_session_SessionManager::getSession()->getUser();
+            $testTaker = UserHelper::getUser($this->getUserUri());
             \taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         }
         else {
@@ -220,15 +220,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * Retrieves the QTI Test Definition meta-data array stored into the private compilation directory.
+     * @deprecated
      */
     protected function retrieveTestMeta() 
     {
-        $directories = $this->getCompilationDirectory();
-        $data = $directories['private']->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME);
-        $data = str_replace('<?php', '', $data);
-        $data = str_replace('?>', '', $data);
-        $this->testMeta = eval($data);
     }
     
     /**
@@ -271,14 +266,20 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Gets the session storage
      * @return AbstractQtiBinaryStorage
+     * @throws \common_exception_Error
+     * @throws \common_ext_ExtensionException
      */
     public function getStorage()
     {
+        if (!$this->storage) {
+            $this->initStorage();
+        }
         return $this->storage;
     }
 
     /**
      * @return EventManager
+     * @throws \Zend\ServiceManager\Exception\ServiceNotFoundException
      */
     protected function getEventManager() {
         return $this->getServiceLocator()->get(EventManager::SERVICE_ID);
@@ -286,9 +287,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * @return \taoQtiTest_helpers_SessionManager
+     * @throws \common_exception_Error
+     * @throws \common_ext_ExtensionException
      */
     public function getSessionManager()
     {
+        if (null === $this->sessionManager){
+            $this->initStorage();
+        }
         return $this->sessionManager;
     }
 
@@ -298,6 +304,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getTestDefinition()
     {
+        if (null === $this->testDefinition) {
+            $this->initTestDefinition();
+        }
         return $this->testDefinition;
     }
 
@@ -307,6 +316,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getCompilationDirectory()
     {
+        if (null === $this->compilationDirectory) {
+            $this->initCompilationDirectory();
+        }
         return $this->compilationDirectory;
     }
 
@@ -316,6 +328,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getTestMeta()
     {
+        if (!isset($this->testMeta)) {
+            $directories = $this->getCompilationDirectory();
+            $data = $directories['private']->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME);
+            $data = str_replace('<?php', '', $data);
+            $data = str_replace('?>', '', $data);
+            $this->testMeta = eval($data);
+        }
         return $this->testMeta;
     }
     
@@ -357,6 +376,27 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
     }
 
+
+    /**
+     * @return string
+     * @throws \common_exception_Error
+     */
+    public function getUserUri()
+    {
+        if ($this->userUri === null) {
+            $this->userUri = \common_session_SessionManager::getSession()->getUserUri();
+        }
+        return $this->userUri;
+    }
+
+    /**
+     * @param string $userUri
+     */
+    public function setUserUri($userUri)
+    {
+        $this->userUri = $userUri;
+    }
+
     /**
      * Gets a particular value from item index
      * @param string $id
@@ -391,7 +431,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         
         return $catEngine;
     }
-    
+
+    public function getTestSession()
+    {
+        if (!$this->testSession){
+            $this->initTestSession();
+        }
+        return parent::getTestSession(); // TODO: Change the autogenerated stub
+    }
+
+
     /**
      * Get the current CAT Session Object.
      * 
@@ -471,20 +520,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->getCatSection()->getSectionId(),
             'cat-item-output'
         );
-        
-        if (!$itemOutput) {
-            $output = [];
-        } else {
+
+        $output = [];
+
+        if (!is_null($itemOutput)) {
             $rawData = json_decode($itemOutput, true);
 
             foreach ($rawData as $result) {
-                $itemIdentifier = $result['identifier'];
-                $variables= [];
-                foreach ($result['outcomeVariables'] as $outcomeVariable) {
-                    $variables[] = ResultVariable::restore($outcomeVariable);
-                }
-                
-                $output[$itemIdentifier] = new ItemResult($itemIdentifier, $variables);
+                /** @var ItemResult $itemResult */
+                $itemResult = ItemResult::restore($result);
+                $output[$itemResult->getItemRefId()] = $itemResult;
             }
         }
         
@@ -553,7 +598,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * Select the next Adaptive Item.
+     * Select the next Adaptive Item and store the retrieved results from CAT engine
      *
      * Ask the CAT Engine for the Next Item to be presented to the candidate, depending on the last
      * CAT Item ID and last CAT Item Output currently stored.
@@ -566,38 +611,40 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function selectAdaptiveNextItem()
     {
-        if( ! $this->syncingMode ) {
-            $lastItemId = $this->getCurrentCatItemId();
-            $lastOutput = $this->getLastCatItemOutput();
-            $catSession = $this->getCatSession();
+        $lastItemId = $this->getCurrentCatItemId();
+        $lastOutput = $this->getLastCatItemOutput();
+        $catSession = $this->getCatSession();
 
-            $preSelection = $catSession->getTestMap();
+        $preSelection = $catSession->getTestMap();
 
-            try {
+        try {
+            if (!$this->syncingMode) {
                 $selection = $catSession->getTestMap(array_values($lastOutput));
+
                 if (!$this->saveAdaptiveResults($catSession)) {
                     \common_Logger::w('Unable to save CatService results.');
                 }
                 $isShadowItem = false;
-            } catch (CatEngineConnectivityException $e) {
-                throw new CatEngineNotFoundException($e->getMessage(), null);
-            } catch (CatEngineException $e) {
-                \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
+            } else {
                 $selection = $catSession->getTestMap();
                 $isShadowItem = true;
             }
+        } catch (CatEngineException $e) {
+            \common_Logger::e('Error during CatEngine processing. ' . $e->getMessage());
+            $selection = $catSession->getTestMap();
+            $isShadowItem = true;
+        }
 
-            $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $preSelection, $selection, $isShadowItem);
-            $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+        $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $preSelection, $selection, $isShadowItem);
+        $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
-            if (is_array($selection) && count($selection) == 0) {
-                \common_Logger::d('No new CAT item selection.');
-                return null;
-            } else {
-                $this->persistCatSession($catSession);
-                \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
-                return $selection[0];
-            }
+        $this->persistCatSession($catSession);
+        if (is_array($selection) && count($selection) > 0) {
+            \common_Logger::d("New CAT item selection is '" . implode(', ', $selection) . "'.");
+            return $selection[0];
+        } else {
+            \common_Logger::d('No new CAT item selection.');
+            return null;
         }
     }
     
@@ -810,45 +857,133 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * Save the Cat service result.
-     * If there is no result, skip
-     * Otherwise tergister the values as Test outcome variables
+     * Save the Cat service result for tests and items
      *
      * @param CatSession $catSession
      * @return bool
      */
     protected function saveAdaptiveResults(CatSession $catSession)
     {
-        /** @var ResultVariable[] $resultVariables */
-        $resultVariables = $catSession->getResults();
-        if (empty($resultVariables)) {
-            \common_Logger::t('No Cat results to store.');
-            return true;
-        }
+        return $this->storeResult(array_merge([$catSession->getTestResult()], $catSession->getItemResults()));
+    }
 
+    /**
+     * Store a Cat Result variable
+     *
+     * The result has to be an ItemResult and TestResult to embed CAT variables
+     * After converted them to taoResultServer variables
+     * Use the runner service to store the variables
+     *
+     * @param AbstractResult[] $results
+     * @return bool
+     */
+    protected function storeResult(array $results)
+    {
         /** @var QtiRunnerService $runnerService */
         $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
-        foreach ($resultVariables as $resultVariable) {
-            try {
-                $sectionId = $this
-                    ->getTestSession()
-                    ->getRoute()
-                    ->current()
-                    ->getAssessmentSection()
-                    ->getIdentifier();
-                $runnerService->storeOutcomeVariable(
-                    $this,
-                    null,
-                    $sectionId . '-' . $resultVariable->getId(),
-                    $resultVariable->getValue()
-                );
-            } catch (\common_Exception $e) {
-                return false;
-            }
-        }
-        \common_Logger::i('Cat service results stored as outcome variable.');
 
-        return true;
+        $success = true;
+        try {
+            foreach ($results as $result) {
+
+                if (!$result instanceof AbstractResult) {
+                    throw new \common_Exception(__FUNCTION__ . ' requires a CAT result to store it.');
+                }
+
+                $variables = $this->convertCatVariables($result->getVariables());
+                if (empty($variables)) {
+                    \common_Logger::t('No Cat result variables to store.');
+                    continue;
+                }
+
+                if ($result instanceof ItemResult) {
+                    $itemId = $result->getItemRefId();
+                    $itemUri = $this->getItemUriFromRefId($itemId);
+                } else {
+                    $itemUri = $itemId = null;
+                    $sectionId = $this
+                        ->getTestSession()
+                        ->getRoute()
+                        ->current()
+                        ->getAssessmentSection()
+                        ->getIdentifier();
+                    /** @var \taoResultServer_models_classes_Variable $variable */
+                    foreach ($variables as $variable) {
+                        $variable->setIdentifier($sectionId . '-' . $variable->getIdentifier());
+                    }
+                }
+
+                if (!$runnerService->storeVariables($this, $itemUri, $variables, $itemId)) {
+                    $success = false;
+                }
+            }
+        } catch (\Exception $e) {
+            \common_Logger::w('An error has occurred during CAT result storing: ' . $e->getMessage());
+            $success = false;
+        }
+
+        return $success;
+    }
+
+    /**
+     * Convert CAT variables to taoResultServer variables
+     *
+     * Following the variable type, use the Runner service to get the appropriate variable
+     * The method manage the trace, response and outcome variable
+     *
+     * @param array $variables
+     * @return array
+     * @throws \common_exception_NotImplemented If variable type is not managed
+     */
+    protected function convertCatVariables(array $variables)
+    {
+        /** @var QtiRunnerService $runnerService */
+        $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
+        $convertedVariables = [];
+
+        foreach ($variables as $variable) {
+
+            switch ($variable->getVariableType()) {
+                case ResultVariable::TRACE_VARIABLE:
+                    $getVariableMethod = 'getTraceVariable';
+                    break;
+                case ResultVariable::RESPONSE_VARIABLE:
+                    $getVariableMethod = 'getResponseVariable';
+                    break;
+                case ResultVariable::OUTCOME_VARIABLE:
+                    $getVariableMethod = 'getOutcomeVariable';
+                    break;
+                case ResultVariable::TEMPLATE_VARIABLE:
+                default:
+                    $getVariableMethod = null;
+                    break;
+            }
+
+            if (is_null($getVariableMethod)) {
+                \common_Logger::w('Variable of type ' . $variable->getVariableType(). ' is not implemented in ' . __METHOD__);
+                throw new \common_exception_NotImplemented();
+            }
+
+            $convertedVariables[] = call_user_func_array(
+                array($runnerService, $getVariableMethod), array($variable->getId(), $variable->getValue())
+            );
+        }
+
+        return $convertedVariables;
+    }
+
+    /**
+     * Get item uri associated to the given $itemId.
+     *
+     * @return string The uri
+     */
+    protected function getItemUriFromRefId($itemId)
+    {
+        $ref = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAssessmentItemRefByIdentifier(
+            $this->getCompilationDirectory()['private'],
+            $itemId
+        );
+        return explode('|', $ref->getHref())[0];
     }
 
     /**

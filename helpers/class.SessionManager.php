@@ -14,10 +14,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
+use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use qtism\runtime\tests\AbstractSessionManager;
 use qtism\runtime\tests\TestResultsSubmission;
 use qtism\runtime\tests\Route;
@@ -42,8 +43,8 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
 
     /**
      * The result server to be used by tao_helpers_TestSession created by the factory.
-     * 
-     * @var taoResultServer_models_classes_ResultServerStateFull
+     *
+     * @var ResultStorageWrapper
      */
     private $resultServer;
     
@@ -53,35 +54,40 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      * @var core_kernel_classes_Resource
      */
     private $test;
-    
+
     /**
      * Create a new SessionManager object.
-     * 
-     * @param taoResultServer_models_classes_ResultServerStateFull $resultServer The ResultServer to be set to the AssessmentTestSession to be built.
+     *
+     * @param ResultStorageWrapper $resultServer The ResultServer to be set to the AssessmentTestSession to be built.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
+     * @throws \InvalidArgumentException
+     * @throws common_Exception
      */
-    public function __construct(taoResultServer_models_classes_ResultServerStateFull $resultServer, core_kernel_classes_Resource $test) {
+    public function __construct(ResultStorageWrapper $resultServer, core_kernel_classes_Resource $test)
+    {
         parent::__construct();
         $this->setAcceptableLatency(new QtiDuration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
         $this->setResultServer($resultServer);
         $this->setTest($test);
     }
-    
+
     /**
      * Set the result server to be used by tao_helpers_TestSession created by the factory.
-     * 
-     * @param taoResultServer_models_classes_ResultServerStateFull $resultServer
+     *
+     * @param ResultStorageWrapper $resultServer
      */
-    public function setResultServer(taoResultServer_models_classes_ResultServerStateFull $resultServer) {
+    public function setResultServer(ResultStorageWrapper $resultServer)
+    {
         $this->resultServer = $resultServer;
     }
-    
+
     /**
      * Get the result server to be used by tao_helpers_TestSession created by the factory.
-     * 
-     * @return taoResultServer_models_classes_ResultServerStateFull
+     *
+     * @return ResultStorageWrapper
      */
-    public function getResultServer() {
+    public function getResultServer()
+    {
         return $this->resultServer;
     }
     
@@ -102,12 +108,13 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     public function getTest() {
         return $this->test;
     }
-    
+
     /**
      * Instantiates an AssessmentTestSession with the default implementation provided by QTISM.
      * @param AssessmentTest $test
      * @param Route $route
      * @return AssessmentTestSession
+     * @throws common_ext_ExtensionException
      */
     protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route) {
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
@@ -145,7 +152,7 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     protected function configureAssessmentTestSession(AssessmentTestSession $assessmentTestSession) {
         $assessmentTestSession->setTestResultsSubmission(TestResultsSubmission::END);
     }
-    
+
     /**
      * Instantiates an AssessmentItemSession with the default implementation provided by QTISM.
      *
@@ -153,17 +160,10 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      * @param integer $navigationMode A value from the NavigationMode enumeration.
      * @param integer $submissionMode A value from the SubmissionMode enumeration.
      * @return AssessmentItemSession A freshly instantiated AssessmentItemSession.
+     * @throws \InvalidArgumentException
      */
     protected function instantiateAssessmentItemSession(IAssessmentItem $assessmentItem, $navigationMode, $submissionMode) {
         return new AssessmentItemSession($assessmentItem, $this, $navigationMode, $submissionMode);
     }
-    
-    /**
-     * Creates a brand new AssessmentItemSessionFactory object.
-     *
-     * @return AssessmentItemSessionFactory
-     */
-    public function createAssessmentItemSessionFactory() {
-        return new AssessmentItemSessionFactory(false);
-    }
+
 }

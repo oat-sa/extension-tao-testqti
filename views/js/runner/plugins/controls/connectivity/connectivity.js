@@ -31,11 +31,18 @@ define([
 ], function ($, _, __, Promise, pollingFactory, waitingDialog, pluginFactory, connectivityTpl) {
     'use strict';
 
+
     /**
-     * Connectivity check interval, in ms
-     * @type {Number}
+     * The plugin default configuration
+     * @type {Object}
+     * @property {Number} checkInterval - when offline, interval to check if we're back online
+     * @property {Boolean} indicator - do we display the indicator in the test UI
      */
-    var checkInterval = 30 * 1000;
+    var defaultConfig = {
+        checkInterval : 30 * 1000,
+        indicator     : true
+    };
+
 
     /**
      * Creates the connectivity plugin.
@@ -49,11 +56,37 @@ define([
          * Initializes the plugin (called during runner's init)
          */
         init: function init() {
-            // this function is mandatory
+            var self       = this;
+            var testRunner = this.getTestRunner();
+            var proxy      = testRunner.getProxy();
+            var config     = _.defaults(this.getConfig() || {}, defaultConfig);
+
+            //Displays a connectivity indicator
+            if(config && config.indicator){
+
+                //create the indicator
+                this.$element = $(connectivityTpl({
+                    state: proxy.isOnline() ? 'connected' : 'disconnected'
+                }));
+
+                testRunner
+                    .on('disconnect', function(){
+                        self.$element.removeClass('connected').addClass('disconnected');
+                    })
+                    .on('reconnect', function() {
+                        self.$element.removeClass('disconnected').addClass('connected');
+                    });
+            }
+
+            //update the interval, with the new value
+            if(this.polling && _.isNumber(config.checkInterval)){
+                this.polling.setInterval(config.checkInterval);
+            }
         },
 
         /**
          * Installs the plugin (called when the runner bind the plugin)
+         * We do it before init to catch even offline during the init sequence
          */
         install: function install() {
             var self = this;
@@ -68,7 +101,7 @@ define([
              * @param {String} [messsage] - additional message for the dialog
              * @returns {Promise} resolves once the wait is over and the user click on 'proceed'
              */
-            var displayWaitingDialog = function displayWaitingDialog(message){
+            this.displayWaitingDialog = function displayWaitingDialog(message){
 
                 var dialog;
                 return new Promise(function(resolve) {
@@ -114,21 +147,16 @@ define([
                         .telemetry(testRunner.getTestContext().itemIdentifier, 'up')
                         .catch(_.noop);
                 },
-                interval: checkInterval,
+                interval: defaultConfig.checkInterval,
                 autoStart: false
             });
 
-            //create the indicator
-            this.$element = $(connectivityTpl({
-                state: proxy.isOnline() ? 'connected' : 'disconnected'
-            }));
 
             //the Proxy is the only one to know something about connectivity
             proxy.on('disconnect', function disconnect(source) {
                 if (!testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', true);
                     testRunner.trigger('disconnect', source);
-                    self.$element.removeClass('connected').addClass('disconnected');
                     self.polling.start();
                 }
             })
@@ -136,7 +164,6 @@ define([
                 if (testRunner.getState('disconnected')) {
                     testRunner.setState('disconnected', false);
                     testRunner.trigger('reconnect');
-                    self.$element.removeClass('disconnected').addClass('connected');
                     self.polling.stop();
                 }
             });
@@ -147,7 +174,7 @@ define([
             //by navigation errors (see below)
             testRunner.before('leave', function(e, data){
                 if (proxy.isOffline()) {
-                    displayWaitingDialog(data.message)
+                    self.displayWaitingDialog(data.message)
                         .then(function(){
                             testRunner.trigger('leave', data);
                         })
@@ -168,7 +195,7 @@ define([
                 }
 
                 if (proxy.isOffline()) {
-                    displayWaitingDialog(err.message)
+                    self.displayWaitingDialog(err.message)
                         .then(function(){
                             if(err.type === 'nav'){
                                 testRunner.loadItem(testRunner.getTestContext().itemIdentifier);
@@ -196,7 +223,9 @@ define([
          */
         render : function render(){
             var $container = this.getAreaBroker().getControlArea();
-            $container.append(this.$element);
+            if(this.$element){
+                $container.append(this.$element);
+            }
         }
     });
 });

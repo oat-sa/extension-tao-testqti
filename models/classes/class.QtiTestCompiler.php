@@ -900,11 +900,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $compiledDocDir->write(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_INDEX, $index->serialize());
         }
     }
-    
-    private function getServiceLocator()
-    {
-        return ServiceManager::getServiceManager();
-    }
 
     /**
      * Compile AssessmentItemRef Href Indexes
