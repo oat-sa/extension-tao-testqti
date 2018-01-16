@@ -22,13 +22,14 @@
  */
 namespace oat\taoQtiTest\test;
 
-use oat\oatbox\service\ServiceManager;
+use Prophecy\Argument;
+use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\tao\model\plugins\PluginModule;
 use oat\taoQtiTest\models\TestCategoryPreset;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
-use oat\taoTests\models\runner\plugins\PluginRegistry;
+use oat\taoTests\models\runner\plugins\TestPluginService;
 
-class TestCategoryPresetProviderTest extends \PHPUnit_Framework_TestCase
+class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
 {
     public function testSort()
     {
@@ -111,8 +112,11 @@ class TestCategoryPresetProviderTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
+        $pluginService = $this->prophesize(TestPluginService::class);
         $presetProvider = new TestCategoryPresetProvider([], $allPresets);
-        $presetProvider->setServiceLocator(ServiceManager::getServiceManager());
+        $presetProvider->setServiceLocator($this->getServiceManagerProphecy([
+            TestPluginService::SERVICE_ID => $pluginService->reveal()
+        ]));
         $sortedPresetGroups = $presetProvider->getPresets();
 
         $this->assertCount(4, $sortedPresetGroups, 'sortedPresetGroups have the right number of preset groups');
@@ -129,7 +133,7 @@ class TestCategoryPresetProviderTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue($preset->getOrder() > $previousOrder, "preset {$preset->getId()} has a sort order > as previous order {$previousOrder}");
             $previousOrder = $preset->getOrder();
         }
-    }
+   }
 
 
     public function testFilterByInactivePlugins()
@@ -199,28 +203,31 @@ class TestCategoryPresetProviderTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $pluginRegistry = PluginRegistry::getRegistry();
-        $pluginRegistry->register(PluginModule::fromArray([
-                'id'          => 'plugin1',
-                'module'      => 'test/plugin1',
-                'category'    => 'plugins',
-                'active'      => true
+        $pluginService = $this->prophesize(TestPluginService::class);
+        $pluginService->getPlugin('plugin1')->willReturn(PluginModule::fromArray([
+            'id'          => 'plugin1',
+            'module'      => 'test/plugin1',
+            'category'    => 'plugins',
+            'active'      => true
         ]));
-        $pluginRegistry->register(PluginModule::fromArray([
-                'id'          => 'plugin2',
-                'module'      => 'test/plugin2',
-                'category'    => 'plugins',
-                'active'      => false
+        $pluginService->getPlugin('plugin2')->willReturn(PluginModule::fromArray([
+            'id'          => 'plugin2',
+            'module'      => 'test/plugin2',
+            'category'    => 'plugins',
+            'active'      => false
         ]));
-        $pluginRegistry->register(PluginModule::fromArray([
-                'id'          => 'plugin10',
-                'module'      => 'test/plugin10',
-                'category'    => 'plugins',
-                'active'      => false
-         ]));
-
+        $pluginService->getPlugin('plugin3')->willReturn(null);
+        $pluginService->getPlugin('plugin10')->willReturn(PluginModule::fromArray([
+            'id'          => 'plugin10',
+            'module'      => 'test/plugin10',
+            'category'    => 'plugins',
+            'active'      => false
+        ]));
         $presetProvider = new TestCategoryPresetProvider([], $allPresets);
-        $presetProvider->setServiceLocator(ServiceManager::getServiceManager());
+        $presetProvider->setServiceLocator($this->getServiceManagerProphecy([
+            TestPluginService::SERVICE_ID => $pluginService->reveal()
+        ]));
+
         $filteredPresetGroups = $presetProvider->getPresets();
 
         $this->assertCount(1, $filteredPresetGroups, 'filteredPresetGroups have the right number of preset groups');
