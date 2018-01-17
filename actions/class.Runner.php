@@ -266,6 +266,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function init()
     {
         $code = 200;
+        $response = [];
 
         try {
             $serviceContext = $this->runnerService->initServiceContext($this->getServiceContext());
@@ -289,9 +290,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $result = $this->runnerService->init($serviceContext);
             $this->runnerService->persist($serviceContext);
 
-            $response = [
-                'success' => $result,
-            ];
+            $response['success'] = $result;
 
             if ($result) {
                 $response['testData'] = $this->runnerService->getTestData($serviceContext);
