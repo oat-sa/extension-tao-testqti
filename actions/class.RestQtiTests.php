@@ -181,7 +181,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     private function getTestClass()
     {
-        return $this->getClassFromRequest(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI));
+        return $this->getClassFromRequest(new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
     }
 
     /**

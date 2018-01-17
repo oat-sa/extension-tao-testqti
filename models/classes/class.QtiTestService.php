@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2018 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -262,6 +262,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @param core_kernel_classes_Class $targetClass The Target RDFS class where you want the Test Resources to be created.
      * @param string $file The path to the IMS archive you want to import tests from.
      * @return common_report_Report An import report.
+     * @throws common_exception_Unauthorized
      */
     public function importMultipleTests(core_kernel_classes_Class $targetClass, $file) {
 
@@ -353,9 +354,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 $data = $r->getData();
 
                 // Delete all imported items.
-                foreach ($data->items as $item) {
-                    common_Logger::t("Rollbacking item '" . $item->getLabel() . "'...");
-                    @$itemService->deleteItem($item);
+                foreach ($data->newItems as $item) {
+                    common_Logger::t("Rollbacking new item '" . $item->getLabel() . "'...");
+                    $itemService->deleteResource($item);
                 }
                 
                 // Delete all created classes (by registered class lookups).
@@ -371,7 +372,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 common_Logger::t("Rollbacking test '" . $data->rdfsResource->getLabel() . "...");
                 @$this->deleteTest($data->rdfsResource);
 
-                if (count($data->items) > 0) {
+                if (count($data->newItems) > 0) {
                     $msg = __("The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back.", $data->manifestResource->getIdentifier());
                     $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, $msg));
                 }
@@ -430,6 +431,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $reportCtx->rdfsResource = $testResource;
         $reportCtx->itemClass = $targetClass;
         $reportCtx->items = [];
+        $reportCtx->newItems = [];
         $reportCtx->itemQtiResources = [];
         $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
         $reportCtx->createdClasses = [];
@@ -533,6 +535,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                                         if ($rdfItem) {
                                             $reportCtx->items[$assessmentItemRefId] = $rdfItem;
+                                            $reportCtx->newItems[$assessmentItemRefId] = $rdfItem;
                                             $reportCtx->itemQtiResources[$resourceIdentifier] = $rdfItem;
                                             $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
 
