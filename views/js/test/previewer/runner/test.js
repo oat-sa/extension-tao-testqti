@@ -22,13 +22,15 @@
 define([
     'jquery',
     'lodash',
+    'core/promise',
     'test/mocks/ajax',
     'taoQtiTest/previewer/runner',
     'json!taoQtiItem/test/samples/json/space-shuttle.json'
-], function ($, _, ajaxMock, previewerFactory, itemData) {
+], function ($, _, Promise, ajaxMock, previewerFactory, itemData) {
     'use strict';
 
     QUnit.module('API');
+
 
     // backup/restore ajax method between each test
     QUnit.testStart(function () {
@@ -38,37 +40,179 @@ define([
         ajaxMock.pop();
     });
 
-    QUnit.test('module', function (assert) {
-        QUnit.expect(3);
+
+    QUnit.asyncTest('module', function (assert) {
+        var config = {
+            serviceCallId: 'foo'
+        };
+
+        var previewer1 = previewerFactory($('#fixture-1'), config);
+        var previewer2 = previewerFactory($('#fixture-2'), config);
+
+        QUnit.expect(4);
+        ajaxMock.mock(true, function() {
+            return {
+                success: true
+            };
+        });
         assert.equal(typeof previewerFactory, 'function', "The previewer module exposes a function");
-        assert.equal(typeof previewerFactory(), 'object', "The previewer factory returns an object");
-        assert.notEqual(previewerFactory(), previewerFactory(), "The previewer factory returns a different instance on each call");
+        assert.equal(typeof previewer1, 'object', "The previewer factory returns an object");
+        assert.equal(typeof previewer2, 'object', "The previewer factory returns an object");
+        assert.notEqual(previewer1, previewer2, "The previewer factory returns a different instance on each call");
+
+        Promise.all([
+            new Promise(function(resolve) {
+                previewer1.on('ready', resolve);
+            }),
+            new Promise(function(resolve) {
+                previewer2.on('ready', resolve);
+            })
+        ]).catch(function(err) {
+            console.error(err);
+        }).then(function() {
+            QUnit.start();
+        })
     });
+
+
+    QUnit.cases([{
+        title: 'itemData in init',
+        fixture: '#fixture-item-1',
+        response: {
+            success: true,
+            itemIdentifier: 'item-1',
+            itemData: {
+                content: {
+                    type: 'qti',
+                    data: itemData
+                },
+                baseUrl: '',
+                state: {}
+            }
+        }
+    }, {
+        title: 'itemRef in init',
+        fixture: '#fixture-item-2',
+        response: function(req) {
+            if (/\/init[\/?]/.test(req.url)) {
+                return {
+                    success: true,
+                    itemIdentifier: 'item-2'
+                };
+            }
+
+            if (/\/getItem[\/?]/.test(req.url)) {
+                return {
+                    success: true,
+                    content: {
+                        type: 'qti',
+                        data: itemData
+                    },
+                    baseUrl: '',
+                    state: {}
+                };
+            }
+        }
+    }, {
+        title: 'manual load',
+        fixture: '#fixture-item-3',
+        itemIdentifier: 'item-3',
+        response: function(req) {
+            if (/\/getItem[\/?]/.test(req.url)) {
+                return {
+                    success: true,
+                    content: {
+                        type: 'qti',
+                        data: itemData
+                    },
+                    baseUrl: '',
+                    state: {}
+                };
+            }
+            return {
+                success: true
+            };
+        }
+    }])
+        .asyncTest('render item ', function (data, assert) {
+        var $container = $(data.fixture);
+        var serviceCallId = 'previewer';
+        var config = {
+            serviceCallId: serviceCallId
+        };
+
+        QUnit.expect(1);
+
+        ajaxMock.mock(true, data.response);
+
+        previewerFactory($container, config)
+            .on('error', function (err) {
+                console.error(err);
+                assert.ok(false, 'An error has occurred');
+                QUnit.start();
+            })
+            .on('ready', function (runner) {
+                runner
+                    .after('renderitem', function () {
+                        assert.ok(true, 'The previewer has been rendered');
+                        QUnit.start();
+                    });
+
+                if (data.itemIdentifier) {
+                    runner.loadItem(data.itemIdentifier);
+                }
+            });
+    });
+
 
     QUnit.asyncTest('integration', function (assert) {
         var $container = $('#previewer');
-        var config = {};
+        var serviceCallId = 'previewer';
+        var itemRef = 'item-1';
+        var config = {
+            serviceCallId: serviceCallId,
+            plugins: [{
+                module: 'taoQtiTest/previewer/plugins/navigation/submit',
+                bundle: 'taoQtiTest/loader/qtiPreviewer.min',
+                category: 'navigation'
+            }]
+        };
 
         QUnit.expect(1);
 
         ajaxMock.mock(true, function(req) {
-            if (req.url.match(/\/getItem[\/?]/)) {
+            if (/\/init[\/?]/.test(req.url)) {
                 return {
                     success: true,
+                    itemIdentifier: itemRef,
                     itemData: {
+                        content: {
+                            type: 'qti',
+                            data: itemData
+                        },
+                        baseUrl: '',
+                        state: {}
+                    }
+                };
+            }
+
+            if (/\/getItem[\/?]/.test(req.url)) {
+                return {
+                    success: true,
+                    content: {
                         type: 'qti',
                         data: itemData
                     },
-                    baseUrl: window.location.href,
-                    itemState: {}
+                    baseUrl: '',
+                    state: {}
                 };
             }
         });
 
         previewerFactory($container, config)
             .on('error', function (err) {
-                assert.ok(false, 'An error has occurred');
                 console.error(err);
+                assert.ok(false, 'An error has occurred');
                 QUnit.start();
             })
             .on('ready', function (runner) {
@@ -77,7 +221,7 @@ define([
                         assert.ok(true, 'The previewer has been rendered');
                         QUnit.start();
                     })
-                    .loadItem('item-1');
+                    //.loadItem(itemRef);
             });
     });
 });

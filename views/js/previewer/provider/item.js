@@ -90,7 +90,9 @@ define([
 
             var proxyProvider = config.proxyProvider || 'qtiItemPreviewerProxy';
             var proxyConfig = _.pick(config, [
-                'bootstrap'
+                'serviceCallId',
+                'bootstrap',
+                'timeout'
             ]);
 
             return proxyFactory(proxyProvider, proxyConfig);
@@ -106,6 +108,9 @@ define([
          * @returns {Promise} to chain proxy.init
          */
         init: function init() {
+            var self = this;
+            var dataHolder = this.getDataHolder();
+
             areaBroker.setComponent('toolbox', toolboxFactory());
             areaBroker.getToolbox().init();
 
@@ -113,6 +118,43 @@ define([
              * Install behavior on events
              */
             this
+                .on('submititem', function () {
+                    var itemRunner = this.itemRunner;
+                    this.trigger('disabletools enablenav');
+                    return this.getProxy()
+                        .submitItem(dataHolder.get('itemIdentifier'), itemRunner.getState(), itemRunner.getResponses())
+                        .then(function submitSuccess(response) {
+                            self.trigger('responseitem', response);
+                            self.trigger('resumeitem');
+                        })
+                        .catch(function submitError(err) {
+                            //some server errors are valid, so we don't fail (prevent empty responses)
+                            if (err.code === 200) {
+                                self.trigger('alert.submitError',
+                                    err.message || __('An error occurred during results submission. Please retry.'),
+                                    function () {
+                                        self.trigger('resumeitem');
+                                    }
+                                );
+                            }
+                        });
+                })
+                .on('ready', function () {
+                    var itemIdentifier = dataHolder.get('itemIdentifier');
+                    var itemData = dataHolder.get('itemData');
+
+                    if (itemIdentifier) {
+                        if (itemData) {
+                            self.renderItem(itemIdentifier, itemData);
+                        } else {
+                            self.loadItem(itemIdentifier);
+                        }
+                    }
+                })
+                .on('loaditem', function (itemRef, itemData) {
+                    dataHolder.set('itemIdentifier', itemRef);
+                    dataHolder.set('itemData', itemData);
+                })
                 .on('renderitem', function () {
                     this.trigger('enabletools enablenav');
                 })
@@ -137,7 +179,10 @@ define([
                     this.destroy();
                 });
 
-            return this.getProxy().init();
+            return this.getProxy().init().then(function (data) {
+                dataHolder.set('itemIdentifier', data.itemIdentifier);
+                dataHolder.set('itemData', data.itemData);
+            });
         },
 
         /**
@@ -167,15 +212,7 @@ define([
          * @returns {Promise} that calls in parallel the state and the item data
          */
         loadItem: function loadItem(itemIdentifier) {
-            return this.getProxy().getItem(itemIdentifier)
-                .then(function (data) {
-                    //aggregate the results
-                    return {
-                        content: data.itemData,
-                        baseUrl: data.baseUrl,
-                        state: data.itemState
-                    };
-                });
+            return this.getProxy().getItem(itemIdentifier);
         },
 
         /**
