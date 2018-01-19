@@ -46,6 +46,7 @@ define([
      * @private
      */
     var _entries = {
+        serviceCallId : true,
         bootstrap : false,
         timeout : false
     };
@@ -53,7 +54,7 @@ define([
     /**
      * Creates a config object for the proxy implementation
      * @param {Object} config - Some required and optional config
-     * @param {String} config.itemDefinition - The URI of the item
+     * @param {String} config.serviceCallId - An identifier for the service call
      * @param {String} [config.bootstrap.serviceController] - The name of the service controller
      * @param {String} [config.bootstrap.serviceExtension] - The name of the extension containing the service controller
      * @returns {Object}
@@ -73,6 +74,14 @@ define([
         // returns only a proxy storage object : no direct access to data is provided
         return {
             /**
+             * Gets the URI of the service call
+             * @returns {String}
+             */
+            getServiceCallId : function getServiceCallId() {
+                return storage.serviceCallId;
+            },
+
+            /**
              * Gets the name of the service controller
              * @returns {String}
              */
@@ -91,11 +100,12 @@ define([
             /**
              * Gets an URL of a service action
              * @param {String} action - the name of the action to request
-             * @param {String} itemDefinition - the identifier of the item (default to the one defined in config)
              * @returns {String} - Returns the URL
              */
             getTestActionUrl : function getTestActionUrl(action) {
-                return urlUtil.route(action, this.getServiceController(), this.getServiceExtension());
+                return urlUtil.route(action, this.getServiceController(), this.getServiceExtension(), {
+                    serviceCallId : this.getServiceCallId()
+                });
             },
 
             /**
@@ -106,6 +116,7 @@ define([
              */
             getItemActionUrl : function getItemActionUrl(itemIdentifier, action) {
                 return urlUtil.route(action, this.getServiceController(), this.getServiceExtension(), {
+                    serviceCallId : this.getServiceCallId(),
                     itemDefinition : itemIdentifier
                 });
             },
@@ -118,6 +129,7 @@ define([
              */
             getTelemetryUrl : function getTelemetryUrl(itemIdentifier, signal) {
                 return urlUtil.route(signal, this.getServiceController(), this.getServiceExtension(), {
+                    serviceCallId : this.getServiceCallId(),
                     itemDefinition : itemIdentifier
                 });
             },
@@ -143,7 +155,9 @@ define([
 
                 // build the service address from the provided config
                 // it can be overwritten by a full url from the config
-                var service = urlUtil.route(action || 'message', controller, extension, {});
+                var service = urlUtil.route(action || 'message', controller, extension, {
+                    serviceCallId : this.getServiceCallId()
+                });
 
                 // append the address of the remote service to target
                 var params = _.merge({}, communication.params || {}, {

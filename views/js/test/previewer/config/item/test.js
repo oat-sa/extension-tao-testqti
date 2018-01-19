@@ -30,7 +30,9 @@ define([
 
 
     QUnit.test('module', function (assert) {
-        var config = {};
+        var config = {
+            serviceCallId: 'foo'
+        };
 
         QUnit.expect(3);
         assert.equal(typeof itemConfig, 'function', "The itemConfig module exposes a function");
@@ -41,6 +43,7 @@ define([
 
     QUnit
         .cases([
+            {title: 'getServiceCallId'},
             {title: 'getServiceController'},
             {title: 'getServiceExtension'},
             {title: 'getTestActionUrl'},
@@ -49,8 +52,9 @@ define([
             {title: 'getTimeout'}
         ])
         .test('proxy API ', function (data, assert) {
-            var config = {};
-            var instance = itemConfig(config);
+            var instance = itemConfig({
+                serviceCallId: 'foo'
+            });
 
             QUnit.expect(1);
 
@@ -61,14 +65,31 @@ define([
     QUnit.test('itemConfig factory', function (assert) {
         QUnit.expect(1);
 
-        itemConfig({});
+        itemConfig({
+            serviceCallId: 'foo'
+        });
         assert.ok(true, 'The itemConfig() factory must not throw an exception when all the required config entries are provided');
+    });
+
+
+    QUnit.test('itemConfig.getServiceCallId', function (assert) {
+        var expectedServiceCallId = 'http://tao.rdf/1234#56789';
+        var config = {
+            serviceCallId: expectedServiceCallId
+        };
+        var instance = itemConfig(config);
+
+        QUnit.expect(1);
+
+        assert.equal(instance.getServiceCallId(), expectedServiceCallId, 'The itemConfig.getServiceCallId() method has returned the expected value');
     });
 
 
     QUnit.test('itemConfig.getServiceController', function (assert) {
         var expectedServiceController = 'MockRunner';
-        var config = {};
+        var config = {
+            serviceCallId: 'foo'
+        };
         var instance = itemConfig(config);
 
         QUnit.expect(3);
@@ -86,7 +107,9 @@ define([
 
     QUnit.test('itemConfig.getServiceExtension', function (assert) {
         var expectedServiceExtension = 'MockExtension';
-        var config = {};
+        var config = {
+            serviceCallId: 'foo'
+        };
         var instance = itemConfig(config);
 
         QUnit.expect(3);
@@ -104,13 +127,18 @@ define([
 
     QUnit.test('itemConfig.getTestActionUrl', function (assert) {
         var config = {
+            serviceCallId: 'foo',
             bootstrap: {
                 serviceController: 'MockRunner',
                 serviceExtension: 'MockExtension'
             }
         };
-        var expectedUrl = urlUtil.route('action1', config.bootstrap.serviceController, config.bootstrap.serviceExtension);
-        var expectedUrl2 = urlUtil.route('action2', config.bootstrap.serviceController, config.bootstrap.serviceExtension);
+        var expectedUrl = urlUtil.route('action1', config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
+            serviceCallId: config.serviceCallId
+        });
+        var expectedUrl2 = urlUtil.route('action2', config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
+            serviceCallId: config.serviceCallId
+        });
         var instance = itemConfig(config);
 
         QUnit.expect(2);
@@ -122,6 +150,7 @@ define([
 
     QUnit.test('itemConfig.getItemActionUrl', function (assert) {
         var config = {
+            serviceCallId: 'foo',
             bootstrap: {
                 serviceController: 'MockRunner',
                 serviceExtension: 'MockExtension'
@@ -129,9 +158,11 @@ define([
         };
         var actionName = 'MockAction';
         var expectedUrl = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
+            serviceCallId: config.serviceCallId,
             itemDefinition: 'item1'
         });
         var expectedUrl2 = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
+            serviceCallId: config.serviceCallId,
             itemDefinition: 'item2'
         });
         var instance = itemConfig(config);
@@ -145,6 +176,7 @@ define([
 
     QUnit.test('itemConfig.getTelemetryUrl', function (assert) {
         var config = {
+            serviceCallId: 'foo',
             bootstrap: {
                 serviceController: 'MockRunner',
                 serviceExtension: 'MockExtension'
@@ -152,9 +184,11 @@ define([
         };
         var actionName = 'MockAction';
         var expectedUrl = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
+            serviceCallId: config.serviceCallId,
             itemDefinition: 'item1'
         });
         var expectedUrl2 = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
+            serviceCallId: config.serviceCallId,
             itemDefinition: 'item2'
         });
         var instance = itemConfig(config);
@@ -167,7 +201,9 @@ define([
 
 
     QUnit.test('itemConfig.getTimeout', function (assert) {
-        var config = {};
+        var config = {
+            serviceCallId: 'foo'
+        };
         var instance = itemConfig(config);
 
         QUnit.expect(2);
@@ -183,6 +219,7 @@ define([
 
     QUnit.test('itemConfig.getCommunicationConfig', function (assert) {
         var config = {
+            serviceCallId: 'foo',
             bootstrap: {
                 serviceController: 'MockRunner',
                 serviceExtension: 'MockExtension'
@@ -193,7 +230,9 @@ define([
             enabled: undef,
             type: undef,
             params: {
-                service: urlUtil.route('message', config.bootstrap.serviceController, config.bootstrap.serviceExtension, {}),
+                service: urlUtil.route('message', config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
+                    serviceCallId: config.serviceCallId
+                }),
                 timeout: undef
             },
             syncActions: []

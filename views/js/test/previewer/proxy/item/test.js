@@ -105,13 +105,16 @@ define([
         }])
         .asyncTest('itemProxy.init ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
                 }
             };
 
-            var expectedUrl = urlUtil.route('init', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension);
+            var expectedUrl = urlUtil.route('init', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId
+            });
 
             var proxy, result;
 
@@ -167,6 +170,7 @@ define([
 
     QUnit.asyncTest('itemProxy.destroy', function(assert) {
         var initConfig = {
+            serviceCallId: 'foo',
             bootstrap: {
                 serviceController: 'MockRunner',
                 serviceExtension: 'MockExtension'
@@ -254,13 +258,16 @@ define([
         }])
         .asyncTest('itemProxy.getTestData ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
                 }
             };
 
-            var expectedUrl = urlUtil.route('getTestData', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension);
+            var expectedUrl = urlUtil.route('getTestData', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId
+            });
 
             var proxy, result;
 
@@ -353,13 +360,16 @@ define([
         }])
         .asyncTest('itemProxy.getTestContext ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
                 }
             };
 
-            var expectedUrl = urlUtil.route('getTestContext', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension);
+            var expectedUrl = urlUtil.route('getTestContext', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId
+            });
 
             var proxy, result;
 
@@ -451,13 +461,16 @@ define([
         }])
         .asyncTest('itemProxy.getTestMap ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
                 }
             };
 
-            var expectedUrl = urlUtil.route('getTestMap', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension);
+            var expectedUrl = urlUtil.route('getTestMap', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId
+            });
 
             var proxy, result;
 
@@ -560,13 +573,16 @@ define([
         }])
         .asyncTest('itemProxy.sendVariables ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
                 }
             };
 
-            var expectedUrl = urlUtil.route('storeTraceData', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension);
+            var expectedUrl = urlUtil.route('storeTraceData', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId
+            });
 
             var proxy, result;
 
@@ -670,13 +686,16 @@ define([
     }])
         .asyncTest('itemProxy.callTestAction ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
                 }
             };
 
-            var expectedUrl = urlUtil.route(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension);
+            var expectedUrl = urlUtil.route(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId
+            });
 
             var proxy, result;
 
@@ -778,6 +797,7 @@ define([
         }])
         .asyncTest('itemProxy.getItem ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
@@ -785,6 +805,7 @@ define([
             };
 
             var expectedUrl = urlUtil.route('getItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId,
                 itemDefinition : caseData.uri
             });
 
@@ -887,6 +908,7 @@ define([
         }])
         .asyncTest('itemProxy.submitItem ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
@@ -894,6 +916,7 @@ define([
             };
 
             var expectedUrl = urlUtil.route('submitItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId,
                 itemDefinition : caseData.uri
             });
 
@@ -1004,6 +1027,7 @@ define([
         }])
         .asyncTest('itemProxy.callItemAction ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
@@ -1011,6 +1035,7 @@ define([
             };
 
             var expectedUrl = urlUtil.route(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId,
                 itemDefinition : caseData.uri
             });
 
@@ -1119,6 +1144,7 @@ define([
         }])
         .asyncTest('itemProxy.telemetry ', function(caseData, assert) {
             var initConfig = {
+                serviceCallId: 'foo',
                 bootstrap: {
                     serviceController: 'MockRunner',
                     serviceExtension: 'MockExtension'
@@ -1126,6 +1152,7 @@ define([
             };
 
             var expectedUrl = urlUtil.route(caseData.signal, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
+                serviceCallId: initConfig.serviceCallId,
                 itemDefinition : caseData.uri
             });
 
@@ -1193,6 +1220,7 @@ define([
 
     QUnit.asyncTest('itemProxy.getCommunicator #enabled', function(assert) {
         var initConfig = {
+            serviceCallId: 'foo',
             bootstrap: {
                 serviceController: 'MockRunner',
                 serviceExtension: 'MockExtension',
@@ -1275,6 +1303,7 @@ define([
 
     QUnit.asyncTest('itemProxy.getCommunicator #disabled', function(assert) {
         var initConfig = {
+            serviceCallId: 'foo',
             bootstrap: {
                 serviceController: 'MockRunner',
                 serviceExtension: 'MockExtension',
