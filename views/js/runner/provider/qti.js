@@ -179,7 +179,6 @@ define([
          * @returns {Promise} to chain
          */
         install : function install(){
-            var self = this;
 
             /**
              * Delegates the udpate of testMap, testContext and testData
@@ -192,15 +191,9 @@ define([
             /**
              * Install the store into the plugins
              */
-            _.forEach(this.getPlugins(), function(plugin){
-                plugin.getStore = function getStore( isVolatile ){
-                    var storeName = plugin.getName();
-                    if(isVolatile){
-                        self.testStore.setStoreAsVolatile(storeName);
-                    }
-                    return self.testStore.getStore(storeName);
-                };
-            });
+            this.getPluginStore = function getPluginStore(pluginName, lasting) {
+                return this.testStore.getStore(pluginName, !!lasting);
+            };
         },
 
         /**
