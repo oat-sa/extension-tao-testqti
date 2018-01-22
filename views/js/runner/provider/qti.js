@@ -29,6 +29,7 @@ define([
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
+    'taoTests/runner/testStore',
     'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/helpers/map',
@@ -36,7 +37,6 @@ define([
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
-    'taoQtiTest/runner/provider/testStore',
     'tpl!taoQtiTest/runner/provider/layout'
 ], function(
     $,
@@ -47,6 +47,7 @@ define([
     areaBrokerFactory,
     proxyFactory,
     probeOverseerFactory,
+    testStoreFactory,
     dataUpdater,
     currentItemHelper,
     mapHelper,
@@ -54,7 +55,6 @@ define([
     toolboxFactory,
     qtiItemRunner,
     getAssetManager,
-    testStoreFactory,
     layoutTpl) {
     'use strict';
 
@@ -109,12 +109,23 @@ define([
          * @returns {probeOverseer}
          */
         loadProbeOverseer : function loadProbeOverseer(){
+
+            //the test run needs to be identified uniquely
+            return probeOverseerFactory(this);
+        },
+
+        /**
+         * Initialize and load the test store
+         * @returns {testStore}
+         */
+        loadTestStore : function loadTestStore(){
             var config = this.getConfig();
 
             //the test run needs to be identified uniquely
             var identifier = config.serviceCallId || 'test-' + Date.now();
-            return probeOverseerFactory(identifier, this);
+            return testStoreFactory(identifier);
         },
+
 
         /**
          * Loads the persistent states storage
@@ -185,15 +196,6 @@ define([
              * to a 3rd part component, the dataUpdater.
              */
             this.dataUpdater = dataUpdater(this.getDataHolder());
-
-            this.testStore = testStoreFactory(this.getConfig().serviceCallId);
-
-            /**
-             * Install the store into the plugins
-             */
-            this.getPluginStore = function getPluginStore(pluginName, lasting) {
-                return this.testStore.getStore(pluginName, !!lasting);
-            };
         },
 
         /**
@@ -488,7 +490,7 @@ define([
             }
 
             //get the current store identifier to send it along with the init call
-            return this.testStore.getStorageIdentifier().then(function(storeId){
+            return this.getTestStore().getStorageIdentifier().then(function(storeId){
 
                 //load data and current context in parallel at initialization
                 return self.getProxy().init({
@@ -500,18 +502,21 @@ define([
                     //set the plugin config from the test data
                     self.dataUpdater.updatePluginsConfig(self.getPlugins());
 
+                    self.getTestStore().clearVolatileOnStoreChange(results.lastStoreId);
+
                     //check if we need to trigger a storeChange
+                    /*
                     if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
 
                         /**
                          * We have changed the local storage engine (could be a browser change)
                          * @deprecated
                          * @event runner/provider/qti#storechange
-                         */
+                         *
                         self.trigger('storechange');
 
                         self.testStore.clearVolatileStores();
-                    }
+                    }*/
                 });
             });
         },
@@ -639,14 +644,20 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
-            var self = this;
-
+            var finishActions = [];
             if (!this.getState('finish')) {
                 this.trigger('disablenav disabletools');
 
-                if (self.stateStorage) {
-                    return self.stateStorage.removeStore();
+                finishActions.push(
+                    this.getTestStore().remove()
+                );
+
+                if (this.stateStorage) {
+                    finishActions.push(
+                       this.stateStorage.removeStore()
+                    );
                 }
+                return Promise.all(finishActions);
             }
         },
 

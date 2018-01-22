@@ -28,14 +28,13 @@ define([
     'core/promise',
     'core/polling',
     'core/timer',
-    'core/store',
     'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/plugins/controls/timer/timerComponent',
     'taoQtiTest/runner/helpers/messages',
     'taoQtiTest/runner/helpers/navigation',
     'tpl!taoQtiTest/runner/plugins/controls/timer/timers'
-], function($, _, __, Promise, pollingFactory, timerFactory, store, hider, pluginFactory, timerComponentFactory, messages, navigationHelper, timerBoxTpl) {
+], function($, _, __, Promise, pollingFactory, timerFactory, hider, pluginFactory, timerComponentFactory, messages, navigationHelper, timerBoxTpl) {
     'use strict';
 
     /**
@@ -84,16 +83,11 @@ define([
         name: 'timer',
 
         /**
-         * Installation of the plugin (called before init)
+         * Install step, add behavior before the lifecycle.
          */
         install: function install() {
-            var self = this;
-            //the storechange event is fired early (before runner's init is done)
-            //so we attach the handler early
-            var testRunner = this.getTestRunner();
-            testRunner.on('storechange', function handleStoreChange() {
-                self.shouldClearStorage = true;
-            });
+            //define the "timer" store as "volatile" (removed on browser change).
+            this.getTestRunner().getTestStore().setVolatile(this.getName());
         },
 
         /**
@@ -359,15 +353,8 @@ define([
                 }
             }
 
-            return store('timer-' + testRunner.getConfig().serviceCallId)
+            return testRunner.getPluginStore(this.getName())
                 .then(function(timeStore) {
-                    if (self.shouldClearStorage) {
-                        return timeStore.clear().then(function() {
-                            return timeStore;
-                        });
-                    }
-                    return Promise.resolve(timeStore);
-                }).then(function(timeStore) {
 
                     //the timer's storage
                     self.storage = timeStore;
