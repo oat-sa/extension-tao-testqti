@@ -22,13 +22,15 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\state\StateStorage;
 use oat\taoDelivery\model\execution\ServiceProxy;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiTest\models\runner\ExtendedState;
 use oat\taoQtiTest\models\runner\StorageManager;
 
 /**
  * Manage the flagged items
  */
-class ExtendedStateService extends ConfigurableService
+class ExtendedStateService extends ConfigurableService implements DeliveryExecutionDelete
 {
     const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
 
@@ -286,5 +288,19 @@ class ExtendedStateService extends ConfigurableService
         $extendedState = $this->getExtendedState($testSessionId);
         $extendedState->removeCatValue($assessmentSectionId, $key);
         $extendedState->save();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
+    {
+        if ($request->getSession() === null) {
+            return false;
+        }
+        $extendedState = $this->getExtendedState($request->getSession()->getSessionId());
+        $extendedState->deleteDeliveryExecutionData($request);
+
+        $this->getStorageService()->persist($extendedState->getUserId(), $extendedState->getStorageKey());
     }
 }
