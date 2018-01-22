@@ -473,7 +473,6 @@ define([
                     this.trigger('disabletools enablenav');
                 })
                 .on('finish', function () {
-                    this.trigger('endsession');
                     this.flush();
                 })
                 .on('leave', function () {
@@ -502,21 +501,8 @@ define([
                     //set the plugin config from the test data
                     self.dataUpdater.updatePluginsConfig(self.getPlugins());
 
+                    //this checks the received storeId and clear the volatiles stores
                     self.getTestStore().clearVolatileOnStoreChange(results.lastStoreId);
-
-                    //check if we need to trigger a storeChange
-                    /*
-                    if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
-
-                        /**
-                         * We have changed the local storage engine (could be a browser change)
-                         * @deprecated
-                         * @event runner/provider/qti#storechange
-                         *
-                        self.trigger('storechange');
-
-                        self.testStore.clearVolatileStores();
-                    }*/
                 });
             });
         },
@@ -644,20 +630,12 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
-            var finishActions = [];
             if (!this.getState('finish')) {
                 this.trigger('disablenav disabletools');
 
-                finishActions.push(
-                    this.getTestStore().remove()
-                );
-
                 if (this.stateStorage) {
-                    finishActions.push(
-                       this.stateStorage.removeStore()
-                    );
+                    return this.stateStorage.removeStore();
                 }
-                return Promise.all(finishActions);
             }
         },
 
@@ -726,6 +704,7 @@ define([
          */
         destroy : function destroy(){
 
+
             // prevent the item to be displayed while test runner is destroying
             if (this.itemRunner) {
                 this.itemRunner.clear();
@@ -735,6 +714,11 @@ define([
             if(areaBroker){
                 areaBroker.getToolbox().destroy();
                 areaBroker = null;
+            }
+
+            //we remove the store(s) only if the finish step was reached
+            if(this.getState('finish')){
+                return this.getTestStore().remove();
             }
         }
     };

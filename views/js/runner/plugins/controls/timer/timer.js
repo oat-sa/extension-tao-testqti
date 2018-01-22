@@ -511,13 +511,6 @@ define([
                                 consumedExtraTime: lastConsumedExtraTime / precision
                             });
                             lastConsumedExtraTime = 0;
-                        })
-                        .before('finish', function() {
-                            return new Promise(function(resolve) {
-                                self.storage.removeStore()
-                                    .then(resolve)
-                                    .catch(resolve);
-                            });
                         });
                 });
         },
