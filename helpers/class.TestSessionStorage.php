@@ -171,7 +171,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    public function delete($assessmentTestSession)
    {
        /** @var StateStorage $storageService */
-       $storageService = ServiceManager::getServiceManager()->getServiceManager()->get(StateStorage::SERVICE_ID);
+       $storageService = ServiceManager::getServiceManager()->get(StateStorage::SERVICE_ID);
 
        return $storageService->del($this->getUserUri(), $assessmentTestSession->getSessionId());
    }
