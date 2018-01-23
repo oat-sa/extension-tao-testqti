@@ -1897,6 +1897,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
         }
 
-        $storage->persist($userUri);
+        return $storage->persist($userUri);
     }
 }
