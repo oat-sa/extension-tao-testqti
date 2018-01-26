@@ -18,7 +18,8 @@
  *
  */
 
-use oat\taoQtiItem\scripts\install\SetUpQueueTasks;
+use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
+use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
@@ -26,6 +27,9 @@ use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
 use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
 use oat\taoQtiTest\scripts\install\RegisterTestImporters;
+use oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
@@ -62,10 +66,10 @@ return array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
             dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
-            \oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter::class,
-            \oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem::class,
+            RegisterTestRunnerProviders::class,
+            RegisterTestRunnerPlugins::class,
+            RegisterTestMetadataExporter::class,
+            CreateTestSessionFilesystem::class,
             RegisterQtiFlysystemManager::class,
             RegisterTestImporters::class,
             SetupEventListeners::class,
