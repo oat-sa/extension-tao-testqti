@@ -38,14 +38,14 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '19.0.0',
+    'version'     => '20.0.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoTests'   => '>=6.9.0',
         'taoQtiItem' => '>=13.0.0',
-        'tao'        => '>=14.13.0',
+        'tao'        => '>=15.4.0',
         'generis'    => '>=5.11.0',
-        'taoDelivery' => '>=8.1.0',
+        'taoDelivery' => '>=9.0.0',
         'taoItems'   => '>=5.4.1',
         'taoTaskQueue' => '>=0.14.0'
     ),
@@ -62,9 +62,10 @@ return array(
 			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
 		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
             dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
-            'oat\\taoQtiTest\\scripts\\install\\RegisterTestRunnerPlugins',
-            'oat\\taoQtiTest\\scripts\\install\\RegisterTestMetadataExporter',
-            'oat\\taoQtiTest\\scripts\\install\\CreateTestSessionFilesystem',
+            \oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders::class,
+            \oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins::class,
+            \oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter::class,
+            \oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem::class,
             RegisterQtiFlysystemManager::class,
             RegisterTestImporters::class,
             SetupEventListeners::class,
@@ -91,7 +92,8 @@ return array(
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'TestRunner')),
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'Runner')),
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Creator')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items'))
+        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items')),
+        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
     ),
 	'constants' => array(
 		# actions directory

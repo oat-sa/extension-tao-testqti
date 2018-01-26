@@ -66,11 +66,14 @@ class taoQtiTest_helpers_ItemResolver implements Resolver {
         
         // strip xinclude, we don't need that at the moment.
         $raw = $this->service->getXmlByRdfItem($this->getResource($url));
-        $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';
+        $dom = new DOMDocument;
+        $dom->loadXML($raw);
+        foreach($dom->getElementsByTagNameNS('http://www.w3.org/2001/XInclude', 'include') as $element) {
+                $element->parentNode->removeChild($element);
+        }       
 
-        $raw = preg_replace("/<xi:include(?:.*)>/u", '', $raw);
-        
-        file_put_contents($tmpfile, $raw);
+        $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';
+        file_put_contents($tmpfile, $dom->saveXML());
         
         return $tmpfile;
     }

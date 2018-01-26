@@ -33,7 +33,8 @@ define([
             answered: 0,
             flagged: 0,
             viewed: 0,
-            total: 0
+            total: 0,
+            questionsViewed: 0
         };
     }
 
@@ -414,6 +415,10 @@ define([
                     if (item.answered) {
                         acc.answered++;
                     }
+
+                    if (item.viewed) {
+                        acc.questionsViewed++;
+                    }
                 }
                 if (item.flagged) {
                     acc.flagged++;
@@ -438,6 +443,7 @@ define([
                 acc.flagged += item.stats.flagged;
                 acc.viewed += item.stats.viewed;
                 acc.total += item.stats.total;
+                acc.questionsViewed += item.stats.questionsViewed;
                 return acc;
             }, getEmptyStats());
         },

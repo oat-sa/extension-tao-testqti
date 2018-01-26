@@ -26,6 +26,10 @@ use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDelivery\model\RuntimeService;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use \oat\taoQtiTest\models\ExtendedStateService;
@@ -145,16 +149,18 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param string $testDefinitionUri The URI of the test
      * @param string $testCompilationUri The URI of the compiled delivery
      * @param string $testExecutionUri The URI of the delivery execution
+     * @param string $userUri User identifier. If null current user will be used
      * @return QtiRunnerServiceContext
      * @throws \common_Exception
      */
-    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri)
+    public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri, $userUri = null)
     {
         // create a service context based on the provided URI
         // initialize the test session and related objects
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
         $serviceContext->setServiceManager($this->getServiceManager());
         $serviceContext->setTestConfig($this->getTestConfig());
+        $serviceContext->setUserUri($userUri);
 
         $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
         $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage(), $serviceContext->getCompilationDirectory());
@@ -587,7 +593,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function getStateId(QtiRunnerServiceContext $context, $itemRef)
     {
-        return  $context->getTestExecutionUri() . $itemRef;
+        return  $this->buildStorageItemKey($context->getTestExecutionUri(), $itemRef);
+    }
+
+    /**
+     * @param string $deliveryExecutionUri
+     * @param string $itemRef
+     * @return string
+     */
+    private function buildStorageItemKey($deliveryExecutionUri, $itemRef)
+    {
+        return $deliveryExecutionUri . $itemRef;
     }
 
     /**
@@ -1850,5 +1866,37 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         return $maxTimeSeconds;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
+    {
+        if ($request->getSession() === null) {
+            return false;
+        }
 
+        /** @var StorageManager $storage */
+        $storage = $this->getServiceLocator()->get(StorageManager::SERVICE_ID);
+        $userUri = $request->getDeliveryExecution()->getUserIdentifier();
+
+        $itemsRefs = (new GetDeliveryExecutionsItems(
+            $this->getServiceLocator()->get(RuntimeService::SERVICE_ID),
+            $this->getServiceLocator()->get(CatService::SERVICE_ID),
+            \tao_models_classes_service_FileStorage::singleton(),
+            $request->getDeliveryExecution(),
+            $request->getSession()
+        ))->getItemsRefs();
+
+        foreach ($itemsRefs as $itemRef) {
+            $stateId = $this->buildStorageItemKey(
+                $request->getDeliveryExecution()->getIdentifier(),
+                $itemRef
+            );
+            if ($storage->has($userUri, $stateId)) {
+                $storage->del($userUri, $stateId);
+            }
+        }
+
+        return $storage->persist($userUri);
+    }
 }

@@ -35,7 +35,7 @@ use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\SectionPauseService;
-use oat\taoResultServer\models\classes\ResultServerService;
+use oat\tao\helpers\UserHelper;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
@@ -119,6 +119,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     private $syncingMode = false;
 
     /**
+     * @var string
+     */
+    private $userUri;
+
+    /**
      * QtiRunnerServiceContext constructor.
      * 
      * @param string $testDefinitionUri
@@ -182,8 +187,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
-
+        $userUri = $this->getUserUri();
 
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $storageClassName = $config['test-session-storage'];
@@ -204,7 +208,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             \common_Logger::d("Instantiating QTI Assessment Test Session");
             $this->setTestSession($storage->instantiate($this->getTestDefinition(), $sessionId));
 
-            $testTaker = \common_session_SessionManager::getSession()->getUser();
+            $testTaker = UserHelper::getUser($this->getUserUri());
             \taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         }
         else {
@@ -370,6 +374,27 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getItemIndex($id) 
     {
         return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
+    }
+
+
+    /**
+     * @return string
+     * @throws \common_exception_Error
+     */
+    public function getUserUri()
+    {
+        if ($this->userUri === null) {
+            $this->userUri = \common_session_SessionManager::getSession()->getUserUri();
+        }
+        return $this->userUri;
+    }
+
+    /**
+     * @param string $userUri
+     */
+    public function setUserUri($userUri)
+    {
+        $this->userUri = $userUri;
     }
 
     /**

@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA;
  *
  *
  */
@@ -118,7 +118,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $class = new \core_kernel_classes_Class($taskParams[self::PARAM_CLASS_URI]);
         }
         if ($class === null || !$class->exists()) {
-            $class = new \core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI);
+            $class = new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST);
         }
         return $class;
     }

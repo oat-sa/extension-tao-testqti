@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\models\runner\time;
 
 use oat\tao\model\state\StateStorage;
+use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoTests\models\runner\time\TimeStorage;
 
 /**
@@ -152,5 +153,18 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
         }
 
         return $this->cache[$this->testSessionId];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function delete()
+    {
+        $storage = $this->getStorageService();
+        $result = $this->getStorageService()->del($this->getUserKey(), $this->getStorageKey());
+        if ($storage instanceof StorageManager) {
+            $result = $storage->persist($this->getUserKey());
+        }
+        return $result;
     }
 }
