@@ -23,19 +23,24 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryServerService;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
+use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
 use oat\taoResultServer\models\classes\ResultServerService;
+use taoQtiTest_helpers_TestSessionStorage;
 
 /**
  * Interface TestSessionService
  * @package oat\taoProctoring\model
  * @author Aleh Hutnikau <hutnikau@1pt.com>
  */
-class TestSessionService extends ConfigurableService
+class TestSessionService extends ConfigurableService implements DeliveryExecutionDelete
 {
     const SERVICE_ID = 'taoQtiTest/TestSessionService';
 
@@ -171,7 +176,7 @@ class TestSessionService extends ConfigurableService
      * @throws \common_exception_Error
      * @throws \common_exception_MissingParameter
      */
-    public function getTestSessionStorage(DeliveryExecution $deliveryExecution)
+    public function getTestSessionStorage(DeliveryExecutionInterface $deliveryExecution)
     {
         $sessionId = $deliveryExecution->getIdentifier();
         if (!$this->hasTestSession($sessionId)) {
@@ -204,13 +209,31 @@ class TestSessionService extends ConfigurableService
 
     /**
      * @param AssessmentTestSession $session
+     * @throws \qtism\runtime\storage\common\StorageException
      */
     public function persist(AssessmentTestSession $session)
     {
         $sessionId = $session->getSessionId();
         if ($this->hasTestSession($sessionId)) {
+            /** @var AbstractQtiBinaryStorage $storage */
             $storage = self::$cache[$sessionId]['storage'];
             $storage->persist($session);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
+    {
+        if ($request->getSession() === null) {
+            return false;
+        }
+        $storage = $this->getTestSessionStorage($request->getDeliveryExecution());
+        if ($storage instanceof taoQtiTest_helpers_TestSessionStorage) {
+            return $storage->delete($request->getSession());
+        }
+
+        return false;
     }
 }
