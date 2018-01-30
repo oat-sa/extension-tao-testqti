@@ -22,10 +22,12 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use Aws\CloudFront\CloudFrontClient;
 use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoQtiItem\model\compile\QtiItemCompilerAssetBlacklist;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiTest\models\cat\CatService;
@@ -131,7 +133,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         }
         try {
-            $this->dataCache[$cacheKey] = json_decode($directory->read($lang.DIRECTORY_SEPARATOR.$path), true);
+            $content = $directory->read($lang.DIRECTORY_SEPARATOR.$path);
+            /** @var QtiItemCompilerAssetBlacklist $assetCloudFrontService */
+            $assetCloudFrontService = $this->getServiceManager()->get(QtiItemCompilerAssetBlacklist::SERVICE_ID);
+            if($assetCloudFrontService->hasCloudFrontAssets($content)){
+                $content = $assetCloudFrontService->replaceCloudFrontAssets($content);
+            }
+
+            $this->dataCache[$cacheKey] = json_decode($content, true);
             return $this->dataCache[$cacheKey];
         } catch (\FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
