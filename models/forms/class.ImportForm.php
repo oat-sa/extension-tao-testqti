@@ -19,6 +19,8 @@
  * 
  */
 
+use oat\tao\helpers\ApplicationHelper;
+
 /**
  * Export form for QTI packages
  *
@@ -86,7 +88,7 @@ class taoQtiTest_models_forms_ImportForm
 		}
 		$fileElt->addValidators(array(
 			tao_helpers_form_FormFactory::getValidator('FileMimeType', array('mimetype' => array('application/zip', 'application/x-zip', 'application/x-zip-compressed', 'application/octet-stream'), 'extension' => array('zip'))),
-			tao_helpers_form_FormFactory::getValidator('FileSize', array('max' => tao_helpers_Environment::getFileUploadLimit()))
+			tao_helpers_form_FormFactory::getValidator('FileSize', array('max' => ApplicationHelper::getFileUploadLimit()))
 		));
     	
 		$this->form->addElement($fileElt);
