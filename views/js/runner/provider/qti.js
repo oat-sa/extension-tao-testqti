@@ -502,7 +502,7 @@ define([
                     self.dataUpdater.updatePluginsConfig(self.getPlugins());
 
                     //this checks the received storeId and clear the volatiles stores
-                    self.getTestStore().clearVolatileOnStoreChange(results.lastStoreId);
+                    self.getTestStore().clearVolatileIfStoreChange(results.lastStoreId);
                 });
             });
         },
