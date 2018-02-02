@@ -21,11 +21,13 @@ namespace oat\taoQtiTest\models\runner;
 
 use oat\oatbox\service\ServiceManagerAwareInterface;
 use oat\oatbox\service\ServiceManagerAwareTrait;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 
 /**
  * Manage the flagged items
  */
-class ExtendedState implements ServiceManagerAwareInterface
+class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDelete
 {
     use ServiceManagerAwareTrait;
     
@@ -351,5 +353,18 @@ class ExtendedState implements ServiceManagerAwareInterface
             unset($this->state[self::VAR_CAT][$assessmentSectionId][$key]);
         }
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
+    {
+        $storage = $this->getStorage();
+        if ($storage) {
+            return $storage->del($this->userId, $this->getStorageKey());
+        }
+
+        return false;
     }
 }
