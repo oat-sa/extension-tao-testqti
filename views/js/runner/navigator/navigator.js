@@ -34,6 +34,40 @@ define([
     'use strict';
 
     /**
+     * Transform the categories into context options :
+     * @param {String[]} categories - the list of categories
+     * @returns {Object} the options object like <optionName : Boolean>
+     */
+    var getOptionsFromCategories = function getOptionsFromCategories(categories) {
+        if(!_.isArray(categories) || !categories.length){
+            return {};
+        }
+        return _.reduce(categories, function(acc, category){
+            if(_.isString(category) && !_.isEmpty(category)){
+                //transfrom the category name in an option name :
+                //x-tao-option-review-screen to reviewScreen
+                var categoryName = category
+                    .replace('x-tao-option-', '')
+                    .split(/[\-_]+/g)
+                    .map( function capitalize(name, index){
+                        if(index === 0){
+                            return name;
+                        }
+                        if(name.length){
+                            return name.charAt(0).toUpperCase() + name.substr(1).toLowerCase();
+                        }
+                        return '';
+                    })
+                    .join('');
+                if(categoryName){
+                    acc[categoryName] = true;
+                }
+            }
+            return acc;
+        }, {});
+    };
+
+    /**
      * Gives you a navigator
      * @param {Object} testData
      * @param {Object} testContext
@@ -115,6 +149,12 @@ define([
             if(isLeavingTestPart && newTestPart.timeConstraint){
                 newContext.timeConstraints.push(newTestPart.timeConstraint);
             }
+
+            //FIXME default options may not be accurate
+            newContext.options = _.defaults(
+                getOptionsFromCategories(newItem.categories || []),
+                _.pick(testContext.options, ['allowComment', 'allowSkipping', 'exitButton', 'logoutButton'])
+            );
 
             return newContext;
         };

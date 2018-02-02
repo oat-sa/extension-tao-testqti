@@ -78,7 +78,7 @@ define([
     QUnit.test('is moving to the next item inside a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(4);
+        QUnit.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context1, testMap).nextItem();
 
@@ -86,12 +86,23 @@ define([
         assert.equal(updatedContext.itemPosition, 1, 'The updated context contains the correct item position');
         assert.equal(updatedContext.sectionId, 'assessmentSection-1', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
+        assert.deepEqual(updatedContext.timeConstraints, [], 'The updated context has no time constraints');
+        assert.deepEqual(updatedContext.options,  {
+            reviewScreen:   true,
+            markReview:     true,
+            endTestWarning: true,
+            zoom:           true,
+            allowComment:   false,
+            allowSkipping:  true,
+            exitButton:     false,
+            logoutButton:   false
+        }, 'The updated context contains the correct options');
     });
 
     QUnit.test('is moving to the next item over a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(5);
+        QUnit.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context2, testMap).nextItem();
 
@@ -107,6 +118,17 @@ define([
             "allowLateSubmission": false,
             "qtiClassName": "assessmentSection"
         }], "The updated context contains the new section time constraints");
+        assert.deepEqual(updatedContext.options,  {
+            calculator:      true,
+            zoom:            true,
+            fooBarBaz:       true,
+            awesomeCategory: true,
+            allowComment:    false,
+            allowSkipping:   true,
+            exitButton:      false,
+            logoutButton:    false
+        }, 'The updated context contains the correct options');
+
     });
 
     QUnit.test('is moving to the next item over a testPart', function(assert) {
