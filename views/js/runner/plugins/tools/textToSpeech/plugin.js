@@ -131,7 +131,7 @@ define([
             })
             .on('disabletools unloaditem', function () {
                 var context = testRunner.getTestContext();
-                if (context.options.textToSpeech && typeof self.tts !== typeof undefined) {
+                if (context.options && context.options.textToSpeech && typeof self.tts !== typeof undefined) {
                     //textHelp requested stopping of running playback on item unload
                     self.tts.stop();
                     self.tts._exec('setCurrentTarget', null);
