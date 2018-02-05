@@ -22,9 +22,11 @@ define([
     'jquery',
     'lodash',
     'core/promise',
+    'core/store',
+    'taoTests/runner/testStore',
     'taoTests/runner/proxy',
     'taoQtiTest/test/runner/mocks/areaBrokerMock'
-], function ($, _, Promise, proxyFactory, areaBroker) {
+], function ($, _, Promise, store, testStoreFactory, proxyFactory, areaBroker) {
     'use strict';
 
     var defaultName = 'mock';
@@ -62,6 +64,18 @@ define([
              */
             loadProxy : function loadProxy(){
                 return config.proxy || proxyFactory(config.proxyName || defaultName, config);
+            },
+
+            /**
+             * Initialize and load the test store
+             * @returns {testStore}
+             */
+            loadTestStore : function loadTestStore(){
+                var config = this.getConfig();
+
+                //the test run needs to be identified uniquely
+                var identifier = config.serviceCallId || 'test-' + Date.now();
+                return testStoreFactory(identifier, store.backends.memory);
             },
 
             /**

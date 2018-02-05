@@ -19,6 +19,7 @@
  *
  */
 
+use oat\tao\model\TaoOntology;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
@@ -410,7 +411,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
 
         // The class where the items that belong to the test will be imported.
-        $itemClass = new core_kernel_classes_Class(TAO_ITEM_CLASS);
+        $itemClass = new core_kernel_classes_Class(TaoOntology::CLASS_URI_ITEM);
         $targetClass = $itemClass->createSubClass($testResource->getLabel());
 
         // Load and validate the manifest

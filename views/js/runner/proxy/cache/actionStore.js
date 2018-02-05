@@ -23,8 +23,8 @@
  */
 define([
     'lodash',
-    'core/store'
-], function(_, store) {
+    'taoTests/runner/testStore'
+], function(_, testStore) {
     'use strict';
 
     var storeName = 'actions';
@@ -38,13 +38,19 @@ define([
      */
     return function actionStoreFatory(id) {
 
-        var storeId;
         var actionQueue = [];
+
+        /**
+         * Load the store from the testStore
+         * @returns {Promise<storage>} the storage instance
+         */
+        var loadStore = function loadStore(){
+            return testStore(id).getStore(storeName);
+        };
 
         if(_.isEmpty(id)){
             throw new TypeError('Please specify the action store id');
         }
-        storeId = storeName + '-' + id;
 
         /**
          * @typedef {actionStore}
@@ -63,7 +69,7 @@ define([
                     timestamp : Date.now(),
                     parameters : params
                 });
-                return store(storeId).then(function(actionStore) {
+                return loadStore().then(function(actionStore) {
                     return actionStore.setItem(storeKey, actionQueue);
                 });
             },
@@ -74,7 +80,7 @@ define([
              */
             flush : function flush(){
                 actionQueue = [];
-                return store(storeId).then(function(actionStore) {
+                return loadStore().then(function(actionStore) {
                     return actionStore.getItem(storeKey).then(function(queue){
                         return actionStore.setItem(storeKey, actionQueue).then(function(){
                             return queue;
@@ -94,7 +100,7 @@ define([
                         action.parameters = params;
                     }
                 });
-                return store(storeId).then(function(actionStore) {
+                return loadStore().then(function(actionStore) {
                     return actionStore.setItem(storeKey, actionQueue);
                 });
             }
