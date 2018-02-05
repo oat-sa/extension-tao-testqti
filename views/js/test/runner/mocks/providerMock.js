@@ -22,10 +22,11 @@ define([
     'jquery',
     'lodash',
     'core/promise',
+    'core/store',
     'taoTests/runner/testStore',
     'taoTests/runner/proxy',
     'taoQtiTest/test/runner/mocks/areaBrokerMock'
-], function ($, _, Promise, testStoreFactory, proxyFactory, areaBroker) {
+], function ($, _, Promise, store, testStoreFactory, proxyFactory, areaBroker) {
     'use strict';
 
     var defaultName = 'mock';
@@ -74,7 +75,7 @@ define([
 
                 //the test run needs to be identified uniquely
                 var identifier = config.serviceCallId || 'test-' + Date.now();
-                return testStoreFactory(identifier);
+                return testStoreFactory(identifier, store.backends.memory);
             },
 
             /**
