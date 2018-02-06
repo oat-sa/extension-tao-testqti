@@ -537,7 +537,8 @@ define([
                     return {
                         content : data.itemData,
                         baseUrl : data.baseUrl,
-                        state : data.itemState
+                        state : data.itemState,
+                        portableElements : data.portableElements
                     };
                 });
         },
@@ -580,6 +581,9 @@ define([
                     if(itemData.state){
                         this.setState(itemData.state);
                         options.state = itemData.state;//official ims portable element requires state information during rendering
+                    }
+                    if(itemData.portableElements){
+                        options.portableElements = itemData.portableElements;
                     }
                     this.render(self.getAreaBroker().getContentArea(), options);
                 })

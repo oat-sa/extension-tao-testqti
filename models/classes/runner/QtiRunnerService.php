@@ -46,7 +46,6 @@ use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
@@ -65,7 +64,7 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
-use oat\taoResultServer\models\classes\ResultServerService;
+use oat\taoQtiItem\model\portableElement\PortableElementService;
 
 /**
  * Class QtiRunnerService
@@ -1898,5 +1897,50 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         return $storage->persist($userUri);
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @return array|string
+     * @throws \common_Exception
+     * @throws \common_exception_InconsistentData
+     */
+    public function getItemPortableElements(RunnerServiceContext $context, $itemRef){
+        $portableElements = [];
+        try{
+            $portableElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::PORTABLE_ELEMENT_FILE_NAME);
+
+            foreach($portableElements as &$portableElementType){
+                foreach($portableElementType as &$portableElement){
+                    $this->updateBaseUrl($portableElement);
+                }
+            }
+        }catch(\tao_models_classes_FileNotFoundException $e){
+            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
+        }
+        return $portableElements;
+    }
+
+    /**
+     * Until there is a way to dynamically resolve the latest baseUrl,
+     * we need to dynamically fetch the latest available version from the registry and update the returned data
+     *
+     * @param array $portableElementsData
+     */
+    private function updateBaseUrl(array &$portableElementsData){
+        $portableElementService = new PortableElementService();
+        $portableElementService->setServiceLocator($this->getServiceLocator());
+
+        foreach($portableElementsData as &$portableElementData){
+            $typeIdentifier = $portableElementData['typeIdentifier'];
+            $model = $portableElementData['model'];
+            $version = preg_replace('/^([0-9]+\.[0-9]+\.)([0-9]+)$/', '$1*', $portableElementData['version']);
+
+            $portableObject = $portableElementService->retrieve($model, $typeIdentifier, $version);
+
+            $portableElementData['version'] = $portableObject->getVersion();
+            $portableElementData['baseUrl'] = $portableObject->getModel()->getRegistry()->getBaseUrl($portableObject);
+        }
     }
 }
