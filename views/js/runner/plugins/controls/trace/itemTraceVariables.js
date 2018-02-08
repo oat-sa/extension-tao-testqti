@@ -23,9 +23,8 @@
 define([
     'lodash',
     'moment',
-    'core/store',
     'taoTests/runner/plugin'
-], function (_, moment, storeFactory, pluginFactory) {
+], function (_, moment, pluginFactory) {
     'use strict';
 
     /**
@@ -50,21 +49,19 @@ define([
         name: 'itemTraceVariables',
 
         /**
-         * Installation of the plugin (called before init)
+         * Install step, add behavior before the lifecycle.
          */
         install: function install() {
-            var self = this;
-            self.getTestRunner().on('storechange', function () {
-                self.shouldClearStorage = true;
-            });
+            //define the "trace" store as "volatile" (removed on browser change).
+            // the store name is "trace" for backward compatibility,
+            // best practice is to use the plugin name
+            this.getTestRunner().getTestStore().setVolatile('trace');
         },
 
         /**
          * Initializes the plugin (called during runner's init)
          */
         init: function init() {
-
-            var self = this;
             var testRunner = this.getTestRunner();
             var variables = {};
 
@@ -72,15 +69,8 @@ define([
                 testRunner.trigger('error', err);
             }
 
-            return storeFactory('trace-' + testRunner.getConfig().serviceCallId)
+            return testRunner.getPluginStore('trace')
                 .then(function (tracesStore) {
-                    if (self.shouldClearStorage) {
-                        return tracesStore.clear().then(function () {
-                            return tracesStore;
-                        });
-                    }
-                    return tracesStore;
-                }).then(function (tracesStore) {
                     testRunner
                         .after('renderitem enableitem', function () {
                             var context = testRunner.getTestContext();
@@ -114,14 +104,6 @@ define([
                             return testRunner.getProxy().callItemAction(context.itemIdentifier, 'storeTraceData', {
                                 traceData: JSON.stringify(variables)
                             }, true);
-                        })
-
-                        .before('finish', function () {
-                            return new Promise(function (resolve) {
-                                tracesStore.removeStore()
-                                    .then(resolve)
-                                    .catch(resolve);
-                            });
                         });
                 });
         }
