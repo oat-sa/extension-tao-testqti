@@ -535,12 +535,10 @@ define([
          */
         submitItem: function submitItem(itemIdentifier, state, response, params) {
             var self = this;
-            return this.itemStore.update(itemIdentifier, {
-                itemState : state
-            })
-            .then(function(){
-                return qtiServiceProxy.submitItem.call(self, itemIdentifier, state, response, params);
-            });
+            return this.itemStore.update(itemIdentifier, 'itemState', state)
+                .then(function(){
+                    return qtiServiceProxy.submitItem.call(self, itemIdentifier, state, response, params);
+                });
         },
 
 
@@ -599,9 +597,7 @@ define([
 
             //update the item state
             if(params.itemState){
-                updateStatePromise = this.itemStore.update(itemIdentifier, {
-                    itemState : params.itemState
-                });
+                updateStatePromise = this.itemStore.update(itemIdentifier, 'itemState', params.itemState);
             }
 
             //check if we have already the item for the action we are going to perform
