@@ -1,5 +1,5 @@
 {
-  "baseUrl": "/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/",
+  "baseUrl": "/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/",
   "itemData": {
     "type": "qti",
     "data": {
@@ -198,9 +198,5 @@
       }
     }
   },
-  "itemState": {},
-  "itemIdentifier": "item-1",
-  "success": true,
-  "token": "cc09ab0b37060683a28a5a8c225f06e6a3d8172a",
-  "messages": []
+  "itemIdentifier": "item-1"
 }

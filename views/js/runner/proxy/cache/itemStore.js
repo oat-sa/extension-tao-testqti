@@ -106,7 +106,7 @@ define([
 
                                 if(config.preload){
                                     _.defer(function(){
-                                        itemPreloader.preload(item, key);
+                                        itemPreloader.preload(item);
                                     });
                                 }
                             }
@@ -158,7 +158,7 @@ define([
                             .then(function(item){
                                 if(config.preload){
                                     _.defer(function(){
-                                        itemPreloader.unload(item, key);
+                                        itemPreloader.unload(item);
                                     });
                                 }
                             })

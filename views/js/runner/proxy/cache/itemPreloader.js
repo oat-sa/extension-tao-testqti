@@ -24,11 +24,14 @@
 define([
     'lodash',
     'core/promise',
+    'core/logger',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
     'util/url'
-], function( _, Promise, qtiItemRunner, getAssetManager, urlUtil){
+], function( _, Promise, loggerFactory, qtiItemRunner, getAssetManager, urlUtil){
     'use strict';
+
+    var logger = loggerFactory('taoQtiTest/runner/proxy/cache/itemPreloader');
 
     /**
      * Test the support of possible `<link rel>` values.
@@ -57,6 +60,22 @@ define([
      */
     var supportPrefetch = relSupport('prefetch');
 
+
+    /**
+     * Check if the given item object matches the expectations
+     * @param {Object} item
+     * @param {String} item.itemIdentifier - the item identifier
+     * @param {String} item.baseUrl - item baseUrl
+     * @param {Object} item.itemData.assets - assets per types :  img : ['url1', 'url2' ]
+     * @returns {Boolean}
+     */
+    var isItemObjectValid = function isItemObjectValid(item){
+        return _.isPlainObject(item) &&
+               _.isString(item.baseUrl) &&
+               _.isString(item.itemIdentifier) && !_.isEmpty(item.itemIdentifier) &&
+               _.isPlainObject(item.itemData);
+    };
+
     /**
      * Create an instance of an item preloader
      * @param {Object} options
@@ -69,7 +88,7 @@ define([
         //this is the test asset manager, referenced under options.testId
         var testAssetManager;
 
-        //we also have a speicific instance of the asset manager to
+        //we also have a specific instance of the asset manager to
         //resolve assets of a next item (we can't use the test asset manager).
         var preloadAssetManager = getAssetManager('item-preloader');
 
@@ -253,12 +272,12 @@ define([
             * Preload the given item (runtime and assets)
             *
             * @param {Object} item
+            * @param {String} item.itemIdentifier - the item identifier
             * @param {String} item.baseUrl - item baseUrl
             * @param {Object} item.itemData.assets - assets per types :  img : ['url1', 'url2' ]
-            * @param {String} itemIdentifier - the item identifier
             * @returns {Promise<Boolean>} resolves with true if the item is loaded
             */
-            preload : function preload(item, itemIdentifier) {
+            preload : function preload(item) {
                 var loading  = [];
 
                 /**
@@ -266,11 +285,13 @@ define([
                 * @returns {Promise}
                 */
                 var itemLoad = function itemLoad(){
+                    logger.debug('Start preloading of item ' + item.itemIdentifier);
                     return new Promise(function(resolve, reject){
                         qtiItemRunner(item.itemData.type, item.itemData.data, {
                             assetManager: preloadAssetManager
                         })
                         .on('init', function(){
+                            logger.debug('Preloading of item ' + item.itemIdentifier + ' done');
                             resolve(true);
                         })
                         .on('error', reject)
@@ -287,7 +308,9 @@ define([
                         _.forEach(resolved, function(assets, type){
                             if(_.isFunction(loaders[type])){
                                 _.forEach(assets, function(url, sourceUrl){
-                                    loaders[type](url, sourceUrl, itemIdentifier);
+                                    logger.debug('Loading asset ' + sourceUrl + '(' + type + ') for item ' + item.itemIdentifier);
+
+                                    loaders[type](url, sourceUrl, item.itemIdentifier);
                                 });
                             }
                         });
@@ -295,7 +318,7 @@ define([
                     });
                 };
 
-                if( item && _.isString(item.baseUrl) && item.itemData && !_.isEmpty(itemIdentifier)  ){
+                if( isItemObjectValid(item) ){
                     loading.push(itemLoad());
 
                     if(_.size(item.itemData.assets) > 0){
@@ -311,20 +334,23 @@ define([
             * Unload the assets for the given item
             *
             * @param {Object} item
+            * @param {String} item.itemIdentifier - the item identifier
             * @param {String} item.baseUrl - item baseUrl
             * @param {Object} item.itemData.assets - assets per types :  img : ['url1', 'url2' ]
             * @param {String} itemIdentifier - the item identifier
             * @returns {Promise}
             */
             unload : function unload(item, itemIdentifier){
-                if (item && _.isString(item.baseUrl) && !_.isEmpty(itemIdentifier) &&
-                    item.itemData && _.size(item.itemData.assets) > 0) {
+                if ( isItemObjectValid(item) && _.size(item.itemData.assets) > 0) {
 
                     return resolveAssets(item.baseUrl, item.itemData.assets).then(function(resolved){
                         _.forEach(resolved, function(assets, type){
                             if(_.isFunction(unloaders[type])){
                                 _.forEach(assets, function(url, sourceUrl){
-                                    unloaders[type](url, sourceUrl, itemIdentifier);
+
+                                    logger.debug( 'Unloading asset ' + sourceUrl + '(' + type + ') for item ' + item.itemIdentifier);
+
+                                    unloaders[type](url, sourceUrl, item.itemIdentifier);
                                 });
                             }
                         });

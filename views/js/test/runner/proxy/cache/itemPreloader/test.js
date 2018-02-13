@@ -25,8 +25,9 @@ define([
     'core/promise',
     'taoQtiTest/runner/proxy/cache/itemPreloader',
     'taoQtiTest/runner/config/assetManager',
-    'json!taoQtiTest/test/runner/proxy/cache/itemPreloader/item.json'
-], function(Promise, itemPreloaderFactory, getAssetManager, itemData) {
+    'json!taoQtiTest/test/runner/proxy/cache/itemPreloader/item1/item.json',
+    'json!taoQtiTest/test/runner/proxy/cache/itemPreloader/item2/item.json'
+], function(Promise, itemPreloaderFactory, getAssetManager, itemData, itemData2) {
     'use strict';
 
     var options = {
@@ -71,22 +72,22 @@ define([
     }, {
         title : 'missing baseUrl',
         item  : {
+            itemIdentifier : 'item-1',
             itemData : {}
-        },
-        itemIdentifier : 'item-1'
+        }
     }, {
         title : 'missing itemData',
         item  : {
+            itemIdentifier : 'item-1',
             baseUrl : '/taoQtiTest/views'
-        },
-        itemIdentifier : 'item-1'
+        }
     }, {
         title : 'empty itemIdentifier',
         item  : {
+            itemIdentifier : '',
             baseUrl : '/taoQtiTest/views',
             itemData : {}
-        },
-        itemIdentifier : ''
+        }
     }]).asyncTest('preload bad data ', function(data, assert){
         var p;
         QUnit.expect(2);
@@ -108,10 +109,7 @@ define([
         var itemPreloader;
         var p;
         var styleSheet;
-        var itemIdentifier = 'item-1';
         var assetManager = getAssetManager(options.testId);
-
-        assetManager.setData('itemIdentifier', itemIdentifier);
 
         QUnit.expect(11);
 
@@ -121,37 +119,39 @@ define([
         };
         Object.defineProperty(window.Image.prototype, 'src',  {
             set: function src(url) {
-                assert.equal(url, '/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/28-days.jpg');
+                assert.equal(url, '/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/28-days.jpg');
             }
         });
 
-        styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
+        styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/tao-user-styles.css"]');
 
         assert.equal(styleSheet, null, 'The item stylesheet is not loaded');
         assert.ok( ! /^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
 
         itemPreloader = itemPreloaderFactory(options);
-        p = itemPreloader.preload(itemData, itemIdentifier);
+        p = itemPreloader.preload(itemData);
         assert.ok(p instanceof Promise);
 
         p.then(function(result){
             assert.ok(result, 'Preloaded');
 
-            styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
+            styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/tao-user-styles.css"]');
             assert.ok(styleSheet instanceof HTMLLinkElement, 'The item stylesheet is loaded');
 
-
+            assetManager.setData('itemIdentifier', itemData.itemIdentifier);
             assert.ok(/^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample resolves through a blob');
         })
         .then(function(){
-            return itemPreloader.unload(itemData, itemIdentifier);
+            return itemPreloader.unload(itemData);
         })
         .then(function(result){
             assert.ok(result, 'Unloaded');
 
-            styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/tao-user-styles.css"]');
+            styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/tao-user-styles.css"]');
 
             assert.equal(styleSheet, null, 'The item stylesheet is now removed');
+
+            assetManager.setData('itemIdentifier', itemData.itemIdentifier);
             assert.ok( ! /^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
 
             QUnit.start();
@@ -161,4 +161,54 @@ define([
             QUnit.start();
         });
     });
+
+
+    QUnit.asyncTest('preload multiple items with an identic source URL asset', function(assert){
+        var itemPreloader;
+        var p;
+        var styleSheet;
+        var assetManager = getAssetManager(options.testId);
+        var secondItem = false;
+
+        QUnit.expect(5);
+
+        //hack the Image element to assert the load
+        window.Image = function(){
+            //called twice
+            assert.ok(true, 'A new image is created');
+        };
+        Object.defineProperty(window.Image.prototype, 'src',  {
+            set: function src(url) {
+                if(secondItem){
+                    assert.equal(url, '/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item2/28-days.jpg');
+                } else {
+                    assert.equal(url, '/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/28-days.jpg');
+                }
+            }
+        });
+
+        itemPreloader = itemPreloaderFactory(options);
+
+        itemPreloader.preload(itemData)
+        .then(function(result){
+            assert.ok(result, 'Preloaded');
+
+            secondItem = true;
+            return itemPreloader.preload(itemData2);
+        })
+        .then(function(){
+            return itemPreloader.unload(itemData);
+        })
+        .then(function(){
+            return itemPreloader.unload(itemData2);
+        })
+        .then(function(result){
+            QUnit.start();
+        })
+        .catch(function(err){
+            assert.ok(false, err);
+            QUnit.start();
+        });
+    });
+
 });
