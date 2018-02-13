@@ -1,0 +1,186 @@
+{
+  "baseUrl": "/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item2/",
+  "itemData": {
+    "type": "qti",
+    "data": {
+      "identifier": "j151186041650418659",
+      "serial": "item_6a2a55fe72795593195718",
+      "qtiClass": "assessmentItem",
+      "attributes": {
+        "identifier": "j151186041650418659",
+        "title": "28 days later",
+        "label": "29 days later",
+        "xml:lang": "en-US",
+        "adaptive": false,
+        "timeDependent": false,
+        "toolName": "TAO",
+        "toolVersion": "3.3.0-sprint65",
+        "class": ""
+      },
+      "body": {
+        "serial": "container_containeritembody_6a2a55fe7278d623968179",
+        "body": " <div class=\"grid-row\"><div class=\"col-6\"><p>{{img_6a2a55fe72d72730366395}}<\/p><\/div><div class=\"col-6\">{{interaction_choiceinteraction_6a2a55fe729b2687243714}}<\/div><\/div>",
+        "elements": {
+          "interaction_choiceinteraction_6a2a55fe729b2687243714": {
+            "serial": "interaction_choiceinteraction_6a2a55fe729b2687243714",
+            "qtiClass": "choiceInteraction",
+            "attributes": {
+              "responseIdentifier": "RESPONSE",
+              "shuffle": true,
+              "maxChoices": 1,
+              "minChoices": 0,
+              "orientation": "vertical"
+            },
+            "choices": {
+              "choice_simplechoice_6a2a55fe72aad088343010": {
+                "identifier": "choice_1",
+                "serial": "choice_simplechoice_6a2a55fe72aad088343010",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_1",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_6a2a55fe72ac7808138434",
+                  "body": "Chemical weapons",
+                  "elements": []
+                }
+              },
+              "choice_simplechoice_6a2a55fe72b30567760403": {
+                "identifier": "choice_2",
+                "serial": "choice_simplechoice_6a2a55fe72b30567760403",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_2",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_6a2a55fe72b44421121657",
+                  "body": "Infected monkeys",
+                  "elements": []
+                }
+              },
+              "choice_simplechoice_6a2a55fe72baf909790371": {
+                "identifier": "choice_3",
+                "serial": "choice_simplechoice_6a2a55fe72baf909790371",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_3",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_6a2a55fe72bc3029423651",
+                  "body": "Aliens material",
+                  "elements": []
+                }
+              },
+              "choice_simplechoice_6a2a55fe72c26513083181": {
+                "identifier": "choice_4",
+                "serial": "choice_simplechoice_6a2a55fe72c26513083181",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_4",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_6a2a55fe72c3a069244532",
+                  "body": "Mad scientist experiments",
+                  "elements": []
+                }
+              },
+              "choice_simplechoice_6a2a55fe72c99718938362": {
+                "identifier": "choice_5",
+                "serial": "choice_simplechoice_6a2a55fe72c99718938362",
+                "qtiClass": "simpleChoice",
+                "attributes": {
+                  "identifier": "choice_5",
+                  "fixed": false,
+                  "showHide": "show"
+                },
+                "body": {
+                  "serial": "container_containerstatic_6a2a55fe72cad490867256",
+                  "body": "We don't know",
+                  "elements": []
+                }
+              }
+            },
+            "prompt": {
+              "serial": "container_containerstatic_6a2a55fe729f9774256326",
+              "body": "<div><strong>What's the root cause of the pandemic in \"28 days later\" <\/strong>?<\/div><div>\u00a0<\/div><div>\u00a0<\/div>",
+              "elements": []
+            }
+          },
+          "img_6a2a55fe72d72730366395": {
+            "serial": "img_6a2a55fe72d72730366395",
+            "qtiClass": "img",
+            "attributes": {
+              "src": "28-days.jpg",
+              "alt": "28 days",
+              "width": "100%"
+            }
+          }
+        }
+      },
+      "namespaces": {
+        "": "http:\/\/www.imsglobal.org\/xsd\/imsqti_v2p2",
+        "m": "http:\/\/www.w3.org\/1998\/Math\/MathML",
+        "xsi": "http:\/\/www.w3.org\/2001\/XMLSchema-instance"
+      },
+      "schemaLocations": {
+        "http:\/\/www.imsglobal.org\/xsd\/imsqti_v2p2": "http:\/\/www.imsglobal.org\/xsd\/qti\/qtiv2p2\/imsqti_v2p2.xsd"
+      },
+      "stylesheets": {
+      },
+      "outcomes": {
+        "outcomedeclaration_6a2a55fe728b7900920078": {
+          "identifier": "SCORE",
+          "serial": "outcomedeclaration_6a2a55fe728b7900920078",
+          "qtiClass": "outcomeDeclaration",
+          "attributes": {
+            "identifier": "SCORE",
+            "cardinality": "single",
+            "baseType": "float",
+            "normalMaximum": 1
+          },
+          "defaultValue": null
+        },
+        "outcomedeclaration_6a2a55fe728e5416774659": {
+          "identifier": "MAXSCORE",
+          "serial": "outcomedeclaration_6a2a55fe728e5416774659",
+          "qtiClass": "outcomeDeclaration",
+          "attributes": {
+            "identifier": "MAXSCORE",
+            "cardinality": "single",
+            "baseType": "float"
+          },
+          "defaultValue": "1"
+        }
+      },
+      "responses": {
+        "responsedeclaration_6a2a55fe72856894444892": {
+          "identifier": "RESPONSE",
+          "serial": "responsedeclaration_6a2a55fe72856894444892",
+          "qtiClass": "responseDeclaration",
+          "attributes": {
+            "identifier": "RESPONSE",
+            "cardinality": "single",
+            "baseType": "identifier"
+          },
+          "defaultValue": []
+        }
+      },
+      "feedbacks": [],
+      "apipAccessibility": ""
+    },
+    "assets": {
+      "img": {
+        "28-days.jpg": "28-days.jpg"
+      }
+    }
+  },
+  "itemIdentifier": "item-2"
+}
