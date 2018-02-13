@@ -38,7 +38,7 @@ class PhpSerializationCompilationDataService extends CompilationDataService
                 throw new \common_Exception($msg);
             }
         } else {
-            $msg = "PHP Compilation data in directory '" . $compilationDirectory->getId() . "' could not be ready properly.";
+            $msg = "PHP Compilation data in directory '" . $compilationDirectory->getId() . "' could not be read properly.";
             throw new \common_Exception($msg);
         }
     }
