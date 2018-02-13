@@ -66,18 +66,28 @@ define([
         title : 'nothing'
     }, {
         title : 'empty object',
-        item  : {}
+        item  : {},
+        itemIdentifier : 'item-1'
     }, {
         title : 'missing baseUrl',
         item  : {
             itemData : {}
-        }
+        },
+        itemIdentifier : 'item-1'
     }, {
         title : 'missing itemData',
         item  : {
             baseUrl : '/taoQtiTest/views'
-        }
-    }]).asyncTest('preload bad data', function(data, assert){
+        },
+        itemIdentifier : 'item-1'
+    }, {
+        title : 'empty itemIdentifier',
+        item  : {
+            baseUrl : '/taoQtiTest/views',
+            itemData : {}
+        },
+        itemIdentifier : ''
+    }]).asyncTest('preload bad data ', function(data, assert){
         var p;
         QUnit.expect(2);
 
@@ -98,7 +108,10 @@ define([
         var itemPreloader;
         var p;
         var styleSheet;
+        var itemIdentifier = 'item-1';
         var assetManager = getAssetManager(options.testId);
+
+        assetManager.setData('itemIdentifier', itemIdentifier);
 
         QUnit.expect(11);
 
@@ -118,7 +131,7 @@ define([
         assert.ok( ! /^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
 
         itemPreloader = itemPreloaderFactory(options);
-        p = itemPreloader.preload(itemData);
+        p = itemPreloader.preload(itemData, itemIdentifier);
         assert.ok(p instanceof Promise);
 
         p.then(function(result){
@@ -131,7 +144,7 @@ define([
             assert.ok(/^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample resolves through a blob');
         })
         .then(function(){
-            return itemPreloader.unload(itemData);
+            return itemPreloader.unload(itemData, itemIdentifier);
         })
         .then(function(result){
             assert.ok(result, 'Unloaded');

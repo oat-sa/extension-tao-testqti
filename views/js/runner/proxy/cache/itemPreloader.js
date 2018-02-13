@@ -89,11 +89,13 @@ define([
              * Preload images, using the in memory Image object
              * @param {String} url - the url of the image to preload
              * @param {String} sourceUrl - the unresolved URL (used to index)
+             * @param {String} itemIdentifier - the id of the item the asset belongs to
              */
-            img : function preloadImage(url, sourceUrl){
-                if('Image' in window && !images[sourceUrl]){
-                    images[sourceUrl] = new Image();
-                    images[sourceUrl].src = url;
+            img : function preloadImage(url, sourceUrl, itemIdentifier){
+                images[itemIdentifier] = images[itemIdentifier] || {};
+                if('Image' in window && !images[itemIdentifier][sourceUrl]){
+                    images[itemIdentifier][sourceUrl] = new Image();
+                    images[itemIdentifier][sourceUrl].src = url;
                 }
             },
 
@@ -124,10 +126,12 @@ define([
              * Preload audio files : save the blobs for later use in the asset manager
              * @param {String} url - the url of the audio file to preload
              * @param {String} sourceUrl - the unresolved URL (used to index)
+             * @param {String} itemIdentifier - the id of the item the asset belongs to
              */
-            audio : function preloadAudio(url, sourceUrl){
+            audio : function preloadAudio(url, sourceUrl, itemIdentifier){
                 var request;
-                if(typeof audioBlobs[sourceUrl] === 'undefined'){
+                audioBlobs[itemIdentifier] = audioBlobs[itemIdentifier] || {};
+                if(typeof audioBlobs[itemIdentifier][sourceUrl] === 'undefined'){
 
                     //direct XHR to benefit from the "blob" response type
                     request = new XMLHttpRequest();
@@ -136,7 +140,7 @@ define([
                     request.onload = function onRequestLoad() {
                         if(this.status === 200){
                             //save the blob, directly
-                            audioBlobs[sourceUrl] = this.response;
+                            audioBlobs[itemIdentifier][sourceUrl] = this.response;
                         }
                     };
                     //ignore failed requests, best effort only
@@ -154,9 +158,12 @@ define([
              * Remove images ref so they can be garbage collected
              * @param {String} url - the url of the image to unload
              * @param {String} sourceUrl - the unresolved URL (used to index)
+             * @param {String} itemIdentifier - the id of the item the asset belongs to
              */
-            img : function unloadImage(url, sourceUrl){
-                images = _.omit(images, sourceUrl);
+            img : function unloadImage(url, sourceUrl, itemIdentifier){
+                if(images[itemIdentifier]){
+                    images[itemIdentifier] = _.omit(images[itemIdentifier], sourceUrl);
+                }
             },
 
             /**
@@ -174,9 +181,12 @@ define([
              * Remove loaded audio files
              * @param {String} url - the url of the css to unload
              * @param {String} sourceUrl - the unresolved URL
+             * @param {String} itemIdentifier - the id of the item the asset belongs to
              */
-            audio : function unloadAudio(url, sourceUrl){
-                audioBlobs = _.omit(audioBlobs, sourceUrl);
+            audio : function unloadAudio(url, sourceUrl, itemIdentifier){
+                if(audioBlobs[itemIdentifier]){
+                    audioBlobs[itemIdentifier] = _.omit(audioBlobs[itemIdentifier], sourceUrl);
+                }
             }
         };
 
@@ -222,13 +232,14 @@ define([
         testAssetManager.prependStrategy({
             name : 'precaching',
             handle : function handlePrecache(url, data){
-                var testUrl = url.toString();
+                var sourceUrl = url.toString();
 
                 //resolves precached audio files
-                if(typeof audioBlobs[testUrl] !== 'undefined'){
+                if (data.itemIdentifier &&  audioBlobs[data.itemIdentifier] &&
+                    typeof audioBlobs[data.itemIdentifier][sourceUrl] !== 'undefined') {
 
                     //creates an internal URL to link the audio blob
-                    return URL.createObjectURL(audioBlobs[testUrl]);
+                    return URL.createObjectURL(audioBlobs[data.itemIdentifier][sourceUrl]);
                 }
             }
         });
@@ -244,9 +255,10 @@ define([
             * @param {Object} item
             * @param {String} item.baseUrl - item baseUrl
             * @param {Object} item.itemData.assets - assets per types :  img : ['url1', 'url2' ]
+            * @param {String} itemIdentifier - the item identifier
             * @returns {Promise<Boolean>} resolves with true if the item is loaded
             */
-            preload : function preload(item) {
+            preload : function preload(item, itemIdentifier) {
                 var loading  = [];
 
                 /**
@@ -274,14 +286,16 @@ define([
                     return resolveAssets(item.baseUrl, item.itemData.assets).then(function(resolved){
                         _.forEach(resolved, function(assets, type){
                             if(_.isFunction(loaders[type])){
-                                _.forEach(assets, loaders[type]);
+                                _.forEach(assets, function(url, sourceUrl){
+                                    loaders[type](url, sourceUrl, itemIdentifier);
+                                });
                             }
                         });
                         return true;
                     });
                 };
 
-                if(item && _.isString(item.baseUrl) && item.itemData){
+                if( item && _.isString(item.baseUrl) && item.itemData && !_.isEmpty(itemIdentifier)  ){
                     loading.push(itemLoad());
 
                     if(_.size(item.itemData.assets) > 0){
@@ -299,14 +313,19 @@ define([
             * @param {Object} item
             * @param {String} item.baseUrl - item baseUrl
             * @param {Object} item.itemData.assets - assets per types :  img : ['url1', 'url2' ]
+            * @param {String} itemIdentifier - the item identifier
             * @returns {Promise}
             */
-            unload : function unload(item){
-                if(item && _.isString(item.baseUrl) && item.itemData && _.size(item.itemData.assets) > 0){
+            unload : function unload(item, itemIdentifier){
+                if (item && _.isString(item.baseUrl) && !_.isEmpty(itemIdentifier) &&
+                    item.itemData && _.size(item.itemData.assets) > 0) {
+
                     return resolveAssets(item.baseUrl, item.itemData.assets).then(function(resolved){
                         _.forEach(resolved, function(assets, type){
                             if(_.isFunction(unloaders[type])){
-                                _.forEach(assets, unloaders[type]);
+                                _.forEach(assets, function(url, sourceUrl){
+                                    unloaders[type](url, sourceUrl, itemIdentifier);
+                                });
                             }
                         });
                         return true;
