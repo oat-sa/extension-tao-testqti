@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.2.0-sprint52\n"
-"PO-Revision-Date: 2017-06-09T15:21:38\n"
+"Project-Id-Version: TAO 3.3.0-sprint70\n"
+"PO-Revision-Date: 2018-02-13T16:39:41\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: el-GR\n"
@@ -29,6 +29,9 @@ msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr ""
 
 msgid "A response to this item is required."
+msgstr ""
+
+msgid "A valid response to this item is required."
 msgstr ""
 
 msgid "A visible section is one that is identifiable by the candidate."
@@ -94,13 +97,19 @@ msgstr ""
 msgid "Allow the test-taker to visually isolate a line of text."
 msgstr ""
 
+msgid "Allows Test-taker to zoom in and out the item content."
+msgstr ""
+
 msgid "Also compute the score per categories"
 msgstr ""
 
-msgid "An error occured during the test iniialization!"
+msgid "An error occured while retrieving items"
 msgstr ""
 
 msgid "An error occurred during results submission. Please retry."
+msgstr ""
+
+msgid "An error occurred during the test initialization!"
 msgstr ""
 
 msgid "An error occurred!"
@@ -122,6 +131,12 @@ msgid "An unknown error occured while compiled QTI Test '%s'."
 msgstr ""
 
 msgid "An unknown error occured while compiling QTI test '%s'."
+msgstr ""
+
+msgid "and flagged %s of them"
+msgstr ""
+
+msgid "and you flagged %s item(s) that you can review now"
 msgstr ""
 
 msgid "Answer Eliminator"
@@ -178,16 +193,25 @@ msgstr ""
 msgid "Class"
 msgstr ""
 
+msgid "Class successfully created."
+msgstr ""
+
 msgid "Clear all active highlights"
 msgstr ""
 
 msgid "Clear Highlights"
 msgstr ""
 
+msgid "Click to speak"
+msgstr ""
+
 msgid "Close Magnifier"
 msgstr ""
 
 msgid "Close the mask"
+msgstr ""
+
+msgid "Close this Section"
 msgstr ""
 
 msgid "Collapse the review panel"
@@ -197,6 +221,9 @@ msgid "Comment"
 msgstr ""
 
 msgid "Completed items"
+msgstr ""
+
+msgid "Connected to server"
 msgstr ""
 
 msgid "Contrast"
@@ -223,7 +250,13 @@ msgstr ""
 msgid "Cut score"
 msgstr ""
 
+msgid "Cut score (pass ratio)"
+msgstr ""
+
 msgid "Disable validation"
+msgstr ""
+
+msgid "Disconnected from server"
 msgstr ""
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
@@ -308,10 +341,6 @@ msgstr ""
 msgid "Export failed for the test \"%s"
 msgstr ""
 
-#, tao-public
-msgid "Export metadata"
-msgstr ""
-
 msgid "Export QTI 2.1 Test Package"
 msgstr ""
 
@@ -331,9 +360,6 @@ msgid "File not found"
 msgstr ""
 
 msgid "File not found!"
-msgstr ""
-
-msgid "Filter"
 msgstr ""
 
 msgid "finished"
@@ -396,7 +422,7 @@ msgstr ""
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
 msgstr ""
 
-msgid "If the candidate can skip the item, without submitting a response."
+msgid "If the candidate can skip the item, without submitting a response (default is true)."
 msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
@@ -462,6 +488,9 @@ msgstr ""
 msgid "Items"
 msgstr ""
 
+msgid "items"
+msgstr ""
+
 msgid "Items can optionally be assigned to one or more categories."
 msgstr ""
 
@@ -469,6 +498,9 @@ msgid "Items Compilation"
 msgstr ""
 
 msgid "Items marked for later review"
+msgstr ""
+
+msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr ""
 
 msgid "Keep Together"
@@ -504,10 +536,6 @@ msgstr ""
 msgid "Manage test properties"
 msgstr ""
 
-#, tao-public
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr ""
 
@@ -536,6 +564,9 @@ msgid "Maximum duration for this section."
 msgstr ""
 
 msgid "Maximum duration for this test part."
+msgstr ""
+
+msgid "Metadata export is not available for test \"%s."
 msgstr ""
 
 msgid "Minimum Duration"
@@ -586,10 +617,16 @@ msgstr ""
 msgid "No"
 msgstr ""
 
+msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
+msgstr ""
+
 msgid "No file found at location \"%s\"."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
+msgstr ""
+
+msgid "no outcome declaration found"
 msgstr ""
 
 msgid "No outcome processing. Erase the existing rules, if any."
@@ -617,6 +654,9 @@ msgid "Ok"
 msgstr ""
 
 msgid "OK & End test"
+msgstr ""
+
+msgid "Once you close this section, you cannot return to it or change your answers."
 msgstr ""
 
 msgid "One or more dependent IMS QTI Items could not be imported."
@@ -647,6 +687,18 @@ msgid "Package is valid but no tests were found. Make sure that it contains vali
 msgstr ""
 
 msgid "Part %d"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
+msgstr ""
+
+msgid "Please confirm you want to leave the test."
+msgstr ""
+
+msgid "Please wait while we try to restore the connection."
 msgstr ""
 
 msgid "Preview the covered area"
@@ -709,6 +761,9 @@ msgstr ""
 msgid "Review"
 msgstr ""
 
+msgid "Review my Answers"
+msgstr ""
+
 msgid "Rubric Block"
 msgstr ""
 
@@ -754,7 +809,7 @@ msgstr ""
 msgid "Set outcome identifier the feedback block is related to"
 msgstr ""
 
-msgid "Set the cut score associated to the test"
+msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
 msgstr ""
 
 msgid "Set the rubric block as a feedback block"
@@ -770,6 +825,9 @@ msgid "Set the XHTML-QTI class of the rubric block."
 msgstr ""
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
+msgstr ""
+
+msgid "Settings"
 msgstr ""
 
 msgid "Show Feedback"
@@ -826,7 +884,13 @@ msgstr ""
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Speech speed"
+msgstr ""
+
 msgid "Start Test-part"
+msgstr ""
+
+msgid "Stop"
 msgstr ""
 
 msgid "Submission"
@@ -859,35 +923,25 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr ""
 
-#, tao-public
-msgid "Tests"
+msgid "Text content"
 msgstr ""
 
-msgid "Text content"
+msgid "Text to Speech"
 msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr ""
 
-msgid "The assessment has been created but is not already running."
-msgstr ""
-
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
-
-msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
 msgstr ""
 
 msgid "The assessment has been terminated."
 msgstr ""
 
-msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgid "The candidate is not allowed to submit invalid responses."
 msgstr ""
 
-msgid "The assessment is still running."
-msgstr ""
-
-msgid "The candidate is not allowed to submit wrong responses."
+msgid "The connection seems to be back, please proceed"
 msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
@@ -944,7 +998,7 @@ msgstr ""
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
 msgstr ""
 
-msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will be compared to the cut score, then the PASS_TOTAL outcome will be set accordingly."
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
 msgstr ""
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
@@ -959,6 +1013,9 @@ msgstr ""
 msgid "The test has been closed/suspended!"
 msgstr ""
 
+msgid "The test has been paused, we are unable to connect to the server."
+msgstr ""
+
 msgid "The test has not been saved."
 msgstr ""
 
@@ -966,9 +1023,6 @@ msgid "The test part identifier."
 msgstr ""
 
 msgid "The test title."
-msgstr ""
-
-msgid "There is not outcomes!"
 msgstr ""
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
@@ -1019,9 +1073,6 @@ msgstr ""
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr ""
 
-msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
-
 msgid "Validate Responses"
 msgstr ""
 
@@ -1040,6 +1091,9 @@ msgstr ""
 msgid "Visible"
 msgstr ""
 
+msgid "Volume"
+msgstr ""
+
 msgid "Warning – You have %s remaining to complete the test."
 msgstr ""
 
@@ -1050,6 +1104,12 @@ msgid "Warning – You have %s remaining to complete this section."
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete this test part."
+msgstr ""
+
+msgid "We are unable to connect the server to submit your results."
+msgstr ""
+
+msgid "We are unable to connect to the server to retrieve the next item."
 msgstr ""
 
 msgid "Weight"
@@ -1088,6 +1148,18 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid "You answered all %s question(s)"
+msgstr ""
+
+msgid "You answered all %s question(s) in this section"
+msgstr ""
+
+msgid "You answered all %s question(s) in this test"
+msgstr ""
+
+msgid "You answered only %s of the %s question(s) in this section"
+msgstr ""
+
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
 msgstr ""
 
@@ -1097,7 +1169,13 @@ msgstr ""
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr ""
 
+msgid "You are encountering a prolonged connectivity loss. "
+msgstr ""
+
 msgid "You have %s item(s) marked for review."
+msgstr ""
+
+msgid "You have %s unanswered question(s)"
 msgstr ""
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
@@ -1107,6 +1185,9 @@ msgid "You have %s unanswered question(s)."
 msgstr ""
 
 msgid "Your comment…"
+msgstr ""
+
+msgid "Zoom"
 msgstr ""
 
 msgid "Zoom in"
