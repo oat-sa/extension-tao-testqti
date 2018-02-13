@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.2.0-sprint63\n"
-"PO-Revision-Date: 2017-11-08T11:30:48\n"
+"Project-Id-Version: TAO 3.3.0-sprint70\n"
+"PO-Revision-Date: 2018-02-13T16:39:41\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -103,7 +103,7 @@ msgstr ""
 msgid "Also compute the score per categories"
 msgstr ""
 
-msgid "An error occured during the test iniialization!"
+msgid "An error occured while retrieving items"
 msgstr ""
 
 msgid "An error occurred during results submission. Please retry."
@@ -310,10 +310,10 @@ msgstr "Habilitar selección"
 msgid "Enable the item review screen / navigator."
 msgstr "Activar la pantalla de revisión/navegador de ítems."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finalizar prueba"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finalizar prueba"
 
 msgid "Enter a blueprint"
@@ -342,10 +342,6 @@ msgstr "Exportar"
 msgid "Export failed for the test \"%s"
 msgstr ""
 
-#, tao-public
-msgid "Export metadata"
-msgstr ""
-
 msgid "Export QTI 2.1 Test Package"
 msgstr "Exportar Paquete de Prueba QTI 2.1"
 
@@ -366,9 +362,6 @@ msgstr ""
 
 msgid "File not found!"
 msgstr ""
-
-msgid "Filter"
-msgstr "Filtro"
 
 msgid "finished"
 msgstr "finalizada"
@@ -392,9 +385,6 @@ msgid "Force the item to be considered as informational and not taken into accou
 msgstr ""
 
 msgid "Hide Review"
-msgstr "Esconder revisión"
-
-msgid "Hide review"
 msgstr "Esconder revisión"
 
 msgid "Hide the review screen"
@@ -433,8 +423,8 @@ msgstr "Si es requerido, debe aparece al menos una vez en la selección."
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
 msgstr "Si se establece, hace que el orden de los elementos secundarios se ordenen al azar, de lo contrario se utiliza el orden en que los elementos secundarios son definidos."
 
-msgid "If the candidate can skip the item, without submitting a response."
-msgstr "Si el candidato puede omitir el elemento, sin presentar una respuesta."
+msgid "If the candidate can skip the item, without submitting a response (default is true)."
+msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
 msgstr ""
@@ -496,11 +486,11 @@ msgstr "Elemento Referencia Propiedades"
 msgid "Item Session Control"
 msgstr "Control de Sesión de Elemento"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Elementos"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
@@ -546,10 +536,6 @@ msgstr "Administrar Bloques de Rúbrica"
 
 msgid "Manage test properties"
 msgstr "Administrar las propiedades de prueba"
-
-#, tao-public
-msgid "Manage tests"
-msgstr "Gestionar pruebas"
 
 msgid "Manage Tests"
 msgstr "Gestionar Pruebas"
@@ -791,15 +777,6 @@ msgstr "Bloque de Rúbrica"
 msgid "Save"
 msgstr "Guardar"
 
-msgid "Scratchpad"
-msgstr "Bloc de notas"
-
-msgid "Scratch pad"
-msgstr "Bloc de notas"
-
-msgid "Scratch Pad"
-msgstr "Bloc de notas"
-
 msgid "Scorer"
 msgstr "Puntaje"
 
@@ -833,7 +810,7 @@ msgstr "Enviar"
 msgid "Set outcome identifier the feedback block is related to"
 msgstr ""
 
-msgid "Set the cut score associated to the test"
+msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
 msgstr ""
 
 msgid "Set the rubric block as a feedback block"
@@ -947,10 +924,6 @@ msgstr "Estado de la prueba"
 msgid "Test-Taker Tools"
 msgstr ""
 
-#, tao-public
-msgid "Tests"
-msgstr "Pruebas"
-
 msgid "Text content"
 msgstr ""
 
@@ -960,28 +933,14 @@ msgstr ""
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "El archivo 'imsmanifest.xml' encontrado en el archivo no es válido."
 
-msgid "The assessment has been created but is not already running."
-msgstr "Se creó la evaluación pero aún no funciona."
-
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
 msgstr "La evaluación fue suspendida por un coordinador autorizado. Si desea retomar su evaluación, vuelva a iniciarla y contacte a su coordinador si es necesario."
-
-msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr "La evaluación ha sido suspendida. Para reanudar su evaluación, por favor reinicie."
 
 msgid "The assessment has been terminated."
 msgstr "La evaluación finalizó."
 
-msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "La evaluación se ha terminado. Ya no puede interactuar con él."
-
-msgid "The assessment is still running."
-msgstr "La evaluación sigue ejecutándose."
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr ""
-
-msgid "The candidate is not allowed to submit wrong responses."
-msgstr "Al candidato no se le permite enviar respuestas equivocadas."
 
 msgid "The connection seems to be back, please proceed"
 msgstr "La conexión parece estar de vuelta, por favor proceda"
@@ -1041,7 +1000,7 @@ msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS
 msgstr "Los recursos relacionados con la Prueba de QTI IMS referenciada como \"%s\\n"
 "\"en el archivo Manifiesto IMS se deshacen."
 
-msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will be compared to the cut score, then the PASS_TOTAL outcome will be set accordingly."
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
 msgstr ""
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
@@ -1056,6 +1015,9 @@ msgstr "El modo de presentación determina cuando las respuestas de los candidat
 msgid "The test has been closed/suspended!"
 msgstr "¡La evaluación se cerró/se suspendió!"
 
+msgid "The test has been paused, we are unable to connect to the server."
+msgstr ""
+
 msgid "The test has not been saved."
 msgstr "No se guardó la prueba."
 
@@ -1064,9 +1026,6 @@ msgstr "El identificador de parte de prueba."
 
 msgid "The test title."
 msgstr "El título de prueba."
-
-msgid "There is not outcomes!"
-msgstr ""
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr "Esta restricción afecta la visibilidad de la retroalimentación después del final del último intento."
@@ -1115,9 +1074,6 @@ msgstr "Error desconocido."
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Subir un Archivo de Paquete de Prueba QTI 2.1"
-
-msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr "Utilice Ctrl/Alt o Lasso para selección múltiple"
 
 msgid "Validate Responses"
 msgstr "Respuestas Validadas"
@@ -1242,61 +1198,3 @@ msgstr "Acercar"
 msgid "Zoom out"
 msgstr "Alejar"
 
-# Scheme names
-msgid "Black on white"
-msgstr "Negro sobre blanco"
-
-msgid "Black on white"
-msgstr "Negro sobre blanco"
-
-msgid "Black on cream"
-msgstr "Negro sobre crema"
-
-msgid "Black on light blue"
-msgstr "Negro sobre azul celeste"
-
-msgid "Black on magenta"
-msgstr "Negro sobre magenta"
-
-msgid "White on black"
-msgstr "Blanco sobre negro"
-
-msgid "Light yellow on royal blue"
-msgstr "Amarillo claro sobre azul real"
-
-msgid "Gray on green (low contrast option)"
-msgstr "Gris sobre verde (opcion de bajo contraste)"
-
-# They're in js.
-msgid "You answered all %s question(s) in this section"
-msgstr "Usted respondio a las %s preguntas en esta sección"
-
-msgid "You answered all %s question(s) in this test"
-msgstr "Usted respondio a las %s preguntas en esta prueba"
-
-msgid "You answered only %s of the %s question(s) in this section"
-msgstr "Usted respondió sólo %s de las preguntas %s en esta sección"
-
-msgid "and flagged %s of them"
-msgstr "y marcó %s de ellas"
-
-msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr "Una vez que cierre esta  sección, no podrá volver a ella ni cambiar sus respuestas."
-
-msgid "Review my Answers"
-msgstr "Revisar mis respuestas"
-
-msgid "Close this Section"
-msgstr "Cerrar esta sección"
-
-msgid "You have %s unanswered question(s)"
-msgstr "Tienes %s preguntas sin respuesta"
-
-msgid "and you flagged %s item(s) that you can review now"
-msgstr "y marcaste %s artículos que puedes revisar ahora"
-
-msgid "Connected to server"
-msgstr "Conectado al servidor"
-
-msgid "Disconnected from server"
-msgstr "Desconectado del servidor"

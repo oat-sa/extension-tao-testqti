@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.2.0-sprint60\n"
-"PO-Revision-Date: 2017-09-26T10:06:08\n"
+"Project-Id-Version: TAO 3.3.0-sprint70\n"
+"PO-Revision-Date: 2018-02-13T16:39:42\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -202,6 +202,9 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
+msgid "Click to speak"
+msgstr ""
+
 msgid "Close Magnifier"
 msgstr ""
 
@@ -307,10 +310,10 @@ msgstr ""
 msgid "Enable the item review screen / navigator."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finir le test"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finir le test"
 
 msgid "Enter a blueprint"
@@ -419,7 +422,7 @@ msgstr ""
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
 msgstr ""
 
-msgid "If the candidate can skip the item, without submitting a response."
+msgid "If the candidate can skip the item, without submitting a response (default is true)."
 msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
@@ -482,10 +485,10 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
-msgid "items"
+msgid "Items"
 msgstr ""
 
-msgid "Items"
+msgid "items"
 msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -599,9 +602,6 @@ msgstr ""
 msgid "Navigation Warnings"
 msgstr ""
 
-msgid "network"
-msgstr ""
-
 msgid "New Rubric Block"
 msgstr ""
 
@@ -688,6 +688,12 @@ msgstr ""
 
 msgid "Part %d"
 msgstr "Partie %d"
+
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
+msgstr ""
 
 msgid "Please confirm you want to leave the test."
 msgstr ""
@@ -821,6 +827,9 @@ msgstr ""
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr ""
 
+msgid "Settings"
+msgstr ""
+
 msgid "Show Feedback"
 msgstr ""
 
@@ -875,8 +884,14 @@ msgstr "Passer à la prochaine section"
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Speech speed"
+msgstr ""
+
 msgid "Start Test-part"
 msgstr "Commencer la test-part"
+
+msgid "Stop"
+msgstr ""
 
 msgid "Submission"
 msgstr ""
@@ -889,9 +904,6 @@ msgstr "Envoyer et aller à l'item suivant"
 
 msgid "Submit and go to the previous item"
 msgstr "Envoyer et aller à l'item précédent"
-
-msgid "technical"
-msgstr ""
 
 msgid "Test"
 msgstr "Test"
@@ -914,25 +926,16 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "The 'imsmanifest.xml' file found in the archive is not valid."
+msgid "Text to Speech"
 msgstr ""
 
-msgid "The assessment has been created but is not already running."
+msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr ""
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
-msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr ""
-
 msgid "The assessment has been terminated."
-msgstr ""
-
-msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr ""
-
-msgid "The assessment is still running."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
@@ -1010,6 +1013,9 @@ msgstr ""
 msgid "The test has been closed/suspended!"
 msgstr ""
 
+msgid "The test has been paused, we are unable to connect to the server."
+msgstr ""
+
 msgid "The test has not been saved."
 msgstr ""
 
@@ -1085,6 +1091,9 @@ msgstr ""
 msgid "Visible"
 msgstr ""
 
+msgid "Volume"
+msgstr ""
+
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "Attention - Il vous reste %s pour finir le test."
 
@@ -1096,6 +1105,9 @@ msgstr "Attention - Il vous reste %s pour finir la section."
 
 msgid "Warning – You have %s remaining to complete this test part."
 msgstr "Attention - Il vous reste %s pour finir la test part."
+
+msgid "We are unable to connect the server to submit your results."
+msgstr ""
 
 msgid "We are unable to connect to the server to retrieve the next item."
 msgstr ""
@@ -1157,7 +1169,7 @@ msgstr ""
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr ""
 
-msgid "You are encountering a prolonged connectivity loss"
+msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
 
 msgid "You have %s item(s) marked for review."

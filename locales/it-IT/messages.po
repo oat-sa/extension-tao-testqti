@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.2.0-sprint60\n"
-"PO-Revision-Date: 2017-09-22T12:37:41\n"
+"Project-Id-Version: TAO 3.3.0-sprint70\n"
+"PO-Revision-Date: 2018-02-13T16:39:42\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -310,10 +310,10 @@ msgstr "Abilita selezione"
 msgid "Enable the item review screen / navigator."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr "Fine test"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Fine test"
 
 msgid "Enter a blueprint"
@@ -422,8 +422,8 @@ msgstr "Se richiesto, deve apparire almeno una volta nella selezione"
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
 msgstr "Se impostato, provoca l'ordine degli elementi figlio da randomizzare, altrimenti utilizza l'ordine in cui sono definiti gli elementi figlio."
 
-msgid "If the candidate can skip the item, without submitting a response."
-msgstr "Se il candidato può ignorare l'item, senza presentare una risposta."
+msgid "If the candidate can skip the item, without submitting a response (default is true)."
+msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
 msgstr ""
@@ -600,9 +600,6 @@ msgid "Navigation"
 msgstr "Navigazione"
 
 msgid "Navigation Warnings"
-msgstr ""
-
-msgid "network"
 msgstr ""
 
 msgid "New Rubric Block"
@@ -908,9 +905,6 @@ msgstr "Invia e vai al prossimo item"
 msgid "Submit and go to the previous item"
 msgstr "Invia e vai all'item precedente"
 
-msgid "technical"
-msgstr ""
-
 msgid "Test"
 msgstr "Test"
 
@@ -938,22 +932,10 @@ msgstr ""
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "Il file 'imsmanifest.xml' trovato nell'archivio non è valido."
 
-msgid "The assessment has been created but is not already running."
-msgstr ""
-
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
-msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr ""
-
 msgid "The assessment has been terminated."
-msgstr ""
-
-msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr ""
-
-msgid "The assessment is still running."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
@@ -1029,6 +1011,9 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "La modalità di presentazione definisce quando le risposte del candidato sono presentate per l'elaborazione di risposta. Una parte di test in modalità individuale richiede che il candidato presenti le risposte su base item per item. In modo simultaneo le risposte del candidato sono tutte presentate insieme alla fine della parte di test."
 
 msgid "The test has been closed/suspended!"
+msgstr ""
+
+msgid "The test has been paused, we are unable to connect to the server."
 msgstr ""
 
 msgid "The test has not been saved."
@@ -1121,6 +1106,9 @@ msgstr ""
 msgid "Warning – You have %s remaining to complete this test part."
 msgstr ""
 
+msgid "We are unable to connect the server to submit your results."
+msgstr ""
+
 msgid "We are unable to connect to the server to retrieve the next item."
 msgstr ""
 
@@ -1181,7 +1169,7 @@ msgstr ""
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Una volta chiusa non potrai più ritornare alle domande. Sei sicuro di voler chiudere la prova?"
 
-msgid "You are encountering a prolonged connectivity loss"
+msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
