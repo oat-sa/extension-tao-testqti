@@ -22,14 +22,13 @@
 
 namespace oat\taoQtiTest\models\runner;
 
-use Aws\CloudFront\CloudFrontClient;
 use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
-use oat\taoQtiItem\model\compile\QtiItemCompilerAssetBlacklist;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
+use oat\taoQtiItem\model\QtiJsonItemCloudFrontReplacement;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
@@ -134,8 +133,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
         try {
             $content = $directory->read($lang.DIRECTORY_SEPARATOR.$path);
-            /** @var QtiItemCompilerAssetBlacklist $assetCloudFrontService */
-            $assetCloudFrontService = $this->getServiceManager()->get(QtiItemCompilerAssetBlacklist::SERVICE_ID);
+            /** @var QtiJsonItemCloudFrontReplacement $assetCloudFrontService */
+            $assetCloudFrontService = $this->getServiceManager()->get(QtiJsonItemCloudFrontReplacement::SERVICE_ID);
             if($assetCloudFrontService->hasCloudFrontAssets($content)){
                 $content = $assetCloudFrontService->replaceCloudFrontAssets($content);
             }
