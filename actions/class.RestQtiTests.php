@@ -19,27 +19,26 @@
 use oat\tao\model\TaoOntology;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiItem\controller\AbstractRestQti;
+use oat\taoTaskQueue\model\Entity\TaskLogEntity;
+use oat\taoTaskQueue\model\TaskLogInterface;
 
 /**
  *
- * @author Absar Gilani & Rashid - PCG Team - {absar.gilani6@gmail.com}
+ * @author Absar Gilani & Rashid - PCG Team - <absar.gilani6@gmail.com>
+ * @author Gyula Szucs <gyula@taotesting.com>
  */
 class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 {
-    const IMPORT_TASK_CLASS = 'oat\taoQtiTest\models\tasks\ImportQtiTest';
+    const PARAM_PACKAGE_NAME = 'qtiPackage';
 
     const ENABLE_METADATA_GUARDIANS = 'enableMetadataGuardians';
 
+    /**
+     * @throws common_exception_NotImplemented
+     */
     public function index()
     {
         $this->returnFailure(new \common_exception_NotImplemented('This API does not support this call.'));
-    }
-
-    public function __construct()
-    {
-        parent::__construct();
-        // The service that implements or inherits get/getAll/getRootClass ... for that particular type of resources
-        $this->service = taoQtiTest_models_classes_CrudQtiTestsService::singleton();
     }
 
     /**
@@ -49,19 +48,17 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     public function import()
     {
         try {
-            $fileUploadName = "qtiPackage";
             if ($this->getRequestMethod() != Request::HTTP_POST) {
                 throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
             }
-            if (!tao_helpers_Http::hasUploadedFile($fileUploadName)) {
-                throw new common_exception_RestApi(__('Missed test package file'));
-            }
-            $file = tao_helpers_Http::getUploadedFile($fileUploadName);
-            $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
-            if (!in_array($mimeType, self::$accepted_types)) {
-                throw new \common_exception_RestApi(__('Wrong file mime type'));
-            }
-            $report = $this->service->importQtiTest($file['tmp_name'], $this->getTestClass(), $this->isMetadataGuardiansEnabled());
+
+            $report = taoQtiTest_models_classes_CrudQtiTestsService::singleton()
+                ->importQtiTest(
+                    $this->getUploadedPackageData()['tmp_name'],
+                    $this->getTestClass(),
+                    $this->isMetadataGuardiansEnabled()
+                );
+
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
                 $data = array();
                 foreach ($report as $r) {
@@ -72,7 +69,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     }
                     $data[] = array(
                         'testId' => $testid,
-                        'testItems' => $itemsid);
+                        'testItems' => $itemsid
+                    );
                 }
                 return $this->returnSuccess($data);
             } else {
@@ -84,42 +82,63 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function getTaskName()
+    {
+        return ImportQtiTest::class;
+    }
+
+    /**
      * Import test package through the task queue.
      * Check POST method & get valid uploaded file
      */
     public function importDeferred()
     {
         try {
-            $fileUploadName = "qtiPackage";
             if ($this->getRequestMethod() != Request::HTTP_POST) {
                 throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
             }
-            if (!tao_helpers_Http::hasUploadedFile($fileUploadName)) {
-                throw new common_exception_RestApi(__('Missed test package file'));
-            }
 
-            $file = tao_helpers_Http::getUploadedFile($fileUploadName);
-            $mimeType = tao_helpers_File::getMimeType($file['tmp_name']);
-            if (!in_array($mimeType, self::$accepted_types)) {
-                throw new \common_exception_RestApi(__('Wrong file mime type'));
-            }
-            $task = ImportQtiTest::createTask($file, $this->getTestClass(), $this->isMetadataGuardiansEnabled());
+            $task = ImportQtiTest::createTask($this->getUploadedPackageData(), $this->getTestClass(), $this->isMetadataGuardiansEnabled());
+
             $result = [
                 'reference_id' => $task->getId()
             ];
-            $report = $task->getReport();
-            if (!empty($report)) {
-                if ($report instanceof \common_report_Report) {
-                    //serialize report to array
-                    $report = json_encode($report);
-                    $report = json_decode($report);
-                }
-                $result['report'] = $report;
+
+            /** @var TaskLogInterface $taskLog */
+            $taskLog = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
+
+            if ($report = $taskLog->getReport($task->getId())) {
+                $result['report'] = $report->toArray();
             }
+
             return $this->returnSuccess($result);
         } catch (\common_exception_RestApi $e) {
             return $this->returnFailure($e);
         }
+    }
+
+    /**
+     * Add extra values to the JSON returned.
+     *
+     * @param TaskLogEntity $taskLogEntity
+     * @return array
+     */
+    protected function addExtraReturnData(TaskLogEntity $taskLogEntity)
+    {
+        $data = [];
+
+        if ($taskLogEntity->getReport()) {
+            $plainReport = $this->getPlainReport($taskLogEntity->getReport());
+
+            //the third report is report of import test
+            if (isset($plainReport[2]) && isset($plainReport[2]->getData()['rdfsResource'])) {
+                $data['testId'] = $plainReport[2]->getData()['rdfsResource']['uriResource'];
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -155,23 +174,25 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     }
 
     /**
-     * @param $taskId
      * @return array
+     * @throws common_exception_Error
+     * @throws common_exception_RestApi
      */
-    protected function getTaskData($taskId)
+    private function getUploadedPackageData()
     {
-        $data = $this->traitGetTaskData($taskId);
-        $task = $this->getTask($taskId);
-        $report = \common_report_Report::jsonUnserialize($task->getReport());
-        if ($report) {
-            $plainReport = $this->getPlainReport($report);
-            //the third report is report of import test
-            if (isset($plainReport[2]) && isset($plainReport[2]->getData()['rdfsResource'])) {
-                $data['testId'] = $plainReport[2]->getData()['rdfsResource']['uriResource'];
-            }
+        if (!tao_helpers_Http::hasUploadedFile(self::PARAM_PACKAGE_NAME)) {
+            throw new common_exception_RestApi(__('Missed test package file'));
         }
 
-        return $data;
+        $fileData = tao_helpers_Http::getUploadedFile(self::PARAM_PACKAGE_NAME);
+
+        $mimeType = tao_helpers_File::getMimeType($fileData['tmp_name']);
+
+        if (!in_array($mimeType, self::$accepted_types)) {
+            throw new \common_exception_RestApi(__('Wrong file mime type'));
+        }
+
+        return $fileData;
     }
 
     /**
