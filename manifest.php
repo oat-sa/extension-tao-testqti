@@ -18,7 +18,7 @@
  *
  */
 
-use oat\taoQtiItem\scripts\install\SetUpQueueTasks;
+use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
