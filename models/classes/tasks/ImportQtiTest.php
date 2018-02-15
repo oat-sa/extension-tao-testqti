@@ -92,8 +92,6 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $action->setServiceLocator(ServiceManager::getServiceManager());
 
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
-        /** @var Queue $queue */
-        $queue = ServiceManager::getServiceManager()->get(Queue::SERVICE_ID);
 
         /** @var QueueDispatcher $queueDispatcher */
         $queueDispatcher = ServiceManager::getServiceManager()->get(QueueDispatcher::SERVICE_ID);
