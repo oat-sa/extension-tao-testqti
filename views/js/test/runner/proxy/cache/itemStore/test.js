@@ -208,8 +208,12 @@ define([
         Promise
             .all([
                 itemStore.set('item1', { name : 'item1'}),
-                itemStore.set('item2', { name : 'item2'}),
-                itemStore.set('item3', { name : 'item3'}),
+                itemStore.set('item2', {
+                    name : 'item2',
+                    response: ['choice1', 'choice2'],
+                    some: 'data'
+                }),
+                itemStore.set('item3', { name : 'item3'})
             ])
             .then(function(){
                 assert.ok(itemStore.has('item1'), 'The store contains the given item');
@@ -217,7 +221,10 @@ define([
                 assert.ok(itemStore.has('item3'), 'The store contains the given item');
             })
             .then(function(){
-                return itemStore.update('item2', { value : 'fooby', deep : { noz : 'barby'}  });
+                return itemStore.update('item2', 'response', []);
+            })
+            .then(function(){
+                return itemStore.update('item2', 'some', 'thing else');
             })
             .then(function(updated){
                 assert.ok(updated, 'The updated went well');
@@ -228,13 +235,13 @@ define([
             .then(function(newItem){
                 assert.deepEqual(newItem, {
                     name : 'item2',
-                    value : 'fooby',
-                    deep : { noz : 'barby'}
+                    response : [],
+                    some : 'thing else'
                 }, 'The item has been updated correclty');
             })
             .then(function(){
                 assert.ok( ! itemStore.has('zoobizoob'), 'The item does not exists');
-                return itemStore.update('zoobizoob', { nope : true });
+                return itemStore.update('zoobizoob', 'nope', true);
             })
             .then(function(updated){
                 assert.ok(!updated, 'Nothing to update');
@@ -248,6 +255,7 @@ define([
                 QUnit.start();
             });
     });
+
     QUnit.asyncTest('clear', function(assert){
         var itemStore;
         QUnit.expect(8);
