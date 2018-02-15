@@ -79,6 +79,8 @@ use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\libCat\custom\EchoAdaptEngine;
+use oat\taoTests\models\runner\providers\ProviderRegistry;
+use oat\taoTests\models\runner\providers\TestProvider;
 
 /**
  *
@@ -1733,9 +1735,39 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('17.19.0');
         }
 
-        $this->skip('17.19.0', '18.4.1');
+        $this->skip('17.19.0', '18.5.1');
 
-        if ($this->isVersion('18.4.1')) {
+        if ($this->isVersion('18.5.1')) {
+
+            $registry = ProviderRegistry::getRegistry();
+            $registry->register(
+                TestProvider::fromArray(
+                    [
+                        'id' => 'qti',
+                        'name' => 'QTI runner',
+                        'module' => 'taoQtiTest/runner/provider/qti',
+                        'bundle' => 'taoQtiTest/loader/qtiTestRunner.min',
+                        'description' => 'QTI implementation of the test runner',
+                        'category' => 'runner',
+                        'active' => true,
+                        'tags' => [ 'core', 'qti', 'runner' ]
+                    ]
+                )
+            );
+
+            $this->setVersion('18.6.0');
+        }
+
+        $this->skip('18.6.0', '18.9.4');
+
+        if ($this->isVersion('18.9.4')) {
+            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+            $this->setVersion('18.9.5');
+        }
+
+        $this->skip('18.9.5', '21.0.2');
+
+        if ($this->isVersion('21.0.2')) {
             /** @var TaskLogInterface|ConfigurableService $taskLogService */
             $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
 
@@ -1743,7 +1775,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->getServiceManager()->register(TaskLogInterface::SERVICE_ID, $taskLogService);
 
-            $this->setVersion('19.0.0');
+            $this->setVersion('22.0.0');
         }
     }
 }

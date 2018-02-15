@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models\runner;
 
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use qtism\data\AssessmentItemRef;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
 
 /**
  * Interface RunnerService
@@ -31,7 +32,7 @@ use qtism\data\AssessmentItemRef;
  *
  * @package oat\taoQtiTest\models
  */
-interface RunnerService
+interface RunnerService extends DeliveryExecutionDelete
 {
     const INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
 

@@ -125,15 +125,17 @@ define([
             /**
              * Update some data of a store item
              * @param {String} key - something identifier
-             * @param {Object} updateData - will get merged into the item data
+             * @param {String} updateKey - key to update
+             * @param {*} updateValue - new data for the updateKey
              * @returns {Promise<Boolean>} resolves with the update status
              */
-            update : function update(key, updateData){
-                if (this.has(key) && _.isPlainObject(updateData)) {
+            update : function update(key, updateKey, updateValue){
+                if (this.has(key) && _.isString(updateKey)) {
                     return getStore().then(function(itemStorage){
                         return itemStorage.getItem(key).then(function(itemData){
                             if(_.isPlainObject(itemData)){
-                                return itemStorage.setItem(key, _.merge(itemData, updateData));
+                                itemData[updateKey] = updateValue;
+                                return itemStorage.setItem(key, itemData);
                             }
                         });
                     });
