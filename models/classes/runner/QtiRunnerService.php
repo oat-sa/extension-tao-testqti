@@ -137,6 +137,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             throw new \tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
             );
+        } catch (\League\Flysystem\FileNotFoundException $e) {
+            throw new \tao_models_classes_FileNotFoundException(
+                $path . ' for item reference ' . $itemRef
+            );
         }
     }
 
