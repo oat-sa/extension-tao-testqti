@@ -1910,37 +1910,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $portableElements = [];
         try{
             $portableElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::PORTABLE_ELEMENT_FILE_NAME);
-
-            foreach($portableElements as &$portableElementType){
-                foreach($portableElementType as &$portableElement){
-                    $this->updateBaseUrl($portableElement);
-                }
-            }
         }catch(\tao_models_classes_FileNotFoundException $e){
             \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
         }
         return $portableElements;
-    }
-
-    /**
-     * Until there is a way to dynamically resolve the latest baseUrl,
-     * we need to dynamically fetch the latest available version from the registry and update the returned data
-     *
-     * @param array $portableElementsData
-     */
-    private function updateBaseUrl(array &$portableElementsData){
-        $portableElementService = new PortableElementService();
-        $portableElementService->setServiceLocator($this->getServiceLocator());
-
-        foreach($portableElementsData as &$portableElementData){
-            $typeIdentifier = $portableElementData['typeIdentifier'];
-            $model = $portableElementData['model'];
-            $version = preg_replace('/^([0-9]+\.[0-9]+\.)([0-9]+)$/', '$1*', $portableElementData['version']);
-
-            $portableObject = $portableElementService->retrieve($model, $typeIdentifier, $version);
-
-            $portableElementData['version'] = $portableObject->getVersion();
-            $portableElementData['baseUrl'] = $portableObject->getModel()->getRegistry()->getBaseUrl($portableObject);
-        }
     }
 }
