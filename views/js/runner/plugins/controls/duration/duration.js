@@ -25,10 +25,9 @@ define([
     'lodash',
     'core/polling',
     'core/timer',
-    'core/store',
     'core/promise',
     'taoTests/runner/plugin',
-], function(_, pollingFactory, timerFactory, store, Promise, pluginFactory) {
+], function(_, pollingFactory, timerFactory, Promise, pluginFactory) {
     'use strict';
 
     /**
@@ -45,14 +44,12 @@ define([
 
         name: 'duration',
 
-
+        /**
+         * Install step, add behavior before the lifecycle.
+         */
         install: function install() {
-            var self = this;
-            //the storechange event is fired early (before runner's init is done)
-            //so we attach the handler early
-            this.getTestRunner().on('storechange', function handleStoreChange() {
-                self.shouldClearStorage = true;
-            });
+            //define the "duration" store as "volatile" (removed on browser change).
+            this.getTestRunner().getTestStore().setVolatile(this.getName());
         },
 
 
@@ -65,15 +62,7 @@ define([
             var testRunner = this.getTestRunner();
 
             //where the duration of attempts are stored
-            return store('duration-' + testRunner.getConfig().serviceCallId)
-                .then(function(durationStore) {
-                    if (self.shouldClearStorage) {
-                        return durationStore.clear().then(function() {
-                            return durationStore;
-                        });
-                    }
-                    return durationStore;
-                })
+            return testRunner.getPluginStore(this.getName())
                 .then(function(durationStore) {
 
                     /**
@@ -160,14 +149,6 @@ define([
                             if (_.isFunction(getDuration)) {
                                 getDuration(getItemDuration(attemptId));
                             }
-                        })
-
-                        .before('finish', function() {
-                            return new Promise(function(resolve) {
-                                durationStore.removeStore()
-                                    .then(resolve)
-                                    .catch(resolve);
-                            });
                         });
                 });
         },
