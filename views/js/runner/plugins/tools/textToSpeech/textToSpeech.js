@@ -159,6 +159,15 @@ define([
                 tss.g_strBookId = deliveryId;
                 tss.g_strPageId = itemId;
 
+                // ensure alt attributes are well loaded by TextHelp on each image
+                // (TextHelp does not directly read the alt attribute, but cache it in a data-msg attribute)
+                options.$contentArea.find('img').each(function() {
+                    var msg = this.getAttribute('data-msg');
+                    if (!msg && this.hasAttribute('alt')) {
+                        this.setAttribute('data-msg', this.getAttribute('alt'));
+                    }
+                });
+
                 this._exec('tagSentences', options.$contentArea.selector);
 
                 return this;
