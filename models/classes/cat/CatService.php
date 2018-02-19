@@ -281,11 +281,13 @@ class CatService extends ConfigurableService
                 $settingsContent = trim(file_get_contents($settingsPath));
                 $catProperties[$assessmentSectionIdentifier] = $settingsContent;
 
-                $this->validateAdaptiveAssessmentSection(
-                    $assessmentSection->getSectionParts(),
-                    $catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef'],
-                    $settingsContent
-                );
+                $this->createAdaptiveSection($assessmentSection, $catInfo, $testBasePath);
+
+//                $this->validateAdaptiveAssessmentSection(
+//                    $assessmentSection->getSectionParts(),
+//                    $catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef'],
+//                    $settingsContent
+//                );
             }
         }
 
@@ -301,6 +303,28 @@ class CatService extends ConfigurableService
         }
     }
 
+
+    protected function createAdaptiveSection($assessmentSection, $catInfo, $testBasePath)
+    {
+        $assessmentSectionIdentifier = $assessmentSection->getIdentifier();
+        $engine = $this->getEngine($catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef']);
+        $settingsPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
+
+        $usagedataContent = null;
+        if (isset($catInfo[$assessmentSectionIdentifier]['qtiUsagedataRef'])) {
+            $usagedataPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['qtiUsagedataRef'];
+            $usagedataContent = trim(file_get_contents($usagedataPath));
+        }
+
+        $metadataContent = null;
+        if (isset($catInfo[$assessmentSectionIdentifier]['qtiMetadataRef'])) {
+            $metadataPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['qtiMetadataRef'];
+            $metadataContent = trim(file_get_contents($metadataPath));
+        }
+
+        $settingsContent = trim(file_get_contents($settingsPath));
+        $adaptSection = $engine->setupSection($settingsContent, $usagedataContent, $metadataContent);
+    }
 
     /**
      * Validation for adaptive section
@@ -544,7 +568,7 @@ class CatService extends ConfigurableService
                     $this->isInitialCall = true;
                     // Rebuild the catSection to be able to alter call options
                     $catSection = $this->getCatSection($testSession, $compilationDirectory, $routeItem);
-                    $this->catSession[$catSectionId] = $catSection->initSession();
+                    $this->catSession[$catSectionId] = $catSection->initSession([], []);
                     $assessmentSection = $routeItem ? $routeItem->getAssessmentSection() : $testSession->getCurrentAssessmentSection();
 
                     $event = new InitializeAdaptiveSessionEvent(

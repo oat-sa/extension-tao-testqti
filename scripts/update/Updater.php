@@ -75,7 +75,7 @@ use oat\taoQtiTest\models\import\QtiTestImporter;
 use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\cat\CatService;
-use oat\libCat\custom\EchoAdaptEngine;
+use oat\libCat\custom\CatEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
 
@@ -1452,7 +1452,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $catService = new CatService([
                 CatService::OPTION_ENGINE_ENDPOINTS => [
                     'http://URL_SERVER/cat/api/' => [
-                        CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+                        CatService::OPTION_ENGINE_CLASS => CatEngine::class,
                         CatService::OPTION_ENGINE_ARGS => []
                     ]
                 ]
@@ -1547,7 +1547,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             if (!isset($engines['http://YOUR_URL_OAUTH/cat/api/'])) {
                 $oauthOptions = [
-                    CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
+                    CatService::OPTION_ENGINE_CLASS => CatEngine::class,
                     CatService::OPTION_ENGINE_ARGS => [
                         CatService::OPTION_ENGINE_VERSION => 'v1.1',
                         CatService::OPTION_ENGINE_CLIENT => [

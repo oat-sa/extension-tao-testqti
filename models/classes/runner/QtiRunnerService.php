@@ -802,8 +802,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
-                                $score->getValue()->getValue()
-                            )
+                                $score->getValue()->getValue(),
+                                null,
+                                $score->getCardinality()
+                            ),
+                            microtime(true)
                         );
                     } else {
                         \common_Logger::i("No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an adaptive section.");
