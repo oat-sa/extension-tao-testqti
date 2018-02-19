@@ -27,6 +27,7 @@ use oat\taoItems\model\CategoryService;
  * Look up items and format them as a tree hierarchy
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
+ * @deprecated use oat\tao\model\resources\TreeResourceLookup
  */
 class TreeItemLookup extends ConfigurableService implements ItemLookup
 {

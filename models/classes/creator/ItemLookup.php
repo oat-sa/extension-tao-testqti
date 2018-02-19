@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models\creator;
  * How to lookup items
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
+ * @deprecated use oat\tao\model\resources\ResourceLookup
  */
 interface ItemLookup
 {
