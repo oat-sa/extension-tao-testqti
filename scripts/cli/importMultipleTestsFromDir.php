@@ -25,9 +25,6 @@ class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
     /** @var  Directory */
     protected $directory;
 
-    /** @var  Directory */
-    protected $uploadDirectoryPath;
-
     /**
      * Entry point, init & import test from $this->directory
      *
@@ -43,7 +40,7 @@ class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
             $tests = 0;
             foreach ($iterator as $file) {
                 try {
-                    $this->importTest($this->uploadDirectoryPath . $file->getPrefix());
+                    $this->importTest($file);
                     echo $file->getPrefix() . ' imported.' . PHP_EOL;
                     $tests++;
                 } catch (\Exception $e) {
@@ -78,10 +75,8 @@ class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
             ->getDirectory(self::TEST_FOLDER_IMPORT);
 
         if (!$this->directory->exists()) {
-            throw new \Exception('Unable to find ' . $this->uploadDirectoryPath);
+            throw new \Exception('Unable to find ' . $this->directory->getPrefix());
         }
-
-        $this->uploadDirectoryPath = FILES_PATH . 'tao/upload/';
 
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
