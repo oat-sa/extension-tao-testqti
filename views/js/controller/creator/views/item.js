@@ -23,10 +23,10 @@ define([
     'jquery',
     'i18n',
     'core/logger',
-    'taoQtiTest/provider/testItems',
+    'provider/resources',
     'ui/resource/selector',
     'ui/feedback'
-], function($, __, loggerFactory, testItemProviderFactory, resourceSelector, feedback){
+], function($, __, loggerFactory, resourceProviderFactory, resourceSelector, feedback){
     'use strict';
 
    /**
@@ -37,7 +37,7 @@ define([
     /**
      * Let's you access the data
      */
-    var testItemProvider = testItemProviderFactory();
+    var testItemProvider = resourceProviderFactory();
 
     /**
      * Handles errors
@@ -45,7 +45,7 @@ define([
      */
     var onError = function onError(err){
         logger.error(err);
-        feedback.error(err.message || __('An error occured while retrieving items'));
+        feedback().error(err.message || __('An error occured while retrieving items'));
     };
 
    /**
@@ -57,18 +57,19 @@ define([
 
         var selectorConfig = {
             type : __('items'),
+            rootClassUri: 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item',
             selectionMode : resourceSelector.selectionModes.multiple
         };
 
         //load the classes hierarchy
-        testItemProvider.getItemClasses()
+        testItemProvider.getClasses(selectorConfig.rootClassUri)
             .then(function(classes){
                 selectorConfig.classes = classes;
                 selectorConfig.classUri = classes[0].uri;
             })
             .then(function(){
                 //load the class properties
-                return testItemProvider.getItemClassProperties(selectorConfig.classUri);
+                return testItemProvider.getClassProperties(selectorConfig.classUri);
             })
             .then(function(filters){
                 //set the filters from the properties
@@ -87,7 +88,7 @@ define([
                         var self = this;
 
                         //ask the server the item from the component query
-                        testItemProvider.getItems(params)
+                        testItemProvider.getResources(params)
                             .then(function(items){
                                 //and update the item list
                                 self.update(items, params);
@@ -100,7 +101,7 @@ define([
                         //by changing the class we need to change the
                         //properties filters
                         testItemProvider
-                            .getItemClassProperties(classUri)
+                            .getClassProperties(classUri)
                             .then(function(filters){
                                 self.updateFilters(filters);
                             })

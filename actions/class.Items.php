@@ -71,6 +71,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
     /**
      * Get the list of items classes
+     * @deprecated use /tao/RestClass/getAll
      */
     public function getItemClasses()
     {
@@ -90,6 +91,8 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      *  - classUri (top class)
      *  - pattern (label filtering)
      *  - offset/limit (paginate)
+     *
+     * @deprecated use /tao/RestResource/getAll
      */
     public function getItems()
     {
