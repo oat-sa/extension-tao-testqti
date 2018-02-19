@@ -18,7 +18,7 @@
  */
 
 use oat\generis\model\OntologyRdfs;
-use oat\taoQtiTest\models\creator\CreatorItems;
+use oat\tao\model\TaoOntology;
 use oat\taoItems\model\CategoryService;
 use qtism\common\utils\Format;
 
@@ -28,7 +28,7 @@ use qtism\common\utils\Format;
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  */
-class taoQtiTest_actions_Items extends tao_actions_CommonModule
+class taoQtiTest_actions_Items extends tao_actions_RestResource
 {
     /**
      * Get ALL QTI items within the platform.
@@ -75,9 +75,8 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     public function getItemClasses()
     {
         try {
-            $data = $this->getCreatorItemsService()->getItemClasses();
+            $data = $this->getResourceService()->getAllClasses($this->getClass(TaoOntology::CLASS_URI_ITEM));
         } catch(\common_Exception $e){
-
             return $this->returnFailure($e);
         }
 
@@ -115,8 +114,8 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
                 }
             }
 
-            $itemClass = new \core_kernel_classes_Class($classUri);
-            $data = $this->getCreatorItemsService()->getQtiItems($itemClass, $format, $search, $offset, $limit);
+            $itemClass = $this->getClass($classUri);
+            $data = $this->getResourceService()->getResources($itemClass, $format, [], $search, $offset, $limit);
         } catch(\Exception $e){
             return $this->returnFailure($e);
         }
@@ -130,7 +129,6 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      *
      * The response is encoded in JSON and contains the list of items and its categories.
      * parameter uris is required in order to get categories for one or more items
-     * @throws common_exception_MissingParameter
      *
      * @deprecated the categories are retrieved with the items in getItems instead
      */
@@ -148,7 +146,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         $items = $this->getQtiItems($uris);
 
         if (count($items) > 0) {
-            $service = $this->getServiceManager()->get(CategoryService::SERVICE_ID);
+            $service = $this->getServiceLocator()->get(CategoryService::SERVICE_ID);
             $itemsCategories = $service->getItemsCategories($items);
 
             //filter all values that wouldn't be valid XML identifiers
@@ -174,7 +172,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         $items = array();
 
         foreach ($itemUris as $uri) {
-            $item = new \core_kernel_classes_Resource($uri);
+            $item = $this->getResource($uri);
             if ($this->getItemService()->hasItemModel($item, array(\oat\taoQtiItem\model\ItemModel::MODEL_URI))) {
                 $items[$uri] = $item;
             }
@@ -190,49 +188,5 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     private function getItemService()
     {
         return \taoItems_models_classes_ItemsService::singleton();
-    }
-
-    /**
-     * Get the CreatorItems service
-     * @return CreatorItems the service
-     */
-    private function getCreatorItemsService()
-    {
-        return $this->getServiceManager()->get(CreatorItems::SERVICE_ID);
-    }
-
-    /**
-     * Helps you to format 200 responses,
-     * using the usual format [success,data]
-     * @param mixed $data the response data to encode
-     * @return string the json
-     */
-    protected function returnSuccess($data)
-    {
-        $returnArray = [
-            'success' => true,
-            'data' => $data
-        ];
-
-        return $this->returnJson($returnArray);
-    }
-
-    /**
-     * Helps you to format failures responses.
-     * @param \Exception $e
-     * @return string the json
-     */
-    protected function returnFailure(\Exception $exception)
-    {
-
-        \common_Logger::e($exception);
-
-        $returnArray = [
-            'success' => false,
-            'errorCode' => 500,
-            'errorMsg' => $exception->getMessage()
-        ];
-
-        return $this->returnJson($returnArray, 500);
     }
 }

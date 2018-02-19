@@ -25,6 +25,7 @@ use oat\oatbox\service\ConfigurableService;
  * This service let's you access the test creator's items
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
+ * @deprecated use oat\tao\model\resources\ResourceService
  */
 class CreatorItems extends ConfigurableService
 {

@@ -26,6 +26,7 @@ use oat\taoItems\model\CategoryService;
  * Look up items and format them as a flat list
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
+ * @deprecated use oat\tao\model\resources\ListResourceLookup
  */
 class ListItemLookup extends ConfigurableService implements ItemLookup
 {
