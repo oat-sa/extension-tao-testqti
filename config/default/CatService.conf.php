@@ -1,13 +1,13 @@
 <?php
 use oat\taoQtiTest\models\cat\CatService;
-use oat\libCat\custom\CatEngine;
+use oat\libCat\custom\EchoAdaptEngine;
 use oat\tao\model\api\ApiClientConnector;
 
 return new CatService([
     CatService::OPTION_ENGINE_ENDPOINTS => [
         // OAuth sample.
         'http://YOUR_URL_OAUTH/cat/api/' => [
-            CatService::OPTION_ENGINE_CLASS => CatEngine::class,
+            CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
             CatService::OPTION_ENGINE_ARGS => [
                 CatService::OPTION_ENGINE_VERSION => 'v1.1',
                 CatService::OPTION_ENGINE_CLIENT => [
@@ -30,7 +30,7 @@ return new CatService([
         ],
         // Basic sample.
         'http://YOUR_URL/cat/api/' => [
-            CatService::OPTION_ENGINE_CLASS => CatEngine::class,
+            CatService::OPTION_ENGINE_CLASS => EchoAdaptEngine::class,
             CatService::OPTION_ENGINE_ARGS => [
                 CatService::OPTION_ENGINE_VERSION => 'v1',
                 CatService::OPTION_ENGINE_CLIENT => [
