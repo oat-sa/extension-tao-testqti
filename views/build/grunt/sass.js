@@ -1,49 +1,41 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var sass    = grunt.config('sass') || {};
-    var watch   = grunt.config('watch') || {};
-    var notify  = grunt.config('notify') || {};
     var root    = grunt.option('root') + '/taoQtiTest/views/';
+    var pluginDir = root + 'js/runner/plugins/';
 
-    sass.taoqtitest = { };
-    sass.taoqtitest.files = { };
-    sass.taoqtitest.files[root + 'css/creator.css'] = root + 'scss/creator.scss';
-    sass.taoqtitest.files[root + 'css/test-runner.css'] = root + 'scss/test-runner.scss';
-    sass.taoqtitest.files[root + 'css/new-test-runner.css'] = root + 'scss/new-test-runner.scss';
-    sass.taoqtitest.files[root + 'css/plugins/key-navigation.css'] = root + 'scss/plugins/key-navigation.scss';
-
-    sass.taoqtitestplugins = {};
-    sass.taoqtitestplugins.files = {};
-    sass.taoqtitestplugins.files[root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.css'] = root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.scss';
-
-    watch.taoqtitestsass = {
-        files : [root + 'scss/**/*.scss'],
-        tasks : ['sass:taoqtitest', 'notify:taoqtitestsass'],
-        options : {
-            debounceDelay : 1000
+    grunt.config.merge({
+        sass : {
+            taoqtitest: {
+                files : [
+                    { dest : root + 'css/creator.css', src : root + 'scss/creator.scss' },
+                    { dest : root + 'css/test-runner.css', src : root + 'scss/test-runner.scss' },
+                    { dest : root + 'css/new-test-runner.css', src :  root + 'scss/new-test-runner.scss'},
+                    { dest : root + 'css/plugins/key-navigation.css', src : root + 'scss/plugins/key-navigation.scss'},
+                    { dest : pluginDir + 'tools/textToSpeech/textToSpeech.css', src : pluginDir + 'tools/textToSpeech/textToSpeech.scss' },
+                    { dest : pluginDir + 'controls/timer/component/css/countdown.css', src : pluginDir + 'controls/timer/component/scss/countdown.scss'}
+                ]
+            },
+        },
+        watch : {
+            taoqtitestsass : {
+                files : [root + 'scss/**/*.scss', pluginDir + '**/*.scss'],
+                tasks : ['sass:taoqtitest'],
+                options : {
+                    debounceDelay : 1000
+                }
+            }
+        },
+        notify : {
+            taoqtitestsass : {
+                options: {
+                    title: 'Grunt SASS',
+                    message: 'SASS files compiled to CSS'
+                }
+            }
         }
-    };
-
-    watch.taoqtitestpluginssass = {
-        files: [root + 'js/runner/plugins/tools/textToSpeech/textToSpeech.scss'],
-        tasks: ['sass:taoqtitestplugins', 'notify:taoqtitestsass'],
-        options: {
-            debounceDelay: 1000
-        }
-    };
-
-    notify.taoqtitestsass = {
-        options: {
-            title: 'Grunt SASS',
-            message: 'SASS files compiled to CSS'
-        }
-    };
-
-    grunt.config('sass', sass);
-    grunt.config('watch', watch);
-    grunt.config('notify', notify);
+    });
 
     //register an alias for main build
-    grunt.registerTask('taoqtitestsass', ['sass:taoqtitest', 'sass:taoqtitestplugins']);
+    grunt.registerTask('taoqtitestsass', ['sass:taoqtitest']);
 };
