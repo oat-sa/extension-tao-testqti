@@ -283,11 +283,11 @@ class CatService extends ConfigurableService
 
                 $this->createAdaptiveSection($assessmentSection, $catInfo, $testBasePath);
 
-//                $this->validateAdaptiveAssessmentSection(
-//                    $assessmentSection->getSectionParts(),
-//                    $catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef'],
-//                    $settingsContent
-//                );
+                $this->validateAdaptiveAssessmentSection(
+                    $assessmentSection->getSectionParts(),
+                    $catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef'],
+                    $settingsContent
+                );
             }
         }
 
@@ -337,15 +337,18 @@ class CatService extends ConfigurableService
     {
         $engine = $this->getEngine($ref);
         $adaptSection = $engine->setupSection($testAdminId);
-        $itemReferences = $adaptSection->getItemReferences();
-        $dependencies = $sectionsParts->getKeys();
+        //todo: remove this checking if tests/{getSectionId}/items will become a part of standard.
+        if (method_exists($adaptSection, 'getItemReferences')) {
+            $itemReferences = $adaptSection->getItemReferences();
+            $dependencies = $sectionsParts->getKeys();
 
-        if ($catDiff = array_diff($dependencies, $itemReferences)) {
-            throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
-        }
+            if ($catDiff = array_diff($dependencies, $itemReferences)) {
+                throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
+            }
 
-        if ($packageDiff = array_diff($dependencies, $itemReferences)) {
-            throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff), $packageDiff);
+            if ($packageDiff = array_diff($dependencies, $itemReferences)) {
+                throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff), $packageDiff);
+            }
         }
     }
     
