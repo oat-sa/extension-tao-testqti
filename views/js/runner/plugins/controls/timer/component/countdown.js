@@ -19,15 +19,23 @@
 /**
  * Component that controls the display of a countdown.
  *
- * You can either control the countdown externally or internally
+ * You can either control the countdown externally  or internally
+ *
+ * @example
+ * countdown(document.querySelector('.stopwatch'), {
+ *      id : 'timer1',
+ *      label : 'Stop watch',
+ *      remaingTime : 60000
+ * })
+ * .on('complete', () => console.log('done'))
+ * .start();
+ *
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
     'jquery',
     'lodash',
-    'i18n',
-    'moment',
     'core/encoder/time',
     'core/polling',
     'core/timer',
@@ -35,7 +43,7 @@ define([
     'tpl!taoQtiTest/runner/plugins/controls/timer/component/tpl/countdown',
     'ui/tooltip',
     'css!taoQtiTest/runner/plugins/controls/timer/component/css/countdown.css'
-], function ($, _, __, moment, timeEncoder, pollingFactory, timerFactory, component, countdownTpl) {
+], function ($, _, timeEncoder, pollingFactory, timerFactory, component, countdownTpl) {
     'use strict';
 
     //Precision is milliseconds
@@ -100,6 +108,7 @@ define([
                 var self = this;
                 var encodedTime;
                 var warningId;
+                var warningMessage;
 
                 if(!this.is('completed')){
                     if(remainingTime <= 0){
@@ -119,14 +128,20 @@ define([
                         if(this.warnings) {
                             //the warnings have already be sorted
                             warningId =  _.findLastKey(this.warnings, function(warning){
-                                return warning && !warning.showed &&
+                                return warning && !warning.shown &&
                                        warning.threshold > 0 &&
                                        warning.threshold >= self.remainingTime;
 
                             });
                             if(warningId){
 
-                                this.warnings[warningId].showed = true;
+                                this.warnings[warningId].shown = true;
+
+                                if(_.isFunction(this.warnings[warningId].message)){
+                                    warningMessage = this.warnings[warningId].message(this.remainingTime);
+                                } else {
+                                    warningMessage = this.warnings[warningId].message;
+                                }
 
                                 /**
                                  * Warn user the timer reach a threshold
@@ -134,7 +149,7 @@ define([
                                  * @param {String} message
                                  * @param {String} level
                                  */
-                                this.trigger('warn', this.warnings[warningId].message, this.warnings[warningId].level);
+                                this.trigger('warn', warningMessage, this.warnings[warningId].level);
                             }
                         }
 
@@ -215,8 +230,8 @@ define([
              *
              * @returns {countdown} chains
              *
-             * @fires countdown#end
              * @fires countdown#complete
+             * @fires countdown#end
              */
             complete : function complete(){
                 if(this.is('rendered') && this.is('running') && !this.is('completed')){
@@ -281,10 +296,12 @@ define([
                     .addClass('txt-' + level);
 
                 if(this.config.displayWarning === true){
-                    $time.qtip({
+
+                    this.getElement().qtip({
                         show: { ready: true },
                         hide: {
-                            delay: warningTimeout[level] || 2000
+                            event : false,
+                            inactive: warningTimeout[level] || 2000
                         },
                         suppress: false,
                         theme : level,
