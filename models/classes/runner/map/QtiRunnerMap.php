@@ -298,7 +298,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     }
 
                     $offset ++;
-                    if ($forceInformationalTitles && !$isItemInformational) {
+                    if (!$forceInformationalTitles || ($forceInformationalTitles && !$isItemInformational)) {
                         $offsetSection++;
                     };
                 }
