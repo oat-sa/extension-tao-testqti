@@ -1,8 +1,6 @@
 @import "inc/bootstrap";
 
 .countdown{
-    padding: 5px;
-    position: relative;
 
     opacity : 0;
     &.rendered {
@@ -10,8 +8,15 @@
         @include transition(opacity, 300ms, linear);
     }
 
-    padding: 0 20px;
+    position: relative;
+    display: inline-block;
     overflow: hidden;
+    text-align: center;
+    vertical-align: top;
+    line-height: 1.2;
+    padding: 0 20px;
+    margin-top: -1px;
+    height: 100%;
 
     .label {
         max-width: 130px;
