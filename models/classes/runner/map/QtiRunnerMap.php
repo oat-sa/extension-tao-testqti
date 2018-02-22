@@ -158,7 +158,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $forceInformationalTitles = !empty($reviewConfig['forceInformationalTitle']);
         $useTitle = !empty($reviewConfig['useTitle']);
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
-        $uniqueInformationalTitle = isset($reviewConfig['informationalItemTitle']) ? $reviewConfig['informationalItemTitle'] : '%d';
+        $uniqueInformationalTitle = isset($reviewConfig['informationalItemTitle']) ? $reviewConfig['informationalItemTitle'] : 'Instructions';
         $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
 
         /* @var AssessmentTestSession $session */
