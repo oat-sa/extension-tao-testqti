@@ -156,7 +156,7 @@ function(
                     sectionModel.sectionParts[index] = {};
                 }
 
-                itemRefView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, $itemRef);
+                itemRefView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, partModel, $itemRef);
                 $itemRef.find('.title').text(
                     config.labels[uri.encode($itemRef.data('uri'))]
                 );
@@ -228,7 +228,7 @@ function(
                         itemRefModel = sectionModel.sectionParts[index];
 
                         //initialize the new item ref
-                        itemRefView.setUp(creatorContext, itemRefModel, sectionModel, $itemRef);
+                        itemRefView.setUp(creatorContext, itemRefModel, sectionModel, partModel, $itemRef);
 
                         /**
                          * @event modelOverseer#item-add
