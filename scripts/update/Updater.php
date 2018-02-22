@@ -1763,5 +1763,31 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('18.9.5', '21.0.2');
+
+        if ($this->isVersion('21.0.2')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['timer'] = [
+                'guided-navigation' => true
+            ];
+            $extension->setConfig('testRunner', $config);
+
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->remove('taoQtiTest/runner/plugins/controls/timer/timer');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'timer',
+                'name' => 'Timer indicator',
+                'module' => 'taoQtiTest/runner/plugins/controls/timer/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Add countdown when remaining time',
+                'category' => 'controls',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('21.1.0');
+        }
     }
 }

@@ -275,6 +275,17 @@ return array(
              * The optional amd path to an alternative template, e.g. myExtension/runner/plugins/tool/calculator/template.tpl
              */
             'template' => ''
+        ],
+
+
+        /**
+         * Timer plugin configuration
+         */
+        'timer' => [
+            /**
+             * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
+             */
+            'guided-navigation' => true
         ]
     ],
 
