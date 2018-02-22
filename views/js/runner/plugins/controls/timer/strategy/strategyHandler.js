@@ -33,11 +33,12 @@ define([
 ], function(_, Promise, enforcedStayStrategy, guidedNavigationStrategy, timeoutStrategy, warnSectionLeavingStrategy){
     'use strict';
 
+
     /**
      * The list of available strategies
      * TODO this list could come from the configuration
      */
-    var availableStrategies = [
+    var defaultAvailableStrategies = [
         enforcedStayStrategy,
         guidedNavigationStrategy,
         timeoutStrategy,
@@ -47,9 +48,10 @@ define([
     /**
      * Get a strategyHandler object for a testRunner instance
      * @param {runner} testRunner - the test runner instance
+     * @param {strategy[]} strategies - the list of available strategies, to override the defaults
      * @returns {strategyHandler} the handler
      */
-    return function getStrategyHandler(testRunner){
+    return function getStrategyHandler(testRunner, strategies){
         var strategyHandler;
 
         /**
@@ -78,6 +80,13 @@ define([
             }));
         };
 
+        var availableStrategies = strategies || defaultAvailableStrategies;
+
+        //quick validation of the test runner
+        if(!testRunner || !_.isFunction(testRunner.on) || !_.isFunction(testRunner.getTestContext)){
+            throw new TypeError('The strategy handler needs a valid test runner.');
+        }
+
         /**
          * @typedef {Object} strategyHandler
          */
@@ -98,6 +107,17 @@ define([
                     }
                 });
                 return applyToStrategies(timer.id, 'setUp');
+            },
+
+            /**
+             * Get the actives strategies for the given timer
+             * @returns {strategy[]} the actives strategies
+             */
+            getActives : function getActives(timer){
+                if(timer && timer.id && _.isArray(actives[timer.id])){
+                    return actives[timer.id];
+                }
+                return [];
             },
 
             /**

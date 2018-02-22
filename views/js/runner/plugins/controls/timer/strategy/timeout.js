@@ -36,6 +36,7 @@ define([], function(){
 
         if(timer && timer.type === 'max'){
             return {
+                name : 'timeout',
 
                 /**
                  * complete entry point : timeout

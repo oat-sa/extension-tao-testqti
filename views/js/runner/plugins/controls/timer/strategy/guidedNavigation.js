@@ -41,6 +41,7 @@ define([], function(){
 
         if(timer && timer.type === 'locked' && timer.scope === 'item' && pluginConfig.guidedNavigation === true){
             return {
+                name : 'guidedNavigation',
 
                 /**
                  * setUp entry point : hides the navigation

@@ -64,6 +64,7 @@ define([
 
         if(timer && timer.scope === 'section' && timer.type === 'max'){
             return {
+                name : 'warnSectionLeaving',
 
                 /**
                  * setUp entry point : blocks the move to display a message if needed

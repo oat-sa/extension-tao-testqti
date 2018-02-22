@@ -39,6 +39,7 @@ define([], function(){
 
         if(timer && timer.type === 'min' && timer.scope === 'item'){
             return {
+                name : 'enforcedStay',
 
                 /**
                  * setUp entry point : disable the navigation
