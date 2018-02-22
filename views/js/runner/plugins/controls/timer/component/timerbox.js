@@ -92,6 +92,8 @@ define([
              *
              * @param {Object[]} timers - the new timers
              * @returns {Promise<Array>} resolves when all timers are up to date (with the result of all the update operations)
+             *
+             * @fires timerbox#update the update is done
              */
             update : function update(timers){
                 var self = this;
@@ -124,6 +126,13 @@ define([
                         } else {
                             hider.hide($zenModeToggler);
                         }
+
+                        /**
+                         * The timer box update is done
+                         * @event timerbox#update
+                         * @param {Object[]} timers - ALL update results (includes removals)
+                         */
+                        self.trigger('update', results);
 
                         return results;
                     });
@@ -166,18 +175,18 @@ define([
                             self.timers[id].countdown = this;
 
                             /**
-                                * The timers have changed (add, update, remove)
-                                * @event timerbox#timerchange
-                                * @param {String} action - add, update, remove
-                                * @param {Object} timer
-                                */
+                             * The timers have changed (add, update, remove)
+                             * @event timerbox#timerchange
+                             * @param {String} action - add, update, remove
+                             * @param {Object} timer
+                             */
                             self.trigger('timerchange', 'add', self.timers[id]);
 
                             /**
-                                * A new timer is added
-                                * @event timerbox#timeradd
-                                * @param {Object} timer
-                                */
+                             * A new timer is added
+                             * @event timerbox#timeradd
+                             * @param {Object} timer
+                             */
                             self.trigger('timeradd', self.timers[id]);
 
                             resolve(self.timers[id]);
@@ -185,10 +194,10 @@ define([
                         .on('start', function(){
 
                             /**
-                                * A timer starts
-                                * @event timerbox#timerstart
-                                * @param {Object} timer
-                                */
+                              * A timer starts
+                              * @event timerbox#timerstart
+                              * @param {Object} timer
+                              */
                             self.trigger('timerstart', self.timers[id]);
                         })
                         .on('stop', function(){

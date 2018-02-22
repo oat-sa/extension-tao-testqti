@@ -16,6 +16,7 @@
  * Copyright (c) 2018 (original work) Open Assessment Technologies SA ;
  */
 /**
+ * Test the timer's plugin countdown component
  */
 define([
     'jquery',
