@@ -36,8 +36,10 @@ define([], function(){
      * @returns {strategy|Boolean} the strategy if applies or false
      */
     return function guidedNavigationStrategy(testRunner, timer){
+        var testData = testRunner.getTestData();
+        var pluginConfig = testData && testData.config && testData.config.plugins && testData.config.plugins.timer;
 
-        if(timer && timer.type === 'locked' && timer.scope === 'item'){
+        if(timer && timer.type === 'locked' && timer.scope === 'item' && pluginConfig.guidedNavigation === true){
             return {
 
                 /**

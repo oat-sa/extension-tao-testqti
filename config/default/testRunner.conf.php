@@ -285,7 +285,7 @@ return array(
             /**
              * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
              */
-            'guided-navigation' => true
+            'guidedNavigation' => true
         ]
     ],
 

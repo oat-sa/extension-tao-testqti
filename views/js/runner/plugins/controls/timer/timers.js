@@ -83,10 +83,10 @@ define([
      * @param {Object[]} timeConstraints - as defined in the testContext
      * @param {Object} [config] - timers config
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
+     * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
      * @returns {timer[]} the timers
      */
     return function getTimers(timeConstraints, config){
-
         var timers = {};
 
         /**
