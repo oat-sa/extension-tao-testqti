@@ -124,7 +124,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
 
             return ($remaining->isNegative() === true) ? new QtiDuration('PT0S') : $remaining;
         }
-        return null;
+        return false;
     }
 
     /**
@@ -138,7 +138,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
         if (($timeLimits = $this->getSource()->getTimeLimits()) !== null && ($maxTime = $timeLimits->getMaxTime()) !== null) {
             return $this->getRemainingTimeFrom($maxTime);
         }
-        return null;
+        return false;
     }
 
     /**
@@ -152,7 +152,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
         if (($timeLimits = $this->getSource()->getTimeLimits()) !== null && ($minTime = $timeLimits->getMinTime()) !== null) {
             return $this->getRemainingTimeFrom($minTime);
         }
-        return null;
+        return false;
     }
 
     /**
