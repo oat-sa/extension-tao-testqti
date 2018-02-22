@@ -263,4 +263,12 @@ interface RunnerService extends DeliveryExecutionDelete
      */
     public function isTerminated(RunnerServiceContext $context);
 
+    /**
+     * Get the list of portable elements used in the item
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @return mixed
+     */
+    public function getItemPortableElements(RunnerServiceContext $context, $itemRef);
+
 }
