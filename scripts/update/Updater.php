@@ -19,6 +19,7 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
@@ -42,6 +43,7 @@ use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
+use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
@@ -64,6 +66,7 @@ use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
+use oat\taoTaskQueue\model\TaskLogInterface;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\taoQtiTest\models\PhpCodeCompilationDataService;
@@ -1765,6 +1768,19 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('18.9.5', '21.0.2');
 
         if ($this->isVersion('21.0.2')) {
+            /** @var TaskLogInterface|ConfigurableService $taskLogService */
+            $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
+
+            $taskLogService->linkTaskToCategory(ImportQtiTest::class, TaskLogInterface::CATEGORY_IMPORT);
+
+            $this->getServiceManager()->register(TaskLogInterface::SERVICE_ID, $taskLogService);
+
+            $this->setVersion('22.0.0');
+        }
+
+        $this->skip('22.0.0', '22.0.1');
+
+        if ($this->isVersion('22.0.1')) {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
@@ -1787,7 +1803,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'tags' => [ 'core', 'qti' ]
             ]));
 
-            $this->setVersion('21.1.0');
+            $this->setVersion('22.1.0');
         }
     }
 }
