@@ -1783,8 +1783,8 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('23.2.0')) {
 
             $registry = PluginRegistry::getRegistry();
-            if ($registry->isRegistered('taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech')) {
-                $registry->remove('taoQtiTest/runner/plugins/tools/textToSpeech/textToSpeech');
+            if ($registry->isRegistered('taoQtiTest/runner/plugins/tools/textToSpeech/plugin')) {
+                $registry->remove('taoQtiTest/runner/plugins/tools/textToSpeech/plugin');
             }
 
             $this->setVersion('23.2.1');
