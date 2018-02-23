@@ -22,7 +22,8 @@
  * by hidding the navigation elements.
  * Once the timer completes, the test moves to the next item.
  *
- * Applies on item scope, locked timers only and the test configuration "guidedNavigation"
+ * Applies on item scope, locked timers only, linear test part and
+ * the test configuration "guidedNavigation"
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
@@ -37,9 +38,12 @@ define([], function(){
      */
     return function guidedNavigationStrategy(testRunner, timer){
         var testData = testRunner.getTestData();
+        var testContext = testRunner.getTestContext();
         var pluginConfig = testData && testData.config && testData.config.plugins && testData.config.plugins.timer;
 
-        if(timer && timer.type === 'locked' && timer.scope === 'item' && pluginConfig.guidedNavigation === true){
+        if( timer && timer.type === 'locked' && timer.scope === 'item' &&
+            pluginConfig.guidedNavigation === true && testContext.isLinear === true){
+
             return {
                 name : 'guidedNavigation',
 

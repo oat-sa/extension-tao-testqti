@@ -54,11 +54,12 @@ define([
              * Load the timers, from the given timeConstraints and reading the current value in the store
              * @param {store} timeStore - where the values are read
              * @param {Object[]} timeConstraints - the timeConstraints as given by the testContext
+             * @param {Boolean} isLinear - the timeConstraints as given by the testContext
              * @param {Object} config - the current config, especially for the warnings
              * @return {Promise<Object[]>} the list of timers for the current context
              */
-            this.loadTimers = function loadTimers(timeStore, timeConstraints, config){
-                var timers = timersFactory(timeConstraints, config);
+            this.loadTimers = function loadTimers(timeStore, timeConstraints, isLinear,  config){
+                var timers = timersFactory(timeConstraints, isLinear, config);
                 return Promise.all(
                     _.map(timers, function(timer){
                         return timeStore.getItem(timer.id).then(function(savedTime){
@@ -134,10 +135,10 @@ define([
 
                     testRunner
                         .before('renderitem resumeitem', function() {
+                            var testContext = testRunner.getTestContext();
                             //update the timers before each item
-                            var timeConstraints = testRunner.getTestContext().timeConstraints;
-                            if(self.timerbox && timeConstraints){
-                                return self.loadTimers(timeStore, timeConstraints, config)
+                            if(self.timerbox && testContext.timeConstraints){
+                                return self.loadTimers(timeStore, testContext.timeConstraints, !!testContext.isLinear, config)
                                     .then(function(timers){
                                         return self.timerbox.update(timers);
                                     })

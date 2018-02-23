@@ -81,12 +81,13 @@ define([
     /**
      * Get the timers objects from the time constraints andt the given config
      * @param {Object[]} timeConstraints - as defined in the testContext
+     * @param {Boolean} isLinear - is the current navigation mode linear
      * @param {Object} [config] - timers config
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
      * @returns {timer[]} the timers
      */
-    return function getTimers(timeConstraints, config){
+    return function getTimers(timeConstraints, isLinear, config){
         var timers = {};
 
         /**
@@ -172,7 +173,8 @@ define([
                 logger.warning('Time constraint defined with no time, skipping');
 
             // minTime = maxTime -> one locked timer
-            } else if (constraintData.maxTime && constraintData.minTime &&
+            } else if ( config.guidedNavigation && isLinear &&
+                    constraintData.maxTime && constraintData.minTime &&
                     constraintData.minTime === constraintData.maxTime &&
                     constraintData.maxTime > 0){
 
@@ -182,7 +184,7 @@ define([
             } else {
 
                 //minTime -> min timer
-                if(constraintData.minTime  && constraintData.minTime > 0){
+                if(isLinear && constraintData.minTime  && constraintData.minTime > 0){
 
                     newTimer = buildTimer('min', constraintData);
                     timers[newTimer.id] = newTimer;

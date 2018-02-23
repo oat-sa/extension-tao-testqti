@@ -22,7 +22,7 @@
  * front of the item until the timer completes,
  * by disabling the navigation elements.
  *
- * Applies on item scope, min timers.
+ * Applies on item scope, min timers if the testPart is linear
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
@@ -36,8 +36,10 @@ define([], function(){
      * @returns {strategy|Boolean} the strategy if applies or false
      */
     return function enforcedStayStrategy(testRunner, timer){
+        var testContext = testRunner.getTestContext();
 
-        if(timer && timer.type === 'min' && timer.scope === 'item'){
+        if( timer && timer.type === 'min' && timer.scope === 'item' &&
+            testContext.isLinear){
             return {
                 name : 'enforcedStay',
 
