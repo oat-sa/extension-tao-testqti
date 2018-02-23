@@ -1784,9 +1784,8 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
-            $config['plugins']['timer'] = [
-                'guidedNavigation' => true
-            ];
+            $config['guidedNavigation'] = true;
+
             $extension->setConfig('testRunner', $config);
 
             $registry = PluginRegistry::getRegistry();
