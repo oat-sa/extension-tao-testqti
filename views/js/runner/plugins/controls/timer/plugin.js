@@ -63,8 +63,15 @@ define([
                 return Promise.all(
                     _.map(timers, function(timer){
                         return timeStore.getItem(timer.id).then(function(savedTime){
+
+                            //apply the remainingTime from the store
                             if (_.isNumber(savedTime) && savedTime >= 0) {
                                 timer.remainingTime = savedTime;
+                            }
+                            //apply the extraTime
+                            if(_.isNumber(timer.extraTime) && timer.extraTime > 0){
+                                timer.remaingWithoutExtraTime = timer.remainingTime;
+                                timer.remainingTime = timer.remainingTime + timer.extraTime;
                             }
                         });
                     })

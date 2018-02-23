@@ -246,6 +246,12 @@ define([
                 if (this.is('rendered') && typeof this.timers[id] !== 'undefined') {
 
                     this.timers[id].remainingTime = timer.remainingTime;
+                    this.timers[id].extraTime     = timer.extraTime;
+
+                    if(_.isNumber(timer.remaingWithoutExtraTime)){
+                        this.timers[id].remaingWithoutExtraTime = timer.remaingWithoutExtraTime;
+                    }
+
                     if (this.timers[id].countdown){
                         this.timers[id].countdown.update(timer.remainingTime);
                     }

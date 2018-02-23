@@ -27,10 +27,11 @@ define([
     'lodash',
     'core/promise',
     'taoQtiTest/runner/plugins/controls/timer/strategy/enforcedStay',
+    'taoQtiTest/runner/plugins/controls/timer/strategy/extraTime',
     'taoQtiTest/runner/plugins/controls/timer/strategy/guidedNavigation',
     'taoQtiTest/runner/plugins/controls/timer/strategy/timeout',
     'taoQtiTest/runner/plugins/controls/timer/strategy/warnSectionLeaving',
-], function(_, Promise, enforcedStayStrategy, guidedNavigationStrategy, timeoutStrategy, warnSectionLeavingStrategy){
+], function(_, Promise, extraTimeStrategy, enforcedStayStrategy, guidedNavigationStrategy, timeoutStrategy, warnSectionLeavingStrategy){
     'use strict';
 
 
@@ -39,6 +40,7 @@ define([
      * TODO this list could come from the configuration
      */
     var defaultAvailableStrategies = [
+        extraTimeStrategy,
         enforcedStayStrategy,
         guidedNavigationStrategy,
         timeoutStrategy,
