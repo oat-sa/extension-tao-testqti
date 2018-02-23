@@ -18,11 +18,9 @@
  */
 
 /**
- * Timer strategy that enforce the test taker to stay in
- * front of the item until the timer completes,
- * by disabling the navigation elements.
+ * Track consumed extra time and add it to the next move request
  *
- * Applies on item scope, min timers if the testPart is linear
+ * Applies when the timer contains an extraTime
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
@@ -33,7 +31,6 @@ define([
 
     var precision = 1000;
     var lastConsumedExtraTime = 0;
-
 
     /**
      * Creates the strategy if it applies to the given timer
@@ -53,7 +50,6 @@ define([
             if(_.isNumber(timer.extraTime) && timer.extraTime > 0 && !timer.extraTimeSetup){
                 timer.extraTimeSetup = true;
 
-                // Sends the
                 testRunner.before('move.extra skip.extra exit.extra timeout.extra', function() {
                     var consumedExtraTime = 0;
                     var testContext = testRunner.getTestContext();
