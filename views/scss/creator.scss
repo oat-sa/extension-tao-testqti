@@ -635,18 +635,18 @@
         }
         .locker {
             position: absolute;
-            border: solid 2px $websiteBorder; 
+            border: solid 1px $websiteBorder;
             border-left-color: transparent;
             @include border-radius(4);
-            top: 12px;
-            right: 33px;
-            width: 30px;
-            height : 50px;
+            top: 9px;
+            right: 49px;
+            width: 23px;
+            height : 46px;
             z-index: 400;
         }
 
         button {
-            background-color: $uiClickableDefaultBg; 
+            background-color: $uiClickableDefaultBg;
             position: absolute;
             z-index: 450;
             padding: 0;
@@ -685,6 +685,10 @@
 
         .duration-ctrl-wrapper {
             z-index: 500;
+            input.duration-ctrl{
+                width: 35px !important;
+                min-width: 35px !important;
+            }
         }
     }
 }
