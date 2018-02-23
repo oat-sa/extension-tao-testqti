@@ -46,7 +46,6 @@ use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
@@ -65,7 +64,7 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
-use oat\taoResultServer\models\classes\ResultServerService;
+use oat\taoQtiItem\model\portableElement\PortableElementService;
 
 /**
  * Class QtiRunnerService
@@ -135,6 +134,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $this->dataCache[$cacheKey] = json_decode($directory->read($lang.DIRECTORY_SEPARATOR.$path), true);
             return $this->dataCache[$cacheKey];
         } catch (\FileNotFoundException $e) {
+            throw new \tao_models_classes_FileNotFoundException(
+                $path . ' for item reference ' . $itemRef
+            );
+        } catch (\League\Flysystem\FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
             );
@@ -1898,5 +1901,22 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         return $storage->persist($userUri);
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @return array|string
+     * @throws \common_Exception
+     * @throws \common_exception_InconsistentData
+     */
+    public function getItemPortableElements(RunnerServiceContext $context, $itemRef){
+        $portableElements = [];
+        try{
+            $portableElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::PORTABLE_ELEMENT_FILE_NAME);
+        }catch(\tao_models_classes_FileNotFoundException $e){
+            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
+        }
+        return $portableElements;
     }
 }

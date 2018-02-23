@@ -65,6 +65,9 @@ define([
                 getSpeed:                '$rw_getSpeed',
                 getVoice:                '$rw_getVoice',
                 hasReachedEnd:           '$rw_hasReachedEnd',
+                speechCompleteCallback:  '$rw_speechCompleteCallback',
+                renderingSpeechCallback: '$rw_renderingSpeechCallback',
+                setSentenceFromSelection:'$rw_setSentenceFromSelection',
                 isPaused:                '$rw_isPaused',
                 isSpeaking:              '$rw_isSpeaking',
                 isTextSelectedForPlay:   '$rw_isTextSelectedForPlay',
@@ -82,6 +85,25 @@ define([
         };
         var speed;
         var volume;
+        var onCompleteDelayer;
+
+        /**
+         * Prevent the delayed action to run
+         */
+        function clearOnCompleteDelayer() {
+            if (onCompleteDelayer) {
+                clearTimeout(onCompleteDelayer);
+                onCompleteDelayer = null;
+            }
+        }
+
+        /**
+         * Register a delayed action
+         */
+        function setOnCompleteDelayer(delayed) {
+            clearOnCompleteDelayer();
+            onCompleteDelayer = setTimeout(delayed, 200);
+        }
 
         _.assign(options || {}, {
             contentArea: $('body'),
@@ -127,6 +149,25 @@ define([
             },
 
             /**
+             * Eventify a texthelp method
+             * @param {String} method
+             * @param {String} [event]
+             */
+            _eventify: function _eventify(method, event) {
+                var prop = texthelpMapping.functions[method] || texthelpMapping.properties[method];
+                var old = prop && window[prop];
+                var self = this;
+                event = event || method;
+                if (_.isFunction(old)) {
+                    return window[prop] = function() {
+                        var params = [event];
+                        self.trigger.apply(self, params.concat(params.slice.call(arguments)));
+                        return old.apply(this, arguments);
+                    };
+                }
+            },
+
+            /**
              * Initialize texthelp
              */
             _init: function _init() {
@@ -147,6 +188,10 @@ define([
                     self.trigger('stop');
                 });
 
+                this._eventify('speechCompleteCallback', 'speechComplete');
+                this._eventify('renderingSpeechCallback', 'renderingSpeech');
+                this._eventify('setSentenceFromSelection', 'setSentence');
+
                 return this;
             },
 
@@ -158,6 +203,15 @@ define([
 
                 tss.g_strBookId = deliveryId;
                 tss.g_strPageId = itemId;
+
+                // ensure alt attributes are well loaded by TextHelp on each image
+                // (TextHelp does not directly read the alt attribute, but cache it in a data-msg attribute)
+                options.$contentArea.find('img').each(function() {
+                    var msg = this.getAttribute('data-msg');
+                    if (!msg && this.hasAttribute('alt')) {
+                        this.setAttribute('data-msg', this.getAttribute('alt'));
+                    }
+                });
 
                 this._exec('tagSentences', options.$contentArea.selector);
 
@@ -401,6 +455,20 @@ define([
 
             $el.find('.play').show();
             $el.find('.pause').hide();
+        })
+        .on('setSentence renderingSpeech', function () {
+            clearOnCompleteDelayer();
+            this.trigger('play');
+        })
+        .on('speechComplete', function (source) {
+            var self = this;
+            if (source === "Complete") {
+                // since the speechComplete event may occur each time a sentence is finished to be spoken
+                // we need to apply a delay to differentiate actual end from pause between sentences.
+                setOnCompleteDelayer(function() {
+                    self.trigger('stop');
+                });
+            }
         });
 
         return component;
