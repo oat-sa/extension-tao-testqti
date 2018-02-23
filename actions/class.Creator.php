@@ -60,8 +60,8 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
 
             $guidedNavigation = false;
             $runtimeConfig = $this->getRuntimeConfig();
-            if(is_array($runtimeConfig) && isset($runtimeConfig['plugins']) && isset($runtimeConfig['plugins']['timer'])) {
-                $guidedNavigation = $runtimeConfig['plugins']['timer']['guidedNavigation'];
+            if( is_array($runtimeConfig) && isset($runtimeConfig['guidedNavigation']) ) {
+                $guidedNavigation = $runtimeConfig['guidedNavigation'];
             }
             $this->setData('guidedNavigation', json_encode($guidedNavigation == true));
 
