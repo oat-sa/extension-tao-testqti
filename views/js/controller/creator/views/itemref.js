@@ -188,6 +188,18 @@ function(
             });
 
             toggleTimeContainers();
+
+            //chek if min <= maw
+            $durationFields.on('change.check', function(){
+                if( refModel.timeLimits.minTime > 0 &&
+                    refModel.timeLimits.maxTime > 0 &&
+                    refModel.timeLimits.minTime > refModel.timeLimits.maxTime ) {
+
+                    $minTimeField.parent('div').find('.duration-ctrl-wrapper').addClass('brd-danger');
+                } else {
+                    $minTimeField.parent('div').find('.duration-ctrl-wrapper').removeClass('brd-danger');
+                }
+            });
         }
 
         /**
