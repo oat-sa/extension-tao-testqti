@@ -90,6 +90,9 @@ define([
             this.saveTimers = function saveTimers(timeStore, timers){
                 return Promise.all(
                     _.map(timers, function(timer){
+                        if(timer.remaingWithoutExtraTime){
+                            return timeStore.setItem(timer.id, timer.remainingTimeWithoutExtraTime);
+                        }
                         return timeStore.setItem(timer.id, timer.remainingTime);
                     })
                 );
