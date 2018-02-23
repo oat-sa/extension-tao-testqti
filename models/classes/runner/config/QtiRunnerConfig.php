@@ -33,7 +33,7 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 {
     const SERVICE_ID = 'taoQtiTest/QtiRunnerConfig';
-    
+
     const OPTION_CONFIG = 'config';
 
     /**
@@ -74,9 +74,11 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
                     'useTitle' => !empty($rawConfig['test-taker-review-use-title']),
                     'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
+                    'forceInformationalTitle' => !empty($rawConfig['test-taker-review-force-informational-title']),
                     'showLegend' => !empty($rawConfig['test-taker-review-show-legend']),
                     'defaultOpen' => !empty($rawConfig['test-taker-review-default-open']),
                     'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
+                    'informationalItemTitle' => isset($rawConfig['test-taker-review-informational-item-title']) ? $rawConfig['test-taker-review-informational-item-title'] : null,
                     'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
                     'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
                     'displaySubsectionTitle' => !empty($rawConfig['test-taker-review-display-subsection-title']),
@@ -129,16 +131,16 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     public function getConfigValue($name)
     {
         $config = $this->getConfig();
-        
+
         $path = explode('.', (string)$name);
         foreach ($path as $entry) {
             if (isset($config[$entry])) {
                 $config =& $config[$entry];
             } else {
                 return null;
-            }   
+            }
         }
-        
+
         return $config;
     }
 
@@ -177,7 +179,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 
         return $options;
     }
-    
+
     /**
      * Returns the options related to the current test context
      * @param RunnerServiceContext $context The test context
@@ -191,12 +193,12 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
         }
         return $this->options;
     }
-    
+
     /**
      * Get Categories.
-     * 
+     *
      * Get the categories of the current AssessmentItemRef in the route depending on a given $context.
-     * 
+     *
      * @param RunnerServiceContext $context
      * @return array An array of strings.
      */
