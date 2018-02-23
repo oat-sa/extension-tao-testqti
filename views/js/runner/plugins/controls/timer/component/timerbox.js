@@ -248,8 +248,8 @@ define([
                     this.timers[id].remainingTime = timer.remainingTime;
                     this.timers[id].extraTime     = timer.extraTime;
 
-                    if(_.isNumber(timer.remaingWithoutExtraTime)){
-                        this.timers[id].remaingWithoutExtraTime = timer.remaingWithoutExtraTime;
+                    if(_.isNumber(timer.remainingWithoutExtraTime)){
+                        this.timers[id].remainingWithoutExtraTime = timer.remainingWithoutExtraTime;
                     }
 
                     if (this.timers[id].countdown){

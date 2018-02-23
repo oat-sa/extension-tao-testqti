@@ -70,7 +70,7 @@ define([
                             }
                             //apply the extraTime
                             if(_.isNumber(timer.extraTime) && timer.extraTime > 0){
-                                timer.remaingWithoutExtraTime = timer.remainingTime;
+                                timer.remainingWithoutExtraTime = timer.remainingTime;
                                 timer.remainingTime = timer.remainingTime + timer.extraTime;
                             }
                         });
@@ -90,9 +90,13 @@ define([
             this.saveTimers = function saveTimers(timeStore, timers){
                 return Promise.all(
                     _.map(timers, function(timer){
-                        if(timer.remaingWithoutExtraTime){
-                            return timeStore.setItem(timer.id, timer.remainingTimeWithoutExtraTime);
+
+                        //if extra time, we always save the original value
+                        if(_.isNumber(timer.extraTime) && timer.extraTime > 0 && timer.remainingWithoutExtraTime){
+                            timer.remainingWithoutExtraTime = Math.max(0, timer.remainingTime - timer.extraTime);
+                            return timeStore.setItem(timer.id, timer.remainingWithoutExtraTime);
                         }
+
                         return timeStore.setItem(timer.id, timer.remainingTime);
                     })
                 );
