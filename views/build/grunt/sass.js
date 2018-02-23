@@ -12,7 +12,6 @@ module.exports = function(grunt) {
                     { dest : root + 'css/test-runner.css', src : root + 'scss/test-runner.scss' },
                     { dest : root + 'css/new-test-runner.css', src :  root + 'scss/new-test-runner.scss'},
                     { dest : root + 'css/plugins/key-navigation.css', src : root + 'scss/plugins/key-navigation.scss'},
-                    { dest : pluginDir + 'tools/textToSpeech/textToSpeech.css', src : pluginDir + 'tools/textToSpeech/textToSpeech.scss' },
                     { dest : pluginDir + 'controls/timer/component/css/countdown.css', src : pluginDir + 'controls/timer/component/scss/countdown.scss'},
                     { dest : pluginDir + 'controls/timer/component/css/timerbox.css', src : pluginDir + 'controls/timer/component/scss/timerbox.scss'}
                 ]

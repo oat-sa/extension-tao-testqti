@@ -1778,9 +1778,19 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('22.0.0');
         }
 
-        $this->skip('22.0.0', '22.0.1');
+        $this->skip('22.0.0', '23.2.0');
 
-        if ($this->isVersion('22.0.1')) {
+        if ($this->isVersion('23.2.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            if ($registry->isRegistered('taoQtiTest/runner/plugins/tools/textToSpeech/plugin')) {
+                $registry->remove('taoQtiTest/runner/plugins/tools/textToSpeech/plugin');
+            }
+
+            $this->setVersion('23.2.1');
+        }
+
+        if ($this->isVersion('23.2.1')) {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
@@ -1802,7 +1812,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'tags' => [ 'core', 'qti' ]
             ]));
 
-            $this->setVersion('22.1.0');
+            $this->setVersion('24.0.0');
         }
     }
 }
