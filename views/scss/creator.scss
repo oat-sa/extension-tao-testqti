@@ -189,6 +189,13 @@
                 width: 100%;
                 max-width: inherit;
                 min-width: inherit;
+                height: 29px;
+            }
+            input.duration-ctrl {
+                height: 29px;
+                border: solid 1px transparent;
+                width: 37px !important;
+                min-width: 37px !important;
             }
 
             .header {
@@ -635,11 +642,11 @@
         }
         .locker {
             position: absolute;
-            border: solid 2px $websiteBorder; 
+            border: solid 1px $websiteBorder; 
             border-left-color: transparent;
             @include border-radius(4);
-            top: 12px;
-            right: 33px;
+            top: 14px;
+            right: 40px;
             width: 30px;
             height : 50px;
             z-index: 400;
@@ -653,7 +660,7 @@
             margin: 0;
             width: 19px;
             height: 30px;
-            top: 7px;
+            top: 8px;
             right: -10px;
             @include simple-border;
             @include border-radius;
@@ -685,6 +692,7 @@
 
         .duration-ctrl-wrapper {
             z-index: 500;
+
         }
     }
 }
