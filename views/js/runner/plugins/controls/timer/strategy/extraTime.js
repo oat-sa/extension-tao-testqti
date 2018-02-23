@@ -62,7 +62,7 @@ define([
                         lastConsumedExtraTime = Math.max(
                                 consumedExtraTime,
                                 lastConsumedExtraTime,
-                                testContext.extra.consumed
+                                testContext.extraTime.consumed
                             );
 
                         testRunner.getProxy().addCallActionParams({
