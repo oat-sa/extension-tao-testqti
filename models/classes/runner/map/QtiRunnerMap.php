@@ -155,8 +155,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $reviewConfig = $config->getConfigValue('review');
         $checkInformational = $config->getConfigValue('checkInformational');
         $forceTitles = !empty($reviewConfig['forceTitle']);
+        $forceInformationalTitles = !empty($reviewConfig['forceInformationalTitle']);
         $useTitle = !empty($reviewConfig['useTitle']);
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
+        $uniqueInformationalTitle = isset($reviewConfig['informationalItemTitle']) ? $reviewConfig['informationalItemTitle'] : 'Instructions';
         $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
 
         /* @var AssessmentTestSession $session */
@@ -202,6 +204,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $itemSession = ($catSession !== false) ? false : $store->getAssessmentItemSession($itemRef, $occurrence);
 
                     // load item infos
+                    $isItemInformational = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
                     $testPart = $routeItem->getTestPart();
                     $partId = $testPart->getIdentifier();
                     $navigationMode = $testPart->getNavigationMode();
@@ -220,8 +223,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $lastSection = $sectionId;
                     }
 
-                    if ($forceTitles) {
+                    if ($forceInformationalTitles && $isItemInformational) {
+                        $label = $uniqueInformationalTitle;
+
+                    } else if ($forceTitles) {
                         $label = __($uniqueTitle, $offsetSection + 1);
+
                     } else {
                         $itemUri = strstr($itemRef->getHref(), '|', true);
                         $label = $this->getItemLabel($context, $itemUri, $useTitle);
@@ -245,7 +252,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     ];
 
                     if ($checkInformational) {
-                        $itemInfos['informational'] = ($itemSession) ? TestRunnerUtils::isItemInformational($routeItem, $itemSession) : false;
+                        $itemInfos['informational'] = ($itemSession) ? $isItemInformational : false;
                     }
 
                     if($itemRef->hasTimeLimits()){
@@ -291,7 +298,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     }
 
                     $offset ++;
-                    $offsetSection ++;
+                    if (!$forceInformationalTitles || ($forceInformationalTitles && !$isItemInformational)) {
+                        $offsetSection++;
+                    };
                 }
             }
             // fallback in case of the delivery was compiled without the index of item href
@@ -438,7 +447,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
       *
       * @param RunnerServiceContext $context
       * @param string $itemUri
-      * @param int $useTitle 
+      * @param int $useTitle
       * @return string the title
       */
     private function getItemLabel(RunnerServiceContext $context, $itemUri, $useTitle = false)
