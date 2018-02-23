@@ -268,12 +268,13 @@
     <div class="itemref-time-limits toggled">
 
         <div class="lockedtime-container hidden">
+
             <div class="grid-row">
                 <div class="col-5">
-                    <label for="itemref-min-time">{{__ 'Minimum Duration'}}</label>
+                    <label for="itemref-max-time">{{__ 'Maximum Duration'}}</label>
                 </div>
                 <div class="col-6">
-                    <input type="text" name="min-time" value="00:00:00" data-duration="HH:mm:ss"  data-bind="timeLimits.minTime" data-bind-encoder="time" />
+                    <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
                 </div>
                 <div class="col-1 help">
                     <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -289,28 +290,12 @@
             </div>
             <div class="grid-row">
                 <div class="col-5">
-                    <label for="itemref-max-time">{{__ 'Maximum Duration'}}</label>
+                    <label for="itemref-min-time">{{__ 'Minimum Duration'}}</label>
                 </div>
                 <div class="col-6">
-                    <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
+                    <input type="text" name="min-time" value="00:00:00" data-duration="HH:mm:ss"  data-bind="timeLimits.minTime" data-bind-encoder="time" />
                 </div>
             </div>
-        </div>
-
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/timeLimits/minTime -->
-        <div class="grid-row mintime-container {{#unless isLinear}}hidden{{/unless}}">
-            <div class="col-5">
-                <label for="min-time">{{__ 'Minimum Duration'}}</label>
-            </div>
-            <div class="col-6">
-                <input type="text" name="min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
-            </div>
-                <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                    {{__ 'Minimum duration for this item.'}}
-                    </div>
-                </div>
         </div>
 
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/timeLimits/maxTime -->
@@ -325,6 +310,22 @@
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                 <div class="tooltip-content">
                 {{__ 'Maximum duration for this item.'}}
+                </div>
+            </div>
+        </div>
+
+<!-- assessmentTest/testPart/assessmentSection/sectionPart/timeLimits/minTime -->
+        <div class="grid-row mintime-container {{#unless isLinear}}hidden{{/unless}}">
+            <div class="col-5">
+                <label for="min-time">{{__ 'Minimum Duration'}}</label>
+            </div>
+            <div class="col-6">
+                <input type="text" name="min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ 'Minimum duration for this item.'}}
                 </div>
             </div>
         </div>
