@@ -39,10 +39,10 @@ define([], function(){
     return function guidedNavigationStrategy(testRunner, timer){
         var testData = testRunner.getTestData();
         var testContext = testRunner.getTestContext();
-        var pluginConfig = testData && testData.config && testData.config.plugins && testData.config.plugins.timer;
+        var config = testData && testData.config ;
 
         if( timer && timer.type === 'locked' && timer.scope === 'item' &&
-            pluginConfig.guidedNavigation === true && testContext.isLinear === true){
+            config.guidedNavigation === true && testContext.isLinear === true){
 
             return {
                 name : 'guidedNavigation',

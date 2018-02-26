@@ -127,7 +127,12 @@ define([
                 /**
                  * The list of configured warnings
                  */
-                warnings : testData && testData.config && testData.config.timerWarning || {}
+                warnings : testData && testData.config && testData.config.timerWarning || {},
+
+                /**
+                 * The guided navigation option
+                 */
+                guidedNavigation : testData && testData.config && testData.config.guidedNavigation
             });
 
             /**
