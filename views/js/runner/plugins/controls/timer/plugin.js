@@ -215,7 +215,7 @@ define([
                         .on('init', resolve)
                         .on('error', handleError);
 
-                        if(config.contextualWarnings){
+                        if(!config.contextualWarnings){
                             self.timerbox.on('warn', function(message, level){
                                 if(level && message){
                                     testRunner.trigger(level, message);
