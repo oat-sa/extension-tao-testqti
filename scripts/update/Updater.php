@@ -1779,5 +1779,40 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('22.0.0', '23.2.0');
+
+        if ($this->isVersion('23.2.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            if ($registry->isRegistered('taoQtiTest/runner/plugins/tools/textToSpeech/plugin')) {
+                $registry->remove('taoQtiTest/runner/plugins/tools/textToSpeech/plugin');
+            }
+
+            $this->setVersion('23.2.1');
+        }
+
+        if ($this->isVersion('23.2.1')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['guidedNavigation'] = false;
+
+            $extension->setConfig('testRunner', $config);
+
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->remove('taoQtiTest/runner/plugins/controls/timer/timer');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'timer',
+                'name' => 'Timer indicator',
+                'module' => 'taoQtiTest/runner/plugins/controls/timer/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Add countdown when remaining time',
+                'category' => 'controls',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('24.0.0');
+        }
     }
 }
