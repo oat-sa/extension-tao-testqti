@@ -204,7 +204,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $itemSession = ($catSession !== false) ? false : $store->getAssessmentItemSession($itemRef, $occurrence);
 
                     // load item infos
-                    $isItemInformational = TestRunnerUtils::isItemInformational($routeItem, $itemSession);
+                    $isItemInformational = ($itemSession) ? TestRunnerUtils::isItemInformational($routeItem, $itemSession) : false;
                     $testPart = $routeItem->getTestPart();
                     $partId = $testPart->getIdentifier();
                     $navigationMode = $testPart->getNavigationMode();
@@ -252,7 +252,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     ];
 
                     if ($checkInformational) {
-                        $itemInfos['informational'] = ($itemSession) ? $isItemInformational : false;
+                        $itemInfos['informational'] = $isItemInformational;
                     }
 
                     if($itemRef->hasTimeLimits()){
