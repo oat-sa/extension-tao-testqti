@@ -57,7 +57,17 @@ class CatUtils
                 foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveSettingsRef', $xmlExtension) as $adaptiveSettingsRef) {
                     $sectionInfo['adaptiveSettingsRef'] = $adaptiveSettingsRef->getAttribute('href');
                 }
-                
+
+                // Get the qtiUsagedataRef.
+                foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:qtiUsagedataRef', $xmlExtension) as $qtiUsagedataRef) {
+                    $sectionInfo['qtiUsagedataRef'] = $qtiUsagedataRef->getAttribute('href');
+                }
+
+                // Get the qtiUsagedataRef.
+                foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:qtiMetadataRef', $xmlExtension) as $qtiMetadataRef) {
+                    $sectionInfo['qtiMetadataRef'] = $qtiMetadataRef->getAttribute('href');
+                }
+
                 if (!empty($sectionInfo)) {
                     $info[$sectionIdentifier] = $sectionInfo;
                 }

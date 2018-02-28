@@ -1779,5 +1779,17 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('22.0.0', '23.2.0');
+
+        if ($this->isVersion('23.2.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            if ($registry->isRegistered('taoQtiTest/runner/plugins/tools/textToSpeech/plugin')) {
+                $registry->remove('taoQtiTest/runner/plugins/tools/textToSpeech/plugin');
+            }
+
+            $this->setVersion('23.2.1');
+        }
+
+        $this->skip('23.2.1', '23.4.0');
     }
 }
