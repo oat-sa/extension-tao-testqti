@@ -215,6 +215,12 @@ define([
                 .on('disablenav', function(){
                     self.disable();
                 })
+                .on('hidenav', function(){
+                    self.hide();
+                })
+                .on('shownav', function(){
+                    self.show();
+                })
                 .on('nav-next', function(nextItemWarning) {
                     doNext(nextItemWarning);
                 });

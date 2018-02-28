@@ -526,5 +526,11 @@ return array(
      * This is required for caching scenarios
      * @type integer
      */
-    'item-cache-size' => 3
+    'item-cache-size' => 3,
+
+
+    /**
+     * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
+     */
+    'guidedNavigation' => false
 );

@@ -1470,7 +1470,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         $session = $context->getTestSession();
         foreach ($session->getRegularTimeConstraints() as $constraint) {
-            if ($constraint->getMaximumRemainingTime() != false) {
+            if ($constraint->getMaximumRemainingTime() != false || $constraint->getMinimumRemainingTime() != false) {
                 $constraints[] = $constraint;
             }
         }
