@@ -80,6 +80,7 @@ define([
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
           * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
+          * @param {Boolean} [options.guidedNavigation  = false]- feature flag for the guided navigation
           */
         start : function(options){
             var self = this;
@@ -94,6 +95,7 @@ define([
             options.routes = options.routes || {};
             options.labels = options.labels || {};
             options.categoriesPresets = options.categoriesPresets || {};
+            options.guidedNavigation = options.guidedNavigation === true;
 
             categorySelector.setPresets(options.categoriesPresets);
 
@@ -160,7 +162,8 @@ define([
                         uri : options.uri,
                         identifiers : self.identifiers,
                         labels : options.labels,
-                        routes : options.routes
+                        routes : options.routes,
+                        guidedNavigation : options.guidedNavigation
                     });
                     creatorContext.setTestModel(model);
                     modelOverseer = creatorContext.getModelOverseer();
