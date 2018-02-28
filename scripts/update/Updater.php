@@ -1790,7 +1790,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('23.2.1');
         }
 
-        if ($this->isVersion('23.2.1')) {
+        $this->skip('23.2.1', '23.4.0');
+
+        if ($this->isVersion('23.4.0')) {
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');

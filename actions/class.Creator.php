@@ -58,6 +58,13 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             }
             $this->setData('identifierUrl', _url('getIdentifier', null, null, array('uri' => $testUri)));
 
+            $guidedNavigation = false;
+            $runtimeConfig = $this->getRuntimeConfig();
+            if( is_array($runtimeConfig) && isset($runtimeConfig['guidedNavigation']) ) {
+                $guidedNavigation = $runtimeConfig['guidedNavigation'];
+            }
+            $this->setData('guidedNavigation', json_encode($guidedNavigation == true));
+
             $this->setView('creator.tpl');
 	}
 
@@ -153,6 +160,16 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
 	        throw new tao_models_classes_MissingRequestParameterException('uri');
 	    }
 	    return new core_kernel_classes_Resource(tao_helpers_Uri::decode($this->getRequestParameter('uri')));
-	}
+        }
+
+    /**
+     * Get the runtime config
+     * @return array the configuration
+     */   
+    protected function getRuntimeConfig()
+    {
+        $extension = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        return $extension->getConfig('testRunner');
+    }
 
 }
