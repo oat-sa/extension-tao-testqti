@@ -173,6 +173,12 @@ define([
                 .on('disablenav', function(){
                     self.disable();
                 })
+                .on('hidenav', function(){
+                    self.hide();
+                })
+                .on('shownav', function(){
+                    self.show();
+                })
                 .on('nav-previous', function(previousItemWarning){
                     doPrevious(previousItemWarning);
                 });

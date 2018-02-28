@@ -1,0 +1,126 @@
+@import "inc/bootstrap";
+
+.timer-box {
+
+    opacity : 0;
+    &.rendered {
+        opacity: 1;
+        @include transition(opacity, 300ms, linear);
+    }
+
+    padding-top: 0;
+    white-space: nowrap;
+
+    /*flex item of control-box */
+    -webkit-flex: 1 0 auto;
+    -ms-flex : 1 0 auto;
+    flex: 1 0 auto;
+
+    /* is also a flex container for .qti-timer */
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+
+    -webkit-justify-content: flex-end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+
+    .timer-toggler {
+        text-decoration: none;
+        color: $textHighlight;
+        line-height: 1.3;
+        opacity: .68;
+        padding: 8px 20px;
+        position: relative;
+        top: -1px;
+        left: 20px;
+        z-index: 2;
+        @include transition(opacity);
+
+        &:hover,&:active,&:focus{
+            outline: unset;
+        }
+        &:hover {
+            opacity: .93;
+            @include transition(opacity);
+        }
+    }
+
+    &.zen {
+        .timer-toggler {
+            opacity: .93;
+            @include transition(opacity);
+        }
+        .countdown .time {
+            opacity: 0;
+            @include transition(opacity, 1s, ease-out);
+        }
+    }
+
+    .countdown {
+
+        &::before {
+            content: ' ';
+            background: white(.3);
+            width: 1px;
+            height: 20px;
+            position: absolute;
+            left: 0;
+            top: 5px
+        }
+        &:first-child {
+            &::before {
+                content: none;
+            }
+        }
+
+        &[data-scope=test][data-type=min]{
+            -ms-flex-order: 5;
+            -webkit-order: 5;
+            order: 5;
+        }
+        &[data-scope=test]{
+            -ms-flex-order: 10;
+            -webkit-order: 10;
+            order: 10;
+        }
+        &[data-scope=testPart][data-type=min]{
+            -ms-flex-order: 15;
+            -webkit-order: 15;
+            order: 15;
+        }
+        &[data-scope=testPart]{
+            -ms-flex-order: 20;
+            -webkit-order: 20;
+            order: 20;
+        }
+        &[data-scope=section][data-type=min]{
+            -ms-flex-order: 25;
+            -webkit-order: 25;
+            order: 25;
+        }
+        &[data-scope=section]{
+            -ms-flex-order: 30;
+            -webkit-order: 30;
+            order: 30;
+        }
+        &[data-scope=item][data-type=min]{
+            -ms-flex-order: 35;
+            -webkit-order: 35;
+            order: 35;
+        }
+        &[data-scope=item]{
+            -ms-flex-order: 40;
+            -webkit-order: 40;
+            order: 40;
+        }
+    }
+}

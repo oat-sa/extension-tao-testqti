@@ -2,14 +2,15 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Test Runner - Plugin Timer</title>
-        <base href="../../../../../../../../tao/views/" />
+        <title>Test Runner - Timer plugin countdown component</title>
+        <base href="../../../../../../../../../tao/views/" />
         <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
         <link rel="stylesheet" type="text/css" href="css/tao-main-style.css">
+        <link rel="stylesheet" type="text/css" href="../../taoQtiTest/views/css/new-test-runner.css">
         <script type="text/javascript" src="js/lib/require.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
         <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
-        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="runner/plugins/controls/timer/timer.js"></script>
+        <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="runner/plugins/controls/timer/component/countdown.js"></script>
 
         <script  type="text/javascript">
 
@@ -20,7 +21,7 @@
             require(['/tao/ClientConfig/config'], function(){
 
                 //load the test
-                require(['taoQtiTest/test/runner/plugins/controls/timer/test'], function(){
+                require(['taoQtiTest/test/runner/plugins/controls/timer/countdown/test'], function(){
 
                     //Tests loaded, run tests
                     QUnit.start();
@@ -30,6 +31,11 @@
     </head>
     <body>
         <div id="qunit"></div>
-        <div id="qunit-fixture"></div>
+        <div id="qunit-fixture">
+            <div class="timer-box"></div>
+        </div>
+        <div id="visual">
+            <div class="timer-box"></div>
+        <div>
     </body>
 </html>
