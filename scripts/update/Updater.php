@@ -24,6 +24,7 @@ use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\TaoOntology;
+use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
@@ -1791,5 +1792,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('23.2.1', '23.2.2');
+
+        if ($this->isVersion('23.2.2')) {
+            AclProxy::revokeRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+            AclProxy::applyRule(new AccessRule('grant', TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+            $this->setVersion('23.3.0');
+        }
     }
 }
