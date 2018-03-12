@@ -189,6 +189,13 @@
                 width: 100%;
                 max-width: inherit;
                 min-width: inherit;
+                height: 29px;
+            }
+            input.duration-ctrl {
+                height: 29px;
+                border: solid 1px transparent;
+                width: 37px !important;
+                min-width: 37px !important;
             }
 
             .header {
@@ -621,6 +628,71 @@
 
         &.edit-active {
             background-color: $lightBlueGrey;
+        }
+    }
+
+    //widget to lock the 2 durations fields
+    .lockedtime-container {
+        margin: 0;
+        padding: 0;
+        position: relative;
+
+        .grid-row {
+            margin-top: 5px;
+        }
+        .locker {
+            position: absolute;
+            border: solid 1px $websiteBorder; 
+            border-left-color: transparent;
+            @include border-radius(4);
+            top: 14px;
+            right: 42px;
+            width: 30px;
+            height : 50px;
+            z-index: 400;
+        }
+
+        button {
+            background-color: $uiClickableDefaultBg; 
+            position: absolute;
+            z-index: 450;
+            padding: 0;
+            margin: 0;
+            width: 19px;
+            height: 30px;
+            top: 8px;
+            right: -10px;
+            @include simple-border;
+            @include border-radius;
+
+            span {
+                padding: 0;
+                margin: 0;
+                position: absolute;
+            }
+            span:before{
+                color: $textColor;
+                position: absolute;
+                padding: 0;
+                margin: 0;
+                left: 3px;
+                top: 6px;
+                transform: rotate(45deg);
+            }
+            &:hover span:before {
+                color: $uiClickableHoverBg;
+            }
+            &.unlocked span:before{
+                @include icon-unlink;
+            }
+            &.locked span:before{
+                @include icon-link;
+            }
+        }
+
+        .duration-ctrl-wrapper {
+            z-index: 500;
+
         }
     }
 }

@@ -1791,12 +1791,38 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('23.2.1');
         }
 
-        $this->skip('23.2.1', '23.2.2');
+        $this->skip('23.2.1', '23.4.0');
 
-        if ($this->isVersion('23.2.2')) {
-            AclProxy::revokeRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+        if ($this->isVersion('23.4.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['guidedNavigation'] = false;
+
+            $extension->setConfig('testRunner', $config);
+
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->remove('taoQtiTest/runner/plugins/controls/timer/timer');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'timer',
+                'name' => 'Timer indicator',
+                'module' => 'taoQtiTest/runner/plugins/controls/timer/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Add countdown when remaining time',
+                'category' => 'controls',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('24.0.0');
+        }
+
+        $this->skip('24.0.0', '24.1.0');
+
+        if ($this->isVersion('24.1.0')) {
             AclProxy::applyRule(new AccessRule('grant', TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
-            $this->setVersion('23.3.0');
+            $this->setVersion('24.2.0');
         }
     }
 }

@@ -281,6 +281,8 @@ class CatService extends ConfigurableService
                 $settingsContent = trim(file_get_contents($settingsPath));
                 $catProperties[$assessmentSectionIdentifier] = $settingsContent;
 
+                $this->createAdaptiveSection($assessmentSection, $catInfo, $testBasePath);
+
                 $this->validateAdaptiveAssessmentSection(
                     $assessmentSection->getSectionParts(),
                     $catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef'],
@@ -302,6 +304,28 @@ class CatService extends ConfigurableService
     }
 
 
+    protected function createAdaptiveSection($assessmentSection, $catInfo, $testBasePath)
+    {
+        $assessmentSectionIdentifier = $assessmentSection->getIdentifier();
+        $engine = $this->getEngine($catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef']);
+        $settingsPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
+
+        $usagedataContent = null;
+        if (isset($catInfo[$assessmentSectionIdentifier]['qtiUsagedataRef'])) {
+            $usagedataPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['qtiUsagedataRef'];
+            $usagedataContent = trim(file_get_contents($usagedataPath));
+        }
+
+        $metadataContent = null;
+        if (isset($catInfo[$assessmentSectionIdentifier]['qtiMetadataRef'])) {
+            $metadataPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['qtiMetadataRef'];
+            $metadataContent = trim(file_get_contents($metadataPath));
+        }
+
+        $settingsContent = trim(file_get_contents($settingsPath));
+        $adaptSection = $engine->setupSection($settingsContent, $usagedataContent, $metadataContent);
+    }
+
     /**
      * Validation for adaptive section
      * @param SectionPartCollection $sectionsParts
@@ -313,15 +337,18 @@ class CatService extends ConfigurableService
     {
         $engine = $this->getEngine($ref);
         $adaptSection = $engine->setupSection($testAdminId);
-        $itemReferences = $adaptSection->getItemReferences();
-        $dependencies = $sectionsParts->getKeys();
+        //todo: remove this checking if tests/{getSectionId}/items will become a part of standard.
+        if (method_exists($adaptSection, 'getItemReferences')) {
+            $itemReferences = $adaptSection->getItemReferences();
+            $dependencies = $sectionsParts->getKeys();
 
-        if ($catDiff = array_diff($dependencies, $itemReferences)) {
-            throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
-        }
+            if ($catDiff = array_diff($dependencies, $itemReferences)) {
+                throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
+            }
 
-        if ($packageDiff = array_diff($dependencies, $itemReferences)) {
-            throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff), $packageDiff);
+            if ($packageDiff = array_diff($dependencies, $itemReferences)) {
+                throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff), $packageDiff);
+            }
         }
     }
     
@@ -544,7 +571,7 @@ class CatService extends ConfigurableService
                     $this->isInitialCall = true;
                     // Rebuild the catSection to be able to alter call options
                     $catSection = $this->getCatSection($testSession, $compilationDirectory, $routeItem);
-                    $this->catSession[$catSectionId] = $catSection->initSession();
+                    $this->catSession[$catSectionId] = $catSection->initSession([], []);
                     $assessmentSection = $routeItem ? $routeItem->getAssessmentSection() : $testSession->getCurrentAssessmentSection();
 
                     $event = new InitializeAdaptiveSessionEvent(

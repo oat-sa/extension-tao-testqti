@@ -306,14 +306,22 @@ define([
                         self.hide();
                     }
                 })
-                .on('enabletools', function () {
+                .on('enabletools enablenav', function () {
                     if (isPluginAllowed()) {
                         self.enable();
                     }
                 })
-                .on('disabletools', function () {
+                .on('disabletools disablenav', function () {
                     if (isPluginAllowed()) {
                         self.disable();
+                    }
+                })
+                .on('hidenav', function (){
+                    self.hide();
+                })
+                .on('shownav', function (){
+                    if (isPluginAllowed()) {
+                        self.show();
                     }
                 })
                 .on('tool-flagitem', function () {
