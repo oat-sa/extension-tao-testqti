@@ -288,7 +288,8 @@ define([
                     logger.debug('Start preloading of item ' + item.itemIdentifier);
                     return new Promise(function(resolve, reject){
                         qtiItemRunner(item.itemData.type, item.itemData.data, {
-                            assetManager: preloadAssetManager
+                            assetManager: preloadAssetManager,
+                            preload: true
                         })
                         .on('init', function(){
                             logger.debug('Preloading of item ' + item.itemIdentifier + ' done');
