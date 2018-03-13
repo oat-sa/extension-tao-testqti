@@ -62,11 +62,7 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
      */
     public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
     {
-        $filter = [];
-        if (isset($propertyFilters[OntologyRdfs::RDFS_LABEL])) {
-            $filter[] = $propertyFilters[OntologyRdfs::RDFS_LABEL];
-        }
-        $result = $this->getListResourceLookupService()->getResources($itemClass, [], $filter, $offset, $limit);
+        $result = $this->getListResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
 
         array_map(function($item){
             return array_merge($item, [
