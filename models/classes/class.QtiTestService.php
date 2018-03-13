@@ -58,6 +58,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
     const QTI_TEST_DEFINITION_INDEX = '.index/qti-test.txt';
 
+    const PROPERTY_QTI_TEST_IDENTIFIER = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestIdentifier';
+
     const INSTANCE_TEST_MODEL_QTI = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel';
 
     const TAOQTITEST_FILENAME = 'tao-qtitest-testdefinition.xml';
@@ -405,6 +407,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $qtiTestModelResource = new core_kernel_classes_Resource(self::INSTANCE_TEST_MODEL_QTI);
         $modelProperty = new core_kernel_classes_Property(TestService::PROPERTY_TEST_TESTMODEL);
         $testResource->editPropertyValues($modelProperty, $qtiTestModelResource);
+
+        // Setting qtiIdentifier property
+        $qtiIdentifierProperty = new core_kernel_classes_Property(self::PROPERTY_QTI_TEST_IDENTIFIER);
+        $testResource->editPropertyValues($qtiIdentifierProperty, $qtiTestResourceIdentifier);
 
         // Create the report that will hold information about the import
         // of $qtiTestResource in TAO.
