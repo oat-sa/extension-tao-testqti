@@ -14,8 +14,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -101,33 +102,71 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
         $this->setApplyExtraTime($applyExtraTime);
     }
 
-
     /**
-     * Get the time remaining to be spent by the candidate on the source of the time
-     * constraint. Please note that this method will never return negative durations.
-     *
-     * @return Duration|boolean A Duration object or false if there is no maxTime constraint running for the source of the time constraint.
+     * Get the remaining duration from a source (min or max time, usually)
+     * @param QtiDuration the source duration
+     * @return Duration A Duration object (or null of not available) that represents the remaining time
      */
-    public function getMaximumRemainingTime()
+    protected function getRemainingTimeFrom(QtiDuration $duration)
     {
-        if (($timeLimits = $this->getSource()->getTimeLimits()) !== null && ($maxTime = $timeLimits->getMaxTime()) !== null) {
-            $remaining = clone $maxTime;
+        if(!is_null($duration)){
+            $remaining = clone $duration;
+
             if ($this->getApplyExtraTime() && $this->timer) {
                 // take care of the already consumed extra time under the current constraint
                 // and append the full remaining extra time
                 // the total must correspond to the already elapsed time plus the remaining time
                 $currentExtraTime = $this->timer->getRemainingExtraTime() + $this->timer->getConsumedExtraTime($this->getSource()->getIdentifier());
-                $extraTime = min($this->timer->getExtraTime($maxTime->getSeconds(true)), $currentExtraTime);
+                $extraTime = min($this->timer->getExtraTime($duration->getSeconds(true)), $currentExtraTime);
                 $remaining->add(new QtiDuration('PT' . $extraTime . 'S'));
             }
             $remaining->sub($this->getDuration());
-            
+
             return ($remaining->isNegative() === true) ? new QtiDuration('PT0S') : $remaining;
-        } else {
-            return false;
         }
+        return false;
     }
 
+    /**
+     * Get the time remaining to be spent by the candidate on the source of the time
+     * constraint. Please note that this method will never return negative durations.
+     *
+     * @return Duration A Duration object or null if there is no maxTime constraint running for the source of the time constraint.
+     */
+    public function getMaximumRemainingTime()
+    {
+        if (($timeLimits = $this->getSource()->getTimeLimits()) !== null && ($maxTime = $timeLimits->getMaxTime()) !== null) {
+            return $this->getRemainingTimeFrom($maxTime);
+        }
+        return false;
+    }
+
+    /**
+     * Get the time remaining the candidate has to spend by the candidate on the source of the time
+     * constraint. Please note that this method will never return negative durations.
+     *
+     * @return Duration A Duration object or null if there is no minTime constraint running for the source of the time constraint.
+     */
+    public function getMinimumRemainingTime()
+    {
+        if (($timeLimits = $this->getSource()->getTimeLimits()) !== null && ($minTime = $timeLimits->getMinTime()) !== null) {
+            return $this->getRemainingTimeFrom($minTime);
+        }
+        return false;
+    }
+
+    /**
+     * Converts a duration to milliseconds
+     * @param QtiDuration|null $duration the duration to convert
+     * @return int|false the duration in ms or false if none
+     */
+    private function durationToMs($duration)
+    {
+        if(!is_null($duration) && $duration instanceof QtiDuration){
+            return TestRunnerUtils::getDurationWithMicroseconds($duration);
+        }
+        return false;
+    }
 
     /**
      * Serialize the constraint the expected way by the TestContext and the TestMap
@@ -135,27 +174,39 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      */
     public function jsonSerialize()
     {
+
         $source = $this->getSource();
-        $identifier = $source->getIdentifier();
-        $timeRemaining = $this->getMaximumRemainingTime();
-        if ($timeRemaining !== false) {
+        $timeLimits = $source->getTimeLimits();
+        if(!is_null($timeLimits)){
+            $identifier = $source->getIdentifier();
 
-            $label = method_exists($source, 'getTitle') ? $source->getTitle() : $identifier;
-            $seconds = TestRunnerUtils::getDurationWithMicroseconds($timeRemaining);
-            $extraTime = null;
-            if (!is_null($this->getTimer()) && $source->getTimeLimits()->hasMaxTime()){
-                $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);
-                $extraTime = $this->getTimer()->getExtraTime($maxTimeSeconds);
+            $maxTime = $timeLimits->getMaxTime();
+            $minTime = $timeLimits->getMinTime();
+            $maxTimeRemaining = $this->getMaximumRemainingTime();
+            $minTimeRemaining = $this->getMinimumRemainingTime();
+            if ( $maxTimeRemaining !== false || $minTimeRemaining !== false) {
+
+                $label = method_exists($source, 'getTitle') ? $source->getTitle() : $identifier;
+
+                $extraTime = null;
+                if (!is_null($this->getTimer()) && $source->getTimeLimits()->hasMaxTime()){
+                    $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);
+                    $extraTime = $this->getTimer()->getExtraTime($maxTimeSeconds);
+                }
+
+                return [
+                    'label'               => $label,
+                    'source'              => $identifier,
+                    'qtiClassName'        => $source->getQtiClassName(),
+                    'extraTime'           => $extraTime,
+                    'allowLateSubmission' => $this->allowLateSubmission(),
+                    'minTime'             => $this->durationToMs($minTime),
+                    'minTimeRemaining'    => $this->durationToMs($minTimeRemaining),
+                    'maxTime'             => $this->durationToMs($maxTime),
+                    'maxTimeRemaining'    => $this->durationToMs($maxTimeRemaining),
+                ];
             }
-
-            return [
-                'label'               => $label,
-                'source'              => $identifier,
-                'seconds'             => $seconds,
-                'extraTime'           => $extraTime,
-                'allowLateSubmission' => $this->allowLateSubmission(),
-                'qtiClassName'        => $source->getQtiClassName()
-            ];
         }
+        return null;
     }
 }

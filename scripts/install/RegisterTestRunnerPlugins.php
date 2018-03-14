@@ -131,7 +131,7 @@ class RegisterTestRunnerPlugins extends InstallAction
             [
                 'id' => 'timer',
                 'name' => 'Timer indicator',
-                'module' => 'taoQtiTest/runner/plugins/controls/timer/timer',
+                'module' => 'taoQtiTest/runner/plugins/controls/timer/plugin',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Add countdown when remaining time',
                 'category' => 'controls',

@@ -120,6 +120,23 @@ return array(
     'test-taker-review-item-title' => 'Item %d',
 
     /**
+     * For a unique title for all informational items.
+     * This will also change the items numbering sequence in the following way:
+     * - item 1
+     * - item 2
+     * - instructions // does not impact the numbering
+     * - item 3
+     * - instructions // does not impact the numbering
+     * - item 4
+     */
+    'test-taker-review-force-informational-title' => false,
+
+    /**
+     * Specify the unique title for informational items
+     */
+    'test-taker-review-informational-item-title' => 'Instructions',
+
+    /**
      * Limits the test taker review screen to a particular scope. Can be:
      * - test : the whole test
      * - testPart : the current test part
@@ -503,11 +520,17 @@ return array(
      * @type boolean
      */
     'allow-browse-next-item' => false,
-    
+
     /**
      * Defines the number of items to cache, when the feature is allowed (allow-browse-next-item).
      * This is required for caching scenarios
      * @type integer
      */
-    'item-cache-size' => 3
+    'item-cache-size' => 3,
+
+
+    /**
+     * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
+     */
+    'guidedNavigation' => false
 );

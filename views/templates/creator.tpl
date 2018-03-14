@@ -76,7 +76,8 @@ requirejs.config({
                 identifier : '<?=get_data('identifierUrl')?>'
             },
             categoriesPresets : <?=get_data('categoriesPresets')?>,
-            labels : <?=get_data('labels')?>
+            labels : <?=get_data('labels')?>,
+            guidedNavigation : <?=get_data('guidedNavigation')?>
        }
     }
 });

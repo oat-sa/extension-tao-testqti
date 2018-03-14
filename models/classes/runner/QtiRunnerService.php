@@ -65,6 +65,7 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
+use oat\taoQtiItem\model\portableElement\PortableElementService;
 
 /**
  * Class QtiRunnerService
@@ -141,6 +142,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $this->dataCache[$cacheKey] = json_decode($content, true);
             return $this->dataCache[$cacheKey];
         } catch (\FileNotFoundException $e) {
+            throw new \tao_models_classes_FileNotFoundException(
+                $path . ' for item reference ' . $itemRef
+            );
+        } catch (\League\Flysystem\FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
             );
@@ -808,8 +813,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
-                                $score->getValue()->getValue()
-                            )
+                                $score->getValue()->getValue(),
+                                null,
+                                $score->getCardinality()
+                            ),
+                            microtime(true)
                         );
                     } else {
                         \common_Logger::i("No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an adaptive section.");
@@ -1470,7 +1478,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         $session = $context->getTestSession();
         foreach ($session->getRegularTimeConstraints() as $constraint) {
-            if ($constraint->getMaximumRemainingTime() != false) {
+            if ($constraint->getMaximumRemainingTime() != false || $constraint->getMinimumRemainingTime() != false) {
                 $constraints[] = $constraint;
             }
         }
@@ -1904,5 +1912,22 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         return $storage->persist($userUri);
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @return array|string
+     * @throws \common_Exception
+     * @throws \common_exception_InconsistentData
+     */
+    public function getItemPortableElements(RunnerServiceContext $context, $itemRef){
+        $portableElements = [];
+        try{
+            $portableElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::PORTABLE_ELEMENT_FILE_NAME);
+        }catch(\tao_models_classes_FileNotFoundException $e){
+            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
+        }
+        return $portableElements;
     }
 }

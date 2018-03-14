@@ -60,6 +60,13 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
             $view.on('change.binder', function(e, model){
                 if(e.namespace === 'binder' && model['qti-type'] === 'testPart'){
                     $identifier.text(model.identifier);
+
+                    /**
+                     * @event modelOverseer#section-add
+                     * @param {Object} sectionModel
+                     */
+                    modelOverseer.trigger('testpart-change', partModel);
+
                 }
             });
 

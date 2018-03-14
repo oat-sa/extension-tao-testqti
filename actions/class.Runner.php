@@ -108,7 +108,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
                 $data['messages'] = $communicationService->processOutput($this->serviceContext);
             }
-            
+
             // ensure the state storage is properly updated
             $this->getStorageManager()->persist();
         } catch (common_Exception $e) {
@@ -463,6 +463,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $itemRef        = $this->runnerService->getItemHref($serviceContext, $itemIdentifier);
         $itemData       = $this->runnerService->getItemData($serviceContext, $itemRef);
         $baseUrl        = $this->runnerService->getItemPublicUrl($serviceContext, $itemRef);
+        $portableElements = $this->runnerService->getItemPortableElements($serviceContext, $itemRef);
 
         $itemState = $this->runnerService->getItemState($serviceContext, $itemIdentifier);
         if ( is_null($itemState) || !count($itemState)) {
@@ -474,6 +475,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             'itemData'       => $itemData,
             'itemState'      => $itemState,
             'itemIdentifier' => $itemIdentifier,
+            'portableElements' => $portableElements
         ];
     }
 
