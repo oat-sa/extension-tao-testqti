@@ -170,7 +170,7 @@ msgid "Auxiliary file not found at location \"%s\"."
 msgstr ""
 
 msgid "Calculator"
-msgstr ""
+msgstr "Calculatrice"
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -669,7 +669,7 @@ msgid "Only display the unanswered items"
 msgstr "Afficher uniquement les items non répondus"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "Ouvrir la calculatrice"
 
 msgid "Ordering"
 msgstr ""
