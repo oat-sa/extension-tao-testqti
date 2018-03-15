@@ -19,10 +19,12 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\TaoOntology;
+use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
@@ -42,6 +44,7 @@ use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
+use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
@@ -64,6 +67,7 @@ use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
+use oat\taoTaskQueue\model\TaskLogInterface;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\taoQtiTest\models\PhpCodeCompilationDataService;
@@ -1762,6 +1766,65 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('18.9.5');
         }
 
-        $this->skip('18.9.5', '20.1.0');
+        $this->skip('18.9.5', '21.0.2');
+
+        if ($this->isVersion('21.0.2')) {
+            /** @var TaskLogInterface|ConfigurableService $taskLogService */
+            $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
+
+            $taskLogService->linkTaskToCategory(ImportQtiTest::class, TaskLogInterface::CATEGORY_IMPORT);
+
+            $this->getServiceManager()->register(TaskLogInterface::SERVICE_ID, $taskLogService);
+
+            $this->setVersion('22.0.0');
+        }
+
+        $this->skip('22.0.0', '23.2.0');
+
+        if ($this->isVersion('23.2.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            if ($registry->isRegistered('taoQtiTest/runner/plugins/tools/textToSpeech/plugin')) {
+                $registry->remove('taoQtiTest/runner/plugins/tools/textToSpeech/plugin');
+            }
+
+            $this->setVersion('23.2.1');
+        }
+
+        $this->skip('23.2.1', '23.4.0');
+
+        if ($this->isVersion('23.4.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['guidedNavigation'] = false;
+
+            $extension->setConfig('testRunner', $config);
+
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->remove('taoQtiTest/runner/plugins/controls/timer/timer');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'timer',
+                'name' => 'Timer indicator',
+                'module' => 'taoQtiTest/runner/plugins/controls/timer/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Add countdown when remaining time',
+                'category' => 'controls',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('24.0.0');
+        }
+
+        $this->skip('24.0.0', '24.1.0');
+
+        if ($this->isVersion('24.1.0')) {
+            AclProxy::applyRule(new AccessRule('grant', TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+            $this->setVersion('24.2.0');
+        }
+
+        $this->skip('24.2.0', '24.3.0');
     }
 }
