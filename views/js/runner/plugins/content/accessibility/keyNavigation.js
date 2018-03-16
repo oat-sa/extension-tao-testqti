@@ -277,7 +277,18 @@ define([
             }).on('left up', function(){
                 this.previous();
             }).on('activate', function(cursor){
-                cursor.navigable.getElement().click();
+                var $elt = cursor.navigable.getElement();
+
+                //jQuery <= 1.9.0 the checkbox values are set
+                //after the click event if triggerred with jQuery
+                if($elt.is(':checkbox')){
+                    $elt.each(function(){
+                        this.click();
+                    });
+                } else {
+                    $elt.click();
+                }
+
             }).on('focus', function(cursor){
                 cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
             }).on('blur', function(cursor){
