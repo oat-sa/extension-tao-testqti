@@ -28,7 +28,7 @@ use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
-use oat\taoQtiItem\model\QtiJsonItemCloudFrontReplacement;
+use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
@@ -133,13 +133,20 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
         try {
             $content = $directory->read($lang.DIRECTORY_SEPARATOR.$path);
-            /** @var QtiJsonItemCloudFrontReplacement $assetCloudFrontService */
-            $assetCloudFrontService = $this->getServiceManager()->get(QtiJsonItemCloudFrontReplacement::SERVICE_ID);
-            if($assetCloudFrontService->hasCloudFrontAssets($content)){
-                $content = $assetCloudFrontService->replaceCloudFrontAssets($content);
+            /** @var ItemAssetsReplacement $assetService */
+            $assetService = $this->getServiceManager()->get(ItemAssetsReplacement::SERVICE_ID);
+            $jsonContent = json_decode($content, true);
+            $jsonAssets = [];
+            if(isset($jsonContent['assets'])){
+                foreach ($jsonContent['assets'] as $type => $assets){
+                    foreach ($assets as $key => $asset){
+                        $jsonAssets[$type][$key] = $assetService->postProcessAssets($asset);
+                    }
+                }
+                $jsonContent["assets"] = $jsonAssets;
             }
 
-            $this->dataCache[$cacheKey] = json_decode($content, true);
+            $this->dataCache[$cacheKey] = $jsonContent;
             return $this->dataCache[$cacheKey];
         } catch (\FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
@@ -151,6 +158,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         }
     }
+
 
     /**
      * Gets the test session for a particular delivery execution
