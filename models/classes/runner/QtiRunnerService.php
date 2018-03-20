@@ -29,6 +29,7 @@ use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
+use oat\taoQtiItem\model\portableElement\exception\PortableModelMissing;
 use oat\taoQtiItem\model\portableElement\PortableElementService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
@@ -1928,7 +1929,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                         try{
                             $portableElementService->setBaseUrlToPortableData($portableData);
                         }catch(PortableElementNotFoundException $e){
-                            \common_Logger::w('the portable element does not exist in delivery server');
+                            \common_Logger::w('the portable element version does not exist in delivery server');
+                        }catch(PortableModelMissing $e){
+                            \common_Logger::w('the portable element model does not exist in delivery server');
                         }
                     }
                 }
