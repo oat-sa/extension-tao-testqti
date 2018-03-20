@@ -29,6 +29,8 @@ use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoItems\model\render\ItemAssetsReplacement;
+use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
+use oat\taoQtiItem\model\portableElement\PortableElementService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
@@ -65,7 +67,6 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
-use oat\taoQtiItem\model\portableElement\PortableElementService;
 
 /**
  * Class QtiRunnerService
@@ -1930,9 +1931,24 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @throws \common_exception_InconsistentData
      */
     public function getItemPortableElements(RunnerServiceContext $context, $itemRef){
+
+        $portableElementService = new PortableElementService();
+        $portableElementService->setServiceLocator($this->getServiceLocator());
+
         $portableElements = [];
         try{
             $portableElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::PORTABLE_ELEMENT_FILE_NAME);
+            foreach($portableElements as $portableModel => &$elements){
+                foreach($elements as $typeIdentifier => &$versions){
+                    foreach($versions as &$portableData){
+                        try{
+                            $portableElementService->setBaseUrlToPortableData($portableData);
+                        }catch(PortableElementNotFoundException $e){
+                            \common_Logger::w('the portable element does not exist in delivery server');
+                        }
+                    }
+                }
+            }
         }catch(\tao_models_classes_FileNotFoundException $e){
             \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
         }
