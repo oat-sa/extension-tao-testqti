@@ -34,7 +34,7 @@ define([
      * The default strategies
      */
     var defaultStrategies = [
-        assetStrategies.externalReplaced,
+        assetStrategies.packedUrl,
         assetStrategies.external,
         assetStrategies.base64,
         assetStrategies.baseUrl,
