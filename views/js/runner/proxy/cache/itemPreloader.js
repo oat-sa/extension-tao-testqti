@@ -219,6 +219,7 @@ define([
             return new Promise(function(resolve){
 
                 preloadAssetManager.setData('baseUrl', baseUrl);
+                preloadAssetManager.setData('assets', assets);
 
                 return resolve(
                     _.reduce(assets, function(acc, assetList, type){
