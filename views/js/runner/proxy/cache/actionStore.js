@@ -64,12 +64,12 @@ define([
              * @returns {Promise} resolves when the action is stored
              */
             push: function push(action, params) {
-                actionQueue.push({
-                    action : action,
-                    timestamp : Date.now(),
-                    parameters : params
-                });
                 return loadStore().then(function(actionStore) {
+                    actionQueue.push({
+                        action : action,
+                        timestamp : Date.now(),
+                        parameters : params
+                    });
                     return actionStore.setItem(storeKey, actionQueue);
                 });
             },
