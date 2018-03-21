@@ -41,10 +41,10 @@ return array(
     'version'     => '24.3.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
-        'taoQtiItem' => '>=13.0.0',
+        'taoQtiItem' => '>=13.4.2',
         'taoTests'   => '>=7.1.0',
         'taoQtiItem' => '>=12.5.0',
-        'tao'        => '>=17.9.0',
+        'tao'        => '>=17.11.1',
         'generis'    => '>=6.14.0',
         'taoDelivery' => '>=9.0.0',
         'taoItems'   => '>=5.4.1',
