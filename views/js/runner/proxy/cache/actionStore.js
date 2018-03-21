@@ -64,12 +64,12 @@ define([
              * @returns {Promise} resolves when the action is stored
              */
             push: function push(action, params) {
-                actionQueue.push({
-                    action : action,
-                    timestamp : Date.now(),
-                    parameters : params
-                });
                 return loadStore().then(function(actionStore) {
+                    actionQueue.push({
+                        action : action,
+                        timestamp : Date.now(),
+                        parameters : params
+                    });
                     return actionStore.setItem(storeKey, actionQueue);
                 });
             },
@@ -79,9 +79,9 @@ define([
              * @returns {Promise} resolves with the flushed data
              */
             flush : function flush(){
-                actionQueue = [];
                 return loadStore().then(function(actionStore) {
                     return actionStore.getItem(storeKey).then(function(queue){
+                        actionQueue = [];
                         return actionStore.setItem(storeKey, actionQueue).then(function(){
                             return queue;
                         });
