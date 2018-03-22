@@ -79,9 +79,9 @@ define([
              * @returns {Promise} resolves with the flushed data
              */
             flush : function flush(){
-                actionQueue = [];
                 return loadStore().then(function(actionStore) {
                     return actionStore.getItem(storeKey).then(function(queue){
+                        actionQueue = [];
                         return actionStore.setItem(storeKey, actionQueue).then(function(){
                             return queue;
                         });
