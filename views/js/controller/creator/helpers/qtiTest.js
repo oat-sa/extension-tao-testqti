@@ -106,16 +106,28 @@ define([
 
         /**
          * Gives you a validator that check if a QTI id is available
-         * @param {Array} lockedIdentifiers - the list of identifiers you cannot use anymore
+         * @param {Array} lockedIdentifiers - deprecated, get them trough the modelOverseer
+         * @param {Object} modelOverseer - let's you get the data model
          * @returns {Object} the validator
          */
-        idAvailableValidator : function idAvailableValidator(lockedIdentifiers){
+        idAvailableValidator : function idAvailableValidator(lockedIdentifiers, modelOverseer){
+            var self = this;
             return {
                 name : 'testIdAvailable',
                 message : __('is already used in the test.'),
-                validate : function(value, callback, options){
+                validate : function(value, callback){
+                    var counts = {};
+                    var key    = value.toLowerCase();
+                    var identifiers = lockedIdentifiers;
+                    if(!identifiers && modelOverseer) {
+                        identifiers = self.extractIdentifiers(modelOverseer.getModel());
+                    }
+
                     if(typeof callback === 'function'){
-                        callback(!_.contains(_.values(lockedIdentifiers), value.toLowerCase()) || (options.original && value === options.original));
+                        counts = _.countBy(identifiers);
+                        //the identifier list always contains itself
+                        //so we check if another one is identical (ie. >= 2)
+                        callback(typeof counts[key] === 'undefined' || counts[key] < 2);
                     }
                 }
             };
@@ -172,7 +184,7 @@ define([
 
                             //remove ordering is shuffle is false
                             if(assessmentSection.ordering &&
-                                assessmentSection.ordering.shuffle !== undefined && assessmentSection.ordering.shuffle === false){
+                                typeof assessmentSection.ordering.shuffle !== 'undefined' && assessmentSection.ordering.shuffle === false){
                                 delete assessmentSection.ordering;
                             }
 
@@ -217,7 +229,23 @@ define([
          * @throws {Error} if the model is not valid
          */
         validateModel: function validateModel(model) {
+            var identifiers = this.extractIdentifiers(model);
+            var nonUniqueIdentifiers = [];
             var outcomes = _.indexBy(outcomeHelper.listOutcomes(model));
+
+            _(identifiers)
+                .countBy()
+                .forEach(function(count, id){
+                    if(count > 1){
+                        nonUniqueIdentifiers.push(id);
+                    }
+                });
+            if(nonUniqueIdentifiers.length === 1){
+                throw new Error(__('The identifier "%s" is not unique accross the test.', nonUniqueIdentifiers[0]));
+            }
+            if(nonUniqueIdentifiers.length > 1){
+                throw new Error(__('The following identifiers "%s" are not unique accross the test.', nonUniqueIdentifiers.join('", "')));
+            }
 
             _.forEach(model.testParts, function (testPart) {
                 _.forEach(testPart.assessmentSections, function (assessmentSection) {
