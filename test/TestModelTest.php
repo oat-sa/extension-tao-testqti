@@ -102,7 +102,7 @@ class TestModelTest extends TaoPhpUnitTestRunner
      */
     public function testTestModelCompilerClass()
     {
-        $model = new TestModelService();
+        $model = new TestModelService(['testCompilerClass' => 'taoQtiTest_models_classes_QtiTestCompiler']);
         $this->assertEquals('taoQtiTest_models_classes_QtiTestCompiler', $model->getCompilerClass());
     }
     
