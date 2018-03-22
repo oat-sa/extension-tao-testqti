@@ -227,7 +227,7 @@ define([
                         var resolved = {};
                         _.forEach(assetList, function(url){
                             //filter base64 (also it seems sometimes we just have base64 data, without the protocol...)
-                            if(!urlUtil.isBase64(url) && /\.[a-zA-Z0-9]+$/.test(url)){
+                            if((!urlUtil.isBase64(url) && /\.[a-zA-Z0-9]+$/.test(url)) || urlUtil.isAbsolute(url)){
                                 resolved[url] = preloadAssetManager.resolve(url);
                             }
                         });
