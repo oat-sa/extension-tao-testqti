@@ -29,7 +29,9 @@ class CatUtilsTest extends TaoPhpUnitTestRunner
                     'S01' => 
                     [
                         'adaptiveEngineRef' => 'http://www.my-cat-engine.com/api/',
-                        'adaptiveSettingsRef' => 'cat/settings.data'
+                        'adaptiveSettingsRef' => 'cat/settings.data',
+                        'qtiUsagedataRef' => 'cat/usagedata.data',
+                        'qtiMetadataRef' => 'cat/metadata.data'
                     ]
                 ]
             ]
