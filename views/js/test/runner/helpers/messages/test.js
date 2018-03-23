@@ -94,19 +94,9 @@ define([
                 sectionStats:   { answered: 2 },
                 currentItemResponse: null,
                 currentItemAnswered: false,
-                testMessage:    'You have 1 unanswered question(s).',
-                partMessage:    'You have 1 unanswered question(s).',
-                sectionMessage: 'You answered only 2 of the 3 question(s) in this section.'
-            }, {
-                title: 'current not answered, none flagged',
-                testStats:      { answered: 2 },
-                partStats:      { answered: 2 },
-                sectionStats:   { answered: 2 },
-                currentItemResponse: null,
-                currentItemAnswered: false,
-                testMessage:    'You have 1 unanswered question(s).',
-                partMessage:    'You have 1 unanswered question(s).',
-                sectionMessage: 'You answered only 2 of the 3 question(s) in this section.'
+                testMessage:    'You answered all 3 question(s) in this test.',
+                partMessage:    'You answered all 3 question(s).',
+                sectionMessage: 'You answered all 3 question(s) in this section.'
             }, {
                 title: 'current not answered, one flagged',
                 testStats:      { answered: 2, flagged: 1 },
@@ -114,9 +104,9 @@ define([
                 sectionStats:   { answered: 2, flagged: 1 },
                 currentItemResponse: null,
                 currentItemAnswered: false,
-                testMessage:    'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now.',
-                partMessage:    'You have 1 unanswered question(s) and you flagged 1 item(s) that you can review now.',
-                sectionMessage: 'You answered only 2 of the 3 question(s) in this section, and flagged 1 of them.'
+                testMessage:    'You answered all 3 question(s) in this test and you flagged 1 item(s) that you can review now.',
+                partMessage:    'You answered all 3 question(s) and you flagged 1 item(s) that you can review now.',
+                sectionMessage: 'You answered all 3 question(s) in this section, and flagged 1 of them.'
             }, {
                 title: 'all answered, one flagged',
                 testStats:      { answered: 3, flagged: 1 },
