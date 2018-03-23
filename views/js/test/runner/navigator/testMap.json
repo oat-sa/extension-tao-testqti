@@ -23,6 +23,7 @@
               "answered": true,
               "flagged": false,
               "viewed": true,
+              "categories" : ["x-tao-option-reviewScreen", "x-tao-option-markReview", "x-tao-option-endTestWarning", "x-tao-option-zoom"],
               "informational": false
             },
             "item-2": {
@@ -37,6 +38,7 @@
               "answered": true,
               "flagged": false,
               "viewed": false,
+              "categories" : ["x-tao-option-reviewScreen", "x-tao-option-markReview", "x-tao-option-endTestWarning", "x-tao-option-zoom"],
               "informational": false
             },
             "item-3": {
@@ -51,6 +53,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : ["x-tao-option-reviewScreen", "x-tao-option-markReview", "x-tao-option-endTestWarning", "x-tao-option-zoom"],
               "informational": false
             }
           },
@@ -87,6 +90,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : ["x-tao-option-calculator", "x-tao-option-zoom", "x-tao-option-foo-bar-baz", "awesome-category"],
               "informational": false
             },
             "item-5": {
@@ -101,6 +105,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : ["x-tao-option-calculator", "x-tao-option-zoom", "x-tao-option-foo-bar-baz", "awesome-category"],
               "informational": false
             },
             "item-6": {
@@ -115,6 +120,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : ["x-tao-option-calculator", "x-tao-option-zoom", "x-tao-option-foo-bar-baz", "awesome-category"],
               "informational": false,
               "timeConstraint": {
                 "label": "Item 3",
@@ -159,6 +165,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : [],
               "informational": false
             },
             "item-8": {
@@ -173,6 +180,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : [],
               "informational": false
             },
             "item-9": {
@@ -187,6 +195,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : [],
               "informational": false
             }
           },
@@ -215,6 +224,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : [],
               "informational": false
             },
             "item-11": {
@@ -229,6 +239,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : [],
               "informational": false
             }
           },
@@ -257,6 +268,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : [],
               "informational": false
             },
             "item-13": {
@@ -271,6 +283,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : [],
               "informational": false
             },
             "item-14": {
@@ -285,6 +298,7 @@
               "answered": false,
               "flagged": false,
               "viewed": false,
+              "categories" : [],
               "informational": false
             }
           },

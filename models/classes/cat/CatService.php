@@ -426,6 +426,7 @@ class CatService extends ConfigurableService
         } else {
             throw new \InvalidArgumentException('Client is misconfigured.');
         }
+        $this->propagate($client);
         return $client;
     }
 

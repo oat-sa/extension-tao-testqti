@@ -87,6 +87,14 @@ define([
                 if (previousTheme !== state.selectedTheme) {
                     testRunner.trigger('themechange', state.selectedTheme, previousTheme);
                 }
+
+                allMenuEntries.forEach(function (menuEntry) {
+                    if (menuEntry.getId() === themeId) {
+                        menuEntry.turnOn();
+                    } else {
+                        menuEntry.turnOff();
+                    }
+                });
             }
 
             //init plugin state
@@ -185,24 +193,12 @@ define([
 
             return testRunner.getPluginStore(this.getName())
                 .then(function (itemThemesStore) {
-                    testRunner
-                        .after('renderitem enableitem', function () {
-                            self.storage = itemThemesStore;
-
-                            self.storage.getItem('itemThemeId')
-                                .then(function (itemThemeId) {
-                                    if (itemThemeId && state.selectedTheme !== itemThemeId) {
-                                        changeTheme(itemThemeId);
-
-                                        allMenuEntries.forEach(function (menuEntry) {
-                                            if (menuEntry.getId() === itemThemeId) {
-                                                menuEntry.turnOn();
-                                            } else {
-                                                menuEntry.turnOff();
-                                            }
-                                        });
-                                    }
-                                });
+                    self.storage = itemThemesStore;
+                    self.storage.getItem('itemThemeId')
+                        .then(function (itemThemeId) {
+                            if (itemThemeId && state.selectedTheme !== itemThemeId) {
+                                changeTheme(itemThemeId);
+                            }
                         });
                 });
         },
