@@ -47,6 +47,8 @@ define([
 
             } else if (isItemCurrentlyAnswered && !context.itemAnswered) {
                 stats.answered++;
+            } else if(!isItemCurrentlyAnswered && !context.itemAnswered) {
+                stats.answered++;
             }
         }
 
