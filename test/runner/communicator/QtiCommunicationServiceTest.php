@@ -42,6 +42,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testProcessInput()
     {
         $service = new QtiCommunicationService([]);
+        $service->setServiceLocator($this->getServiceManagerProphecy());
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
         $channel3 = new CommunicationChannel2();
@@ -70,6 +71,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testProcessInputException()
     {
         $service = new QtiCommunicationService([]);
+        $service->setServiceLocator($this->getServiceManagerProphecy());
         $channel = new CommunicationChannel();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
         $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
@@ -83,6 +85,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testProcessInputException2()
     {
         $service = new QtiCommunicationService([]);
+        $service->setServiceLocator($this->getServiceManagerProphecy());
         $channel = new CommunicationChannel();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
         $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
@@ -96,6 +99,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testProcessOutput()
     {
         $service = new QtiCommunicationService([]);
+        $service->setServiceLocator($this->getServiceManagerProphecy());
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
         $channel3 = new CommunicationChannel2();
@@ -127,6 +131,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testAttachChannel()
     {
         $service = new QtiCommunicationService([]);
+        $service->setServiceLocator($this->getServiceManagerProphecy());
         $this->assertEquals(null, $service->getOption(QtiCommunicationService::OPTION_CHANNELS));
 
         $channel = new CommunicationChannel();
@@ -155,6 +160,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testAttachChannelException()
     {
         $service = new QtiCommunicationService([]);
+        $service->setServiceLocator($this->getServiceManagerProphecy());
         $channel = new CommunicationChannel();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
@@ -166,6 +172,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testDetachChannel()
     {
         $service = new QtiCommunicationService([]);
+        $service->setServiceLocator($this->getServiceManagerProphecy());
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
@@ -201,6 +208,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testDetachChannelException()
     {
         $service = new QtiCommunicationService([]);
+        $service->setServiceLocator($this->getServiceManagerProphecy());
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);

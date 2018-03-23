@@ -18,6 +18,7 @@
  *
  */
 
+use oat\generis\Helper\SystemHelper;
 use oat\taoQtiItem\model\qti\Resource;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\php\PhpDocument;
@@ -174,7 +175,7 @@ class taoQtiTest_helpers_Utils {
                 
                 // With some Windows flavours (Win7, Win8), the $itemRefCanonicalHref comes out with
                 // a leading 'file:\' component. Let's clean this. (str_replace is binary-safe \0/)
-                $os = tao_helpers_Environment::getOperatingSystem();
+                $os = SystemHelper::getOperatingSystem();
                 if ($os === 'WINNT' || $os === 'WIN32' || $os === 'Windows') {
                     $itemRefCanonicalHref = str_replace('file:\\', '', $itemRefCanonicalHref);
                     

@@ -570,6 +570,7 @@ define([
             return new Promise(function(resolve, reject){
                 assetManager.setData('baseUrl', itemData.baseUrl);
                 assetManager.setData('itemIdentifier', itemIdentifier);
+                assetManager.setData('assets', itemData.content.assets);
 
                 itemData.content = itemData.content || {};
 

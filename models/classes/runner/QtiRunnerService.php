@@ -31,6 +31,7 @@ use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
 use oat\taoQtiItem\model\portableElement\exception\PortableModelMissing;
 use oat\taoQtiItem\model\portableElement\PortableElementService;
+use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
@@ -133,7 +134,21 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         }
         try {
-            $this->dataCache[$cacheKey] = json_decode($directory->read($lang.DIRECTORY_SEPARATOR.$path), true);
+            $content = $directory->read($lang.DIRECTORY_SEPARATOR.$path);
+            /** @var ItemAssetsReplacement $assetService */
+            $assetService = $this->getServiceManager()->get(ItemAssetsReplacement::SERVICE_ID);
+            $jsonContent = json_decode($content, true);
+            $jsonAssets = [];
+            if(isset($jsonContent['assets'])){
+                foreach ($jsonContent['assets'] as $type => $assets){
+                    foreach ($assets as $key => $asset){
+                        $jsonAssets[$type][$key] = $assetService->postProcessAssets($asset);
+                    }
+                }
+                $jsonContent["assets"] = $jsonAssets;
+            }
+
+            $this->dataCache[$cacheKey] = $jsonContent;
             return $this->dataCache[$cacheKey];
         } catch (\FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
