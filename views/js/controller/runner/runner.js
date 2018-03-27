@@ -152,7 +152,7 @@ define([
 
                 logger.error({ displayMessage : displayMessage }, err);
 
-                if(err.code === 403) {
+                if(err.code === 403 || err.code === 500) {
                     //we just leave if any 403 occurs
                     return exit(displayMessage);
                 }
