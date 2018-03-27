@@ -230,6 +230,7 @@ $GLOBALS['__l10n']["IMS QTI Test referenced as \"%s\" in the IMS Manifest file s
 $GLOBALS['__l10n']["In this part of the test navigation is not allowed."]="In questa parte di test la navigazione non è consentita.";
 $GLOBALS['__l10n']["Inclusive (AND)"]="Inclusivo (e)";
 $GLOBALS['__l10n']["Inconsistency at line %1d:"]="Incoerenza alla riga% 1d:";
+$GLOBALS['__l10n']["Index"]="Indice";
 $GLOBALS['__l10n']["Indexing has been run"]="L'indicizzazione è stata richiamata";
 $GLOBALS['__l10n']["Individual"]="Singolo";
 $GLOBALS['__l10n']["Install"]="Installa";
@@ -281,6 +282,8 @@ $GLOBALS['__l10n']["Log in"]="Entra";
 $GLOBALS['__l10n']["Log Out"]="Esci";
 $GLOBALS['__l10n']["Login"]="Login";
 $GLOBALS['__l10n']["Login available"]="Login disponibile";
+$GLOBALS['__l10n']["LTI"]="LTI";
+$GLOBALS['__l10n']["LTI Consumers"]="Cliente LTI ";
 $GLOBALS['__l10n']["Manage data list"]="Gestisci lista dati";
 $GLOBALS['__l10n']["Manage groups"]="Gestione gruppi";
 $GLOBALS['__l10n']["Manage items"]="Gestisci item";
