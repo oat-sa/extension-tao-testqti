@@ -24,8 +24,18 @@ define([
     'use strict';
 
     /**
+     * @typedef {Object} itemStats
+     * @property {Number} questions - the number of questions items
+     * @property {Number} answered - the number of answered questions
+     * @property {Number} flagged - the number of items flagged for review
+     * @property {Number} viewed - the number of viewed items
+     * @property {Number} total - the total number of items
+     * @property {Number} questionsViewed - the number of viewed questions
+     */
+
+    /**
      * Gets an empty stats record
-     * @returns {Object}
+     * @returns {itemStats}
      */
     function getEmptyStats() {
         return {
@@ -158,7 +168,7 @@ define([
         /**
          * Gets the global stats of the assessment test
          * @param {Object} map - The assessment test map
-         * @returns {Object}
+         * @returns {itemStats}
          */
         getTestStats: function getTestStats(map) {
             return map && map.stats;
@@ -168,7 +178,7 @@ define([
          * Gets the stats of the test part containing a particular position
          * @param {Object} map - The assessment test map
          * @param {String} partName - The identifier of the test part
-         * @returns {Object}
+         * @returns {itemStats}
          */
         getPartStats: function getPartStats(map, partName) {
             var part = this.getPart(map, partName);
@@ -179,7 +189,7 @@ define([
          * Gets the stats of the test section containing a particular position
          * @param {Object} map - The assessment test map
          * @param {String} sectionName - The identifier of the test section
-         * @returns {Object}
+         * @returns {itemStats}
          */
         getSectionStats: function getSectionStats(map, sectionName) {
             var section = this.getSection(map, sectionName);
@@ -191,7 +201,7 @@ define([
          * @param {Object} map - The assessment test map
          * @param {Number} position - The current position
          * @param {String} [scope] - The name of the scope. Can be: test, part, section (default: test)
-         * @returns {Object}
+         * @returns {itemStats}
          */
         getScopeStats: function getScopeStats(map, position, scope) {
             var jump = this.getJump(map, position);
@@ -405,7 +415,7 @@ define([
         /**
          * Computes the stats for a list of items
          * @param {Object} items
-         * @returns {Object}
+         * @returns {itemStats}
          */
         computeItemStats: function computeItemStats(items) {
             return _.reduce(items, function accStats(acc, item) {
@@ -434,7 +444,7 @@ define([
         /**
          * Computes the global stats of a collection of stats
          * @param {Object} collection
-         * @returns {Object}
+         * @returns {itemStats}
          */
         computeStats: function computeStats(collection) {
             return _.reduce(collection, function accStats(acc, item) {
