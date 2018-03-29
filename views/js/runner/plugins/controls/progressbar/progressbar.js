@@ -25,9 +25,19 @@ define([
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/progress',
-    'taoQtiTest/runner/plugins/controls/progressbar/renderer/percentage'
-], function (pluginFactory, mapHelper, progressHelper, percentageRendererFactory){
+    'taoQtiTest/runner/plugins/controls/progressbar/renderer/percentage',
+    'taoQtiTest/runner/plugins/controls/progressbar/renderer/position'
+], function (pluginFactory, mapHelper, progressHelper, percentageRendererFactory, positionRendererFactory){
     'use strict';
+
+    /**
+     * List of available progress indicator renderers
+     * @type {Object}
+     */
+    var renderers = {
+        percentage: percentageRendererFactory,
+        position: positionRendererFactory
+    };
 
     /**
      * Returns the configured plugin
@@ -45,6 +55,7 @@ define([
             var config     = testData.config.progressIndicator || {};
             var self       = this;
 
+            var rendererFactory = renderers[config.renderer] || renderers.percentage;
             var progressConfig = {
                 indicator: config.type || 'percentage',
                 scope: config.scope || 'test',
@@ -69,7 +80,7 @@ define([
             };
 
             //create the progressbar
-            this.renderer = percentageRendererFactory(progressConfig);
+            this.renderer = rendererFactory(progressConfig);
 
             //let update the progression
             update();

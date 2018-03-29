@@ -19,10 +19,11 @@
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
+    'lodash',
     'ui/component',
-    'tpl!taoQtiTest/runner/plugins/controls/progressbar/renderer/percentage',
-    'ui/progressbar'
-], function (component, percentageTpl) {
+    'tpl!taoQtiTest/runner/plugins/controls/progressbar/renderer/position',
+    'tpl!taoQtiTest/runner/plugins/controls/progressbar/renderer/position-point'
+], function (_, component, positionTpl, pointTpl) {
     'use strict';
 
     /**
@@ -39,7 +40,9 @@ define([
      * @param {Boolean} [config.showLabel=true] - show/hide the progress label
      * @param {Object} [progressData] - the initial dataset
      */
-    return function percentageIndicatorRenderer(config, progressData) {
+    return function positionIndicatorRenderer(config, progressData) {
+        var count = 0;
+
         var rendererApi = {
             /**
              * Update the progress bar according to the provided indicator data
@@ -48,13 +51,24 @@ define([
             update: function update(data) {
                 progressData = data;
                 if (this.is('rendered') && this.controls) {
+                    if (count !== progressData.total) {
+                        // the number of points have changed, regenerate the full bar
+                        count = progressData.total;
+                        this.controls.$bar.empty().append(pointTpl(_.range(count)));
+                    }
                     this.controls.$label.text(progressData.label);
-                    this.controls.$bar.progressbar('value', progressData.ratio);
+                    this.controls.$bar
+                        // remove progression from all points
+                        .children().removeClass('reached current')
+                        // set progression to each reached point
+                        .slice(0, progressData.position).addClass('reached')
+                        // set current position
+                        .slice(-1).addClass('current');
                 }
 
                 /**
                  * Executes extra tasks on update
-                 * @event percentageIndicatorRenderer#update
+                 * @event positionIndicatorRenderer#update
                  * @param {progressIndicator} data
                  */
                 this.trigger('update', data);
@@ -62,21 +76,18 @@ define([
         };
 
         return component(rendererApi, defaults)
-            .setTemplate(percentageTpl)
+            .setTemplate(positionTpl)
             .on('render', function() {
                 // get access to the controls
                 this.controls = {
                     $label: this.getElement().find('[data-control="progress-label"]'),
-                    $bar: this.getElement().find('[data-control="progress-bar"]')
+                    $bar: this.getElement().find('[data-control="progress-bar"] .progressbar-points')
                 };
 
                 // apply option
                 if (!this.config.showLabel) {
                     this.controls.$label.hide();
                 }
-
-                // and initialize the progress bar component
-                this.controls.$bar.progressbar();
 
                 // set the right progression according to init data
                 if (progressData) {
