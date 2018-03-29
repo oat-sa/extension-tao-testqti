@@ -65,8 +65,10 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 'catEngineWarning' => isset($rawConfig['catEngineWarning']) ? $rawConfig['catEngineWarning'] : null,
                 'progressIndicator' => [
                     'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
+                    'renderer' => isset($rawConfig['progress-indicator-renderer']) ? $rawConfig['progress-indicator-renderer'] : null,
                     'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
                     'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
+                    'showLabel' => !empty($rawConfig['progress-indicator-show-label']),
                     'showTotal' => !empty($rawConfig['progress-indicator-show-total']),
                 ],
                 'review' => [
