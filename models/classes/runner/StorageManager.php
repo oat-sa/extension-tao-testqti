@@ -142,9 +142,10 @@ class StorageManager extends ConfigurableService
             switch ($cache['state']) {
                 case self::STATE_PENDING_WRITE:
                     $success = $this->getStorage()->set($cache['userId'], $cache['callId'], $cache['data']);
-                    if ($success) {
-                        $this->cache[$key]['state'] = self::STATE_ALIGNED;
+                    if (!$success) {
+                        throw new \common_exception_Error('Can\'t write into test runner state storage at '.static::class);
                     }
+                    $this->cache[$key]['state'] = self::STATE_ALIGNED;
                     break;
 
                 case self::STATE_PENDING_DELETE:
