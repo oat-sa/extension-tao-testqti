@@ -31,9 +31,10 @@ define([
      * Return scope stats that takes into account any test taker interaction made since the item has been loaded
      * @param {String} scope - scope to consider for calculating the stats
      * @param {Object} runner - testRunner instance
+     * @param {Boolean} sync - flag for sync the unanswered stats in exit message and the unanswered stats in the toolbox. Default false
      * @returns {Object}
      */
-    function getInstantStats(scope, runner) {
+    function getInstantStats(scope, runner, sync) {
         var map = runner.getTestMap(),
             context = runner.getTestContext(),
             stats = _.clone(mapHelper.getScopeStats(map, context.itemPosition, scope)),
@@ -46,6 +47,10 @@ define([
                 stats.answered--;
 
             } else if (isItemCurrentlyAnswered && !context.itemAnswered) {
+                stats.answered++;
+            }
+
+            if (sync && !isItemCurrentlyAnswered && !context.itemAnswered) {
                 stats.answered++;
             }
         }
