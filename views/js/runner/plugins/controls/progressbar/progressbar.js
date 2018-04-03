@@ -52,7 +52,7 @@ define([
         init : function init(){
             var testRunner = this.getTestRunner();
             var testData   = testRunner.getTestData();
-            var config     = testData.config.progressIndicator || {};
+            var config     = _.defaults(this.getConfig(), testData.config.progressIndicator || {});
             var self       = this;
 
             var rendererFactory = renderers[config.renderer] || renderers.percentage;
