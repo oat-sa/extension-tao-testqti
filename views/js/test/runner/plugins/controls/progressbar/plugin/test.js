@@ -19,7 +19,7 @@
 define([
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
-    'taoQtiTest/runner/plugins/controls/progressbar/plugin',
+    'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
     'json!taoQtiTest/test/runner/plugins/controls/progressbar/plugin/map.json'
 ], function (runnerFactory, providerMock, pluginFactory, testMap) {
     'use strict';
@@ -38,9 +38,9 @@ define([
 
         QUnit.expect(3);
 
-        assert.equal(typeof pluginFactory, 'function', 'The pluginFactory module exposes a function');
-        assert.equal(typeof pluginFactory('progressBar'), 'function', 'The plugin factory produces another factory');
-        assert.notStrictEqual(pluginFactory('progressBar'), pluginFactory('progressBar'), 'The plugin factory provides a different factory on each call');
+        assert.equal(typeof pluginFactory, 'function', "The pluginFactory module exposes a function");
+        assert.equal(typeof pluginFactory(runner), 'object', "The plugin factory produces an instance");
+        assert.notStrictEqual(pluginFactory(runner), pluginFactory(runner), "The plugin factory provides a different instance on each call");
     });
 
 
@@ -65,29 +65,9 @@ define([
         {title: 'disable'}
     ]).test('plugin API ', function (data, assert) {
         var runner = runnerFactory(providerName);
-        var factory = pluginFactory('progressBar');
-        var plugin = factory(runner);
+        var plugin = pluginFactory(runner);
         QUnit.expect(1);
         assert.equal(typeof plugin[data.title], 'function', 'The pluginFactory instances expose a "' + data.title + '" function');
-    });
-
-
-    QUnit.test('error', function (assert) {
-        var runner = runnerFactory(providerName);
-
-        QUnit.expect(2);
-
-        assert.throws(function () {
-            var factory = pluginFactory();
-            factory(runner);
-        }, 'A plugin name must be provided');
-
-        assert.throws(function () {
-            var factory = pluginFactory('mock', null, {
-                not_a_renderer: true
-            });
-            factory(runner);
-        }, 'A renderer factory must be a function');
     });
 
 
@@ -99,9 +79,8 @@ define([
 
     QUnit.asyncTest('render/destroy', function (assert) {
         var runner = runnerFactory(providerName),
-            factory = pluginFactory('mockBar'),
             areaBroker = runner.getAreaBroker(),
-            plugin = factory(runner, areaBroker),
+            plugin = pluginFactory(runner, areaBroker),
             $container = areaBroker.getControlArea();
 
         QUnit.expect(4);
@@ -147,9 +126,8 @@ define([
 
     QUnit.asyncTest('show/hide', function (assert) {
         var runner = runnerFactory(providerName),
-            factory = pluginFactory('mockBar'),
             areaBroker = runner.getAreaBroker(),
-            plugin = factory(runner, areaBroker),
+            plugin = pluginFactory(runner, areaBroker),
             $container = areaBroker.getControlArea();
 
         QUnit.expect(7);
@@ -208,9 +186,8 @@ define([
 
     QUnit.asyncTest('hide on informational', function (assert) {
         var runner = runnerFactory(providerName),
-            factory = pluginFactory('mockBar'),
             areaBroker = runner.getAreaBroker(),
-            plugin = factory(runner, areaBroker),
+            plugin = pluginFactory(runner, areaBroker),
             $container = areaBroker.getControlArea();
 
         QUnit.expect(5);

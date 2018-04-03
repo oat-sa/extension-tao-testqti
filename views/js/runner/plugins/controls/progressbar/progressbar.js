@@ -22,12 +22,106 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'taoQtiTest/runner/plugins/controls/progressbar/plugin'
-], function (pluginFactory){
+    'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/progress',
+    'taoQtiTest/runner/plugins/controls/progressbar/renderer/percentage',
+    'taoQtiTest/runner/plugins/controls/progressbar/renderer/position'
+], function (pluginFactory, mapHelper, progressHelper, percentageRendererFactory, positionRendererFactory){
     'use strict';
+
+    /**
+     * List of available progress indicator renderers
+     * @type {Object}
+     */
+    var renderers = {
+        percentage: percentageRendererFactory,
+        position: positionRendererFactory
+    };
 
     /**
      * Returns the configured plugin
      */
-    return pluginFactory('progressBar');
+    return pluginFactory({
+
+        name : 'progressBar',
+
+        /**
+         * Initialize the plugin (called during runner's init)
+         */
+        init : function init(){
+            var testRunner = this.getTestRunner();
+            var testData   = testRunner.getTestData();
+            var config     = testData.config.progressIndicator || {};
+            var self       = this;
+
+            var rendererFactory = renderers[config.renderer] || renderers.percentage;
+            var progressConfig = {
+                indicator: config.type || 'percentage',
+                scope: config.scope || 'test',
+                showLabel: config.showLabel,
+                showTotal: config.showTotal
+            };
+
+            /**
+             * Update the progress bar
+             */
+            var update = function update (){
+                var testContext = testRunner.getTestContext();
+                var testMap = testRunner.getTestMap();
+                var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+
+                if (item && item.informational && progressConfig.indicator === 'questions') {
+                    self.renderer.hide();
+                } else {
+                    self.renderer.show();
+                    self.renderer.update(progressHelper.computeProgress(testMap, testContext, progressConfig));
+                }
+            };
+
+            //create the progressbar
+            this.renderer = rendererFactory(progressConfig);
+
+            //let update the progression
+            update();
+
+            testRunner.on('ready loaditem', update);
+        },
+
+        /**
+         * Called during the runner's render phase
+         */
+        render : function render() {
+            var $container = this.getAreaBroker().getControlArea();
+            this.renderer.render($container);
+        },
+
+        /**
+         * Called during the runner's render phase
+         */
+        destroy : function destroy() {
+            if (this.renderer) {
+                this.renderer.destroy();
+            }
+            this.renderer = null;
+        },
+
+        /**
+         * Show the progress bar
+         */
+        show: function show() {
+            if (this.renderer) {
+                this.renderer.show();
+            }
+        },
+
+        /**
+         * Hide the progress bar
+         */
+        hide: function hide() {
+            if (this.renderer) {
+                this.renderer.hide();
+            }
+        }
+    });
 });
