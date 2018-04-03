@@ -518,7 +518,7 @@ $GLOBALS['__l10n']["The assessment has been created but is not already running."
 $GLOBALS['__l10n']["The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."]="La evaluación fue suspendida por un coordinador autorizado. Si desea retomar su evaluación, vuelva a iniciarla y contacte a su coordinador si es necesario.";
 $GLOBALS['__l10n']["The assessment has been suspended. To resume your assessment, please relaunch it."]="La evaluación ha sido suspendida. Para reanudar su evaluación, por favor reinicie.";
 $GLOBALS['__l10n']["The assessment has been terminated."]="La evaluación se ha terminado.";
-$GLOBALS['__l10n']["The assessment has been terminated. You cannot interact with it anymore."]="La evaluación se ha terminado. Ya no puede interactuar con él.";
+$GLOBALS['__l10n']["The assessment has been terminated. You cannot interact with it anymore."]="La evaluación se ha terminado. Ya no puede interactuar con ella.";
 $GLOBALS['__l10n']["The assessment has been terminated. You cannot interact with it anymore. Please contact your proctor if required."]="La evaluación se ha terminado. Ya no puede interactuar con ella. Póngase en contacto con su supervisor si es necesario.";
 $GLOBALS['__l10n']["The assessment is still running."]="La evaluación sigue ejecutándose.";
 $GLOBALS['__l10n']["The candidate is not allowed to submit wrong responses."]="Al candidato no se le permite enviar respuestas equivocadas.";

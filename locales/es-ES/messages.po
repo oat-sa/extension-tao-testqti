@@ -976,7 +976,7 @@ msgid "The assessment has been terminated."
 msgstr "La evaluación se ha terminado."
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "La evaluación se ha terminado. Ya no puede interactuar con él."
+msgstr "La evaluación se ha terminado. Ya no puede interactuar con ella."
 
 msgid "The assessment is still running."
 msgstr "La evaluación sigue ejecutándose."
