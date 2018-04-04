@@ -45,12 +45,7 @@ define([
             isItemCurrentlyAnswered = currentItemHelper.isAnswered(runner);
             if (!isItemCurrentlyAnswered && context.itemAnswered) {
                 stats.answered--;
-
-            } else if (isItemCurrentlyAnswered && !context.itemAnswered) {
-                stats.answered++;
-            }
-
-            if (sync && !isItemCurrentlyAnswered && !context.itemAnswered) {
+            } else if ((isItemCurrentlyAnswered || sync) && !context.itemAnswered) {
                 stats.answered++;
             }
         }
