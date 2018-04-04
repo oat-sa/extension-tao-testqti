@@ -113,7 +113,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         $directoryIds = explode('|', $itemRef);
         if (count($directoryIds) < 3) {
-            throw new \common_exception_InconsistentData('The itemRef is not formated correctly');
+            if (is_scalar($itemRef)) {
+                $itemRefInfo = gettype($itemRef) . ': ' . strval($itemRef);
+            } elseif (is_object($itemRef)) {
+                $itemRefInfo = gettype($itemRef) . ': ' . get_class($itemRef);
+            } else {
+                $itemRefInfo = gettype($itemRef);
+            }
+
+            throw new \common_exception_InconsistentData("The itemRef (value = '${itemRefInfo}') is not formatted correctly.");
         }
 
         $itemUri = $directoryIds[0];
