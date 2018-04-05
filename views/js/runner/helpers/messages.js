@@ -31,15 +31,19 @@ define([
      * @param {String} message - custom message that will be appended to the unanswered stats count
      * @param {String} scope - scope to consider for calculating the stats
      * @param {Object} runner - testRunner instance
-     * @param {Boolean} sync - flag for sync the unanswered stats in exit message and the unanswered stats in the toolbox. Default false
+     * @param {Boolean} sync - flag for sync the unanswered stats in exit message and the unanswered stats in the toolbox
      * @returns {String} Returns the message text
      */
-    function getExitMessage(message, scope, runner, sync = false) {
+    function getExitMessage(message, scope, runner, sync) {
         var itemsCountMessage = '';
 
         var testData = runner.getTestData(),
             testConfig = testData && testData.config,
             messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
+
+        if (sync === undefined) {
+            sync = false;
+        }
 
         if (messageEnabled) {
             itemsCountMessage = getUnansweredItemsWarning(scope, runner, sync);
