@@ -52,7 +52,9 @@ define([
         testContext: {
             itemPosition: 3,
             testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1'
+            sectionId: 'assessmentSection-1',
+            numberCompleted: 4,
+            numberItems: 12
         },
         expected: {
             questions: 9,
@@ -60,6 +62,8 @@ define([
             flagged: 0,
             viewed: 6,
             total: 12,
+            completed: 4,
+            overall: 12,
             questionsViewed: 3,
             position: 4,
             sections: {
@@ -98,7 +102,9 @@ define([
         testContext: {
             itemPosition: 3,
             testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1'
+            sectionId: 'assessmentSection-1',
+            numberCompleted: 4,
+            numberItems: 12
         },
         expected: {
             questions: 5,
@@ -106,6 +112,8 @@ define([
             flagged: 0,
             viewed: 4,
             total: 6,
+            completed: 4,
+            overall: 12,
             questionsViewed: 3,
             position: 2,
             sections: {
@@ -144,7 +152,9 @@ define([
         testContext: {
             itemPosition: 3,
             testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1'
+            sectionId: 'assessmentSection-1',
+            numberCompleted: 4,
+            numberItems: 12
         },
         expected: {
             questions: 2,
@@ -152,6 +162,8 @@ define([
             flagged: 0,
             viewed: 3,
             total: 3,
+            completed: 4,
+            overall: 12,
             questionsViewed: 2,
             position: 2,
             sections: {
@@ -216,15 +228,17 @@ define([
             flagged: 2,
             viewed: 4,
             total: 10,
+            completed: 5,
+            overall: 12,
             questionsViewed: 4,
             position: 5
         },
         config: {},
         expected: {
-            position: 4,
-            total: 10,
-            ratio: 40,
-            label: '40%'
+            position: 5,
+            total: 12,
+            ratio: 41,
+            label: '41%'
         }
     }, {
         title: 'position - short',
@@ -322,13 +336,15 @@ define([
         testContext: {
             itemPosition: 5,
             testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-2'
+            sectionId: 'assessmentSection-2',
+            numberCompleted: 6,
+            numberItems: 12
         },
         expected: {
-            position: 3,
-            total: 9,
-            ratio: 33,
-            label: '33%'
+            position: 6,
+            total: 12,
+            ratio: 50,
+            label: '50%'
         }
     }, {
         title: 'test scope, position',
@@ -394,13 +410,15 @@ define([
         testContext: {
             itemPosition: 5,
             testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-2'
+            sectionId: 'assessmentSection-2',
+            numberCompleted: 6,
+            numberItems: 12
         },
         expected: {
-            position: 3,
-            total: 5,
-            ratio: 60,
-            label: '60%'
+            position: 6,
+            total: 12,
+            ratio: 50,
+            label: '50%'
         }
     }, {
         title: 'testPart scope, position',
@@ -466,13 +484,15 @@ define([
         testContext: {
             itemPosition: 5,
             testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-2'
+            sectionId: 'assessmentSection-2',
+            numberCompleted: 6,
+            numberItems: 12
         },
         expected: {
-            position: 1,
-            total: 3,
-            ratio: 33,
-            label: '33%'
+            position: 6,
+            total: 12,
+            ratio: 50,
+            label: '50%'
         }
     }, {
         title: 'testSection scope, position',

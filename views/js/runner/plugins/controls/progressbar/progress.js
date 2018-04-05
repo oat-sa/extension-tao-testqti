@@ -40,6 +40,8 @@ define([
     /**
      * @typedef {itemStats} progressData
      * @property {Number} position - the position in the scope
+     * @property {Number} completed - the number of completed items in the test
+     * @property {Number} overall - the total number of items in the test
      * @property {progressDetails} sections - the details of testSections in the scope
      * @property {progressDetails} parts - the details of testParts in the scope
      * @property {progressDetails} answerableSections - the details of testSections that contain questions in the scope
@@ -102,6 +104,8 @@ define([
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
             var stats = getDetailedStats(scopedMap, item);
             stats.position = item.position + 1;
+            stats.completed = testContext.numberCompleted;
+            stats.overall = testContext.numberItems;
             return stats;
         },
 
@@ -116,6 +120,8 @@ define([
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
             var stats = getDetailedStats(scopedMap, item);
             stats.position = item.positionInPart + 1;
+            stats.completed = testContext.numberCompleted;
+            stats.overall = testContext.numberItems;
             return stats;
         },
 
@@ -130,6 +136,8 @@ define([
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
             var stats = getDetailedStats(scopedMap, item);
             stats.position = item.positionInSection + 1;
+            stats.completed = testContext.numberCompleted;
+            stats.overall = testContext.numberItems;
             return stats;
         }
     };
@@ -145,7 +153,7 @@ define([
          * @returns {progressIndicator}
          */
         percentage: function percentage(stats) {
-            return getRatioProgression(stats.answered, stats.questions);
+            return getRatioProgression(stats.completed, stats.overall);
         },
 
         /**
