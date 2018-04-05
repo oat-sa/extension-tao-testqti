@@ -185,7 +185,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if ($e instanceof \common_exception_UserReadableException) {
                 $response['message'] = $e->getUserMessage();
             } else {
-                $response['message'] = __('An error occurred!');
+                $response['message'] = __('Internal server error!');
             }
 
             switch (true) {
