@@ -1825,9 +1825,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('24.2.0');
         }
 
-        $this->skip('24.2.0', '24.6.3');
+        $this->skip('24.2.0', '24.7.0');
 
-        if ($this->isVersion('24.6.3')) {
+        if ($this->isVersion('24.7.0')) {
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
 
@@ -1840,7 +1840,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             }
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('24.7.0');
+            $this->setVersion('24.8.0');
         }
     }
 }

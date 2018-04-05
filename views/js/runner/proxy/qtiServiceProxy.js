@@ -26,8 +26,9 @@ define([
     'core/promiseQueue',
     'core/communicator',
     'helpers',
-    'taoQtiTest/runner/config/qtiServiceConfig'
-], function($, _, __, Promise, promiseQueue, communicatorFactory, helpers, configFactory) {
+    'taoQtiTest/runner/config/qtiServiceConfig',
+    'util/httpErrorParser'
+], function($, _, __, Promise, promiseQueue, communicatorFactory, helpers, configFactory, httpErrorParser) {
     'use strict';
 
     /**
@@ -143,6 +144,7 @@ define([
                                 type: textStatus || 'error',
                                 message: errorThrown || __('An error occurred!')
                             });
+
                             if (data.token) {
                                 tokenHandler.setToken(data.token);
                             } else if (!noToken) {
@@ -154,7 +156,7 @@ define([
                                 return resolve(data);
                             }
 
-                            reject(data);
+                            reject(httpErrorParser.parse(jqXHR, textStatus, errorThrown));
                         });
                     });
                 };
