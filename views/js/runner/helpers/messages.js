@@ -40,11 +40,7 @@ define([
         var testData = runner.getTestData(),
             testConfig = testData && testData.config,
             messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
-
-        if (sync === undefined) {
-            sync = false;
-        }
-
+        
         if (messageEnabled) {
             itemsCountMessage = getUnansweredItemsWarning(scope, runner, sync);
         }
