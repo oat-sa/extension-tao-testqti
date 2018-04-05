@@ -21,8 +21,8 @@
  */
 define([
     'lodash',
-    'taoQtiTest/runner/helpers/progress',
-    'json!taoQtiTest/test/runner/helpers/progress/map.json'
+    'taoQtiTest/runner/plugins/controls/progressbar/progress',
+    'json!taoQtiTest/test/runner/plugins/controls/progressbar/progress/map.json'
 ], function (_, progressHelper, mapSample) {
     'use strict';
 

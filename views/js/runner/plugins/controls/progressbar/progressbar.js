@@ -24,7 +24,7 @@
 define([
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
-    'taoQtiTest/runner/helpers/progress',
+    'taoQtiTest/runner/plugins/controls/progressbar/progress',
     'taoQtiTest/runner/plugins/controls/progressbar/renderer/percentage',
     'taoQtiTest/runner/plugins/controls/progressbar/renderer/position'
 ], function (pluginFactory, mapHelper, progressHelper, percentageRendererFactory, positionRendererFactory){
