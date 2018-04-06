@@ -146,7 +146,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Checks the security token.
-     * @throws \common_Exception
+     * @throws \common_exception_Unauthorized
      */
     protected function checkSecurityToken()
     {
@@ -157,9 +157,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if ($this->getTokenService()->checkToken($csrfToken)) {
                 $this->getTokenService()->revokeToken($csrfToken);
             } else {
-                \common_Logger::e("XSRF attempt! The token $csrfToken is no longer valid! " .
-                    "or the previous request failed silently without creating a token");
-                throw new \common_exception_Unauthorized();
+                $msg = "XSRF attempt! The token $csrfToken is no longer valid! " .
+                    "or the previous request failed silently without creating a token";
+                \common_Logger::e($msg);
+                throw new \common_exception_Unauthorized($msg);
             }
         }
     }
@@ -398,6 +399,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->startTimer($serviceContext);
 
         } catch (common_Exception $e) {
+            $msg = __CLASS__ . "::getItem(): an error occurred while retrieving item with identifier '${itemIdentifier}'.\n";
+            $msg .= "Exception of type '" . get_class($e) . "' was thrown in '" . $e->getFile() . "' l." . $e->getLine() . " with message '" . $e->getMessage() . "'.";
+
+            if ($e instanceof \common_exception_Unauthorized) {
+                // Log as debug as not being authorized is not a "real" system error.
+                \common_Logger::d($msg);
+            } else {
+                \common_Logger::e($msg);
+            }
+
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
