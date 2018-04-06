@@ -966,14 +966,17 @@ msgstr "Se creó la evaluación pero aún no funciona."
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
 msgstr "La evaluación fue suspendida por un coordinador autorizado. Si desea retomar su evaluación, vuelva a iniciarla y contacte a su coordinador si es necesario."
 
+msgid "The assessment has been terminated. You cannot interact with it anymore. Please contact your proctor if required."
+msgstr "La evaluación se ha terminado. Ya no puede interactuar con ella. Póngase en contacto con su supervisor si es necesario."
+
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
 msgstr "La evaluación ha sido suspendida. Para reanudar su evaluación, por favor reinicie."
 
 msgid "The assessment has been terminated."
-msgstr "La evaluación finalizó."
+msgstr "La evaluación se ha terminado."
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "La evaluación se ha terminado. Ya no puede interactuar con él."
+msgstr "La evaluación se ha terminado. Ya no puede interactuar con ella."
 
 msgid "The assessment is still running."
 msgstr "La evaluación sigue ejecutándose."
