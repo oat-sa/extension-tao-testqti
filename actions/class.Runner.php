@@ -399,7 +399,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->startTimer($serviceContext);
 
         } catch (common_Exception $e) {
-            $msg = __CLASS__ . "::getItem(): an error occurred while retrieving item with identifier '${itemIdentifier}'\n";
+            $msg = __CLASS__ . "::getItem(): an error occurred while retrieving item with identifier '${itemIdentifier}'.\n";
             $msg .= "Exception of type '" . get_class($e) . "' was thrown in '" . $e->getFile() . "' l." . $e->getLine() . " with message '" . $e->getMessage() . "'.";
 
             if ($e instanceof \common_exception_Unauthorized) {
