@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -22,195 +22,22 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'jquery',
-    'lodash',
-    'i18n',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
-    'tpl!taoQtiTest/runner/plugins/controls/progressbar/progressbar',
-    'ui/progressbar'
-], function ($, _, __, pluginFactory, mapHelper, progressTpl){
+    'taoQtiTest/runner/plugins/controls/progressbar/progress',
+    'taoQtiTest/runner/plugins/controls/progressbar/renderer/percentage',
+    'taoQtiTest/runner/plugins/controls/progressbar/renderer/position'
+], function (pluginFactory, mapHelper, progressHelper, percentageRendererFactory, positionRendererFactory){
     'use strict';
 
     /**
-     * Calculate progression based on the current context
-     *
-     * @param {Object} testContext - The current test context
-     * @param {Object} testMap - The items organization map
-     * @param {Object} progressConfig
-     * @param {String} progressConfig.indicator - to select the progression type
-     * @param {String} [progressConfig.scope] - to select the progression type
-     * @param {Bool} progressConfig.showTotal - display 'item x of y' (true) | 'item x'
-     * @returns {Object} the progression with a label and a ratio
+     * List of available progress indicator renderers
+     * @type {Object}
      */
-    var progressUpdater = function progressUpdater(testContext, testMap, progressConfig){
-
-
-        /**
-         * Provide progression calculation based on the type of indicator
-         */
-        var updater = {
-
-            /**
-            * Updates the progress bar displaying the percentage
-            * @param {Object} testContext The progression context
-            * @returns {{ratio: number, label: string}}
-            */
-            percentage : function percentage() {
-                var total = Math.max(1, testContext.numberItems);
-                var ratio = Math.floor(testContext.numberCompleted / total * 100);
-                return {
-                    ratio : ratio,
-                    label : ratio + '%'
-                };
-            },
-
-            /**
-            * Updates the progress bar displaying the position
-            * @param {Object} testContext The progression context
-            * @returns {{ratio: number, label: string}}
-            */
-            position : function position() {
-
-                //get the current test part in the map
-                var getTestPart = function getTestPart(){
-                    if(testMap && testMap.parts){
-                        return testMap.parts[testContext.testPartId];
-                    }
-                };
-
-                //get the current test section in the map
-                var getTestSection = function getTestSection(){
-                    var testPart = getTestPart();
-                    if(testPart && testPart.sections){
-                        return testPart.sections[testContext.sectionId];
-                    }
-                };
-
-                //provides you the methods to get total and position by scope
-                var progressScopeCounter = {
-                    test : {
-                        total : function(){
-                            return Math.max(1, testContext.numberItems);
-                        },
-                        position : function(){
-                            return testContext.itemPosition + 1;
-                        }
-                    },
-                    testPart : {
-                        total : function(){
-                            var testPart = getTestPart();
-                            if(testPart){
-                                return _.reduce(testMap.parts[testContext.testPartId].sections, function(acc, section){
-                                    return acc + _.size(section.items);
-                                }, 0);
-                            }
-                            return 0;
-                        },
-                        position : function(){
-                            var testSection = getTestSection();
-                            if(testSection){
-                                return testSection.items[testContext.itemIdentifier].positionInPart + 1;
-                            }
-                            return 0;
-                        }
-                    },
-                    testSection : {
-                        total : function(){
-                            var testSection = getTestSection();
-                            if(testSection){
-                                return _.size(testSection.items);
-                            }
-                            return 0;
-                        },
-                        position : function(){
-                            var testSection = getTestSection();
-                            if(testSection && testSection.items[testContext.itemIdentifier]){
-                                return testSection.items[testContext.itemIdentifier].positionInSection + 1;
-                            }
-                            return 0;
-                        }
-                    }
-                };
-
-                var counter = progressScopeCounter[progressConfig.scope] || progressScopeCounter.test;
-                var total = counter.total();
-                var currentPosition = counter.position();
-
-                return {
-                    ratio : total > 0 ? Math.floor(currentPosition / total * 100) : 0,
-                    label : progressConfig.showTotal ?
-                        __('Item %d of %d', currentPosition, total) :
-                        __('Item %d', currentPosition)
-                };
-            },
-
-            /**
-             * Updates the progress bar displaying the questions only
-             * ( for example informational items won't be counted and will be without progress bar)
-             * @param {Object} testContext The progression context
-             * @returns {{ratio: number, label: string}}
-             */
-            questions : function position() {
-
-                //get the current test part in the map
-                var getTestPart = function getTestPart(){
-                    if(testMap && testMap.parts){
-                        return testMap.parts[testContext.testPartId];
-                    }
-                };
-
-                //get the current test section in the map
-                var getTestSection = function getTestSection() {
-                    var testPart = getTestPart();
-                    if(testPart && testPart.sections){
-                        return testPart.sections[testContext.sectionId];
-                    }
-                };
-
-                //provides you the methods to get total and position by scope
-                var progressScopeCounter = {
-                    test : {
-                        total : function(){
-                            return mapHelper.getTestStats(testMap).questions;
-                        },
-                        position : function(){
-                            return mapHelper.getTestStats(testMap).questionsViewed;
-                        }
-                    },
-                    testPart : {
-                        total : function(){
-                            return mapHelper.getPartStats(testMap, getTestPart().id).questions;
-                        },
-                        position : function(){
-                            return mapHelper.getPartStats(testMap, getTestPart().id).questionsViewed;
-                        }
-                    },
-                    testSection : {
-                        total : function(){
-                            return mapHelper.getSectionStats(testMap, getTestSection().id).questions;
-                        },
-                        position : function(){
-                            return mapHelper.getSectionStats(testMap, getTestSection().id).questionsViewed;
-                        }
-                    }
-                };
-
-                var counter = progressScopeCounter[progressConfig.scope] || progressScopeCounter.test;
-                var total = counter.total();
-                var currentPosition = counter.position();
-
-                return {
-                    ratio : total > 0 ? Math.floor(currentPosition / total * 100) : 0,
-                    label : progressConfig.showTotal ?
-                        __('Item %d of %d', currentPosition, total) :
-                        __('Item %d', currentPosition)
-                };
-            }
-        };
-        return updater[progressConfig.indicator]();
+    var renderers = {
+        percentage: percentageRendererFactory,
+        position: positionRendererFactory
     };
-
 
     /**
      * Returns the configured plugin
@@ -223,17 +50,17 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init : function init(){
-            var $progressLabel,
-                $progressControl;
             var testRunner = this.getTestRunner();
             var testData   = testRunner.getTestData();
-            var config     = testData.config.progressIndicator || {};
+            var config     = _.defaults(this.getConfig(), testData.config.progressIndicator || {});
             var self       = this;
 
+            var rendererFactory = renderers[config.renderer] || renderers.percentage;
             var progressConfig = {
                 indicator: config.type || 'percentage',
                 scope: config.scope || 'test',
-                showTotal: !!config.showTotal
+                showLabel: config.showLabel,
+                showTotal: config.showTotal
             };
 
             /**
@@ -242,43 +69,59 @@ define([
             var update = function update (){
                 var testContext = testRunner.getTestContext();
                 var testMap = testRunner.getTestMap();
-                var progressData = progressUpdater(testContext, testMap, progressConfig);
                 var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+
                 if (item && item.informational && progressConfig.indicator === 'questions') {
-                    self.$element.hide();
+                    self.renderer.hide();
                 } else {
-                    self.$element.show();
-                    if (progressData && $progressLabel && $progressControl) {
-                        $progressLabel.text(progressData.label);
-                        $progressControl.progressbar('value', progressData.ratio);
-                    }
+                    self.renderer.show();
+                    self.renderer.update(progressHelper.computeProgress(testMap, testContext, progressConfig));
                 }
             };
 
             //create the progressbar
-            this.$element = $(progressTpl());
-
-            //store the controls
-            $progressLabel = $('[data-control="progress-label"]', this.$element);
-            $progressControl = $('[data-control="progress-bar"]', this.$element);
-
-            //and initialize the progress bar component
-            $progressControl.progressbar();
+            this.renderer = rendererFactory(progressConfig);
 
             //let update the progression
             update();
 
-            testRunner
-                .on('ready', update)
-                .on('loaditem', update);
+            testRunner.on('ready loaditem', update);
         },
 
         /**
          * Called during the runner's render phase
          */
-        render : function render(){
+        render : function render() {
             var $container = this.getAreaBroker().getControlArea();
-            $container.append(this.$element);
+            this.renderer.render($container);
+        },
+
+        /**
+         * Called during the runner's render phase
+         */
+        destroy : function destroy() {
+            if (this.renderer) {
+                this.renderer.destroy();
+            }
+            this.renderer = null;
+        },
+
+        /**
+         * Show the progress bar
+         */
+        show: function show() {
+            if (this.renderer) {
+                this.renderer.show();
+            }
+        },
+
+        /**
+         * Hide the progress bar
+         */
+        hide: function hide() {
+            if (this.renderer) {
+                this.renderer.hide();
+            }
         }
     });
 });

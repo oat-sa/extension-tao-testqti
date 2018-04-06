@@ -42,6 +42,14 @@ define([
     'use strict';
 
     /**
+     * Default plugin options
+     * @type {Object}
+     */
+    var defaults = {
+        allowPartial: true // whether all interactions must be answered to count an item as answered
+    };
+
+    /**
      * Plugin factory
      * @returns {Object}
      */
@@ -59,9 +67,16 @@ define([
          */
         init: function init() {
             this.getTestRunner().before('move', function () {
-                var self = this;
-                var testContext = this.getTestContext();
+                var self          = this;
+                var testContext   = this.getTestContext();
                 var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
+                var testData      = this.getTestData() || {};
+                var testConfig    = testData.config || {};
+                var pluginsConfig = testConfig.plugins || {};
+                var config        = _.defaults(pluginsConfig.allowSkipping || {}, defaults);
+                var warning       = config.allowPartial
+                    ? __('A response to every question in this item is required.')
+                    : __('A response to this item is required.');
 
                 if ( isInteracting && testContext.enableAllowSkipping && !testContext.allowSkipping ) {
 
@@ -69,15 +84,16 @@ define([
                         if(_.size(currentItemHelper.getDeclarations(self)) === 0){
                             return resolve();
                         }
-                        if (currentItemHelper.isAnswered(self, true)) {
+                        if (currentItemHelper.isAnswered(self, config.allowPartial)) {
                             return resolve();
                         }
 
                         if (!self.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
+
                             self.setState('alerted.notallowed', true);
                             self.trigger(
                                 'alert.notallowed',
-                                __('A response to this item is required.'),
+                                warning,
                                 function () {
                                     self.trigger('resumeitem');
                                     reject();

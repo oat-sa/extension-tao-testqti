@@ -1825,6 +1825,24 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('24.2.0');
         }
 
-        $this->skip('24.2.0', '24.5.2');
+        $this->skip('24.2.0', '24.7.0');
+
+        if ($this->isVersion('24.7.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+
+            $config['progress-indicator-renderer'] = 'percentage';
+            $config['progress-indicator-show-label'] = 'true';
+
+            // as the percentage indicator now takes care of the scope, ensure the legacy is respected
+            if ($config['progress-indicator'] == 'percentage') {
+                $config['progress-indicator-scope'] = 'test';
+            }
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('24.8.0');
+        }
+
+        $this->skip('24.8.0', '24.8.1');
     }
 }

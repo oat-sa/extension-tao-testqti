@@ -147,9 +147,11 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
            $msg = "Could not retrieve current user URI.";
            throw new StorageException($msg, StorageException::RETRIEVAL);
        }
-       
+
        $data = $this->getLastError() . $stream->getBinary();
-       $storageService->set($userUri, $assessmentTestSession->getSessionId(), $data);
+       if (!$storageService->set($userUri, $assessmentTestSession->getSessionId(), $data)) {
+           throw new StorageException('Can\'t write into storage at '.static::class);
+       }
    }
    
    public function exists($sessionId) {
