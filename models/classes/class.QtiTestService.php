@@ -90,12 +90,32 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     protected $useMetadataGuardians = true;
 
+    /**
+     * @var array
+     */
+    protected $customParams = [];
+
     public function enableMetadataGuardians() {
         $this->useMetadataGuardians = true;
     }
 
     public function disableMetadataGuardians() {
         $this->useMetadataGuardians = false;
+    }
+
+    /**
+     * @param $parameters
+     */
+    public function addCustomParams($parameters) {
+        $this->customParams = $parameters;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomParams()
+    {
+        return $this->getCustomParams();
     }
 
     /**
@@ -533,7 +553,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                             array(),
                                             array(),
                                             array(),
-                                            $createdClasses
+                                            $createdClasses,
+                                            $this->customParams
                                         );
 
                                         $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);

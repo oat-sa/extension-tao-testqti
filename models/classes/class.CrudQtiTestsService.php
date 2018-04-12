@@ -20,8 +20,7 @@
 
 use oat\tao\model\TaoOntology;
 
-/**
- * Crud services implements basic CRUD services, orginally intended for 
+/** * Crud services implements basic CRUD services, orginally intended for
  * REST controllers/ HTTP exception handlers . 
  * 
  * Consequently the signatures and behaviors is closer to REST and throwing HTTP like exceptions
@@ -54,9 +53,10 @@ class taoQtiTest_models_classes_CrudQtiTestsService
      * @param string $uploadedFile
      * @param \core_kernel_classes_Class $class
      * @param bool $enableMetadataGuardians
+     * @param array $options
      * @return common_report_Report
      */
-	public function importQtiTest($uploadedFile, $class = null, $enableMetadataGuardians = true)
+	public function importQtiTest($uploadedFile, $class = null, $enableMetadataGuardians = true, array $options = [])
 	{
         try {
             //The zip extraction is a long process that can exceed the 30s timeout
@@ -65,6 +65,9 @@ class taoQtiTest_models_classes_CrudQtiTestsService
             $importer = taoQtiTest_models_classes_QtiTestService::singleton();
             if ($enableMetadataGuardians === false) {
                 $importer->disableMetadataGuardians();
+            }
+            if ($options) {
+                $importer->addCustomParams($options);
             }
             $report = $importer->importMultipleTests($class, $uploadedFile);
             helpers_TimeOutHelper::reset();
