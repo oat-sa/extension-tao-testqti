@@ -82,7 +82,8 @@
                             "informational": true,
                             "answered": false,
                             "flagged": false,
-                            "viewed": true
+                            "viewed": true,
+                            "categories": []
                         },
                         "item-2": {
                             "id": "item-2",
@@ -96,7 +97,8 @@
                             "informational": false,
                             "answered": true,
                             "flagged": false,
-                            "viewed": true
+                            "viewed": true,
+                            "categories": ["SCORED"]
                         },
                         "item-3": {
                             "id": "item-3",
@@ -110,7 +112,8 @@
                             "informational": false,
                             "answered": true,
                             "flagged": false,
-                            "viewed": true
+                            "viewed": true,
+                            "categories": ["SCORED", "CAT2"]
                         }
                     },
                     "stats": {
@@ -139,7 +142,8 @@
                             "informational": false,
                             "answered": true,
                             "flagged": false,
-                            "viewed": true
+                            "viewed": true,
+                            "categories": ["SCORED", "CAT2"]
                         },
                         "item-5": {
                             "id": "item-5",
@@ -153,7 +157,8 @@
                             "informational": false,
                             "answered": false,
                             "flagged": false,
-                            "viewed": false
+                            "viewed": false,
+                            "categories": ["SCORED", "CAT2"]
                         },
                         "item-6": {
                             "id": "item-6",
@@ -167,7 +172,8 @@
                             "informational": false,
                             "answered": false,
                             "flagged": false,
-                            "viewed": false
+                            "viewed": false,
+                            "categories": []
                         }
                     },
                     "stats": {
@@ -212,7 +218,8 @@
                             "informational": false,
                             "answered": false,
                             "flagged": false,
-                            "viewed": false
+                            "viewed": false,
+                            "categories": ["SCORED", "CAT2"]
                         },
                         "item-8": {
                             "id": "item-8",
@@ -226,7 +233,8 @@
                             "informational": false,
                             "answered": false,
                             "flagged": false,
-                            "viewed": false
+                            "viewed": false,
+                            "categories": ["SCORED"]
                         }
                     },
                     "stats": {
@@ -255,7 +263,8 @@
                             "informational": false,
                             "answered": false,
                             "flagged": false,
-                            "viewed": false
+                            "viewed": false,
+                            "categories": []
                         },
                         "item-10": {
                             "id": "item-10",
@@ -269,7 +278,8 @@
                             "informational": false,
                             "answered": false,
                             "flagged": false,
-                            "viewed": false
+                            "viewed": false,
+                            "categories": ["SCORED"]
                         }
                     },
                     "stats": {
