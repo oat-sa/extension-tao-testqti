@@ -157,7 +157,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if ($this->getTokenService()->checkToken($csrfToken)) {
                 $this->getTokenService()->revokeToken($csrfToken);
             } else {
-                $msg = "XSRF attempt! The token $csrfToken is no longer valid! " .
+                $userIdentifier = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
+                $msg = "XSRF attempt for user '${userIdentifier}'! The token ${csrfToken} is no longer valid! " .
                     "or the previous request failed silently without creating a token";
                 \common_Logger::e($msg);
                 throw new \common_exception_Unauthorized($msg);
@@ -394,12 +395,20 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if (is_array($response)) {
                 $response['success'] = true;
+            } else {
+                // Build an appropriate failure response.
+                $response = [];
+                $response['success'] = false;
+
+                $userIdentifier = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
+                \common_Logger::e("Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'.");
             }
 
             $this->getRunnerService()->startTimer($serviceContext);
 
         } catch (common_Exception $e) {
-            $msg = __CLASS__ . "::getItem(): an error occurred while retrieving item with identifier '${itemIdentifier}'.\n";
+            $userIdentifier = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
+            $msg = __CLASS__ . "::getItem(): Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'.\n";
             $msg .= "Exception of type '" . get_class($e) . "' was thrown in '" . $e->getFile() . "' l." . $e->getLine() . " with message '" . $e->getMessage() . "'.";
 
             if ($e instanceof \common_exception_Unauthorized) {
