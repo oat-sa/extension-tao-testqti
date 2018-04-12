@@ -22,12 +22,13 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+    'lodash',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/plugins/controls/progressbar/progress',
     'taoQtiTest/runner/plugins/controls/progressbar/renderer/percentage',
     'taoQtiTest/runner/plugins/controls/progressbar/renderer/position'
-], function (pluginFactory, mapHelper, progressHelper, percentageRendererFactory, positionRendererFactory){
+], function (_, pluginFactory, mapHelper, progressHelper, percentageRendererFactory, positionRendererFactory){
     'use strict';
 
     /**
@@ -60,7 +61,8 @@ define([
                 indicator: config.type || 'percentage',
                 scope: config.scope || 'test',
                 showLabel: config.showLabel,
-                showTotal: config.showTotal
+                showTotal: config.showTotal,
+                categories: config.categories
             };
 
             /**
@@ -70,8 +72,18 @@ define([
                 var testContext = testRunner.getTestContext();
                 var testMap = testRunner.getTestMap();
                 var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+                var diff;
 
-                if (item && item.informational && progressConfig.indicator === 'questions') {
+
+                diff = _.intersection(item.categories, progressConfig.categories);
+
+                if (item
+                    && (
+                        (item.informational && progressConfig.indicator === 'questions')
+                        || (progressConfig.indicator === 'categories'
+                            && progressConfig.categories.length && diff.length !== progressConfig.categories.length)
+                    )
+                ) {
                     self.renderer.hide();
                 } else {
                     self.renderer.show();

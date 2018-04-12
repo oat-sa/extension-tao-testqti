@@ -46,9 +46,16 @@ return array(
      * - position : Progress bar displaying the position of the current item within the test session
      * - questions : Progress bar displaying the position of the last viewed question (informational items will be ignored)
      * - sections : Progress bar displaying the position of the last reached answerable section
+     * - categories : Progress bar displaying the position of the last reached item only for defined categories (in the 'categories' configuration)
      * @type string
      */
     'progress-indicator' => 'percentage',
+
+    /**
+     * List of categories which will be used in progress bar
+     * If empty then all categories will be used (items without categories are include)
+     */
+    'categories' => [],
 
     /**
      * Tells what type of progress indicator renderer to use:
