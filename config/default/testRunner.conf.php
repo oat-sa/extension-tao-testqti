@@ -55,7 +55,7 @@ return array(
      * List of categories which will be used in progress bar
      * If empty then all categories will be used (items without categories are include)
      */
-    'categories' => [],
+    'progress-categories' => [],
 
     /**
      * Tells what type of progress indicator renderer to use:

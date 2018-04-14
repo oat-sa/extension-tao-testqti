@@ -46,6 +46,7 @@ define([
      * @property {progressDetails} parts - the details of testParts in the scope
      * @property {progressDetails} answerableSections - the details of testSections that contain questions in the scope
      * @property {progressDetails} answerableParts - the details of testParts that contain questions in the scope
+     * @property {progressDetails} matchedCategories - the details of items that match the expected categories in the scope
      */
 
     /**
@@ -194,8 +195,8 @@ define([
         /**
          * Indicator that shows the number of viewed items which have categories from the configuration
          * (show all if categories are not set)
-         * @param stats
-         * @param config
+         * @param {progressData} stats
+         * @param {progressConfig} config
          */
         categories: function categories(stats, config) {
             return getPositionProgression(stats.matchedCategories.position, stats.matchedCategories.total, 'item', config);
@@ -265,11 +266,12 @@ define([
      * Completes the progression stats
      * @param {Object} testMap - the actual test map
      * @param {Object} currentItem - the current item from the test map
+     * @param {progressConfig} config
      * @returns {progressData}
      */
     function getDetailedStats(testMap, currentItem, config) {
         var stats = _.clone(testMap.stats);
-        var categories = config.categories;
+        var categoriesToMatch = config.categories;
         stats.parts = getEmptyDetails();
         stats.sections = getEmptyDetails();
         stats.answerableParts = getEmptyDetails();
@@ -290,16 +292,33 @@ define([
                     updateDetails(stats.answerableSections, section, currentItem.position);
                 }
 
-                _.forEach(section.items, function (item) {
-                    var diff = _.intersection(item.categories, categories);
-                    if (!categories.length || diff.length === categories.length) {
-                        updateItemDetails(stats.matchedCategories, item, currentItem.position);
-                    }
-                });
+                if (config.indicator === 'categories') {
+                    _.forEach(section.items, function (item) {
+                        if (matchCategories(item.categories, categoriesToMatch)) {
+                            updateItemDetails(stats.matchedCategories, item, currentItem.position);
+                        }
+                    });
+                }
             });
         });
 
         return stats;
+    }
+
+    function matchCategories(categories, expectedCategories) {
+        var categoryId;
+
+        if (expectedCategories && expectedCategories.length) {
+            // all expected categories have to be included in the provided categories
+            for (categoryId in expectedCategories) {
+                if (expectedCategories.hasOwnProperty(categoryId)
+                    && categories.indexOf(expectedCategories[categoryId]) === -1) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -362,13 +381,25 @@ define([
         };
     }
 
-
     return {
+
+        /**
+         * Checks that categories matched
+         * @param categories
+         * @param expectedCategories
+         * @returns {boolean}
+         */
+        isMatchedCategories: function validCategories(categories, expectedCategories) {
+            return matchCategories(categories, expectedCategories);
+        },
+
         /**
          * Computes the progress stats for the specified scope
          * @param {Object} testMap - the actual test map
          * @param {Object} testContext - the actual test context
          * @param {progressConfig} config - a config object
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressData}
          */
         computeStats: function computeStats(testMap, testContext, config) {

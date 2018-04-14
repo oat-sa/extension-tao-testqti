@@ -65,6 +65,23 @@ define([
                 categories: config.categories
             };
 
+            var hiddenByQuestions = function hiddenByQuestions(item) {
+                return item && item.informational && progressConfig.indicator === 'questions';
+            };
+
+            var hiddenByCategories = function (item) {
+                return item
+                    && progressConfig.indicator === 'categories'
+                    && !progressHelper.isMatchedCategories(item.categories, progressConfig.categories);
+            };
+
+            /**
+             * Check if progress bar should be hidden
+             */
+            var isProgressbarHidden = function isProgressbarHidden(item) {
+                return hiddenByQuestions(item) || hiddenByCategories(item);
+            };
+
             /**
              * Update the progress bar
              */
@@ -72,18 +89,8 @@ define([
                 var testContext = testRunner.getTestContext();
                 var testMap = testRunner.getTestMap();
                 var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
-                var diff;
 
-
-                diff = _.intersection(item.categories, progressConfig.categories);
-
-                if (item
-                    && (
-                        (item.informational && progressConfig.indicator === 'questions')
-                        || (progressConfig.indicator === 'categories'
-                            && progressConfig.categories.length && diff.length !== progressConfig.categories.length)
-                    )
-                ) {
+                if (isProgressbarHidden(item)) {
                     self.renderer.hide();
                 } else {
                     self.renderer.show();

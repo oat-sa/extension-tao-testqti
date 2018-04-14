@@ -31,7 +31,6 @@ define([
      * @property {Number} viewed - the number of viewed items
      * @property {Number} total - the total number of items
      * @property {Number} questionsViewed - the number of viewed questions
-     * @property {Array} categories - included categories
      */
 
     /**
@@ -46,7 +45,6 @@ define([
             viewed: 0,
             total: 0,
             questionsViewed: 0,
-            categories: []
         };
     }
 
@@ -439,7 +437,6 @@ define([
                     acc.viewed++;
                 }
                 acc.total++;
-                _.merge(acc.categories, item.categories);
                 return acc;
             }, getEmptyStats());
         },
@@ -457,7 +454,6 @@ define([
                 acc.viewed += item.stats.viewed;
                 acc.total += item.stats.total;
                 acc.questionsViewed += item.stats.questionsViewed;
-                _.merge(acc.categories, item.stats.categories);
                 return acc;
             }, getEmptyStats());
         },

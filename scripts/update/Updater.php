@@ -1848,7 +1848,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('24.8.4')) {
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
-            $config['categories'] = [];
+            $config['progress-categories'] = [];
             $extension->setConfig('testRunner', $config);
             $this->setVersion('24.9.0');
         }
