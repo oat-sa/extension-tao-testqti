@@ -101,6 +101,8 @@ define([
          * @param {Object} testMap - the actual test map
          * @param {Object} testContext - the actual test context
          * @param {progressConfig} config - a config object
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressData}
          */
         test: function test(testMap, testContext, config) {
@@ -118,6 +120,8 @@ define([
          * @param {Object} testMap - the actual test map
          * @param {Object} testContext - the actual test context
          * @param {progressConfig} config - a config object
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressData}
          */
         testPart: function testPart(testMap, testContext, config) {
@@ -135,6 +139,8 @@ define([
          * @param {Object} testMap - the actual test map
          * @param {Object} testContext - the actual test context
          * @param {progressConfig} config - a config object
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressData}
          */
         testSection: function testSection(testMap, testContext, config) {
@@ -166,6 +172,8 @@ define([
          * Indicator that shows the position of current item
          * @param {progressData} stats
          * @param {progressConfig} config
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressIndicator}
          */
         position: function position(stats, config) {
@@ -176,6 +184,8 @@ define([
          * Indicator that shows the number of viewed questions
          * @param {progressData} stats
          * @param {progressConfig} config
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressIndicator}
          */
         questions: function questions(stats, config) {
@@ -186,6 +196,8 @@ define([
          * Indicator that shows the number of reached answerable sections
          * @param {progressData} stats
          * @param {progressConfig} config
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressIndicator}
          */
         sections: function sections(stats, config) {
@@ -197,6 +209,8 @@ define([
          * (show all if categories are not set)
          * @param {progressData} stats
          * @param {progressConfig} config
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          */
         categories: function categories(stats, config) {
             return getPositionProgression(stats.matchedCategories.position, stats.matchedCategories.total, 'item', config);
@@ -267,6 +281,8 @@ define([
      * @param {Object} testMap - the actual test map
      * @param {Object} currentItem - the current item from the test map
      * @param {progressConfig} config
+     * @param {String} config.scope - the scope of the progression
+     * @param {Array} config.categories - categories to count by them
      * @returns {progressData}
      */
     function getDetailedStats(testMap, currentItem, config) {
