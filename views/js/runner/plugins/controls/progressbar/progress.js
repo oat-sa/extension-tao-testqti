@@ -340,6 +340,8 @@ define([
      * @param {Number} total - the total number of items
      * @param {String} type - the type of element that is represented
      * @param {progressConfig} config - a config object
+     * @param {String} config.scope - the scope of the progression
+     * @param {Array} config.categories - categories to count by them
      * @returns {String}
      */
     function getProgressionLabel(position, total, type, config) {
@@ -354,6 +356,8 @@ define([
      * @param {Number} total - the total number of items
      * @param {String} type - the type of element that is represented
      * @param {progressConfig} config - a config object
+     * @param {String} config.scope - the scope of the progression
+     * @param {Array} config.categories - categories to count by them
      * @returns {progressIndicator}
      */
     function getPositionProgression(position, total, type, config) {
