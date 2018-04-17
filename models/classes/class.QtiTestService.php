@@ -533,7 +533,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                             array(),
                                             array(),
                                             array(),
-                                            $createdClasses
+                                            $createdClasses,
+                                            $this->useMetadataGuardians
                                         );
 
                                         $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);
