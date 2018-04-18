@@ -71,6 +71,8 @@ define([
                 return config;
             },
 
+
+
             /**
              * Gets the list of defined outcomes for the nested model. A descriptor is built for each outcomes:
              * {
