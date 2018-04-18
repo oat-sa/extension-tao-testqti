@@ -1843,6 +1843,16 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('24.8.0');
         }
 
-        $this->skip('24.8.0', '25.0.0');
+        $this->skip('24.8.0', '24.8.4');
+
+        if ($this->isVersion('24.8.4')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['progress-categories'] = [];
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('24.9.0');
+        }
+      
+        $this->skip('24.9.0', '25.0.0');
     }
 }
