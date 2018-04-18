@@ -44,7 +44,7 @@ define([
             flagged: 0,
             viewed: 0,
             total: 0,
-            questionsViewed: 0
+            questionsViewed: 0,
         };
     }
 
