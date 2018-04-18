@@ -55,7 +55,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->getUploadedPackageData()['tmp_name'],
                     $this->getTestClass(),
                     $this->isMetadataGuardiansEnabled(),
-                    $this->isMetadataValidatorsEnabled()
+                    $this->isMetadataValidatorsEnabled(),
+                    $this->isItemMustExistEnabled()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -103,7 +104,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->getUploadedPackageData(),
                 $this->getTestClass(),
                 $this->isMetadataGuardiansEnabled(),
-                $this->isMetadataValidatorsEnabled()
+                $this->isMetadataValidatorsEnabled(),
+                $this->isItemMustExistEnabled()
             );
 
             $result = [

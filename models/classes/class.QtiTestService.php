@@ -91,6 +91,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     protected $useMetadataGuardians = true;
 
     /**
+     * @var bool If true, items contained in the test must be all found by one metadata guardian.
+     */
+    protected $itemMustExist = false;
+
+    /**
      * @var bool If true, registered validators will be invoked for each test item to be imported.
      */
     protected $useMetadataValidators = true;
@@ -109,6 +114,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
     public function disableMetadataValidators() {
         $this->useMetadataValidators = false;
+    }
+
+    public function enableItemMustExist() {
+        $this->itemMustExist = true;
+    }
+
+    public function disableItemMustExist() {
+        $this->itemMustExist = false;
     }
 
     /**
@@ -548,7 +561,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                             array(),
                                             $createdClasses,
                                             $this->useMetadataGuardians,
-                                            $this->useMetadataValidators
+                                            $this->useMetadataValidators,
+                                            $this->itemMustExist
                                         );
 
                                         $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);

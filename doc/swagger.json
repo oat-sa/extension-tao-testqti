@@ -124,6 +124,13 @@
                         "description": "Boolean flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default.",
                         "type": "boolean",
                         "required": false
+                    },
+                    {
+                        "name": "itemMustExist",
+                        "in": "formData",
+                        "description": "Boolean flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. Default value is false.",
+                        "type": "boolean",
+                        "required": false
                     }
                 ],
                 "consumes": [
@@ -233,6 +240,13 @@
                         "name": "enableMetadataValidators",
                         "in": "formData",
                         "description": "Boolean flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default.",
+                        "type": "boolean",
+                        "required": false
+                    },
+                    {
+                        "name": "itemMustExist",
+                        "in": "formData",
+                        "description": "Boolean flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. Default value is false.",
                         "type": "boolean",
                         "required": false
                     }
