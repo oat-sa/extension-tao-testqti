@@ -96,6 +96,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     protected $itemMustExist = false;
 
     /**
+     * @var bool If true, items found by metadata guardians will be overwritten.
+     */
+    protected $itemMustBeOverwritten = false;
+
+    /**
      * @var bool If true, registered validators will be invoked for each test item to be imported.
      */
     protected $useMetadataValidators = true;
@@ -122,6 +127,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
     public function disableItemMustExist() {
         $this->itemMustExist = false;
+    }
+
+    public function enableItemMustBeOverwritten() {
+        $this->itemMustBeOverwritten = true;
+    }
+
+    public function disableItemMustBeOverwritten() {
+        $this->itemMustBeOverwritten = false;
     }
 
     /**
@@ -562,7 +575,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                             $createdClasses,
                                             $this->useMetadataGuardians,
                                             $this->useMetadataValidators,
-                                            $this->itemMustExist
+                                            $this->itemMustExist,
+                                            $this->itemMustBeOverwritten
                                         );
 
                                         $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);

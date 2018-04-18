@@ -42,6 +42,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     const PARAM_ENABLE_GUARDIANS = 'enable_guardians';
     const PARAM_ENABLE_VALIDATORS = 'enable_validators';
     const PARAM_ITEM_MUST_EXIST = 'item_must_exist';
+    const PARAM_ITEM_MUST_BE_OVERWRITTEN = 'item_must_be_overwritten';
 
     protected $service;
 
@@ -71,7 +72,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $this->getClass($params),
             isset($params[self::PARAM_ENABLE_GUARDIANS]) ? $params[self::PARAM_ENABLE_GUARDIANS] : true,
             isset($params[self::PARAM_ENABLE_VALIDATORS]) ? $params[self::PARAM_ENABLE_VALIDATORS] : true,
-            isset($params[self::PARAM_ITEM_MUST_EXIST]) ? $params[self::PARAM_ITEM_MUST_EXIST] : false
+            isset($params[self::PARAM_ITEM_MUST_EXIST]) ? $params[self::PARAM_ITEM_MUST_EXIST] : false,
+            isset($params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN]) ? $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] : false
         );
     }
 
@@ -90,9 +92,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      * @param bool $enableGuardians Flag that marks use or not metadata guardians during the import.
      * @param bool $enableValidators Flag that marks use or not metadata validators during the import.
      * @param bool $itemMustExist Flag to indicate that all items must exist in database (via metadata guardians) to make the test import successful.
+     * @param bool $itemMustBeOverwritten Flag to indicate that items found by metadata guardians will be overwritten.
      * @return TaskInterface
      */
-    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true, $enableValidators = true, $itemMustExist = false)
+    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true, $enableValidators = true, $itemMustExist = false, $itemMustBeOverwritten = false)
     {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
@@ -109,7 +112,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
                 self::PARAM_CLASS_URI => $class->getUri(),
                 self::PARAM_ENABLE_GUARDIANS => $enableGuardians,
                 self::PARAM_ENABLE_VALIDATORS => $enableValidators,
-                self::PARAM_ITEM_MUST_EXIST => $itemMustExist
+                self::PARAM_ITEM_MUST_EXIST => $itemMustExist,
+                self::PARAM_ITEM_MUST_BE_OVERWRITTEN => $itemMustBeOverwritten
 
             ],
             __('Import QTI TEST into "%s"', $class->getLabel())

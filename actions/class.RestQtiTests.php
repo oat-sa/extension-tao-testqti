@@ -56,7 +56,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->getTestClass(),
                     $this->isMetadataGuardiansEnabled(),
                     $this->isMetadataValidatorsEnabled(),
-                    $this->isItemMustExistEnabled()
+                    $this->isItemMustExistEnabled(),
+                    $this->isItemMustBeOverwrittenEnabled()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -105,7 +106,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->getTestClass(),
                 $this->isMetadataGuardiansEnabled(),
                 $this->isMetadataValidatorsEnabled(),
-                $this->isItemMustExistEnabled()
+                $this->isItemMustExistEnabled(),
+                $this->isItemMustBeOverwrittenEnabled()
             );
 
             $result = [

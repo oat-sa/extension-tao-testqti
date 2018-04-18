@@ -56,9 +56,10 @@ class taoQtiTest_models_classes_CrudQtiTestsService
      * @param bool $enableMetadataGuardians
      * @param bool $enableMetadataValidators
      * @param bool $itemMustExist
+     * @param bool $itemMustBeOverwritten
      * @return common_report_Report
      */
-	public function importQtiTest($uploadedFile, $class = null, $enableMetadataGuardians = true, $enableMetadataValidators = true, $itemMustExist = false)
+	public function importQtiTest($uploadedFile, $class = null, $enableMetadataGuardians = true, $enableMetadataValidators = true, $itemMustExist = false, $itemMustBeOverwritten = false)
 	{
         try {
             //The zip extraction is a long process that can exceed the 30s timeout
@@ -76,6 +77,10 @@ class taoQtiTest_models_classes_CrudQtiTestsService
 
             if ($itemMustExist === true) {
                 $importer->enableItemMustExist();
+            }
+
+            if ($itemMustBeOverwritten === true) {
+                $importer->enableItemMustBeOverwritten();
             }
 
             $report = $importer->importMultipleTests($class, $uploadedFile);
