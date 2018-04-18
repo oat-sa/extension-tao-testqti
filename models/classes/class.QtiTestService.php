@@ -90,12 +90,25 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     protected $useMetadataGuardians = true;
 
+    /**
+     * @var bool If true, registered validators will be invoked for each test item to be imported.
+     */
+    protected $useMetadataValidators = true;
+
     public function enableMetadataGuardians() {
         $this->useMetadataGuardians = true;
     }
 
     public function disableMetadataGuardians() {
         $this->useMetadataGuardians = false;
+    }
+
+    public function enableMetadataValidators() {
+        $this->useMetadataValidators = true;
+    }
+
+    public function disableMetadataValidators() {
+        $this->useMetadataValidators = false;
     }
 
     /**
@@ -534,7 +547,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                             array(),
                                             array(),
                                             $createdClasses,
-                                            $this->useMetadataGuardians
+                                            $this->useMetadataGuardians,
+                                            $this->useMetadataValidators
                                         );
 
                                         $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);

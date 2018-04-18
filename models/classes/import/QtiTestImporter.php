@@ -38,10 +38,10 @@ class QtiTestImporter extends AbstractTestImporter
      * @param bool $enableMetadataGuardians
      * @return \common_report_Report
      */
-    public function import(File $file, \core_kernel_classes_Class $class = null, $enableMetadataGuardians = true)
+    public function import(File $file, \core_kernel_classes_Class $class = null, $enableMetadataGuardians = true, $enableValidators = true)
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
-        return $service->importQtiTest($file, $class, $enableMetadataGuardians);
+        return $service->importQtiTest($file, $class, $enableMetadataGuardians, $enableValidators);
     }
 }

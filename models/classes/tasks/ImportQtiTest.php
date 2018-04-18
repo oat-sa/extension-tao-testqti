@@ -40,6 +40,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     const PARAM_CLASS_URI = 'class_uri';
     const PARAM_FILE = 'file';
     const PARAM_ENABLE_GUARDIANS = 'enable_guardians';
+    const PARAM_ENABLE_VALIDATORS = 'enable_validators';
 
     protected $service;
 
@@ -67,7 +68,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         return $importer->import(
             $file,
             $this->getClass($params),
-            isset($params[self::PARAM_ENABLE_GUARDIANS]) ? $params[self::PARAM_ENABLE_GUARDIANS] : true
+            isset($params[self::PARAM_ENABLE_GUARDIANS]) ? $params[self::PARAM_ENABLE_GUARDIANS] : true,
+            isset($params[self::PARAM_ENABLE_VALIDATORS]) ? $params[self::PARAM_ENABLE_VALIDATORS] : true
         );
     }
 
@@ -84,9 +86,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      * @param array $packageFile uploaded file
      * @param \core_kernel_classes_Class $class uploaded file
      * @param bool $enableGuardians Flag that marks use or not metadata guardians during the import.
+     * @param bool $enableValidators Flag that marks use or not metadata validators during the import.
      * @return TaskInterface
      */
-    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true)
+    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true, $enableValidators = true)
     {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
@@ -101,7 +104,9 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             [
                 self::PARAM_FILE => $fileUri,
                 self::PARAM_CLASS_URI => $class->getUri(),
-                self::PARAM_ENABLE_GUARDIANS => $enableGuardians
+                self::PARAM_ENABLE_GUARDIANS => $enableGuardians,
+                self::PARAM_ENABLE_VALIDATORS => $enableValidators
+
             ],
             __('Import QTI TEST into "%s"', $class->getLabel())
         );

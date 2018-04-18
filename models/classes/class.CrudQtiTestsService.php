@@ -54,18 +54,25 @@ class taoQtiTest_models_classes_CrudQtiTestsService
      * @param string $uploadedFile
      * @param \core_kernel_classes_Class $class
      * @param bool $enableMetadataGuardians
+     * @param bool $enableMetadataValidators
      * @return common_report_Report
      */
-	public function importQtiTest($uploadedFile, $class = null, $enableMetadataGuardians = true)
+	public function importQtiTest($uploadedFile, $class = null, $enableMetadataGuardians = true, $enableMetadataValidators = true)
 	{
         try {
             //The zip extraction is a long process that can exceed the 30s timeout
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
             $class = is_null($class) ? new core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI) : $class;
             $importer = taoQtiTest_models_classes_QtiTestService::singleton();
+
             if ($enableMetadataGuardians === false) {
                 $importer->disableMetadataGuardians();
             }
+
+            if ($enableMetadataValidators === false) {
+                $importer->disableMetadataValidators();
+            }
+
             $report = $importer->importMultipleTests($class, $uploadedFile);
             helpers_TimeOutHelper::reset();
             return $report;

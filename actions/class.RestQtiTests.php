@@ -54,7 +54,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 ->importQtiTest(
                     $this->getUploadedPackageData()['tmp_name'],
                     $this->getTestClass(),
-                    $this->isMetadataGuardiansEnabled()
+                    $this->isMetadataGuardiansEnabled(),
+                    $this->isMetadataValidatorsEnabled()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -101,7 +102,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
             $task = ImportQtiTest::createTask(
                 $this->getUploadedPackageData(),
                 $this->getTestClass(),
-                $this->isMetadataGuardiansEnabled()
+                $this->isMetadataGuardiansEnabled(),
+                $this->isMetadataValidatorsEnabled()
             );
 
             $result = [
