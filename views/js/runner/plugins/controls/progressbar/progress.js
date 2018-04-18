@@ -277,6 +277,19 @@ define([
     }
 
     /**
+     * Convert list of the categories to the hashtable to improve performance
+     * @param categories
+     * @returns {*}
+     */
+    function getCategoriesToMatch(categories) {
+        var matchSize = categories && categories.length;
+        return matchSize && _.reduce(categories, function(map, category) {
+            map[category] = true;
+            return map;
+        }, {});
+    }
+
+    /**
      * Completes the progression stats
      * @param {Object} testMap - the actual test map
      * @param {Object} currentItem - the current item from the test map
@@ -287,12 +300,19 @@ define([
      */
     function getDetailedStats(testMap, currentItem, config) {
         var stats = _.clone(testMap.stats);
-        var categoriesToMatch = config.categories;
+        var categoriesToMatch;
+        var matchSize;
+
+        if (config.indicator === 'categories') {
+            categoriesToMatch = getCategoriesToMatch(config.categories);
+            matchSize = config.categories && config.categories.length;
+            stats.matchedCategories = getEmptyDetails();
+        }
+
         stats.parts = getEmptyDetails();
         stats.sections = getEmptyDetails();
         stats.answerableParts = getEmptyDetails();
         stats.answerableSections = getEmptyDetails();
-        stats.matchedCategories = getEmptyDetails();
 
         _.forEach(testMap.parts, function (part) {
             updateDetails(stats.parts, part, currentItem.position);
@@ -310,7 +330,7 @@ define([
 
                 if (config.indicator === 'categories') {
                     _.forEach(section.items, function (item) {
-                        if (matchCategories(item.categories, categoriesToMatch)) {
+                        if (matchCategories(item.categories, categoriesToMatch, matchSize)) {
                             updateItemDetails(stats.matchedCategories, item, currentItem.position);
                         }
                     });
@@ -321,20 +341,27 @@ define([
         return stats;
     }
 
-    function matchCategories(categories, expectedCategories) {
-        var categoryId;
+    /**
+     *
+     * @param {Array} categories - List of categories to check
+     * @param {Object} expectedCategories - Hashtable of expected categories
+     * @param {Number} minWanted - Minimal number of expected categories that should match
+     * @returns {Boolean}
+     */
+    function matchCategories(categories, expectedCategories, minWanted) {
+        var matched = 0;
 
-        if (expectedCategories && expectedCategories.length) {
-            // all expected categories have to be included in the provided categories
-            for (categoryId in expectedCategories) {
-                if (expectedCategories.hasOwnProperty(categoryId)
-                    && categories.indexOf(expectedCategories[categoryId]) === -1) {
-                    return false;
+        if (expectedCategories) {
+            _.forEach(categories, function(category) {
+                if (expectedCategories[category]) {
+                    matched ++;
+                    if (matched >= minWanted) {
+                        return false;
+                    }
                 }
-            }
+            });
         }
-
-        return true;
+        return matched === minWanted;
     }
 
     /**
@@ -410,7 +437,9 @@ define([
          * @returns {boolean}
          */
         isMatchedCategories: function validCategories(categories, expectedCategories) {
-            return matchCategories(categories, expectedCategories);
+            var categoriesToMatch = getCategoriesToMatch(expectedCategories);
+            var matchSize = expectedCategories && expectedCategories.length;
+            return matchCategories(categories, categoriesToMatch, matchSize);
         },
 
         /**

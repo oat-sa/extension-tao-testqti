@@ -96,17 +96,6 @@ define([
                 completed: 0,
                 viewed: 0,
                 total: 2
-            },
-            categories: [
-                "SCORED",
-                "CAT2"
-            ],
-            matchedCategories: {
-                completed: 3,
-                position: 4,
-                reached: 6,
-                total: 12,
-                viewed: 6
             }
         }
     }, {
@@ -160,17 +149,6 @@ define([
                 completed: 0,
                 viewed: 0,
                 total: 1
-            },
-            categories: [
-                "SCORED",
-                "CAT2"
-            ],
-            matchedCategories: {
-                completed: 3,
-                position: 2,
-                reached: 4,
-                total: 6,
-                viewed: 4
             }
         }
     }, {
@@ -224,23 +202,12 @@ define([
                 completed: 1,
                 viewed: 1,
                 total: 1
-            },
-            categories: [
-                "SCORED",
-                "CAT2"
-            ],
-            matchedCategories: {
-                completed: 2,
-                position: 2,
-                reached: 3,
-                total: 3,
-                viewed: 3
             }
         }
     }, {
-        title: 'all categories scope',
+        title: 'all categories',
         config: {
-            scope: 'categories',
+            indicator: 'categories',
             categories: []
         },
         testMap: mapSample,
@@ -289,10 +256,6 @@ define([
                 viewed: 0,
                 total: 2
             },
-            categories: [
-                'SCORED',
-                'CAT2'
-            ],
             matchedCategories: {
                 completed: 3,
                 position: 4,
@@ -302,9 +265,9 @@ define([
             }
         }
     }, {
-        title: 'one categories scope',
+        title: 'one category',
         config: {
-            scope: 'categories',
+            indicator: 'categories',
             categories: ['SCORED']
         },
         testMap: mapSample,
@@ -353,10 +316,6 @@ define([
                 viewed: 0,
                 total: 2
             },
-            categories: [
-                'SCORED',
-                'CAT2'
-            ],
             matchedCategories: {
                 completed: 3,
                 position: 1,
@@ -366,9 +325,9 @@ define([
             }
         }
     }, {
-        title: 'multi categories scope',
+        title: 'multi categories',
         config: {
-            scope: 'categories',
+            indicator: 'categories',
             categories: ['SCORED', 'CAT2']
         },
         testMap: mapSample,
@@ -417,10 +376,6 @@ define([
                 viewed: 0,
                 total: 2
             },
-            categories: [
-                'SCORED',
-                'CAT2'
-            ],
             matchedCategories: {
                 completed: 2,
                 position: 0,
@@ -432,7 +387,11 @@ define([
     }]).test('helpers/progress.computeStats', function (data, assert) {
         QUnit.expect(1);
 
-        assert.deepEqual(progressHelper.computeStats(data.testMap, data.testContext, data.config), data.expected, 'The progress helper computeStats provides the expected stats');
+        assert.deepEqual(
+            progressHelper.computeStats(data.testMap, data.testContext, data.config),
+            data.expected,
+            'The progress helper computeStats provides the expected stats'
+        );
     });
 
 
