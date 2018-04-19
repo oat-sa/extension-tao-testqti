@@ -394,11 +394,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
             foreach ($report as $r) {
                 $data = $r->getData();
+                $overwrittenItemsIds = array_keys($data->overwrittenItems);
 
                 // Delete all imported items.
                 foreach ($data->newItems as $item) {
-                    common_Logger::t("Rollbacking new item '" . $item->getLabel() . "'...");
-                    $itemService->deleteResource($item);
+                    if (!in_array($item->getUri(), $overwrittenItemsIds)) {
+                        common_Logger::d("Rollbacking new item '" . $item->getLabel() . "'...");
+                        @$itemService->deleteResource($item);
+                    } else {
+                        common_Logger::d("Restoring content of item '" . $item->getLabel() . "'...");
+                        @Service::singleton()->restoreContentByRdfItem($item, $data->overwrittenItems[$item->getUri()]);
+                    }
                 }
                 
                 // Delete all created classes (by registered class lookups).
@@ -478,6 +484,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $reportCtx->itemClass = $targetClass;
         $reportCtx->items = [];
         $reportCtx->newItems = [];
+        $reportCtx->overwrittenItems = [];
         $reportCtx->itemQtiResources = [];
         $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
         $reportCtx->createdClasses = [];
@@ -529,17 +536,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                 
                                 if (!array_key_exists($resourceIdentifier, $ignoreQtiResources)) {
 
-                                    // Check if the item is already stored in the bank.
-                                    $guardian = $this->getMetadataImporter()->guard($resourceIdentifier, self::METADATA_GUARDIAN_CONTEXT_NAME);
-                                    if ($this->useMetadataGuardians && $guardian !== false) {
-                                        $message = __('The IMS QTI Item referenced as "%s" in the IMS Manifest file was already stored in the Item Bank.', $resourceIdentifier);
-                                        \common_Logger::d($message);
-                                        $report->add(common_report_Report::createInfo($message, $guardian));
-                                        $reportCtx->items[$assessmentItemRefId] = $guardian;
-                                        // Simply do not import again.
-                                        continue;
-                                    }
-
                                     $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
                                     // If metadata should be aware of the test context...
@@ -576,7 +572,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                             $this->useMetadataGuardians,
                                             $this->useMetadataValidators,
                                             $this->itemMustExist,
-                                            $this->itemMustBeOverwritten
+                                            $this->itemMustBeOverwritten,
+                                            $reportCtx->overwrittenItems
                                         );
 
                                         $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);
@@ -588,14 +585,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                             $reportCtx->newItems[$assessmentItemRefId] = $rdfItem;
                                             $reportCtx->itemQtiResources[$resourceIdentifier] = $rdfItem;
                                             $alreadyImportedTestItemFiles[$qtiFile] = $rdfItem;
-
-                                            $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $resourceIdentifier));
-                                        }
-                                        else {
-
-                                            if (! $itemReport->getMessage()) {
+                                        } else {
+                                            if (!$itemReport->getMessage()) {
                                                 $itemReport->setMessage(__('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $resourceIdentifier));
                                             }
+
                                             $itemReport->setType(common_report_Report::TYPE_ERROR);
                                             $itemError = ($itemError === false) ? true : $itemError;
                                         }
@@ -666,7 +660,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             catch (StorageException $e) {
                 // Source of the exception = $testDefinition->load()
                 // What is the reason ?
-                $finalErrorString = '';
                 $eStrs = array();
 
                 if (($libXmlErrors = $e->getErrors()) !== null) {
