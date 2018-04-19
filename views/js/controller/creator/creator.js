@@ -71,8 +71,6 @@ define([
 
         routes : {},
 
-        identifiers: [],
-
          /**
           * Start the controller, main entry method.
           * @public
@@ -155,12 +153,9 @@ define([
             binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
-                    //extract ids
-                    self.identifiers = qtiTestHelper.extractIdentifiers(model);
 
                     creatorContext = qtiTestCreatorFactory($container, {
                         uri : options.uri,
-                        identifiers : self.identifiers,
                         labels : options.labels,
                         routes : options.routes,
                         guidedNavigation : options.guidedNavigation
@@ -174,7 +169,7 @@ define([
                     //register validators
                     validators.register('idFormat', qtiTestHelper.idFormatValidator());
                     validators.register('testIdFormat', qtiTestHelper.testidFormatValidator());
-                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(null, modelOverseer), true);
+                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(modelOverseer), true);
 
                     //once model is loaded, we set up the test view
                     testView(creatorContext);

@@ -249,7 +249,7 @@ function(
             var $itemRef;
             var $items = $refList.children('li');
             index = index || $items.length;
-            itemData.identifier = qtiTestHelper.getIdentifier('item', config.identifiers);
+            itemData.identifier = qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentItemRef', 'item');
             itemData.index = index + 1;
             $itemRef = $(templates.itemref(itemData));
             if(index > 0){
