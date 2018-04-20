@@ -238,11 +238,13 @@ function(
             $view.find('.itemref-weight-add').on('click', function(e) {
                 var defaultData = {
                     value: 1,
-                    identifier: (refModel.weights.length === 0) ? 'WEIGHT' : qtiTestHelper.getIdentifier('WEIGHT', qtiTestHelper.extractIdentifiers(refModel))
+                    'qti-type' : 'weight',
+                    identifier: (refModel.weights.length === 0) ? 'WEIGHT' : qtiTestHelper.getAvailableIdentifier(refModel, 'weight', 'WEIGHT')
                 };
                 e.preventDefault();
 
                 $weightList.append(weightTpl(defaultData));
+                refModel.weights.push(defaultData);
                 $weightList.trigger('add.internalbinder'); // trigger model update
 
                 $view.groupValidator();

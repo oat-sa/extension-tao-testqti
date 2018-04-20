@@ -50,7 +50,8 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 
     /**
      * Returns the config of the test runner
-     * @return mixed
+     * @return array|mixed
+     * @throws \common_ext_ExtensionException
      */
     protected function buildConfig() {
         if ($this->hasOption(self::OPTION_CONFIG)) {
@@ -70,6 +71,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
                     'showLabel' => !empty($rawConfig['progress-indicator-show-label']),
                     'showTotal' => !empty($rawConfig['progress-indicator-show-total']),
+                    'categories' => isset($rawConfig['progress-categories']) ? $rawConfig['progress-categories'] : [],
                 ],
                 'review' => [
                     'enabled' => !empty($rawConfig['test-taker-review']),
