@@ -46,6 +46,7 @@ define([
      * @property {progressDetails} parts - the details of testParts in the scope
      * @property {progressDetails} answerableSections - the details of testSections that contain questions in the scope
      * @property {progressDetails} answerableParts - the details of testParts that contain questions in the scope
+     * @property {progressDetails} matchedCategories - the details of items that match the expected categories in the scope
      */
 
     /**
@@ -61,6 +62,7 @@ define([
      * @property {String} scope - the scope of the progression
      * @property {String} indicator - the type of progression
      * @property {Bool} showTotal - display 'item x of y' (true) | 'item x'
+     * @property {Array} categories - categories to count by them
      */
 
     /**
@@ -70,7 +72,8 @@ define([
     var defaultConfig = {
         scope: 'test',
         indicator: 'percentage',
-        showTotal: true
+        showTotal: true,
+        categories: []
     };
 
     /**
@@ -97,12 +100,15 @@ define([
          * Gets stats for the whole test
          * @param {Object} testMap - the actual test map
          * @param {Object} testContext - the actual test context
+         * @param {progressConfig} config - a config object
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressData}
          */
-        test: function test(testMap, testContext) {
+        test: function test(testMap, testContext, config) {
             var scopedMap = mapHelper.getScopeMap(testMap, testContext.itemPosition, 'test');
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
-            var stats = getDetailedStats(scopedMap, item);
+            var stats = getDetailedStats(scopedMap, item, config);
             stats.position = item.position + 1;
             stats.completed = testContext.numberCompleted;
             stats.overall = testContext.numberItems;
@@ -113,12 +119,15 @@ define([
          * Gets stats for the current test part
          * @param {Object} testMap - the actual test map
          * @param {Object} testContext - the actual test context
+         * @param {progressConfig} config - a config object
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressData}
          */
-        testPart: function testPart(testMap, testContext) {
+        testPart: function testPart(testMap, testContext, config) {
             var scopedMap = mapHelper.getScopeMap(testMap, testContext.itemPosition, 'testPart');
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
-            var stats = getDetailedStats(scopedMap, item);
+            var stats = getDetailedStats(scopedMap, item, config);
             stats.position = item.positionInPart + 1;
             stats.completed = testContext.numberCompleted;
             stats.overall = testContext.numberItems;
@@ -129,12 +138,15 @@ define([
          * Gets stats for the current test section
          * @param {Object} testMap - the actual test map
          * @param {Object} testContext - the actual test context
+         * @param {progressConfig} config - a config object
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressData}
          */
-        testSection: function testSection(testMap, testContext) {
+        testSection: function testSection(testMap, testContext, config) {
             var scopedMap = mapHelper.getScopeMap(testMap, testContext.itemPosition, 'testSection');
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
-            var stats = getDetailedStats(scopedMap, item);
+            var stats = getDetailedStats(scopedMap, item, config);
             stats.position = item.positionInSection + 1;
             stats.completed = testContext.numberCompleted;
             stats.overall = testContext.numberItems;
@@ -160,6 +172,8 @@ define([
          * Indicator that shows the position of current item
          * @param {progressData} stats
          * @param {progressConfig} config
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressIndicator}
          */
         position: function position(stats, config) {
@@ -170,6 +184,8 @@ define([
          * Indicator that shows the number of viewed questions
          * @param {progressData} stats
          * @param {progressConfig} config
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressIndicator}
          */
         questions: function questions(stats, config) {
@@ -180,10 +196,24 @@ define([
          * Indicator that shows the number of reached answerable sections
          * @param {progressData} stats
          * @param {progressConfig} config
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressIndicator}
          */
         sections: function sections(stats, config) {
             return getPositionProgression(stats.answerableSections.reached, stats.answerableSections.total, 'section', config);
+        },
+
+        /**
+         * Indicator that shows the number of viewed items which have categories from the configuration
+         * (show all if categories are not set)
+         * @param {progressData} stats
+         * @param {progressConfig} config
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
+         */
+        categories: function categories(stats, config) {
+            return getPositionProgression(stats.matchedCategories.position, stats.matchedCategories.total, 'item', config);
         }
     };
 
@@ -227,13 +257,58 @@ define([
     }
 
     /**
+     * Updates the progress details from the given element
+     * @param {progressDetails} stats - The stats details to update
+     * @param {Object} element - The element from which take the details
+     * @param {Number} position - The current item position
+     */
+    function updateItemDetails(stats, element, position) {
+        if (element.position <= position) {
+            stats.position++;
+        }
+        if (element.viewed) {
+            stats.reached++;
+            stats.viewed++;
+        }
+        if (element.answered) {
+            stats.completed++;
+        }
+        stats.total++;
+    }
+
+    /**
+     * Convert list of the categories to the hashtable to improve performance
+     * @param categories
+     * @returns {*}
+     */
+    function getCategoriesToMatch(categories) {
+        var matchSize = categories && categories.length;
+        return matchSize && _.reduce(categories, function(map, category) {
+            map[category] = true;
+            return map;
+        }, {});
+    }
+
+    /**
      * Completes the progression stats
      * @param {Object} testMap - the actual test map
      * @param {Object} currentItem - the current item from the test map
+     * @param {progressConfig} config
+     * @param {String} config.scope - the scope of the progression
+     * @param {Array} config.categories - categories to count by them
      * @returns {progressData}
      */
-    function getDetailedStats(testMap, currentItem) {
+    function getDetailedStats(testMap, currentItem, config) {
         var stats = _.clone(testMap.stats);
+        var categoriesToMatch;
+        var matchSize;
+
+        if (config.indicator === 'categories') {
+            categoriesToMatch = getCategoriesToMatch(config.categories);
+            matchSize = config.categories && config.categories.length;
+            stats.matchedCategories = getEmptyDetails();
+        }
+
         stats.parts = getEmptyDetails();
         stats.sections = getEmptyDetails();
         stats.answerableParts = getEmptyDetails();
@@ -252,10 +327,41 @@ define([
                 if (section.stats.questions > 0) {
                     updateDetails(stats.answerableSections, section, currentItem.position);
                 }
+
+                if (config.indicator === 'categories') {
+                    _.forEach(section.items, function (item) {
+                        if (matchCategories(item.categories, categoriesToMatch, matchSize)) {
+                            updateItemDetails(stats.matchedCategories, item, currentItem.position);
+                        }
+                    });
+                }
             });
         });
 
         return stats;
+    }
+
+    /**
+     *
+     * @param {Array} categories - List of categories to check
+     * @param {Object} expectedCategories - Hashtable of expected categories
+     * @param {Number} minWanted - Minimal number of expected categories that should match
+     * @returns {Boolean}
+     */
+    function matchCategories(categories, expectedCategories, minWanted) {
+        var matched = 0;
+
+        if (expectedCategories) {
+            _.forEach(categories, function(category) {
+                if (expectedCategories[category]) {
+                    matched ++;
+                    if (matched >= minWanted) {
+                        return false;
+                    }
+                }
+            });
+        }
+        return matched === minWanted;
     }
 
     /**
@@ -277,6 +383,8 @@ define([
      * @param {Number} total - the total number of items
      * @param {String} type - the type of element that is represented
      * @param {progressConfig} config - a config object
+     * @param {String} config.scope - the scope of the progression
+     * @param {Array} config.categories - categories to count by them
      * @returns {String}
      */
     function getProgressionLabel(position, total, type, config) {
@@ -291,6 +399,8 @@ define([
      * @param {Number} total - the total number of items
      * @param {String} type - the type of element that is represented
      * @param {progressConfig} config - a config object
+     * @param {String} config.scope - the scope of the progression
+     * @param {Array} config.categories - categories to count by them
      * @returns {progressIndicator}
      */
     function getPositionProgression(position, total, type, config) {
@@ -318,18 +428,32 @@ define([
         };
     }
 
-
     return {
+
+        /**
+         * Checks that categories matched
+         * @param categories
+         * @param expectedCategories
+         * @returns {boolean}
+         */
+        isMatchedCategories: function validCategories(categories, expectedCategories) {
+            var categoriesToMatch = getCategoriesToMatch(expectedCategories);
+            var matchSize = expectedCategories && expectedCategories.length;
+            return matchCategories(categories, categoriesToMatch, matchSize);
+        },
+
         /**
          * Computes the progress stats for the specified scope
          * @param {Object} testMap - the actual test map
          * @param {Object} testContext - the actual test context
-         * @param {String} [scope="test"] - the scope in which compute the stats (could be: test, testPart, testSection)
+         * @param {progressConfig} config - a config object
+         * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @returns {progressData}
          */
-        computeStats: function computeStats(testMap, testContext, scope) {
-            var statsComputer = (scope && scopes[scope]) || scopes.test;
-            return statsComputer(testMap, testContext);
+        computeStats: function computeStats(testMap, testContext, config) {
+            var statsComputer = (config.scope && scopes[config.scope]) || scopes.test;
+            return statsComputer(testMap, testContext, config || defaultConfig);
         },
 
         /**
@@ -352,12 +476,13 @@ define([
          * @param {progressConfig} config - a config object
          * @param {String} config.indicator - the type of progression
          * @param {String} config.scope - the scope of the progression
+         * @param {Array} config.categories - categories to count by them
          * @param {Boolean} [config.showTotal=true] - display 'item x of y' (true) | 'item x'
          */
         computeProgress: function computeProgress(testMap, testContext, config) {
             var progressData;
             config = _.defaults(config || {}, defaultConfig);
-            progressData = this.computeStats(testMap, testContext, config.scope);
+            progressData = this.computeStats(testMap, testContext, config);
             return this.computeIndicator(progressData, config.indicator, config);
         }
     };

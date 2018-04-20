@@ -112,7 +112,7 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                     var sectionIndex = $('.section', $testPart).length;
                     cb({
                         'qti-type' : 'assessmentSection',
-                        identifier : qtiTestHelper.getIdentifier('assessmentSection',  config.identifiers),
+                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection'),
                         title : 'Section ' + (sectionIndex + 1),
                         index : 0,
                         sectionParts : []
