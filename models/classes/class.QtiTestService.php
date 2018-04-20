@@ -396,15 +396,19 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 $data = $r->getData();
                 $overwrittenItemsIds = array_keys($data->overwrittenItems);
 
-                // Delete all imported items.
+                // -- Rollback all items.
+                // 1. Simply delete items that were not involved in overwriting.
                 foreach ($data->newItems as $item) {
                     if (!in_array($item->getUri(), $overwrittenItemsIds)) {
-                        common_Logger::d("Rollbacking new item '" . $item->getLabel() . "'...");
+                        common_Logger::d("Rollbacking new item '" . $item->getUri() . "'...");
                         @$itemService->deleteResource($item);
-                    } else {
-                        common_Logger::d("Restoring content of item '" . $item->getLabel() . "'...");
-                        @Service::singleton()->restoreContentByRdfItem($item, $data->overwrittenItems[$item->getUri()]);
                     }
+                }
+
+                // 2. Restore overwritten item contents.
+                foreach ($data->overwrittenItems as $overwrittenItemId => $backupName) {
+                    common_Logger::d("Restoring content for item '${overwrittenItemId}'...");
+                    @Service::singleton()->restoreContentByRdfItem(new core_kernel_classes_Resource($overwrittenItemId), $backupName);
                 }
                 
                 // Delete all created classes (by registered class lookups).
