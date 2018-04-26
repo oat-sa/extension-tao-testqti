@@ -213,7 +213,7 @@ define([
                 });
                 runner.off('alert.notallowed')
                     .on('alert.notallowed', function(message, cb) {
-                        assert.equal(message, 'A response to this item is required.', 'The user receive the correct message');
+                        assert.equal(message, 'A response to every question in this item is required.', 'The user receive the correct message');
                         cb();
                     });
                 runner.on('resumeitem', function() {
