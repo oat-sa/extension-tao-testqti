@@ -23,10 +23,10 @@
 define([
     'jquery',
     'lodash',
-    'taoTests/runner/plugin'
-], function ($, _, pluginFactory) {
+    'taoTests/runner/plugin',
+    'ckeditor'
+], function ($, _, pluginFactory, ckEditor) {
     'use strict';
-
 
     /**
      * Returns the configured plugin
@@ -45,16 +45,35 @@ define([
             //update plugin state based on changes
             testRunner
                 .after('renderitem', function() {
-                    var $item = self.getAreaBroker().getContentArea().find('.qti-itemBody');
-                    var $firstInput = $item.find('input, textarea, select')
+                    var $item        = self.getAreaBroker().getContentArea().find('.qti-itemBody');
+                    var $interaction = $item.find('.qti-interaction').first();
+                    var $input       = $interaction.find('input, textarea, select')
                         .not(':input[type=button], :input[type=submit], :input[type=reset]')
                         .filter(':first');
-                    // var $firstInput = $('[data-serial="'  + itemData.content.data.serial + '"]')
-                    //     .find('input[type=text],textarea,select').filter(':visible:first');
-                    setTimeout(function() {
-                        $firstInput.focus();
-                        console.log($firstInput)
-                    }, 2000)
+
+                    // first element might be a CK Editor
+                    var $cke         = $interaction.find('.cke');
+                    var ckeInstance;
+                    var ckeFocusManager;
+
+                    if($cke.length) {
+                        ckeInstance     = ckEditor.instances[$cke.attr('id').replace(/^cke_/, '')];
+                        ckeFocusManager = new ckEditor.focusManager(ckeInstance);
+                        console.log(ckeFocusManager.currentActive)
+                        //console.log(ckeInstance)
+                        ckeFocusManager.focus();
+                        console.log(ckeFocusManager.currentActive)
+                        //(ckEditor.focusManager(ckeInstance)).focus();
+                        //(ckEditor.focusManager($cke))
+                        //console.log($cke, ckEditor.instances[$cke.attr('id').replace(/^cke_/, '')], ckEditor.focusManager)
+
+                        //var focusManager = new CKEDITOR.focusManager( editor );
+                        //focusManager.focus();
+
+                    }
+                    else {
+                        $input.focus();
+                    }
                 });
         }
     });

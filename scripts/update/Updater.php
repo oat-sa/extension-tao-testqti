@@ -1860,8 +1860,8 @@ class Updater extends \common_ext_ExtensionUpdater {
             $registry->register(TestPlugin::fromArray([
                 'id' => 'focusOnFirstField',
                 'name' => 'Focus on first form field',
-                'module'     => 'taoAct/runner/plugins/content/accessibility/focusOnFirst',
-                'bundle'      => 'taoAct/loader/testPlugins.min',
+                'module'     => 'taoQtiTest/runner/plugins/content/accessibility/focusOnFirstField',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Sets focus on first form field',
                 'category' => 'accessibility',
                 'active' => true,
