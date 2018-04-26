@@ -1852,7 +1852,22 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
             $this->setVersion('24.9.0');
         }
-      
+
         $this->skip('24.9.0', '25.0.1');
+
+        if ($this->isVersion('25.0.1')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'focusOnFirstField',
+                'name' => 'Focus on first form field',
+                'module'     => 'taoAct/runner/plugins/content/accessibility/focusOnFirst',
+                'bundle'      => 'taoAct/loader/testPlugins.min',
+                'description' => 'Sets focus on first form field',
+                'category' => 'accessibility',
+                'active' => true,
+                'tags' => []
+            ]));
+            $this->setVersion('25.1.0');
+        }
     }
 }
