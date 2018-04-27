@@ -53,23 +53,13 @@ define([
 
                     // first element might be a CK Editor
                     var $cke         = $interaction.find('.cke');
-                    var ckeInstance;
-                    var ckeFocusManager;
+                    var ckeName;
 
                     if($cke.length) {
-                        ckeInstance     = ckEditor.instances[$cke.attr('id').replace(/^cke_/, '')];
-                        ckeFocusManager = new ckEditor.focusManager(ckeInstance);
-                        console.log(ckeFocusManager.currentActive)
-                        //console.log(ckeInstance)
-                        ckeFocusManager.focus();
-                        console.log(ckeFocusManager.currentActive)
-                        //(ckEditor.focusManager(ckeInstance)).focus();
-                        //(ckEditor.focusManager($cke))
-                        //console.log($cke, ckEditor.instances[$cke.attr('id').replace(/^cke_/, '')], ckEditor.focusManager)
-
-                        //var focusManager = new CKEDITOR.focusManager( editor );
-                        //focusManager.focus();
-
+                        ckeName = $cke.attr('id').replace(/^cke_/, '');
+                        _.delay(function() {
+                            ckEditor.instances[ckeName].focus();
+                        }, 100);
                     }
                     else {
                         $input.focus();
