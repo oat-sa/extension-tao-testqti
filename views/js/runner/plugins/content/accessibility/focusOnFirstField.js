@@ -39,6 +39,7 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init: function init() {
+            var self = this;
 
             this.getTestRunner()
                 .after('renderitem', function() {
