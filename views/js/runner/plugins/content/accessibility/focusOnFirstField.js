@@ -39,11 +39,8 @@ define([
          * Initialize the plugin (called during runner's init)
          */
         init: function init() {
-            var self = this;
-            var testRunner = this.getTestRunner();
 
-            //update plugin state based on changes
-            testRunner
+            this.getTestRunner()
                 .after('renderitem', function() {
                     var $item        = self.getAreaBroker().getContentArea().find('.qti-itemBody');
                     var $interaction = $item.find('.qti-interaction').first();
