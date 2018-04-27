@@ -47,6 +47,8 @@ define([
                 stats.answered--;
             } else if ((isItemCurrentlyAnswered || sync) && !context.itemAnswered) {
                 stats.answered++;
+            } else if (sync && !isItemCurrentlyAnswered && context.itemAnswered && context.isLinear) {
+                stats.answered++;
             }
         }
 
