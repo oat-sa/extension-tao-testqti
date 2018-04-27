@@ -1863,7 +1863,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'module'     => 'taoQtiTest/runner/plugins/content/accessibility/focusOnFirstField',
                 'bundle'      => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Sets focus on first form field',
-                'category' => 'accessibility',
+                'category' => 'content',
                 'active' => true,
                 'tags' => []
             ]));
