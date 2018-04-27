@@ -40,6 +40,7 @@ use taoTests_models_classes_TestsService as TestService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
+use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 
 /**
  * the QTI TestModel service.
@@ -399,7 +400,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 // -- Rollback all items.
                 // 1. Simply delete items that were not involved in overwriting.
                 foreach ($data->newItems as $item) {
-                    if (!in_array($item->getUri(), $overwrittenItemsIds)) {
+                    if (!$item instanceof MetadataGuardianResource && !in_array($item->getUri(), $overwrittenItemsIds)) {
                         common_Logger::d("Rollbacking new item '" . $item->getUri() . "'...");
                         @$itemService->deleteResource($item);
                     }
