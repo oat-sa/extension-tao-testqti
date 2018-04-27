@@ -22,12 +22,13 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+    'lodash',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/plugins/controls/progressbar/progress',
     'taoQtiTest/runner/plugins/controls/progressbar/renderer/percentage',
     'taoQtiTest/runner/plugins/controls/progressbar/renderer/position'
-], function (pluginFactory, mapHelper, progressHelper, percentageRendererFactory, positionRendererFactory){
+], function (_, pluginFactory, mapHelper, progressHelper, percentageRendererFactory, positionRendererFactory){
     'use strict';
 
     /**
@@ -60,7 +61,25 @@ define([
                 indicator: config.type || 'percentage',
                 scope: config.scope || 'test',
                 showLabel: config.showLabel,
-                showTotal: config.showTotal
+                showTotal: config.showTotal,
+                categories: config.categories
+            };
+
+            var hiddenByQuestions = function hiddenByQuestions(item) {
+                return item && item.informational && progressConfig.indicator === 'questions';
+            };
+
+            var hiddenByCategories = function (item) {
+                return item
+                    && progressConfig.indicator === 'categories'
+                    && !progressHelper.isMatchedCategories(item.categories, progressConfig.categories);
+            };
+
+            /**
+             * Check if progress bar should be hidden
+             */
+            var isProgressbarHidden = function isProgressbarHidden(item) {
+                return hiddenByQuestions(item) || hiddenByCategories(item);
             };
 
             /**
@@ -71,7 +90,7 @@ define([
                 var testMap = testRunner.getTestMap();
                 var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
 
-                if (item && item.informational && progressConfig.indicator === 'questions') {
+                if (isProgressbarHidden(item)) {
                     self.renderer.hide();
                 } else {
                     self.renderer.show();

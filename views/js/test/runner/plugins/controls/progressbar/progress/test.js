@@ -47,7 +47,10 @@ define([
 
     QUnit.cases([{
         title: 'test scope',
-        scope: 'test',
+        config: {
+            scope: 'test',
+            categories: []
+        },
         testMap: mapSample,
         testContext: {
             itemPosition: 3,
@@ -97,7 +100,10 @@ define([
         }
     }, {
         title: 'testPart scope',
-        scope: 'testPart',
+        config: {
+            scope: 'testPart',
+            categories: []
+        },
         testMap: mapSample,
         testContext: {
             itemPosition: 3,
@@ -147,7 +153,10 @@ define([
         }
     }, {
         title: 'testSection scope',
-        scope: 'testSection',
+        config: {
+            scope: 'testSection',
+            categories: []
+        },
         testMap: mapSample,
         testContext: {
             itemPosition: 3,
@@ -195,10 +204,194 @@ define([
                 total: 1
             }
         }
+    }, {
+        title: 'all categories',
+        config: {
+            indicator: 'categories',
+            categories: []
+        },
+        testMap: mapSample,
+        testContext: {
+            itemPosition: 3,
+            testPartId: 'testPart-1',
+            sectionId: 'assessmentSection-1',
+            numberCompleted: 4,
+            numberItems: 12
+        },
+        expected: {
+            questions: 9,
+            answered: 3,
+            flagged: 0,
+            viewed: 6,
+            total: 12,
+            completed: 4,
+            overall: 12,
+            questionsViewed: 3,
+            position: 4,
+            sections: {
+                position: 2,
+                reached: 3,
+                completed: 1,
+                viewed: 2,
+                total: 5
+            },
+            parts: {
+                position: 2,
+                reached: 2,
+                completed: 0,
+                viewed: 1,
+                total: 3
+            },
+            answerableSections: {
+                position: 1,
+                reached: 2,
+                completed: 1,
+                viewed: 1,
+                total: 4
+            },
+            answerableParts: {
+                position: 1,
+                reached: 1,
+                completed: 0,
+                viewed: 0,
+                total: 2
+            },
+            matchedCategories: {
+                completed: 3,
+                position: 4,
+                reached: 6,
+                total: 12,
+                viewed: 6
+            }
+        }
+    }, {
+        title: 'one category',
+        config: {
+            indicator: 'categories',
+            categories: ['SCORED']
+        },
+        testMap: mapSample,
+        testContext: {
+            itemPosition: 3,
+            testPartId: 'testPart-1',
+            sectionId: 'assessmentSection-1',
+            numberCompleted: 4,
+            numberItems: 12
+        },
+        expected: {
+            questions: 9,
+            answered: 3,
+            flagged: 0,
+            viewed: 6,
+            total: 12,
+            completed: 4,
+            overall: 12,
+            questionsViewed: 3,
+            position: 4,
+            sections: {
+                position: 2,
+                reached: 3,
+                completed: 1,
+                viewed: 2,
+                total: 5
+            },
+            parts: {
+                position: 2,
+                reached: 2,
+                completed: 0,
+                viewed: 1,
+                total: 3
+            },
+            answerableSections: {
+                position: 1,
+                reached: 2,
+                completed: 1,
+                viewed: 1,
+                total: 4
+            },
+            answerableParts: {
+                position: 1,
+                reached: 1,
+                completed: 0,
+                viewed: 0,
+                total: 2
+            },
+            matchedCategories: {
+                completed: 3,
+                position: 1,
+                reached: 3,
+                total: 7,
+                viewed: 3
+            }
+        }
+    }, {
+        title: 'multi categories',
+        config: {
+            indicator: 'categories',
+            categories: ['SCORED', 'CAT2']
+        },
+        testMap: mapSample,
+        testContext: {
+            itemPosition: 3,
+            testPartId: 'testPart-1',
+            sectionId: 'assessmentSection-1',
+            numberCompleted: 4,
+            numberItems: 12
+        },
+        expected: {
+            questions: 9,
+            answered: 3,
+            flagged: 0,
+            viewed: 6,
+            total: 12,
+            completed: 4,
+            overall: 12,
+            questionsViewed: 3,
+            position: 4,
+            sections: {
+                position: 2,
+                reached: 3,
+                completed: 1,
+                viewed: 2,
+                total: 5
+            },
+            parts: {
+                position: 2,
+                reached: 2,
+                completed: 0,
+                viewed: 1,
+                total: 3
+            },
+            answerableSections: {
+                position: 1,
+                reached: 2,
+                completed: 1,
+                viewed: 1,
+                total: 4
+            },
+            answerableParts: {
+                position: 1,
+                reached: 1,
+                completed: 0,
+                viewed: 0,
+                total: 2
+            },
+            matchedCategories: {
+                completed: 2,
+                position: 0,
+                reached: 2,
+                total: 4,
+                viewed: 2
+            }
+        }
     }]).test('helpers/progress.computeStats', function (data, assert) {
         QUnit.expect(1);
 
-        assert.deepEqual(progressHelper.computeStats(data.testMap, data.testContext, data.scope), data.expected, 'The progress helper computeStats provides the expected stats');
+        assert.deepEqual(
+            progressHelper.computeStats(data.testMap, data.testContext, data.config),
+            data.expected,
+            'The progress helper computeStats provides the expected stats'
+        );
     });
 
 
