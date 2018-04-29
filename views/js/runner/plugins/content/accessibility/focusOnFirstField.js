@@ -43,11 +43,11 @@ define([
 
             this.getTestRunner()
                 .after('renderitem', function() {
-                    var $input       = self.getAreaBroker().getContentArea().find('.qti-itemBody')
+                    var $input = self.getAreaBroker().getContentArea().find('.qti-itemBody')
                         .find('input, textarea, select')
                         .not(':input[type=button], :input[type=submit], :input[type=reset]')
                         .first();
-                    var $cke         = $input.closest('.qti-interaction').find('.cke');
+                    var $cke = $input.closest('.qti-interaction').find('.cke');
 
                     if($cke.length) {
                         _.delay(function() {
