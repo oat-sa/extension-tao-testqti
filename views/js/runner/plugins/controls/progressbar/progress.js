@@ -40,7 +40,7 @@ define([
     /**
      * @typedef {itemStats} progressData
      * @property {Number} position - the position in the scope
-     * @property {Number} completed - the number of completed items in the test
+     * @property {Number} overallCompleted - the number of completed items in the test
      * @property {Number} overall - the total number of items in the test
      * @property {progressDetails} sections - the details of testSections in the scope
      * @property {progressDetails} parts - the details of testParts in the scope
@@ -110,8 +110,6 @@ define([
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
             var stats = getDetailedStats(scopedMap, item, config);
             stats.position = item.position + 1;
-            stats.completed = testContext.numberCompleted;
-            stats.overall = testContext.numberItems;
             return stats;
         },
 
@@ -129,8 +127,6 @@ define([
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
             var stats = getDetailedStats(scopedMap, item, config);
             stats.position = item.positionInPart + 1;
-            stats.completed = testContext.numberCompleted;
-            stats.overall = testContext.numberItems;
             return stats;
         },
 
@@ -148,8 +144,6 @@ define([
             var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
             var stats = getDetailedStats(scopedMap, item, config);
             stats.position = item.positionInSection + 1;
-            stats.completed = testContext.numberCompleted;
-            stats.overall = testContext.numberItems;
             return stats;
         }
     };
@@ -165,7 +159,7 @@ define([
          * @returns {progressIndicator}
          */
         percentage: function percentage(stats) {
-            return getRatioProgression(stats.completed, stats.overall);
+            return getRatioProgression(stats.answered, stats.questions);
         },
 
         /**
@@ -434,7 +428,7 @@ define([
          * Checks that categories matched
          * @param categories
          * @param expectedCategories
-         * @returns {boolean}
+         * @returns {Boolean}
          */
         isMatchedCategories: function validCategories(categories, expectedCategories) {
             var categoriesToMatch = getCategoriesToMatch(expectedCategories);
@@ -453,7 +447,10 @@ define([
          */
         computeStats: function computeStats(testMap, testContext, config) {
             var statsComputer = (config.scope && scopes[config.scope]) || scopes.test;
-            return statsComputer(testMap, testContext, config || defaultConfig);
+            var stats = statsComputer(testMap, testContext, config || defaultConfig);
+            stats.overallCompleted = testContext.numberCompleted;
+            stats.overall = testContext.numberItems;
+            return stats;
         },
 
         /**
