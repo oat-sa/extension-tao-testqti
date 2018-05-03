@@ -1869,5 +1869,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('25.2.0');
         }
+
+        $this->skip('25.2.0', '25.3.0');
     }
 }
