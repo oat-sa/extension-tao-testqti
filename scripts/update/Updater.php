@@ -1853,9 +1853,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('24.9.0');
         }
 
-        $this->skip('24.9.0', '25.0.1');
+        $this->skip('24.9.0', '25.1.0');
 
-        if ($this->isVersion('25.0.1')) {
+        if ($this->isVersion('25.1.0')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id' => 'focusOnFirstField',
@@ -1867,7 +1867,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'active' => true,
                 'tags' => []
             ]));
-            $this->setVersion('25.1.0');
+            $this->setVersion('25.2.0');
         }
     }
 }
