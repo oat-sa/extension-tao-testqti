@@ -19,6 +19,7 @@
 
 namespace oat\taoQtiTest\scripts\install;
 use oat\taoQtiItem\model\ItemModel;
+use oat\taoDelivery\model\execution\DeliveryServerService;
 
 /**
  * Class TestRunnerVersion
@@ -63,19 +64,20 @@ class TestRunnerVersion extends \common_ext_action_InstallAction
      */
     private function checkDeliveryServer()
     {
-        $ext = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery');
-        $config = $ext->getConfig('deliveryServer');
-
-        $deliveryContainerClass = $config->getOption('deliveryContainer');
-        $oldRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryServiceContainer';
-        $newRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryClientContainer';
-
-        if ($this->isClass($deliveryContainerClass, $newRunnerClass)) {
-            $result = $this->resultData('DeliveryServer: New TestRunner', true, true);
-        } else if ($this->isClass($deliveryContainerClass, $oldRunnerClass)) {
-            $result = $this->resultData('DeliveryServer: Old TestRunner', false, true);
+        $service = $this->getServiceLocator()->get(DeliveryServerService::SERVICE_ID);
+        if ($service->hasOption('deliveryContainer')) {
+            $deliveryContainerClass = $service->getOption('deliveryContainer');
+            $oldRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryServiceContainer';
+            $newRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryClientContainer';
+            if ($this->isClass($deliveryContainerClass, $newRunnerClass)) {
+                $result = $this->resultData('DeliveryServer: New TestRunner', true, true);
+            } else if ($this->isClass($deliveryContainerClass, $oldRunnerClass)) {
+                $result = $this->resultData('DeliveryServer: Old TestRunner', false, true);
+            } else {
+                $result = $this->resultData('DeliveryServer: Unknown version / bad config (' . $deliveryContainerClass . ')', false, false);
+            }
         } else {
-            $result = $this->resultData('DeliveryServer: Unknown version / bad config (' . $deliveryContainerClass . ')', false, false);
+            $result = $this->resultData('Legacy container used for deliveries without container not set', null, true);
         }
 
         return $result;
