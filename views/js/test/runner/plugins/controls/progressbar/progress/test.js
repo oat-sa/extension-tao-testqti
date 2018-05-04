@@ -45,346 +45,1496 @@ define([
     });
 
 
-    QUnit.cases([{
-        title: 'test scope',
-        config: {
-            scope: 'test',
-            categories: []
-        },
-        testMap: mapSample,
-        testContext: {
-            itemPosition: 3,
-            testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1',
-            numberCompleted: 4,
-            numberItems: 12
-        },
-        expected: {
-            questions: 9,
-            answered: 3,
-            flagged: 0,
-            viewed: 6,
-            total: 12,
-            overallCompleted: 4,
-            overall: 12,
-            questionsViewed: 3,
-            position: 4,
-            sections: {
-                position: 2,
-                reached: 3,
-                completed: 1,
-                viewed: 2,
-                total: 5
+    QUnit.cases([
+        /** NON LINEAR - STANDARD **/
+        {
+            title: 'non linear - test scope',
+            config: {
+                scope: 'test',
+                categories: []
             },
-            parts: {
-                position: 2,
-                reached: 2,
-                completed: 0,
-                viewed: 1,
-                total: 3
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
             },
-            answerableSections: {
-                position: 1,
-                reached: 2,
-                completed: 1,
-                viewed: 1,
-                total: 4
-            },
-            answerableParts: {
-                position: 1,
-                reached: 1,
-                completed: 0,
-                viewed: 0,
-                total: 2
-            }
-        }
-    }, {
-        title: 'testPart scope',
-        config: {
-            scope: 'testPart',
-            categories: []
-        },
-        testMap: mapSample,
-        testContext: {
-            itemPosition: 3,
-            testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1',
-            numberCompleted: 4,
-            numberItems: 12
-        },
-        expected: {
-            questions: 5,
-            answered: 3,
-            flagged: 0,
-            viewed: 4,
-            total: 6,
-            overallCompleted: 4,
-            overall: 12,
-            questionsViewed: 3,
-            position: 2,
-            sections: {
-                position: 1,
-                reached: 2,
-                completed: 1,
-                viewed: 1,
-                total: 2
-            },
-            parts: {
-                position: 1,
-                reached: 1,
-                completed: 0,
-                viewed: 0,
-                total: 1
-            },
-            answerableSections: {
-                position: 1,
-                reached: 2,
-                completed: 1,
-                viewed: 1,
-                total: 2
-            },
-            answerableParts: {
-                position: 1,
-                reached: 1,
-                completed: 0,
-                viewed: 0,
-                total: 1
-            }
-        }
-    }, {
-        title: 'testSection scope',
-        config: {
-            scope: 'testSection',
-            categories: []
-        },
-        testMap: mapSample,
-        testContext: {
-            itemPosition: 3,
-            testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1',
-            numberCompleted: 4,
-            numberItems: 12
-        },
-        expected: {
-            questions: 2,
-            answered: 2,
-            flagged: 0,
-            viewed: 3,
-            total: 3,
-            overallCompleted: 4,
-            overall: 12,
-            questionsViewed: 2,
-            position: 2,
-            sections: {
-                position: 1,
-                reached: 1,
-                completed: 1,
-                viewed: 1,
-                total: 1
-            },
-            parts: {
-                position: 1,
-                reached: 1,
-                completed: 1,
-                viewed: 1,
-                total: 1
-            },
-            answerableSections: {
-                position: 1,
-                reached: 1,
-                completed: 1,
-                viewed: 1,
-                total: 1
-            },
-            answerableParts: {
-                position: 1,
-                reached: 1,
-                completed: 1,
-                viewed: 1,
-                total: 1
-            }
-        }
-    }, {
-        title: 'all categories',
-        config: {
-            indicator: 'categories',
-            categories: []
-        },
-        testMap: mapSample,
-        testContext: {
-            itemPosition: 3,
-            testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1',
-            numberCompleted: 4,
-            numberItems: 12
-        },
-        expected: {
-            questions: 9,
-            answered: 3,
-            flagged: 0,
-            viewed: 6,
-            total: 12,
-            overallCompleted: 4,
-            overall: 12,
-            questionsViewed: 3,
-            position: 4,
-            sections: {
-                position: 2,
-                reached: 3,
-                completed: 1,
-                viewed: 2,
-                total: 5
-            },
-            parts: {
-                position: 2,
-                reached: 2,
-                completed: 0,
-                viewed: 1,
-                total: 3
-            },
-            answerableSections: {
-                position: 1,
-                reached: 2,
-                completed: 1,
-                viewed: 1,
-                total: 4
-            },
-            answerableParts: {
-                position: 1,
-                reached: 1,
-                completed: 0,
-                viewed: 0,
-                total: 2
-            },
-            matchedCategories: {
-                completed: 3,
-                position: 4,
-                reached: 6,
+            expected: {
+                questions: 9,
+                answered: 3,
+                flagged: 0,
+                viewed: 6,
                 total: 12,
-                viewed: 6
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 3,
+                position: 4,
+                sections: {
+                    position: 2,
+                    reached: 3,
+                    completed: 1,
+                    viewed: 2,
+                    total: 5
+                },
+                parts: {
+                    position: 2,
+                    reached: 2,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 4
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 2
+                }
+            }
+        }, {
+            title: 'non linear - testPart scope',
+            config: {
+                scope: 'testPart',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 5,
+                answered: 3,
+                flagged: 0,
+                viewed: 4,
+                total: 6,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 3,
+                position: 2,
+                sections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                }
+            }
+        }, {
+            title: 'non linear - testSection scope',
+            config: {
+                scope: 'testSection',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 2,
+                answered: 2,
+                flagged: 0,
+                viewed: 3,
+                total: 3,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 2,
+                position: 2,
+                sections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                }
+            }
+        },
+
+        /** NON LINEAR - ALL CATEGORIES **/
+        {
+            title: 'non linear - all categories - test scope',
+            config: {
+                scope: 'test',
+                indicator: 'categories',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 9,
+                answered: 3,
+                flagged: 0,
+                viewed: 6,
+                total: 12,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 3,
+                position: 4,
+                sections: {
+                    position: 2,
+                    reached: 3,
+                    completed: 1,
+                    viewed: 2,
+                    total: 5
+                },
+                parts: {
+                    position: 2,
+                    reached: 2,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 4
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 2
+                },
+                matchedCategories: {
+                    position: 4,
+                    reached: 6,
+                    completed: 3,
+                    viewed: 6,
+                    total: 12
+                }
+            }
+        }, {
+            title: 'non linear - all categories - testPart scope',
+            config: {
+                scope: 'testPart',
+                indicator: 'categories',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 5,
+                answered: 3,
+                flagged: 0,
+                viewed: 4,
+                total: 6,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 3,
+                position: 2,
+                sections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 2,
+                    reached: 4,
+                    completed: 3,
+                    viewed: 4,
+                    total: 6
+                }
+            }
+        }, {
+            title: 'non linear - all categories - testSection scope',
+            config: {
+                scope: 'testSection',
+                indicator: 'categories',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 2,
+                answered: 2,
+                flagged: 0,
+                viewed: 3,
+                total: 3,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 2,
+                position: 2,
+                sections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 2,
+                    reached: 3,
+                    completed: 2,
+                    viewed: 3,
+                    total: 3
+                }
+            }
+        },
+
+        /** NON LINEAR - ONE CATEGORY **/
+        {
+            title: 'non linear - one category - test scope',
+            config: {
+                scope: 'test',
+                indicator: 'categories',
+                categories: ['SCORED']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 9,
+                answered: 3,
+                flagged: 0,
+                viewed: 6,
+                total: 12,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 3,
+                position: 4,
+                sections: {
+                    position: 2,
+                    reached: 3,
+                    completed: 1,
+                    viewed: 2,
+                    total: 5
+                },
+                parts: {
+                    position: 2,
+                    reached: 2,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 4
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 2
+                },
+                matchedCategories: {
+                    position: 1,
+                    reached: 3,
+                    completed: 3,
+                    viewed: 3,
+                    total: 7
+                }
+            }
+        }, {
+            title: 'non linear - one category - testPart scope',
+            config: {
+                scope: 'testPart',
+                indicator: 'categories',
+                categories: ['SCORED']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 5,
+                answered: 3,
+                flagged: 0,
+                viewed: 4,
+                total: 6,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 3,
+                position: 2,
+                sections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 1,
+                    reached: 3,
+                    completed: 3,
+                    viewed: 3,
+                    total: 4
+                }
+            }
+        }, {
+            title: 'non linear - one category - testSection scope',
+            config: {
+                scope: 'testSection',
+                indicator: 'categories',
+                categories: ['SCORED']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 2,
+                answered: 2,
+                flagged: 0,
+                viewed: 3,
+                total: 3,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 2,
+                position: 2,
+                sections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 1,
+                    reached: 2,
+                    completed: 2,
+                    viewed: 2,
+                    total: 2
+                }
+            }
+        },
+
+        /** NON LINEAR - SEVERAL CATEGORIES **/
+        {
+            title: 'non linear - several categories - test scope',
+            config: {
+                scope: 'test',
+                indicator: 'categories',
+                categories: ['SCORED', 'CAT2']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 9,
+                answered: 3,
+                flagged: 0,
+                viewed: 6,
+                total: 12,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 3,
+                position: 4,
+                sections: {
+                    position: 2,
+                    reached: 3,
+                    completed: 1,
+                    viewed: 2,
+                    total: 5
+                },
+                parts: {
+                    position: 2,
+                    reached: 2,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 4
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 2
+                },
+                matchedCategories: {
+                    position: 0,
+                    reached: 2,
+                    completed: 2,
+                    viewed: 2,
+                    total: 4
+                }
+            }
+        }, {
+            title: 'non linear - several categories - testPart scope',
+            config: {
+                scope: 'testPart',
+                indicator: 'categories',
+                categories: ['SCORED', 'CAT2']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 5,
+                answered: 3,
+                flagged: 0,
+                viewed: 4,
+                total: 6,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 3,
+                position: 2,
+                sections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 0,
+                    reached: 2,
+                    completed: 2,
+                    viewed: 2,
+                    total: 3
+                }
+            }
+        }, {
+            title: 'non linear - several categories - testSection scope',
+            config: {
+                scope: 'testSection',
+                indicator: 'categories',
+                categories: ['SCORED', 'CAT2']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 3,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-1',
+                numberCompleted: 3,
+                numberItems: 12,
+                isLinear: false,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 2,
+                answered: 2,
+                flagged: 0,
+                viewed: 3,
+                total: 3,
+                overallCompleted: 3,
+                overall: 12,
+                questionsViewed: 2,
+                position: 2,
+                sections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 0,
+                    reached: 1,
+                    completed: 1,
+                    viewed: 1,
+                    total: 1
+                }
+            }
+        },
+
+
+        /** LINEAR - STANDARD **/
+        {
+            title: 'linear - test scope',
+            config: {
+                scope: 'test',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 9,
+                answered: 2,
+                flagged: 0,
+                viewed: 6,
+                total: 12,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 3,
+                position: 6,
+                sections: {
+                    position: 3,
+                    reached: 3,
+                    completed: 1,
+                    viewed: 2,
+                    total: 5
+                },
+                parts: {
+                    position: 2,
+                    reached: 2,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                },
+                answerableSections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 4
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 2
+                }
+            }
+        }, {
+            title: 'linear - testPart scope',
+            config: {
+                scope: 'testPart',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 5,
+                answered: 2,
+                flagged: 0,
+                viewed: 4,
+                total: 6,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 3,
+                position: 4,
+                sections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                }
+            }
+        }, {
+            title: 'linear - testSection scope',
+            config: {
+                scope: 'testSection',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 3,
+                answered: 0,
+                flagged: 0,
+                viewed: 1,
+                total: 3,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 1,
+                position: 1,
+                sections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                }
+            }
+        },
+
+        /** LINEAR - ALL CATEGORIES **/
+        {
+            title: 'linear - all categories - test scope',
+            config: {
+                scope: 'test',
+                indicator: 'categories',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 9,
+                answered: 2,
+                flagged: 0,
+                viewed: 6,
+                total: 12,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 3,
+                position: 6,
+                sections: {
+                    position: 3,
+                    reached: 3,
+                    completed: 1,
+                    viewed: 2,
+                    total: 5
+                },
+                parts: {
+                    position: 2,
+                    reached: 2,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                },
+                answerableSections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 4
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 2
+                },
+                matchedCategories: {
+                    position: 6,
+                    reached: 6,
+                    completed: 2,
+                    viewed: 6,
+                    total: 12
+                }
+            }
+        }, {
+            title: 'linear - all categories - testPart scope',
+            config: {
+                scope: 'testPart',
+                indicator: 'categories',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 5,
+                answered: 2,
+                flagged: 0,
+                viewed: 4,
+                total: 6,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 3,
+                position: 4,
+                sections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 4,
+                    reached: 4,
+                    completed: 2,
+                    viewed: 4,
+                    total: 6
+                }
+            }
+        }, {
+            title: 'linear - all categories - testSection scope',
+            config: {
+                scope: 'testSection',
+                indicator: 'categories',
+                categories: []
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 3,
+                answered: 0,
+                flagged: 0,
+                viewed: 1,
+                total: 3,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 1,
+                position: 1,
+                sections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                }
+            }
+        },
+
+        /** LINEAR - ONE CATEGORY **/
+        {
+            title: 'linear - one category - test scope',
+            config: {
+                scope: 'test',
+                indicator: 'categories',
+                categories: ['SCORED']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 9,
+                answered: 2,
+                flagged: 0,
+                viewed: 6,
+                total: 12,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 3,
+                position: 6,
+                sections: {
+                    position: 3,
+                    reached: 3,
+                    completed: 1,
+                    viewed: 2,
+                    total: 5
+                },
+                parts: {
+                    position: 2,
+                    reached: 2,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                },
+                answerableSections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 4
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 2
+                },
+                matchedCategories: {
+                    position: 3,
+                    reached: 3,
+                    completed: 2,
+                    viewed: 3,
+                    total: 7
+                }
+            }
+        }, {
+            title: 'linear - one category - testPart scope',
+            config: {
+                scope: 'testPart',
+                indicator: 'categories',
+                categories: ['SCORED']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 5,
+                answered: 2,
+                flagged: 0,
+                viewed: 4,
+                total: 6,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 3,
+                position: 4,
+                sections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 3,
+                    reached: 3,
+                    completed: 2,
+                    viewed: 3,
+                    total: 4
+                }
+            }
+        }, {
+            title: 'linear - one category - testSection scope',
+            config: {
+                scope: 'testSection',
+                indicator: 'categories',
+                categories: ['SCORED']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 3,
+                answered: 0,
+                flagged: 0,
+                viewed: 1,
+                total: 3,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 1,
+                position: 1,
+                sections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 1,
+                    total: 2
+                }
+            }
+        },
+
+        /** LINEAR - SEVERAL CATEGORIES **/
+        {
+            title: 'linear - several categories - test scope',
+            config: {
+                scope: 'test',
+                indicator: 'categories',
+                categories: ['SCORED', 'CAT2']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 9,
+                answered: 2,
+                flagged: 0,
+                viewed: 6,
+                total: 12,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 3,
+                position: 6,
+                sections: {
+                    position: 3,
+                    reached: 3,
+                    completed: 1,
+                    viewed: 2,
+                    total: 5
+                },
+                parts: {
+                    position: 2,
+                    reached: 2,
+                    completed: 0,
+                    viewed: 1,
+                    total: 3
+                },
+                answerableSections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 4
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 2
+                },
+                matchedCategories: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 2,
+                    total: 4
+                }
+            }
+        }, {
+            title: 'linear - several categories - testPart scope',
+            config: {
+                scope: 'testPart',
+                indicator: 'categories',
+                categories: ['SCORED', 'CAT2']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 5,
+                answered: 2,
+                flagged: 0,
+                viewed: 4,
+                total: 6,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 3,
+                position: 4,
+                sections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 1,
+                    total: 2
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 2,
+                    reached: 2,
+                    completed: 1,
+                    viewed: 2,
+                    total: 3
+                }
+            }
+        }, {
+            title: 'linear - several categories - testSection scope',
+            config: {
+                scope: 'testSection',
+                indicator: 'categories',
+                categories: ['SCORED', 'CAT2']
+            },
+            testMap: mapSample,
+            testContext: {
+                itemPosition: 5,
+                testPartId: 'testPart-1',
+                sectionId: 'assessmentSection-2',
+                numberCompleted: 2,
+                numberItems: 12,
+                isLinear: true,
+                itemAnswered: true
+            },
+            expected: {
+                questions: 3,
+                answered: 0,
+                flagged: 0,
+                viewed: 1,
+                total: 3,
+                overallCompleted: 2,
+                overall: 12,
+                questionsViewed: 1,
+                position: 1,
+                sections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                parts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableSections: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                answerableParts: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 0,
+                    total: 1
+                },
+                matchedCategories: {
+                    position: 1,
+                    reached: 1,
+                    completed: 0,
+                    viewed: 1,
+                    total: 2
+                }
             }
         }
-    }, {
-        title: 'one category',
-        config: {
-            indicator: 'categories',
-            categories: ['SCORED']
-        },
-        testMap: mapSample,
-        testContext: {
-            itemPosition: 3,
-            testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1',
-            numberCompleted: 4,
-            numberItems: 12
-        },
-        expected: {
-            questions: 9,
-            answered: 3,
-            flagged: 0,
-            viewed: 6,
-            total: 12,
-            overallCompleted: 4,
-            overall: 12,
-            questionsViewed: 3,
-            position: 4,
-            sections: {
-                position: 2,
-                reached: 3,
-                completed: 1,
-                viewed: 2,
-                total: 5
-            },
-            parts: {
-                position: 2,
-                reached: 2,
-                completed: 0,
-                viewed: 1,
-                total: 3
-            },
-            answerableSections: {
-                position: 1,
-                reached: 2,
-                completed: 1,
-                viewed: 1,
-                total: 4
-            },
-            answerableParts: {
-                position: 1,
-                reached: 1,
-                completed: 0,
-                viewed: 0,
-                total: 2
-            },
-            matchedCategories: {
-                completed: 3,
-                position: 1,
-                reached: 3,
-                total: 7,
-                viewed: 3
-            }
-        }
-    }, {
-        title: 'multi categories',
-        config: {
-            indicator: 'categories',
-            categories: ['SCORED', 'CAT2']
-        },
-        testMap: mapSample,
-        testContext: {
-            itemPosition: 3,
-            testPartId: 'testPart-1',
-            sectionId: 'assessmentSection-1',
-            numberCompleted: 4,
-            numberItems: 12
-        },
-        expected: {
-            questions: 9,
-            answered: 3,
-            flagged: 0,
-            viewed: 6,
-            total: 12,
-            overallCompleted: 4,
-            overall: 12,
-            questionsViewed: 3,
-            position: 4,
-            sections: {
-                position: 2,
-                reached: 3,
-                completed: 1,
-                viewed: 2,
-                total: 5
-            },
-            parts: {
-                position: 2,
-                reached: 2,
-                completed: 0,
-                viewed: 1,
-                total: 3
-            },
-            answerableSections: {
-                position: 1,
-                reached: 2,
-                completed: 1,
-                viewed: 1,
-                total: 4
-            },
-            answerableParts: {
-                position: 1,
-                reached: 1,
-                completed: 0,
-                viewed: 0,
-                total: 2
-            },
-            matchedCategories: {
-                completed: 2,
-                position: 0,
-                reached: 2,
-                total: 4,
-                viewed: 2
-            }
-        }
-    }]).test('helpers/progress.computeStats', function (data, assert) {
+    ]).test('helpers/progress.computeStats', function (data, assert) {
         QUnit.expect(1);
 
         assert.deepEqual(
@@ -677,7 +1827,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 3,
@@ -697,7 +1849,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 6,
@@ -717,7 +1871,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 3,
@@ -737,7 +1893,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 2,
@@ -758,7 +1916,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 3,
@@ -778,7 +1938,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 3,
@@ -798,7 +1960,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 4,
@@ -818,7 +1982,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 3,
@@ -838,7 +2004,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 2,
@@ -859,7 +2027,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 3,
@@ -879,7 +2049,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 1,
@@ -899,7 +2071,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 1,
@@ -919,7 +2093,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 1,
@@ -939,7 +2115,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 1,
@@ -960,7 +2138,9 @@ define([
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-2',
             numberCompleted: 6,
-            numberItems: 12
+            numberItems: 12,
+            isLinear: false,
+            itemAnswered: true
         },
         expected: {
             position: 1,
