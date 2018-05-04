@@ -66,6 +66,7 @@ class QtiTestDeliveryContainer extends AbstractContainer
         $container->setData('serviceCallId', $execution->getIdentifier());
         $container->setData('deliveryExecution', $execution->getIdentifier());
         $container->setData('deliveryServerConfig', []);
+
         return $container;
     }
 }

@@ -18,6 +18,7 @@
  *
  */
 
+use oat\tao\model\state\StateStorage;
 use qtism\common\storage\IStream;
 use qtism\runtime\tests\AbstractSessionManager;
 use qtism\common\storage\MemoryStream;
@@ -136,8 +137,9 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        return $stream;
    }
    
-   protected function persistStream(AssessmentTestSession $assessmentTestSession, MemoryStream $stream) {
-       
+   protected function persistStream(AssessmentTestSession $assessmentTestSession, MemoryStream $stream)
+   {
+       /** @var tao_models_classes_service_StateStorage $storageService */
        $storageService = tao_models_classes_service_StateStorage::singleton();
        $userUri = $this->getUserUri();
        
@@ -145,9 +147,11 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
            $msg = "Could not retrieve current user URI.";
            throw new StorageException($msg, StorageException::RETRIEVAL);
        }
-       
+
        $data = $this->getLastError() . $stream->getBinary();
-       $storageService->set($userUri, $assessmentTestSession->getSessionId(), $data);
+       if (!$storageService->set($userUri, $assessmentTestSession->getSessionId(), $data)) {
+           throw new StorageException('Can\'t write into storage at '.static::class);
+       }
    }
    
    public function exists($sessionId) {
@@ -161,7 +165,19 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
        
        return $storageService->has($userUri, $sessionId);
    }
-   
+
+    /**
+     * @param AssessmentTestSession $assessmentTestSession
+     * @return bool
+     */
+   public function delete($assessmentTestSession)
+   {
+       /** @var StateStorage $storageService */
+       $storageService = ServiceManager::getServiceManager()->get(StateStorage::SERVICE_ID);
+
+       return $storageService->del($this->getUserUri(), $assessmentTestSession->getSessionId());
+   }
+
    protected function createBinaryStreamAccess(IStream $stream) {
        return new QtiBinaryStreamAccess(
           $stream,

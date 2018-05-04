@@ -71,8 +71,6 @@ define([
 
         routes : {},
 
-        identifiers: [],
-
          /**
           * Start the controller, main entry method.
           * @public
@@ -80,6 +78,7 @@ define([
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
           * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
+          * @param {Boolean} [options.guidedNavigation  = false]- feature flag for the guided navigation
           */
         start : function(options){
             var self = this;
@@ -94,6 +93,7 @@ define([
             options.routes = options.routes || {};
             options.labels = options.labels || {};
             options.categoriesPresets = options.categoriesPresets || {};
+            options.guidedNavigation = options.guidedNavigation === true;
 
             categorySelector.setPresets(options.categoriesPresets);
 
@@ -153,14 +153,12 @@ define([
             binder = DataBindController
                 .takeControl($container, binderOptions)
                 .get(function(model){
-                    //extract ids
-                    self.identifiers = qtiTestHelper.extractIdentifiers(model);
 
                     creatorContext = qtiTestCreatorFactory($container, {
                         uri : options.uri,
-                        identifiers : self.identifiers,
                         labels : options.labels,
-                        routes : options.routes
+                        routes : options.routes,
+                        guidedNavigation : options.guidedNavigation
                     });
                     creatorContext.setTestModel(model);
                     modelOverseer = creatorContext.getModelOverseer();
@@ -171,7 +169,7 @@ define([
                     //register validators
                     validators.register('idFormat', qtiTestHelper.idFormatValidator());
                     validators.register('testIdFormat', qtiTestHelper.testidFormatValidator());
-                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(self.identifiers), true);
+                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(modelOverseer), true);
 
                     //once model is loaded, we set up the test view
                     testView(creatorContext);

@@ -57,11 +57,13 @@ function(
      * @param {Object} creatorContext
      * @param {Object} refModel - the data model to bind to the item ref
      * @param {Object} sectionModel - the parent data model to inherit
+     * @param {Object} partModel - the model of the parent's test part
      * @param {jQueryElement} $itemRef - the itemRef element to set up
      */
-    function setUp (creatorContext, refModel, sectionModel, $itemRef) {
+    function setUp (creatorContext, refModel, sectionModel, partModel, $itemRef) {
 
         var modelOverseer = creatorContext.getModelOverseer();
+        var config = modelOverseer.getConfig()  || {};
         var $actionContainer = $('.actions', $itemRef);
 
         // set item session control to use test part options if section level isn't set
@@ -70,30 +72,134 @@ function(
         }
         _.defaults(refModel.itemSessionControl, sectionModel.itemSessionControl);
 
+        refModel.isLinear = partModel.navigationMode === 0;
+
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
 
         resize();
 
         /**
-         * Perform some binding once the property view is create
-         * @private
+         * Set up the time limits behaviors :
+         *  - linear test part: display the minTime field
+         *  - linear + guided nav option : display the minTime field + the lock
+         *  - otherwise only the maxTime field
          * @param {propView} propView - the view object
          */
-        function propHandler (propView) {
+        function timeLimitsProperty(propView){
+            var $view = propView.getView();
 
-            categoriesProperty(propView.getView());
-            weightsProperty(propView);
+            //target elements
+            var $minTimeContainer    = $('.mintime-container', $view);
+            var $maxTimeContainer    = $('.maxtime-container', $view);
+            var $lockedTimeContainer = $('.lockedtime-container', $view);
+            var $locker              = $('.locker button', $lockedTimeContainer);
+            var $durationFields      = $(':text[data-duration]', $lockedTimeContainer);
+            var $minTimeField        = $(':text[name="min-time"]', $lockedTimeContainer);
+            var $maxTimeField        = $(':text[name="max-time"]', $lockedTimeContainer);
 
-            $itemRef.parents('.testpart').on('delete', removePropHandler);
-            $itemRef.parents('.section').on('delete', removePropHandler);
-            $itemRef.on('delete', removePropHandler);
+            /**
+             * Sync min value to max value, trigger change to sync the component.
+             * Need to temporally remove the other handler to prevent infinite loop
+             */
+            var minToMaxHandler = _.throttle(function minToMax(){
+                $maxTimeField.off('change.sync');
+                $maxTimeField.val($minTimeField.val()).trigger('change');
+                _.defer(function(){
+                    $maxTimeField.on('change.sync', minToMaxHandler);
+                });
+            }, 200);
 
-            function removePropHandler(){
-                if(propView !== null){
-                    propView.destroy();
+            /**
+             * Sync max value to min value, trigger change to sync the component.
+             * Need to temporally remove the other handler to prevent infinite loop
+             */
+            var maxToMinHandler = _.throttle(function maxToMin(){
+                $minTimeField.off('change.sync');
+                $minTimeField.val($maxTimeField.val()).trigger('change');
+                _.defer(function(){
+                    $minTimeField.on('change.sync', minToMaxHandler);
+                });
+            }, 200);
+
+            /**
+             * Lock the timers
+             */
+            var lockTimers = function lockTimers(){
+                $locker.removeClass('unlocked')
+                       .addClass('locked')
+                       .attr('title', __('Unlink to use sperated durations'));
+
+                //sync min to max
+                $minTimeField.val($maxTimeField.val()).trigger('change');
+
+                //keep both in sync
+                $minTimeField.on('change.sync', minToMaxHandler);
+                $maxTimeField.on('change.sync', maxToMinHandler);
+            };
+
+            /**
+             * Unlock the timers
+             */
+            var unlockTimers = function unlockTimers(){
+                $locker.removeClass('locked')
+                       .addClass('unlocked')
+                       .attr('title', __('Link durations to activate the guided navigation'));
+
+                $durationFields.off('change.sync');
+                $minTimeField.val('00:00:00').trigger('change');
+            };
+
+            /**
+             * Toggle the timelimits modes max, min + max, min + max + locked
+             */
+            var toggleTimeContainers = function toggleTimeContainers(){
+                refModel.isLinear = partModel.navigationMode === 0;
+                if(refModel.isLinear && config.guidedNavigation){
+                    $minTimeContainer.addClass('hidden');
+                    $maxTimeContainer.addClass('hidden');
+                    $lockedTimeContainer.removeClass('hidden');
+                    if($minTimeField.val() === $maxTimeField.val() && $maxTimeField.val() !== '00:00:00'){
+                        lockTimers();
+                    }
+                    $locker.on('click', function(e){
+                        e.preventDefault();
+
+                        if($locker.hasClass('locked')){
+                            unlockTimers();
+                        } else {
+                            lockTimers();
+                        }
+                    });
+                } else if (refModel.isLinear){
+                    $lockedTimeContainer.addClass('hidden');
+                    $minTimeContainer.removeClass('hidden');
+                    $maxTimeContainer.removeClass('hidden');
+                } else {
+                    $lockedTimeContainer.addClass('hidden');
+                    $minTimeContainer.addClass('hidden');
+                    $maxTimeContainer.removeClass('hidden');
                 }
-            }
+            };
+
+            //if the testpart changes it's navigation mode
+            modelOverseer.on('testpart-change', function(){
+                toggleTimeContainers();
+            });
+
+            toggleTimeContainers();
+
+            //chek if min <= maw
+            $durationFields.on('change.check', function(){
+                if( refModel.timeLimits.minTime > 0 &&
+                    refModel.timeLimits.maxTime > 0 &&
+                    refModel.timeLimits.minTime > refModel.timeLimits.maxTime ) {
+
+                    $minTimeField.parent('div').find('.duration-ctrl-wrapper').addClass('brd-danger');
+                } else {
+                    $minTimeField.parent('div').find('.duration-ctrl-wrapper').removeClass('brd-danger');
+                }
+            });
         }
 
         /**
@@ -121,7 +227,6 @@ function(
             });
         }
 
-
         /**
          * Setup the weights properties
          */
@@ -133,17 +238,39 @@ function(
             $view.find('.itemref-weight-add').on('click', function(e) {
                 var defaultData = {
                     value: 1,
-                    identifier: (refModel.weights.length === 0)
-                        ? 'WEIGHT'
-                        : qtiTestHelper.getIdentifier('WEIGHT', qtiTestHelper.extractIdentifiers(refModel))
+                    'qti-type' : 'weight',
+                    identifier: (refModel.weights.length === 0) ? 'WEIGHT' : qtiTestHelper.getAvailableIdentifier(refModel, 'weight', 'WEIGHT')
                 };
                 e.preventDefault();
 
                 $weightList.append(weightTpl(defaultData));
+                refModel.weights.push(defaultData);
                 $weightList.trigger('add.internalbinder'); // trigger model update
 
                 $view.groupValidator();
             });
+        }
+
+        /**
+         * Perform some binding once the property view is create
+         * @private
+         * @param {propView} propView - the view object
+         */
+        function propHandler (propView) {
+
+            var removePropHandler = function removePropHandler(){
+                if(propView !== null){
+                    propView.destroy();
+                }
+            };
+
+            categoriesProperty(propView.getView());
+            weightsProperty(propView);
+            timeLimitsProperty(propView);
+
+            $itemRef.parents('.testpart').on('delete', removePropHandler);
+            $itemRef.parents('.section').on('delete', removePropHandler);
+            $itemRef.on('delete', removePropHandler);
         }
     }
 

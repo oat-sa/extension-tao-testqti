@@ -19,10 +19,12 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\TaoOntology;
+use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
@@ -42,6 +44,7 @@ use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
+use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\QtiTestListenerService;
@@ -64,6 +67,7 @@ use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
+use oat\taoTaskQueue\model\TaskLogInterface;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\taoQtiTest\models\PhpCodeCompilationDataService;
@@ -1755,6 +1759,117 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('18.6.0');
         }
 
-        $this->skip('18.6.0', '18.7.0');
+        $this->skip('18.6.0', '18.9.4');
+
+        if ($this->isVersion('18.9.4')) {
+            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+            $this->setVersion('18.9.5');
+        }
+
+        $this->skip('18.9.5', '21.0.2');
+
+        if ($this->isVersion('21.0.2')) {
+            /** @var TaskLogInterface|ConfigurableService $taskLogService */
+            $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
+
+            $taskLogService->linkTaskToCategory(ImportQtiTest::class, TaskLogInterface::CATEGORY_IMPORT);
+
+            $this->getServiceManager()->register(TaskLogInterface::SERVICE_ID, $taskLogService);
+
+            $this->setVersion('22.0.0');
+        }
+
+        $this->skip('22.0.0', '23.2.0');
+
+        if ($this->isVersion('23.2.0')) {
+
+            $registry = PluginRegistry::getRegistry();
+            if ($registry->isRegistered('taoQtiTest/runner/plugins/tools/textToSpeech/plugin')) {
+                $registry->remove('taoQtiTest/runner/plugins/tools/textToSpeech/plugin');
+            }
+
+            $this->setVersion('23.2.1');
+        }
+
+        $this->skip('23.2.1', '23.4.0');
+
+        if ($this->isVersion('23.4.0')) {
+
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['guidedNavigation'] = false;
+
+            $extension->setConfig('testRunner', $config);
+
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->remove('taoQtiTest/runner/plugins/controls/timer/timer');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'timer',
+                'name' => 'Timer indicator',
+                'module' => 'taoQtiTest/runner/plugins/controls/timer/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Add countdown when remaining time',
+                'category' => 'controls',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('24.0.0');
+        }
+
+        $this->skip('24.0.0', '24.1.0');
+
+        if ($this->isVersion('24.1.0')) {
+            AclProxy::applyRule(new AccessRule('grant', TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+            $this->setVersion('24.2.0');
+        }
+
+        $this->skip('24.2.0', '24.7.0');
+
+        if ($this->isVersion('24.7.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+
+            $config['progress-indicator-renderer'] = 'percentage';
+            $config['progress-indicator-show-label'] = 'true';
+
+            // as the percentage indicator now takes care of the scope, ensure the legacy is respected
+            if ($config['progress-indicator'] == 'percentage') {
+                $config['progress-indicator-scope'] = 'test';
+            }
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('24.8.0');
+        }
+
+        $this->skip('24.8.0', '24.8.4');
+
+        if ($this->isVersion('24.8.4')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['progress-categories'] = [];
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('24.9.0');
+        }
+
+        $this->skip('24.9.0', '25.1.0');
+
+        if ($this->isVersion('25.1.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'focusOnFirstField',
+                'name' => 'Focus on first form field',
+                'module'     => 'taoQtiTest/runner/plugins/content/accessibility/focusOnFirstField',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Sets focus on first form field',
+                'category' => 'content',
+                'active' => true,
+                'tags' => []
+            ]));
+            $this->setVersion('25.2.0');
+        }
+
+        $this->skip('25.2.0', '25.3.0');
     }
 }

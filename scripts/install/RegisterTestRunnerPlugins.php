@@ -125,13 +125,23 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => true,
                 'tags' => [ 'core' ]
+            ],
+            [
+                'id' => 'focusOnFirstField',
+                'name' => 'Focus on first form field',
+                'module'     => 'taoQtiTest/runner/plugins/content/accessibility/focusOnFirstField',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Sets focus on first form field',
+                'category' => 'content',
+                'active' => true,
+                'tags' => []
             ]
         ],
         'controls' => [
             [
                 'id' => 'timer',
                 'name' => 'Timer indicator',
-                'module' => 'taoQtiTest/runner/plugins/controls/timer/timer',
+                'module' => 'taoQtiTest/runner/plugins/controls/timer/plugin',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Add countdown when remaining time',
                 'category' => 'controls',

@@ -1,0 +1,27 @@
+.progress-box {
+    .progressbar {
+        .progressbar-points {
+            @include flex-container();
+            & > span.progressbar-point {
+                flex: 1;
+                display: inline-block;
+                border: 1px solid $info;
+                background-color: $uiClickableDefaultBg;
+                height: calc(1rem - 4px);
+                margin: 0 1px 0 0;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+
+                &.reached {
+                    background-color: $info;
+                }
+
+                &.current {
+                    background-color: $uiClickableActiveBg;
+                }
+            }
+        }
+    }
+}

@@ -24,12 +24,12 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'core/store',
     'core/promise',
     'core/cachedStore',
     'taoTests/runner/areaBroker',
     'taoTests/runner/proxy',
     'taoTests/runner/probeOverseer',
+    'taoTests/runner/testStore',
     'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/helpers/map',
@@ -42,12 +42,12 @@ define([
     $,
     _,
     __,
-    store,
     Promise,
     cachedStore,
     areaBrokerFactory,
     proxyFactory,
     probeOverseerFactory,
+    testStoreFactory,
     dataUpdater,
     currentItemHelper,
     mapHelper,
@@ -57,8 +57,6 @@ define([
     getAssetManager,
     layoutTpl) {
     'use strict';
-
-
 
     var $layout = $(layoutTpl());
 
@@ -111,12 +109,23 @@ define([
          * @returns {probeOverseer}
          */
         loadProbeOverseer : function loadProbeOverseer(){
+
+            //the test run needs to be identified uniquely
+            return probeOverseerFactory(this);
+        },
+
+        /**
+         * Initialize and load the test store
+         * @returns {testStore}
+         */
+        loadTestStore : function loadTestStore(){
             var config = this.getConfig();
 
             //the test run needs to be identified uniquely
             var identifier = config.serviceCallId || 'test-' + Date.now();
-            return probeOverseerFactory(identifier, this);
+            return testStoreFactory(identifier);
         },
+
 
         /**
          * Loads the persistent states storage
@@ -182,7 +191,6 @@ define([
          */
         install : function install(){
 
-
             /**
              * Delegates the udpate of testMap, testContext and testData
              * to a 3rd part component, the dataUpdater.
@@ -201,6 +209,7 @@ define([
          */
         init : function init(){
             var self = this;
+
             /**
              * Retrieve the item results
              * @returns {Object} the results
@@ -225,7 +234,9 @@ define([
              * @param {Promise} [loadPromise] - wait this Promise to resolve before loading the item.
              */
             function computeNext(action, params, loadPromise){
+
                 var context = self.getTestContext();
+
                 //catch server errors
                 var submitError = function submitError(err){
                     //some server errors are valid, so we don't fail (prevent empty responses)
@@ -382,8 +393,15 @@ define([
                             scope: scope,
                             ref: ref
                         }),
-                        new Promise(function(resolve){
-                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
+                        new Promise(function(resolve) {
+                            if (context.options
+                                && context.options.hasOwnProperty('noAlertTimeout')
+                                && context.options.noAlertTimeout
+                            ) {
+                                resolve();
+                            } else {
+                                self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
+                            }
                         })
                     );
                 })
@@ -462,7 +480,6 @@ define([
                     this.trigger('disabletools enablenav');
                 })
                 .on('finish', function () {
-                    this.trigger('endsession');
                     this.flush();
                 })
                 .on('leave', function () {
@@ -479,7 +496,7 @@ define([
             }
 
             //get the current store identifier to send it along with the init call
-            return store.getIdentifier().then(function(storeId){
+            return this.getTestStore().getStorageIdentifier().then(function(storeId){
 
                 //load data and current context in parallel at initialization
                 return self.getProxy().init({
@@ -491,15 +508,8 @@ define([
                     //set the plugin config from the test data
                     self.dataUpdater.updatePluginsConfig(self.getPlugins());
 
-                    //check if we need to trigger a storeChange
-                    if(!_.isEmpty(storeId) && !_.isEmpty(results.lastStoreId) && results.lastStoreId !== storeId){
-
-                        /**
-                         * We have changed the local storage engine (could be a browser change)
-                         * @event runner/provider/qti#storechange
-                         */
-                        self.trigger('storechange');
-                    }
+                    //this checks the received storeId and clear the volatiles stores
+                    self.getTestStore().clearVolatileIfStoreChange(results.lastStoreId);
                 });
             });
         },
@@ -537,7 +547,8 @@ define([
                     return {
                         content : data.itemData,
                         baseUrl : data.baseUrl,
-                        state : data.itemState
+                        state : data.itemState,
+                        portableElements : data.portableElements
                     };
                 });
         },
@@ -565,6 +576,8 @@ define([
 
             return new Promise(function(resolve, reject){
                 assetManager.setData('baseUrl', itemData.baseUrl);
+                assetManager.setData('itemIdentifier', itemIdentifier);
+                assetManager.setData('assets', itemData.content.assets);
 
                 itemData.content = itemData.content || {};
 
@@ -580,6 +593,9 @@ define([
                     if(itemData.state){
                         this.setState(itemData.state);
                         options.state = itemData.state;//official ims portable element requires state information during rendering
+                    }
+                    if(itemData.portableElements){
+                        options.portableElements = itemData.portableElements;
                     }
                     this.render(self.getAreaBroker().getContentArea(), options);
                 })
@@ -627,13 +643,11 @@ define([
          * @returns {Promise} proxy.finish
          */
         finish : function finish(){
-            var self = this;
-
             if (!this.getState('finish')) {
                 this.trigger('disablenav disabletools');
 
-                if (self.stateStorage) {
-                    return self.stateStorage.removeStore();
+                if (this.stateStorage) {
+                    return this.stateStorage.removeStore();
                 }
             }
         },
@@ -703,6 +717,7 @@ define([
          */
         destroy : function destroy(){
 
+
             // prevent the item to be displayed while test runner is destroying
             if (this.itemRunner) {
                 this.itemRunner.clear();
@@ -712,6 +727,11 @@ define([
             if(areaBroker){
                 areaBroker.getToolbox().destroy();
                 areaBroker = null;
+            }
+
+            //we remove the store(s) only if the finish step was reached
+            if(this.getState('finish')){
+                return this.getTestStore().remove();
             }
         }
     };

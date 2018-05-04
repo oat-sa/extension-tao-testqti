@@ -21,6 +21,8 @@
 namespace oat\taoQtiTest\models\runner\time;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStorageJsonFormat;
 use oat\taoTests\models\runner\time\Timer;
@@ -31,7 +33,7 @@ use oat\taoTests\models\runner\time\TimeStorage;
  * @package oat\taoQtiTest\models\runner\time
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-class QtiTimerFactory extends ConfigurableService
+class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDelete
 {
     const SERVICE_ID = 'taoQtiTest/QtiTimerFactory';
     
@@ -100,5 +102,17 @@ class QtiTimerFactory extends ConfigurableService
         $timer->load();
         
         return $timer;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
+    {
+        if ($request->getSession() === null) {
+            return false;
+        }
+        $timer = $this->getTimer($request->getSession()->getSessionId(), $request->getDeliveryExecution()->getUserIdentifier());
+        return $timer->delete();
     }
 }

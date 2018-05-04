@@ -37,6 +37,7 @@ define([
     'ui/feedback',
     'util/url',
     'taoTests/runner/runner',
+    'taoQtiTest/runner/provider/qti',
     'taoQtiTest/runner/proxy/loader',
     'css!taoQtiTestCss/new-test-runner'
 ], function (
@@ -55,6 +56,7 @@ define([
     feedback,
     urlUtil,
     runner,
+    qtiProvider,
     proxyLoader
 ) {
     'use strict';
@@ -84,6 +86,7 @@ define([
     /**
      * TODO provider registration should be loaded dynamically
      */
+    runner.registerProvider('qti', qtiProvider);
     communicator.registerProvider('poll', pollProvider);
     communicator.registerProvider('request', requestProvider);
 
@@ -122,13 +125,17 @@ define([
             /**
              * Exit the test runner using the configured exitUrl
              * @param {String} [reason] - to add a warning once left
+             * @param {String} [level] - error level
              */
-            var exit = function exit(reason){
+            var exit = function exit(reason, level){
                 var url = runnerOptions.exitUrl;
+                var params = {};
                 if (reason) {
-                    url = urlUtil.build(url, {
-                        warning: reason
-                    });
+                    if (!level) {
+                        level = 'warning';
+                    }
+                    params[level] = reason;
+                    url = urlUtil.build(url, params);
                 }
                 window.location = url;
             };
@@ -149,9 +156,9 @@ define([
 
                 logger.error({ displayMessage : displayMessage }, err);
 
-                if(err.code === 403) {
-                    //we just leave if any 403 occurs
-                    return exit(displayMessage);
+                if(err.code === 403 || err.code === 500) {
+                    displayMessage = __('An error occurred during the test, please content your administrator.') + " " + displayMessage;
+                    return exit(displayMessage, 'error');
                 }
                 feedback().error(displayMessage, { timeout : -1 });
             };
@@ -198,28 +205,22 @@ define([
             //load the plugins and the proxy provider
             Promise
                 .all([
-                    loadProviders(runnerOptions.providers),
                     loadPlugins(runnerOptions.plugins),
                     loadProxy()
                 ])
                 .then(function (results) {
 
-                    var providers = results[0];
-                    var plugins = results[1];
-                    var proxyProviderName = results[2];
+                    var plugins = results[0];
+                    var proxyProviderName = results[1];
 
                     var config = _.omit(runnerOptions, ['plugins', 'providers']);
                     config.proxyProvider = proxyProviderName;
                     config.renderTo      = $container;
 
-                    logger.debug({ config: config, plugins: plugins, providers: providers}, 'Start test runner');
-
-                    _.forEach(providers, function(provider) {
-                        runner.registerProvider(provider.name, provider);
-                    });
+                    logger.debug({ config: config, plugins: plugins}, 'Start test runner');
 
                     //instantiate the QtiTestRunner
-                    runner(config.provider, plugins, config)
+                    runner('qti', plugins, config)
                         .on('error', onError)
                         .on('ready', function () {
                             _.defer(function () {

@@ -21,6 +21,10 @@ namespace oat\taoQtiTest\models;
 
 class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
 {
+    /**
+     * @param TestCategoryPresetProvider $presetService
+     * @throws \common_exception_InconsistentData
+     */
     public function registerPresets(TestCategoryPresetProvider $presetService)
     {
         $presetService->register(
@@ -103,7 +107,15 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review.'),
                     'order'         => 500,
                     'pluginId'      => 'next'
-                ])
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'noAlertTimeout',
+                    'label'         => __('Do not show alert on timeout'),
+                    'qtiCategory'   => 'x-tao-option-noAlertTimeout',
+                    'description'   => __('Moving to the next item without time limit reached message.'),
+                    'order'         => 600,
+                    'pluginId'      => 'next'
+                ]),
             ]
         );
 
@@ -165,7 +177,7 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allow the test-taker to use a movable magnifier tool.'),
                     'order'         => 700,
                     'pluginId'      => 'magnifier'
-                ]),                
+                ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'zoom',
                     'label'         => __('Zoom'),

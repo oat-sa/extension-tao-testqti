@@ -568,7 +568,16 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function delete()
+    {
+       $storage = $this->getStorage();
+       return $storage->delete();
+    }
+
     /**
      * Checks if a timestamp is consistent with existing TimePoint within a range
      * @param array $points

@@ -1,0 +1,26 @@
+@import "inc/bootstrap";
+
+.countdown{
+
+    opacity : 0;
+    &.rendered {
+        opacity: 1;
+        @include transition(opacity, 300ms, linear);
+    }
+
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    text-align: center;
+    vertical-align: top;
+    line-height: 1.2;
+    padding: 0 20px;
+    margin-top: -1px;
+    height: 100%;
+
+    .label {
+        max-width: 130px;
+        display:block;
+        @include font-size(12);
+    }
+}

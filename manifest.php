@@ -18,8 +18,17 @@
  *
  */
 
+use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
+use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
+use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
+use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
+use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
+use oat\taoQtiTest\scripts\install\RegisterTestImporters;
+use oat\taoQtiTest\scripts\install\SetSynchronisationService;
+use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -29,15 +38,16 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '18.7.0',
+    'version'     => '25.3.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
-        'taoTests'   => '>=6.9.0',
-        'taoQtiItem' => '>=12.5.0',
-        'tao'        => '>=14.13.0',
-        'generis'    => '>=5.11.0',
-        'taoDelivery' => '>=8.1.0',
-        'taoItems'   => '>=5.4.1',
+        'taoQtiItem' => '>=14.2.0',
+        'taoTests'   => '>=7.1.0',
+        'tao'        => '>=17.15.0',
+        'generis'    => '>=6.14.0',
+        'taoDelivery' => '>=9.6.0',
+        'taoItems'   => '>=5.11.0',
+        'taoTaskQueue' => '>=0.13.1'
     ),
 	'models' => array(
 		'http://www.tao.lu/Ontologies/TAOTest.rdf'
@@ -57,18 +67,19 @@ return array(
             \oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter::class,
             \oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem::class,
             RegisterQtiFlysystemManager::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestImporters::class,
-            \oat\taoQtiTest\scripts\install\SetupEventListeners::class,
-            \oat\taoQtiTest\scripts\install\RegisterCreatorServices::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService::class,
-            \oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders::class,
-            \oat\taoQtiTest\scripts\install\RegisterSectionPauseService::class,
-            \oat\taoQtiTest\scripts\install\SetSynchronisationService::class,
-            \oat\taoQtiTest\scripts\install\SyncChannelInstaller::class,
-		    RegisterTestContainer::class
+            RegisterTestImporters::class,
+            SetupEventListeners::class,
+            RegisterCreatorServices::class,
+            RegisterTestCategoryPresetProviderService::class,
+            RegisterQtiCategoryPresetProviders::class,
+            RegisterSectionPauseService::class,
+            SetSynchronisationService::class,
+            SyncChannelInstaller::class,
+            RegisterTestContainer::class,
+            SetUpQueueTasks::class
         )
-	),
-	'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
+    ),
+    'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
     'local'	=> array(
         'php'	=> array(
             dirname(__FILE__).'/install/local/addQTIExamples.php'
@@ -81,7 +92,9 @@ return array(
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'TestRunner')),
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'Runner')),
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Creator')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items'))
+        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items')),
+        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
+        array('grant', \oat\tao\model\user\TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
     ),
 	'constants' => array(
 		# actions directory

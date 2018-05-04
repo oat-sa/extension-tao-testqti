@@ -26,6 +26,14 @@ use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDelivery\model\RuntimeService;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
+use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
+use oat\taoQtiItem\model\portableElement\exception\PortableModelMissing;
+use oat\taoQtiItem\model\portableElement\PortableElementService;
+use oat\taoItems\model\render\ItemAssetsReplacement;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use \oat\taoQtiTest\models\ExtendedStateService;
@@ -42,7 +50,6 @@ use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
@@ -61,7 +68,6 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
-use oat\taoResultServer\models\classes\ResultServerService;
 
 /**
  * Class QtiRunnerService
@@ -107,7 +113,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         $directoryIds = explode('|', $itemRef);
         if (count($directoryIds) < 3) {
-            throw new \common_exception_InconsistentData('The itemRef is not formated correctly');
+            if (is_scalar($itemRef)) {
+                $itemRefInfo = gettype($itemRef) . ': ' . strval($itemRef);
+            } elseif (is_object($itemRef)) {
+                $itemRefInfo = gettype($itemRef) . ': ' . get_class($itemRef);
+            } else {
+                $itemRefInfo = gettype($itemRef);
+            }
+
+            throw new \common_exception_InconsistentData("The itemRef (value = '${itemRefInfo}') is not formatted correctly.");
         }
 
         $itemUri = $directoryIds[0];
@@ -128,9 +142,27 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         }
         try {
-            $this->dataCache[$cacheKey] = json_decode($directory->read($lang.DIRECTORY_SEPARATOR.$path), true);
+            $content = $directory->read($lang.DIRECTORY_SEPARATOR.$path);
+            /** @var ItemAssetsReplacement $assetService */
+            $assetService = $this->getServiceManager()->get(ItemAssetsReplacement::SERVICE_ID);
+            $jsonContent = json_decode($content, true);
+            $jsonAssets = [];
+            if(isset($jsonContent['assets'])){
+                foreach ($jsonContent['assets'] as $type => $assets){
+                    foreach ($assets as $key => $asset){
+                        $jsonAssets[$type][$key] = $assetService->postProcessAssets($asset);
+                    }
+                }
+                $jsonContent["assets"] = $jsonAssets;
+            }
+
+            $this->dataCache[$cacheKey] = $jsonContent;
             return $this->dataCache[$cacheKey];
         } catch (\FileNotFoundException $e) {
+            throw new \tao_models_classes_FileNotFoundException(
+                $path . ' for item reference ' . $itemRef
+            );
+        } catch (\League\Flysystem\FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
             );
@@ -589,7 +621,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     protected function getStateId(QtiRunnerServiceContext $context, $itemRef)
     {
-        return  $context->getTestExecutionUri() . $itemRef;
+        return  $this->buildStorageItemKey($context->getTestExecutionUri(), $itemRef);
+    }
+
+    /**
+     * @param string $deliveryExecutionUri
+     * @param string $itemRef
+     * @return string
+     */
+    private function buildStorageItemKey($deliveryExecutionUri, $itemRef)
+    {
+        return $deliveryExecutionUri . $itemRef;
     }
 
     /**
@@ -788,8 +830,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                             new ResultVariable(
                                 $score->getIdentifier(),
                                 BaseType::getNameByConstant($score->getBaseType()),
-                                $score->getValue()->getValue()
-                            )
+                                $score->getValue()->getValue(),
+                                null,
+                                $score->getCardinality()
+                            ),
+                            microtime(true)
                         );
                     } else {
                         \common_Logger::i("No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an adaptive section.");
@@ -1450,7 +1495,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         $session = $context->getTestSession();
         foreach ($session->getRegularTimeConstraints() as $constraint) {
-            if ($constraint->getMaximumRemainingTime() != false) {
+            if ($constraint->getMaximumRemainingTime() != false || $constraint->getMinimumRemainingTime() != false) {
                 $constraints[] = $constraint;
             }
         }
@@ -1852,5 +1897,71 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         return $maxTimeSeconds;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
+    {
+        if ($request->getSession() === null) {
+            return false;
+        }
 
+        /** @var StorageManager $storage */
+        $storage = $this->getServiceLocator()->get(StorageManager::SERVICE_ID);
+        $userUri = $request->getDeliveryExecution()->getUserIdentifier();
+
+        $itemsRefs = (new GetDeliveryExecutionsItems(
+            $this->getServiceLocator()->get(RuntimeService::SERVICE_ID),
+            $this->getServiceLocator()->get(CatService::SERVICE_ID),
+            \tao_models_classes_service_FileStorage::singleton(),
+            $request->getDeliveryExecution(),
+            $request->getSession()
+        ))->getItemsRefs();
+
+        foreach ($itemsRefs as $itemRef) {
+            $stateId = $this->buildStorageItemKey(
+                $request->getDeliveryExecution()->getIdentifier(),
+                $itemRef
+            );
+            if ($storage->has($userUri, $stateId)) {
+                $storage->del($userUri, $stateId);
+            }
+        }
+
+        return $storage->persist($userUri);
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @return array|string
+     * @throws \common_Exception
+     * @throws \common_exception_InconsistentData
+     */
+    public function getItemPortableElements(RunnerServiceContext $context, $itemRef){
+
+        $portableElementService = new PortableElementService();
+        $portableElementService->setServiceLocator($this->getServiceLocator());
+
+        $portableElements = [];
+        try{
+            $portableElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::PORTABLE_ELEMENT_FILE_NAME);
+            foreach($portableElements as $portableModel => &$elements){
+                foreach($elements as $typeIdentifier => &$versions){
+                    foreach($versions as &$portableData){
+                        try{
+                            $portableElementService->setBaseUrlToPortableData($portableData);
+                        }catch(PortableElementNotFoundException $e){
+                            \common_Logger::w('the portable element version does not exist in delivery server');
+                        }catch(PortableModelMissing $e){
+                            \common_Logger::w('the portable element model does not exist in delivery server');
+                        }
+                    }
+                }
+            }
+        }catch(\tao_models_classes_FileNotFoundException $e){
+            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
+        }
+        return $portableElements;
+    }
 }

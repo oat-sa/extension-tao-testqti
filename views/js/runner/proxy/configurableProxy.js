@@ -25,8 +25,9 @@ define([
     'i18n',
     'core/promise',
     'core/promiseQueue',
-    'core/communicator'
-], function ($, _, __, Promise, promiseQueue, communicatorFactory) {
+    'core/communicator',
+    'util/httpErrorParser'
+], function ($, _, __, Promise, promiseQueue, communicatorFactory, httpErrorParser) {
     'use strict';
 
     /**
@@ -148,6 +149,7 @@ define([
                                         type: textStatus || 'error',
                                         message: errorThrown || __('An error occurred!')
                                     });
+
                                     if (data.token) {
                                         tokenHandler.setToken(data.token);
                                     } else if (!noToken) {
@@ -159,7 +161,7 @@ define([
                                         return resolve(data);
                                     }
 
-                                    reject(data);
+                                    reject(httpErrorParser.parse(jqXHR, textStatus, errorThrown));
                                 });
                         });
                     };

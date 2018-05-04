@@ -25,39 +25,27 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'core/store',
     'taoTests/runner/plugin',
     'ui/hider',
     'ui/themes',
     'util/shortcut',
     'util/namespace'
-], function ($, _, __, storeFactory, pluginFactory, hider, themeHandler, shortcut, namespaceHelper) {
+], function ($, _, __, pluginFactory, hider, themeHandler, shortcut, namespaceHelper) {
     'use strict';
-
-    /**
-     * The public name of the plugin
-     * @type {String}
-     */
-    var pluginName = 'itemThemeSwitcher';
 
     /**
      * Returns the configured plugin
      */
     return pluginFactory({
 
-        name: pluginName,
+        name: 'itemThemeSwitcher',
 
         /**
-         * Installation of the plugin (called before init)
+         * Install step, add behavior before the lifecycle.
          */
         install: function install() {
-            var self = this;
-            //the storechange event is fired early (before runner's init is done)
-            //so we attach the handler early
-            var testRunner = this.getTestRunner();
-            testRunner.on('storechange', function handleStoreChange() {
-                self.shouldClearStorage = true;
-            });
+            //define the "itemThemeSwitcher" store as "volatile" (removed on browser change).
+            this.getTestRunner().getTestStore().setVolatile(this.getName());
         },
 
         /**
@@ -65,6 +53,7 @@ define([
          */
         init: function init() {
             var self = this;
+            var pluginName = this.getName();
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
@@ -98,6 +87,14 @@ define([
                 if (previousTheme !== state.selectedTheme) {
                     testRunner.trigger('themechange', state.selectedTheme, previousTheme);
                 }
+
+                allMenuEntries.forEach(function (menuEntry) {
+                    if (menuEntry.getId() === themeId) {
+                        menuEntry.turnOn();
+                    } else {
+                        menuEntry.turnOff();
+                    }
+                });
             }
 
             //init plugin state
@@ -194,41 +191,14 @@ define([
                     }
                 });
 
-            return storeFactory(pluginName + '-' + testRunner.getConfig().serviceCallId)
+            return testRunner.getPluginStore(this.getName())
                 .then(function (itemThemesStore) {
-                    if (self.shouldClearStorage) {
-                        return itemThemesStore.clear().then(function () {
-                            return itemThemesStore;
-                        });
-                    }
-                    return itemThemesStore;
-                }).then(function (itemThemesStore) {
-                    testRunner
-                        .after('renderitem enableitem', function () {
-                            self.storage = itemThemesStore;
-
-                            self.storage.getItem('itemThemeId')
-                                .then(function (itemThemeId) {
-                                    if (itemThemeId && state.selectedTheme !== itemThemeId) {
-                                        changeTheme(itemThemeId);
-
-                                        allMenuEntries.forEach(function (menuEntry) {
-                                            if (menuEntry.getId() === itemThemeId) {
-                                                menuEntry.turnOn();
-                                            } else {
-                                                menuEntry.turnOff();
-                                            }
-                                        });
-                                    }
-                                });
-                        })
-
-                        .before('finish', function() {
-                            return new Promise(function(resolve) {
-                                self.storage.removeStore()
-                                    .then(resolve)
-                                    .catch(resolve);
-                            });
+                    self.storage = itemThemesStore;
+                    self.storage.getItem('itemThemeId')
+                        .then(function (itemThemeId) {
+                            if (itemThemeId && state.selectedTheme !== itemThemeId) {
+                                changeTheme(itemThemeId);
+                            }
                         });
                 });
         },
