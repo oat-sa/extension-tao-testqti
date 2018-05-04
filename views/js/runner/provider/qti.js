@@ -275,7 +275,8 @@ define([
                         if (action === 'skip') {
                             context.itemAnswered = false;
                         } else {
-                            context.itemAnswered = currentItemHelper.isAnswered(self);
+                            // when the test part is linear, the item is always answered as we cannot come back to it
+                            context.itemAnswered = currentItemHelper.isAnswered(self) || context.isLinear;
                         }
                         self.setTestContext(context);
                         resolve();
