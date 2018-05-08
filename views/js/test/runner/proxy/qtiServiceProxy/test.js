@@ -23,20 +23,21 @@ define([
     'lodash',
     'util/url',
     'core/communicator',
-    'test/mocks/ajax',
     'taoTests/runner/proxy',
-    'taoQtiTest/runner/proxy/qtiServiceProxy'
-], function($, _, urlUtil, communicatorFactory, ajaxMock, proxyFactory, qtiServiceProxy) {
+    'taoQtiTest/runner/proxy/qtiServiceProxy',
+    'lib/jquery.mockjax/jquery.mockjax'
+], function($, _, urlUtil, communicatorFactory, proxyFactory, qtiServiceProxy) {
     'use strict';
 
     QUnit.module('qtiServiceProxy');
 
-    // backup/restore ajax method between each test
-    QUnit.testStart(function () {
-        ajaxMock.push();
-    });
+    // prevent the AJAX mocks to pollute the logs
+    $.mockjaxSettings.logger = null;
+    $.mockjaxSettings.responseTime = 1;
+
+    // restore AJAX method after each test
     QUnit.testDone(function () {
-        ajaxMock.pop();
+        $.mockjax.clear();
     });
 
 
@@ -125,8 +126,13 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
@@ -148,7 +154,7 @@ define([
             result
                 .then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -188,16 +194,24 @@ define([
 
         proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-        ajaxMock.mock(true);
+        $.mockjax([{
+            url: '/init*',
+            responseText: {
+                success: true
+            }
+        }, {
+            url: '/(^init)*',
+            status: 500,
+            response: function() {
+                assert.ok(false, 'The proxy must not use an ajax request to destroy the instance!');
+            }
+        }]);
 
         proxy = proxyFactory('qtiServiceProxy', initConfig);
 
         proxy.install();
 
         proxy.init().then(function () {
-            ajaxMock.mock(false, false, function() {
-                assert.ok(false, 'The proxy must not use an ajax request to destroy the instance!');
-            });
 
             proxy.on('destroy', function(promise) {
                 assert.ok(true, 'The proxyFactory has fired the "destroy" event');
@@ -284,7 +298,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -302,8 +321,13 @@ define([
 
             proxy.init().then(function() {
 
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('getTestData', function(promise) {
@@ -317,7 +341,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -390,7 +414,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -407,8 +436,13 @@ define([
                 });
 
             proxy.init().then(function() {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('getTestContext', function(promise) {
@@ -422,7 +456,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -495,7 +529,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -512,8 +551,13 @@ define([
                 });
 
             proxy.init().then(function() {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('getTestMap', function(promise) {
@@ -527,7 +571,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -611,7 +655,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -628,8 +677,13 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('sendVariables', function(promise, variables) {
@@ -644,7 +698,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -728,7 +782,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -745,8 +804,13 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('callTestAction', function(promise, action, params) {
@@ -762,7 +826,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -844,7 +908,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -861,8 +930,13 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('getItem', function(promise, uri) {
@@ -877,7 +951,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -959,7 +1033,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -976,8 +1055,13 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('submitItem', function(promise, uri, state, response) {
@@ -994,7 +1078,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -1082,7 +1166,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -1099,8 +1188,13 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('callItemAction', function(promise, uri, action, params) {
@@ -1117,7 +1211,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -1203,7 +1297,12 @@ define([
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax({
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -1220,8 +1319,13 @@ define([
             proxy.init().then(function () {
                 proxy.getTokenHandler().setToken(caseData.token);
 
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+                $.mockjax({
+                    url: '/*',
+                    status: caseData.ajaxSuccess ? 200 : 500,
+                    responseText: caseData.response,
+                    response: function(settings) {
+                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                    }
                 });
 
                 proxy.on('telemetry', function(promise, uri, signal, params) {
@@ -1238,7 +1342,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -1311,7 +1415,12 @@ define([
         communicatorFactory.registerProvider(initConfig.bootstrap.communication.type, mockCommunicator);
         proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-        ajaxMock.mock(true);
+        $.mockjax({
+            url: '/init*',
+            responseText: {
+                success: true
+            }
+        });
 
         proxy = proxyFactory('qtiServiceProxy', initConfig);
 
@@ -1373,7 +1482,12 @@ define([
 
         proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
-        ajaxMock.mock(true);
+        $.mockjax({
+            url: '/init*',
+            responseText: {
+                success: true
+            }
+        });
 
         proxy = proxyFactory('qtiServiceProxy', initConfig);
 

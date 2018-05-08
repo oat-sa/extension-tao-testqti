@@ -23,21 +23,22 @@ define([
     'jquery',
     'lodash',
     'core/promise',
-    'test/mocks/ajax',
     'taoQtiTest/previewer/runner',
-    'json!taoQtiItem/test/samples/json/space-shuttle.json'
-], function ($, _, Promise, ajaxMock, previewerFactory, itemData) {
+    'json!taoQtiItem/test/samples/json/space-shuttle.json',
+    'lib/jquery.mockjax/jquery.mockjax'
+], function ($, _, Promise, previewerFactory, itemData) {
     'use strict';
 
     QUnit.module('API');
 
 
-    // backup/restore ajax method between each test
-    QUnit.testStart(function () {
-        ajaxMock.push();
-    });
+    // prevent the AJAX mocks to pollute the logs
+    $.mockjaxSettings.logger = null;
+    $.mockjaxSettings.responseTime = 1;
+
+    // restore AJAX method after each test
     QUnit.testDone(function () {
-        ajaxMock.pop();
+        $.mockjax.clear();
     });
 
 
@@ -50,10 +51,11 @@ define([
         var previewer2 = previewerFactory($('#fixture-2'), config);
 
         QUnit.expect(4);
-        ajaxMock.mock(true, function() {
-            return {
+        $.mockjax({
+            url: '/*',
+            responseText: {
                 success: true
-            };
+            }
         });
         assert.equal(typeof previewerFactory, 'function', "The previewer module exposes a function");
         assert.equal(typeof previewer1, 'object', "The previewer factory returns an object");
@@ -71,17 +73,41 @@ define([
             console.error(err);
         }).then(function() {
             QUnit.start();
-        })
+        });
     });
 
 
     QUnit.cases([{
         title: 'itemData in init',
         fixture: '#fixture-item-1',
-        response: {
-            success: true,
-            itemIdentifier: 'item-1',
-            itemData: {
+        mock: {
+            url: '/init*',
+            responseText: {
+                success: true,
+                itemIdentifier: 'item-1',
+                itemData: {
+                    content: {
+                        type: 'qti',
+                        data: itemData
+                    },
+                    baseUrl: '',
+                    state: {}
+                }
+            }
+        }
+    }, {
+        title: 'itemRef in init',
+        fixture: '#fixture-item-2',
+        mock: [{
+            url: '/init*',
+            responseText: {
+                success: true,
+                itemIdentifier: 'item-2'
+            }
+        }, {
+            url: '/getItem*',
+            responseText: {
+                success: true,
                 content: {
                     type: 'qti',
                     data: itemData
@@ -89,52 +115,29 @@ define([
                 baseUrl: '',
                 state: {}
             }
-        }
-    }, {
-        title: 'itemRef in init',
-        fixture: '#fixture-item-2',
-        response: function(req) {
-            if (/\/init[\/?]/.test(req.url)) {
-                return {
-                    success: true,
-                    itemIdentifier: 'item-2'
-                };
-            }
-
-            if (/\/getItem[\/?]/.test(req.url)) {
-                return {
-                    success: true,
-                    content: {
-                        type: 'qti',
-                        data: itemData
-                    },
-                    baseUrl: '',
-                    state: {}
-                };
-            }
-        }
+        }]
     }, {
         title: 'manual load',
         fixture: '#fixture-item-3',
         itemIdentifier: 'item-3',
-        response: function(req) {
-            if (/\/getItem[\/?]/.test(req.url)) {
-                return {
-                    success: true,
-                    content: {
-                        type: 'qti',
-                        data: itemData
-                    },
-                    baseUrl: '',
-                    state: {}
-                };
-            }
-            return {
+        mock: [{
+            url: '/init*',
+            responseText: {
                 success: true
-            };
-        }
-    }])
-        .asyncTest('render item ', function (data, assert) {
+            }
+        }, {
+            url: '/getItem*',
+            responseText: {
+                success: true,
+                content: {
+                    type: 'qti',
+                    data: itemData
+                },
+                baseUrl: '',
+                state: {}
+            }
+        }]
+    }]).asyncTest('render item ', function (data, assert) {
         var $container = $(data.fixture);
         var serviceCallId = 'previewer';
         var config = {
@@ -143,7 +146,7 @@ define([
 
         QUnit.expect(1);
 
-        ajaxMock.mock(true, data.response);
+        $.mockjax(data.mock);
 
         previewerFactory($container, config)
             .on('error', function (err) {
@@ -180,32 +183,22 @@ define([
 
         QUnit.expect(1);
 
-        ajaxMock.mock(true, function(req) {
-            if (/\/init[\/?]/.test(req.url)) {
-                return {
-                    success: true,
-                    itemIdentifier: itemRef,
-                    itemData: {
-                        content: {
-                            type: 'qti',
-                            data: itemData
-                        },
-                        baseUrl: '',
-                        state: {}
-                    }
-                };
+        $.mockjax({
+            url: '/init*',
+            responseText: {
+                success: true
             }
-
-            if (/\/getItem[\/?]/.test(req.url)) {
-                return {
-                    success: true,
-                    content: {
-                        type: 'qti',
-                        data: itemData
-                    },
-                    baseUrl: '',
-                    state: {}
-                };
+        });
+        $.mockjax({
+            url: '/getItem*',
+            responseText: {
+                success: true,
+                content: {
+                    type: 'qti',
+                    data: itemData
+                },
+                baseUrl: '',
+                state: {}
             }
         });
 
@@ -221,7 +214,7 @@ define([
                         assert.ok(true, 'The previewer has been rendered');
                         QUnit.start();
                     })
-                    //.loadItem(itemRef);
+                    .loadItem(itemRef);
             });
     });
 });

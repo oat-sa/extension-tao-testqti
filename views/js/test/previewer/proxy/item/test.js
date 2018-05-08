@@ -24,20 +24,22 @@ define([
     'lodash',
     'util/url',
     'core/communicator',
-    'test/mocks/ajax',
     'taoTests/runner/proxy',
-    'taoQtiTest/previewer/proxy/item'
-], function($, _, urlUtil, communicatorFactory, ajaxMock, proxyFactory, itemProxy) {
+    'taoQtiTest/previewer/proxy/item',
+    'lib/jquery.mockjax/jquery.mockjax'
+], function($, _, urlUtil, communicatorFactory, proxyFactory, itemProxy) {
     'use strict';
 
     QUnit.module('itemProxy');
 
-    // backup/restore ajax method between each test
-    QUnit.testStart(function () {
-        ajaxMock.push();
-    });
+
+    // prevent the AJAX mocks to pollute the logs
+    $.mockjaxSettings.logger = null;
+    $.mockjaxSettings.responseTime = 1;
+
+    // restore AJAX method after each test
     QUnit.testDone(function () {
-        ajaxMock.pop();
+        $.mockjax.clear();
     });
 
 
@@ -122,8 +124,13 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
 
             proxy = proxyFactory('itemProxy', initConfig);
@@ -145,7 +152,7 @@ define([
             result
                 .then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -183,17 +190,24 @@ define([
 
         proxyFactory.registerProvider('itemProxy', itemProxy);
 
-        ajaxMock.mock(true);
+        $.mockjax([{
+            url: '/init*',
+            responseText: {
+                success: true
+            }
+        }, {
+            url: '/*',
+            status: 500,
+            response: function() {
+                assert.ok(false, 'The proxy must not use an ajax request to destroy the instance!');
+            }
+        }]);
 
         proxy = proxyFactory('itemProxy', initConfig);
 
         proxy.install();
 
         proxy.init().then(function () {
-            ajaxMock.mock(false, false, function() {
-                assert.ok(false, 'The proxy must not use an ajax request to destroy the instance!');
-            });
-
             proxy.on('destroy', function(promise) {
                 assert.ok(true, 'The proxyFactory has fired the "destroy" event');
                 assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "destroy" event');
@@ -275,7 +289,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -293,10 +319,6 @@ define([
 
             proxy.init().then(function() {
 
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
-
                 proxy.on('getTestData', function(promise) {
                     assert.ok(true, 'The proxy has fired the "getTestData" event');
                     assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "getTestData" event');
@@ -308,7 +330,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -377,7 +399,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -394,9 +428,6 @@ define([
                 });
 
             proxy.init().then(function() {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
 
                 proxy.on('getTestContext', function(promise) {
                     assert.ok(true, 'The proxy has fired the "getTestContext" event');
@@ -409,7 +440,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -478,7 +509,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -495,9 +538,6 @@ define([
                 });
 
             proxy.init().then(function() {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
 
                 proxy.on('getTestMap', function(promise) {
                     assert.ok(true, 'The proxy has fired the "getTestMap" event');
@@ -510,7 +550,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -590,7 +630,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -607,9 +659,6 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
 
                 proxy.on('sendVariables', function(promise, variables) {
                     assert.ok(true, 'The proxy has fired the "sendVariables" event');
@@ -623,7 +672,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -683,8 +732,7 @@ define([
             response: "error",
             ajaxSuccess: false,
             success: false
-    }])
-        .asyncTest('itemProxy.callTestAction ', function(caseData, assert) {
+    }]).asyncTest('itemProxy.callTestAction ', function(caseData, assert) {
             var initConfig = {
                 serviceCallId: 'foo',
                 bootstrap: {
@@ -703,7 +751,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -720,9 +780,6 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
 
                 proxy.on('callTestAction', function(promise, action, params) {
                     assert.ok(true, 'The proxy has fired the "callTestAction" event');
@@ -737,7 +794,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -815,7 +872,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -832,9 +901,6 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
 
                 proxy.on('getItem', function(promise, uri) {
                     assert.ok(true, 'The proxy has fired the "getItem" event');
@@ -848,7 +914,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -926,7 +992,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -943,9 +1021,6 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
 
                 proxy.on('submitItem', function(promise, uri, state, response) {
                     assert.ok(true, 'The proxy has fired the "submitItem" event');
@@ -961,7 +1036,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -1045,7 +1120,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -1062,9 +1149,6 @@ define([
                 });
 
             proxy.init().then(function () {
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
 
                 proxy.on('callItemAction', function(promise, uri, action, params) {
                     assert.ok(true, 'The proxy has fired the "callItemAction" event');
@@ -1080,7 +1164,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -1162,7 +1246,19 @@ define([
 
             proxyFactory.registerProvider('itemProxy', itemProxy);
 
-            ajaxMock.mock(true);
+            $.mockjax([{
+                url: '/init*',
+                responseText: {
+                    success: true
+                }
+            }, {
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            }]);
 
             proxy = proxyFactory('itemProxy', initConfig);
 
@@ -1179,10 +1275,6 @@ define([
             proxy.init().then(function () {
                 proxy.getTokenHandler().setToken(caseData.token);
 
-                ajaxMock.mock(caseData.ajaxSuccess, caseData.response, function(ajaxConfig) {
-                    assert.equal(ajaxConfig.url, expectedUrl, 'The proxy has called the right service');
-                });
-
                 proxy.on('telemetry', function(promise, uri, signal, params) {
                     assert.ok(true, 'The proxy has fired the "telemetry" event');
                     assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "telemetry" event');
@@ -1197,7 +1289,7 @@ define([
 
                 result.then(function(data) {
                     if (caseData.success) {
-                        assert.equal(data, caseData.response, 'The proxy has returned the expected data');
+                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
@@ -1268,7 +1360,12 @@ define([
         communicatorFactory.registerProvider(initConfig.bootstrap.communication.type, mockCommunicator);
         proxyFactory.registerProvider('itemProxy', itemProxy);
 
-        ajaxMock.mock(true);
+        $.mockjax({
+            url: '/*',
+            responseText: {
+                success: true
+            }
+        });
 
         proxy = proxyFactory('itemProxy', initConfig);
 
@@ -1328,7 +1425,12 @@ define([
 
         proxyFactory.registerProvider('itemProxy', itemProxy);
 
-        ajaxMock.mock(true);
+        $.mockjax({
+            url: '/*',
+            responseText: {
+                success: true
+            }
+        });
 
         proxy = proxyFactory('itemProxy', initConfig);
 
