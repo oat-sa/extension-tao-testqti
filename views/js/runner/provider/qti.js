@@ -394,8 +394,15 @@ define([
                             scope: scope,
                             ref: ref
                         }),
-                        new Promise(function(resolve){
-                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
+                        new Promise(function(resolve) {
+                            if (context.options
+                                && context.options.hasOwnProperty('noAlertTimeout')
+                                && context.options.noAlertTimeout
+                            ) {
+                                resolve();
+                            } else {
+                                self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
+                            }
                         })
                     );
                 })
