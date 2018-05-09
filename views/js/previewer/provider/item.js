@@ -76,12 +76,13 @@ define([
 
             return areaBrokerFactory($layout, {
                 content: $('#qti-content', $layout),
-                toolbox: $('.tools-box', $layout),
-                navigation: $('.navi-box-list', $layout),
+                toolbox: $('.bottom-action-bar .tools-box', $layout),
+                navigation: $('.bottom-action-bar .navi-box-list', $layout),
                 control: $('.top-action-bar .control-box', $layout),
                 actionsBar: $('.bottom-action-bar .control-box', $layout),
                 panel: $('.test-sidebar-left', $layout),
-                header: $('.title-box', $layout)
+                header: $('.top-action-bar .tools-box', $layout),
+                context: $('.top-action-bar .navi-box-list', $layout)
             });
         },
 

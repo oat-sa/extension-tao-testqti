@@ -1,9 +1,14 @@
 <main class="item-previewer-scope">
     <div class="action-bar content-action-bar horizontal-action-bar top-action-bar">
-        <div class="control-box size-wrapper"></div>
+        <div class="control-box size-wrapper">
+            <div class="lft tools-box"></div>
+            <div class="rgt navi-box">
+                <ul class="plain navi-box-list"></ul>
+            </div>
+        </div>
     </div>
 
-    <div class="item-previewer-sections">
+    <div class="test-runner-sections">
 
         <aside class="test-sidebar test-sidebar-left"></aside>
 

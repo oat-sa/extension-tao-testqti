@@ -15,7 +15,7 @@
 
     height: calc(100vh - #{(map-get($heights, header) + map-get($heights, footer)) * 1px});
 
-    .item-previewer-sections {
+    .test-runner-sections {
 
         /* flex column value */
         -webkit-flex: 1 1 0%;
