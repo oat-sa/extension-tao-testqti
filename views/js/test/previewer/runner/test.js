@@ -25,7 +25,8 @@ define([
     'core/promise',
     'taoQtiTest/previewer/runner',
     'json!taoQtiItem/test/samples/json/space-shuttle.json',
-    'lib/jquery.mockjax/jquery.mockjax'
+    'lib/jquery.mockjax/jquery.mockjax',
+    'css!taoQtiTestCss/item-previewer'
 ], function ($, _, Promise, previewerFactory, itemData) {
     'use strict';
 
@@ -178,6 +179,10 @@ define([
                 module: 'taoQtiTest/previewer/plugins/navigation/submit',
                 bundle: 'taoQtiTest/loader/qtiPreviewer.min',
                 category: 'navigation'
+            }, {
+                module: 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher',
+                bundle: 'taoQtiTest/loader/testPlugins.min',
+                category: 'tools'
             }]
         };
 

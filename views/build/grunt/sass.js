@@ -11,6 +11,7 @@ module.exports = function(grunt) {
                     { dest : root + 'css/creator.css', src : root + 'scss/creator.scss' },
                     { dest : root + 'css/test-runner.css', src : root + 'scss/test-runner.scss' },
                     { dest : root + 'css/new-test-runner.css', src :  root + 'scss/new-test-runner.scss'},
+                    { dest : root + 'css/item-previewer.css', src :  root + 'scss/item-previewer.scss'},
                     { dest : root + 'css/plugins/key-navigation.css', src : root + 'scss/plugins/key-navigation.scss'},
                     { dest : pluginDir + 'controls/timer/component/css/countdown.css', src : pluginDir + 'controls/timer/component/scss/countdown.scss'},
                     { dest : pluginDir + 'controls/timer/component/css/timerbox.css', src : pluginDir + 'controls/timer/component/scss/timerbox.scss'}
