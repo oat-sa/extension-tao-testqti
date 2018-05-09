@@ -170,7 +170,7 @@ msgid "Auxiliary file not found at location \"%s\"."
 msgstr ""
 
 msgid "Calculator"
-msgstr ""
+msgstr "Calculatrice"
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -203,7 +203,7 @@ msgid "Clear Highlights"
 msgstr ""
 
 msgid "Close Magnifier"
-msgstr ""
+msgstr "Fermer la loupe"
 
 msgid "Close the mask"
 msgstr ""
@@ -516,16 +516,16 @@ msgid "Linear"
 msgstr ""
 
 msgid "Magnifier"
-msgstr ""
+msgstr "Loupe"
 
 msgid "Magnify less"
-msgstr ""
+msgstr "Agrandir moins"
 
 msgid "Magnify more"
-msgstr ""
+msgstr "Agrandir plus"
 
 msgid "Magnifying Glass"
-msgstr ""
+msgstr "Loupe"
 
 msgid "Manage Rubric Blocks"
 msgstr ""
@@ -669,7 +669,7 @@ msgid "Only display the unanswered items"
 msgstr "Afficher uniquement les items non répondus"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "Ouvrir la calculatrice"
 
 msgid "Ordering"
 msgstr ""
