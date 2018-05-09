@@ -27,25 +27,31 @@ define([
     'i18n',
     'core/store',
     'core/promise',
+    'core/cachedStore',
     'taoTests/runner/areaBroker',
+    'taoTests/runner/testStore',
     'taoTests/runner/proxy',
     'taoQtiTest/previewer/proxy/item',
     'taoQtiTest/runner/ui/toolbox/toolbox',
     'taoQtiItem/runner/qtiItemRunner',
     'taoQtiTest/runner/config/assetManager',
     'tpl!taoQtiTest/previewer/provider/item'
-], function ($,
-             _,
-             __,
-             store,
-             Promise,
-             areaBrokerFactory,
-             proxyFactory,
-             proxyProvider,
-             toolboxFactory,
-             qtiItemRunner,
-             assetManagerFactory,
-             layoutTpl) {
+], function (
+    $,
+    _,
+    __,
+    store,
+    Promise,
+    cachedStore,
+    areaBrokerFactory,
+    testStoreFactory,
+    proxyFactory,
+    proxyProvider,
+    toolboxFactory,
+    qtiItemRunner,
+    assetManagerFactory,
+    layoutTpl
+) {
     'use strict';
 
     //the asset strategies
@@ -87,15 +93,82 @@ define([
          */
         loadProxy: function loadProxy() {
             var config = this.getConfig();
-
-            var proxyProvider = config.proxyProvider || 'qtiItemPreviewerProxy';
             var proxyConfig = _.pick(config, [
                 'serviceCallId',
                 'bootstrap',
                 'timeout'
             ]);
 
-            return proxyFactory(proxyProvider, proxyConfig);
+            return proxyFactory(config.proxyProvider || 'qtiItemPreviewerProxy', proxyConfig);
+        },
+
+        /**
+         * Initialize and load the test store
+         * @returns {testStore}
+         */
+        loadTestStore : function loadTestStore(){
+            var config = this.getConfig();
+
+            //the test run needs to be identified uniquely
+            var identifier = config.serviceCallId || 'test-' + Date.now();
+            return testStoreFactory(identifier);
+        },
+
+
+        /**
+         * Loads the persistent states storage
+         *
+         * @returns {Promise}
+         */
+        loadPersistentStates : function loadPersistentStates() {
+            var self = this;
+            var config = this.getConfig();
+            var persistencePromise = cachedStore('test-states-' + config.serviceCallId, 'states');
+
+            persistencePromise.catch(function(err) {
+                self.trigger('error', err);
+            });
+
+            return persistencePromise
+                .then(function(storage) {
+                    self.stateStorage = storage;
+                });
+        },
+
+        /**
+         * Checks a runner persistent state
+         *
+         * @param {String} name - the state name
+         * @returns {Boolean} if active, false if not set
+         */
+        getPersistentState : function getPersistentState(name) {
+            if (this.stateStorage) {
+                return this.stateStorage.getItem(name);
+            }
+        },
+
+        /**
+         * Defines a runner persistent state
+         *
+         * @param {String} name - the state name
+         * @param {Boolean} active - is the state active
+         * @returns {Promise} Returns a promise that:
+         *                      - will be resolved once the state is fully stored
+         *                      - will be rejected if any error occurs or if the state name is not a valid string
+         */
+        setPersistentState : function setPersistentState(name, active) {
+            var self = this;
+            var setPromise;
+
+            if (this.stateStorage) {
+                setPromise = this.stateStorage.setItem(name, active);
+
+                setPromise.catch(function(err) {
+                    self.trigger('error', err);
+                });
+
+                return setPromise;
+            }
         },
 
         /**
