@@ -1,9 +1,9 @@
-<main class="test-runner-scope">
+<main class="item-previewer-scope">
     <div class="action-bar content-action-bar horizontal-action-bar top-action-bar">
         <div class="control-box size-wrapper"></div>
     </div>
 
-    <div class="test-runner-sections">
+    <div class="item-previewer-sections">
 
         <aside class="test-sidebar test-sidebar-left"></aside>
 

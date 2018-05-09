@@ -26,8 +26,9 @@ define([
     'lodash',
     'context',
     'core/promise',
-    'taoTests/runner/runnerComponent'
-], function ($, _, context, Promise, runnerFactory) {
+    'taoTests/runner/runnerComponent',
+    'tpl!taoQtiTest/previewer/runner'
+], function ($, _, context, Promise, runnerFactory, runnerTpl) {
     'use strict';
 
     /**
@@ -63,6 +64,6 @@ define([
         if (config.providers) {
             config.providers = _.filter(config.providers, {category: 'previewer'});
         }
-        return runnerFactory(container, config, template);
+        return runnerFactory(container, config, template || runnerTpl);
     };
 });
