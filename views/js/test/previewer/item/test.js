@@ -182,16 +182,7 @@ define([
         var serviceCallId = 'previewer';
         var itemRef = 'item-1';
         var config = {
-            serviceCallId: serviceCallId,
-            plugins: [{
-                module: 'taoQtiTest/previewer/plugins/navigation/submit',
-                bundle: 'taoQtiTest/loader/qtiPreviewer.min',
-                category: 'navigation'
-            }, {
-                module: 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher',
-                bundle: 'taoQtiTest/loader/testPlugins.min',
-                category: 'tools'
-            }]
+            serviceCallId: serviceCallId
         };
 
         QUnit.expect(1);

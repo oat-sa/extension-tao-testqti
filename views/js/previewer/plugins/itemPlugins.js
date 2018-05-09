@@ -22,7 +22,7 @@ define([
     'lodash',
     'ui/themes',
     'taoQtiTest/previewer/plugins/controls/close',
-    'taoQtiTest/previewer/plugins/navigation/submit',
+    'taoQtiTest/previewer/plugins/navigation/submit/submit',
     'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher'
 ], function (_, themeHandler, close, submit, itemThemeSwitcher) {
     'use strict';

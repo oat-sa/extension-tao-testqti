@@ -28,8 +28,10 @@ define([
     'ui/hider',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/messages',
-    'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, pluginFactory, messages, buttonTpl) {
+    'tpl!taoQtiTest/runner/plugins/templates/button',
+    'tpl!taoQtiTest/previewer/plugins/navigation/submit/preview-console',
+    'tpl!taoQtiTest/previewer/plugins/navigation/submit/preview-console-closer'
+], function ($, _, __, hider, pluginFactory, messages, buttonTpl, previewConsoleTpl, previewConsoleCloserTpl) {
     'use strict';
 
     return pluginFactory({
@@ -43,14 +45,19 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
-            this.$element = $(buttonTpl({
-                control: 'submit',
-                title: __('Submit and show the result'),
-                icon: 'forward',
-                text: __('Submit')
-            }));
+            this.controls = {
+                $button: $(buttonTpl({
+                    control: 'submit',
+                    title: __('Submit and show the result'),
+                    icon: 'forward',
+                    text: __('Submit')
+                })),
+                $console: $(previewConsoleTpl()),
+                $consoleCloser: $(previewConsoleCloserTpl())
+            };
 
-            this.$element.on('click', function (e) {
+
+            this.controls.$button.on('click', function (e) {
                 e.preventDefault();
                 if (self.getState('enabled') !== false) {
                     self.disable();
@@ -61,7 +68,7 @@ define([
             this.disable();
 
             testRunner
-                .on('responseitem', function(response) {
+                .on('responseitem', function (response) {
                     console.log(response);
                 })
                 .on('enablenav', function () {
@@ -78,45 +85,53 @@ define([
         render: function render() {
 
             //attach the element to the navigation area
-            var $container = this.getAreaBroker().getNavigationArea();
-            $container.append(this.$element);
+            var $container = this.getAreaBroker().getContainer();
+            var $navigation = this.getAreaBroker().getNavigationArea();
+            $navigation.append(this.controls.$button);
+            $navigation.append(this.controls.$consoleCloser);
+            $container.append(this.controls.$console);
         },
 
         /**
          * Called during the runner's destroy phase
          */
         destroy: function destroy() {
-            this.$element.remove();
+            _.forEach(this.controls, function ($el) {
+                $el.remove();
+            });
+            this.controls = null;
         },
 
         /**
          * Enable the button
          */
         enable: function enable() {
-            this.$element.removeProp('disabled')
-                .removeClass('disabled');
+            _.forEach(this.controls, function ($el) {
+                $el.removeProp('disabled').removeClass('disabled');
+            });
         },
 
         /**
          * Disable the button
          */
         disable: function disable() {
-            this.$element.prop('disabled', true)
-                .addClass('disabled');
+            _.forEach(this.controls, function ($el) {
+                $el.prop('disabled', true).addClass('disabled');
+            });
         },
 
         /**
          * Show the button
          */
         show: function show() {
-            hider.show(this.$element);
+            _.forEach(this.controls, hider.show);
         },
 
         /**
          * Hide the button
          */
         hide: function hide() {
-            hider.hide(this.$element);
+            _.forEach(this.controls, hider.hide);
         }
     });
 });

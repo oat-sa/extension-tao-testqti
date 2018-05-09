@@ -176,7 +176,7 @@ define([
         var config = {
             serviceCallId: serviceCallId,
             plugins: [{
-                module: 'taoQtiTest/previewer/plugins/navigation/submit',
+                module: 'taoQtiTest/previewer/plugins/navigation/submit/submit',
                 bundle: 'taoQtiTest/loader/qtiPreviewer.min',
                 category: 'navigation'
             }, {
