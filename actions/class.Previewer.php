@@ -18,7 +18,7 @@
  */
 
 /**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;

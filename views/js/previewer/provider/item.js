@@ -57,18 +57,6 @@ define([
     //the asset strategies
     var assetManager = assetManagerFactory();
 
-    var $layout = $(layoutTpl());
-
-    var areaBroker = areaBrokerFactory($layout, {
-        content: $('#qti-content', $layout),
-        toolbox: $('.tools-box', $layout),
-        navigation: $('.navi-box-list', $layout),
-        control: $('.top-action-bar .control-box', $layout),
-        actionsBar: $('.bottom-action-bar .control-box', $layout),
-        panel: $('.test-sidebar-left', $layout),
-        header: $('.title-box', $layout)
-    });
-
     proxyFactory.registerProvider('qtiItemPreviewerProxy', proxyProvider);
 
     /**
@@ -84,7 +72,17 @@ define([
          * @returns {areaBroker}
          */
         loadAreaBroker: function loadAreaBroker() {
-            return areaBroker;
+            var $layout = $(layoutTpl());
+
+            return areaBrokerFactory($layout, {
+                content: $('#qti-content', $layout),
+                toolbox: $('.tools-box', $layout),
+                navigation: $('.navi-box-list', $layout),
+                control: $('.top-action-bar .control-box', $layout),
+                actionsBar: $('.bottom-action-bar .control-box', $layout),
+                panel: $('.test-sidebar-left', $layout),
+                header: $('.title-box', $layout)
+            });
         },
 
         /**
@@ -183,6 +181,7 @@ define([
         init: function init() {
             var self = this;
             var dataHolder = this.getDataHolder();
+            var areaBroker = this.getAreaBroker();
 
             areaBroker.setComponent('toolbox', toolboxFactory());
             areaBroker.getToolbox().init();
@@ -268,9 +267,9 @@ define([
         render: function render() {
 
             var config = this.getConfig();
-            var broker = this.getAreaBroker();
+            var areaBroker = this.getAreaBroker();
 
-            config.renderTo.append(broker.getContainer());
+            config.renderTo.append(areaBroker.getContainer());
 
             areaBroker.getToolbox().render(areaBroker.getToolboxArea());
         },
@@ -368,6 +367,7 @@ define([
          * @this {runner} the runner context, not the provider
          */
         destroy: function destroy() {
+            var areaBroker = this.getAreaBroker();
 
             // prevent the item to be displayed while test runner is destroying
             if (this.itemRunner) {
@@ -377,7 +377,6 @@ define([
 
             if (areaBroker) {
                 areaBroker.getToolbox().destroy();
-                areaBroker = null;
             }
         }
     };
