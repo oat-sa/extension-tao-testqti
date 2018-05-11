@@ -364,14 +364,19 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         catch (XmlStorageException $e){
 
             $details[] = $e->getMessage();
+            $subReport = new common_report_Report(common_report_Report::TYPE_ERROR, __('The QTI Test XML or one of its dependencies is malformed or empty.'));
+            $itemReport = new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage());
             while (($previous = $e->getPrevious()) != null) {
                 $details[] = $previous->getMessage();
                 $e = $e->getPrevious();
             }
+            /** @var LibXMLError $error */
+            foreach ($e->getErrors() as $error) {
+                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $error->message));
+            }
+            $subReport->add($itemReport);
 
             common_Logger::e(implode("\n", $details));
-
-            $subReport = new common_report_Report(common_report_Report::TYPE_ERROR, __('The QTI Test XML or one of its dependencies is malformed or empty.'));
             $report->add($subReport);
 
             $report->setType(common_report_Report::TYPE_ERROR);
