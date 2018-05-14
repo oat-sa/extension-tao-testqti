@@ -196,16 +196,18 @@ define([
                     var itemState = itemRunner.getState();
                     var itemResponses = itemRunner.getResponses();
 
-                    this.trigger('disabletools enablenav');
+                    this.trigger('disabletools disablenav');
                     this.trigger('submitresponse', itemResponses, itemState);
 
                     return this.getProxy()
                         .submitItem(dataHolder.get('itemIdentifier'), itemState, itemResponses)
                         .then(function submitSuccess(response) {
                             self.trigger('scoreitem', response);
-                            self.trigger('resumeitem');
+                            self.trigger('enabletools enablenav resumeitem');
                         })
                         .catch(function submitError(err) {
+                            self.trigger('enabletools enablenav');
+
                             //some server errors are valid, so we don't fail (prevent empty responses)
                             if (err.code === 200) {
                                 self.trigger('alert.submitError',

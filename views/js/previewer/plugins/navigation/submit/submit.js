@@ -94,7 +94,7 @@ define([
 
             // display responses in the console
             function showResponses(type, responses) {
-                _.forEach(responses, function(response, identifier) {
+                _.forEach(responses, function (response, identifier) {
                     addConsoleLine(type, strPad(identifier + ': ', 15, ' ') + _.escape(pciResponse.prettyPrint(response)));
                 });
             }
@@ -172,18 +172,14 @@ define([
          * Enable the button
          */
         enable: function enable() {
-            _.forEach(this.controls, function ($el) {
-                $el.removeProp('disabled').removeClass('disabled');
-            });
+            this.controls.$button.removeProp('disabled').removeClass('disabled');
         },
 
         /**
          * Disable the button
          */
         disable: function disable() {
-            _.forEach(this.controls, function ($el) {
-                $el.prop('disabled', true).addClass('disabled');
-            });
+            this.controls.$button.prop('disabled', true).addClass('disabled');
         },
 
         /**
