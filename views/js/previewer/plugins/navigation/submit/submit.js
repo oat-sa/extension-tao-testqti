@@ -26,12 +26,30 @@ define([
     'lodash',
     'i18n',
     'ui/hider',
+    'ui/autoscroll',
+    'util/strPad',
     'taoTests/runner/plugin',
+    'taoQtiItem/qtiCommonRenderer/helpers/PciResponse',
     'taoQtiTest/runner/helpers/messages',
     'tpl!taoQtiTest/runner/plugins/templates/button',
     'tpl!taoQtiTest/previewer/plugins/navigation/submit/preview-console',
+    'tpl!taoQtiTest/previewer/plugins/navigation/submit/preview-console-line',
     'tpl!taoQtiTest/previewer/plugins/navigation/submit/preview-console-closer'
-], function ($, _, __, hider, pluginFactory, messages, buttonTpl, previewConsoleTpl, previewConsoleCloserTpl) {
+], function (
+    $,
+    _,
+    __,
+    hider,
+    autoscroll,
+    strPad,
+    pluginFactory,
+    pciResponse,
+    messages,
+    buttonTpl,
+    consoleTpl,
+    consoleLineTpl,
+    consoleCloserTpl
+) {
     'use strict';
 
     return pluginFactory({
@@ -45,6 +63,42 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
+            // display the console and its related controls, then auto scrolls to the last element
+            function showConsole() {
+                hider.show(self.controls.$console);
+                hider.show(self.controls.$consoleBody);
+                hider.show(self.controls.$consoleCloser);
+                autoscroll(self.controls.$consoleBody.children().last(), self.controls.$consoleBody);
+            }
+
+            // hide the console and its related controls
+            function hideConsole() {
+                hider.hide(self.controls.$console);
+                hider.hide(self.controls.$consoleCloser);
+            }
+
+            // add a line to the console
+            function addConsoleLine(type, message) {
+                var time = new Date();
+                var data = {
+                    time: strPad([
+                        strPad(time.getHours(), 2, '0', 'STR_PAD_LEFT'),
+                        strPad(time.getMinutes(), 2, '0', 'STR_PAD_LEFT'),
+                        strPad(time.getSeconds(), 2, '0', 'STR_PAD_LEFT')
+                    ].join(':'), 12, ' '),
+                    type: strPad(type || '', 18, ' '),
+                    message: strPad(message || '', 18, ' ')
+                };
+                self.controls.$consoleBody.append($(consoleLineTpl(data)));
+            }
+
+            // display responses in the console
+            function showResponses(type, responses) {
+                _.forEach(responses, function(response, identifier) {
+                    addConsoleLine(type, strPad(identifier + ': ', 15, ' ') + _.escape(pciResponse.prettyPrint(response)));
+                });
+            }
+
             this.controls = {
                 $button: $(buttonTpl({
                     control: 'submit',
@@ -52,10 +106,10 @@ define([
                     icon: 'forward',
                     text: __('Submit')
                 })),
-                $console: $(previewConsoleTpl()),
-                $consoleCloser: $(previewConsoleCloserTpl())
+                $console: $(consoleTpl()),
+                $consoleCloser: $(consoleCloserTpl())
             };
-
+            this.controls.$consoleBody = this.controls.$console.find('.preview-console-body');
 
             this.controls.$button.on('click', function (e) {
                 e.preventDefault();
@@ -65,11 +119,23 @@ define([
                 }
             });
 
+            this.controls.$consoleCloser.on('click', function (e) {
+                e.preventDefault();
+                hideConsole();
+            });
+
             this.disable();
 
             testRunner
-                .on('responseitem', function (response) {
-                    console.log(response);
+                .on('submitresponse', function (responses) {
+                    showResponses(__('Submitted data'), responses);
+                    showConsole();
+                })
+                .on('scoreitem', function (responses) {
+                    if (responses.itemSession) {
+                        showResponses(__('Output data'), responses.itemSession);
+                        showConsole();
+                    }
                 })
                 .on('enablenav', function () {
                     self.enable();
@@ -124,7 +190,7 @@ define([
          * Show the button
          */
         show: function show() {
-            _.forEach(this.controls, hider.show);
+            hider.show(this.controls.$button);
         },
 
         /**

@@ -55,6 +55,9 @@ define([
         config.provider = config.provider || itemProvider.name;
 
         return previewerFactory(container || $(document.body), config)
+            .on('render', function() {
+                this.setState('fullpage', true);
+            })
             .on('ready', function(runner) {
                 var self = this;
                 runner.on('destroy', function() {

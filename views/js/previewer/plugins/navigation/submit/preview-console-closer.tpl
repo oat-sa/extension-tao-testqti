@@ -1,1 +1,1 @@
-<span class="icon-close preview-console-closer" title="{{__ 'Close console'}}"></span>
+<span class="icon-close preview-console-closer hidden" title="{{__ 'Close console'}}"></span>

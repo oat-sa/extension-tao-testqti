@@ -193,11 +193,16 @@ define([
             this
                 .on('submititem', function () {
                     var itemRunner = this.itemRunner;
+                    var itemState = itemRunner.getState();
+                    var itemResponses = itemRunner.getResponses();
+
                     this.trigger('disabletools enablenav');
+                    this.trigger('submitresponse', itemResponses, itemState);
+
                     return this.getProxy()
-                        .submitItem(dataHolder.get('itemIdentifier'), itemRunner.getState(), itemRunner.getResponses())
+                        .submitItem(dataHolder.get('itemIdentifier'), itemState, itemResponses)
                         .then(function submitSuccess(response) {
-                            self.trigger('responseitem', response);
+                            self.trigger('scoreitem', response);
                             self.trigger('resumeitem');
                         })
                         .catch(function submitError(err) {
