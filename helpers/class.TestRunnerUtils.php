@@ -19,6 +19,7 @@
 */
 
 use oat\taoQtiTest\models\runner\RunnerService;
+use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\Container;
@@ -331,13 +332,15 @@ class taoQtiTest_helpers_TestRunnerUtils {
      */
     static public function buildTimeConstraints(AssessmentTestSession $session) {
         $constraints = array();
-        
+        /** @var TimerLabelFormatterService $timerLabelFormatter */
+        $timerLabelFormatter = static::getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
+
         foreach ($session->getTimeConstraints() as $tc) {
             // Only consider time constraints in force.
             if ($tc->getMaximumRemainingTime() !== false) {
                 $label = method_exists($tc->getSource(), 'getTitle') ? $tc->getSource()->getTitle() : $tc->getSource()->getIdentifier();
                 $constraints[] = array(
-                    'label' => $label,
+                    'label' => $timerLabelFormatter->format($label),
                     'source' => $tc->getSource()->getIdentifier(),
                     'seconds' => self::getDurationWithMicroseconds($tc->getMaximumRemainingTime()),
                     'allowLateSubmission' => $tc->allowLateSubmission(),
