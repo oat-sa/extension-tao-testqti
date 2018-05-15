@@ -23,7 +23,7 @@ define([
     'jquery',
     'lodash',
     'core/promise',
-    'taoQtiTest/previewer/runner',
+    'taoQtiTest/previewer/item',
     'json!taoQtiItem/test/samples/json/space-shuttle.json',
     'lib/jquery.mockjax/jquery.mockjax',
     'css!taoQtiTestCss/item-previewer'
@@ -48,8 +48,8 @@ define([
             serviceCallId: 'foo'
         };
 
-        var previewer1 = previewerFactory($('#fixture-1'), config);
-        var previewer2 = previewerFactory($('#fixture-2'), config);
+        var previewer1 = previewerFactory(config, $('#fixture-1'));
+        var previewer2 = previewerFactory(config, $('#fixture-2'));
 
         QUnit.expect(4);
         $.mockjax({
@@ -65,10 +65,16 @@ define([
 
         Promise.all([
             new Promise(function(resolve) {
-                previewer1.on('ready', resolve);
+                previewer1.on('ready', function(runner) {
+                    runner.destroy();
+                });
+                previewer1.on('destroy', resolve);
             }),
             new Promise(function(resolve) {
-                previewer2.on('ready', resolve);
+                previewer2.on('ready', function(runner) {
+                    runner.destroy();
+                });
+                previewer2.on('destroy', resolve);
             })
         ]).catch(function(err) {
             console.error(err);
@@ -149,7 +155,7 @@ define([
 
         $.mockjax(data.mock);
 
-        previewerFactory($container, config)
+        previewerFactory(config, $container)
             .on('error', function (err) {
                 console.error(err);
                 assert.ok(false, 'An error has occurred');
@@ -159,31 +165,24 @@ define([
                 runner
                     .after('renderitem', function () {
                         assert.ok(true, 'The previewer has been rendered');
-                        QUnit.start();
+                        runner.destroy();
                     });
 
                 if (data.itemIdentifier) {
                     runner.loadItem(data.itemIdentifier);
                 }
+            })
+            .on('destroy', function() {
+                QUnit.start();
             });
     });
 
 
     QUnit.asyncTest('integration', function (assert) {
-        var $container = $('#previewer');
         var serviceCallId = 'previewer';
         var itemRef = 'item-1';
         var config = {
-            serviceCallId: serviceCallId,
-            plugins: [{
-                module: 'taoQtiTest/previewer/plugins/navigation/submit/submit',
-                bundle: 'taoQtiTest/loader/qtiPreviewer.min',
-                category: 'navigation'
-            }, {
-                module: 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher',
-                bundle: 'taoQtiTest/loader/testPlugins.min',
-                category: 'tools'
-            }]
+            serviceCallId: serviceCallId
         };
 
         QUnit.expect(1);
@@ -207,7 +206,7 @@ define([
             }
         });
 
-        previewerFactory($container, config)
+        previewerFactory(config)
             .on('error', function (err) {
                 console.error(err);
                 assert.ok(false, 'An error has occurred');

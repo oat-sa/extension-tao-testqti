@@ -17,7 +17,7 @@
  */
 
 /**
- * Test Previewer Navigation Plugin : Submit
+ * Test Previewer Control Plugin : Close
  *
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
@@ -34,7 +34,7 @@ define([
 
     return pluginFactory({
 
-        name: 'submit',
+        name: 'close',
 
         /**
          * Initialize the plugin (called during runner's init)
@@ -44,26 +44,24 @@ define([
             var testRunner = this.getTestRunner();
 
             this.$element = $(buttonTpl({
-                control: 'submit',
-                title: __('Submit and show the result'),
-                icon: 'forward',
-                text: __('Submit')
+                control: 'close',
+                title: __('Close the previewer'),
+                icon: 'close',
+                text: __('Close'),
+                className: 'context-action'
             }));
 
             this.$element.on('click', function (e) {
                 e.preventDefault();
                 if (self.getState('enabled') !== false) {
                     self.disable();
-                    testRunner.trigger('submititem');
+                    testRunner.trigger('finish');
                 }
             });
 
             this.disable();
 
             testRunner
-                .on('responseitem', function(response) {
-                    console.log(response);
-                })
                 .on('enablenav', function () {
                     self.enable();
                 })
@@ -78,7 +76,7 @@ define([
         render: function render() {
 
             //attach the element to the navigation area
-            var $container = this.getAreaBroker().getNavigationArea();
+            var $container = this.getAreaBroker().getArea('context');
             $container.append(this.$element);
         },
 

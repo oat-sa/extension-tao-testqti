@@ -15,39 +15,21 @@
  *
  * Copyright (c) 2018 (original work) Open Assessment Technologies SA ;
  */
-
 /**
- * Component that embeds the QTI previewer for tests and items
- *
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
     'jquery',
     'lodash',
-    'context',
-    'core/promise',
-    'taoTests/runner/runnerComponent',
-    'tpl!taoQtiTest/previewer/runner'
-], function ($, _, context, Promise, runnerFactory, runnerTpl) {
+    'taoQtiTest/previewer/runner',
+    'taoQtiTest/previewer/provider/item',
+    'taoQtiTest/previewer/plugins/itemPlugins',
+    'css!taoQtiTestCss/item-previewer'
+], function ($, _, previewerFactory, itemProvider, itemPluginsLoader) {
     'use strict';
 
     /**
-     * Some default values.
-     * @type {Object}
-     */
-    var defaults = {
-        provider: 'qtiItemPreviewer',
-        providers: [{
-            'id' : 'qtiItemPreviewer',
-            'module' : 'taoQtiTest/previewer/provider/item',
-            'bundle' : 'taoQtiTest/loader/qtiPreviewer.min',
-            'category' : 'previewer'
-        }]
-    };
-
-    /**
      * Builds a test runner to preview test item
-     * @param {jQuery|HTMLElement|String} container - The container in which renders the component
      * @param {Object}   config - The testRunner options
      * @param {String}   config.provider - The provider to use
      * @param {Object[]} [config.plugins] - A collection of plugins to load
@@ -56,14 +38,31 @@ define([
      * @param {Boolean} [config.replace] - When the component is appended to its container, clears the place before
      * @param {Number|String} [config.width] - The width in pixels, or 'auto' to use the container's width
      * @param {Number|String} [config.height] - The height in pixels, or 'auto' to use the container's height
-     * @param {Function} [template] - An optional template for the component
+     * @param {jQuery|HTMLElement|String} [container] - The container in which renders the component
      * @returns {previewer}
      */
-    return function previewerFactory(container, config, template) {
-        config = _.defaults(config || {}, defaults);
-        if (config.providers) {
-            config.providers = _.filter(config.providers, {category: 'previewer'});
-        }
-        return runnerFactory(container, config, template || runnerTpl);
+    return function itemPreviewerFactory(config, container) {
+        var itemPlugins = itemPluginsLoader();
+
+        config = config || {};
+        config.loadedPlugins = config.loadedPlugins || {};
+        _.forEach(itemPlugins, function(plugins, category) {
+            config.loadedPlugins[category] = (config.loadedPlugins[category] || []).concat(plugins);
+        });
+
+        config.loadProviders = config.loadProviders || {};
+        config.loadProviders.previewer = [itemProvider];
+        config.provider = config.provider || itemProvider.name;
+
+        return previewerFactory(container || $(document.body), config)
+            .on('render', function() {
+                this.setState('fullpage', true);
+            })
+            .on('ready', function(runner) {
+                var self = this;
+                runner.on('destroy', function() {
+                    self.destroy();
+                });
+            });
     };
 });

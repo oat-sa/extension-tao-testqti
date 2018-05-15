@@ -1,0 +1,46 @@
+.item-previewer-scope {
+
+    .preview-console-closer {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+        color: white(.9);
+        text-shadow: none;
+
+        &:hover {
+            color: white;
+        }
+    }
+
+    .preview-console {
+        background: rgb(43, 43, 43);
+        color: $textHighlight;
+        font-family: $monospaceFont;
+        position: relative;
+
+        .preview-console-body {
+            padding: 5px;
+            margin: 0;
+
+            height: 30vh;
+            overflow: auto;
+
+            .log-time {
+                color: #999;
+            }
+
+            .log-type {
+                color: #eee;
+            }
+
+            .log-message {
+                color: #69f;
+            }
+
+            pre {
+                margin: 0;
+            }
+        }
+    }
+}

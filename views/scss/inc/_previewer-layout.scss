@@ -15,7 +15,7 @@
 
     height: calc(100vh - #{(map-get($heights, header) + map-get($heights, footer)) * 1px});
 
-    .item-previewer-sections {
+    .test-runner-sections {
 
         /* flex column value */
         -webkit-flex: 1 1 0%;
@@ -50,19 +50,19 @@
             max-width: 350px;
             padding: 10px;
         }
-        @media only screen and (max-device-width : 800px) {
+        @media only screen and (max-device-width: 800px) {
             max-width: 200px;
             & > .qti-panel {
                 max-width: 200px;
             }
         }
-        @media only screen and (min-device-width : 800px) and (max-device-width : 1280px) {
+        @media only screen and (min-device-width: 800px) and (max-device-width: 1280px) {
             max-width: 250px;
             & > .qti-panel {
                 max-width: 250px;
             }
         }
-        @media only screen and (min-device-width : 1280px) and (max-device-width : 1440px) {
+        @media only screen and (min-device-width: 1280px) and (max-device-width: 1440px) {
             max-width: 300px;
             & > .qti-panel {
                 max-width: 300px;
@@ -95,11 +95,11 @@
             top: 0;
             bottom: 0;
             width: 100%;
-            opacity : .9;
+            opacity: .9;
 
             &-full {
                 background-color: $uiGeneralContentBg;
-                opacity : 1;
+                opacity: 1;
             }
         }
     }
@@ -142,5 +142,22 @@
 
 .no-controls .item-previewer-scope {
     height: 100vh;
+}
+
+.previewer-component {
+    background: inherit;
+
+    &.fullpage {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        .item-previewer-scope {
+            height: 100vh;
+        }
+    }
+
 }
 

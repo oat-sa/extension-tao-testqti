@@ -57,18 +57,6 @@ define([
     //the asset strategies
     var assetManager = assetManagerFactory();
 
-    var $layout = $(layoutTpl());
-
-    var areaBroker = areaBrokerFactory($layout, {
-        content: $('#qti-content', $layout),
-        toolbox: $('.tools-box', $layout),
-        navigation: $('.navi-box-list', $layout),
-        control: $('.top-action-bar .control-box', $layout),
-        actionsBar: $('.bottom-action-bar .control-box', $layout),
-        panel: $('.test-sidebar-left', $layout),
-        header: $('.title-box', $layout)
-    });
-
     proxyFactory.registerProvider('qtiItemPreviewerProxy', proxyProvider);
 
     /**
@@ -84,7 +72,18 @@ define([
          * @returns {areaBroker}
          */
         loadAreaBroker: function loadAreaBroker() {
-            return areaBroker;
+            var $layout = $(layoutTpl());
+
+            return areaBrokerFactory($layout, {
+                content: $('#qti-content', $layout),
+                toolbox: $('.bottom-action-bar .tools-box', $layout),
+                navigation: $('.bottom-action-bar .navi-box-list', $layout),
+                control: $('.top-action-bar .control-box', $layout),
+                actionsBar: $('.bottom-action-bar .control-box', $layout),
+                panel: $('.test-sidebar-left', $layout),
+                header: $('.top-action-bar .tools-box', $layout),
+                context: $('.top-action-bar .navi-box-list', $layout)
+            });
         },
 
         /**
@@ -183,6 +182,7 @@ define([
         init: function init() {
             var self = this;
             var dataHolder = this.getDataHolder();
+            var areaBroker = this.getAreaBroker();
 
             areaBroker.setComponent('toolbox', toolboxFactory());
             areaBroker.getToolbox().init();
@@ -193,14 +193,21 @@ define([
             this
                 .on('submititem', function () {
                     var itemRunner = this.itemRunner;
-                    this.trigger('disabletools enablenav');
+                    var itemState = itemRunner.getState();
+                    var itemResponses = itemRunner.getResponses();
+
+                    this.trigger('disabletools disablenav');
+                    this.trigger('submitresponse', itemResponses, itemState);
+
                     return this.getProxy()
-                        .submitItem(dataHolder.get('itemIdentifier'), itemRunner.getState(), itemRunner.getResponses())
+                        .submitItem(dataHolder.get('itemIdentifier'), itemState, itemResponses)
                         .then(function submitSuccess(response) {
-                            self.trigger('responseitem', response);
-                            self.trigger('resumeitem');
+                            self.trigger('scoreitem', response);
+                            self.trigger('enabletools enablenav resumeitem');
                         })
                         .catch(function submitError(err) {
+                            self.trigger('enabletools enablenav');
+
                             //some server errors are valid, so we don't fail (prevent empty responses)
                             if (err.code === 200) {
                                 self.trigger('alert.submitError',
@@ -268,9 +275,9 @@ define([
         render: function render() {
 
             var config = this.getConfig();
-            var broker = this.getAreaBroker();
+            var areaBroker = this.getAreaBroker();
 
-            config.renderTo.append(broker.getContainer());
+            config.renderTo.append(areaBroker.getContainer());
 
             areaBroker.getToolbox().render(areaBroker.getToolboxArea());
         },
@@ -368,6 +375,7 @@ define([
          * @this {runner} the runner context, not the provider
          */
         destroy: function destroy() {
+            var areaBroker = this.getAreaBroker();
 
             // prevent the item to be displayed while test runner is destroying
             if (this.itemRunner) {
@@ -377,7 +385,6 @@ define([
 
             if (areaBroker) {
                 areaBroker.getToolbox().destroy();
-                areaBroker = null;
             }
         }
     };
