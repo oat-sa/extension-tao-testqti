@@ -143,7 +143,7 @@ define([
         assert.equal(updatedContext.sectionId, 'assessmentSection-6', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-2', 'The updated context contains the correct test part id');
         assert.equal(updatedContext.isLinear, true, 'The updated context contains the correct isLinear option');
-        assert.equal(updatedContext.itemAnswered, false, 'The item has not been answered');
+        assert.equal(updatedContext.itemAnswered, true, 'The item has been answered since the test part is linear');
     });
 
     QUnit.test('is moving to the next item over timed sections', function(assert) {

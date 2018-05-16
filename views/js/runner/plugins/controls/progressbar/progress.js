@@ -40,7 +40,7 @@ define([
     /**
      * @typedef {itemStats} progressData
      * @property {Number} position - the position in the scope
-     * @property {Number} completed - the number of completed items in the test
+     * @property {Number} overallCompleted - the number of completed items in the test
      * @property {Number} overall - the total number of items in the test
      * @property {progressDetails} sections - the details of testSections in the scope
      * @property {progressDetails} parts - the details of testParts in the scope
@@ -106,12 +106,9 @@ define([
          * @returns {progressData}
          */
         test: function test(testMap, testContext, config) {
-            var scopedMap = mapHelper.getScopeMap(testMap, testContext.itemPosition, 'test');
-            var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
-            var stats = getDetailedStats(scopedMap, item, config);
+            var stats = getProgressStats(testMap, testContext, config, 'test');
+            var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
             stats.position = item.position + 1;
-            stats.completed = testContext.numberCompleted;
-            stats.overall = testContext.numberItems;
             return stats;
         },
 
@@ -125,12 +122,9 @@ define([
          * @returns {progressData}
          */
         testPart: function testPart(testMap, testContext, config) {
-            var scopedMap = mapHelper.getScopeMap(testMap, testContext.itemPosition, 'testPart');
-            var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
-            var stats = getDetailedStats(scopedMap, item, config);
+            var stats = getProgressStats(testMap, testContext, config, 'testPart');
+            var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
             stats.position = item.positionInPart + 1;
-            stats.completed = testContext.numberCompleted;
-            stats.overall = testContext.numberItems;
             return stats;
         },
 
@@ -144,12 +138,9 @@ define([
          * @returns {progressData}
          */
         testSection: function testSection(testMap, testContext, config) {
-            var scopedMap = mapHelper.getScopeMap(testMap, testContext.itemPosition, 'testSection');
-            var item = mapHelper.getItemAt(scopedMap, testContext.itemPosition);
-            var stats = getDetailedStats(scopedMap, item, config);
+            var stats = getProgressStats(testMap, testContext, config, 'testSection');
+            var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
             stats.position = item.positionInSection + 1;
-            stats.completed = testContext.numberCompleted;
-            stats.overall = testContext.numberItems;
             return stats;
         }
     };
@@ -165,7 +156,7 @@ define([
          * @returns {progressIndicator}
          */
         percentage: function percentage(stats) {
-            return getRatioProgression(stats.completed, stats.overall);
+            return getRatioProgression(stats.answered, stats.questions);
         },
 
         /**
@@ -218,10 +209,26 @@ define([
     };
 
     /**
+     * Fix the test map if the current test part is linear, as the current item should not be answered.
+     * @param {Object} testMap - the actual test map
+     * @param {Object} testContext - the actual test context
+     * @returns {Object} The fixed test map
+     */
+    function getFixedMap(testMap, testContext) {
+        var item;
+        if (testContext.itemAnswered && testContext.isLinear) {
+            testMap = _.cloneDeep(testMap);
+            item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+            item.answered = false;
+        }
+        return testMap;
+    }
+
+    /**
      * Gets an empty stats record
      * @returns {progressDetails}
      */
-    function getEmptyDetails() {
+    function getEmptyStats() {
         return {
             position: 0,
             reached: 0,
@@ -232,12 +239,12 @@ define([
     }
 
     /**
-     * Updates the progress details from the given element
+     * Updates the progress stats from the given element
      * @param {progressDetails} stats - The stats details to update
      * @param {Object} element - The element from which take the details
      * @param {Number} position - The current item position
      */
-    function updateDetails(stats, element, position) {
+    function updateStats(stats, element, position) {
         if (element.position <= position) {
             stats.position++;
         }
@@ -257,12 +264,12 @@ define([
     }
 
     /**
-     * Updates the progress details from the given element
+     * Updates the progress stats from the given element
      * @param {progressDetails} stats - The stats details to update
      * @param {Object} element - The element from which take the details
      * @param {Number} position - The current item position
      */
-    function updateItemDetails(stats, element, position) {
+    function updateItemStats(stats, element, position) {
         if (element.position <= position) {
             stats.position++;
         }
@@ -292,46 +299,49 @@ define([
     /**
      * Completes the progression stats
      * @param {Object} testMap - the actual test map
-     * @param {Object} currentItem - the current item from the test map
+     * @param {Object} testContext - the actual test context
      * @param {progressConfig} config
      * @param {String} config.scope - the scope of the progression
      * @param {Array} config.categories - categories to count by them
+     * @param {String} [scope] - The name of the scope. Can be: test, part, section (default: test)
      * @returns {progressData}
      */
-    function getDetailedStats(testMap, currentItem, config) {
-        var stats = _.clone(testMap.stats);
+    function getProgressStats(testMap, testContext, config, scope) {
+        var fixedMap = getFixedMap(testMap, testContext);
+        var scopedMap = mapHelper.getScopeMap(fixedMap, testContext.itemPosition, scope);
+        var stats = _.clone(scopedMap.stats);
         var categoriesToMatch;
         var matchSize;
 
         if (config.indicator === 'categories') {
             categoriesToMatch = getCategoriesToMatch(config.categories);
             matchSize = config.categories && config.categories.length;
-            stats.matchedCategories = getEmptyDetails();
+            stats.matchedCategories = getEmptyStats();
         }
 
-        stats.parts = getEmptyDetails();
-        stats.sections = getEmptyDetails();
-        stats.answerableParts = getEmptyDetails();
-        stats.answerableSections = getEmptyDetails();
+        stats.parts = getEmptyStats();
+        stats.sections = getEmptyStats();
+        stats.answerableParts = getEmptyStats();
+        stats.answerableSections = getEmptyStats();
 
-        _.forEach(testMap.parts, function (part) {
-            updateDetails(stats.parts, part, currentItem.position);
+        _.forEach(scopedMap.parts, function (part) {
+            updateStats(stats.parts, part, testContext.itemPosition);
 
             if (part.stats.questions > 0) {
-                updateDetails(stats.answerableParts, part, currentItem.position);
+                updateStats(stats.answerableParts, part, testContext.itemPosition);
             }
 
             _.forEach(part.sections, function (section) {
-                updateDetails(stats.sections, section, currentItem.position);
+                updateStats(stats.sections, section, testContext.itemPosition);
 
                 if (section.stats.questions > 0) {
-                    updateDetails(stats.answerableSections, section, currentItem.position);
+                    updateStats(stats.answerableSections, section, testContext.itemPosition);
                 }
 
                 if (config.indicator === 'categories') {
                     _.forEach(section.items, function (item) {
                         if (matchCategories(item.categories, categoriesToMatch, matchSize)) {
-                            updateItemDetails(stats.matchedCategories, item, currentItem.position);
+                            updateItemStats(stats.matchedCategories, item, testContext.itemPosition);
                         }
                     });
                 }
@@ -434,7 +444,7 @@ define([
          * Checks that categories matched
          * @param categories
          * @param expectedCategories
-         * @returns {boolean}
+         * @returns {Boolean}
          */
         isMatchedCategories: function validCategories(categories, expectedCategories) {
             var categoriesToMatch = getCategoriesToMatch(expectedCategories);
@@ -453,7 +463,10 @@ define([
          */
         computeStats: function computeStats(testMap, testContext, config) {
             var statsComputer = (config.scope && scopes[config.scope]) || scopes.test;
-            return statsComputer(testMap, testContext, config || defaultConfig);
+            var stats = statsComputer(testMap, testContext, config || defaultConfig);
+            stats.overallCompleted = testContext.numberCompleted;
+            stats.overall = testContext.numberItems;
+            return stats;
         },
 
         /**
