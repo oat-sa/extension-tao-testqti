@@ -74,17 +74,25 @@ class GetDeliveryExecutionsItems
      */
     public function getItemsRefs()
     {
-        $sections = $this->assessmentTestSession->getAssessmentTest()->getComponentsByClassName('assessmentSection');
-        $items = [];
-        foreach ($sections as $section) {
-            $assessmentItemsRef = $this->getSectionItems($section, $this->deliveryExecution->getDelivery());
-            /** @var ExtendedAssessmentItemRef $item */
-            foreach ($assessmentItemsRef as $item) {
-                $items[] = $item->getIdentifier();
+        $itemIds = [];
+
+        $route = $this->assessmentTestSession->getRoute();
+        $routeCount = $route->count();
+
+        for ($i = 0; $i < $routeCount; $i++) {
+
+            $routeItem =  $route->getRouteItemAt($i);
+            $mainItemRef = $routeItem->getAssessmentItemRef();
+
+            if ($this->catService->isAdaptivePlaceholder($mainItemRef)) {
+                $seenCatItems = $this->catService->getPreviouslySeenCatItemIds($this->assessmentTestSession, $this->directoryStorage, $routeItem);
+                $itemIds = array_merge($itemIds, $seenCatItems);
+            } else {
+                $itemIds[] = $mainItemRef->getIdentifier();
             }
         }
 
-        return $items;
+        return $itemIds;
     }
 
     /**
