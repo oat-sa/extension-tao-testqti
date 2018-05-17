@@ -74,6 +74,30 @@ define([
         // returns only a proxy storage object : no direct access to data is provided
         return {
             /**
+             * Gets the list of parameters
+             * @param {String|Object} [itemIdentifier]
+             * @returns {Object}
+             */
+            getParameters: function getParameters(itemIdentifier) {
+                var type = typeof itemIdentifier;
+                var parameters = {
+                    serviceCallId : this.getServiceCallId()
+                };
+
+                if (type === 'string') {
+                    // simple item identifier
+                    parameters.itemUri = itemIdentifier;
+                    // structured item identifier (a list of parameters)
+                } else if (type === 'object' && _.isPlainObject(itemIdentifier)) {
+                    _.merge(parameters, itemIdentifier);
+                } else if (type !== 'undefined') {
+                    throw new TypeError('Wrong parameter type provided for itemIdentifier: ' + type + '. Only string or plain object are allowed!');
+                }
+
+                return parameters;
+            },
+
+            /**
              * Gets the URI of the service call
              * @returns {String}
              */
@@ -103,35 +127,27 @@ define([
              * @returns {String} - Returns the URL
              */
             getTestActionUrl : function getTestActionUrl(action) {
-                return urlUtil.route(action, this.getServiceController(), this.getServiceExtension(), {
-                    serviceCallId : this.getServiceCallId()
-                });
+                return urlUtil.route(action, this.getServiceController(), this.getServiceExtension(), this.getParameters());
             },
 
             /**
              * Gets an URL of a service action related to a particular item
-             * @param {String} itemIdentifier - The URI of the item
+             * @param {String|Object} itemIdentifier - The URI of the item
              * @param {String} action - the name of the action to request
              * @returns {String} - Returns the URL
              */
             getItemActionUrl : function getItemActionUrl(itemIdentifier, action) {
-                return urlUtil.route(action, this.getServiceController(), this.getServiceExtension(), {
-                    serviceCallId : this.getServiceCallId(),
-                    itemDefinition : itemIdentifier
-                });
+                return urlUtil.route(action, this.getServiceController(), this.getServiceExtension(), this.getParameters(itemIdentifier));
             },
 
             /**
              * Gets an URL of a telemetry signal related to a particular item
-             * @param {String} itemIdentifier - The URI of the item
+             * @param {String|Object} itemIdentifier - The URI of the item
              * @param {String} signal - the name of the signal to request
              * @returns {String} - Returns the URL
              */
             getTelemetryUrl : function getTelemetryUrl(itemIdentifier, signal) {
-                return urlUtil.route(signal, this.getServiceController(), this.getServiceExtension(), {
-                    serviceCallId : this.getServiceCallId(),
-                    itemDefinition : itemIdentifier
-                });
+                return urlUtil.route(signal, this.getServiceController(), this.getServiceExtension(), this.getParameters(itemIdentifier));
             },
 
             /**
@@ -155,9 +171,7 @@ define([
 
                 // build the service address from the provided config
                 // it can be overwritten by a full url from the config
-                var service = urlUtil.route(action || 'message', controller, extension, {
-                    serviceCallId : this.getServiceCallId()
-                });
+                var service = urlUtil.route(action || 'message', controller, extension, this.getParameters());
 
                 // append the address of the remote service to target
                 var params = _.merge({}, communication.params || {}, {

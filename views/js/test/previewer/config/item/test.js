@@ -43,6 +43,7 @@ define([
 
     QUnit
         .cases([
+            {title: 'getParameters'},
             {title: 'getServiceCallId'},
             {title: 'getServiceController'},
             {title: 'getServiceExtension'},
@@ -70,6 +71,72 @@ define([
         });
         assert.ok(true, 'The itemConfig() factory must not throw an exception when all the required config entries are provided');
     });
+
+
+    QUnit
+        .cases([{
+            title: 'No item identifier',
+            config: {
+                serviceCallId: 'http://tao.rdf/1234#56789'
+            },
+            expected: {
+                serviceCallId: 'http://tao.rdf/1234#56789'
+            }
+        }, {
+            title: 'Standard item identifier',
+            config: {
+                serviceCallId: 'http://tao.rdf/1234#56789'
+            },
+            itemId: 'http://tao.rdf/item#123',
+            expected: {
+                serviceCallId: 'http://tao.rdf/1234#56789',
+                itemUri: 'http://tao.rdf/item#123'
+            }
+        }, {
+            title: 'Structured item identifier',
+            config: {
+                serviceCallId: 'http://tao.rdf/1234#56789'
+            },
+            itemId: {
+                resultId: 'http://tao.rdf/result#123',
+                itemDefinition: 'http://tao.rdf/item#123',
+                deliveryUri: 'http://tao.rdf/delivery#123'
+            },
+            expected: {
+                serviceCallId: 'http://tao.rdf/1234#56789',
+                resultId: 'http://tao.rdf/result#123',
+                itemDefinition: 'http://tao.rdf/item#123',
+                deliveryUri: 'http://tao.rdf/delivery#123'
+            }
+        }])
+        .test('itemConfig.getParameters', function (data, assert) {
+            var instance = itemConfig(data.config);
+
+            QUnit.expect(1);
+
+            assert.deepEqual(instance.getParameters(data.itemId), data.expected, 'The itemConfig.getParameters() method has returned the expected value');
+        });
+
+
+    QUnit
+        .cases([
+            {title: 'number', itemId: 10},
+            {title: 'boolean', itemId: true},
+            {title: 'array', itemId: [1, 2, 3]}
+        ])
+        .test('itemConfig.getParameters#error', function (data, assert) {
+            var expectedServiceCallId = 'http://tao.rdf/1234#56789';
+            var config = {
+                serviceCallId: expectedServiceCallId
+            };
+            var instance = itemConfig(config);
+
+            QUnit.expect(1);
+
+            assert.throws(function(){
+                instance.getParameters(data.itemId);
+            }, 'The itemConfig.getParameters() method should throw an error if the parameter does not have the right type');
+        });
 
 
     QUnit.test('itemConfig.getServiceCallId', function (assert) {
@@ -159,11 +226,11 @@ define([
         var actionName = 'MockAction';
         var expectedUrl = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
             serviceCallId: config.serviceCallId,
-            itemDefinition: 'item1'
+            itemUri: 'item1'
         });
         var expectedUrl2 = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
             serviceCallId: config.serviceCallId,
-            itemDefinition: 'item2'
+            itemUri: 'item2'
         });
         var instance = itemConfig(config);
 
@@ -185,11 +252,11 @@ define([
         var actionName = 'MockAction';
         var expectedUrl = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
             serviceCallId: config.serviceCallId,
-            itemDefinition: 'item1'
+            itemUri: 'item1'
         });
         var expectedUrl2 = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
             serviceCallId: config.serviceCallId,
-            itemDefinition: 'item2'
+            itemUri: 'item2'
         });
         var instance = itemConfig(config);
 
