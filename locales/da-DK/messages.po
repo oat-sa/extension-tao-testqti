@@ -1115,3 +1115,5 @@ msgstr ""
 msgid "Zoom out"
 msgstr ""
 
+msgid "Time Remaining"
+msgstr ""

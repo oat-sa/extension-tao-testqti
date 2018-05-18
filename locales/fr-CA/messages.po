@@ -1196,3 +1196,6 @@ msgstr ""
 msgid "A response to every question in this item is required."
 msgstr "Une réponse pour chaque question de cet item est requise"
 
+msgid "Time Remaining"
+msgstr "Durée Restant"
+
