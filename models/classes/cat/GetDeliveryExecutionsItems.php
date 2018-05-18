@@ -96,23 +96,6 @@ class GetDeliveryExecutionsItems
     }
 
     /**
-     * @param ExtendedAssessmentSection $section
-     * @return array
-     */
-    protected function getSectionItems(ExtendedAssessmentSection $section) {
-
-        $sectionItems = $section->getComponentsByClassName('assessmentItemRef' , false);
-
-        if($this->catService->isAssessmentSectionAdaptive($section)) {
-            $item = $sectionItems->current();
-            $sectionItems = $this->catService->getAssessmentItemRefsByPlaceholder($this->directoryStorage, $item);
-        }
-
-        return $sectionItems;
-    }
-
-
-    /**
      * @param core_kernel_classes_Resource $delivery
      * @return void
      * @throws \common_exception_Error
