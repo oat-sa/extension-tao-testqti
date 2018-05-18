@@ -726,3 +726,6 @@ msgstr "%sの未回答問題があります"
 msgid "Your comment…"
 msgstr "あなたのコメント..."
 
+msgid "Time Remaining"
+msgstr ""
+
