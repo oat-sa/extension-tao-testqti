@@ -1864,10 +1864,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('25.2.0');
         }
+        $this->skip('25.2.0', '25.5.1');
 
-        $this->skip('25.2.0', '25.5.0');
-
-        if ($this->isVersion('25.5.0')){
+        if ($this->isVersion('25.5.1')){
             $timerLabel = new TimerLabelFormatterService([
                 TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL => 'Time Remaining'
             ]);
