@@ -26,22 +26,17 @@ use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
-use oat\taoQtiTest\models\runner\communicator\CommunicationService;
-use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
-use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
-use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
-use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
-use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
+use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
@@ -1869,7 +1864,18 @@ class Updater extends \common_ext_ExtensionUpdater {
             ]));
             $this->setVersion('25.2.0');
         }
+        $this->skip('25.2.0', '25.5.1');
 
-        $this->skip('25.2.0', '25.3.2');
+        if ($this->isVersion('25.5.1')){
+            $timerLabel = new TimerLabelFormatterService([
+                TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL => 'Time Remaining'
+            ]);
+
+            $this->getServiceManager()->register(TimerLabelFormatterService::SERVICE_ID, $timerLabel);
+
+            $this->setVersion('25.6.0');
+        }
+
+        $this->skip('25.6.0', '25.6.2');
     }
 }
