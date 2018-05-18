@@ -36,6 +36,7 @@ $GLOBALS['__l10n']["A QTI Item involved in the QTI Test '%s' could not be compil
 $GLOBALS['__l10n']["A QTI Test must contain at least one QTI Item to be compiled. None found."]="Un test QTI doit contenir au un item QTI pour être compilé. Aucun trouvé";
 $GLOBALS['__l10n']["A qti testpackage"]="Un paquet test QTI";
 $GLOBALS['__l10n']["A remote resource referenced in QTI test '%s' could not be retrieved."]="Une resource distante incluse dans le test '%s' n'a pas pu être obtenue";
+$GLOBALS['__l10n']["A response to every question in this item is required."]="Une réponse pour chaque question de cet item est requise";
 $GLOBALS['__l10n']["A response to this item is required."]="Réponse obligatoire Vous devez répondre à cette question pour poursuivre.";
 $GLOBALS['__l10n']["A valid response to this item is required."]="Une réponse valide est attendue à cette question";
 $GLOBALS['__l10n']["Access Denied"]="Accès refusé";
@@ -125,8 +126,8 @@ $GLOBALS['__l10n']["Edit Instance"]="Modifier Instance";
 $GLOBALS['__l10n']["Element"]="Élément";
 $GLOBALS['__l10n']["Element deleted."]="Élément supprimé.";
 $GLOBALS['__l10n']["Email"]="Email";
-$GLOBALS['__l10n']["End Test"]="Terminer le Test";
 $GLOBALS['__l10n']["End test"]="Terminer le test";
+$GLOBALS['__l10n']["End Test"]="Terminer le Test";
 $GLOBALS['__l10n']["Enter"]="Entrée";
 $GLOBALS['__l10n']["Error"]="Erreur";
 $GLOBALS['__l10n']["Error during file import"]="Erreur pendant l'import du fichier.";
