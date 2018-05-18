@@ -50,8 +50,8 @@ define([
             config.loadedPlugins[category] = (config.loadedPlugins[category] || []).concat(plugins);
         });
 
-        config.loadProviders = config.loadProviders || {};
-        config.loadProviders.previewer = [itemProvider];
+        config.loadedProviders = config.loadedProviders || {};
+        config.loadedProviders.previewer = [itemProvider];
         config.provider = config.provider || itemProvider.name;
 
         return previewerFactory(container || $(document.body), config)
