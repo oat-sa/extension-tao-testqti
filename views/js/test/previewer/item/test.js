@@ -214,6 +214,25 @@ define([
             })
             .on('ready', function (runner) {
                 runner
+                    .before('submititem', function() {
+                        $.mockjax({
+                            url: '/submitItem*',
+                            responseText: {
+                                success: true,
+                                displayFeedback: true,
+                                itemSession: {
+                                    SCORE: {
+                                        base: {
+                                            float: 0
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .after('submititem', function() {
+                        $.mockjax.clear();
+                    })
                     .after('renderitem.runnerComponent', function () {
                         assert.ok(true, 'The previewer has been rendered');
                         QUnit.start();

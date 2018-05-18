@@ -265,7 +265,14 @@ class taoQtiTest_actions_Previewer extends tao_actions_ServiceModule
 
             $response = [
                 'success' => true,
-                'displayFeedbacks' => $displayFeedback
+                'displayFeedbacks' => $displayFeedback,
+                'itemSession' => [
+                    'SCORE' => [
+                        'base' => [
+                            'float' => 0
+                        ]
+                    ]
+                ]
             ];
 
             if ($displayFeedback == true) {
