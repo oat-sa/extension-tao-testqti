@@ -39,6 +39,6 @@ class TimerLabelFormatterService extends ConfigurableService
             return $potentialLabel;
         }
 
-        return __($label);
+        return $label;
     }
 }

@@ -18,5 +18,5 @@
  */
 
 return new \oat\taoQtiTest\models\runner\time\TimerLabelFormatterService([
-   \oat\taoQtiTest\models\runner\time\TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL => 'Time Remaining'
+   \oat\taoQtiTest\models\runner\time\TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL => __('Time Remaining')
 ]);
