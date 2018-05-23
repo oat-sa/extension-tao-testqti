@@ -144,93 +144,34 @@ class taoQtiTest_actions_Previewer extends tao_actions_ServiceModule
             $itemUri = $this->getRequestParameter('itemUri');
             $resultId = $this->getRequestParameter('resultId');
 
+            $response = [
+                'baseUrl' => '',
+                'itemData' => [],
+            ];
+
             // previewing a result
             if ($resultId) {
                 if (!$this->hasRequestParameter('itemDefinition')) {
                     throw new \common_exception_MissingParameter('itemDefinition', $this->getRequestURI());
                 }
 
-                $itemDefinition = $this->getRequestParameter('itemDefinition');
-
                 if (!$this->hasRequestParameter('deliveryUri')) {
                     throw new \common_exception_MissingParameter('deliveryUri', $this->getRequestURI());
                 }
 
-                $deliveryUri = $this->getRequestParameter('deliveryUri');
+                $itemDefinition = $this->getRequestParameter('itemDefinition');
+                $delivery = new \core_kernel_classes_Resource($this->getRequestParameter('deliveryUri'));
 
-                $delivery = new \core_kernel_classes_Resource($deliveryUri);
+                $itemPreviewer = new \oat\taoQtiTest\models\ItemPreviewer();
+                $itemPreviewer->setServiceLocator($this->getServiceLocator());
 
-                if (!$delivery->exists()) {
-                    throw new \common_exception_NotFound('Delivery "'. $deliveryUri .'" not found');
-                }
+                $response['itemData'] = $itemPreviewer->setResultId($resultId)
+                    ->setItemDefinition($itemDefinition)
+                    ->setDelivery($delivery)
+                    ->loadCompiledItemData();
 
-                /** @var \oat\taoResultServer\models\classes\ResultServerService $resultServerService */
-                $resultServerService = $this->getServiceLocator()->get(\oat\taoResultServer\models\classes\ResultServerService::SERVICE_ID);
-                /** @var \taoResultServer_models_classes_ReadableResultStorage $implementation */
-                $implementation = $resultServerService->getResultStorage($deliveryUri);
+                $response['baseUrl'] = $itemPreviewer->getBaseUrl();
 
-                $testTaker = new \core_kernel_users_GenerisUser(new \core_kernel_classes_Resource($implementation->getTestTaker($resultId)));
-                $lang = $testTaker->getPropertyValues(\oat\generis\model\GenerisRdf::PROPERTY_USER_DEFLG);
-                $userDataLang = empty($lang) ? DEFAULT_LANG : (string) current($lang);
-
-                // Load COMPILED item data
-
-                $runtimeService = $this->getServiceLocator()->get(\oat\taoDelivery\model\RuntimeService::SERVICE_ID);
-                /** @var \oat\taoDelivery\model\container\delivery\AbstractContainer $deliveryContainer */
-                $deliveryContainer = $runtimeService->getDeliveryContainer($deliveryUri);
-
-                $deliveryPrivateDir = null;
-                if ($deliveryContainer instanceof \oat\taoQtiTest\models\container\QtiTestDeliveryContainer) {
-                    // in case of new test runner
-                    $deliveryPrivateDir = $deliveryContainer->getRuntimeParams()['private'];
-                } else {
-                    // in case of old test runner
-                    $inParams = $deliveryContainer->getRuntimeParams()['in'];
-
-                    foreach ($inParams as $param) {
-                        if ($param['def'] == \taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_COMPILATION) {
-                            $deliveryPrivateDir = explode('|', $param['const'])[0];
-                            break;
-                        }
-                    }
-                }
-
-                if (!$deliveryPrivateDir){
-                    throw new \common_exception_InconsistentData('Could not determine private dir of delivery');
-                }
-
-                $fileStorage = \tao_models_classes_service_FileStorage::singleton();
-                $deliveryPrivateStorageDir = $fileStorage->getDirectoryById($deliveryPrivateDir);
-
-                $itemHrefIndexPath = \taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($itemDefinition);
-
-                $itemHrefs = explode('|', $deliveryPrivateStorageDir->getFile($itemHrefIndexPath)->read());
-                if (count($itemHrefs) < 3) {
-                    throw new \common_exception_InconsistentData('The itemRef is not formatted correctly');
-                }
-
-                $itemUri = $itemHrefs[0];
-                $itemPublicDir = $fileStorage->getDirectoryById($itemHrefs[1]);
-                $itemPrivateDir = $fileStorage->getDirectoryById($itemHrefs[2]);
-
-                $jsonFile = $itemPrivateDir->getFile($userDataLang . DIRECTORY_SEPARATOR . \oat\taoQtiItem\model\QtiJsonItemCompiler::ITEM_FILE_NAME);
-                $xmlFile = $itemPrivateDir->getFile($userDataLang . DIRECTORY_SEPARATOR . \oat\taoQtiItem\model\qti\Service::QTI_ITEM_FILE);
-                if ($jsonFile->exists()) {
-                    // new test runner is used
-                    $itemData = json_decode($jsonFile->read(), true);
-                } elseif ($xmlFile->exists()) {
-                    // old test runner is used
-                    /** @var \oat\taoItems\model\pack\Packer $packer */
-                    $packer = (new \oat\taoItems\model\pack\Packer(new \core_kernel_classes_Resource($itemUri), $userDataLang))
-                        ->setServiceLocator($this->getServiceLocator());
-
-                    /** @var \oat\taoItems\model\pack\ItemPack $itemPack */
-                    $itemPack = $packer->pack();
-
-                    $itemData = $itemPack->JsonSerialize();
-                } else {
-                    throw new \common_exception_NotFound('Either item.json or qti.xml not found');
-                }
             } else if ($itemUri) {
                 // Load RESOURCE item data
                 // TODO
@@ -238,12 +179,7 @@ class taoQtiTest_actions_Previewer extends tao_actions_ServiceModule
                 throw new \common_exception_BadRequest('Either itemUri or resultId needs to be provided.');
             }
 
-            $response = [
-                'success' => true,
-                'baseUrl' => $itemPublicDir->getPublicAccessUrl(). $userDataLang . '/',
-                'itemData' => $itemData,
-            ];
-
+            $response['success'] = true;
         } catch (\Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
