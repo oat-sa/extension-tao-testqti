@@ -1871,5 +1871,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('25.2.0', '25.3.0');
+
+        if ($this->isVersion('25.3.0')) {
+            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Previewer')));
+
+            $this->setVersion('25.4.0');
+        }
     }
 }

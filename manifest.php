@@ -38,7 +38,7 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '25.3.0',
+    'version'     => '25.4.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoQtiItem' => '>=14.2.0',
@@ -95,6 +95,7 @@ return array(
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items')),
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
         array('grant', \oat\tao\model\user\TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
+        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Previewer')),
     ),
 	'constants' => array(
 		# actions directory
