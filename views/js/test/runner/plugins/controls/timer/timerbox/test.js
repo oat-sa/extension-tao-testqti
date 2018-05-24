@@ -293,7 +293,7 @@ define([
                 'timer-1' : {
                     id : 'timer-1',
                     label : 'Timer 01',
-                    remainingTime: 6000,
+                    remainingTime: 3000,
                     warnings : [{
                         level : 'success',
                         message : 'be green',
@@ -301,13 +301,13 @@ define([
                     }, {
                         level : 'danger',
                         message : 'be orange',
-                        threshold : 4000
+                        threshold : 1000
                     }]
                 },
                 'timer-2' : {
                     id : 'timer-2',
                     label : 'Timer 02',
-                    remainingTime: 3000
+                    remainingTime: 1500
                 }
             }).then(function(){
                 self.start();
