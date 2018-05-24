@@ -243,7 +243,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             try {
                 $timer->adjust($tags, $duration);
             } catch (\oat\taoTests\models\runner\time\TimeException $e) {
-                $this->logAlert($e->getMessage());
+                $this->logAlert($e->getMessage().'; Test session identifier: '.$this->getSessionId());
             }
         }
         

@@ -37,7 +37,6 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
     function testView (creatorContext) {
         var modelOverseer = creatorContext.getModelOverseer();
         var testModel = modelOverseer.getModel();
-        var config = modelOverseer.getConfig();
 
         actions.properties($('.test-creator-test > h1'), 'test', testModel, propHandler);
         testParts();
@@ -153,13 +152,13 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
                     var testPartIndex = $('.testpart').length;
                     cb({
                         'qti-type' : 'testPart',
-                        identifier : qtiTestHelper.getIdentifier('testPart', config.identifiers),
+                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'testPart'),
                         index  : testPartIndex,
                         navigationMode : 0,
                         submissionMode : 0,
                         assessmentSections : [{
                             'qti-type' : 'assessmentSection',
-                            identifier : qtiTestHelper.getIdentifier('assessmentSection',  config.identifiers),
+                            identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'section'),
                             title : 'Section 1',
                             index : 0,
                             sectionParts : []

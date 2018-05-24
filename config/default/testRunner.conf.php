@@ -44,30 +44,52 @@ return array(
      * Tells what type of progress bar to use? Can be:
      * - percentage : Classic progress bar displaying the percentage of answered items
      * - position : Progress bar displaying the position of the current item within the test session
-     * - questions : Progress bar displaying and count only on questions which should be answered (for example informational items will be missed)
+     * - questions : Progress bar displaying the position of the last viewed question (informational items will be ignored)
+     * - sections : Progress bar displaying the position of the last reached answerable section
+     * - categories : Progress bar displaying the position of the last reached item only for defined categories (in the 'categories' configuration)
      * @type string
      */
     'progress-indicator' => 'percentage',
 
     /**
-     * When the `progress-indicator` option is set to `position`, define the scope of progress
+     * List of categories which will be used in progress bar
+     * If empty then all categories will be used (items without categories are include)
+     */
+    'progress-categories' => [],
+
+    /**
+     * Tells what type of progress indicator renderer to use:
+     * - percentage : Classic progress bar displaying a linear percentage bar
+     * - position : Progress bar displaying a point by available element in the scope
+     * @type string
+     */
+    'progress-indicator-renderer' => 'percentage',
+
+    /**
+     * Defines the scope of the progress bar
      * (i. e.: the number of items on which the ratio is computed). Can be:
      * - testSection : The progression within the current section
      * - testPart : The progression within the current part
      * - test : The progression within the current test
      * @type string
      */
-    'progress-indicator-scope' => 'testSection',
+    'progress-indicator-scope' => 'test',
 
     /**
      * Force the progress indicator to be always displayed
-     * @type string
+     * @type boolean
      */
     'progress-indicator-forced' => false,
 
     /**
+     * Display the label of the progress indicator
+     * @type boolean
+     */
+    'progress-indicator-show-label' => true,
+
+    /**
      * Display 'item x of y' rather than 'item x'
-     * @type string
+     * @type boolean
      */
     'progress-indicator-show-total' => true,
 
@@ -88,26 +110,26 @@ return array(
     /**
      * Show legend on review panel
      *
-     * @type string
+     * @type boolean
      */
     'test-taker-review-show-legend' => true,
 
     /**
      * Show review panel open on launch
      *
-     * @type string
+     * @type boolean
      */
     'test-taker-review-default-open' => true,
 
     /**
      * Use item title instead of item label.
-     * @type string
+     * @type boolean
      */
     'test-taker-review-use-title' => true,
 
     /**
      * Forces a unique title for all test items.
-     * @type string
+     * @type boolean
      */
     'test-taker-review-force-title' => false,
 
@@ -128,6 +150,7 @@ return array(
      * - item 3
      * - instructions // does not impact the numbering
      * - item 4
+     * @type boolean
      */
     'test-taker-review-force-informational-title' => false,
 

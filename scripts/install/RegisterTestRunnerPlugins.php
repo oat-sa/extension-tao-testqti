@@ -125,6 +125,16 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => true,
                 'tags' => [ 'core' ]
+            ],
+            [
+                'id' => 'focusOnFirstField',
+                'name' => 'Focus on first form field',
+                'module'     => 'taoQtiTest/runner/plugins/content/accessibility/focusOnFirstField',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Sets focus on first form field',
+                'category' => 'content',
+                'active' => true,
+                'tags' => []
             ]
         ],
         'controls' => [

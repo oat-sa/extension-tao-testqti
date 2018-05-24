@@ -31,8 +31,6 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 {
     const PARAM_PACKAGE_NAME = 'qtiPackage';
 
-    const ENABLE_METADATA_GUARDIANS = 'enableMetadataGuardians';
-
     /**
      * @throws common_exception_NotImplemented
      */
@@ -56,7 +54,10 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 ->importQtiTest(
                     $this->getUploadedPackageData()['tmp_name'],
                     $this->getTestClass(),
-                    $this->isMetadataGuardiansEnabled()
+                    $this->isMetadataGuardiansEnabled(),
+                    $this->isMetadataValidatorsEnabled(),
+                    $this->isItemMustExistEnabled(),
+                    $this->isItemMustBeOverwrittenEnabled()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -100,7 +101,14 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
             }
 
-            $task = ImportQtiTest::createTask($this->getUploadedPackageData(), $this->getTestClass(), $this->isMetadataGuardiansEnabled());
+            $task = ImportQtiTest::createTask(
+                $this->getUploadedPackageData(),
+                $this->getTestClass(),
+                $this->isMetadataGuardiansEnabled(),
+                $this->isMetadataValidatorsEnabled(),
+                $this->isItemMustExistEnabled(),
+                $this->isItemMustBeOverwrittenEnabled()
+            );
 
             $result = [
                 'reference_id' => $task->getId()
@@ -203,26 +211,5 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     private function getTestClass()
     {
         return $this->getClassFromRequest(new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
-    }
-
-    /**
-     * @return bool
-     * @throws common_exception_RestApi
-     */
-    private function isMetadataGuardiansEnabled()
-    {
-        $enableMetadataGuardians = $this->getRequestParameter(self::ENABLE_METADATA_GUARDIANS);
-
-        if (is_null($enableMetadataGuardians)) {
-            return true; // default value if parameter not passed
-        }
-
-        if (!in_array($enableMetadataGuardians, ['true', 'false'])) {
-            throw new \common_exception_RestApi(
-                self::ENABLE_METADATA_GUARDIANS . ' parameter should be boolean (true or false).'
-            );
-        }
-
-        return filter_var($enableMetadataGuardians, FILTER_VALIDATE_BOOLEAN);
     }
 }

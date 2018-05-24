@@ -275,7 +275,8 @@ define([
                         if (action === 'skip') {
                             context.itemAnswered = false;
                         } else {
-                            context.itemAnswered = currentItemHelper.isAnswered(self);
+                            // when the test part is linear, the item is always answered as we cannot come back to it
+                            context.itemAnswered = currentItemHelper.isAnswered(self) || context.isLinear;
                         }
                         self.setTestContext(context);
                         resolve();
@@ -393,8 +394,15 @@ define([
                             scope: scope,
                             ref: ref
                         }),
-                        new Promise(function(resolve){
-                            self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
+                        new Promise(function(resolve) {
+                            if (context.options
+                                && context.options.hasOwnProperty('noAlertTimeout')
+                                && context.options.noAlertTimeout
+                            ) {
+                                resolve();
+                            } else {
+                                self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
+                            }
                         })
                     );
                 })
@@ -582,15 +590,10 @@ define([
                     reject(err);
                 })
                 .on('init', function(){
-                    var options = {};
-                    if(itemData.state){
-                        this.setState(itemData.state);
-                        options.state = itemData.state;//official ims portable element requires state information during rendering
-                    }
-                    if(itemData.portableElements){
-                        options.portableElements = itemData.portableElements;
-                    }
-                    this.render(self.getAreaBroker().getContentArea(), options);
+                    var itemContainer        = self.getAreaBroker().getContentArea();
+                    var itemRenderingOptions = _.pick(itemData, ['state', 'portableElements']);
+
+                    this.render(itemContainer, itemRenderingOptions);
                 })
                 .on('render', function(){
 

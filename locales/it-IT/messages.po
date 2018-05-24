@@ -1161,13 +1161,13 @@ msgid "Yes"
 msgstr "Sì"
 
 msgid "You answered all %s question(s)"
-msgstr "Hai risposto a tutte le domande e stai per chiudere la prova"
+msgstr "Grazie"
 
 msgid "You answered all %s question(s) in this section"
 msgstr ""
 
 msgid "You answered all %s question(s) in this test"
-msgstr "Hai risposto a tutte le domande e stai per chiudere la prova"
+msgstr "Grazie"
 
 msgid "You answered only %s of the %s question(s) in this section"
 msgstr ""
@@ -1179,7 +1179,7 @@ msgid "You are about to go to the previous item. Click OK to continue and go to 
 msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "Una volta chiusa non potrai più ritornare alle domande. Sei sicuro di voler chiudere la prova?"
+msgstr "Hai terminato la prova, clicca su SÌ per uscire."
 
 msgid "You are encountering a prolonged connectivity loss"
 msgstr ""
@@ -1188,13 +1188,13 @@ msgid "You have %s item(s) marked for review."
 msgstr " "
 
 msgid "You have %s unanswered question(s)"
-msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova"
+msgstr "Grazie"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova."
+msgstr "Grazie"
 
 msgid "You have %s unanswered question(s)."
-msgstr "Non hai risposto a %s domanda/e e stai per chiudere la prova"
+msgstr "Grazie"
 
 msgid "Your comment…"
 msgstr "Il tuo commento :"
@@ -1206,5 +1206,8 @@ msgid "Zoom in"
 msgstr ""
 
 msgid "Zoom out"
+msgstr ""
+
+msgid "Time Remaining"
 msgstr ""
 

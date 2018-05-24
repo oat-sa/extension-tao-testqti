@@ -89,7 +89,7 @@ msgid "Allow the test-taker to mask parts of the item with a movable mask."
 msgstr ""
 
 msgid "Allow the test-taker to use a basic calculator."
-msgstr ""
+msgstr "Permet au participant d'utiliser une calculatrice basique"
 
 msgid "Allow the test-taker to use a movable magnifier tool."
 msgstr ""
@@ -170,7 +170,7 @@ msgid "Auxiliary file not found at location \"%s\"."
 msgstr ""
 
 msgid "Calculator"
-msgstr ""
+msgstr "Calculatrice"
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -669,7 +669,7 @@ msgid "Only display the unanswered items"
 msgstr "Afficher uniquement les items non répondus"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "Ouvrir la calculatrice"
 
 msgid "Ordering"
 msgstr ""
@@ -1182,5 +1182,8 @@ msgid "Zoom in"
 msgstr ""
 
 msgid "Zoom out"
+msgstr ""
+
+msgid "Time Remaining"
 msgstr ""
 

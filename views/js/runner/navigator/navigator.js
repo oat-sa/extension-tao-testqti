@@ -106,7 +106,9 @@ define([
             newContext = _.defaults({
                 itemIdentifier : newItem.id,
                 itemPosition   : position,
-                itemAnswered   : newItem.answered,
+
+                // when the test part is linear, the item is always answered as we cannot come back to it
+                itemAnswered   : newItem.answered || newTestPart.isLinear,
 
                 //FIXME numberPresented can be late
                 numberPresented : testMap.stats.viewed,

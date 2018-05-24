@@ -29,7 +29,7 @@ msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Une resource distante incluse dans le test '%s' n'a pas pu être obtenue"
 
 msgid "A response to this item is required."
-msgstr "Vous devez répondre à cette question"
+msgstr "Réponse obligatoire Vous devez répondre à cette question pour poursuivre."
 
 msgid "A valid response to this item is required."
 msgstr "Une réponse valide est attendue à cette question"
@@ -621,10 +621,10 @@ msgid "New test part"
 msgstr ""
 
 msgid "Next"
-msgstr "Prochain"
+msgstr "Suivant"
 
 msgid "Next Section"
-msgstr "Prochaine Section"
+msgstr "Suivant Section"
 
 msgid "No"
 msgstr "Non"
@@ -666,7 +666,7 @@ msgid "Ok"
 msgstr "Ok"
 
 msgid "OK & End test"
-msgstr "Ok et Finir le test"
+msgstr "Ok et Terminer le test"
 
 msgid "Once you close this section, you cannot return to it or change your answers."
 msgstr ""
@@ -870,7 +870,7 @@ msgid "Skip &amp; End Test"
 msgstr "Sauter &amp; Terminer le Test"
 
 msgid "Skip and end test"
-msgstr "Test de saut et fin"
+msgstr "Terminer le test et fin"
 
 msgid "Skip and go to the end of the test"
 msgstr "Passer et aller à la fin du test"
@@ -879,10 +879,10 @@ msgid "Skip to the end of the test"
 msgstr "Sauter à la fin du test"
 
 msgid "Skip to the next item"
-msgstr "Sauter au prochain élément"
+msgstr "Sauter au suivant élément"
 
 msgid "Skip to the next section"
-msgstr "Sauter à la prochaine section"
+msgstr "Sauter à la suivant section"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
@@ -897,7 +897,7 @@ msgid "Submit and go to the end of the test"
 msgstr "Envoyer et aller à la fin du test"
 
 msgid "Submit and go to the next item"
-msgstr "Envoyer et aller au prochain élément"
+msgstr "Envoyer et aller au suivant élément"
 
 msgid "Submit and go to the previous item"
 msgstr "Envoyer et aller à l'élément antérieur"
@@ -1192,4 +1192,10 @@ msgstr ""
 
 msgid "Zoom out"
 msgstr ""
+
+msgid "A response to every question in this item is required."
+msgstr "Une réponse pour chaque question de cet item est requise"
+
+msgid "Time Remaining"
+msgstr "Durée Restant"
 

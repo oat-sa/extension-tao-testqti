@@ -1,0 +1,105 @@
+﻿"label","type","nb choice","responseIdentifier","BR_identifier","BR_label","choice_identifier_1","choice_label_1","choice_identifier_2","choice_label_2","choice_identifier_3","choice_label_3","choice_identifier_4","choice_label_4","choice_identifier_5","choice_label_5","choice_identifier_6","choice_label_6","choice_identifier_7","choice_label_7","choice_identifier_8","choice_label_8","choice_identifier_9","choice_label_9","choice_identifier_10","choice_label_10","choice_identifier_11","choice_label_11","choice_identifier_12","choice_label_12","choice_identifier_13","choice_label_13","choice_identifier_14","choice_label_14","testPart","section","shuffle","section-order"
+"Example_0_Introduction",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-1","0","1"
+"example_1_TAO","Order","12","RESPONSE_1",,,"choice_1","Exclusive Choice","choice_2","HotSpot","choice_3","Reordering","choice_4","Extended Text Entry","choice_5","HotText","choice_6","File Upload","choice_7","Inline Choice","choice_8","Inline Text Entry","choice_9","Match","choice_10","Media ","choice_11","Associate","choice_12","<p>Gap Match</p>",,,,,"testPart-1","assessmentSection-1","0","2"
+"example_1_TAO","Slider",,"RESPONSE_3",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-1","0","2"
+"example_2_Math","Order","3","RESPONSE",,,"choice_1","<img src='numbers-sand.jpg' alt='numbers sand' width='153' height='100'></img>","choice_2","<img src='789-sand.jpg' alt='789 sand' width='167' height='100'></img>","choice_3","<img src='456-sand.jpg' alt='456 sand' width='161' height='100'></img>",,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-1","0","3"
+"example_2_Math","Associate","4","RESPONSE_1",,,"choice_4","<p>
+              <m:math>
+                <m:semantics>
+                  <m:mstyle displaystyle='true'>
+                    <m:mrow class='MJX-TeXAtom-ORD'>
+                      <m:mi>x</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mrow class='MJX-TeXAtom-ORD'>
+                        <m:mfrac>
+                          <m:mrow>
+                            <m:mo>−<!-- − --></m:mo>
+                            <m:mi>b</m:mi>
+                            <m:mo>±<!-- ± --></m:mo>
+                            <m:msqrt>
+                              <m:msup>
+                                <m:mi>b</m:mi>
+                                <m:mn>2</m:mn>
+                              </m:msup>
+                              <m:mo>−<!-- − --></m:mo>
+                              <m:mn>4</m:mn>
+                              <m:mi>a</m:mi>
+                              <m:mi>c</m:mi>
+                            </m:msqrt>
+                          </m:mrow>
+                          <m:mrow>
+                            <m:mn>2</m:mn>
+                            <m:mi>a</m:mi>
+                          </m:mrow>
+                        </m:mfrac>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mstyle>
+                  <m:annotation encoding='latex'>x = {-b \pm \sqrt{b^2 - 4ac}\over 2a}</m:annotation>
+                </m:semantics>
+              </m:math>
+            </p>
+            <p> </p>","choice_5","<p>x =</p>
+            <p>{</p>
+            <p>-b \pm \sqrt{b^2 - 4ac}</p>
+            <p>\</p>
+            <p>over 2a</p>
+            <p>}</p>","choice_6","<m:math><m:semantics><m:mstyle displaystyle='true'><m:mrow class='MJX-TeXAtom-ORD'><m:munderover><m:mo>∫<!-- ∫ --></m:mo><m:mi>a</m:mi><m:mi>b</m:mi></m:munderover><m:msup><m:mi>x</m:mi><m:mn>2</m:mn></m:msup><m:mrow class='MJX-TeXAtom-ORD'><m:mi mathvariant='normal'>d</m:mi></m:mrow><m:mi>x</m:mi></m:mrow></m:mstyle><m:annotation encoding='latex'>\int\limits_a^b x^2  \mathrm{d} x</m:annotation></m:semantics></m:math><br></br>
+ ","choice_7","\int\limits_a^b x^2  \mathrm{d} x",,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-1","0","3"
+"Example_4_Appearance","Match","14","RESPONSE",,,"choice_1","TAO","choice_2","Other Proprietary Solutions ","choice_3","Free to use ?","choice_4","Free to modify ?","choice_5","Free to redistribute ? ","choice_6","Customizable ?","choice_7","QTI compliant ? ","choice_8","APIs ? ","choice_9","A user community ? ","choice_10","Sustainable ? ","choice_11","Reliable ? ","choice_12","Scalable ? ","choice_13","Runs in any modern web browser ?","choice_14","Runs on mobile devices ?","testPart-1","assessmentSection-1","0","4"
+"Example_5_picasso","Inline choice","4","RESPONSE",,,"choice_1","cubist","choice_2","surrealism","choice_3","pointillism","choice_4","impressionism",,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-1","0","5"
+"Example_5_picasso","Extended text",,"RESPONSE_2",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-1","0","5"
+"Example_5_picasso","Upload file",,"RESPONSE_3",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-1","0","5"
+"Example_5_picasso","Text entry",,"RESPONSE_1",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-1","0","5"
+"example_1_TAO","Order","12","RESPONSE_1",,,"choice_1","Exclusive Choice","choice_2","HotSpot","choice_3","Reordering","choice_4","Extended Text Entry","choice_5","HotText","choice_6","File Upload","choice_7","Inline Choice","choice_8","Inline Text Entry","choice_9","Match","choice_10","Media ","choice_11","Associate","choice_12","<p>Gap Match</p>",,,,,"testPart-1","assessmentSection-2","0","1"
+"example_1_TAO","Slider",,"RESPONSE_3",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-2","0","1"
+"example_2_Math","Order","3","RESPONSE",,,"choice_1","<img src='numbers-sand.jpg' alt='numbers sand' width='153' height='100'></img>","choice_2","<img src='789-sand.jpg' alt='789 sand' width='167' height='100'></img>","choice_3","<img src='456-sand.jpg' alt='456 sand' width='161' height='100'></img>",,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-2","0","2"
+"example_2_Math","Associate","4","RESPONSE_1",,,"choice_4","<p>
+              <m:math>
+                <m:semantics>
+                  <m:mstyle displaystyle='true'>
+                    <m:mrow class='MJX-TeXAtom-ORD'>
+                      <m:mi>x</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mrow class='MJX-TeXAtom-ORD'>
+                        <m:mfrac>
+                          <m:mrow>
+                            <m:mo>−<!-- − --></m:mo>
+                            <m:mi>b</m:mi>
+                            <m:mo>±<!-- ± --></m:mo>
+                            <m:msqrt>
+                              <m:msup>
+                                <m:mi>b</m:mi>
+                                <m:mn>2</m:mn>
+                              </m:msup>
+                              <m:mo>−<!-- − --></m:mo>
+                              <m:mn>4</m:mn>
+                              <m:mi>a</m:mi>
+                              <m:mi>c</m:mi>
+                            </m:msqrt>
+                          </m:mrow>
+                          <m:mrow>
+                            <m:mn>2</m:mn>
+                            <m:mi>a</m:mi>
+                          </m:mrow>
+                        </m:mfrac>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mstyle>
+                  <m:annotation encoding='latex'>x = {-b \pm \sqrt{b^2 - 4ac}\over 2a}</m:annotation>
+                </m:semantics>
+              </m:math>
+            </p>
+            <p> </p>","choice_5","<p>x =</p>
+            <p>{</p>
+            <p>-b \pm \sqrt{b^2 - 4ac}</p>
+            <p>\</p>
+            <p>over 2a</p>
+            <p>}</p>","choice_6","<m:math><m:semantics><m:mstyle displaystyle='true'><m:mrow class='MJX-TeXAtom-ORD'><m:munderover><m:mo>∫<!-- ∫ --></m:mo><m:mi>a</m:mi><m:mi>b</m:mi></m:munderover><m:msup><m:mi>x</m:mi><m:mn>2</m:mn></m:msup><m:mrow class='MJX-TeXAtom-ORD'><m:mi mathvariant='normal'>d</m:mi></m:mrow><m:mi>x</m:mi></m:mrow></m:mstyle><m:annotation encoding='latex'>\int\limits_a^b x^2  \mathrm{d} x</m:annotation></m:semantics></m:math><br></br>
+ ","choice_7","\int\limits_a^b x^2  \mathrm{d} x",,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-2","0","2"
+"Example_3_Baudelaire","Gap Match","5","RESPONSE",,,"choice_2","paresse","choice_1","chasseresse","choice_3","Loire","choice_4","sonnets","choice_5","gloire",,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-2","0","3"
+"Example_4_Appearance","Match","14","RESPONSE",,,"choice_1","TAO","choice_2","Other Proprietary Solutions ","choice_3","Free to use ?","choice_4","Free to modify ?","choice_5","Free to redistribute ? ","choice_6","Customizable ?","choice_7","QTI compliant ? ","choice_8","APIs ? ","choice_9","A user community ? ","choice_10","Sustainable ? ","choice_11","Reliable ? ","choice_12","Scalable ? ","choice_13","Runs in any modern web browser ?","choice_14","Runs on mobile devices ?","testPart-1","assessmentSection-3","0","1"
+"Example_5_picasso","Inline choice","4","RESPONSE",,,"choice_1","cubist","choice_2","surrealism","choice_3","pointillism","choice_4","impressionism",,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-3","0","2"
+"Example_5_picasso","Extended text",,"RESPONSE_2",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-3","0","2"
+"Example_5_picasso","Upload file",,"RESPONSE_3",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-3","0","2"
+"Example_5_picasso","Text entry",,"RESPONSE_1",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"testPart-1","assessmentSection-3","0","2"

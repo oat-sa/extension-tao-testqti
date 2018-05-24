@@ -31,17 +31,18 @@ define([
      * @param {String} message - custom message that will be appended to the unanswered stats count
      * @param {String} scope - scope to consider for calculating the stats
      * @param {Object} runner - testRunner instance
+     * @param {Boolean} sync - flag for sync the unanswered stats in exit message and the unanswered stats in the toolbox
      * @returns {String} Returns the message text
      */
-    function getExitMessage(message, scope, runner) {
+    function getExitMessage(message, scope, runner, sync) {
         var itemsCountMessage = '';
 
         var testData = runner.getTestData(),
             testConfig = testData && testData.config,
             messageEnabled = testConfig ? testConfig.enableUnansweredItemsWarning : true;
-
+        
         if (messageEnabled) {
-            itemsCountMessage = getUnansweredItemsWarning(scope, runner);
+            itemsCountMessage = getUnansweredItemsWarning(scope, runner, sync);
         }
 
         return (itemsCountMessage + " " + message).trim();
@@ -51,10 +52,11 @@ define([
      * Build message if not all items have answers
      * @param {String} scope - scope to consider for calculating the stats
      * @param {Object} runner - testRunner instance
+     * @param {Boolean} sync - flag for sync the unanswered stats in exit message and the unanswered stats in the toolbox. Default false
      * @returns {String} Returns the message text
      */
-    function getUnansweredItemsWarning(scope, runner) {
-        var stats = statsHelper.getInstantStats(scope, runner);
+    function getUnansweredItemsWarning(scope, runner, sync) {
+        var stats = statsHelper.getInstantStats(scope, runner, sync);
         var unansweredCount = stats && (stats.questions - stats.answered);
         var flaggedCount = stats && stats.flagged;
         var itemsCountMessage = '';

@@ -726,3 +726,5 @@ msgstr "Sie haben %s unbeantwortete Frage(n)."
 msgid "Your comment…"
 msgstr "Ihr Kommentar..."
 
+msgid "Time Remaining"
+msgstr ""

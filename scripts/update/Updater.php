@@ -26,22 +26,17 @@ use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
-use oat\taoQtiTest\models\runner\communicator\CommunicationService;
-use oat\taoQtiTest\models\runner\communicator\SyncChannel;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
-use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
-use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
-use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
-use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
+use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
@@ -1825,6 +1820,62 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('24.2.0');
         }
 
-        $this->skip('24.2.0', '24.6.0');
+        $this->skip('24.2.0', '24.7.0');
+
+        if ($this->isVersion('24.7.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+
+            $config['progress-indicator-renderer'] = 'percentage';
+            $config['progress-indicator-show-label'] = 'true';
+
+            // as the percentage indicator now takes care of the scope, ensure the legacy is respected
+            if ($config['progress-indicator'] == 'percentage') {
+                $config['progress-indicator-scope'] = 'test';
+            }
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('24.8.0');
+        }
+
+        $this->skip('24.8.0', '24.8.4');
+
+        if ($this->isVersion('24.8.4')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['progress-categories'] = [];
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('24.9.0');
+        }
+
+        $this->skip('24.9.0', '25.1.0');
+
+        if ($this->isVersion('25.1.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'focusOnFirstField',
+                'name' => 'Focus on first form field',
+                'module'     => 'taoQtiTest/runner/plugins/content/accessibility/focusOnFirstField',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Sets focus on first form field',
+                'category' => 'content',
+                'active' => true,
+                'tags' => []
+            ]));
+            $this->setVersion('25.2.0');
+        }
+        $this->skip('25.2.0', '25.5.1');
+
+        if ($this->isVersion('25.5.1')){
+            $timerLabel = new TimerLabelFormatterService([
+                TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL => 'Time Remaining'
+            ]);
+
+            $this->getServiceManager()->register(TimerLabelFormatterService::SERVICE_ID, $timerLabel);
+
+            $this->setVersion('25.6.0');
+        }
+
+        $this->skip('25.6.0', '25.7.0');
     }
 }
