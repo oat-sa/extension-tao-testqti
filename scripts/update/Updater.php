@@ -23,8 +23,10 @@ use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\tao\model\modules\DynamicModule;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\user\TaoRoles;
+use oat\taoItems\model\preview\previewers\ItemPreviewerRegistry;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\SyncChannel;
@@ -1874,6 +1876,23 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         if ($this->isVersion('25.3.0')) {
             AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Previewer')));
+
+            $registry = ItemPreviewerRegistry::getRegistry();
+            $registry->register(
+                DynamicModule::fromArray(
+                    [
+                        'id' => 'qtiItem',
+                        'name' => 'QTI Item Previewer',
+                        'module' => 'taoQtiTest/previewer/provider/qtiItem',
+                        'bundle' => 'taoQtiTest/loader/qtiTestPreviewer.min',
+                        'description' => 'QTI implementation of the item previewer',
+                        'category' => 'previewer',
+                        'active' => true,
+                        'tags' => [ 'core', 'qti', 'previewer' ]
+                    ]
+                )
+            );
+
 
             $this->setVersion('25.4.0');
         }
