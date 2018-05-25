@@ -863,7 +863,7 @@ define([
 
             var expectedUrl = urlUtil.route('getItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 serviceCallId: initConfig.serviceCallId,
-                itemDefinition : caseData.uri
+                itemUri : caseData.uri
             });
 
             var proxy, result;
@@ -983,7 +983,7 @@ define([
 
             var expectedUrl = urlUtil.route('submitItem', initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 serviceCallId: initConfig.serviceCallId,
-                itemDefinition : caseData.uri
+                itemUri : caseData.uri
             });
 
             var proxy, result;
@@ -1111,7 +1111,7 @@ define([
 
             var expectedUrl = urlUtil.route(caseData.action, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 serviceCallId: initConfig.serviceCallId,
-                itemDefinition : caseData.uri
+                itemUri : caseData.uri
             });
 
             var proxy, result;
@@ -1237,7 +1237,7 @@ define([
 
             var expectedUrl = urlUtil.route(caseData.signal, initConfig.bootstrap.serviceController, initConfig.bootstrap.serviceExtension, {
                 serviceCallId: initConfig.serviceCallId,
-                itemDefinition : caseData.uri
+                itemUri : caseData.uri
             });
 
             var proxy, result;
