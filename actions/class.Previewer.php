@@ -114,15 +114,12 @@ class taoQtiTest_actions_Previewer extends tao_actions_ServiceModule
 
         try {
 
-            $testDefinition = $this->getRequestParameter('testDefinition');
-            $testCompilation = $this->getRequestParameter('testCompilation');
-            $testExecution = $this->getRequestParameter('serviceCallId');
+            $serviceCallId = $this->getRequestParameter('serviceCallId');
 
             $response = [
-                'success' => true,
-                'testData' => [],
-                'testContext' => [],
-                'testMap' => [],
+                'success' => $serviceCallId == 'previewer',
+                'itemIdentifier' => null,
+                'itemData' => null
             ];
 
         } catch (\Exception $e) {
@@ -146,7 +143,7 @@ class taoQtiTest_actions_Previewer extends tao_actions_ServiceModule
 
             $response = [
                 'baseUrl' => '',
-                'itemData' => [],
+                'content' => [],
             ];
 
             // previewing a result
@@ -165,7 +162,7 @@ class taoQtiTest_actions_Previewer extends tao_actions_ServiceModule
                 $itemPreviewer = new \oat\taoQtiTest\models\ItemPreviewer();
                 $itemPreviewer->setServiceLocator($this->getServiceLocator());
 
-                $response['itemData'] = $itemPreviewer->setResultId($resultId)
+                $response['content'] = $itemPreviewer->setResultId($resultId)
                     ->setItemDefinition($itemDefinition)
                     ->setDelivery($delivery)
                     ->loadCompiledItemData();
@@ -199,6 +196,7 @@ class taoQtiTest_actions_Previewer extends tao_actions_ServiceModule
 
             $displayFeedback = false;
 
+            // @TODO implement the scoring
             $response = [
                 'success' => true,
                 'displayFeedbacks' => $displayFeedback,

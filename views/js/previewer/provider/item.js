@@ -325,12 +325,9 @@ define([
                         reject(err);
                     })
                     .on('init', function () {
-                        var options = {};
-                        if (itemData.state) {
-                            this.setState(itemData.state);
-                            options.state = itemData.state;//official ims portable element requires state information during rendering
-                        }
-                        this.render(self.getAreaBroker().getContentArea(), options);
+                        var itemContainer = self.getAreaBroker().getContentArea();
+                        var options = _.pick(itemData, ['state', 'portableElements']);
+                        this.render(itemContainer, options);
                     })
                     .on('render', function () {
 
