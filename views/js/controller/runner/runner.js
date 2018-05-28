@@ -86,7 +86,7 @@ define([
     /**
      * TODO provider registration should be loaded dynamically
      */
-    runner.registerProvider('qti', qtiProvider);
+    //runner.registerProvider('qti', qtiProvider);
     communicator.registerProvider('poll', pollProvider);
     communicator.registerProvider('request', requestProvider);
 
@@ -205,13 +205,16 @@ define([
             //load the plugins and the proxy provider
             Promise
                 .all([
+                    loadProviders(runnerOptions.providers),
                     loadPlugins(runnerOptions.plugins),
                     loadProxy()
                 ])
                 .then(function (results) {
 
-                    var plugins = results[0];
-                    var proxyProviderName = results[1];
+                    console.log('LOAD PROMISE RESULTS', results);
+                    var providers = results[0];
+                    var plugins = results[1];
+                    var proxyProviderName = results[2];
 
                     var config = _.omit(runnerOptions, ['plugins', 'providers']);
                     config.proxyProvider = proxyProviderName;
@@ -219,8 +222,12 @@ define([
 
                     logger.debug({ config: config, plugins: plugins}, 'Start test runner');
 
+                    _.forEach(providers, function(provider) {
+                        runner.registerProvider(provider.name, provider);
+                    });
+
                     //instantiate the QtiTestRunner
-                    runner('qti', plugins, config)
+                    runner(config.provider, plugins, config)
                         .on('error', onError)
                         .on('ready', function () {
                             _.defer(function () {
