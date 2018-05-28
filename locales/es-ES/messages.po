@@ -1303,3 +1303,6 @@ msgstr "Conectado al servidor"
 
 msgid "Disconnected from server"
 msgstr "Desconectado del servidor"
+
+msgid "Time Remaining"
+msgstr ""

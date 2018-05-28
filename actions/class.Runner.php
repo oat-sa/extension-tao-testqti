@@ -159,7 +159,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             } else {
                 $userIdentifier = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
                 $msg = "XSRF attempt for user '${userIdentifier}'! The token ${csrfToken} is no longer valid! " .
-                    "or the previous request failed silently without creating a token";
+                    "or the previous request failed silently without creating a token. " .
+                    "Session Id: " . $this->getSessionId();
                 \common_Logger::e($msg);
                 throw new \common_exception_Unauthorized($msg);
             }
