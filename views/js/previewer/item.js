@@ -22,11 +22,23 @@ define([
     'jquery',
     'lodash',
     'taoQtiTest/previewer/runner',
-    'taoQtiTest/previewer/provider/item',
-    'taoQtiTest/previewer/plugins/itemPlugins',
     'css!taoQtiTestCss/item-previewer'
-], function ($, _, previewerFactory, itemProvider, itemPluginsLoader) {
+], function ($, _, previewerFactory) {
     'use strict';
+
+    var defaultPlugins = [{
+        module: 'taoQtiTest/previewer/plugins/controls/close',
+        bundle: 'taoQtiTest/loader/qtiPreviewer.min',
+        category: 'controls'
+    }, {
+        module: 'taoQtiTest/previewer/plugins/navigation/submit/submit',
+        bundle: 'taoQtiTest/loader/qtiPreviewer.min',
+        category: 'navigation'
+    }, {
+        module: 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher',
+        bundle: 'taoQtiTest/loader/testPlugins.min',
+        category: 'tools'
+    }];
 
     /**
      * Builds a test runner to preview test item
@@ -44,13 +56,8 @@ define([
      * @returns {previewer}
      */
     return function itemPreviewerFactory(config, container) {
-        var itemPlugins = itemPluginsLoader(config);
-
         config = config || {};
-        config.loadedPlugins = config.loadedPlugins || {};
-        _.forEach(itemPlugins, function(plugins, category) {
-            config.loadedPlugins[category] = (config.loadedPlugins[category] || []).concat(plugins);
-        });
+        config.plugins = defaultPlugins.concat(config.plugins || []);
 
         return previewerFactory(config, container || $(document.body));
     };

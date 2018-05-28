@@ -63,6 +63,15 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
+            /**
+             * Tells if the component is enabled
+             * @returns {Boolean}
+             */
+            function isPluginAllowed() {
+                var config = testRunner.getConfig();
+                return !config.readOnly;
+            }
+
             // display the console and its related controls, then auto scrolls to the last element
             function showConsole() {
                 hider.show(self.controls.$console);
@@ -124,9 +133,20 @@ define([
                 hideConsole();
             });
 
+            if (!isPluginAllowed()) {
+                this.hide();
+            }
+
             this.disable();
 
             testRunner
+                .on('render', function () {
+                    if (isPluginAllowed()) {
+                        self.show();
+                    } else {
+                        self.hide();
+                    }
+                })
                 .on('submitresponse', function (responses) {
                     showResponses(__('Submitted data'), responses);
                     showConsole();
