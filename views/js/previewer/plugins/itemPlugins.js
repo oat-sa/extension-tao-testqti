@@ -29,18 +29,25 @@ define([
 
     /**
      * Gets the list of plugins required to properly preview an item, gathered by categories.
+     * @param {Object} [config] - Some config entries
+     * @param {String} [config.readOnly] - Do not allow to modify the previewed item.
      * @returns {Object}
      */
-    return function itemPluginsLoader() {
+    return function itemPluginsLoader(config) {
         var themesConfig = themeHandler.get('items') || {};
         var plugins = {
             controls: [
                 close
-            ],
-            navigation: [
-                submit
             ]
         };
+
+        config = config || {};
+
+        if (!config.readOnly) {
+            plugins.navigation = [
+                submit
+            ];
+        }
 
         if (themesConfig && _.size(themesConfig.available) > 1) {
             plugins.tools = [
