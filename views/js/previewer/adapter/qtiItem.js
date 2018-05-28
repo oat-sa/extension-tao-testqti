@@ -20,9 +20,12 @@
  */
 define([
     'lodash',
+    'core/logger',
     'taoQtiTest/previewer/item'
-], function (_, previewerFactory) {
+], function (_, loggerFactory, previewerFactory) {
     'use strict';
+
+    var logger = loggerFactory('taoQtiTest/previewer');
 
     /**
      * Wraps the legacy item previewer in order to be loaded by the taoItems previewer factory
@@ -45,7 +48,7 @@ define([
         init: function init(uri, state, config) {
             config = _.defaults(config || {}, {
                 serviceCallId: 'previewer',
-                logger: console
+                logger: logger
             });
 
             return previewerFactory(config)
