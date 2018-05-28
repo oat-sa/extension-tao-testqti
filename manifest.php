@@ -64,6 +64,7 @@ return array(
             dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
             \oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins::class,
+            \oat\taoQtiTest\scripts\install\RegisterTestRunnerPreviewers::class,
             \oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter::class,
             \oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem::class,
             RegisterQtiFlysystemManager::class,

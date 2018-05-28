@@ -1889,8 +1889,8 @@ class Updater extends \common_ext_ExtensionUpdater {
                     [
                         'id' => 'qtiItem',
                         'name' => 'QTI Item Previewer',
-                        'module' => 'taoQtiTest/previewer/provider/qtiItem',
-                        'bundle' => 'taoQtiTest/loader/qtiTestPreviewer.min',
+                        'module' => 'taoQtiTest/previewer/adapter/qtiItem',
+                        'bundle' => 'taoQtiTest/loader/qtiPreviewer.min',
                         'description' => 'QTI implementation of the item previewer',
                         'category' => 'previewer',
                         'active' => true,

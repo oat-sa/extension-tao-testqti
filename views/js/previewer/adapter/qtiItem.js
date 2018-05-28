@@ -20,13 +20,12 @@
  */
 define([
     'lodash',
-    'taoQtiTest/previewer/item',
-    'css!taoQtiTestCss/item-previewer'
+    'taoQtiTest/previewer/item'
 ], function (_, previewerFactory) {
     'use strict';
 
     /**
-     * Wraps the legacy item previewer in order to be loaded by the previewer factory
+     * Wraps the legacy item previewer in order to be loaded by the taoItems previewer factory
      */
     return {
         name: 'qtiItem',
@@ -39,6 +38,7 @@ define([
          * @param {Object} [config] - Some config entries
          * @param {String} [config.serviceCallId='previewer'] - The service call Id to send to the server
          * @param {logger} [config.logger] - A logger for the errors reporting
+         * @param {String} [config.fullPage] - Force the previewer to occupy the full window.
          * @param {String} [config.readOnly] - Do not allow to modify the previewed item.
          * @returns {Object}
          */

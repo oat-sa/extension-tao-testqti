@@ -26,6 +26,10 @@ define([
 ], function ($, _, previewerFactory) {
     'use strict';
 
+    /**
+     * List of required plugins that should be loaded in order to make the previewer work properly
+     * @type {Object[]}
+     */
     var defaultPlugins = [{
         module: 'taoQtiTest/previewer/plugins/controls/close',
         bundle: 'taoQtiTest/loader/qtiPreviewer.min',
