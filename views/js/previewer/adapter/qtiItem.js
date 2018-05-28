@@ -21,11 +21,30 @@
 define([
     'lodash',
     'core/logger',
-    'taoQtiTest/previewer/item'
+    'taoQtiTest/previewer/runner',
+    'css!taoQtiTestCss/item-previewer'
 ], function (_, loggerFactory, previewerFactory) {
     'use strict';
 
     var logger = loggerFactory('taoQtiTest/previewer');
+
+    /**
+     * List of required plugins that should be loaded in order to make the previewer work properly
+     * @type {Object[]}
+     */
+    var defaultPlugins = [{
+        module: 'taoQtiTest/previewer/plugins/controls/close',
+        bundle: 'taoQtiTest/loader/qtiPreviewer.min',
+        category: 'controls'
+    }, {
+        module: 'taoQtiTest/previewer/plugins/navigation/submit/submit',
+        bundle: 'taoQtiTest/loader/qtiPreviewer.min',
+        category: 'navigation'
+    }, {
+        module: 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher',
+        bundle: 'taoQtiTest/loader/testPlugins.min',
+        category: 'tools'
+    }];
 
     /**
      * Wraps the legacy item previewer in order to be loaded by the taoItems previewer factory
@@ -50,6 +69,9 @@ define([
                 serviceCallId: 'previewer',
                 logger: logger
             });
+
+            // ensure required plugins will be loaded
+            config.plugins = defaultPlugins.concat(config.plugins || []);
 
             return previewerFactory(config)
                 .on('error', function (err) {
