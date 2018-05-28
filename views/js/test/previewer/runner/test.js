@@ -48,8 +48,8 @@ define([
             serviceCallId: 'foo'
         };
 
-        var previewer1 = previewerFactory($('#fixture-1'), config);
-        var previewer2 = previewerFactory($('#fixture-2'), config);
+        var previewer1 = previewerFactory(config, $('#fixture-1'));
+        var previewer2 = previewerFactory(config, $('#fixture-2'));
 
         QUnit.expect(4);
         $.mockjax({
@@ -149,7 +149,7 @@ define([
 
         $.mockjax(data.mock);
 
-        previewerFactory($container, config)
+        previewerFactory(config, $container)
             .on('error', function (err) {
                 console.error(err);
                 assert.ok(false, 'An error has occurred');
@@ -207,7 +207,7 @@ define([
             }
         });
 
-        previewerFactory($container, config)
+        previewerFactory(config, $container)
             .on('error', function (err) {
                 console.error(err);
                 assert.ok(false, 'An error has occurred');

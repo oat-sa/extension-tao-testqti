@@ -25,8 +25,7 @@ define([
     'core/promise',
     'taoQtiTest/previewer/item',
     'json!taoQtiItem/test/samples/json/space-shuttle.json',
-    'lib/jquery.mockjax/jquery.mockjax',
-    'css!taoQtiTestCss/item-previewer'
+    'lib/jquery.mockjax/jquery.mockjax'
 ], function ($, _, Promise, previewerFactory, itemData) {
     'use strict';
 
@@ -180,9 +179,15 @@ define([
 
     QUnit.asyncTest('integration', function (assert) {
         var serviceCallId = 'previewer';
-        var itemRef = 'item-1';
+        var itemRef = {
+            resultId: 'http://ce.tao/tao.rdf#i15265414071682172',
+            itemDefinition: 'item-2',
+            deliveryUri: 'http://ce.tao/tao.rdf#i15265411295469108'
+        };
         var config = {
-            serviceCallId: serviceCallId
+            serviceCallId: serviceCallId,
+            fullPage: true,
+            readOnly: true
         };
 
         QUnit.expect(1);

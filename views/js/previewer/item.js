@@ -38,6 +38,7 @@ define([
      * @param {Boolean} [config.replace] - When the component is appended to its container, clears the place before
      * @param {Number|String} [config.width] - The width in pixels, or 'auto' to use the container's width
      * @param {Number|String} [config.height] - The height in pixels, or 'auto' to use the container's height
+     * @param {String} [config.fullPage] - Force the previewer to occupy the full window.
      * @param {String} [config.readOnly] - Do not allow to modify the previewed item.
      * @param {jQuery|HTMLElement|String} [container] - The container in which renders the component
      * @returns {previewer}
@@ -51,20 +52,6 @@ define([
             config.loadedPlugins[category] = (config.loadedPlugins[category] || []).concat(plugins);
         });
 
-        config.loadedProviders = config.loadedProviders || {};
-        config.loadedProviders.previewer = [itemProvider];
-        config.provider = config.provider || itemProvider.name;
-
-        return previewerFactory(container || $(document.body), config)
-            .on('render', function() {
-                this.setState('fullpage', true);
-                this.setState('readonly', config.readOnly);
-            })
-            .on('ready', function(runner) {
-                var self = this;
-                runner.on('destroy', function() {
-                    self.destroy();
-                });
-            });
+        return previewerFactory(config, container || $(document.body));
     };
 });

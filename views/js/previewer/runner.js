@@ -28,7 +28,7 @@ define([
     'core/promise',
     'taoTests/runner/runnerComponent',
     'tpl!taoQtiTest/previewer/runner'
-], function ($, _, context, Promise, runnerFactory, runnerTpl) {
+], function ($, _, context, Promise, runnerComponentFactory, runnerTpl) {
     'use strict';
 
     /**
@@ -56,14 +56,26 @@ define([
      * @param {Boolean} [config.replace] - When the component is appended to its container, clears the place before
      * @param {Number|String} [config.width] - The width in pixels, or 'auto' to use the container's width
      * @param {Number|String} [config.height] - The height in pixels, or 'auto' to use the container's height
+     * @param {String} [config.fullPage] - Force the previewer to occupy the full window.
+     * @param {String} [config.readOnly] - Do not allow to modify the previewed item.
      * @param {Function} [template] - An optional template for the component
      * @returns {previewer}
      */
-    return function previewerFactory(container, config, template) {
+    return function previewerFactory(config, container, template) {
         config = _.defaults(config || {}, defaults);
         if (config.providers) {
             config.providers = _.filter(config.providers, {category: 'previewer'});
         }
-        return runnerFactory(container, config, template || runnerTpl);
+        return runnerComponentFactory(container || $(document.body), config, template || runnerTpl)
+            .on('render', function() {
+                this.setState('fullpage', config.fullPage);
+                this.setState('readonly', config.readOnly);
+            })
+            .on('ready', function(runner) {
+                var self = this;
+                runner.on('destroy', function() {
+                    self.destroy();
+                });
+            });
     };
 });
