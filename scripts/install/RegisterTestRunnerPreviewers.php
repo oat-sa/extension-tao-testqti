@@ -23,7 +23,7 @@ namespace oat\taoQtiTest\scripts\install;
 use common_report_Report as Report;
 use oat\oatbox\extension\InstallAction;
 use oat\tao\model\modules\DynamicModule;
-use oat\taoItems\model\preview\previewers\ItemPreviewerRegistry;
+use oat\taoItems\model\preview\ItemPreviewerService;
 
 /**
  * Installation action that registers the test runner providers
@@ -50,12 +50,13 @@ class RegisterTestRunnerPreviewers extends InstallAction
 
     public function __invoke($params)
     {
-        $registry = ItemPreviewerRegistry::getRegistry();
+        $registry = $this->getServiceLocator()->get(ItemPreviewerService::SERVICE_ID);
+        
         $count = 0;
 
         foreach(self::$providers as $categoryProviders) {
             foreach($categoryProviders as $providerData){
-                if( $registry->register(DynamicModule::fromArray($providerData)) ) {
+                if( $registry->registerAdapter(DynamicModule::fromArray($providerData)) ) {
                     $count++;
                 }
             }

@@ -26,7 +26,7 @@ use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\modules\DynamicModule;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\user\TaoRoles;
-use oat\taoItems\model\preview\previewers\ItemPreviewerRegistry;
+use oat\taoItems\model\preview\ItemPreviewerService;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
@@ -1883,8 +1883,8 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('25.7.1')) {
             AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Previewer')));
 
-            $registry = ItemPreviewerRegistry::getRegistry();
-            $registry->register(
+            $registry = $this->getServiceManager()->get(ItemPreviewerService::SERVICE_ID);
+            $registry->registerAdapter(
                 DynamicModule::fromArray(
                     [
                         'id' => 'qtiItem',
