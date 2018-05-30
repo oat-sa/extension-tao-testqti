@@ -393,8 +393,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $details[] = $previous->getMessage();
             $firstError = $e->getPrevious();
         }
-        foreach ($this->getMessages($firstError) as $message) {
-            $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $message));
+        if (isset($firstError)) {
+            foreach ($this->getMessages($firstError) as $message) {
+                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $message));
+            }
         }
 
         $subReport->add($itemReport);
@@ -409,17 +411,15 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 
     private function getMessages($error) {
         $messages = [];
-        if (isset($error)) {
-            if (method_exists($error, 'getErrors')) {
-                /** @var LibXMLError $error */
-                foreach ($error->getErrors() as $error) {
-                    $messages[] = $error->message;
-                }
-            } elseif ($error instanceof Exception) {
-                $messages[] = $error->getMessage();
-            } else {
-                common_Logger::e('Undefined error type' . print_r($error, 1));
+        if (method_exists($error, 'getErrors')) {
+            /** @var LibXMLError $error */
+            foreach ($error->getErrors() as $error) {
+                $messages[] = $error->message;
             }
+        } elseif ($error instanceof Exception) {
+            $messages[] = $error->getMessage();
+        } else {
+            common_Logger::e('Undefined error type' . print_r($error, 1));
         }
         return $messages;
     }
