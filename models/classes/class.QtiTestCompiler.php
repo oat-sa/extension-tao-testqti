@@ -388,6 +388,23 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     {
         $details[] = $e->getMessage();
         $subReport = new common_report_Report(common_report_Report::TYPE_ERROR, __('The QTI Test XML or one of its dependencies is malformed or empty.'));
+        $subReport->add($this->prepareItemReport($e));
+
+        common_Logger::e(implode("\n", $details));
+        $report->add($subReport);
+
+        $report->setType(common_report_Report::TYPE_ERROR);
+        $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
+        return $report;
+    }
+
+    /**
+     * @param XmlStorageException $e
+     * @return common_report_Report
+     * @throws common_exception_Error
+     */
+    private function prepareItemReport(XmlStorageException $e)
+    {
         $itemReport = new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage());
         while (($previous = $e->getPrevious()) != null) {
             $details[] = $previous->getMessage();
@@ -403,14 +420,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         } else {
             common_Logger::e("Incorrect exception found: " . print_r($e, 1));
         }
-        $subReport->add($itemReport);
 
-        common_Logger::e(implode("\n", $details));
-        $report->add($subReport);
-
-        $report->setType(common_report_Report::TYPE_ERROR);
-        $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
-        return $report;
+        return $itemReport;
     }
 
     /**
