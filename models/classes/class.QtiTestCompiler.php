@@ -394,8 +394,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $e = $e->getPrevious();
         }
         /** @var LibXMLError $error */
-        foreach ($e->getErrors() as $error) {
-            $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $error->message));
+        if (method_exists($e, 'getErrors')) {
+            foreach ($e->getErrors() as $error) {
+                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $error->message));
+            }
+        } elseif (method_exists($e, 'getMessage')) {
+            $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage()));
+        } else {
+            common_Logger::e("Incorrect exception found: " . print_r($e, 1));
         }
         $subReport->add($itemReport);
 
