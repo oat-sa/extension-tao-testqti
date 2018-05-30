@@ -388,7 +388,21 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     {
         $details[] = $e->getMessage();
         $subReport = new common_report_Report(common_report_Report::TYPE_ERROR, __('The QTI Test XML or one of its dependencies is malformed or empty.'));
-        $subReport->add($this->prepareItemReport($e));
+        $itemReport = new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage());
+        while (($previous = $e->getPrevious()) != null) {
+            $details[] = $previous->getMessage();
+            $e = $e->getPrevious();
+        }
+        if (method_exists($e, 'getErrors')) {
+            /** @var LibXMLError $error */
+            foreach ($e->getErrors() as $error) {
+                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $error->message));
+            }
+        } else {
+            $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage()));
+        }
+
+        $subReport->add($itemReport);
 
         common_Logger::e(implode("\n", $details));
         $report->add($subReport);
@@ -396,32 +410,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $report->setType(common_report_Report::TYPE_ERROR);
         $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
         return $report;
-    }
-
-    /**
-     * @param XmlStorageException $e
-     * @return common_report_Report
-     * @throws common_exception_Error
-     */
-    private function prepareItemReport(XmlStorageException $e)
-    {
-        $itemReport = new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage());
-        while (($previous = $e->getPrevious()) != null) {
-            $details[] = $previous->getMessage();
-            $e = $e->getPrevious();
-        }
-        /** @var LibXMLError $error */
-        if (method_exists($e, 'getErrors')) {
-            foreach ($e->getErrors() as $error) {
-                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $error->message));
-            }
-        } elseif (method_exists($e, 'getMessage')) {
-            $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage()));
-        } else {
-            common_Logger::e("Incorrect exception found: " . print_r($e, 1));
-        }
-
-        return $itemReport;
     }
 
     /**
