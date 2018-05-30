@@ -391,17 +391,18 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $itemReport = new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage());
         while (($previous = $e->getPrevious()) != null) {
             $details[] = $previous->getMessage();
-            $e = $e->getPrevious();
+            $firstError = $e->getPrevious();
         }
-        if (method_exists($e, 'getErrors')) {
-            /** @var LibXMLError $error */
-            foreach ($e->getErrors() as $error) {
-                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $error->message));
+        if (isset($firstError)) {
+            if (method_exists($firstError, 'getErrors')) {
+                /** @var LibXMLError $error */
+                foreach ($firstError->getErrors() as $error) {
+                    $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $error->message));
+                }
+            } else {
+                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $firstError->getMessage()));
             }
-        } else {
-            $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage()));
         }
-
         $subReport->add($itemReport);
 
         common_Logger::e(implode("\n", $details));
