@@ -391,12 +391,15 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $itemReport = new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage());
         while (($previous = $e->getPrevious()) != null) {
             $details[] = $previous->getMessage();
-            $firstError = $e->getPrevious();
+            $e = $e->getPrevious();
         }
-        if (isset($firstError)) {
-            foreach ($this->getMessages($firstError) as $message) {
-                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $message));
+        if (method_exists($e, 'getErrors')) {
+            /** @var LibXMLError $error */
+            foreach ($e->getErrors() as $error) {
+                $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $error->message));
             }
+        } else {
+            $itemReport->add(new common_report_Report(common_report_Report::TYPE_ERROR, $e->getMessage()));
         }
 
         $subReport->add($itemReport);
@@ -407,21 +410,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $report->setType(common_report_Report::TYPE_ERROR);
         $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
         return $report;
-    }
-
-    private function getMessages($error) {
-        $messages = [];
-        if (method_exists($error, 'getErrors')) {
-            /** @var LibXMLError $error */
-            foreach ($error->getErrors() as $error) {
-                $messages[] = $error->message;
-            }
-        } elseif ($error instanceof Exception) {
-            $messages[] = $error->getMessage();
-        } else {
-            common_Logger::e('Undefined error type' . print_r($error, 1));
-        }
-        return $messages;
     }
 
     /**
