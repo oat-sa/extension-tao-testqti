@@ -19,7 +19,10 @@
  */
 namespace oat\taoQtiTest\models\creator;
 
+use oat\generis\model\OntologyAwareTrait;
+use oat\generis\model\OntologyRdfs;
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\resources\ListResourceLookup;
 use oat\taoItems\model\CategoryService;
 
 /**
@@ -29,53 +32,44 @@ use oat\taoItems\model\CategoryService;
  */
 class ListItemLookup extends ConfigurableService implements ItemLookup
 {
+    use OntologyAwareTrait;
 
     const SERVICE_ID = 'taoQtiTest/CreatorItems/list';
 
     /**
      * Get the CategoryService
-     * @return CategoryService the service
      */
     public function getCategoryService()
     {
-        return $this->getServiceManager()->get(CategoryService::SERVICE_ID);
+        return $this->getServiceLocator()->get(CategoryService::SERVICE_ID);
+    }
+
+    /**
+     * Get the ListResourceLookup
+     */
+    protected function getListResourceLookupService()
+    {
+        return $this->getServiceLocator()->get(ListResourceLookup::SERVICE_ID);
     }
 
     /**
      * Retrieve QTI Items for the given parameters.
      * @param \core_kernel_classes_Class $itemClass the item class
-     * @param cestring $propertyFiltehhhhhhhhhhhs the lookup format
-     * @param string $pattern to filter by label
+     * @param array $propertyFilters the lookup format
      * @param int    $offset for paging
      * @param int    $limit  for paging
      * @return array the items
      */
     public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
     {
-        $options = [
-            'recursive' => true,
-            'like'      => true,
-            'limit'     => $limit,
-            'offset'    => $offset
-        ];
+        $result = $this->getListResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
 
-        $count = $itemClass->countInstances($propertyFilters, $options);
-        $items = $itemClass->searchInstances($propertyFilters, $options);
+        array_map(function($item){
+            return array_merge($item, [
+                'categories' => $this->getCategoryService()->getItemCategories($this->getResource($item['uri']))
+            ]);
+        }, $result['nodes']);
 
-        $nodes = [];
-        foreach($items as $item){
-            $nodes[] = [
-                'uri'        => $item->getUri(),
-                'label'      => $item->getLabel(),
-                'categories' => $this->getCategoryService()->getItemCategories($item)
-            ];
-        }
-
-        return [
-            'total'  => $count,
-            'offset' => $offset,
-            'limit'  => $limit,
-            'nodes'  => $nodes
-        ];
+        return $result;
     }
 }

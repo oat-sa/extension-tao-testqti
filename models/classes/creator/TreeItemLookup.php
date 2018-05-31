@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\models\creator;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\GenerisTreeFactory;
+use oat\tao\model\resources\TreeResourceLookup;
 use oat\taoItems\model\CategoryService;
 
 /**
@@ -38,7 +39,15 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
      */
     public function getCategoryService()
     {
-        return $this->getServiceManager()->get(CategoryService::SERVICE_ID);
+        return $this->getServiceLocator()->get(CategoryService::SERVICE_ID);
+    }
+
+    /**
+     * @return TreeResourceLookup
+     */
+    public function getTreeResourceLookupService()
+    {
+        return $this->getServiceLocator()->get(TreeResourceLookup::SERVICE_ID);
     }
 
     /**
@@ -51,10 +60,8 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
      */
     public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
     {
-        $factory = new GenerisTreeFactory(true, [$itemClass->getUri()], $limit, $offset, [], $propertyFilters);
-        $treeData = $factory->buildTree($itemClass);
-
-        return $this->formatTreeData([$treeData]);
+        $data =  $this->getTreeResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
+        return $this->formatTreeData($data);
     }
 
 
@@ -67,19 +74,13 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
     private function formatTreeData(array $treeData)
     {
         return array_map(function($data){
-
-            $formated = [
-                'label' => $data['data'],
-                'type'  => $data['type'],
-                'uri'   => $data['attributes']['data-uri'],
-                'state' => isset($data['state']) ? $data['state'] : false, 
-                'count' => isset($data['count']) ? $data['count'] : 0,
-                'categories' => $this->getCategoryService()->getItemCategories(new \core_kernel_classes_Resource($data['attributes']['data-uri']))
+            $formatted = [
+                'categories' => $this->getCategoryService()->getItemCategories(new \core_kernel_classes_Resource($data['uri']))
             ];
             if(isset($data['children'])){
-                $formated['children'] = $this->formatTreeData($data['children']);
+                $formatted['children'] = $this->formatTreeData($data['children']);
             }
-            return $formated;
+            return array_merge($data, $formatted);
         }, $treeData);
     }
 }
