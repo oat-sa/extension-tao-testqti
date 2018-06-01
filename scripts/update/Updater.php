@@ -1886,5 +1886,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(TimerLabelFormatterService::SERVICE_ID, $timerLabel);
             $this->setVersion('25.7.3');
         }
+
+        $this->skip('25.7.3', '25.8.0');
     }
 }
