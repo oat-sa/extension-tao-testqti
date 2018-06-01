@@ -34,11 +34,16 @@ class TimerLabelFormatterService extends ConfigurableService
      */
     public function format($potentialLabel = '')
     {
-        $label = (string) $this->getOption(static::OPTION_DEFAULT_TIMER_LABEL);
-        if (empty($label)){
+        $token = (string) $this->getOption(static::OPTION_DEFAULT_TIMER_LABEL);
+        if (empty($token)){
             return $potentialLabel;
         }
 
-        return __($label);
+        switch ($token) {
+            case 'timer_name_translation_token':
+                return __('Time Remaining');
+            default:
+                return $potentialLabel;
+        }
     }
 }
