@@ -36,6 +36,20 @@ define([
         record: 'record'
     };
 
+    var itemInteractionAttributes = {};
+
+    var interactionProperties = {
+        matchInteraction: 'minAssociations',
+        choiceInteraction: 'minChoices',
+        orderInteraction: 'minChoices',
+        associateInteraction: 'minAssociations',
+        hottextInteraction: 'minChoices',
+        hotspotInteraction: 'minChoices',
+        graphicOrderInteraction: 'minChoices',
+        graphicAssociateInteraction: 'minAssociations',
+        selectPointInteraction: 'minChoices'
+    };
+
     /**
      * @typedef {currentItemHelper}
      */
@@ -127,22 +141,77 @@ define([
         },
 
         /**
+         * Additional check if question was fully answered (respecting min constraint of interaction)
+         * @param response
+         * @param interactionAttributes
+         * @param baseType
+         * @param cardinality
+         * @returns {boolean}
+         */
+        isQuestionFullyAnswered: function isQuestionFullyAnswered(response, interactionAttributes, baseType, cardinality) {
+            var minConstraint = interactionProperties[interactionAttributes.qtiClass] || false;
+            
+            if (minConstraint) {
+                var minQuantity = interactionAttributes[minConstraint] || 0;
+                var responses = response[cardinality][baseType] || [];
+
+                if (responses && responses.length < minQuantity) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
+
+        /**
          * Tells if an item question has been answered or not
+         * @param responseIdentifier
          * @param response
          * @param baseType
          * @param cardinality
          * @param [defaultValue]
          * @returns {*}
          */
-        isQuestionAnswered: function isQuestionAnswered(response, baseType, cardinality, defaultValue) {
-            var answered;
+        isQuestionAnswered: function isQuestionAnswered(responseIdentifier, response, baseType, cardinality, defaultValue) {
+            var answered, fullyAnswered;
             defaultValue = defaultValue || null;
             if (currentItemHelper.isQtiValueNull(response, baseType, cardinality)) {
                 answered = false;
             } else {
                 answered = !_.isEqual(response, currentItemHelper.toResponse(defaultValue, baseType, cardinality));
+
+                if (itemInteractionAttributes[responseIdentifier].notApplicable) {
+                    fullyAnswered = true;
+                } else {
+                    fullyAnswered = currentItemHelper.isQuestionFullyAnswered(response, itemInteractionAttributes[responseIdentifier], baseType, responseCardinalities[cardinality]);
+                }
+
+                answered = answered && fullyAnswered;
             }
             return answered;
+        },
+
+        /**
+         * Grabs interaction attributes and stores it into variable
+         * @param runner
+         */
+        storeItemInteractionAttributes: function storeItemInteractionAttributes(runner) {
+            var itemRunner = runner.itemRunner;
+            var itemBody = itemRunner._item.bdy || {};
+            var interactions = itemBody.elements || {};
+
+            _.forEach(interactions, function(interaction) {
+                var attributes = interaction.attributes || {};
+                var qtiClass = interaction.__proto__.qtiClass;
+
+                if (interactionProperties.hasOwnProperty(qtiClass)) {
+                    attributes['qtiClass']      = qtiClass;
+                    attributes['notApplicable'] = false;
+                    itemInteractionAttributes[attributes.responseIdentifier] = attributes;
+                } else {
+                    itemInteractionAttributes[attributes.responseIdentifier] = {notApplicable: true};
+                }
+            });
         },
 
         /**
@@ -158,15 +227,20 @@ define([
             var count = 0;
             var empty = 0;
 
+            var declarations;
+
             if (itemRunner) {
-                _.forEach(currentItemHelper.getDeclarations(runner), function (declaration) {
+                declarations = currentItemHelper.getDeclarations(runner);
+                currentItemHelper.storeItemInteractionAttributes(runner);
+
+                _.forEach(declarations, function (declaration) {
                     var attributes = declaration.attributes || {};
                     var response = responses[attributes.identifier];
                     var baseType = attributes.baseType;
                     var cardinality = attributes.cardinality;
 
                     count++;
-                    if (!currentItemHelper.isQuestionAnswered(response, baseType, cardinality, declaration.defaultValue)) {
+                    if (!currentItemHelper.isQuestionAnswered(attributes.identifier, response, baseType, cardinality, declaration.defaultValue)) {
                         empty++;
                     }
                 });
