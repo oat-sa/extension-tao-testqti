@@ -1876,6 +1876,15 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('25.6.0');
         }
 
-        $this->skip('25.6.0', '25.6.2');
+        $this->skip('25.6.0', '25.7.2');
+
+        if ($this->isVersion('25.7.2')) {
+            /** @var TimerLabelFormatterService $timerLabel */
+            $timerLabel = $this->getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
+            $timerLabel->setOption(TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL, 'timer_name_translation_token');
+
+            $this->getServiceManager()->register(TimerLabelFormatterService::SERVICE_ID, $timerLabel);
+            $this->setVersion('25.7.3');
+        }
     }
 }
