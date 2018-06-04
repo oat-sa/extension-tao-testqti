@@ -252,7 +252,6 @@ define([
                 })
                 .on('finish leave', function () {
                     this.trigger('disablenav disabletools');
-                    this.trigger('endsession');
                     this.flush();
                 })
                 .on('flush', function () {

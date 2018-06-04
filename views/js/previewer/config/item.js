@@ -24,7 +24,7 @@
 define([
     'lodash',
     'util/url',
-    'taoQtiTest/runner/helpers/config'
+    'util/config'
 ], function(_, urlUtil, configHelper) {
     'use strict';
 
