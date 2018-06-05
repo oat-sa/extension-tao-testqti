@@ -43,7 +43,7 @@ return array(
     'requires'    => array(
         'taoQtiItem' => '>=14.2.0',
         'taoTests'   => '>=7.8.0',
-        'tao'        => '>=19.4.0',
+        'tao'        => '>=19.5.0',
         'generis'    => '>=6.14.0',
         'taoDelivery' => '>=9.6.0',
         'taoItems'   => '>=5.13.0',
@@ -64,7 +64,6 @@ return array(
             dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
             \oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestRunnerPreviewers::class,
             \oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter::class,
             \oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem::class,
             RegisterQtiFlysystemManager::class,
@@ -96,7 +95,6 @@ return array(
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items')),
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
         array('grant', \oat\tao\model\user\TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Previewer')),
     ),
 	'constants' => array(
 		# actions directory

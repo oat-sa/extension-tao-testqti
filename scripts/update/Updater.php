@@ -1878,29 +1878,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('25.6.0');
         }
 
-        $this->skip('25.6.0', '25.7.1');
-
-        if ($this->isVersion('25.7.1')) {
-            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Previewer')));
-
-            $registry = $this->getServiceManager()->get(ItemPreviewerService::SERVICE_ID);
-            $registry->registerAdapter(
-                DynamicModule::fromArray(
-                    [
-                        'id' => 'qtiItem',
-                        'name' => 'QTI Item Previewer',
-                        'module' => 'taoQtiTest/previewer/adapter/qtiItem',
-                        'bundle' => 'taoQtiTest/loader/qtiPreviewer.min',
-                        'description' => 'QTI implementation of the item previewer',
-                        'category' => 'previewer',
-                        'active' => true,
-                        'tags' => [ 'core', 'qti', 'previewer' ]
-                    ]
-                )
-            );
-
-
-            $this->setVersion('25.8.0');
-        }
+        $this->skip('25.6.0', '25.8.0');
     }
 }
