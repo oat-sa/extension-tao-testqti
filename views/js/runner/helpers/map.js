@@ -232,7 +232,7 @@ define([
             var scopeMap = _.cloneDeep(map || {});
 
             // gets the current part and section
-            var jump = this.getJump(map, position);
+            var jump = this.getJump(scopeMap, position);
             var part = this.getPart(scopeMap, jump && jump.part);
             var section = this.getSection(scopeMap, jump && jump.section);
 

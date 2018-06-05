@@ -72,9 +72,9 @@ define([
      */
     var updateElement = function updateElement($element, context){
         var dataType = context.isLast ? 'end' : 'next';
-        if($element.data('control') !== buttonData[dataType].control){
+        if($element.attr('data-control') !== buttonData[dataType].control){
 
-            $element.data('control', buttonData[dataType].control)
+            $element.attr('data-control', buttonData[dataType].control)
                     .attr('title', buttonData[dataType].title)
                     .find('.text').text(buttonData[dataType].text);
 

@@ -42,6 +42,7 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
     const TEST_ITEM    = 'assessmentItemRef';
     const ITEM_SHUFFLE = 'shuffle';
     const ITEM_ORDER   = 'section-order';
+    const ITEM_URI   = 'uri';
 
     /**
      * Item exporter to handle each items
@@ -74,43 +75,24 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
     {
         $this->assessmentUri = $uri;
 
-        $items = \taoQtiTest_models_classes_QtiTestService::singleton()->getItems($this->getResource($uri));
+        $testData = $this->getAssessmentData();
 
-        $data = [];
-        /** @var \core_kernel_classes_Resource $item */
-        foreach ($items as $item) {
-            try {
-                $itemData = $this->getItemExporter()->getDataByItem($item);
-                foreach ($itemData as &$column) {
-                    $column = array_merge($column, $this->getAdditionalData($item));
-                }
-                $data[] = $itemData;
-            } catch (ExtractorException $e) {
-                \common_Logger::e('ERROR on item ' . $item->getUri() . ' : ' . $e->getMessage());
+        $finalData = [];
+        foreach ($testData as $data){
+            $item = new \core_kernel_classes_Resource($data[self::ITEM_URI]);
+            unset($data[self::ITEM_URI]);
+            $itemData = $this->getItemExporter()->getDataByItem($item);
+            foreach ($itemData as &$column){
+                $column = array_merge($column, $data);
             }
+            $finalData[] = $itemData;
         }
+
         $headers = array_merge($this->getItemExporter()->getHeaders(), $this->getHeaders());
 
-        return $this->getItemExporter()->save($headers, $data, true);
+        return $this->getItemExporter()->save($headers, $finalData, true);
     }
 
-    /**
-     * Get assessment data for an item
-     *
-     * @param \core_kernel_classes_Resource $item
-     * @return array
-     */
-    protected function getAdditionalData(\core_kernel_classes_Resource $item)
-    {
-        $data = $this->getAssessmentData();
-        $identifier = $item->getUri();
-
-        if (isset($data[$identifier])) {
-            return $data[$identifier];
-        } else {
-            return [];
-        }
-    }
 
     /**
      * Fetch assessment item data
@@ -132,7 +114,8 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
                     $order = 1;
                     /** @var AssessmentItemRef $item */
                     foreach ($itemCollection as $item) {
-                        $this->assessmentItemData[$item->getHref()] = [
+                        $this->assessmentItemData[$item->getIdentifier()] = [
+                            self::ITEM_URI     => $item->getHref(),
                             self::TEST_PART    => $testPart->getIdentifier(),
                             self::TEST_SECTION => $section->getIdentifier(),
                             self::ITEM_SHUFFLE => is_null($section->getOrdering()) ? 0 : (int) $section->getOrdering()->getShuffle(),
@@ -164,7 +147,7 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
     protected function getItemExporter()
     {
         if (! $this->itemExporter) {
-            $this->itemExporter = $this->getServiceManager()->get(SimpleExporter::SERVICE_ID);
+            $this->itemExporter = $this->getServiceLocator()->get(SimpleExporter::SERVICE_ID);
         }
         return $this->itemExporter;
     }

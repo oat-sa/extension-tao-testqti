@@ -19,7 +19,9 @@
  */
 namespace oat\taoQtiTest\models\creator;
 
+use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\resources\ResourceService;
 
 /**
  * This service let's you access the test creator's items
@@ -28,6 +30,8 @@ use oat\oatbox\service\ConfigurableService;
  */
 class CreatorItems extends ConfigurableService
 {
+    use OntologyAwareTrait;
+
     const SERVICE_ID = 'taoQtiTest/CreatorItems';
 
     const ITEM_ROOT_CLASS_URI       = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
@@ -50,38 +54,8 @@ class CreatorItems extends ConfigurableService
      */
     public function getItemClasses()
     {
-        $itemClass = new \core_kernel_classes_Class(self::ITEM_ROOT_CLASS_URI);
-
-        $result = [
-            'uri' => $itemClass->getUri(),
-            'label' => $itemClass->getLabel(),
-            'children' => $this->getSubClasses($itemClass->getSubClasses(false))
-        ];
-
-        return $result;
-    }
-
-    /**
-     * Get the class subclasses
-     * @return array the classes hierarchy
-     */
-    private function getSubClasses($subClasses)
-    {
-        $result = [];
-
-        foreach ($subClasses as $subClass) {
-            $children = $subClass->getSubClasses(false);
-            $entry = [
-                'uri' => $subClass->getUri(),
-                'label' => $subClass->getLabel()
-            ];
-            if (count($children) > 0) {
-                $entry['children'] = $this->getSubClasses($children);
-            }
-            array_push($result, $entry);
-        }
-
-        return $result;
+        $itemClass = $this->getClass(self::ITEM_ROOT_CLASS_URI);
+        return $this->getResourceService()->getAllClasses($itemClass);
     }
 
     /**
@@ -124,11 +98,16 @@ class CreatorItems extends ConfigurableService
         if(in_array($format, self::$formats)){
 
             //load the lookup dynamically using the format
-            $itemLookup = $this->getServiceManager()->get(self::SERVICE_ID . '/' . $format);
+            $itemLookup = $this->getServiceLocator()->get(self::SERVICE_ID . '/' . $format);
             if(!is_null($itemLookup) && $itemLookup instanceof ItemLookup){
                 $result = $itemLookup->getItems($itemClass, $propertyFilters, $offset, $limit);
             }
         }
         return $result;
+    }
+
+    protected function getResourceService()
+    {
+        return $this->getServiceLocator()->get(ResourceService::SERVICE_ID);
     }
 }
