@@ -430,13 +430,14 @@ class CatService extends ConfigurableService
         return $client;
     }
 
+    /**
+     * @param array $options
+     *
+     * @return string
+     */
     protected function getCatEngineVersion(array $options = [])
     {
-        if (isset($options[self::OPTION_ENGINE_VERSION])) {
-            return $options[self::OPTION_ENGINE_VERSION];
-        }
-
-        throw new \InvalidArgumentException('No API version provided. Cannot connect to endpoint.');
+        return isset($options[self::OPTION_ENGINE_VERSION]) ? $options[self::OPTION_ENGINE_VERSION] : '';
     }
     
     public function isAdaptive(AssessmentTestSession $testSession, AssessmentItemRef $currentAssessmentItemRef = null)
