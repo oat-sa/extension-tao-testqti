@@ -411,16 +411,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
         return $report;
     }
-
-    /**
+        /**
      * (non-PHPdoc)
      * @see \oat\taoDelivery\model\container\delivery\ContainerProvider::getContainer()
      */
     public function getContainer() {
-        $itemModel = $this->getServiceLocator()->get(ItemModel::SERVICE_ID);
         $registry = DeliveryContainerRegistry::getRegistry();
         $registry->setServiceLocator($this->getServiceLocator());
-        if ($itemModel->getCompilerClass() == QtiJsonItemCompiler::class) {
+        if ($this->useClientTestRunner()) {
             // client container
             $container = $registry->getDeliveryContainer('qtiTest',array(
                 'source' => $this->getResource()->getUri(),
@@ -432,6 +430,16 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $container = $registry->getDeliveryContainer('service',$serviceCall);
         }
         return $container;
+    }
+
+    /**
+     * Whenever or not we use the Client Test runner
+     * @return boolean
+     */
+    protected function useClientTestRunner() {
+        $itemModel = $this->getServiceLocator()->get(ItemModel::SERVICE_ID);
+        $isClientTestRunner = $itemModel->getCompilerClass() == QtiJsonItemCompiler::class;
+        return $isClientTestRunner;
     }
 
     /**
@@ -469,22 +477,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             // Each item could take some time to be compiled, making the request to timeout.
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::SHORT);
-            
-            $itemToCompile = new core_kernel_classes_Resource($assessmentItemRef->getHref());
-            $subReport = $this->subCompile($itemToCompile);
+            $subReport = $this->useClientTestRunner()
+                ? $this->compileJsonItem($assessmentItemRef)
+                : $this->legacyCompileItem($assessmentItemRef);
             $report->add($subReport);
-            if ($subReport->getType() == common_report_Report::TYPE_SUCCESS) {
-                $itemService = $subReport->getdata(); 
-                $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
-                $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $inputValues['itemDataPath']);
-                
-                // Ask for item ref information compilation for fast later usage.
-                $this->compileAssessmentItemRefHrefIndex($assessmentItemRef);
-                
-            } else {
+            if ($subReport->getType() != common_report_Report::TYPE_SUCCESS) {
                 $report->setType(common_report_Report::TYPE_ERROR);
             }
-
             // Count the item even if it fails to avoid false "no item" error.
             $itemCount++;
             common_Logger::t("QTI Item successfully compiled and registered as a service call in the QTI Test Definition.");
@@ -497,6 +496,46 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         return $report;
     }
     
+    /**
+     * 
+     * @param AssessmentItemRef $assessmentItemRef
+     * @return common_report_Report
+     */
+    protected function legacyCompileItem(AssessmentItemRef &$assessmentItemRef) {
+        $item = new core_kernel_classes_Resource($assessmentItemRef->getHref());
+        $report = $this->subCompile($item);
+        if ($report->getType() == common_report_Report::TYPE_SUCCESS) {
+            $itemService = $report->getdata();
+            $inputValues = tao_models_classes_service_ServiceCallHelper::getInputValues($itemService, array());
+            $assessmentItemRef->setHref($inputValues['itemUri'] . '|' . $inputValues['itemPath'] . '|' . $inputValues['itemDataPath']);
+
+            // Ask for item ref information compilation for fast later usage.
+            $this->compileAssessmentItemRefHrefIndex($assessmentItemRef);
+        }
+        return $report;
+    }
+
+    /**
+     * 
+     * @param AssessmentItemRef $item
+     * @return common_report_Report
+     */
+    protected function compileJsonItem(AssessmentItemRef &$assessmentItemRef) {
+        $jsonCompiler = new QtiJsonItemCompiler(
+            new core_kernel_classes_Resource($assessmentItemRef->getHref()),
+            $this->getStorage()
+        );
+        $jsonCompiler->setServiceLocator($this->getServiceLocator());
+        $jsonCompiler->setContext($this->getContext());
+        $report = $jsonCompiler->compileJson();
+        if ($report->getType() == common_report_Report::TYPE_SUCCESS) {
+            // store $itemUri, $publicDirId, $privateDirId in a string
+            $assessmentItemRef->setHref(implode('|', $report->getdata()));
+            $this->compileAssessmentItemRefHrefIndex($assessmentItemRef);
+        }
+        return $report;
+    }
+
     /**
      * Explode the rubric blocks of the test definition into separate QTI-XML files and
      * remove the compact XML document from the file system (useless for
@@ -933,11 +972,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compileAssessmentItemRefHrefIndex(AssessmentItemRef $assessmentItemRef)
     {
         $compiledDocDir = $this->getPrivateDirectory();
-        
-        $compiledDocDir->write(
-            self::buildHrefIndexPath($assessmentItemRef->getIdentifier()), 
-            $assessmentItemRef->getHref()
-        );
+        $compiledDocDir->getFile(self::buildHrefIndexPath($assessmentItemRef->getIdentifier()))
+            ->write($assessmentItemRef->getHref());
     }
     
     /**
