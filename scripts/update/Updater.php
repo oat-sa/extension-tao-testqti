@@ -1888,13 +1888,15 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('25.7.3');
         }
 
-        if ($this->isVersion('25.7.3')) {
+        $this->skip('25.7.3', '25.7.5');
+
+        if ($this->isVersion('25.7.5')) {
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['enable-allow-skipping'] = true;
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('25.7.4');
+            $this->setVersion('25.7.6');
         }
     }
 }
