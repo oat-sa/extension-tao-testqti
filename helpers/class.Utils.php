@@ -21,12 +21,11 @@
 use oat\generis\Helper\SystemHelper;
 use oat\taoQtiItem\model\qti\Resource;
 use qtism\data\storage\xml\XmlDocument;
-use qtism\data\storage\php\PhpDocument;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\filesystem\FileSystemService;
-use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\Directory;
 use oat\taoQtiTest\models\CompilationDataService;
+use qtism\data\AssessmentTest;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -111,7 +110,7 @@ class taoQtiTest_helpers_Utils {
      * Returns an empty IMS Manifest file as a DOMDocument, ready to be fill with
      * new information about IMS QTI Items and Tests.
      * 
-     * @param $version The requested QTI version. Can be "2.1" or "2.2". Default is "2.1".
+     * @param $version string The requested QTI version. Can be "2.1" or "2.2". Default is "2.1".
      * @return DOMDocument
      */
     static public function emptyImsManifest($version = '2.1') {
