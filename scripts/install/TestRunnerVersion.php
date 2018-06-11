@@ -41,7 +41,7 @@ class TestRunnerVersion extends \common_ext_action_InstallAction
     {
         return [
             'message' => $message,
-            'new' => !!$newRunner,
+            'new' => $newRunner,
             'correct' => !!$correct
         ];
     }
@@ -70,14 +70,14 @@ class TestRunnerVersion extends \common_ext_action_InstallAction
             $oldRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryServiceContainer';
             $newRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryClientContainer';
             if ($this->isClass($deliveryContainerClass, $newRunnerClass)) {
-                $result = $this->resultData('DeliveryServer: New TestRunner', true, true);
+                $result = $this->resultData('Default Container: New TestRunner', true, true);
             } else if ($this->isClass($deliveryContainerClass, $oldRunnerClass)) {
-                $result = $this->resultData('DeliveryServer: Old TestRunner', false, true);
+                $result = $this->resultData('Default Container: Old TestRunner', false, true);
             } else {
-                $result = $this->resultData('DeliveryServer: Unknown version / bad config (' . $deliveryContainerClass . ')', false, false);
+                $result = $this->resultData('Default Container: Unknown version / bad config (' . $deliveryContainerClass . ')', false, false);
             }
         } else {
-            $result = $this->resultData('Legacy container used for deliveries without container not set', null, true);
+            $result = $this->resultData('No container set for legacy deliveries', null, true);
         }
 
         return $result;
@@ -153,17 +153,15 @@ class TestRunnerVersion extends \common_ext_action_InstallAction
         ];
 
         $messages = [];
-        $newRunner = true;
         $correct = true;
         $someOld = false;
         $someNew = false;
         foreach ($checks as $check) {
             $messages[] = $check['message'];
-            $newRunner = $newRunner && $check['new'];
             $correct = $correct && $check['correct'];
-            if ($check['new']) {
+            if ($check['new'] === true) {
                 $someNew = true;
-            } else {
+            } elseif ($check['new'] === false) {
                 $someOld = true;
             }
         }
@@ -176,7 +174,7 @@ class TestRunnerVersion extends \common_ext_action_InstallAction
             if ($someNew && $someOld) {
                 $message .= "\n\nThere is a mix of different versions!";
             }
-        } else if ($newRunner) {
+        } else if ($someNew) {
             $message .= "\nThe New Test Runner is activated";
         } else {
             $message .= "\nThe Old Test Runner is activated";
