@@ -25,6 +25,7 @@ use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\user\TaoRoles;
+use oat\taoDevTools\actions\ExtensionsManager;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
@@ -1886,6 +1887,16 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(TimerLabelFormatterService::SERVICE_ID, $timerLabel);
             $this->setVersion('25.7.3');
         }
+
         $this->skip('25.7.3', '25.7.5');
+
+        if ($this->isVersion('25.7.5')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['enable-allow-skipping'] = true;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('25.7.6');
+        }
     }
 }
