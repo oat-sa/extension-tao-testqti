@@ -73,6 +73,7 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
+use oat\taoQtiTest\models\compilation\CompilationService;
 
 /**
  *
@@ -1047,10 +1048,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('9.12.0', '9.14.1');
 
         if ($this->isVersion('9.14.1')) {
+            /* deprecated as of 25.8.0
             $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
             $testModelService->setOption('testCompilerClass', 'taoQtiTest_models_classes_QtiTestCompiler');
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
-
+            */
             $this->setVersion('9.15.0');
         }
 
@@ -1645,5 +1647,18 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('25.7.6', '25.7.7');
+
+        // test compiler settings refactoring
+        if ($this->isVersion('25.7.7')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('TestCompiler');
+
+            $model = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+            $model->setOption(TestModelService::SUBSERVICE_COMPILATION, new CompilationService([
+                CompilationService::OPTION_RUBRIC_BLOCK_CSS_SCOPE => $config['enable-rubric-block-stylesheet-scoping']
+            ]));
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $model);
+            $this->setVersion('25.8.0');
+        }
     }
 }

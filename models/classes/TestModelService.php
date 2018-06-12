@@ -39,6 +39,8 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
 
     const SERVICE_ID = 'taoQtiTest/TestModel';
 
+    const SUBSERVICE_COMPILATION = 'CompilationService';
+
     /**
      * default constructor to ensure the implementation
      * can be instanciated
@@ -144,7 +146,7 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
     }
 
     public function getCompilerClass() {
-        $service = $this->getSubService('CompilationService')->getCompilerClass();
+        $service = $this->getSubService(self::SUBSERVICE_COMPILATION)->getCompilerClass();
     }
 
 

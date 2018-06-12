@@ -27,7 +27,6 @@ return new \oat\taoQtiTest\models\TestModelService([
     'importHandlers' => [
         new taoQtiTest_models_classes_import_TestImport()
     ],
-    'testCompilerClass'  => 'taoQtiTest_models_classes_QtiTestCompiler',
     'CompilationService' => new CompilationService([
         // Whether nor not scoping rubricBlock stylesheet rules with IDs.
         CompilationService::OPTION_RUBRIC_BLOCK_CSS_SCOPE => true,
