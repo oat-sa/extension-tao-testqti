@@ -131,6 +131,18 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     private $compilationInfo = [];
 
     /**
+     * Whenever or not rubric block css should be scoped
+     * @var boolean
+     */
+    private $settingCssScope = true;
+
+    /**
+     * Whenever or not the new client test runner hsould be used
+     * @var boolean
+     */
+    private $settingClientContainer = true;
+
+    /**
      * Get the public compilation directory.
      * 
      * @return tao_models_classes_service_StorageDirectory
@@ -325,7 +337,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             
             // 5. Update test definition with additional runtime info.
             $assessmentTest = $compiledDoc->getDocumentComponent();
-            $this->updateTestDefinition($assessmentTest);
+            //$this->updateTestDefinition($assessmentTest);
 
             // 6. Compile rubricBlocks and serialize on disk.
             $this->compileRubricBlocks($assessmentTest);
@@ -409,11 +421,13 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $report->setMessage(__('QTI Test "%s" publishing failed.', $this->getResource()->getLabel()));
         return $report;
     }
-        /**
-     * (non-PHPdoc)
+
+    /**
+     * {@inheritDoc}
      * @see \oat\taoDelivery\model\container\delivery\ContainerProvider::getContainer()
      */
-    public function getContainer() {
+    public function getContainer()
+    {
         $registry = DeliveryContainerRegistry::getRegistry();
         $registry->setServiceLocator($this->getServiceLocator());
         if ($this->useClientTestRunner()) {
@@ -428,16 +442,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $container = $registry->getDeliveryContainer('service',$serviceCall);
         }
         return $container;
-    }
-
-    /**
-     * Whenever or not we use the Client Test runner
-     * @return boolean
-     */
-    protected function useClientTestRunner() {
-        $itemModel = $this->getServiceLocator()->get(ItemModel::SERVICE_ID);
-        $isClientTestRunner = $itemModel->getCompilerClass() == QtiJsonItemCompiler::class;
-        return $isClientTestRunner;
     }
 
     /**
@@ -621,9 +625,6 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compileRubricBlocks(AssessmentTest $assessmentTest) {
         common_Logger::t("Compiling QTI rubricBlocks...");
         
-        $config = $this->getTaoQtiTestExtension()->getConfig('TestCompiler');
-        $cssScoping = isset($config['enable-rubric-block-stylesheet-scoping']) && $config['enable-rubric-block-stylesheet-scoping'] === true;
-        
         $rubricBlockRefs = $assessmentTest->getComponentsByClassName('rubricBlockRef');
         $testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $sourceDir = $testService->getQtiTestDir($this->getResource());
@@ -677,7 +678,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $styleRendering = $renderingEngine->getStylesheets();
             $mainStringRendering = $styleRendering->ownerDocument->saveXML($styleRendering) . $mainStringRendering;
 
-            if ($cssScoping === true) {
+            if ($this->useCssScoping()) {
                 foreach ($stylesheets as $rubricStylesheet) {
                     $relPath = trim($this->getExtraPath(), '/');
                     $relPath = (empty($relPath) ? '' : $relPath.DIRECTORY_SEPARATOR)
@@ -1025,5 +1026,41 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             self::COMPILATION_INFO_FILENAME,
             json_encode($this->getCompilatonInfo())
         );
+    }
+
+    /**
+     * Set whenever or not the compiler should use client test container
+     * @param boolean $boolean
+     */
+    public function setClientContainer($boolean)
+    {
+        $this->settingClientContainer = !!$boolean;
+    }
+
+    /**
+     * Whenever or not we use the Client Test runner
+     * @return boolean
+     */
+    protected function useClientTestRunner()
+    {
+        return $this->settingClientContainer;
+    }
+
+    /**
+     * Set whenever or not the compiler should scope rubric block css
+     * @param boolean $boolean
+     */
+    public function setCssScoping($boolean)
+    {
+        $this->settingCssScope = !!$boolean;
+    }
+
+    /**
+     * Whenever or not we scope rubric block css
+     * @return boolean
+     */
+    protected function useCssScoping()
+    {
+        return $this->settingCssScope;
     }
 }

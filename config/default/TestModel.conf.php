@@ -16,6 +16,8 @@
  *
  * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA;
  */
+use oat\taoQtiTest\models\compilation\CompilationService;
+
 return new \oat\taoQtiTest\models\TestModelService([
     'exportHandlers' => [
         new \oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler(),
@@ -25,5 +27,11 @@ return new \oat\taoQtiTest\models\TestModelService([
     'importHandlers' => [
         new taoQtiTest_models_classes_import_TestImport()
     ],
-    'testCompilerClass'  => 'taoQtiTest_models_classes_QtiTestCompiler'
+    'testCompilerClass'  => 'taoQtiTest_models_classes_QtiTestCompiler',
+    'CompilationService' => new CompilationService([
+        // Whether nor not scoping rubricBlock stylesheet rules with IDs.
+        CompilationService::OPTION_RUBRIC_BLOCK_CSS_SCOPE => true,
+        // Whether nor not to use the client container for the testrunner
+        CompilationService::OPTION_CLIENT_TESTRUNNER => true
+    ])
 ]);
