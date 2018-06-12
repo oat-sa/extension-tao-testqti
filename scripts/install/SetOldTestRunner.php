@@ -33,12 +33,6 @@ class SetOldTestRunner extends InstallAction
 {
     public function __invoke($params)
     {
-        $deliveryExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery');
-        $deliveryServerConfig = $deliveryExt->getConfig('deliveryServer');
-        $deliveryServerConfig->setOption('deliveryContainer', 'oat\\taoDelivery\\helper\\container\\DeliveryServiceContainer');
-        $deliveryExt->setConfig('deliveryServer', $deliveryServerConfig);
-
-
         $compilerClassConfig = 'oat\\taoQtiItem\\model\\QtiItemCompiler';
         /** @var ItemModel $itemModelService */
         $itemModelService = $this->getServiceManager()->get(ItemModel::SERVICE_ID);

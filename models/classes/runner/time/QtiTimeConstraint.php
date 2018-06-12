@@ -23,6 +23,7 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use oat\oatbox\service\ServiceManager;
 use qtism\common\datatypes\QtiDuration;
 use qtism\data\NavigationMode;
 use qtism\data\QtiComponent;
@@ -194,8 +195,10 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                     $extraTime = $this->getTimer()->getExtraTime($maxTimeSeconds);
                 }
 
+                /** @var TimerLabelFormatterService $labelFormatter */
+                $labelFormatter = ServiceManager::getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
                 return [
-                    'label'               => $label,
+                    'label'               => $labelFormatter->format($label),
                     'source'              => $identifier,
                     'qtiClassName'        => $source->getQtiClassName(),
                     'extraTime'           => $extraTime,
