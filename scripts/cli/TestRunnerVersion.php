@@ -34,6 +34,29 @@ use common_report_Report as Report;
 class TestRunnerVersion extends AbstractAction
 {
     /**
+     * Checks the version of the Test Runner
+     * @param $params
+     * @return Report
+     */
+    public function __invoke($params)
+    {
+        $checks = [
+            $this->checkDeliveryServer(),
+            $this->checkCompiler(),
+            $this->checkTestSession(),
+        ];
+        $error = $this->hasError($checks);
+        $mixed = $this->isMixed($checks);
+        $new = $this->isNew($checks);
+
+        $report = $this->generateReport($error, $mixed, $new);
+        foreach ($checks as $check) {
+            $report->add(new Report(Report::TYPE_INFO, $check['message']));
+        }
+        return $report;
+    }
+
+    /**
      * Builds a result set
      * @param string $message
      * @param bool $newRunner
@@ -70,19 +93,30 @@ class TestRunnerVersion extends AbstractAction
         $service = $this->getServiceLocator()->get(DeliveryServerService::SERVICE_ID);
         if ($service->hasOption('deliveryContainer')) {
             $deliveryContainerClass = $service->getOption('deliveryContainer');
-            $oldRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryServiceContainer';
-            $newRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryClientContainer';
-            if ($this->isClass($deliveryContainerClass, $newRunnerClass)) {
-                $result = $this->resultData('Default Container: New TestRunner', true, true);
-            } elseif ($this->isClass($deliveryContainerClass, $oldRunnerClass)) {
-                $result = $this->resultData('Default Container: Old TestRunner', false, true);
-            } else {
-                $result = $this->resultData('Default Container: Unknown version / bad config (' . $deliveryContainerClass . ')', false, false);
-            }
+            $result = $this->checkLegacyContainerConfig($deliveryContainerClass);
         } else {
             $result = $this->resultData('No container set for legacy deliveries', null, true);
         }
 
+        return $result;
+    }
+
+    /**
+     * Check which container is used for deliveries without container
+     * @param string $deliveryContainerClass
+     * @return array
+     */
+    private function checkLegacyContainerConfig($deliveryContainerClass)
+    {
+        $oldRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryServiceContainer';
+        $newRunnerClass = 'oat\\taoDelivery\\helper\\container\\DeliveryClientContainer';
+        if ($this->isClass($deliveryContainerClass, $newRunnerClass)) {
+            $result = $this->resultData('Default Container: New TestRunner', true, true);
+        } elseif ($this->isClass($deliveryContainerClass, $oldRunnerClass)) {
+            $result = $this->resultData('Default Container: Old TestRunner', false, true);
+        } else {
+            $result = $this->resultData('Default Container: Unknown version / bad config (' . $deliveryContainerClass . ')', false, false);
+        }
         return $result;
     }
 
@@ -153,57 +187,61 @@ class TestRunnerVersion extends AbstractAction
         return $result;
     }
 
-    /**
-     * Checks the version of the Test Runner
-     * @param $params
-     * @return Report
-     */
-    public function __invoke($params)
-    {
-        $checks = [
-            $this->checkDeliveryServer(),
-            $this->checkCompiler(),
-            $this->checkTestSession(),
-        ];
+    private function haserror($checks) {
+        $error = false;
+        foreach ($checks as $check) {
+            if (!$check['correct']) {
+                $error = true;
+            }
+        }
+        return $error;
+    }
 
-        $correct = true;
+    /**
+     * Do we have mixed settings
+     * @param array $checks
+     * @return boolean
+     */
+    private function isMixed($checks) {
         $someOld = false;
         $someNew = false;
         foreach ($checks as $check) {
-            $correct = $correct && $check['correct'];
             if ($check['new'] === true) {
                 $someNew = true;
             } elseif ($check['new'] === false) {
                 $someOld = true;
             }
         }
+        return !($someNew xor $someOld);
+    }
 
-        $mixedSettings = !($someNew xor $someOld);
-        $report = $this->generateReport($correct, $mixedSettings, $someNew);
+    private function isNew($checks) {
+        $isNew = false;
         foreach ($checks as $check) {
-            $report->add(new Report(Report::TYPE_INFO, $check['message']));
+            if (!is_null($check['new'])) {
+                $isNew = $check['new'];
+            }
         }
-        return $report;
+        return $isNew;
     }
 
     /**
-     * Preparethe final report on the test compiler/runner settings
-     * @param boolean $valid
+     * Prepare the final report on the test compiler/runner settings
+     * @param boolean $error
      * @param boolean $mixedSettings
      * @param boolean $newTestDriver
      * @return \common_report_Report
      */
-    public function generateReport($valid, $mixedSettings, $newTestDriver)
+    protected function generateReport($error, $mixedSettings, $newTestDriver)
     {
-        if (!$valid || $mixedSettings) {
+        if ($error || $mixedSettings) {
             $report = new Report(Report::TYPE_ERROR, "WARNING!\nThe Test Runner does not seem to be well configured!");
             if ($mixedSettings) {
                 $report->add(new Report(Report::TYPE_ERROR, "There is a mix of different versions!"));
             }
-        } else if ($newTestDriver) {
-            $report = new Report(Report::TYPE_SUCCESS, "The New Test Runner is activated");
         } else {
-            $report = new Report(Report::TYPE_SUCCESS, "The Old Test Runner is activated");
+            $message = $newTestDriver ? "The New Test Runner is activated" : "The Old Test Runner is activated";
+            $report = new Report(Report::TYPE_SUCCESS, $message);
         }
         return $report;
     }
