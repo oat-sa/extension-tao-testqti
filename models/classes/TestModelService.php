@@ -25,7 +25,6 @@ use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\filesystem\Directory;
 use oat\taoTests\models\TestModel;
 use oat\tao\model\service\ServiceFileStorage;
-use oat\taoQtiTest\models\compilation\CompilationService;
 
 /**
  * the qti TestModel
@@ -141,7 +140,6 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
     public function getCompiler(\core_kernel_classes_Resource $test, ServiceFileStorage $storage)
     {
         $service = $this->getSubService('CompilationService');
-        //$service = $this->getServiceLocator()->get(CompilationService::SERVICE_ID);
         return $service->getCompiler($test, $storage);
     }
 
