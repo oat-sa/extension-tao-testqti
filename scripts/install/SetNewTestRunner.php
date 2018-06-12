@@ -16,34 +16,13 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
  */
-
 namespace oat\taoQtiTest\scripts\install;
-use oat\oatbox\extension\InstallAction;
-use oat\taoQtiItem\model\ItemModel;
+
+use oat\taoQtiTest\scripts\cli\SetNewTestRunner as NewSetNewTestRunner;
 
 /**
- * Class SetNewTestRunner
- * 
- * Setup the new Test Runner
- * 
- * @package oat\taoQtiTest\scripts\install
+ * @deprecated
  */
-class SetNewTestRunner extends InstallAction
+class SetNewTestRunner extends NewSetNewTestRunner
 {
-    public function __invoke($params)
-    {
-        $compilerClassConfig = 'oat\\taoQtiItem\\model\\QtiJsonItemCompiler';
-
-        /** @var ItemModel $itemModelService */
-        $itemModelService = $this->getServiceManager()->get(ItemModel::SERVICE_ID);
-        $itemModelService->setOption(ItemModel::COMPILER, $compilerClassConfig);
-        $this->getServiceManager()->register(ItemModel::SERVICE_ID, $itemModelService);
-
-        $testQtiExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $testRunnerConfig = $testQtiExt->getConfig('testRunner');
-        $testRunnerConfig['test-session'] = 'oat\\taoQtiTest\\models\\runner\\session\\TestSession';
-        $testQtiExt->setConfig('testRunner', $testRunnerConfig);
-
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, 'New test runner activated');
-    }
 }
