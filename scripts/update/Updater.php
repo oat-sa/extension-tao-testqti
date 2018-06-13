@@ -24,6 +24,7 @@ use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\TaoOntology;
+use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
 use oat\taoDevTools\actions\ExtensionsManager;
 use oat\taoQtiTest\models\creator\CreatorItems;
@@ -63,7 +64,6 @@ use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
-use oat\taoTaskQueue\model\TaskLogInterface;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 use oat\taoQtiTest\models\PhpCodeCompilationDataService;
@@ -1762,20 +1762,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('18.9.5');
         }
 
-        $this->skip('18.9.5', '21.0.2');
-
-        if ($this->isVersion('21.0.2')) {
-            /** @var TaskLogInterface|ConfigurableService $taskLogService */
-            $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
-
-            $taskLogService->linkTaskToCategory(ImportQtiTest::class, TaskLogInterface::CATEGORY_IMPORT);
-
-            $this->getServiceManager()->register(TaskLogInterface::SERVICE_ID, $taskLogService);
-
-            $this->setVersion('22.0.0');
-        }
-
-        $this->skip('22.0.0', '23.2.0');
+        $this->skip('18.9.5', '23.2.0');
 
         if ($this->isVersion('23.2.0')) {
 
@@ -1900,5 +1887,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('25.7.6', '25.8.0');
+
+        if ($this->isVersion('25.8.0')) {
+            /** @var TaskLogInterface|ConfigurableService $taskLogService */
+            $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
+
+            $taskLogService->linkTaskToCategory(ImportQtiTest::class, TaskLogInterface::CATEGORY_IMPORT);
+
+            $this->getServiceManager()->register(TaskLogInterface::SERVICE_ID, $taskLogService);
+
+            $this->setVersion('25.9.0');
+        }
     }
 }
