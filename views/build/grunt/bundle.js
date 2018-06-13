@@ -67,7 +67,7 @@ module.exports = function(grunt) {
                     { src: [out + '/qtiTestRunner.min.js'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js' },
                     { src: [out + '/qtiTestRunner.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/qtiTestRunner.min.js.map' },
                     { src: [out + '/testPlugins.min.js'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js' },
-                    { src: [out + '/testPlugins.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js.map' }
+                    { src: [out + '/testPlugins.min.js.map'],  dest: root + '/taoQtiTest/views/js/loader/testPlugins.min.js.map' },
                 ]
             }
         }

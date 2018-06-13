@@ -1886,9 +1886,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('25.7.6');
         }
 
-        $this->skip('25.7.6', '25.7.7');
+        $this->skip('25.7.6', '25.8.0');
 
-        if ($this->isVersion('25.7.7')) {
+        if ($this->isVersion('25.8.0')) {
             /** @var TaskLogInterface|ConfigurableService $taskLogService */
             $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
 
@@ -1896,7 +1896,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->getServiceManager()->register(TaskLogInterface::SERVICE_ID, $taskLogService);
 
-            $this->setVersion('25.8.0');
+            $this->setVersion('25.9.0');
         }
     }
 }
