@@ -135,7 +135,7 @@ define([
                 guidedNavigation : testData && testData.config && testData.config.guidedNavigation,
 
                 /**
-                 * Sync timer from the client
+                 * Sync the timer with client
                  */
                 clientSync: testData && testData.config && testData.config.timer.syncWithClient
             });
