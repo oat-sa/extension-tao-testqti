@@ -144,7 +144,7 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
     }
 
     public function getCompilerClass() {
-        $service = $this->getSubService(self::SUBSERVICE_COMPILATION)->getCompilerClass();
+        return $this->getSubService(self::SUBSERVICE_COMPILATION)->getCompilerClass();
     }
 
 
