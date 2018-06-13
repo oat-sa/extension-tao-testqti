@@ -555,5 +555,10 @@ return array(
     /**
      * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
      */
-    'guidedNavigation' => false
+    'guidedNavigation' => false,
+
+    /**
+     * Sync the timer with client after reloading
+     */
+    'sync-timer-with-client' => true,
 );
