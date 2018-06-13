@@ -1904,7 +1904,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('25.7.7')) {
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
-            $config['sync-timer-with-client'] = true;
+            $config['restore-timer-from-client'] = true;
             $extension->setConfig('testRunner', $config);
 
             $this->setVersion('25.7.8');
