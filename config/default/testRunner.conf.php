@@ -558,7 +558,8 @@ return array(
     'guidedNavigation' => false,
 
     /**
-     * Sync the timer with client after reloading
+     * Restore timer from client. Depends on timer/target. If target is 'client' then this value must be true.
+     * @type boolean
      */
-    'sync-timer-with-client' => true,
+    'restore-timer-from-client' => true,
 );

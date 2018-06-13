@@ -65,7 +65,7 @@ define([
                         return timeStore.getItem(timer.id).then(function(savedTime){
 
                             //apply the remainingTime from the store
-                            if (_.isNumber(savedTime) && savedTime >= 0 && config.clientSync) {
+                            if (_.isNumber(savedTime) && savedTime >= 0 && config.restoreTimerFromClient) {
                                 timer.remainingTime = savedTime;
                             }
                             //apply the extraTime
@@ -135,9 +135,9 @@ define([
                 guidedNavigation : testData && testData.config && testData.config.guidedNavigation,
 
                 /**
-                 * Sync the timer with client
+                 * Restore timer from client.
                  */
-                clientSync: testData && testData.config && testData.config.timer.syncWithClient
+                restoreTimerFromClient: testData && testData.config && testData.config.timer.restoreTimerFromClient
             });
 
             /**
