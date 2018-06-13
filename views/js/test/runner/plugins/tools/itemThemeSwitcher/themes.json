@@ -1,0 +1,48 @@
+{
+  "items": {
+    "base": "http://ce.tao/taoQtiItem/views/css/qti-runner.css?buster=5b0bb304e009e",
+    "available": [
+      {
+        "id": "tao",
+        "name": "TAO",
+        "path": "http://ce.tao/taoQtiItem/views/css/themes/default.css?buster=5b0bb304e009e"
+      },
+      {
+        "id": "blackOnWhite",
+        "name": "Black on White",
+        "path": "http://ce.tao/taoColorContrast/views/css/themes/items/blackOnWhite/theme.css?buster=5b0bb304e009e"
+      },
+      {
+        "id": "blackOnCream",
+        "name": "Black on Cream",
+        "path": "http://ce.tao/taoColorContrast/views/css/themes/items/blackOnCream/theme.css?buster=5b0bb304e009e"
+      },
+      {
+        "id": "blackOnLightBlue",
+        "name": "Black on Light Blue",
+        "path": "http://ce.tao/taoColorContrast/views/css/themes/items/blackOnLightBlue/theme.css?buster=5b0bb304e009e"
+      },
+      {
+        "id": "blackOnLightMagenta",
+        "name": "Black on Light Magenta",
+        "path": "http://ce.tao/taoColorContrast/views/css/themes/items/blackOnLightMagenta/theme.css?buster=5b0bb304e009e"
+      },
+      {
+        "id": "whiteOnBlack",
+        "name": "White on Black",
+        "path": "http://ce.tao/taoColorContrast/views/css/themes/items/whiteOnBlack/theme.css?buster=5b0bb304e009e"
+      },
+      {
+        "id": "yellowOnBlue",
+        "name": "Yellow on Blue",
+        "path": "http://ce.tao/taoColorContrast/views/css/themes/items/yellowOnBlue/theme.css?buster=5b0bb304e009e"
+      },
+      {
+        "id": "grayOnGreen",
+        "name": "Gray on Green",
+        "path": "http://ce.tao/taoColorContrast/views/css/themes/items/grayOnGreen/theme.css?buster=5b0bb304e009e"
+      }
+    ],
+    "default": "tao"
+  }
+}

@@ -1899,15 +1899,15 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('25.7.6');
         }
 
-        $this->skip('25.7.6', '25.7.7');
+        $this->skip('25.7.6', '25.8.0');
 
-        if ($this->isVersion('25.7.7')) {
+        if ($this->isVersion('25.8.0')) {
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['restore-timer-from-client'] = true;
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('25.7.8');
+            $this->setVersion('25.8.1');
         }
     }
 }
