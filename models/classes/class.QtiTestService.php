@@ -963,7 +963,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     public function getQtiTestDir(core_kernel_classes_Resource $test, $createTestFile = true)
     {
         $testModel = TestService::singleton()->getTestModel($test);
-        if (is_null($testModel) || $testModel->getUri() != self::INSTANCE_TEST_MODEL_QTI) {
+        if ($testModel->getUri() != self::INSTANCE_TEST_MODEL_QTI) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
                 'The selected test is not a QTI test',
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
