@@ -165,15 +165,15 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    }
 
     /**
-     * @param AssessmentTestSession $assessmentTestSession
+     * @param string $sessionId
      * @return bool
      */
-   public function delete($assessmentTestSession)
+   public function delete($sessionId)
    {
        /** @var StateStorage $storageService */
        $storageService = ServiceManager::getServiceManager()->get(StateStorage::SERVICE_ID);
 
-       return $storageService->del($this->getUserUri(), $assessmentTestSession->getSessionId());
+       return $storageService->del($this->getUserUri(), $sessionId);
    }
 
    protected function createBinaryStreamAccess(IStream $stream) {
