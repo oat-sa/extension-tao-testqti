@@ -40,7 +40,6 @@ use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\CompilationDataService;
-use oat\taoQtiItem\model\ItemModel;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
 use oat\taoDelivery\model\container\delivery\ContainerProvider;
@@ -137,7 +136,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     private $settingCssScope = true;
 
     /**
-     * Whenever or not the new client test runner hsould be used
+     * Whenever or not the new client test runner should be used
      * @var boolean
      */
     private $settingClientContainer = true;
