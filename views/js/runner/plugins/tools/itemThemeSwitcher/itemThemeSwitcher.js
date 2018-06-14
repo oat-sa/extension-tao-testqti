@@ -67,6 +67,14 @@ define([
             var allMenuEntries = [];
 
             /**
+             * Tells if the component is enabled
+             * @returns {Boolean}
+             */
+            function isPluginAllowed() {
+                return themesConfig && _.size(themesConfig.available) > 1;
+            }
+
+            /**
              * Load the selected theme
              * @param themeId
              */
@@ -167,13 +175,21 @@ define([
                 }
             }
 
+            if (!isPluginAllowed()) {
+                this.hide();
+            }
+
             //start disabled
             this.disable();
 
             //update plugin state based on changes
             testRunner
                 .on('loaditem', function() {
-                    self.show();
+                    if (isPluginAllowed()) {
+                        self.show();
+                    } else {
+                        self.hide();
+                    }
                 })
                 .on('renderitem', function () {
                     self.enable();

@@ -19,6 +19,13 @@
         //load the config
         require(['/tao/ClientConfig/config'], function(){
 
+            //some mocks
+            requirejs.config({
+                "paths": {
+                    "ui/themes" : "/taoQtiTest/views/js/test/runner/plugins/tools/itemThemeSwitcher/themesMock"
+                }
+            });
+
             //load the test
             require(['taoQtiTest/test/runner/plugins/tools/itemThemeSwitcher/test'], function(){
 
