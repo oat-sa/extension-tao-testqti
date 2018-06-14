@@ -13,10 +13,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA ;
  */
+
 /**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
     'jquery',
@@ -25,10 +26,9 @@ define([
     'core/promise',
     'core/promiseQueue',
     'core/communicator',
-    'helpers',
     'taoQtiTest/runner/config/qtiServiceConfig',
     'util/httpErrorParser'
-], function($, _, __, Promise, promiseQueue, communicatorFactory, helpers, configFactory, httpErrorParser) {
+], function($, _, __, Promise, promiseQueue, communicatorFactory, configFactory, httpErrorParser) {
     'use strict';
 
     /**
@@ -110,54 +110,54 @@ define([
                             contentType : contentType || noop,
                             timeout : self.configStorage.getTimeout()
                         })
-                        .done(function(data) {
+                            .done(function(data) {
 
-                            if (data && data.token) {
-                                tokenHandler.setToken(data.token);
-                            }
+                                if (data && data.token) {
+                                    tokenHandler.setToken(data.token);
+                                }
 
-                            self.setOnline();
+                                self.setOnline();
 
-                            if (data && data.success) {
-                                resolve(data);
-                            } else {
-                                reject(data);
-                            }
-                        })
-                        .fail(function(jqXHR, textStatus, errorThrown) {
-                            var data;
+                                if (data && data.success) {
+                                    resolve(data);
+                                } else {
+                                    reject(data);
+                                }
+                            })
+                            .fail(function(jqXHR, textStatus, errorThrown) {
+                                var data;
 
-                            try {
-                                data = JSON.parse(jqXHR.responseText);
-                            } catch(err) {
-                                data = {};
-                            }
+                                try {
+                                    data = JSON.parse(jqXHR.responseText);
+                                } catch(err) {
+                                    data = {};
+                                }
 
-                            data = _.defaults(data, {
-                                success: false,
-                                source: 'network',
-                                cause : url,
-                                purpose: 'proxy',
-                                context: this,
-                                code: jqXHR.status,
-                                sent: jqXHR.readyState > 0,
-                                type: textStatus || 'error',
-                                message: errorThrown || __('An error occurred!')
+                                data = _.defaults(data, {
+                                    success: false,
+                                    source: 'network',
+                                    cause : url,
+                                    purpose: 'proxy',
+                                    context: this,
+                                    code: jqXHR.status,
+                                    sent: jqXHR.readyState > 0,
+                                    type: textStatus || 'error',
+                                    message: errorThrown || __('An error occurred!')
+                                });
+
+                                if (data.token) {
+                                    tokenHandler.setToken(data.token);
+                                } else if (!noToken) {
+                                    tokenHandler.setToken(token);
+                                }
+
+                                if(self.isConnectivityError(data)){
+                                    self.setOffline('request');
+                                    return resolve(data);
+                                }
+
+                                reject(httpErrorParser.parse(jqXHR, textStatus, errorThrown));
                             });
-
-                            if (data.token) {
-                                tokenHandler.setToken(data.token);
-                            } else if (!noToken) {
-                                tokenHandler.setToken(token);
-                            }
-
-                            if(self.isConnectivityError(data)){
-                                self.setOffline('request');
-                                return resolve(data);
-                            }
-
-                            reject(httpErrorParser.parse(jqXHR, textStatus, errorThrown));
-                        });
                     });
                 };
 
