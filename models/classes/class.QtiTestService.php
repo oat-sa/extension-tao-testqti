@@ -254,8 +254,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * This identifier must be unique across the whole document.
      *
      * @param XmlDocument $doc
-     * @param type $qtiType the type name
-     * @return the identifier
+     * @param string $qtiType the type name
+     * @return string the identifier
      */
     public function getIdentifierFor(XmlDocument $doc, $qtiType)
     {
@@ -273,7 +273,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * Check whether an identifier is unique against a list of components
      *
      * @param QtiComponentCollection $components
-     * @param type $identifier
+     * @param string $identifier
      * @return boolean
      */
     private function isIdentifierUnique(QtiComponentCollection $components, $identifier)
@@ -290,9 +290,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * Generate an identifier from a qti type, using the syntax "qtitype-index"
      *
      * @param XmlDocument $doc
-     * @param type $qtiType
-     * @param type $offset
-     * @return the identifier
+     * @param string $qtiType
+     * @param int $offset
+     * @return string the identifier
      */
     private function generateIdentifier(XmlDocument $doc, $qtiType, $offset = 1)
     {
@@ -843,7 +843,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * Get the QTI reprensentation of a test content.
      *
      * @param core_kernel_classes_Resource $test the test to get the content from
-     * @param type $validate enable validation
      * @return XmlDocument the QTI representation from the test content
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
@@ -897,7 +896,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * Get the items from a QTI test document.
      *
      * @param \qtism\data\storage\xml\XmlDocument $doc The QTI XML document to be inspected to retrieve the items.
-     * @return An array of core_kernel_classes_Resource object indexed by assessmentItemRef->identifier (string).
+     * @return core_kernel_classes_Resource[] An array of core_kernel_classes_Resource object indexed by assessmentItemRef->identifier (string).
      */
     private function getDocItems(XmlDocument $doc){
         $itemArray = array();
@@ -911,7 +910,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * Assign items to a QTI test.
      * @param XmlDocument $doc
      * @param array $items
-     * @return type
+     * @return int
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     private function setItemsToDoc(XmlDocument $doc, array $items, $sectionIndex = 0) {
@@ -964,7 +963,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     public function getQtiTestDir(core_kernel_classes_Resource $test, $createTestFile = true)
     {
         $testModel = TestService::singleton()->getTestModel($test);
-        if (is_null($testModel) || $testModel->getUri() != self::INSTANCE_TEST_MODEL_QTI) {
+        if ($testModel->getUri() != self::INSTANCE_TEST_MODEL_QTI) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
                 'The selected test is not a QTI test',
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR

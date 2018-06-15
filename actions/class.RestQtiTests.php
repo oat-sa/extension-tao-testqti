@@ -17,10 +17,10 @@
  */
 
 use oat\tao\model\TaoOntology;
+use oat\tao\model\taskQueue\TaskLog\Entity\EntityInterface;
+use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiItem\controller\AbstractRestQti;
-use oat\taoTaskQueue\model\Entity\TaskLogEntity;
-use oat\taoTaskQueue\model\TaskLogInterface;
 
 /**
  *
@@ -130,10 +130,10 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     /**
      * Add extra values to the JSON returned.
      *
-     * @param TaskLogEntity $taskLogEntity
+     * @param EntityInterface $taskLogEntity
      * @return array
      */
-    protected function addExtraReturnData(TaskLogEntity $taskLogEntity)
+    protected function addExtraReturnData(EntityInterface $taskLogEntity)
     {
         $data = [];
 
