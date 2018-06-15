@@ -36,9 +36,11 @@ define([
         record: 'record'
     };
 
-    var itemInteractionAttributes = {};
-
-    var interactionProperties = {
+    /**
+     * List of QTI interaction minConstraint properties
+     * @type {Object}
+     */
+    var interactionMinConstraintProperties = {
         matchInteraction: 'minAssociations',
         choiceInteraction: 'minChoices',
         orderInteraction: 'minChoices',
@@ -141,49 +143,29 @@ define([
         },
 
         /**
-         * Additional check if question was fully answered (respecting min constraint of interaction)
-         * @param response
-         * @param interactionAttributes
-         * @param baseType
-         * @param cardinality
-         * @returns {boolean}
-         */
-        isQuestionFullyAnswered: function isQuestionFullyAnswered(response, interactionAttributes, baseType, cardinality) {
-            var minConstraint = interactionProperties[interactionAttributes.qtiClass] || false;
-            
-            if (minConstraint) {
-                var minQuantity = interactionAttributes[minConstraint] || 0;
-                var responses = response[cardinality][baseType] || [];
-
-                if (responses && responses.length < minQuantity) {
-                    return false;
-                }
-            }
-
-            return true;
-        },
-
-        /**
          * Tells if an item question has been answered or not
-         * @param responseIdentifier
          * @param response
          * @param baseType
          * @param cardinality
          * @param [defaultValue]
+         * @param constraintValue
          * @returns {*}
          */
-        isQuestionAnswered: function isQuestionAnswered(responseIdentifier, response, baseType, cardinality, defaultValue) {
-            var answered, fullyAnswered;
+        isQuestionAnswered: function isQuestionAnswered(response, baseType, cardinality, defaultValue, constraintValue) {
+            var answered;
+            var fullyAnswered = true;
             defaultValue = defaultValue || null;
+            constraintValue = constraintValue || 0;
+
             if (currentItemHelper.isQtiValueNull(response, baseType, cardinality)) {
                 answered = false;
             } else {
                 answered = !_.isEqual(response, currentItemHelper.toResponse(defaultValue, baseType, cardinality));
 
-                if (itemInteractionAttributes[responseIdentifier].notApplicable) {
-                    fullyAnswered = true;
-                } else {
-                    fullyAnswered = currentItemHelper.isQuestionFullyAnswered(response, itemInteractionAttributes[responseIdentifier], baseType, responseCardinalities[cardinality]);
+                if (constraintValue !== 0) {
+                    var currentCardinality = responseCardinalities[cardinality];
+                    var responses = response[currentCardinality][baseType] || [];
+                    fullyAnswered = responses && (responses.length >= constraintValue);
                 }
 
                 answered = answered && fullyAnswered;
@@ -191,27 +173,24 @@ define([
             return answered;
         },
 
-        /**
-         * Grabs interaction attributes and stores it into variable
-         * @param runner
-         */
-        storeItemInteractionAttributes: function storeItemInteractionAttributes(runner) {
+        guessInteractionConstraintValues: function guessInteractionConstraintValues(runner) {
             var itemRunner = runner.itemRunner;
             var itemBody = itemRunner._item.bdy || {};
             var interactions = itemBody.elements || {};
+
+            var constraintValues = {};
 
             _.forEach(interactions, function(interaction) {
                 var attributes = interaction.attributes || {};
                 var qtiClass = interaction.__proto__.qtiClass;
 
-                if (interactionProperties.hasOwnProperty(qtiClass)) {
-                    attributes['qtiClass']      = qtiClass;
-                    attributes['notApplicable'] = false;
-                    itemInteractionAttributes[attributes.responseIdentifier] = attributes;
-                } else {
-                    itemInteractionAttributes[attributes.responseIdentifier] = {notApplicable: true};
+                if (interactionMinConstraintProperties.hasOwnProperty(qtiClass)) {
+                    var constraintProperty = interactionMinConstraintProperties[qtiClass];
+                    constraintValues[attributes.responseIdentifier] = attributes[constraintProperty];
                 }
             });
+
+            return constraintValues;
         },
 
         /**
@@ -231,7 +210,7 @@ define([
 
             if (itemRunner) {
                 declarations = currentItemHelper.getDeclarations(runner);
-                currentItemHelper.storeItemInteractionAttributes(runner);
+                var constraintValues = currentItemHelper.guessInteractionConstraintValues(runner);
 
                 _.forEach(declarations, function (declaration) {
                     var attributes = declaration.attributes || {};
@@ -240,7 +219,7 @@ define([
                     var cardinality = attributes.cardinality;
 
                     count++;
-                    if (!currentItemHelper.isQuestionAnswered(attributes.identifier, response, baseType, cardinality, declaration.defaultValue)) {
+                    if (!currentItemHelper.isQuestionAnswered(response, baseType, cardinality, declaration.defaultValue, constraintValues[attributes.identifier])) {
                         empty++;
                     }
                 });
