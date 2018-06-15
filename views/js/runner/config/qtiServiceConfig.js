@@ -13,15 +13,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA ;
  */
 /**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
     'lodash',
-    'helpers'
-], function(_, helpers) {
+    'util/url',
+    'util/config'
+], function(_, urlUtil, configHelper) {
     'use strict';
 
     /**
@@ -50,24 +51,6 @@ define([
     };
 
     /**
-     * Extract the handled config entries.
-     * @param {Object} config
-     * @returns {Object}
-     * @throws Error if a required entry is missing
-     */
-    function getConfig(config) {
-        var storage = {};
-        _.forEach(_entries, function(value, name) {
-            if ('undefined' !== typeof config[name]) {
-                storage[name] = config[name];
-            } else if (value) {
-                throw new Error('The config entry "' + name + '" is required!');
-            }
-        });
-        return _.defaults(storage, _defaults);
-    }
-
-    /**
      * Creates a config object for the proxy implementation
      * @param {Object} config - Some required and optional config
      * @param {String} config.testDefinition - The URI of the test
@@ -79,14 +62,14 @@ define([
      */
     function configFactory(config) {
         // protected storage
-        var storage = getConfig(config);
-        var noop;
+        var storage = configHelper.from(config, _entries, _defaults);
+        var undef;
 
         // convert some values from seconds to milliseconds
         if (storage.timeout) {
             storage.timeout *= 1000;
         } else {
-            storage.timeout = noop;
+            storage.timeout = undef;
         }
 
         // returns only a proxy storage object : no direct access to data is provided
@@ -137,7 +120,7 @@ define([
              * @returns {String} - Returns the URL
              */
             getTestActionUrl : function getTestActionUrl(action) {
-                return helpers._url(action, this.getServiceController(), this.getServiceExtension(), {
+                return urlUtil.route(action, this.getServiceController(), this.getServiceExtension(), {
                     testDefinition : this.getTestDefinition(),
                     testCompilation : this.getTestCompilation(),
                     serviceCallId : this.getServiceCallId()
@@ -151,7 +134,7 @@ define([
              * @returns {String} - Returns the URL
              */
             getItemActionUrl : function getItemActionUrl(itemIdentifier, action) {
-                return helpers._url(action, this.getServiceController(), this.getServiceExtension(), {
+                return urlUtil.route(action, this.getServiceController(), this.getServiceExtension(), {
                     testDefinition : this.getTestDefinition(),
                     testCompilation : this.getTestCompilation(),
                     testServiceCallId : this.getServiceCallId(),
@@ -166,7 +149,7 @@ define([
              * @returns {String} - Returns the URL
              */
             getTelemetryUrl : function getTelemetryUrl(itemIdentifier, signal) {
-                return helpers._url(signal, this.getServiceController(), this.getServiceExtension(), {
+                return urlUtil.route(signal, this.getServiceController(), this.getServiceExtension(), {
                     testDefinition : this.getTestDefinition(),
                     testCompilation : this.getTestCompilation(),
                     testServiceCallId : this.getServiceCallId(),
@@ -195,7 +178,7 @@ define([
 
                 // build the service address from the provided config
                 // it can be overwritten by a full url from the config
-                var service = helpers._url(action, controller, extension, {
+                var service = urlUtil.route(action || 'message', controller, extension, {
                     testDefinition : this.getTestDefinition(),
                     testCompilation : this.getTestCompilation(),
                     serviceCallId : this.getServiceCallId()

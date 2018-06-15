@@ -22,6 +22,8 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use common_persistence_AdvKeyValuePersistence;
+use common_persistence_KeyValuePersistence;
 use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
@@ -63,6 +65,7 @@ use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\RouteItem;
+use tao_models_classes_service_StateStorage;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
@@ -1902,33 +1905,21 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
     {
-        if ($request->getSession() === null) {
-            return false;
-        }
-
         /** @var StorageManager $storage */
         $storage = $this->getServiceLocator()->get(StorageManager::SERVICE_ID);
         $userUri = $request->getDeliveryExecution()->getUserIdentifier();
 
-        $itemsRefs = (new GetDeliveryExecutionsItems(
-            $this->getServiceLocator()->get(RuntimeService::SERVICE_ID),
-            $this->getServiceLocator()->get(CatService::SERVICE_ID),
-            \tao_models_classes_service_FileStorage::singleton(),
-            $request->getDeliveryExecution(),
-            $request->getSession()
-        ))->getItemsRefs();
-
-        foreach ($itemsRefs as $itemRef) {
-            $stateId = $this->buildStorageItemKey(
+        if ($request->getSession() === null) {
+            $status = $this->deleteExecutionStates(
                 $request->getDeliveryExecution()->getIdentifier(),
-                $itemRef
+                $userUri,
+                $storage
             );
-            if ($storage->has($userUri, $stateId)) {
-                $storage->del($userUri, $stateId);
-            }
+        } else {
+            $status = $this->deleteExecutionStatesBasedOnSession($request, $storage, $userUri);
         }
 
-        return $storage->persist($userUri);
+        return $status;
     }
 
     /**
@@ -1963,5 +1954,76 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
         }
         return $portableElements;
+    }
+
+    /**
+     * @param $deUri
+     * @param $userUri
+     * @param $storage
+     * @return mixed
+     */
+    protected function deleteExecutionStates($deUri, $userUri, StorageManager $storage)
+    {
+        $stateStorage = $storage->getStorage();
+        $persistence  = common_persistence_KeyValuePersistence::getPersistence(
+            $stateStorage->getOption(tao_models_classes_service_StateStorage::OPTION_PERSISTENCE)
+        );
+
+        $driver = $persistence->getDriver();
+        if ($driver instanceof common_persistence_AdvKeyValuePersistence) {
+            $keys = $driver->keys(tao_models_classes_service_StateStorage::KEY_NAMESPACE .'*'. $deUri.'*');
+            foreach ($keys as $key){
+                $driver->del($key);
+            }
+
+            return $storage->persist($userUri);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param DeliveryExecutionDeleteRequest $request
+     * @param StorageManager $storage
+     * @param $userUri
+     * @return bool
+     * @throws \common_exception_NotFound
+     */
+    protected function deleteExecutionStatesBasedOnSession(DeliveryExecutionDeleteRequest $request, StorageManager $storage, $userUri)
+    {
+        $itemsRefs = $this->getItemsRefs($request);
+        foreach ($itemsRefs as $itemRef) {
+            $stateId = $this->buildStorageItemKey(
+                $request->getDeliveryExecution()->getIdentifier(),
+                $itemRef
+            );
+            if ($storage->has($userUri, $stateId)) {
+                $storage->del($userUri, $stateId);
+            }
+        }
+
+        return $storage->persist($userUri);
+    }
+
+    /**
+     * @param DeliveryExecutionDeleteRequest $request
+     * @return array
+     */
+    protected function getItemsRefs(DeliveryExecutionDeleteRequest $request)
+    {
+        try {
+            $itemsRefs = (new GetDeliveryExecutionsItems(
+                $this->getServiceLocator()->get(RuntimeService::SERVICE_ID),
+                $this->getServiceLocator()->get(CatService::SERVICE_ID),
+                \tao_models_classes_service_FileStorage::singleton(),
+                $request->getDeliveryExecution(),
+                $request->getSession()
+            ))->getItemsRefs();
+
+        } catch (\Exception $exception){
+            $itemsRefs = [];
+        }
+
+        return $itemsRefs;
     }
 }

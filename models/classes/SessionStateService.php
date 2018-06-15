@@ -22,8 +22,10 @@ namespace oat\taoQtiTest\models;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoQtiTest\models\cat\CatService;
+use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\AssessmentTestSession;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use qtism\runtime\tests\RouteItem;
 
 /**
  * The SessionStateService
@@ -171,6 +173,11 @@ class SessionStateService extends ConfigurableService
     protected function getSessionProgress(\taoQtiTest_helpers_TestSession $session)
     {
         if ($session->isRunning() !== false) {
+            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $categories = [];
+            if (isset($config['progress-indicator']) && $config['progress-indicator'] == 'categories') {
+                $categories = $config['progress-categories'];
+            }
             $route = $session->getRoute();
             $routeItems = $route->getAllRouteItems();
             $offset = $route->getRouteItemPosition($routeItems[0]);
@@ -186,6 +193,7 @@ class SessionStateService extends ConfigurableService
             $partIndex = 0;
 
             // compute positions from the test map
+            /** @var RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
                 $testPart = $routeItem->getTestPart();
                 $partId = $testPart->getIdentifier();
@@ -204,9 +212,16 @@ class SessionStateService extends ConfigurableService
                 }
 
                 $offset ++;
-                $offsetPart ++;
                 $offsetSection ++;
 
+                if ($categories && $config['progress-indicator-scope'] == 'testPart') {
+                    /** @var AssessmentItemRef $assessmentItemRef */
+                    $assessmentItemRef = $routeItem->getAssessmentItemRef();
+                    $assessmenCategories = $assessmentItemRef->getCategories()->getArrayCopy();
+                    if (array_intersect($categories, $assessmenCategories)) {
+                        $offsetPart ++;
+                    }
+                }
                 $lengthParts[$partIndex] = $offsetPart;
                 $lengthSections[$sectionIndex] = $offsetSection;
 
