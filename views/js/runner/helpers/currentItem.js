@@ -152,7 +152,7 @@ define([
          * @returns {*}
          */
         isQuestionAnswered: function isQuestionAnswered(response, baseType, cardinality, defaultValue, constraintValue) {
-            var answered;
+            var answered, currentCardinality, responses;
             var fullyAnswered = true;
             defaultValue = defaultValue || null;
             constraintValue = constraintValue || 0;
@@ -163,8 +163,8 @@ define([
                 answered = !_.isEqual(response, currentItemHelper.toResponse(defaultValue, baseType, cardinality));
 
                 if (constraintValue !== 0) {
-                    var currentCardinality = responseCardinalities[cardinality];
-                    var responses = response[currentCardinality][baseType] || [];
+                    currentCardinality = responseCardinalities[cardinality];
+                    responses = response[currentCardinality][baseType] || [];
                     fullyAnswered = responses && (responses.length >= constraintValue);
                 }
 
