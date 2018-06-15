@@ -227,11 +227,17 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
     {
         if ($request->getSession() === null) {
-            return false;
+            $sessionId = $request->getDeliveryExecution()->getIdentifier();
+        } else {
+            $sessionId = $request->getSession()->getSessionId();
         }
-        $storage = $this->getTestSessionStorage($request->getDeliveryExecution());
-        if ($storage instanceof taoQtiTest_helpers_TestSessionStorage) {
-            return $storage->delete($request->getSession());
+        try{
+            $storage = $this->getTestSessionStorage($request->getDeliveryExecution());
+            if ($storage instanceof taoQtiTest_helpers_TestSessionStorage) {
+                return $storage->delete($sessionId);
+            }
+        }catch (\Exception $exception){
+            return false;
         }
 
         return false;

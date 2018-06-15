@@ -22,8 +22,9 @@
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\generis\model\fileReference\FileReferenceSerializer;
 use oat\oatbox\filesystem\Directory;
+use oat\taoTests\models\TestModel;
+use oat\tao\model\service\ServiceFileStorage;
 
 /**
  * the qti TestModel
@@ -32,10 +33,12 @@ use oat\oatbox\filesystem\Directory;
  * @author Joel Bout, <joel.bout@tudor.lu>
  * @package taoQtiTest
  */
-class TestModelService extends ConfigurableService implements \taoTests_models_classes_TestModel, \tao_models_classes_import_ImportProvider, \tao_models_classes_export_ExportProvider
+class TestModelService extends ConfigurableService implements TestModel, \tao_models_classes_import_ImportProvider, \tao_models_classes_export_ExportProvider
 {
 
     const SERVICE_ID = 'taoQtiTest/TestModel';
+
+    const SUBSERVICE_COMPILATION = 'CompilationService';
 
     /**
      * default constructor to ensure the implementation
@@ -49,8 +52,8 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     }
 
     /**
-     * (non-PHPdoc)
-     * @see taoTests_models_classes_TestModel::prepareContent()
+     * {@inheritDoc}
+     * @see \taoTests_models_classes_TestModel::prepareContent()
      */
     public function prepareContent( \core_kernel_classes_Resource $test, $items = array()) {
         $service = \taoQtiTest_models_classes_QtiTestService::singleton();
@@ -58,8 +61,8 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     }
 
     /**
-     * (non-PHPdoc)
-     * @see taoTests_models_classes_TestModel::deleteContent()
+     * {@inheritDoc}
+     * @see \taoTests_models_classes_TestModel::deleteContent()
      */
     public function deleteContent( \core_kernel_classes_Resource $test) {
         $service = \taoQtiTest_models_classes_QtiTestService::singleton();
@@ -67,8 +70,8 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     }
 
     /**
-     * (non-PHPdoc)
-     * @see taoTests_models_classes_TestModel::getItems()
+     * {@inheritDoc}
+     * @see \taoTests_models_classes_TestModel::getItems()
      */
     public function getItems( \core_kernel_classes_Resource $test) {
     	$service = \taoQtiTest_models_classes_QtiTestService::singleton();
@@ -76,23 +79,16 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
     }
 
     /**
-     * (non-PHPdoc)
-     * @see taoTests_models_classes_TestModel::onChangeTestLabel()
+     * {@inheritDoc}
+     * @see \taoTests_models_classes_TestModel::onChangeTestLabel()
      */
     public function onChangeTestLabel( \core_kernel_classes_Resource $test) {
     	// do nothing
     }
 
     /**
-     * @deprecated
-     * @see taoTests_models_classes_TestModel::getAuthoring()
-     */
-    public function getAuthoring( \core_kernel_classes_Resource $test) {
-    	return "";
-    }
-
-    /**
-     * @see taoTests_models_classes_TestModel::getAuthoringUrl()
+     * {@inheritDoc}
+     * @see \taoTests_models_classes_TestModel::getAuthoringUrl()
      */
     public function getAuthoringUrl( \core_kernel_classes_Resource $test) {
         return _url('index', 'Creator', 'taoQtiTest', array('uri' => $test->getUri()));
@@ -137,8 +133,18 @@ class TestModelService extends ConfigurableService implements \taoTests_models_c
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \oat\taoTests\models\TestModel::getCompiler()
+     */
+    public function getCompiler(\core_kernel_classes_Resource $test, ServiceFileStorage $storage)
+    {
+        $service = $this->getSubService('CompilationService');
+        return $service->getCompiler($test, $storage);
+    }
+
     public function getCompilerClass() {
-        return $this->getOption('testCompilerClass');
+        return $this->getSubService(self::SUBSERVICE_COMPILATION)->getCompilerClass();
     }
 
 

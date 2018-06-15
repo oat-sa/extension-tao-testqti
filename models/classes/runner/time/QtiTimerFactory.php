@@ -110,9 +110,11 @@ class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDe
     public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
     {
         if ($request->getSession() === null) {
-            return false;
+            $sessionId = $request->getDeliveryExecution()->getIdentifier();
+        } else {
+            $sessionId = $request->getSession()->getSessionId();
         }
-        $timer = $this->getTimer($request->getSession()->getSessionId(), $request->getDeliveryExecution()->getUserIdentifier());
+        $timer = $this->getTimer($sessionId, $request->getDeliveryExecution()->getUserIdentifier());
         return $timer->delete();
     }
 }

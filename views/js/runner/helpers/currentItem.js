@@ -37,6 +37,22 @@ define([
     };
 
     /**
+     * List of QTI interaction minConstraint properties
+     * @type {Object}
+     */
+    var interactionMinConstraintProperties = {
+        matchInteraction: 'minAssociations',
+        choiceInteraction: 'minChoices',
+        orderInteraction: 'minChoices',
+        associateInteraction: 'minAssociations',
+        hottextInteraction: 'minChoices',
+        hotspotInteraction: 'minChoices',
+        graphicOrderInteraction: 'minChoices',
+        graphicAssociateInteraction: 'minAssociations',
+        selectPointInteraction: 'minChoices'
+    };
+
+    /**
      * @typedef {currentItemHelper}
      */
     var currentItemHelper = {
@@ -132,17 +148,49 @@ define([
          * @param baseType
          * @param cardinality
          * @param [defaultValue]
+         * @param constraintValue
          * @returns {*}
          */
-        isQuestionAnswered: function isQuestionAnswered(response, baseType, cardinality, defaultValue) {
-            var answered;
+        isQuestionAnswered: function isQuestionAnswered(response, baseType, cardinality, defaultValue, constraintValue) {
+            var answered, currentCardinality, responses;
+            var fullyAnswered = true;
             defaultValue = defaultValue || null;
+            constraintValue = constraintValue || 0;
+
             if (currentItemHelper.isQtiValueNull(response, baseType, cardinality)) {
                 answered = false;
             } else {
                 answered = !_.isEqual(response, currentItemHelper.toResponse(defaultValue, baseType, cardinality));
+
+                if (constraintValue !== 0) {
+                    currentCardinality = responseCardinalities[cardinality];
+                    responses = response[currentCardinality][baseType] || [];
+                    fullyAnswered = responses && (responses.length >= constraintValue);
+                }
+
+                answered = answered && fullyAnswered;
             }
             return answered;
+        },
+
+        guessInteractionConstraintValues: function guessInteractionConstraintValues(runner) {
+            var itemRunner = runner.itemRunner;
+            var itemBody = itemRunner._item.bdy || {};
+            var interactions = itemBody.elements || {};
+
+            var constraintValues = {};
+
+            _.forEach(interactions, function(interaction) {
+                var attributes = interaction.attributes || {};
+                var qtiClass = interaction.__proto__.qtiClass;
+
+                if (interactionMinConstraintProperties.hasOwnProperty(qtiClass)) {
+                    var constraintProperty = interactionMinConstraintProperties[qtiClass];
+                    constraintValues[attributes.responseIdentifier] = attributes[constraintProperty];
+                }
+            });
+
+            return constraintValues;
         },
 
         /**
@@ -158,15 +206,20 @@ define([
             var count = 0;
             var empty = 0;
 
+            var declarations, constraintValues;
+
             if (itemRunner) {
-                _.forEach(currentItemHelper.getDeclarations(runner), function (declaration) {
+                declarations = currentItemHelper.getDeclarations(runner);
+                constraintValues = currentItemHelper.guessInteractionConstraintValues(runner);
+
+                _.forEach(declarations, function (declaration) {
                     var attributes = declaration.attributes || {};
                     var response = responses[attributes.identifier];
                     var baseType = attributes.baseType;
                     var cardinality = attributes.cardinality;
 
                     count++;
-                    if (!currentItemHelper.isQuestionAnswered(response, baseType, cardinality, declaration.defaultValue)) {
+                    if (!currentItemHelper.isQuestionAnswered(response, baseType, cardinality, declaration.defaultValue, constraintValues[attributes.identifier])) {
                         empty++;
                     }
                 });

@@ -29,7 +29,7 @@ msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Une resource distante incluse dans le test '%s' n'a pas pu être obtenue"
 
 msgid "A response to this item is required."
-msgstr "Réponse obligatoire Vous devez répondre à cette question pour poursuivre."
+msgstr "Réponse obligatoire. Vous devez répondre à cette question pour poursuivre."
 
 msgid "A valid response to this item is required."
 msgstr "Une réponse valide est attendue à cette question"
