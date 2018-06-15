@@ -19,8 +19,10 @@
  *
  */
 
+use oat\oatbox\event\EventManagerAwareTrait;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
+use oat\taoQtiTest\models\event\QtiTestExportEvent;
 
 /**
  * Export Handler for QTI tests.
@@ -32,6 +34,7 @@ use oat\oatbox\PhpSerializeStateless;
 class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_export_ExportHandler, PhpSerializable
 {
     use PhpSerializeStateless;
+    use EventManagerAwareTrait;
 
     /**
      * (non-PHPdoc)
@@ -102,6 +105,10 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 
                 $report->setData($path);
                 $zip->close();
+
+                if (!$report->containsError() && $formValues['uri']) {
+                    $this->getEventManager()->trigger(new QtiTestExportEvent(new core_kernel_classes_Resource($formValues['uri'])));
+                }
 
             } else {
                 common_Logger::w("No instance in form to export");
