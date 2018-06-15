@@ -38,7 +38,7 @@ class TestModelTest extends TaoPhpUnitTestRunner
      *
      * @author Lionel Lecaque, lionel@taotesting.com
      * @param string $uri
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
     private function getResourceMock($uri)
     {
@@ -96,15 +96,4 @@ class TestModelTest extends TaoPhpUnitTestRunner
         $handler = reset($handlers);
         $this->assertInstanceOf('taoQtiTest_models_classes_export_TestExport', $handler);
     }
-    
-    /**
-     * Verify TestModel compiler class
-     */
-    public function testTestModelCompilerClass()
-    {
-        $model = new TestModelService(['testCompilerClass' => 'taoQtiTest_models_classes_QtiTestCompiler']);
-        $this->assertEquals('taoQtiTest_models_classes_QtiTestCompiler', $model->getCompilerClass());
-    }
-    
-
 }

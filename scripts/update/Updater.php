@@ -19,14 +19,12 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
-use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
-use oat\taoDevTools\actions\ExtensionsManager;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
@@ -49,13 +47,11 @@ use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\export\metadata\TestExporter;
 use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
-use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\TestCategoryPresetRegistry;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestCategoryRulesGenerator;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
-use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
@@ -78,6 +74,7 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
+use oat\taoQtiTest\models\compilation\CompilationService;
 
 /**
  *
@@ -92,259 +89,9 @@ class Updater extends \common_ext_ExtensionUpdater {
      */
     public function update($initialVersion) {
 
-        $currentVersion = $initialVersion;
-
-        // add testrunner config
-        if ($currentVersion == '2.6') {
-
-            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', array(
-                'progress-indicator' => 'percentage',
-                'timerWarning' => array(
-                    'assessmentItemRef' => null,
-                    'assessmentSection' => 300,
-                    'testPart' => null
-                )
-            ));
-
-            $currentVersion = '2.6.1';
+        if ($this->isBetween('0.0.0', '2.23.0')) {
+            throw new \common_exception_NotImplemented('Updates from versions prior to Tao 3.1 are not longer supported, please update to Tao 3.1 first');
         }
-
-        if ($currentVersion == '2.6.1') {
-            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
-            $config['exitButton'] = false;
-            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $config);
-
-            $currentVersion = '2.6.2';
-        }
-
-        // add testrunner review screen config
-        if ($currentVersion == '2.6.2') {
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $extension->setConfig('testRunner', array_merge($config, array(
-                'test-taker-review' => false,
-                'test-taker-review-region' => 'left',
-                'test-taker-review-section-only' => false,
-                'test-taker-review-prevents-unseen' => true,
-            )));
-
-            $currentVersion = '2.6.3';
-        }
-
-        // adjust testrunner config
-        if ($currentVersion == '2.6.3') {
-            $defaultConfig = array(
-                'timerWarning' => array(
-                    'assessmentItemRef' => null,
-                    'assessmentSection' => null,
-                    'testPart'          => null
-                ),
-                'progress-indicator' => 'percentage',
-                'progress-indicator-scope' => 'testSection',
-                'test-taker-review' => false,
-                'test-taker-review-region' => 'left',
-                'test-taker-review-section-only' => false,
-                'test-taker-review-prevents-unseen' => true,
-                'exitButton' => false
-            );
-
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            foreach($defaultConfig as $key => $value) {
-                if (!isset($config[$key])) {
-                    $config[$key] = $value;
-                }
-            }
-            $extension->setConfig('testRunner', $config);
-
-            $currentVersion = '2.6.4';
-        }
-
-        if ($currentVersion == '2.6.4') {
-            $currentVersion = '2.7.0';
-        }
-
-        // add markForReview button
-        if ($currentVersion === '2.7.0') {
-            $registry = TestRunnerClientConfigRegistry::getRegistry();
-
-            $registry->registerQtiTools('markForReview', array(
-                'label' => 'Mark for review',
-                'icon' => 'anchor',
-                'hook' => 'taoQtiTest/testRunner/actionBar/markForReview'
-            ));
-
-            $currentVersion = '2.8.0';
-         }
-
-        // adjust testrunner config: set the review scope
-        if ($currentVersion == '2.8.0') {
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $config['test-taker-review-scope'] = 'test';
-            unset($config['test-taker-review-section-only']);
-            $extension->setConfig('testRunner', $config);
-
-            $currentVersion = '2.9.0';
-        }
-
-       // add show/hide button
-        // adjust testrunner config: set the "can collapse" option
-        if ($currentVersion == '2.9.0') {
-            $registry = TestRunnerClientConfigRegistry::getRegistry();
-
-            $registry->registerQtiTools('collapseReview', array(
-                'title' => 'Show/Hide the review screen',
-                'label' => 'Review',
-                'icon' => 'mobile-menu',
-                'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
-                'order' => -1
-            ));
-
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $config['test-taker-review-can-collapse'] = false;
-            $extension->setConfig('testRunner', $config);
-
-            $currentVersion = '2.10.0';
-        }
-
-        // adjust testrunner config: set the item sequence number options
-        if ($currentVersion == '2.10.0') {
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $config['test-taker-review-force-title'] = false;
-            $config['test-taker-review-item-title'] = 'Item %d';
-            $extension->setConfig('testRunner', $config);
-
-            $currentVersion = '2.11.0';
-        }
-
-        if ($currentVersion == '2.11.0') {
-            $currentVersion = '2.11.1';
-        }
-
-        // adjust testrunner config: set the force progress indicator display
-        if ($currentVersion == '2.11.1') {
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $config['progress-indicator-forced'] = false;
-            $extension->setConfig('testRunner', $config);
-
-            $currentVersion = '2.12.0';
-        }
-
-        // update the test taker review action buttons
-        if ($currentVersion == '2.12.0') {
-            $registry = TestRunnerClientConfigRegistry::getRegistry();
-
-            $registry->registerQtiTools('collapseReview', array(
-                'hook' => 'taoQtiTest/testRunner/actionBar/collapseReview',
-                'order' => 'first',
-                'title' => null,
-                'label' => null,
-                'icon' => null,
-            ));
-
-            $registry->registerQtiTools('markForReview', array(
-                'hook' => 'taoQtiTest/testRunner/actionBar/markForReview',
-                'order' => 'last',
-                'title' => null,
-                'label' => null,
-                'icon' => null,
-            ));
-
-            $currentVersion = '2.13.0';
-        }
-
-        // adjust testrunner config: set the next section button display
-        if ($currentVersion == '2.13.0') {
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $config['next-section'] = false;
-            $extension->setConfig('testRunner', $config);
-
-            $currentVersion = '2.14.0';
-        }
-
-        if ($currentVersion === '2.14.0') {
-            try {
-                $this->getServiceManager()->get('taoQtiTest/SessionStateService');
-            } catch (ServiceNotFoundException $e) {
-                $sessionStateService = new SessionStateService();
-                $sessionStateService->setServiceManager($this->getServiceManager());
-
-                $this->getServiceManager()->register('taoQtiTest/SessionStateService', $sessionStateService);
-            }
-
-            $currentVersion = '2.15.0';
-        }
-
-        if ($currentVersion === '2.15.0') {
-            $registry = TestRunnerClientConfigRegistry::getRegistry();
-            $registry->registerQtiTools('comment', array(
-                'hook' => 'taoQtiTest/testRunner/actionBar/comment'
-            ));
-
-            $currentVersion = '2.16.0';
-        }
-
-        $this->setVersion($currentVersion);
-
-        if ($this->isBetween('2.16.0','2.17.0')) {
-            AclProxy::applyRule(new AccessRule(
-                AccessRule::GRANT,
-				TaoOntology::PROPERTY_INSTANCE_ROLE_DELIVERY,
-                ['ext' => 'taoQtiTest' , 'mod' => 'Runner']
-            ));
-
-            try {
-                $this->getServiceManager()->get(QtiRunnerService::CONFIG_ID);
-            } catch (ServiceNotFoundException $e) {
-                $service = new QtiRunnerService();
-                $service->setServiceManager($this->getServiceManager());
-
-                $this->getServiceManager()->register(QtiRunnerService::CONFIG_ID, $service);
-            }
-
-            $this->setVersion('2.17.0');
-        }
-
-        $this->skip('2.17.0','2.19.1');
-
-        if ($this->isVersion('2.19.1')) {
-            // sets default plugin options
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            if (!array_key_exists('plugins', $config)) {
-                $config['plugins'] = null;
-            }
-            $extension->setConfig('testRunner', $config);
-
-            $this->setVersion('2.20.0');
-        }
-
-        $this->skip('2.20.0','2.21.1');
-
-        if ($this->isVersion('2.21.1')) {
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $extension->setConfig('testRunner', array_merge($config, array(
-                'csrf-token' => true
-            )));
-
-            $this->setVersion('2.22.0');
-        }
-
-        if ($this->isVersion('2.22.0')) {
-            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $config['timer']['target'] = 'server';
-            $extension->setConfig('testRunner', $config);
-
-            $this->setVersion('2.23.0');
-        }
-
         $this->skip('2.23.0','2.24.2');
 
         if ($this->isVersion('2.24.2')) {
@@ -1302,10 +1049,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('9.12.0', '9.14.1');
 
         if ($this->isVersion('9.14.1')) {
+            /* deprecated as of 25.8.0
             $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
             $testModelService->setOption('testCompilerClass', 'taoQtiTest_models_classes_QtiTestCompiler');
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
-
+            */
             $this->setVersion('9.15.0');
         }
 
@@ -1899,6 +1647,30 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('25.9.0');
         }
 
-        $this->skip('25.9.0', '25.10.0');
+        $this->skip('25.9.0', '25.9.2');
+
+        // test compiler settings refactoring
+        if ($this->isVersion('25.9.2')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('TestCompiler');
+
+            $model = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+            $model->setOption(TestModelService::SUBSERVICE_COMPILATION, new CompilationService([
+                CompilationService::OPTION_RUBRIC_BLOCK_CSS_SCOPE => $config['enable-rubric-block-stylesheet-scoping']
+            ]));
+            $this->getServiceManager()->register(TestModelService::SERVICE_ID, $model);
+            $this->setVersion('25.10.0');
+        }
+
+        if ($this->isVersion('25.10.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['restore-timer-from-client'] = true;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('25.10.1');
+        }
+
+        $this->skip('25.10.1', '25.11.0');
     }
 }

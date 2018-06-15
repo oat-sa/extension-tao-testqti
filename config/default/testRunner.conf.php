@@ -1,4 +1,6 @@
 <?php
+use oat\taoQtiTest\models\runner\session\TestSession;
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -343,13 +345,13 @@ return array(
      * The FQCN of the TestSession class
      * @type string
      */
-    'test-session' => '\taoQtiTest_helpers_TestSession',
+    'test-session' => TestSession::class,
 
     /**
      * The FQCN of the TestSessionStorage class
      * @type string
      */
-     'test-session-storage' => '\taoQtiTest_helpers_TestSessionStorage',
+    'test-session-storage' => '\taoQtiTest_helpers_TestSessionStorage',
 
     /**
      * A config set that will be provided though the bootstrap
@@ -555,5 +557,11 @@ return array(
     /**
      * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
      */
-    'guidedNavigation' => false
+    'guidedNavigation' => false,
+
+    /**
+     * Restore timer from client. Depends on timer/target. If target is 'client' then this value must be true.
+     * @type boolean
+     */
+    'restore-timer-from-client' => true,
 );
