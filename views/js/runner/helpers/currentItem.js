@@ -206,11 +206,11 @@ define([
             var count = 0;
             var empty = 0;
 
-            var declarations;
+            var declarations, constraintValues;
 
             if (itemRunner) {
                 declarations = currentItemHelper.getDeclarations(runner);
-                var constraintValues = currentItemHelper.guessInteractionConstraintValues(runner);
+                constraintValues = currentItemHelper.guessInteractionConstraintValues(runner);
 
                 _.forEach(declarations, function (declaration) {
                     var attributes = declaration.attributes || {};
