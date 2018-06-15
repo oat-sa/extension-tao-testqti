@@ -21,8 +21,8 @@ namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
-use oat\taoTaskQueue\model\TaskLogInterface;
 
 /**
  * Install Action to set up things related to the task queue

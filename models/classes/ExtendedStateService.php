@@ -296,9 +296,11 @@ class ExtendedStateService extends ConfigurableService implements DeliveryExecut
     public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
     {
         if ($request->getSession() === null) {
-            return false;
+            $sessionId = $request->getDeliveryExecution()->getIdentifier();
+        } else {
+            $sessionId = $request->getSession()->getSessionId();
         }
-        $extendedState = $this->getExtendedState($request->getSession()->getSessionId());
+        $extendedState = $this->getExtendedState($sessionId);
         $extendedState->deleteDeliveryExecutionData($request);
 
         return $this->getStorageService()->persist($extendedState->getUserId(), $extendedState->getStorageKey());
