@@ -25,9 +25,9 @@ use oat\oatbox\task\AbstractTaskAction;
 use oat\oatbox\service\ServiceManager;
 use oat\tao\model\import\ImportersService;
 use oat\tao\model\TaoOntology;
+use oat\tao\model\taskQueue\QueueDispatcherInterface;
+use oat\tao\model\taskQueue\Task\TaskInterface;
 use \oat\taoQtiTest\models\import\QtiTestImporter;
-use oat\taoTaskQueue\model\QueueDispatcher;
-use oat\taoTaskQueue\model\Task\TaskInterface;
 
 /**
  * Class ImportQtiTest
@@ -102,8 +102,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 
         $fileUri = $action->saveFile($packageFile['tmp_name'], $packageFile['name']);
 
-        /** @var QueueDispatcher $queueDispatcher */
-        $queueDispatcher = ServiceManager::getServiceManager()->get(QueueDispatcher::SERVICE_ID);
+        /** @var QueueDispatcherInterface $queueDispatcher */
+        $queueDispatcher = ServiceManager::getServiceManager()->get(QueueDispatcherInterface::SERVICE_ID);
 
         return $queueDispatcher->createTask(
             $action,

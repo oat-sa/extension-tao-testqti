@@ -16,40 +16,13 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
  */
-
 namespace oat\taoQtiTest\scripts\install;
 
-use oat\oatbox\extension\InstallAction;
-use oat\taoQtiItem\model\ItemModel;
+use oat\taoQtiTest\scripts\cli\SetOldTestRunner as NewSetOldTestRunner;
 
 /**
- * Class SetOldTestRunner
- *
- * Setup the old Test Runner
- *
- * @package oat\taoQtiTest\scripts\install
+ * @deprecated
  */
-class SetOldTestRunner extends InstallAction
+class SetOldTestRunner extends NewSetOldTestRunner
 {
-    public function __invoke($params)
-    {
-        $deliveryExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery');
-        $deliveryServerConfig = $deliveryExt->getConfig('deliveryServer');
-        $deliveryServerConfig->setOption('deliveryContainer', 'oat\\taoDelivery\\helper\\container\\DeliveryServiceContainer');
-        $deliveryExt->setConfig('deliveryServer', $deliveryServerConfig);
-
-
-        $compilerClassConfig = 'oat\\taoQtiItem\\model\\QtiItemCompiler';
-        /** @var ItemModel $itemModelService */
-        $itemModelService = $this->getServiceManager()->get(ItemModel::SERVICE_ID);
-        $itemModelService->setOption(ItemModel::COMPILER, $compilerClassConfig);
-        $this->getServiceManager()->register(ItemModel::SERVICE_ID, $itemModelService);
-
-        $testQtiExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        $testRunnerConfig = $testQtiExt->getConfig('testRunner');
-        $testRunnerConfig['test-session'] = '\\taoQtiTest_helpers_TestSession';
-        $testQtiExt->setConfig('testRunner', $testRunnerConfig);
-
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, 'Old test runner activated');
-    }
 }

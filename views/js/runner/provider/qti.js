@@ -58,18 +58,6 @@ define([
     layoutTpl) {
     'use strict';
 
-    var $layout = $(layoutTpl());
-
-    var areaBroker = areaBrokerFactory($layout, {
-        content:    $('#qti-content', $layout),
-        toolbox:    $('.tools-box', $layout),
-        navigation: $('.navi-box-list', $layout),
-        control:    $('.top-action-bar .control-box', $layout),
-        actionsBar: $('.bottom-action-bar .control-box', $layout),
-        panel:      $('.test-sidebar-left', $layout),
-        header:     $('.title-box', $layout)
-    });
-
     /**
      * A Test runner provider to be registered against the runner
      */
@@ -83,7 +71,17 @@ define([
          * @returns {areaBroker}
          */
         loadAreaBroker : function loadAreaBroker(){
-            return areaBroker;
+            var $layout = $(layoutTpl());
+
+            return areaBrokerFactory($layout, {
+                content:    $('#qti-content', $layout),
+                toolbox:    $('.tools-box', $layout),
+                navigation: $('.navi-box-list', $layout),
+                control:    $('.top-action-bar .control-box', $layout),
+                actionsBar: $('.bottom-action-bar .control-box', $layout),
+                panel:      $('.test-sidebar-left', $layout),
+                header:     $('.title-box', $layout)
+            });
         },
 
         /**
@@ -209,6 +207,7 @@ define([
          */
         init : function init(){
             var self = this;
+            var areaBroker = this.getAreaBroker();
 
             /**
              * Retrieve the item results
@@ -525,9 +524,9 @@ define([
         render : function render(){
 
             var config = this.getConfig();
-            var broker = this.getAreaBroker();
+            var areaBroker = this.getAreaBroker();
 
-            config.renderTo.append(broker.getContainer());
+            config.renderTo.append(areaBroker.getContainer());
 
             areaBroker.getToolbox().render(areaBroker.getToolboxArea());
         },
@@ -585,24 +584,24 @@ define([
                 self.itemRunner = qtiItemRunner(itemData.content.type, itemData.content.data, {
                     assetManager: assetManager
                 })
-                .on('error', function(err){
-                    self.trigger('enablenav');
-                    reject(err);
-                })
-                .on('init', function(){
-                    var itemContainer        = self.getAreaBroker().getContentArea();
-                    var itemRenderingOptions = _.pick(itemData, ['state', 'portableElements']);
+                    .on('error', function(err){
+                        self.trigger('enablenav');
+                        reject(err);
+                    })
+                    .on('init', function(){
+                        var itemContainer        = self.getAreaBroker().getContentArea();
+                        var itemRenderingOptions = _.pick(itemData, ['state', 'portableElements']);
 
-                    this.render(itemContainer, itemRenderingOptions);
-                })
-                .on('render', function(){
+                        this.render(itemContainer, itemRenderingOptions);
+                    })
+                    .on('render', function(){
 
-                    this.on('responsechange', changeState);
-                    this.on('statechange', changeState);
+                        this.on('responsechange', changeState);
+                        this.on('statechange', changeState);
 
-                    resolve();
-                })
-                .init();
+                        resolve();
+                    })
+                    .init();
             });
         },
 
@@ -712,7 +711,7 @@ define([
          * @this {runner} the runner context, not the provider
          */
         destroy : function destroy(){
-
+            var areaBroker = this.getAreaBroker();
 
             // prevent the item to be displayed while test runner is destroying
             if (this.itemRunner) {
@@ -722,7 +721,6 @@ define([
 
             if(areaBroker){
                 areaBroker.getToolbox().destroy();
-                areaBroker = null;
             }
 
             //we remove the store(s) only if the finish step was reached
