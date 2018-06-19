@@ -1886,5 +1886,13 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(TimerLabelFormatterService::SERVICE_ID, $timerLabel);
             $this->setVersion('25.7.3');
         }
+
+        if ($this->isVersion('25.7.3')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['restore-timer-from-client'] = true;
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('25.7.4');
+        }
     }
 }
