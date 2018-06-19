@@ -85,9 +85,10 @@ define([
      * @param {Object} [config] - timers config
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
+     * @param {Object[]} extraTime - as defined in the testContext
      * @returns {timer[]} the timers
      */
-    return function getTimers(timeConstraints, isLinear, config){
+    return function getTimers(timeConstraints, isLinear, config, extraTime){
         var timers = {};
 
         /**
@@ -148,6 +149,9 @@ define([
             }
             if(timer.extraTime > 0){
                 timer.extraTime = timer.extraTime * precision;
+            }
+            if (extraTime) {
+                timer.remainingTime += extraTime.remaining * precision;
             }
 
             //TODO supports warnings for other types
