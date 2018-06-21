@@ -169,7 +169,12 @@ define([
                                     .catch(handleError);
                             }
                         })
-                        .on('enableitem renderitem', function(){
+                        .on('enableitem', function(){
+                            if(self.timerbox){
+                                self.timerbox.start();
+                            }
+                        })
+                        .after('renderitem', function(){
                             if(self.timerbox){
                                 self.timerbox.start();
                             }
