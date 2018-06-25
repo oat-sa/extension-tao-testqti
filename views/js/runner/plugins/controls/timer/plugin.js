@@ -50,16 +50,19 @@ define([
          */
         install: function install() {
 
+            var testRunner = this.getTestRunner();
+
             /**
              * Load the timers, from the given timeConstraints and reading the current value in the store
              * @param {store} timeStore - where the values are read
-             * @param {Object[]} timeConstraints - the timeConstraints as given by the testContext
-             * @param {Boolean} isLinear - the timeConstraints as given by the testContext
              * @param {Object} config - the current config, especially for the warnings
-             * @param {Object} extraTime - as defined in the testContext
              * @return {Promise<Object[]>} the list of timers for the current context
              */
-            this.loadTimers = function loadTimers(timeStore, timeConstraints, isLinear, config, extraTime){
+            this.loadTimers = function loadTimers(timeStore, config){
+                var testContext = testRunner.getTestContext();
+                var timeConstraints = testContext.timeConstraints;
+                var isLinear = !!testContext.isLinear;
+                var extraTime = testContext.extraTime;
                 var timers = timersFactory(timeConstraints, isLinear, config, extraTime);
                 return Promise.all(
                     _.map(timers, function(timer){
@@ -103,7 +106,7 @@ define([
             };
 
             //define the "timer" store as "volatile" (removed on browser change).
-            this.getTestRunner().getTestStore().setVolatile(this.getName());
+            testRunner.getTestStore().setVolatile(this.getName());
         },
 
         /**
@@ -162,7 +165,7 @@ define([
                             var testContext = testRunner.getTestContext();
                             //update the timers before each item
                             if(self.timerbox && testContext.timeConstraints){
-                                return self.loadTimers(timeStore, testContext.timeConstraints, !!testContext.isLinear, config, testContext.extraTime)
+                                return self.loadTimers(timeStore, config)
                                     .then(function(timers){
                                         return self.timerbox.update(timers);
                                     })
