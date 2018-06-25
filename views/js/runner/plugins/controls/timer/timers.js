@@ -132,8 +132,9 @@ define([
             var timer  = _.pick(constraintData, ['label', 'scope', 'source', 'extraTime', 'qtiClassName']);
 
             timer.type = type;
+            timer.allowLateSubmission = constraintData.allowLateSubmission;
 
-            //to stay backward comaptible, the "max" timers ids are just the source
+            //to stay backward compatible, the "max" timers ids are just the source
             if(type === 'max'){
                 timer.id  = constraintData.source;
             } else {
