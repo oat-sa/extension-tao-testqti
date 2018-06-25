@@ -56,12 +56,10 @@ define([
              * @param {Object[]} timeConstraints - the timeConstraints as given by the testContext
              * @param {Boolean} isLinear - the timeConstraints as given by the testContext
              * @param {Object} config - the current config, especially for the warnings
+             * @param {Object} extraTime - as defined in the testContext
              * @return {Promise<Object[]>} the list of timers for the current context
              */
-            this.loadTimers = function loadTimers(timeStore, testContext, config){
-                var isLinear =  !!testContext.isLinear;
-                var timeConstraints = testContext.timeConstraints;
-                var extraTime = testContext.extraTime;
+            this.loadTimers = function loadTimers(timeStore, timeConstraints, isLinear, config, extraTime){
                 var timers = timersFactory(timeConstraints, isLinear, config, extraTime);
                 return Promise.all(
                     _.map(timers, function(timer){
@@ -164,7 +162,7 @@ define([
                             var testContext = testRunner.getTestContext();
                             //update the timers before each item
                             if(self.timerbox && testContext.timeConstraints){
-                                return self.loadTimers(timeStore, testContext, config)
+                                return self.loadTimers(timeStore, testContext.timeConstraints, !!testContext.isLinear, config, testContext.extraTime)
                                     .then(function(timers){
                                         return self.timerbox.update(timers);
                                     })

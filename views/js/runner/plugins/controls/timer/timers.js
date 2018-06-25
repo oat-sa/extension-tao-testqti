@@ -85,7 +85,7 @@ define([
      * @param {Object} [config] - timers config
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
-     * @param {Object[]} extraTime - as defined in the testContext
+     * @param {Object} extraTime - as defined in the testContext
      * @returns {timer[]} the timers
      */
     return function getTimers(timeConstraints, isLinear, config, extraTime){
