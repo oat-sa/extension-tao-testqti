@@ -676,6 +676,10 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
                     if ($constraintDuration instanceof QtiDuration) {
                         $constraintDuration->sub($constraintDuration);
                         $constraintDuration->add($maxTime);
+                        if ($constraint->getApplyExtraTime()) {
+                            $extraTime = $constraint->getTimer()->getExtraTime($maxTime->getSeconds(true));
+                            $constraintDuration->add(new QtiDuration('PT' . $extraTime . 'S'));
+                        }
                     }
                 }
             }
