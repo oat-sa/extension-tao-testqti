@@ -129,12 +129,14 @@ define([
              * @property {Number} extraTime - additional time, in ms
              * @property {Number} originalTime - the starting value of the timer, never changes, in ms.
              * @property {Number} remainingTime - current value, in ms.
+             * @property {Number} remainingWithoutExtraTime - remaining time without extra time, in ms.
+             * @property {Number} total - total time (original time + extra time), in ms.
              */
             var timer  = _.pick(constraintData, ['label', 'scope', 'source', 'extraTime', 'qtiClassName']);
 
             timer.type = type;
 
-            //to stay backward comaptible, the "max" timers ids are just the source
+            //to stay backward compatible, the "max" timers ids are just the source
             if(type === 'max'){
                 timer.id  = constraintData.source;
             } else {
@@ -147,13 +149,17 @@ define([
                 timer.originalTime  = constraintData.maxTime * precision;
                 timer.remainingTime = constraintData.maxTimeRemaining * precision;
             }
+
+            timer.remainingWithoutExtraTime = timer.remainingTime;
             if(timer.extraTime > 0){
-                timer.extraTime = timer.extraTime * precision;
+                timer.extraTime = extraTime.total * precision;
             }
+
+            timer.total = timer.originalTime + (extraTime.total * precision);
+
             if (extraTime) {
                 timer.remainingTime += extraTime.remaining * precision;
             }
-
             //TODO supports warnings for other types
             if (type === 'max' && _.isArray(constraintsWarnings[timer.scope])) {
                 timer.warnings = constraintsWarnings[timer.scope];
