@@ -137,16 +137,12 @@ define([
             timer.type = type;
             timer.allowLateSubmission = constraintData.allowLateSubmission;
 
-            //to stay backward compatible, the "max" timers ids are just the source
-            if(type === 'max'){
-                timer.id  = constraintData.source;
-            } else {
-                timer.id  = type + '-' + constraintData.scope + '-' + constraintData.source;
-            }
             if(type === 'min'){
+                timer.id  = type + '-' + constraintData.scope + '-' + constraintData.source;
                 timer.originalTime  = constraintData.minTime * precision;
                 timer.remainingTime = constraintData.minTimeRemaining * precision;
             } else {
+                timer.id  = constraintData.source;
                 timer.originalTime  = constraintData.maxTime * precision;
                 timer.remainingTime = constraintData.maxTimeRemaining * precision;
             }
