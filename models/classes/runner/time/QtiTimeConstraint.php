@@ -105,8 +105,8 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
 
     /**
      * Get the remaining duration from a source (min or max time, usually)
-     * @param QtiDuration the source duration
-     * @return Duration A Duration object (or null of not available) that represents the remaining time
+     * @param QtiDuration $duration the source duration
+     * @return Duration|false A Duration object (or false of not available) that represents the remaining time
      */
     protected function getRemainingTimeFrom(QtiDuration $duration)
     {
@@ -117,12 +117,9 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                 // take care of the already consumed extra time under the current constraint
                 // and append the full remaining extra time
                 // the total must correspond to the already elapsed time plus the remaining time
-                $currentExtraTime = $this->timer->getRemainingExtraTime() + $this->timer->getConsumedExtraTime($this->getSource()->getIdentifier());
-                $extraTime = min($this->timer->getExtraTime($duration->getSeconds(true)), $currentExtraTime);
-                $remaining->add(new QtiDuration('PT' . $extraTime . 'S'));
+                $remaining->add(new QtiDuration('PT' . $this->timer->getExtraTime($duration->getSeconds(true)) . 'S'));
             }
             $remaining->sub($this->getDuration());
-
             return ($remaining->isNegative() === true) ? new QtiDuration('PT0S') : $remaining;
         }
         return false;
