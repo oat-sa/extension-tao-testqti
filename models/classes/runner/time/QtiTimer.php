@@ -556,7 +556,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     public function consumeExtraTime($time, $tags = null)
     {
         $time = max(0, floatval($time));
-        $this->consumedExtraTime += $time;
+        $this->consumedExtraTime = $time;
         
         // assign the consumed time to the provided tags
         if ($time && !is_null($tags)) {
