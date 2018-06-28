@@ -62,13 +62,12 @@ define([
                 var testContext = testRunner.getTestContext();
                 var timeConstraints = testContext.timeConstraints;
                 var isLinear = !!testContext.isLinear;
-                var extraTime = testContext.extraTime;
-                var timers = timersFactory(timeConstraints, isLinear, config, extraTime);
+                var timers = timersFactory(timeConstraints, isLinear, config);
                 return Promise.all(
                     _.map(timers, function(timer){
-                        return timeStore.getItem(timer.id).then(function(savedConsumedTime){
+                        return timeStore.getItem('consumed_' + timer.id).then(function(savedConsumedTime){
                             if (_.isNumber(savedConsumedTime) && savedConsumedTime >= 0 && config.restoreTimerFromClient) {
-                                timer.remainingTime = timer.originalTime + timer.extraTime - savedConsumedTime;
+                                timer.remainingTime = timer.originalTime + timer.extraTime.total - savedConsumedTime;
                             }
                         });
                     })
@@ -87,7 +86,7 @@ define([
             this.saveTimers = function saveTimers(timeStore, timers){
                 return Promise.all(
                     _.map(timers, function(timer){
-                        return timeStore.setItem(timer.id, timer.total - timer.remainingTime);
+                        return timeStore.setItem('consumed_' + timer.id, timer.total - timer.remainingTime);
                     })
                 );
             };

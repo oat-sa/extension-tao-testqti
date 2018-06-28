@@ -57,22 +57,11 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     const STORAGE_KEY_CONSUMED_EXTRA_TIME = 'consumedExtraTime';
     
     /**
-     * The name of the storage key for the time line related to the consumed extra time
-     */
-    const STORAGE_KEY_EXTRA_TIME_LINE = 'extraTimeLine';
-    
-    /**
      * The TimeLine used to compute the duration
      * @var TimeLine
      */
     protected $timeLine;
     
-    /**
-     * The TimeLine used to compute the consumed extra time
-     * @var TimeLine
-     */
-    protected $extraTimeLine;
-
     /**
      * The storage used to maintain the data
      * @var TimeStorage
@@ -103,7 +92,6 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     public function __construct()
     {
         $this->timeLine = new QtiTimeLine();
-        $this->extraTimeLine = new QtiTimeLine();
     }
 
     /**
@@ -371,7 +359,6 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             self::STORAGE_KEY_TIME_LINE => $this->timeLine,
             self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
             self::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
-            self::STORAGE_KEY_EXTRA_TIME_LINE => $this->extraTimeLine,
             self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
         ];
     }
@@ -447,12 +434,6 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
                 $this->timeLine = new QtiTimeLine();
             }
 
-            if (isset($data[self::STORAGE_KEY_EXTRA_TIME_LINE])) {
-                $this->extraTimeLine = $this->unserializeTimeLine($data[self::STORAGE_KEY_EXTRA_TIME_LINE]);
-            } else {
-                $this->extraTimeLine = new QtiTimeLine();
-            }
-            
             if (isset($data[self::STORAGE_KEY_EXTRA_TIME])) {
                 $this->extraTime = $data[self::STORAGE_KEY_EXTRA_TIME];
             } else {
@@ -471,7 +452,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
                 $this->consumedExtraTime = 0;
             }
 
-            if (!$this->timeLine instanceof TimeLine || !$this->extraTimeLine instanceof TimeLine) {
+            if (!$this->timeLine instanceof TimeLine) {
                 throw new InvalidDataException('The storage did not provide acceptable data when loading!');
             }
         }
@@ -527,46 +508,27 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     /**
      * Gets the amount of already consumed extra time. If tags are provided, only take care of the related time.
      * @param string|array $tags A tag or a list of tags to filter
+     * @param integer $maxTime initial (total) timer value without extra time
+     * @param integer $target (server/client)
      * @return float
+     * @throws
      */
-    public function getConsumedExtraTime($tags = null)
+    public function getConsumedExtraTime($tags = null, $maxTime = 0, $target = TimePoint::TARGET_SERVER)
     {
-        if (!is_null($tags)) {
-            return $this->extraTimeLine->compute($tags);
-        }
-        return $this->consumedExtraTime;
+        $totalConsumed = $this->compute($tags, $target);
+        return $totalConsumed - $maxTime < 0 ? 0 : $totalConsumed - $maxTime;
     }
 
     /**
      * Gets the amount of remaining extra time
+     * @param string|array $tags A tag or a list of tags to filter
+     * @param integer $maxTime initial (total) timer value without extra time
+     * @param integer $target (server/client)
      * @return float
      */
-    public function getRemainingExtraTime()
+    public function getRemainingExtraTime($tags = null, $maxTime = 0, $target = TimePoint::TARGET_SERVER)
     {
-        return max(0, $this->extraTime - $this->consumedExtraTime);
-    }
-
-    /**
-     * Consumes an amount of extra time.
-     * If tags are provided, assign them to the consumed time.
-     * @param float $time
-     * @param string|array $tags A tag or a list of tags to assign
-     * @return ExtraTime
-     */
-    public function consumeExtraTime($time, $tags = null)
-    {
-        $time = max(0, floatval($time));
-        $this->consumedExtraTime += $time;
-        
-        // assign the consumed time to the provided tags
-        if ($time && !is_null($tags)) {
-            $end = microtime(true);
-            $start = $end - $time;
-            $this->extraTimeLine->add(new TimePoint($tags, $start, TimePoint::TYPE_START, TimePoint::TARGET_SERVER));
-            $this->extraTimeLine->add(new TimePoint($tags, $end, TimePoint::TYPE_END, TimePoint::TARGET_SERVER));
-        }
-        
-        return $this;
+        return max(0, $this->getExtraTime($maxTime) - $this->getConsumedExtraTime($tags, $maxTime, $target));
     }
 
     /**

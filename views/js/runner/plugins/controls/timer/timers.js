@@ -85,10 +85,9 @@ define([
      * @param {Object} [config] - timers config
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
-     * @param {Object} extraTime - as defined in the testContext
      * @returns {timer[]} the timers
      */
-    return function getTimers(timeConstraints, isLinear, config, extraTime){
+    return function getTimers(timeConstraints, isLinear, config){
         var timers = {};
 
         /**
@@ -126,7 +125,7 @@ define([
              * @property {String} scope - the timer's scope (item, section, etc.)
              * @property {String} qtiClassName - the QTI class of the timers applies to
              * @property {String} source - the ID of the element the timers belongs to
-             * @property {Number} extraTime - additional time, in ms
+             * @property {Number} extraTime - additional time data, object
              * @property {Number} originalTime - the starting value of the timer, never changes, in ms.
              * @property {Number} remainingTime - current value, in ms.
              * @property {Number} remainingWithoutExtraTime - remaining time without extra time, in ms.
@@ -147,15 +146,14 @@ define([
             }
 
             timer.remainingWithoutExtraTime = timer.remainingTime;
-            if(timer.extraTime > 0){
-                timer.extraTime = extraTime.total * precision;
+            if (timer.extraTime) {
+                timer.extraTime.consumed = timer.extraTime.consumed * precision;
+                timer.extraTime.remaining = timer.extraTime.remaining * precision;
+                timer.extraTime.total = timer.extraTime.total * precision;
+                timer.total = timer.originalTime + (timer.extraTime.total);
+                timer.remainingTime += timer.extraTime.remaining;
             }
 
-            timer.total = timer.originalTime + (extraTime.total * precision);
-
-            if (extraTime) {
-                timer.remainingTime += extraTime.remaining * precision;
-            }
             //TODO supports warnings for other types
             if (type === 'max' && _.isArray(constraintsWarnings[timer.scope])) {
                 timer.warnings = constraintsWarnings[timer.scope];

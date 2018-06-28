@@ -117,8 +117,8 @@ trait RunnerParamParserTrait
         if($this->getRequestParameter('itemDuration')){
             $serviceContext    = $this->getServiceContext(false);
             $itemDuration      = $this->getRequestParameter('itemDuration');
-            $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
-            return $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $timestamp);
+            //$consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
+            return $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $timestamp);
         }
         return false;
     }
