@@ -43,7 +43,7 @@ define([], function(){
                  */
                 complete : function complete(){
                     if(timer.qtiClassName && timer.source){
-                        return testRunner.timeout(timer.qtiClassName, timer.source);
+                        return testRunner.timeout(timer.qtiClassName, timer.source, timer);
                     }
                 }
             };
