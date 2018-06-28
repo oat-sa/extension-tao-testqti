@@ -85,14 +85,16 @@ class SynchronisationService extends ConfigurableService
         /** @var TestRunnerAction $action */
         foreach( $actions as $action) {
             try {
-                if ($action->hasRequestParameter('itemDuration')) {
+                $serviceContext->setSyncingMode($action->getRequestParameter('offline'));
+                if ($action->hasRequestParameter('itemDuration') && $serviceContext->isSyncingMode()) {
                     $last += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
+                    $action->setTime($last);
+                } else {
+                    $action->setTime($now);
                 }
-                $action->setTime($last);
 
                 $action->setServiceContext($serviceContext);
                 if ($serviceContext instanceof QtiRunnerServiceContext) {
-                    $serviceContext->setSyncingMode($action->getRequestParameter('offline'));
                 }
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
