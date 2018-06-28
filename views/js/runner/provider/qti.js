@@ -377,7 +377,7 @@ define([
                             self.trigger('error', err);
                         });
                 })
-                .on('timeout', function(scope, ref){
+                .on('timeout', function(scope, ref, timer){
 
                     var context = self.getTestContext();
 
@@ -385,25 +385,41 @@ define([
 
                     this.setTestContext(context);
 
-                    this.disableItem(context.itemIdentifier);
+                    if (timer && timer.allowLateSubmission) {
+                        self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended. However you are allowed to finish the current item.'));
+                        self.before('move.latetimeout', function() {
+                            self.off('move.latetimeout');
+                            computeNext(
+                                'timeout',
+                                _.merge(getItemResults(), {
+                                    scope: scope,
+                                    ref: ref,
+                                    late: true
+                                })
+                            );
+                            return Promise.reject({cancel: true});
+                        });
+                    } else {
+                        this.disableItem(context.itemIdentifier);
 
-                    computeNext(
-                        'timeout',
-                        _.merge(getItemResults(), {
-                            scope: scope,
-                            ref: ref
-                        }),
-                        new Promise(function(resolve) {
-                            if (context.options
-                                && context.options.hasOwnProperty('noAlertTimeout')
-                                && context.options.noAlertTimeout
-                            ) {
-                                resolve();
-                            } else {
-                                self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
-                            }
-                        })
-                    );
+                        computeNext(
+                            'timeout',
+                            _.merge(getItemResults(), {
+                                scope: scope,
+                                ref: ref
+                            }),
+                            new Promise(function (resolve) {
+                                if (context.options
+                                    && context.options.hasOwnProperty('noAlertTimeout')
+                                    && context.options.noAlertTimeout
+                                ) {
+                                    resolve();
+                                } else {
+                                    self.trigger('alert.timeout', __('Time limit reached, this part of the test has ended.'), resolve);
+                                }
+                            })
+                        );
+                    }
                 })
                 .on('pause', function(data){
 

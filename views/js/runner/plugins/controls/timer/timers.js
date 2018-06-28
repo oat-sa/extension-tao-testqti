@@ -134,6 +134,7 @@ define([
             var timer  = _.pick(constraintData, ['label', 'scope', 'source', 'extraTime', 'qtiClassName']);
 
             timer.type = type;
+            timer.allowLateSubmission = constraintData.allowLateSubmission;
 
             if(type === 'min'){
                 timer.id  = type + '-' + constraintData.scope + '-' + constraintData.source;
