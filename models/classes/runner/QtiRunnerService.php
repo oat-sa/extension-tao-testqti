@@ -462,7 +462,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // Time constraints.
                 $response['timeConstraints'] = $this->buildTimeConstraints($context);
-                //$response['extraTime'] = $this->buildExtraTime($context);
 
                 // Test Part title.
                 $response['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
@@ -1519,31 +1518,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         return $constraints;
     }
-
-    /**
-     * Builds a descriptor that contains the extra time
-     * @param RunnerServiceContext $context
-     * @return array
-     */
-//    protected function buildExtraTime(RunnerServiceContext $context)
-//    {
-//        /* @var TestSession $session */
-//        $session = $context->getTestSession();
-//        $timer = $session->getTimer();
-//        $sessionMaxTime = null;
-//        $sessionTimeLimits = $session->getCurrentTestPart()->getTimeLimits();
-//        if ($sessionTimeLimits) {
-//            $sessionMaxTime = $sessionTimeLimits->hasMaxTime()
-//                 ? $sessionTimeLimits->getMaxTime()->getSeconds(true)
-//                 : null;
-//        }
-//
-//        return [
-//            'total' => $timer->getExtraTime($sessionMaxTime),
-//            'consumed' => $timer->getConsumedExtraTime(null, $sessionMaxTime),
-//            'remaining' => $timer->getRemainingExtraTime(null, $sessionMaxTime),
-//        ];
-//    }
 
     /**
      * Stores trace variable related to an item, a test or a section
