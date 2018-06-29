@@ -735,6 +735,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $ref   = $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
         $start = $this->hasRequestParameter('start');
+        $late = $this->hasRequestParameter('late');
 
         try {
             $this->checkSecurityToken();
@@ -749,7 +750,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->saveItemResponses();
 
-            $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref);
+            $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref, $late);
 
             $response = [
                 'success' => $result,

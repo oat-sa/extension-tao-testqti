@@ -50,28 +50,38 @@ define([
          */
         install: function install() {
 
+            var testRunner = this.getTestRunner();
+
             /**
              * Load the timers, from the given timeConstraints and reading the current value in the store
              * @param {store} timeStore - where the values are read
-             * @param {Object[]} timeConstraints - the timeConstraints as given by the testContext
-             * @param {Boolean} isLinear - the timeConstraints as given by the testContext
              * @param {Object} config - the current config, especially for the warnings
              * @return {Promise<Object[]>} the list of timers for the current context
              */
-            this.loadTimers = function loadTimers(timeStore, timeConstraints, isLinear,  config){
-                var timers = timersFactory(timeConstraints, isLinear, config);
+            this.loadTimers = function loadTimers(timeStore, config){
+                var testContext = testRunner.getTestContext();
+                var timeConstraints = testContext.timeConstraints;
+                var isLinear = !!testContext.isLinear;
+                var extraTime = testContext.extraTime;
+                var timers = timersFactory(timeConstraints, isLinear, config, extraTime);
                 return Promise.all(
                     _.map(timers, function(timer){
                         return timeStore.getItem(timer.id).then(function(savedTime){
+                            var total = timer.originalTime + timer.extraTime;
+                            var consumed;
+                            //first initialization
+                            if ((timer.remainingTime === timer.originalTime || timer.remainingTime === 0) && !savedTime) {
+                                timer.remainingTime = timer.originalTime + timer.extraTime;
+                            }
 
                             //apply the remainingTime from the store
                             if (_.isNumber(savedTime) && savedTime >= 0 && config.restoreTimerFromClient) {
                                 timer.remainingTime = savedTime;
                             }
+                            consumed = total - timer.remainingTime;
                             //apply the extraTime
                             if(_.isNumber(timer.extraTime) && timer.extraTime > 0){
-                                timer.remainingWithoutExtraTime = timer.remainingTime;
-                                timer.remainingTime = timer.remainingTime + timer.extraTime;
+                                timer.remainingWithoutExtraTime = consumed > timer.originalTime ? 0 : timer.originalTime - consumed;
                             }
                         });
                     })
@@ -90,20 +100,13 @@ define([
             this.saveTimers = function saveTimers(timeStore, timers){
                 return Promise.all(
                     _.map(timers, function(timer){
-
-                        //if extra time, we always save the original value
-                        if(_.isNumber(timer.extraTime) && timer.extraTime > 0 && timer.remainingWithoutExtraTime){
-                            timer.remainingWithoutExtraTime = Math.max(0, timer.remainingTime - timer.extraTime);
-                            return timeStore.setItem(timer.id, timer.remainingWithoutExtraTime);
-                        }
-
                         return timeStore.setItem(timer.id, timer.remainingTime);
                     })
                 );
             };
 
             //define the "timer" store as "volatile" (removed on browser change).
-            this.getTestRunner().getTestStore().setVolatile(this.getName());
+            testRunner.getTestStore().setVolatile(this.getName());
         },
 
         /**
@@ -162,14 +165,19 @@ define([
                             var testContext = testRunner.getTestContext();
                             //update the timers before each item
                             if(self.timerbox && testContext.timeConstraints){
-                                return self.loadTimers(timeStore, testContext.timeConstraints, !!testContext.isLinear, config)
+                                return self.loadTimers(timeStore, config)
                                     .then(function(timers){
                                         return self.timerbox.update(timers);
                                     })
                                     .catch(handleError);
                             }
                         })
-                        .on('enableitem renderitem', function(){
+                        .on('enableitem', function(){
+                            if(self.timerbox){
+                                self.timerbox.start();
+                            }
+                        })
+                        .after('renderitem', function(){
                             if(self.timerbox){
                                 self.timerbox.start();
                             }
