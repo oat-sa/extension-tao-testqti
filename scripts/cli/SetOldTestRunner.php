@@ -19,8 +19,9 @@
 
 namespace oat\taoQtiTest\scripts\cli;
 
-use oat\taoQtiItem\model\ItemModel;
 use oat\oatbox\extension\AbstractAction;
+use oat\taoQtiTest\models\TestModelService;
+use oat\taoQtiTest\models\compilation\CompilationService;
 /**
  * Class SetOldTestRunner
  *
@@ -32,11 +33,11 @@ class SetOldTestRunner extends AbstractAction
 {
     public function __invoke($params)
     {
-        $compilerClassConfig = 'oat\\taoQtiItem\\model\\QtiItemCompiler';
-        /** @var ItemModel $itemModelService */
-        $itemModelService = $this->getServiceManager()->get(ItemModel::SERVICE_ID);
-        $itemModelService->setOption(ItemModel::COMPILER, $compilerClassConfig);
-        $this->getServiceManager()->register(ItemModel::SERVICE_ID, $itemModelService);
+        $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+        $compiler = $testModelService->getOption(TestModelService::SUBSERVICE_COMPILATION);
+        $compiler->setOption(CompilationService::OPTION_CLIENT_TESTRUNNER, false);
+        $testModelService->setOption(TestModelService::SUBSERVICE_COMPILATION, $compiler);
+        $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
 
         $testQtiExt = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $testRunnerConfig = $testQtiExt->getConfig('testRunner');
