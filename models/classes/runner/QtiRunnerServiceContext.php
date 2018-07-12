@@ -208,7 +208,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             \common_Logger::d("Instantiating QTI Assessment Test Session");
             $this->setTestSession($storage->instantiate($this->getTestDefinition(), $sessionId));
 
-            $testTaker = UserHelper::getUser($this->getUserUri());
+            $testTaker = $this->getTestTakerFromSessionOrRds();
             \taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         }
         else {
@@ -1004,5 +1004,27 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function setSyncingMode($syncing)
     {
         $this->syncingMode = (bool) $syncing;
+    }
+
+    /**
+     * @return \oat\oatbox\user\User
+     * @throws \common_exception_Error
+     */
+    private function getTestTakerFromSessionOrRds()
+    {
+        try{
+            $session = \common_session_SessionManager::getSession();
+        }catch (\common_exception_Error $exception) {
+            $session = null;
+            \common_Logger::w($exception->getMessage());
+        }
+
+        if ($session == null || $session->getUser() == null) {
+            $testTaker = UserHelper::getUser($this->getUserUri());
+        } else {
+            $testTaker = $session->getUser();
+        }
+
+        return $testTaker;
     }
 }
