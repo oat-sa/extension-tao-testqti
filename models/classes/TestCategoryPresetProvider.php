@@ -165,16 +165,21 @@ class TestCategoryPresetProvider extends ConfigurableService
         return ($a < $b) ? -1 : 1;
     }
 
+    /**
+     * @param $presetGroup
+     * @param $presets
+     */
     public function register($presetGroup, $presets) {
-        if (array_key_exists($presetGroup, $this->allPresets)) {
-            if (! is_array($presets)) {
-                $presets = [$presets];
+        if (!array_key_exists($presetGroup, $this->allPresets)) {
+            return;
+        }
+        if (!is_array($presets)) {
+            $presets = [$presets];
+        }
+        foreach ($presets as $preset) {
+            if (!in_array($preset, $this->allPresets[$presetGroup]['presets'])) {
+                $this->allPresets[$presetGroup]['presets'][] = $preset;
             }
-            $this->allPresets[$presetGroup]['presets'] = array_merge(
-                $this->allPresets[$presetGroup]['presets'],
-                $presets
-            );
         }
     }
-
 }

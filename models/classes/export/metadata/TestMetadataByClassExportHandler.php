@@ -20,11 +20,15 @@
 
 namespace oat\taoQtiTest\models\export\metadata;
 
+use oat\oatbox\event\EventManagerAwareTrait;
 use \oat\taoQtiItem\model\Export\ItemMetadataByClassExportHandler;
 use oat\taoQtiItem\model\flyExporter\extractor\ExtractorException;
+use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
 
 class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
 {
+    use EventManagerAwareTrait;
+
     public function getLabel()
     {
         return 'QTI Test Metadata';
@@ -47,6 +51,8 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
                     $exporterService->export($formValues['uri']),
                     $formValues['filename']
                 );
+
+                $this->getEventManager()->trigger(new QtiTestMetadataExportEvent($instance));
             } catch (ExtractorException $e) {
                 return \common_report_Report::createFailure('Selected object does not have any item to export.');
             }
