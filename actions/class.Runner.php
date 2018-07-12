@@ -33,6 +33,9 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
+use \core_kernel_classes_Property as Property;
+use oat\taoDeliveryRdf\model\theme\DeliveryThemeDetailsProvider;
+use \oat\taoDelivery\model\execution\ServiceProxy;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -293,6 +296,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
                 $response['lastStoreId'] = $lastStoreId;
                 $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext);
+
+                $themeNamespace = $this->guessThemeNamespace($serviceContext->getTestExecutionUri());
+                if (null !== $themeNamespace) {
+                    $response['testData']['config']['plugins']['itemThemeSwitcher']['activeNamespace'] = $themeNamespace;
+                }
             }
 
         } catch (common_Exception $e) {
@@ -304,6 +312,27 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
         $this->returnJson($response, $code);
+    }
+
+    private function guessThemeNamespace($executionUri)
+    {
+        //This part is rather questionable as it creates a dependency from LTI
+//        $currentSession = \common_session_SessionManager::getSession();
+//        if ($currentSession instanceof TaoLtiSession) {
+//            $launchData = $currentSession->getLaunchData();
+//            if ($launchData->hasVariable(LtiThemeSwitcher::LTI_VARIABLE)) {
+//                $config["activeNamespace"] = $launchData->getVariable(LtiThemeSwitcher::LTI_VARIABLE);
+//            }
+//        }
+
+        /** @var \oat\taoDelivery\model\execution\DeliveryExecution $deliveryExecution */
+        $deliveryExecution = ServiceProxy::singleton()->getDeliveryExecution($executionUri);
+
+        $delivery = $deliveryExecution->getDelivery();
+
+        $themeNamespace = $delivery->getOnePropertyValue(new Property(DeliveryThemeDetailsProvider::DELIVERY_THEME_ID_URI));
+
+        return (string)$themeNamespace;
     }
 
     /**
