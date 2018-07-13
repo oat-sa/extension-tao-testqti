@@ -387,7 +387,6 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         }
         
         $this->storage->store($this->toArray());
-        
         return $this;
     }
 
@@ -445,7 +444,6 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             } else {
                 $this->extendedTime = 0;
             }
-            
             if (isset($data[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
                 $this->consumedExtraTime = $data[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
             } else {
@@ -506,6 +504,17 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     }
 
     /**
+     * Sets the added extra time
+     * @param float $time
+     * @return $this
+     */
+    public function setConsumedExtraTime($time)
+    {
+        $this->consumedExtraTime = max($this->consumedExtraTime, floatval($time));
+        return $this;
+    }
+
+    /**
      * Gets the amount of already consumed extra time. If tags are provided, only take care of the related time.
      * @param string|array $tags A tag or a list of tags to filter
      * @param integer $maxTime initial (total) timer value without extra time
@@ -515,8 +524,12 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     public function getConsumedExtraTime($tags = null, $maxTime = 0, $target = TimePoint::TARGET_SERVER)
     {
-        $totalConsumed = $this->compute($tags, $target);
-        return $totalConsumed - $maxTime < 0 ? 0 : $totalConsumed - $maxTime;
+        if ($maxTime) {
+            $totalConsumed = $this->compute($tags, $target);
+            $consumedExtraTime = $totalConsumed - $maxTime < 0 ? 0 : $totalConsumed - $maxTime;
+            $this->setConsumedExtraTime($consumedExtraTime)->save();
+        }
+        return $this->consumedExtraTime;
     }
 
     /**
