@@ -225,6 +225,11 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
         return $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
     }
 
+    /**
+     * Check if itemThemeSwitch plugin is enabled
+     *
+     * @return bool
+     */
     private function isThemeSwitcherEnabled()
     {
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoTests')->getConfig('test_runner_plugin_registry');
@@ -234,22 +239,16 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
         }
     }
 
+    /**
+     * Guess test theme from the available DeliveryThemeProviders
+     *
+     * @return string
+     */
     private function guessTestTheme()
     {
-        $request = \Context::getInstance()->getRequest();
-
-        $executionId = \tao_helpers_Uri::decode($request->getParameter('serviceCallId'));
-
-        $theme = "";
-        if ($executionId) {
-            $deliveryThemeDetailsProvider = new DeliveryThemeDetailsProvider();
-
-            $deliveryId = $deliveryThemeDetailsProvider->getDeliveryIdFromSession($executionId);
-
-            if ($deliveryId) {
-                $theme = $deliveryThemeDetailsProvider->getDeliveryThemeId($deliveryId);
-            }
-        }
+        /** @var ThemeService $themeService */
+        $themeService = $this->getServiceLocator()->get(ThemeService::SERVICE_ID);
+        $theme = $themeService->getTheme()->getId();
 
         return $theme;
     }
