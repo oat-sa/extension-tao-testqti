@@ -62,11 +62,7 @@ define([
 
             var pluginConfig = self.getConfig();
             var oldNamespace = themeHandler.getActiveNamespace();
-            if (pluginConfig.activeNamespace) {
-                themeHandler.setActiveNamespace(pluginConfig.activeNamespace);
-            }
-            var themesConfig = themeHandler.get('items') || {};
-
+            var themesConfig = {};
             var state = {
                 availableThemes: [],
                 defaultTheme: '',
@@ -74,6 +70,10 @@ define([
             };
             var allMenuEntries = [];
 
+            if (pluginConfig.activeNamespace) {
+                themeHandler.setActiveNamespace(pluginConfig.activeNamespace);
+            }
+            themesConfig = themeHandler.get('items') || {};
             if (pluginConfig.activeNamespace !== oldNamespace && !_.isEmpty(themesConfig)) {
                 reloadThemes();
             }
@@ -86,11 +86,13 @@ define([
                 return themesConfig && _.size(themesConfig.available) > 1;
             }
 
+            /**
+             * Reloads theme config and changes theme
+             */
             function reloadThemes() {
                 var themeConfig = themeHandler.get('items');
 
                 themeLoader(themeConfig).load();
-                
                 if (state && state.selectedTheme) {
                     changeTheme(state.selectedTheme);
                 } else {
