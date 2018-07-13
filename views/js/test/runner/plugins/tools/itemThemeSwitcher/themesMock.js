@@ -24,16 +24,27 @@ define([
 ], function(_, config){
     'use strict';
 
+    var themesConfig;
     return {
+        getConfig : function getConfig() {
+            var initialConfig;
+
+            if(!themesConfig){
+                initialConfig = config;
+                themesConfig = _.cloneDeep(initialConfig);
+            }
+            return themesConfig;
+        },
         get : function get(what, ns){
+            var localConfig = this.getConfig();
             if (ns) {
                 what += '_' + ns;
 
-            } else if (config.activeNamespace && config[what + '_' + config.activeNamespace]) {
-                what += '_' + config.activeNamespace;
+            } else if (localConfig.activeNamespace && config[what + '_' + localConfig.activeNamespace]) {
+                what += '_' + localConfig.activeNamespace;
             }
-            if(_.isPlainObject(config[what])){
-                return config[what];
+            if(_.isPlainObject(localConfig[what])){
+                return localConfig[what];
             }
         },
         getAvailable : function getAvailable(what, ns){
@@ -43,6 +54,12 @@ define([
                 available = themes.available;
             }
             return available;
+        },
+        getActiveNamespace : function getActiveNamespace(){
+            return this.getConfig().activeNamespace;
+        },
+        setActiveNamespace : function setActiveNamespace(ns){
+            this.getConfig().activeNamespace = ns;
         }
     };
 });
