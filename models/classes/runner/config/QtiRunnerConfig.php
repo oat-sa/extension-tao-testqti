@@ -24,8 +24,6 @@ namespace oat\taoQtiTest\models\runner\config;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\theme\ThemeService;
-use oat\taoDelivery\models\classes\theme\DeliveryThemeDetailsProvider;
-use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
@@ -119,7 +117,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             ];
 
             if ($this->isThemeSwitcherEnabled()) {
-                $themeSwitcherPlugin[self::TOOL_ITEM_THEME_SWITCHER]['activeNamespace'] = $this->guessTestTheme();
+                $themeSwitcherPlugin[self::TOOL_ITEM_THEME_SWITCHER]['activeNamespace'] = $this->getItemTheme();
                 $newPlugins = array_merge($config['plugins'], $themeSwitcherPlugin);
                 $config['plugins'] = $newPlugins;
             }
@@ -240,16 +238,15 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     }
 
     /**
-     * Guess test theme from the available DeliveryThemeProviders
+     * Get test theme from the available DeliveryThemeProviders
      *
      * @return string
      */
-    private function guessTestTheme()
+    private function getItemTheme()
     {
         /** @var ThemeService $themeService */
         $themeService = $this->getServiceLocator()->get(ThemeService::SERVICE_ID);
-        $theme = $themeService->getTheme()->getId();
 
-        return $theme;
+        return $themeService->getTheme()->getId();
     }
 }
