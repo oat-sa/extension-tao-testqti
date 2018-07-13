@@ -23,6 +23,9 @@
 namespace oat\taoQtiTest\models\runner\config;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\theme\ThemeService;
+use oat\taoDelivery\models\classes\theme\DeliveryThemeDetailsProvider;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
@@ -35,6 +38,9 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     const SERVICE_ID = 'taoQtiTest/QtiRunnerConfig';
 
     const OPTION_CONFIG = 'config';
+
+    const TOOL_ITEM_THEME_SWITCHER = 'itemThemeSwitcher';
+    const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
 
     /**
      * The test runner config
@@ -111,6 +117,12 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 ],
                 'guidedNavigation' => isset($rawConfig['guidedNavigation']) ? $rawConfig['guidedNavigation'] : false,
             ];
+
+            if ($this->isThemeSwitcherEnabled()) {
+                $themeSwitcherPlugin[self::TOOL_ITEM_THEME_SWITCHER]['activeNamespace'] = $this->guessTestTheme();
+                $newPlugins = array_merge($config['plugins'], $themeSwitcherPlugin);
+                $config['plugins'] = $newPlugins;
+            }
         }
         return $config;
     }
@@ -211,5 +223,34 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     protected function getCategories(RunnerServiceContext $context)
     {
         return $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
+    }
+
+    private function isThemeSwitcherEnabled()
+    {
+        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoTests')->getConfig('test_runner_plugin_registry');
+
+        if (array_key_exists(self::TOOL_ITEM_THEME_SWITCHER_KEY, $config) && $config[self::TOOL_ITEM_THEME_SWITCHER_KEY]['active']) {
+            return true;
+        }
+    }
+
+    private function guessTestTheme()
+    {
+        $request = \Context::getInstance()->getRequest();
+
+        $executionId = \tao_helpers_Uri::decode($request->getParameter('serviceCallId'));
+
+        $theme = "";
+        if ($executionId) {
+            $deliveryThemeDetailsProvider = new DeliveryThemeDetailsProvider();
+
+            $deliveryId = $deliveryThemeDetailsProvider->getDeliveryIdFromSession($executionId);
+
+            if ($deliveryId) {
+                $theme = $deliveryThemeDetailsProvider->getDeliveryThemeId($deliveryId);
+            }
+        }
+
+        return $theme;
     }
 }
