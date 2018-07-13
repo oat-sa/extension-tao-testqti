@@ -33,9 +33,6 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-use \core_kernel_classes_Property as Property;
-use oat\taoDeliveryRdf\model\theme\DeliveryThemeDetailsProvider;
-use \oat\taoDelivery\model\execution\ServiceProxy;
 
 /**
  * Class taoQtiTest_actions_Runner
