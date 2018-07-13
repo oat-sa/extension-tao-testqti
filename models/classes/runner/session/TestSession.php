@@ -245,7 +245,16 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
                 $this->logAlert($e->getMessage().'; Test session identifier: '.$this->getSessionId());
             }
         }
-        
+        $constraints = $this->getTimeConstraints();
+
+        $maxTime = 0;
+        /** @var TimeConstraint $constraint */
+        foreach ($constraints as $constraint) {
+            if ($constraint->getSource()->getTimeLimits()) {
+                $maxTime = $constraint->getSource()->getTimeLimits()->getMaxTime()->getSeconds(true);
+            }
+        }
+        $this->getTimer()->getConsumedExtraTime($tags, $maxTime);
         $timer->save();
     }
 
