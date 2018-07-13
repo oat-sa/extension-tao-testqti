@@ -140,7 +140,7 @@ class taoQtiTest_helpers_TestRunnerUtils {
                 $values = $testTaker->getPropertyValues($rdfPropUri);
                 $outcome = $session->getVariable($outcomeId);
                 if(!is_null($outcome) && count($values)){
-                    $outcome->setValue(new QtiString($values[0]));
+                    $outcome->setValue(new QtiString((string)$values[0]));
                 }
             }
         }
