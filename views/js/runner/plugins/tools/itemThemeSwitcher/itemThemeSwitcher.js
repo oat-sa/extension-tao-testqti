@@ -29,8 +29,9 @@ define([
     'ui/hider',
     'ui/themes',
     'util/shortcut',
-    'util/namespace'
-], function ($, _, __, pluginFactory, hider, themeHandler, shortcut, namespaceHelper) {
+    'util/namespace',
+    'ui/themeLoader'
+], function ($, _, __, pluginFactory, hider, themeHandler, shortcut, namespaceHelper, themeLoader) {
     'use strict';
 
     /**
@@ -58,7 +59,10 @@ define([
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
-            var themesConfig = themeHandler.get('items') || {};
+
+            var pluginConfig = self.getConfig();
+            var oldNamespace = themeHandler.getActiveNamespace();
+            var themesConfig = {};
             var state = {
                 availableThemes: [],
                 defaultTheme: '',
@@ -66,12 +70,34 @@ define([
             };
             var allMenuEntries = [];
 
+            if (pluginConfig.activeNamespace) {
+                themeHandler.setActiveNamespace(pluginConfig.activeNamespace);
+            }
+            themesConfig = themeHandler.get('items') || {};
+            if (pluginConfig.activeNamespace !== oldNamespace && !_.isEmpty(themesConfig)) {
+                reloadThemes();
+            }
+
             /**
              * Tells if the component is enabled
              * @returns {Boolean}
              */
             function isPluginAllowed() {
                 return themesConfig && _.size(themesConfig.available) > 1;
+            }
+
+            /**
+             * Reloads theme config and changes theme
+             */
+            function reloadThemes() {
+                var themeConfig = themeHandler.get('items');
+
+                themeLoader(themeConfig).load();
+                if (state && state.selectedTheme) {
+                    changeTheme(state.selectedTheme);
+                } else {
+                    changeTheme(themeConfig.default);
+                }
             }
 
             /**
