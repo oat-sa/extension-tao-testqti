@@ -520,12 +520,11 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
             'item_fake_href',
         ];
         $timer->start($tags, 1459335000.0000);
-        $timer->end($tags, 1459335020.0000);
+        $timer->end($tags, 1459335025.0000);
 
         $extraTime = 20;
         $consumedTime = 4;
         $timer->setExtraTime($extraTime);
-        $timer->consumeExtraTime($consumedTime, $tags);
 
         $dataStorage = null;
         $storage = $this->getTimeStorage($dataStorage);
@@ -545,13 +544,13 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
 
         $timePoints = $timeLine->getPoints();
         $this->assertEquals($extraTime, $newTimer->getExtraTime());
-        $this->assertEquals($consumedTime, $newTimer->getConsumedExtraTime());
-        $this->assertEquals($consumedTime, $newTimer->getConsumedExtraTime($tags));
+        $this->assertEquals(5, $newTimer->getConsumedExtraTime(null, 20));
+        $this->assertEquals(25, $newTimer->getConsumedExtraTime($tags));
         $this->assertEquals(2, count($timePoints));
         $this->assertEquals(1459335000.0000, $timePoints[0]->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[0]->getTarget());
         $this->assertEquals(TimePoint::TYPE_START, $timePoints[0]->getType());
-        $this->assertEquals(1459335020.0000, $timePoints[1]->getTimestamp());
+        $this->assertEquals(1459335025.0000, $timePoints[1]->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
         $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
     }
@@ -572,8 +571,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
     {
         $timer = new QtiTimer();
         $dataStorage = serialize([
-            QtiTimer::STORAGE_KEY_TIME_LINE => new \stdClass(),
-            QtiTimer::STORAGE_KEY_EXTRA_TIME_LINE => new \stdClass(),
+            QtiTimer::STORAGE_KEY_TIME_LINE => new \stdClass()
         ]);
         $storage = $this->getTimeStorage($dataStorage);
         $timer->setStorage($storage);
@@ -597,53 +595,6 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $this->assertEquals($extraTime2, $timer->getExtraTime());
     }
     
-    /**
-     * Test the QtiTimer::consumeExtraTime()
-     */
-    public function testConsumeExtraTime()
-    {
-        $timer = new QtiTimer();
-        $this->assertEquals(0, $timer->getExtraTime());
-        
-        $extraTime = 77;
-        $timer->setExtraTime($extraTime);
-        $this->assertEquals($extraTime, $timer->getExtraTime());
-
-        $consume = 6;
-        $consumedTime = $consume;
-        $timer->consumeExtraTime($consume);
-        $this->assertEquals($extraTime, $timer->getExtraTime());
-        $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
-        
-        $remainingTime = $extraTime - $consumedTime;
-        $this->assertEquals($remainingTime, $timer->getRemainingExtraTime());
-
-        $consume = 5;
-        $consumedTime += $consume;
-        $timer->consumeExtraTime($consume);
-        $this->assertEquals($extraTime, $timer->getExtraTime());
-        $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
-
-        $remainingTime = $extraTime - $consumedTime;
-        $this->assertEquals($remainingTime, $timer->getRemainingExtraTime());
-
-        $tags = ['test', 'part1'];
-        $consume = 2;
-        $consumedTime += $consume;
-        $timer->consumeExtraTime($consume, $tags);
-        $this->assertEquals($extraTime, $timer->getExtraTime());
-        $this->assertEquals($consumedTime, $timer->getConsumedExtraTime());
-        $this->assertEquals($consume, $timer->getConsumedExtraTime($tags));
-        $this->assertEquals($consume, $timer->getConsumedExtraTime($tags[0]));
-        $this->assertEquals($consume, $timer->getConsumedExtraTime($tags[1]));
-        $this->assertEquals(0, $timer->getConsumedExtraTime('unknown'));
-
-        $remainingTime = $extraTime - $consumedTime;
-        $this->assertEquals($remainingTime, $timer->getRemainingExtraTime());
-    }
-
-
-
     //DATA PROVIDERS
     /**
      * @return array
@@ -909,17 +860,4 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $reflectionProperty->setAccessible(true);
         return $reflectionProperty->getValue($timer);
     }
-    
-    /**
-     * @param QtiTimer $timer
-     * @return QtiTimeLine
-     */
-    private function getExtraTimeLine(QtiTimer $timer)
-    {
-        $reflectionClass = new ReflectionClass(QtiTimer::class);
-        $reflectionProperty = $reflectionClass->getProperty('extraTimeLine');
-        $reflectionProperty->setAccessible(true);
-        return $reflectionProperty->getValue($timer);
-    }
-
 }

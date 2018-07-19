@@ -462,7 +462,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                 // Time constraints.
                 $response['timeConstraints'] = $this->buildTimeConstraints($context);
-                $response['extraTime'] = $this->buildExtraTime($context);
 
                 // Test Part title.
                 $response['testPartId'] = $session->getCurrentTestPart()->getIdentifier();
@@ -1521,31 +1520,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
-     * Builds a descriptor that contains the extra time
-     * @param RunnerServiceContext $context
-     * @return array
-     */
-    protected function buildExtraTime(RunnerServiceContext $context)
-    {
-        /* @var TestSession $session */
-        $session = $context->getTestSession();
-        $timer = $session->getTimer();
-        $sessionMaxTime = null;
-        $sessionTimeLimits = $session->getCurrentTestPart()->getTimeLimits();
-        if ($sessionTimeLimits) {
-            $sessionMaxTime = $sessionTimeLimits->hasMaxTime()
-                 ? $sessionTimeLimits->getMaxTime()->getSeconds(true)
-                 : null;
-        }
-
-        return [
-            'total' => $timer->getExtraTime($sessionMaxTime),
-            'consumed' => $timer->getConsumedExtraTime(),
-            'remaining' => $timer->getRemainingExtraTime(),
-        ];
-    }
-
-    /**
      * Stores trace variable related to an item, a test or a section
      *
      * @param RunnerServiceContext $context
@@ -1803,17 +1777,16 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      *
      * @param RunnerServiceContext $context
      * @param float $duration The client side duration to adjust the timer
-     * @param float $consumedExtraTime The extra time consumed by the client
      * @param float $timestamp allow to end the timer at a specific time, or use current when it's null
      * @return bool
      * @throws \common_exception_InvalidArgumentType
      */
-    public function endTimer(RunnerServiceContext $context, $duration = null, $consumedExtraTime = null, $timestamp = null)
+    public function endTimer(RunnerServiceContext $context, $duration = null, $timestamp = null)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
-            $session->endItemTimer($duration, $consumedExtraTime, $timestamp);
+            $session->endItemTimer($duration, $timestamp);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',

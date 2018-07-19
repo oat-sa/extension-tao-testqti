@@ -26,6 +26,7 @@ use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\theme\ThemeService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoTests\models\runner\time\TimePoint;
 
 /**
  * Class QtiRunnerOptions
@@ -65,6 +66,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             // fallback to get the raw server config, using the old notation
             $rawConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
             // build the test config using the new notation
+            $target = isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null;
             $config = [
                 'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
                 'catEngineWarning' => isset($rawConfig['catEngineWarning']) ? $rawConfig['catEngineWarning'] : null,
@@ -98,10 +100,10 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'csrfToken' => isset($rawConfig['csrf-token']) ? $rawConfig['csrf-token'] : false,
                 ],
                 'timer' => [
-                    'target' => isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null,
+                    'target' => $target,
                     'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
                     'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
-                    'restoreTimerFromClient' => !empty($rawConfig['restore-timer-from-client']),
+                    'restoreTimerFromClient' => $target === TimePoint::TARGET_CLIENT,
                 ],
                 'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
                 'enableValidateResponses' => isset($rawConfig['enable-validate-responses']) ? $rawConfig['enable-validate-responses'] : false,

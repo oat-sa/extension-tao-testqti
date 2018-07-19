@@ -527,8 +527,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         if($this->hasRequestParameter('itemDuration')){
             $serviceContext    = $this->getServiceContext();
             $itemDuration      = $this->getRequestParameter('itemDuration');
-            $consumedExtraTime = $this->getRequestParameter('consumedExtraTime');
-            return $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime);
+            return $this->getRunnerService()->endTimer($serviceContext, $itemDuration);
         }
         return false;
     }
