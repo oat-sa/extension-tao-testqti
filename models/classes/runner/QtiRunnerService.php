@@ -1265,14 +1265,23 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function check(RunnerServiceContext $context)
     {
-        $state = $context->getTestSession()->getState();
+        $testSession = $context->getTestSession();
+        $state = $testSession->getState();
 
         if ($state == AssessmentTestSessionState::CLOSED) {
             throw new QtiRunnerClosedException();
         }
 
         if ($state == AssessmentTestSessionState::SUSPENDED) {
-            throw new QtiRunnerPausedException();
+            /** @var \common_ext_ExtensionsManager $extensionsManager */
+            $extensionsManager = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID);
+            if (!$extensionsManager->isInstalled('taoProctoring')) {
+                // In case of no proctoring is in place, there is no reason of not beeing able to
+                // resume a paused test.
+                $testSession->resume();
+            } else {
+                throw new QtiRunnerPausedException();
+            }
         }
 
         return true;
