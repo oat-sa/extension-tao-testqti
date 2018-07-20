@@ -46,14 +46,13 @@ class Skip extends TestRunnerAction
 
         $ref       = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
         $itemDuration = null;
-        $consumedExtraTime = null;
 
         $scope = $this->getRequestParameter('scope');
         $start = ($this->getRequestParameter('start') !== false);
 
         try {
             $serviceContext = $this->getServiceContext();
-            $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $consumedExtraTime, $this->getTime());
+            $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $this->getTime());
 
             if ($this->getRequestParameter('offline') === true) {
                 $this->setOffline();

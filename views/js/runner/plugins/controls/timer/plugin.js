@@ -62,26 +62,12 @@ define([
                 var testContext = testRunner.getTestContext();
                 var timeConstraints = testContext.timeConstraints;
                 var isLinear = !!testContext.isLinear;
-                var extraTime = testContext.extraTime;
-                var timers = timersFactory(timeConstraints, isLinear, config, extraTime);
+                var timers = timersFactory(timeConstraints, isLinear, config);
                 return Promise.all(
                     _.map(timers, function(timer){
-                        return timeStore.getItem(timer.id).then(function(savedTime){
-                            var total = timer.originalTime + timer.extraTime;
-                            var consumed;
-                            //first initialization
-                            if ((timer.remainingTime === timer.originalTime || timer.remainingTime === 0) && !savedTime) {
-                                timer.remainingTime = timer.originalTime + timer.extraTime;
-                            }
-
-                            //apply the remainingTime from the store
-                            if (_.isNumber(savedTime) && savedTime >= 0 && config.restoreTimerFromClient) {
-                                timer.remainingTime = savedTime;
-                            }
-                            consumed = total - timer.remainingTime;
-                            //apply the extraTime
-                            if(_.isNumber(timer.extraTime) && timer.extraTime > 0){
-                                timer.remainingWithoutExtraTime = consumed > timer.originalTime ? 0 : timer.originalTime - consumed;
+                        return timeStore.getItem('consumed_' + timer.id).then(function(savedConsumedTime){
+                            if (_.isNumber(savedConsumedTime) && savedConsumedTime >= 0 && config.restoreTimerFromClient) {
+                                timer.remainingTime = timer.originalTime + timer.extraTime.total - savedConsumedTime;
                             }
                         });
                     })
@@ -92,7 +78,7 @@ define([
             };
 
             /**
-             * Save timer values into the store
+             * Save consumed time values into the store
              * @param {store} timeStore - where the values are saved
              * @param {Object[]} timers - the timers to save
              * @return {Promise} resolves once saved
@@ -100,7 +86,7 @@ define([
             this.saveTimers = function saveTimers(timeStore, timers){
                 return Promise.all(
                     _.map(timers, function(timer){
-                        return timeStore.setItem(timer.id, timer.remainingTime);
+                        return timeStore.setItem('consumed_' + timer.id, timer.total - timer.remainingTime);
                     })
                 );
             };
