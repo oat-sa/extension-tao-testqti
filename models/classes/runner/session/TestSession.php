@@ -223,10 +223,9 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Sets the client duration for the current item in the TestSession.
      *
      * @param float $duration The client duration, or null to force server duration to be used as client duration
-     * @param float $consumedExtraTime The extra time consumed by the client
      * @param $timestamp
      */
-    public function endItemTimer($duration = null, $consumedExtraTime = null, $timestamp = null)
+    public function endItemTimer($duration = null, $timestamp = null)
     {
         if (is_null($timestamp)) {
             $timestamp = microtime(true);
@@ -246,11 +245,16 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
                 $this->logAlert($e->getMessage().'; Test session identifier: '.$this->getSessionId());
             }
         }
-        
-        if (is_numeric($consumedExtraTime) && !is_null($consumedExtraTime)) {
-            $timer->consumeExtraTime($consumedExtraTime, $tags);            
-        }
+        $constraints = $this->getTimeConstraints();
 
+        $maxTime = 0;
+        /** @var TimeConstraint $constraint */
+        foreach ($constraints as $constraint) {
+            if ($constraint->getSource()->getTimeLimits() && $constraint->getSource()->getTimeLimits()->getMaxTime()) {
+                $maxTime = $constraint->getSource()->getTimeLimits()->getMaxTime()->getSeconds(true);
+            }
+        }
+        $this->getTimer()->getConsumedExtraTime($tags, $maxTime);
         $timer->save();
     }
 
@@ -356,7 +360,14 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      */
     protected function getTimeConstraint($source, $navigationMode, $considerMinTime, $applyExtraTime = true)
     {
-        $constraint = new QtiTimeConstraint($source, $this->getTimerDuration($source->getIdentifier()), $navigationMode, $considerMinTime, $applyExtraTime);
+        $constraint = new QtiTimeConstraint(
+            $source,
+            $this->getTimerDuration($source->getIdentifier()),
+            $navigationMode,
+            $considerMinTime,
+            $applyExtraTime,
+            $this->getTimerTarget()
+        );
         $constraint->setTimer($this->getTimer());
         return $constraint;
     }

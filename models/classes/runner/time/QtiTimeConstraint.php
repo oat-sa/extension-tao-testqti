@@ -24,6 +24,7 @@
 namespace oat\taoQtiTest\models\runner\time;
 
 use oat\oatbox\service\ServiceManager;
+use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\QtiDuration;
 use qtism\data\NavigationMode;
 use qtism\data\QtiComponent;
@@ -49,6 +50,11 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      * @var boolean
      */
     protected $applyExtraTime;
+
+    /**
+     * @var integer
+     */
+    protected $timerTarget;
 
     /**
      * @return QtiTimer
@@ -87,6 +93,16 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
     }
 
     /**
+     * @param integer $timerTarget
+     * @return QtiTimeConstraint
+     */
+    public function setTimerTarget($timerTarget)
+    {
+        $this->timerTarget = $timerTarget;
+        return $this;
+    }
+
+    /**
      * Create a new TimeConstraint object.
      *
      * @param QtiComponent $source The TestPart or SectionPart the constraint applies on.
@@ -94,19 +110,27 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      * @param int|NavigationMode $navigationMode The current navigation mode.
      * @param boolean $considerMinTime Whether or not to consider minimum time limits.
      * @param boolean $applyExtraTime Allow to take care of extra time
+     * @param integer $timerTarget client/server
      */
-    public function __construct(QtiComponent $source, QtiDuration $duration, $navigationMode = NavigationMode::LINEAR, $considerMinTime = true, $applyExtraTime = false)
-    {
+    public function __construct(
+        QtiComponent $source,
+        QtiDuration $duration,
+        $navigationMode = NavigationMode::LINEAR,
+        $considerMinTime = true,
+        $applyExtraTime = false,
+        $timerTarget = TimePoint::TARGET_SERVER
+    ) {
         $this->setSource($source);
         $this->setDuration($duration);
         $this->setNavigationMode($navigationMode);
         $this->setApplyExtraTime($applyExtraTime);
+        $this->setTimerTarget($timerTarget);
     }
 
     /**
      * Get the remaining duration from a source (min or max time, usually)
-     * @param QtiDuration the source duration
-     * @return Duration A Duration object (or null of not available) that represents the remaining time
+     * @param QtiDuration $duration the source duration
+     * @return Duration|false A Duration object (or false of not available) that represents the remaining time
      */
     protected function getRemainingTimeFrom(QtiDuration $duration)
     {
@@ -117,12 +141,9 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                 // take care of the already consumed extra time under the current constraint
                 // and append the full remaining extra time
                 // the total must correspond to the already elapsed time plus the remaining time
-                $currentExtraTime = $this->timer->getRemainingExtraTime() + $this->timer->getConsumedExtraTime($this->getSource()->getIdentifier());
-                $extraTime = min($this->timer->getExtraTime($duration->getSeconds(true)), $currentExtraTime);
-                $remaining->add(new QtiDuration('PT' . $extraTime . 'S'));
+                $remaining->add(new QtiDuration('PT' . $this->timer->getExtraTime($duration->getSeconds(true)) . 'S'));
             }
             $remaining->sub($this->getDuration());
-
             return ($remaining->isNegative() === true) ? new QtiDuration('PT0S') : $remaining;
         }
         return false;
@@ -175,7 +196,6 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-
         $source = $this->getSource();
         $timeLimits = $source->getTimeLimits();
         if(!is_null($timeLimits)){
@@ -185,14 +205,19 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
             $minTime = $timeLimits->getMinTime();
             $maxTimeRemaining = $this->getMaximumRemainingTime();
             $minTimeRemaining = $this->getMinimumRemainingTime();
-            if ( $maxTimeRemaining !== false || $minTimeRemaining !== false) {
+            if ($maxTimeRemaining !== false || $minTimeRemaining !== false) {
 
                 $label = method_exists($source, 'getTitle') ? $source->getTitle() : $identifier;
 
-                $extraTime = null;
-                if (!is_null($this->getTimer()) && $source->getTimeLimits()->hasMaxTime()){
+                $extraTime = [];
+                if (!is_null($this->getTimer()) && $source->getTimeLimits()->hasMaxTime()) {
+                    $timer = $this->getTimer();
                     $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);
-                    $extraTime = $this->getTimer()->getExtraTime($maxTimeSeconds);
+                    $extraTime = [
+                        'total' => $timer->getExtraTime($maxTimeSeconds),
+                        'consumed' => $timer->getConsumedExtraTime($identifier, $maxTimeSeconds, $this->timerTarget),
+                        'remaining' => $timer->getRemainingExtraTime($identifier, $maxTimeSeconds, $this->timerTarget),
+                    ];
                 }
 
                 /** @var TimerLabelFormatterService $labelFormatter */
