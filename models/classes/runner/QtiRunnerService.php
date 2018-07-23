@@ -267,6 +267,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $context->persistCurrentCatItemId($nextCatItemId);
                     $context->persistSeenCatItemIds($nextCatItemId);
                 }
+            } elseif ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
+                $session->resume();
             }
 
             $session->initItemTimer();
@@ -1262,6 +1264,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param RunnerServiceContext $context
      * @return boolean
      * @throws \common_Exception
+     * @throws QtiRunnerClosedException
      */
     public function check(RunnerServiceContext $context)
     {
@@ -1269,10 +1272,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         if ($state == AssessmentTestSessionState::CLOSED) {
             throw new QtiRunnerClosedException();
-        }
-
-        if ($state == AssessmentTestSessionState::SUSPENDED) {
-            throw new QtiRunnerPausedException();
         }
 
         return true;
