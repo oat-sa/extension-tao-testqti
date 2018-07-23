@@ -267,6 +267,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                     $context->persistCurrentCatItemId($nextCatItemId);
                     $context->persistSeenCatItemIds($nextCatItemId);
                 }
+            } elseif ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
+                // The test session was suspended.
+                $session->resume();
             }
 
             $session->initItemTimer();
