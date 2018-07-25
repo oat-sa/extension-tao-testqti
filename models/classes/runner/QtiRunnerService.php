@@ -71,6 +71,7 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
+use oat\taoDelivery\model\execution\StateServiceInterface;
 
 /**
  * Class QtiRunnerService
@@ -1154,7 +1155,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $session->endTestSession();
 
-            $this->finish($context);
+            $this->finish($context, DeliveryExecution::STATE_TERMINATED);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1173,10 +1174,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Finishes the test
      * @param RunnerServiceContext $context
+     * @param string $finalState
      * @return boolean
      * @throws \common_Exception
      */
-    public function finish(RunnerServiceContext $context)
+    public function finish(RunnerServiceContext $context, $finalState = DeliveryExecution::STATE_FINISHED)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             $executionUri = $context->getTestExecutionUri();
@@ -1187,7 +1189,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             if ($deliveryExecution->getUserIdentifier() == $userUri) {
                 \common_Logger::i("Finishing the delivery execution {$executionUri}");
-                $result = $deliveryExecution->setState(DeliveryExecution::STATE_FINISHIED);
+                $result = $deliveryExecution->setState($finalState);
             } else {
                 \common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
                 $result = false;
