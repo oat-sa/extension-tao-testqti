@@ -51,7 +51,6 @@ class TestCategoryRulesService extends ConfigurableService
     public function __construct(array $options = array())
     {
         parent::__construct($options);
-        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         
         $generator = new TestCategoryRulesGenerator();
         $generator->setScoreVariableIdentifier(empty($options['score-variable-identifier']) ? 'SCORE' : (string) $options['score-variable-identifier']);
