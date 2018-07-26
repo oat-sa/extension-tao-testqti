@@ -41,17 +41,6 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
     const SUBSERVICE_COMPILATION = 'CompilationService';
 
     /**
-     * default constructor to ensure the implementation
-     * can be instanciated
-     * @param array $options
-     *
-     */
-    public function __construct($options = array()) {
-        parent::__construct($options);
-        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-    }
-
-    /**
      * {@inheritDoc}
      * @see \taoTests_models_classes_TestModel::prepareContent()
      */
