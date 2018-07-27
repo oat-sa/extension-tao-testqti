@@ -85,10 +85,9 @@ define([
      * @param {Object} [config] - timers config
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
      * @param {Object[]} [config.warnings] - the warnings to apply to the timers (max only for now)
-     * @param {Object} extraTime - as defined in the testContext
      * @returns {timer[]} the timers
      */
-    return function getTimers(timeConstraints, isLinear, config, extraTime){
+    return function getTimers(timeConstraints, isLinear, config){
         var timers = {};
 
         /**
@@ -126,33 +125,34 @@ define([
              * @property {String} scope - the timer's scope (item, section, etc.)
              * @property {String} qtiClassName - the QTI class of the timers applies to
              * @property {String} source - the ID of the element the timers belongs to
-             * @property {Number} extraTime - additional time, in ms
+             * @property {Number} extraTime - additional time data, object
              * @property {Number} originalTime - the starting value of the timer, never changes, in ms.
              * @property {Number} remainingTime - current value, in ms.
+             * @property {Number} remainingWithoutExtraTime - remaining time without extra time, in ms.
+             * @property {Number} total - total time (original time + extra time), in ms.
              */
             var timer  = _.pick(constraintData, ['label', 'scope', 'source', 'extraTime', 'qtiClassName']);
 
             timer.type = type;
             timer.allowLateSubmission = constraintData.allowLateSubmission;
 
-            //to stay backward compatible, the "max" timers ids are just the source
-            if(type === 'max'){
-                timer.id  = constraintData.source;
-            } else {
-                timer.id  = type + '-' + constraintData.scope + '-' + constraintData.source;
-            }
             if(type === 'min'){
+                timer.id  = type + '-' + constraintData.scope + '-' + constraintData.source;
                 timer.originalTime  = constraintData.minTime * precision;
                 timer.remainingTime = constraintData.minTimeRemaining * precision;
             } else {
+                timer.id  = constraintData.source;
                 timer.originalTime  = constraintData.maxTime * precision;
                 timer.remainingTime = constraintData.maxTimeRemaining * precision;
             }
-            if(timer.extraTime > 0){
-                timer.extraTime = timer.extraTime * precision;
-            }
-            if (extraTime) {
-                timer.remainingTime += extraTime.remaining * precision;
+
+            timer.remainingWithoutExtraTime = timer.remainingTime;
+            if (timer.extraTime) {
+                timer.extraTime.consumed = timer.extraTime.consumed * precision;
+                timer.extraTime.remaining = timer.extraTime.remaining * precision;
+                timer.extraTime.total = timer.extraTime.total * precision;
+                timer.total = timer.originalTime + (timer.extraTime.total);
+                timer.remainingTime += timer.extraTime.remaining;
             }
 
             //TODO supports warnings for other types
