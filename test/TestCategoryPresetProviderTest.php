@@ -350,8 +350,6 @@ class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
      */
     public function testGetAvailablePresets($allPresets, $config, $result)
     {
-
-
         $plugin = $this->prophesize(PluginModule::class);
         $plugin->isActive()->willReturn(true);
 

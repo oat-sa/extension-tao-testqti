@@ -115,12 +115,7 @@ class TestCategoryPresetProvider extends ConfigurableService
                 $presetGroup['presets'] = array_filter(
                     $presetGroup['presets'],
                     function($preset) use ($config) {
-                        $flag = $preset->getFeatureFlag();
-                        if(is_string($flag) && isset($config[$flag]) && $config[$flag] != true){
-                            return false;
-                        }
-
-                        return true;
+                        return !$this->isPresetAvailable($preset, $config);
                     }
                 );
 
@@ -131,6 +126,24 @@ class TestCategoryPresetProvider extends ConfigurableService
             }
         }
         return $presets;
+    }
+
+    /**
+     * Is a preset available according to a configuration (ie. based on it's featureFlag)
+     *
+     * @param TestCategoryPreset $preset the preset to test 
+     * @param array $config the configuration
+     * @return boolean true if available
+     */
+    private function isPresetAvailable(TestCategoryPreset $preset, $config = [])
+    {
+        if(!is_null($preset)) {
+            $flag = $preset->getFeatureFlag();
+            if(is_string($flag) && isset($config[$flag]) && $config[$flag] != true){
+                return true;
+            }
+        }
+        return false;
     }
 
     private function loadPresetFromProviders() {
