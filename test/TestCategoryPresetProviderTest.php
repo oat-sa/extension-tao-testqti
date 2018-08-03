@@ -240,5 +240,132 @@ class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
         $this->assertEquals('preset4', $filteredPresets[1]->getId(), 'second remaining preset is the expected one');
     }
 
+
+    /**
+     * Providers data sets to test the getAvailablePresets method
+     * @return array the list of data sets 
+     */ 
+    public function presetsConfigDataProvider()
+    {
+        $preset1 = TestCategoryPreset::fromArray([
+            'id'            => 'preset1',
+            'label'         => 'preset1',
+            'qtiCategory'   => 'x-tao-option-preset1',
+            'order'         => 1,
+            'pluginId'      => 'plugin1'
+        ]);
+        $preset2 = TestCategoryPreset::fromArray([
+            'id'            => 'preset2',
+            'label'         => 'preset2',
+            'qtiCategory'   => 'x-tao-option-preset2',
+            'order'         => 2,
+            'pluginId'      => 'plugin2',
+            'featureFlag'   => 'enable-option-2'
+        ]);
+        $preset3 = TestCategoryPreset::fromArray([
+            'id'            => 'preset3',
+            'label'         => __('preset3'),
+            'qtiCategory'   => 'x-tao-option-preset3',
+            'order'         => 3,
+            'pluginId'      => 'plugin3',
+            'featureFlag'   => 'enable-option-3'
+        ]);
+        $preset10 = TestCategoryPreset::fromArray([
+            'id'            => 'preset10',
+            'label'         => __('preset10'),
+            'qtiCategory'   => 'x-tao-option-preset10',
+            'order'         => 1,
+            'pluginId'      => 'plugin10',
+            'featureFlag'   => 'enable-option-10'
+        ]);
+
+        $allPresets =  [
+            'group1' => [
+                'groupId'    => 'group1',
+                'groupLabel' => 'group1',
+                'groupOrder' => 1,
+                'presets'    => [ $preset1, $preset2, $preset3 ]
+            ],
+            'group2' => [
+                'groupId'    => 'group2',
+                'groupLabel' => 'group2',
+                'groupOrder' => 2,
+                'presets'    => [ $preset10 ]
+            ]
+        ];
+
+        return [
+            [   //no config, all presets are available
+                'allPresets' => $allPresets,
+                'config'     => [],
+                'result'     => [[
+                    'groupId' => 'group1',
+                    'groupLabel' => 'group1',
+                    'groupOrder' => 1,
+                    'presets' => [ $preset1, $preset2, $preset3 ]
+                ], [
+                    'groupId' => 'group2',
+                    'groupLabel' => 'group2',
+                    'groupOrder' => 2,
+                    'presets' => [ $preset10 ]
+                ]],
+            ], [ // all options are defined
+                'allPresets' => $allPresets,
+                'config'     => [
+                    'enable-option-2' => true,
+                    'enable-option-3' => false,
+                    'enable-option-10' => true
+                ],
+                'result'     => [[
+                    'groupId' => 'group1',
+                    'groupLabel' => 'group1',
+                    'groupOrder' => 1,
+                    'presets' => [ $preset1, $preset2 ]
+                ], [
+                    'groupId' => 'group2',
+                    'groupLabel' => 'group2',
+                    'groupOrder' => 2,
+                    'presets' => [ $preset10 ]
+                ]],
+            ], [ //missing option 2 and empty group 2
+                'allPresets' => $allPresets,
+                'config'     => [
+                    'enable-option-3' => true,
+                    'enable-option-10' => false
+                ],
+                'result'     => [[
+                    'groupId' => 'group1',
+                    'groupLabel' => 'group1',
+                    'groupOrder' => 1,
+                    'presets' => [ $preset1, $preset2, $preset3 ]
+                ]]
+            ]
+        ];
+    }
+
+    /**
+     * Test the method getAvailable presets
+     *
+     * @dataProvider presetsConfigDataProvider
+     */
+    public function testGetAvailablePresets($allPresets, $config, $result)
+    {
+
+
+        $plugin = $this->prophesize(PluginModule::class);
+        $plugin->isActive()->willReturn(true);
+
+        $pluginService = $this->prophesize(TestPluginService::class);
+        $pluginService->getPlugin(Argument::type('string'))->willReturn($plugin->reveal());
+
+        $presetProvider = new TestCategoryPresetProvider([], $allPresets);
+        $presetProvider->setServiceLocator($this->getServiceManagerProphecy([
+            TestPluginService::SERVICE_ID => $pluginService->reveal()
+        ]));
+
+        $availablePresets = $presetProvider->getAvailablePresets($config);
+
+        $this->assertSame($result, $availablePresets, 'The available presets match the given configuration');
+    }
 }
 

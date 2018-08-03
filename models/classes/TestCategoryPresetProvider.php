@@ -73,6 +73,7 @@ class TestCategoryPresetProvider extends ConfigurableService
     }
 
     /**
+     * Get all active presets
      * @return array - the sorted preset list
      */
     public function getPresets() {
@@ -84,6 +85,52 @@ class TestCategoryPresetProvider extends ConfigurableService
         $this->sortPresets();
 
         return $this->allPresets;
+    }
+
+    /**
+     * Get all active presets matching the given config.
+     *
+     * If a preset is linked to a feature flag,
+     * we add it only if the config value matching the flag is true.
+     *
+     * For example, if a $aPreset->featureFlag = 'foo';
+     * The preset will be included only if $config['foo'] = true.
+     *
+     * If the config doesn't have a flag, we keep the preset.
+     *
+     * @param array $config a config flag list as  { key : string => value : boolean }
+     * @return array the sorted preset list
+     */
+    public function getAvailablePresets($config = []) {
+        //work on a clone
+        $presets = array_merge([], $this->getPresets());
+
+        foreach($presets as $groupId => &$presetGroup) {
+
+            if(isset($presetGroup['presets'])){
+
+                //filter presets based on the config value
+                //if the config has the flag, we chek it's value
+                //if the config doesn't have the flag, we keep the preset
+                $presetGroup['presets'] = array_filter(
+                    $presetGroup['presets'],
+                    function($preset) use ($config) {
+                        $flag = $preset->getFeatureFlag();
+                        if(is_string($flag) && isset($config[$flag]) && $config[$flag] != true){
+                            return false;
+                        }
+
+                        return true;
+                    }
+                );
+
+                //remove empty groups
+                if(count($presetGroup['presets']) === 0){
+                    unset($presets[$groupId]);
+                }
+            }
+        }
+        return $presets;
     }
 
     private function loadPresetFromProviders() {

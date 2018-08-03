@@ -59,6 +59,12 @@ class TestCategoryPreset implements JsonSerializable
      */
     private $pluginId = '';
 
+    /**
+     * @var string $featureFlag - the name of a config flag,
+     * the preset will be deactivated based on this optional value.
+     */
+    private $featureFlag;
+
 
     /**
      * Create a test category preset
@@ -93,6 +99,9 @@ class TestCategoryPreset implements JsonSerializable
         if(isset($data['pluginId'])) {
             $this->pluginId = (string) $data['pluginId'];
         }
+        if(isset($data['featureFlag'])) {
+            $this->featureFlag = (string) $data['featureFlag'];
+        }
     }
 
     public function getId()
@@ -125,6 +134,11 @@ class TestCategoryPreset implements JsonSerializable
         return $this->pluginId;
     }
 
+    public function getFeatureFlag()
+    {
+        return isset($this->featureFlag) ? $this->featureFlag : false;
+    }
+
     /**
      * @see JsonSerializable::jsonSerialize
      */
@@ -145,7 +159,8 @@ class TestCategoryPreset implements JsonSerializable
             'qtiCategory' => $this->qtiCategory,
             'description' => $this->description,
             'order'       => $this->order,
-            'pluginId'    => $this->pluginId
+            'pluginId'    => $this->pluginId,
+            'featureFlag' => $this->featureFlag
         ];
     }
 
