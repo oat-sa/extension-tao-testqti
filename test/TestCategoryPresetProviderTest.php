@@ -242,9 +242,9 @@ class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
 
 
     /**
-     * Providers data sets to test the getAvailablePresets method
-     * @return array the list of data sets 
-     */ 
+     * Provides data sets to test the "getAvailablePresets" method
+     * @return array the list of data sets
+     */
     public function presetsConfigDataProvider()
     {
         $preset1 = TestCategoryPreset::fromArray([
@@ -344,7 +344,7 @@ class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
     }
 
     /**
-     * Test the method getAvailable presets
+     * Test the method "getAvailablePresets"
      *
      * @dataProvider presetsConfigDataProvider
      */
