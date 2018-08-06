@@ -87,6 +87,14 @@ define([
             }
         });
 
+        // same as previous but for touch devices (as from TAO-6578)
+        $(document).on('touchend.highlighter', function() {
+            if (isHighlighting && !selection.isCollapsed) {
+                highlightHelper.highlightRanges(getAllRanges());
+                selection.removeAllRanges();
+            }
+        });
+
         /**
          * The highlighter instance
          */
