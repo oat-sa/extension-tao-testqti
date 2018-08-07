@@ -136,7 +136,7 @@ class TestCategoryPreset implements JsonSerializable
 
     public function getFeatureFlag()
     {
-        return isset($this->featureFlag) ? $this->featureFlag : false;
+        return (string) $this->featureFlag;
     }
 
     /**

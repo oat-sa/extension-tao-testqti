@@ -137,9 +137,9 @@ class TestCategoryPresetProvider extends ConfigurableService
      */
     private function isPresetAvailable(TestCategoryPreset $preset, $config = [])
     {
-        if(!is_null($preset)) {
+        if (!is_null($preset)) {
             $flag = $preset->getFeatureFlag();
-            if(is_string($flag) && isset($config[$flag]) && $config[$flag] != true){
+            if ($flag && isset($config[$flag]) && $config[$flag] != true) {
                 return true;
             }
         }
