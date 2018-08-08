@@ -558,10 +558,4 @@ return array(
      * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
      */
     'guidedNavigation' => false,
-
-    /**
-     * Restore timer from client. Depends on timer/target. If target is 'client' then this value must be true.
-     * @type boolean
-     */
-    'restore-timer-from-client' => true,
 );

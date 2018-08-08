@@ -436,7 +436,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $session->getTimerDuration($source->getIdentifier()),
             $navigationMode,
             true,
-            true
+            true,
+            $session->getTimerTarget()
         );
         $constraint->setTimer($session->getTimer());
         return $constraint;

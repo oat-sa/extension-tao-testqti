@@ -22,7 +22,6 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
-use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
@@ -1671,6 +1670,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('25.10.1');
         }
 
-        $this->skip('25.10.1', '26.0.0');
+        $this->skip('25.10.1', '27.0.0');
     }
 }
