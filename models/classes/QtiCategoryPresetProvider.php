@@ -61,7 +61,7 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allow skipping of the current section.'),
                     'order'         => 400,
                     'pluginId'      => 'nextSection',
-                    'featureFlag'   => 'enable-allow-skipping'
+                    'featureFlag'   => 'next-section'
                 ])
             ]
         );
