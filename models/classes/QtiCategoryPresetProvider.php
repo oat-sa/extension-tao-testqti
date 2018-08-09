@@ -60,7 +60,8 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'qtiCategory'   => 'x-tao-option-nextSection',
                     'description'   => __('Allow skipping of the current section.'),
                     'order'         => 400,
-                    'pluginId'      => 'nextSection'
+                    'pluginId'      => 'nextSection',
+                    'featureFlag'   => 'enable-allow-skipping'
                 ])
             ]
         );
