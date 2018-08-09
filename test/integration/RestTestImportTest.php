@@ -19,15 +19,14 @@
  */
 
 namespace oat\taoQtiTest\test\integration;
-
-use oat\tao\test\RestTestRunner;
+use oat\tao\test\integration\RestTestRunner;
 
 /**
  * connects as a client agent on the rest controller
  * @author patrick
  * @package taoTestTaker
  */
-class RestTestImportTest extends RestTestRunner 
+class RestTestImportTest extends RestTestRunner
 {
     public function testImport()
     {
