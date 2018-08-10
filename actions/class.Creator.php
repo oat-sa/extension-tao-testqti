@@ -46,8 +46,9 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             }
             $this->setData('labels', json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
 
+            $runtimeConfig = $this->getRuntimeConfig();
             $categoriesPresetService = $this->getServiceManager()->get(TestCategoryPresetProvider::SERVICE_ID);
-            $this->setData('categoriesPresets', json_encode($categoriesPresetService->getPresets()));
+            $this->setData('categoriesPresets', json_encode($categoriesPresetService->getAvailablePresets($runtimeConfig)));
 
             $this->setData('loadUrl', _url('getTest', null, null, array('uri' => $testUri)));
             $this->setData('saveUrl', _url('saveTest', null, null, array('uri' => $testUri)));
@@ -59,7 +60,6 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             $this->setData('identifierUrl', _url('getIdentifier', null, null, array('uri' => $testUri)));
 
             $guidedNavigation = false;
-            $runtimeConfig = $this->getRuntimeConfig();
             if( is_array($runtimeConfig) && isset($runtimeConfig['guidedNavigation']) ) {
                 $guidedNavigation = $runtimeConfig['guidedNavigation'];
             }
@@ -165,7 +165,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
     /**
      * Get the runtime config
      * @return array the configuration
-     */   
+     */
     protected function getRuntimeConfig()
     {
         $extension = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');

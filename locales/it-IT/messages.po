@@ -1179,7 +1179,7 @@ msgid "You are about to go to the previous item. Click OK to continue and go to 
 msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "Hai terminato la prova, clicca su SÌ per uscire."
+msgstr "Hai terminato questa parte della prova. Se clicchi su Sì non potrai più tornare a questa sezione."
 
 msgid "You are encountering a prolonged connectivity loss"
 msgstr ""
