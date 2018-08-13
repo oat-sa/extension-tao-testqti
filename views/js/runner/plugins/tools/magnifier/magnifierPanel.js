@@ -491,6 +491,10 @@ define([
         function getElementFromPoint(x, y) {
             var el;
 
+            // this is done to prevent working with undefined coordinates
+            x = x || 0;
+            y = y || 0;
+
             if (controls) {
                 controls.$overlay.addClass('hidden');
             }
