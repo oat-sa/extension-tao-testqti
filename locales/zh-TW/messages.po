@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:37:15\n"
+"PO-Revision-Date: 2018-08-14T11:45:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-TW\n"
@@ -350,6 +350,9 @@ msgstr "匯出"
 msgid "Export failed for the test \"%s"
 msgstr ""
 
+msgid "Export metadata"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr "匯出QTI 2.1 考試包"
 
@@ -369,6 +372,9 @@ msgid "File not found"
 msgstr ""
 
 msgid "File not found!"
+msgstr ""
+
+msgid "Filter"
 msgstr ""
 
 msgid "finished"
@@ -556,6 +562,9 @@ msgstr "管理指導語區塊"
 
 msgid "Manage test properties"
 msgstr "管理考試屬性"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Manage Tests"
 msgstr "管理考試"
@@ -965,6 +974,9 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr ""
 
+msgid "Tests"
+msgstr ""
+
 msgid "Text content"
 msgstr ""
 
@@ -1085,6 +1097,9 @@ msgstr "考試部分的標識符。"
 msgid "The test title."
 msgstr "考試標題。"
 
+msgid "There is not outcomes!"
+msgstr ""
+
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr "考完試以後考生是否可以看得見題目的回饋。"
 
@@ -1141,6 +1156,9 @@ msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "上傳一個 QTI 2.1 考試包檔案"
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
+msgstr ""
 
 msgid "Validate Responses"
 msgstr "驗證回應"

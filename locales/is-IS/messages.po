@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:37:13\n"
+"PO-Revision-Date: 2018-08-14T11:45:45\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: is-IS\n"
@@ -350,6 +350,9 @@ msgstr "Flytja út"
 msgid "Export failed for the test \"%s"
 msgstr ""
 
+msgid "Export metadata"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr "Flytja út QTI 2.1 prófapakka"
 
@@ -369,6 +372,9 @@ msgid "File not found"
 msgstr ""
 
 msgid "File not found!"
+msgstr ""
+
+msgid "Filter"
 msgstr ""
 
 msgid "finished"
@@ -556,6 +562,9 @@ msgstr "Sýsla fyrirmælablokkir"
 
 msgid "Manage test properties"
 msgstr "Sýsla með eiginleika prófs"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Manage Tests"
 msgstr "Sýsla með próf"
@@ -965,6 +974,9 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr ""
 
+msgid "Tests"
+msgstr ""
+
 msgid "Text content"
 msgstr ""
 
@@ -1085,6 +1097,9 @@ msgstr "Prófhlutakenni."
 msgid "The test title."
 msgstr "Titill prófs."
 
+msgid "There is not outcomes!"
+msgstr ""
+
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr "Þessi takmörkun hefur áhrif á sýnileika endurgjafar í lok síðustu tilraunar."
 
@@ -1141,6 +1156,9 @@ msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Hlaða upp QTI 2.1 prófapakkaskrá"
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
+msgstr ""
 
 msgid "Validate Responses"
 msgstr "Staðfestu svör"

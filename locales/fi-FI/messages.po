@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:37:12\n"
+"PO-Revision-Date: 2018-08-14T11:45:44\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fi-FI\n"
@@ -350,6 +350,9 @@ msgstr ""
 msgid "Export failed for the test \"%s"
 msgstr ""
 
+msgid "Export metadata"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr ""
 
@@ -369,6 +372,9 @@ msgid "File not found"
 msgstr ""
 
 msgid "File not found!"
+msgstr ""
+
+msgid "Filter"
 msgstr ""
 
 msgid "finished"
@@ -555,6 +561,9 @@ msgid "Manage Rubric Blocks"
 msgstr ""
 
 msgid "Manage test properties"
+msgstr ""
+
+msgid "Manage tests"
 msgstr ""
 
 msgid "Manage Tests"
@@ -965,6 +974,9 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr ""
 
+msgid "Tests"
+msgstr ""
+
 msgid "Text content"
 msgstr ""
 
@@ -1085,6 +1097,9 @@ msgstr ""
 msgid "The test title."
 msgstr ""
 
+msgid "There is not outcomes!"
+msgstr ""
+
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr ""
 
@@ -1140,6 +1155,9 @@ msgid "Unlink to use sperated durations"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
+msgstr ""
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
 msgstr ""
 
 msgid "Validate Responses"

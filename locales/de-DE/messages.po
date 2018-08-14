@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:37:12\n"
+"PO-Revision-Date: 2018-08-14T11:45:43\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -351,6 +351,9 @@ msgstr "Exportieren"
 msgid "Export failed for the test \"%s"
 msgstr ""
 
+msgid "Export metadata"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr "QTI 2.1 Testpaket exportieren"
 
@@ -370,6 +373,9 @@ msgid "File not found"
 msgstr ""
 
 msgid "File not found!"
+msgstr ""
+
+msgid "Filter"
 msgstr ""
 
 msgid "finished"
@@ -557,6 +563,9 @@ msgstr "Rubrik-Blöcke verwalten"
 
 msgid "Manage test properties"
 msgstr "Test-Eigenschaften verwalten"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Manage Tests"
 msgstr "Tests verwalten"
@@ -966,6 +975,9 @@ msgstr "Teststatus"
 msgid "Test-Taker Tools"
 msgstr ""
 
+msgid "Tests"
+msgstr ""
+
 msgid "Text content"
 msgstr ""
 
@@ -1086,6 +1098,9 @@ msgstr "Der Bezeichner des Teiltests."
 msgid "The test title."
 msgstr "Der Testtitel"
 
+msgid "There is not outcomes!"
+msgstr ""
+
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr "Diese Einschränkung beeinträchtigt die Sichtbarkeit des Feedback nach dem letzten Versuch."
 
@@ -1142,6 +1157,9 @@ msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "QTI 2.1 Testpaket-Datei hochladen"
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
+msgstr ""
 
 msgid "Validate Responses"
 msgstr "Antworten validieren"

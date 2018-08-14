@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:37:12\n"
+"PO-Revision-Date: 2018-08-14T11:45:44\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -351,6 +351,9 @@ msgstr "Exportar"
 msgid "Export failed for the test \"%s"
 msgstr ""
 
+msgid "Export metadata"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr "Exportar Paquete de Prueba QTI 2.1"
 
@@ -370,6 +373,9 @@ msgid "File not found"
 msgstr ""
 
 msgid "File not found!"
+msgstr ""
+
+msgid "Filter"
 msgstr ""
 
 msgid "finished"
@@ -557,6 +563,9 @@ msgstr "Administrar Bloques de Rúbrica"
 
 msgid "Manage test properties"
 msgstr "Administrar las propiedades de prueba"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Manage Tests"
 msgstr "Gestionar Pruebas"
@@ -966,6 +975,9 @@ msgstr "Estado de la prueba"
 msgid "Test-Taker Tools"
 msgstr ""
 
+msgid "Tests"
+msgstr ""
+
 msgid "Text content"
 msgstr ""
 
@@ -1087,6 +1099,9 @@ msgstr "El identificador de parte de prueba."
 msgid "The test title."
 msgstr "El título de prueba."
 
+msgid "There is not outcomes!"
+msgstr ""
+
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr "Esta restricción afecta la visibilidad de la retroalimentación después del final del último intento."
 
@@ -1143,6 +1158,9 @@ msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Subir un Archivo de Paquete de Prueba QTI 2.1"
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
+msgstr ""
 
 msgid "Validate Responses"
 msgstr "Respuestas Validadas"
