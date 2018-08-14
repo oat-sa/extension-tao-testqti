@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint72\n"
-"PO-Revision-Date: 2018-03-15T14:27:22\n"
+"Project-Id-Version: TAO 3.3.0-sprint83\n"
+"PO-Revision-Date: 2018-08-14T10:19:27\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-CA\n"
@@ -27,6 +27,9 @@ msgstr "Un paquet test QTI"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Une resource distante incluse dans le test '%s' n'a pas pu être obtenue"
+
+msgid "A response to every question in this item is required."
+msgstr "Une réponse pour chaque question de cet item est requise"
 
 msgid "A response to this item is required."
 msgstr "Réponse obligatoire. Vous devez répondre à cette question pour poursuivre."
@@ -110,6 +113,9 @@ msgid "An error occurred during results submission. Please retry."
 msgstr ""
 
 msgid "An error occurred during the test initialization!"
+msgstr ""
+
+msgid "An error occurred during the test, please content your administrator."
 msgstr ""
 
 msgid "An error occurred!"
@@ -289,6 +295,9 @@ msgstr ""
 msgid "Do not flag the current item for later review"
 msgstr ""
 
+msgid "Do not show alert on timeout"
+msgstr ""
+
 msgid "Eliminate choices"
 msgstr ""
 
@@ -461,6 +470,9 @@ msgstr "Individuel"
 msgid "Informational Item Usage"
 msgstr ""
 
+msgid "Internal server error!"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr ""
 
@@ -485,11 +497,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Éléments"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr ""
@@ -606,6 +618,9 @@ msgid "Move Down"
 msgstr ""
 
 msgid "Move Up"
+msgstr ""
+
+msgid "Moving to the next item without time limit reached message."
 msgstr ""
 
 msgid "Navigation"
@@ -788,6 +803,12 @@ msgstr ""
 msgid "Scoring"
 msgstr ""
 
+msgid "Section %d"
+msgstr ""
+
+msgid "Section %d of %d"
+msgstr ""
+
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
 msgstr ""
 
@@ -863,9 +884,6 @@ msgstr ""
 msgid "Skip"
 msgstr "Sauter"
 
-msgid "Skip  and go to the next item"
-msgstr "Passer et passer à l'élément suivant"
-
 msgid "Skip &amp; End Test"
 msgstr "Sauter &amp; Terminer le Test"
 
@@ -874,6 +892,9 @@ msgstr "Terminer le test et fin"
 
 msgid "Skip and go to the end of the test"
 msgstr "Passer et aller à la fin du test"
+
+msgid "Skip and go to the next item"
+msgstr "Passer et passer à l'élément suivant"
 
 msgid "Skip to the end of the test"
 msgstr "Sauter à la fin du test"
@@ -926,10 +947,10 @@ msgstr ""
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr ""
 
-msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
-msgid "The assessment has been terminated."
+msgid "The assessment has been terminated. You cannot interact with it anymore."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
@@ -941,13 +962,13 @@ msgstr ""
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr ""
 
+msgid "The following identifiers are not unique accross the test : %s"
+msgstr ""
+
 msgid "The identifier of the item reference."
 msgstr ""
 
 msgid "The identifier of the section."
-msgstr ""
-
-msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
 msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
@@ -1028,17 +1049,20 @@ msgstr ""
 msgid "This test has been suspended"
 msgstr "Ce test a été suspendu"
 
-msgid "This test has been terminated"
-msgstr "Ce test a pris fin"
-
 msgid "Time limit reached for item \"%s\"."
 msgstr "Limite de temps atteinte pour l'élément \"%s\"."
 
 msgid "Time limit reached, this part of the test has ended."
 msgstr "Limite de temps atteinte, cette partie du test s'est terminée."
 
+msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
+msgstr ""
+
 msgid "Time Limits"
 msgstr ""
+
+msgid "Time Remaining"
+msgstr "Durée Restant"
 
 msgid "Title"
 msgstr ""
@@ -1192,10 +1216,4 @@ msgstr ""
 
 msgid "Zoom out"
 msgstr ""
-
-msgid "A response to every question in this item is required."
-msgstr "Une réponse pour chaque question de cet item est requise"
-
-msgid "Time Remaining"
-msgstr "Durée Restant"
 
