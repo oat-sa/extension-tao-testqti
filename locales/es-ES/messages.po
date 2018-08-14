@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T10:19:27\n"
+"PO-Revision-Date: 2018-08-14T11:37:12\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -208,6 +208,9 @@ msgstr "Borrar todos los resaltados activos"
 msgid "Clear Highlights"
 msgstr "Borrar resaltados"
 
+msgid "Click to speak"
+msgstr ""
+
 msgid "Close Magnifier"
 msgstr "Cerrar aumento"
 
@@ -316,10 +319,10 @@ msgstr "Habilitar selección"
 msgid "Enable the item review screen / navigator."
 msgstr "Activar la pantalla de revisión/navegador de ítems."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finalizar prueba"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finalizar prueba"
 
 msgid "Enter a blueprint"
@@ -630,6 +633,9 @@ msgstr "Navegación"
 msgid "Navigation Warnings"
 msgstr ""
 
+msgid "network"
+msgstr ""
+
 msgid "New Rubric Block"
 msgstr "Nuevo Bloque de Rúbrica"
 
@@ -716,6 +722,12 @@ msgstr ""
 
 msgid "Part %d"
 msgstr "Parte %d"
+
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
+msgstr ""
 
 msgid "Please confirm you want to leave the test."
 msgstr ""
@@ -855,6 +867,9 @@ msgstr ""
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr ""
 
+msgid "Settings"
+msgstr ""
+
 msgid "Show Feedback"
 msgstr "Mostrar comentarios"
 
@@ -909,8 +924,14 @@ msgstr "Saltar a la siguiente sección"
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Speech speed"
+msgstr ""
+
 msgid "Start Test-part"
 msgstr "Iniciar parte de la Prueba"
+
+msgid "Stop"
+msgstr ""
 
 msgid "Submission"
 msgstr "Envío"
@@ -923,6 +944,9 @@ msgstr "Enviar e ir al elemento siguiente"
 
 msgid "Submit and go to the previous item"
 msgstr "Enviar e ir al elemento anterior"
+
+msgid "technical"
+msgstr ""
 
 msgid "Test"
 msgstr "Prueba"
@@ -945,14 +969,32 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
+msgid "Text to Speech"
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "El archivo 'imsmanifest.xml' encontrado en el archivo no es válido."
+
+msgid "The assessment has been created but is not already running."
+msgstr ""
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr ""
+
+msgid "The assessment has been terminated."
+msgstr ""
+
 msgid "The assessment has been terminated. You cannot interact with it anymore."
 msgstr "La evaluación se ha terminado. Ya no puede interactuar con ella."
+
+msgid "The assessment is still running."
+msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr ""
@@ -971,6 +1013,9 @@ msgstr "El identificador de la referencia del elemento."
 
 msgid "The identifier of the section."
 msgstr "El identificador de la sección."
+
+msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
+msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "El Paquete de Prueba IMS QTI no pudo ser importado."
@@ -1051,6 +1096,9 @@ msgstr "Esta restricción controla si se permite o no al candidato proporcionar 
 msgid "This test has been suspended"
 msgstr "Esta prueba ha sido suspendida"
 
+msgid "This test has been terminated"
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "Alcanzó el límite de tiempo para el ítem \"%s\"."
 
@@ -1113,6 +1161,9 @@ msgstr "Vistas"
 
 msgid "Visible"
 msgstr "Visible"
+
+msgid "Volume"
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "Advertencia – Le quedan %s minutos para completar la prueba."

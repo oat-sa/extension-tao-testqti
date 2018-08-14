@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T10:19:30\n"
+"PO-Revision-Date: 2018-08-14T11:37:15\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-TW\n"
@@ -208,6 +208,9 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
+msgid "Click to speak"
+msgstr ""
+
 msgid "Close Magnifier"
 msgstr ""
 
@@ -316,11 +319,11 @@ msgstr "啟用選擇"
 msgid "Enable the item review screen / navigator."
 msgstr ""
 
-msgid "End Test"
-msgstr "結束考試"
-
 msgid "End test"
 msgstr ""
+
+msgid "End Test"
+msgstr "結束考試"
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -629,6 +632,9 @@ msgstr "導覽"
 msgid "Navigation Warnings"
 msgstr ""
 
+msgid "network"
+msgstr ""
+
 msgid "New Rubric Block"
 msgstr "新指導語區塊"
 
@@ -714,6 +720,12 @@ msgid "Package is valid but no tests were found. Make sure that it contains vali
 msgstr ""
 
 msgid "Part %d"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
 msgstr ""
 
 msgid "Please confirm you want to leave the test."
@@ -854,6 +866,9 @@ msgstr ""
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr ""
 
+msgid "Settings"
+msgstr ""
+
 msgid "Show Feedback"
 msgstr "顯示回饋"
 
@@ -908,7 +923,13 @@ msgstr ""
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Speech speed"
+msgstr ""
+
 msgid "Start Test-part"
+msgstr ""
+
+msgid "Stop"
 msgstr ""
 
 msgid "Submission"
@@ -921,6 +942,9 @@ msgid "Submit and go to the next item"
 msgstr ""
 
 msgid "Submit and go to the previous item"
+msgstr ""
+
+msgid "technical"
 msgstr ""
 
 msgid "Test"
@@ -944,13 +968,31 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
+msgid "Text to Speech"
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "发现 'imsmanifest.xml' 档案未有效存档。"
+
+msgid "The assessment has been created but is not already running."
+msgstr ""
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr ""
+
+msgid "The assessment has been terminated."
+msgstr ""
+
 msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgstr ""
+
+msgid "The assessment is still running."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
@@ -970,6 +1012,9 @@ msgstr "該題目引用的標識符。"
 
 msgid "The identifier of the section."
 msgstr "區域引用的標識符。"
+
+msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
+msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "無法匯入 IMS QTI 考試包。"
@@ -1049,6 +1094,9 @@ msgstr "控制考生是否可以在考試中對題目提供評論。評論不是
 msgid "This test has been suspended"
 msgstr ""
 
+msgid "This test has been terminated"
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr ""
 
@@ -1111,6 +1159,9 @@ msgstr "顯示"
 
 msgid "Visible"
 msgstr "可見"
+
+msgid "Volume"
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr ""

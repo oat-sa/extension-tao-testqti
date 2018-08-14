@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T10:19:28\n"
+"PO-Revision-Date: 2018-08-14T11:37:13\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -208,6 +208,9 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
+msgid "Click to speak"
+msgstr ""
+
 msgid "Close Magnifier"
 msgstr ""
 
@@ -316,11 +319,11 @@ msgstr "選択を可能にする。"
 msgid "Enable the item review screen / navigator."
 msgstr ""
 
-msgid "End Test"
-msgstr "テスト終了"
-
 msgid "End test"
 msgstr ""
+
+msgid "End Test"
+msgstr "テスト終了"
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -630,6 +633,9 @@ msgstr "ナビゲーション"
 msgid "Navigation Warnings"
 msgstr ""
 
+msgid "network"
+msgstr ""
+
 msgid "New Rubric Block"
 msgstr "新たなルーブリックブロック"
 
@@ -716,6 +722,12 @@ msgstr "パッケージは有効ですがテストがありません。有効な
 
 msgid "Part %d"
 msgstr "パート%d"
+
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
+msgstr ""
 
 msgid "Please confirm you want to leave the test."
 msgstr ""
@@ -855,6 +867,9 @@ msgstr ""
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr ""
 
+msgid "Settings"
+msgstr ""
+
 msgid "Show Feedback"
 msgstr "フィードバックを表示"
 
@@ -909,8 +924,14 @@ msgstr "次のセクションにスキップ"
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Speech speed"
+msgstr ""
+
 msgid "Start Test-part"
 msgstr "テストパート開始"
+
+msgid "Stop"
+msgstr ""
 
 msgid "Submission"
 msgstr "提出"
@@ -923,6 +944,9 @@ msgstr "提出して次の問題に移動"
 
 msgid "Submit and go to the previous item"
 msgstr "提出して前の問題に移動"
+
+msgid "technical"
+msgstr ""
 
 msgid "Test"
 msgstr "テスト"
@@ -945,13 +969,31 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
+msgid "Text to Speech"
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "アーカイブで見つかった 'imsmanifest.xml'ファイルは有効ではありません"
+
+msgid "The assessment has been created but is not already running."
+msgstr ""
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr ""
+
+msgid "The assessment has been terminated."
+msgstr ""
+
 msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgstr ""
+
+msgid "The assessment is still running."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
@@ -971,6 +1013,9 @@ msgstr "アイテム参照用識別子"
 
 msgid "The identifier of the section."
 msgstr "セクションの識別子"
+
+msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
+msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "IMS QTIのテストパッケージはインポートできませんでした。"
@@ -1050,6 +1095,9 @@ msgstr "この制限は、受験者がセッション中にアイテムに対す
 msgid "This test has been suspended"
 msgstr "テストは一時中断されました。"
 
+msgid "This test has been terminated"
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "アイテム\"%s\"の回答時間が制限に達しました。"
 
@@ -1112,6 +1160,9 @@ msgstr "表示"
 
 msgid "Visible"
 msgstr "表示可能"
+
+msgid "Volume"
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "警告：テスト完了まであと%sです。"
