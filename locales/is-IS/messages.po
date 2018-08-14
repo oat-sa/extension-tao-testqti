@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:45:45\n"
+"PO-Revision-Date: 2018-08-14T14:23:52\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: is-IS\n"
@@ -173,6 +173,18 @@ msgid "Author"
 msgstr "Höfundur"
 
 msgid "Auxiliary file not found at location \"%s\"."
+msgstr ""
+
+msgid "Black on cream"
+msgstr ""
+
+msgid "Black on light blue"
+msgstr ""
+
+msgid "Black on magenta"
+msgstr ""
+
+msgid "Black on white"
 msgstr ""
 
 msgid "Calculator"
@@ -398,6 +410,9 @@ msgstr ""
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
 
+msgid "Gray on green (low contrast option)"
+msgstr ""
+
 msgid "Hide Review"
 msgstr ""
 
@@ -506,11 +521,11 @@ msgstr "Tilvísunareiginleikar atriðis"
 msgid "Item Session Control"
 msgstr "Stjórn á atriðisaðgerð"
 
-msgid "Items"
-msgstr "Atriði"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Atriði"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Atriði má tengja við einn eða fleiri flokka."
@@ -531,6 +546,9 @@ msgid "Late submission allowed"
 msgstr "Sein skil leyfð"
 
 msgid "Leave a comment"
+msgstr ""
+
+msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -563,11 +581,11 @@ msgstr "Sýsla fyrirmælablokkir"
 msgid "Manage test properties"
 msgstr "Sýsla með eiginleika prófs"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "Sýsla með próf"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr ""
@@ -822,6 +840,15 @@ msgid "Scorer"
 msgstr "Teljari"
 
 msgid "Scoring"
+msgstr ""
+
+msgid "Scratch Pad"
+msgstr ""
+
+msgid "Scratch pad"
+msgstr ""
+
+msgid "Scratchpad"
 msgstr ""
 
 msgid "Section %d"
@@ -1151,7 +1178,7 @@ msgstr ""
 msgid "Unknown error."
 msgstr "Óþekkt villa."
 
-msgid "Unlink to use sperated durations"
+msgid "Unlink to use separated durations"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
@@ -1222,6 +1249,9 @@ msgstr "Hvort svar próftaka sem hefur notað meira en hámarkstíma í prófhlu
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Hvort svar próftaka sem hefur notað meira en hámarkstíma skuli tekið gilt."
+
+msgid "White on black"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Hver getur skoðað fyrirmælin meðan á próftöku stendur."

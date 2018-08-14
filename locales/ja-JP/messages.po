@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:45:45\n"
+"PO-Revision-Date: 2018-08-14T14:23:53\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -174,6 +174,18 @@ msgstr "作成者"
 
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "ロケーション\"%s\"に関連ファイルが見つかりませんでした。"
+
+msgid "Black on cream"
+msgstr ""
+
+msgid "Black on light blue"
+msgstr ""
+
+msgid "Black on magenta"
+msgstr ""
+
+msgid "Black on white"
+msgstr ""
 
 msgid "Calculator"
 msgstr ""
@@ -399,6 +411,9 @@ msgstr "フラグ付け"
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
 
+msgid "Gray on green (low contrast option)"
+msgstr ""
+
 msgid "Hide Review"
 msgstr ""
 
@@ -507,11 +522,11 @@ msgstr "アイテム参照プロパティ"
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "Items"
-msgstr "アイテム"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "アイテムはひとつまたは複数のカテゴリーに割り当てることができます。"
@@ -532,6 +547,9 @@ msgid "Late submission allowed"
 msgstr "後での送信を許可"
 
 msgid "Leave a comment"
+msgstr ""
+
+msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -564,11 +582,11 @@ msgstr "ルーブリックブロックの管理"
 msgid "Manage test properties"
 msgstr "テストプロパティの管理"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "テストの管理"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr "レビュー用マーク"
@@ -823,6 +841,15 @@ msgid "Scorer"
 msgstr "採点者"
 
 msgid "Scoring"
+msgstr ""
+
+msgid "Scratch Pad"
+msgstr ""
+
+msgid "Scratch pad"
+msgstr ""
+
+msgid "Scratchpad"
 msgstr ""
 
 msgid "Section %d"
@@ -1152,7 +1179,7 @@ msgstr ""
 msgid "Unknown error."
 msgstr "不明なエラー"
 
-msgid "Unlink to use sperated durations"
+msgid "Unlink to use separated durations"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
@@ -1223,6 +1250,9 @@ msgstr "受験者の回答でテストで設定された制限時間を超えて
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "受験者の回答で設定された制限時間を超えてもそれを許可する。"
+
+msgid "White on black"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "デリバリー中だれがルーブリックブロックを参照できるか"

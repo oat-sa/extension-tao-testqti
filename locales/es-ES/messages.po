@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:45:44\n"
+"PO-Revision-Date: 2018-08-14T14:23:51\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -174,6 +174,18 @@ msgstr "Autor"
 
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Archivo auxiliar no encontrado en la ubicación \"%s\"."
+
+msgid "Black on cream"
+msgstr ""
+
+msgid "Black on light blue"
+msgstr ""
+
+msgid "Black on magenta"
+msgstr ""
+
+msgid "Black on white"
+msgstr ""
 
 msgid "Calculator"
 msgstr "Calculadora"
@@ -376,7 +388,7 @@ msgid "File not found!"
 msgstr ""
 
 msgid "Filter"
-msgstr ""
+msgstr "Filtro"
 
 msgid "finished"
 msgstr "finalizada"
@@ -397,6 +409,9 @@ msgid "Flagged"
 msgstr "Marcado"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
+msgid "Gray on green (low contrast option)"
 msgstr ""
 
 msgid "Hide Review"
@@ -507,11 +522,11 @@ msgstr "Elemento Referencia Propiedades"
 msgid "Item Session Control"
 msgstr "Control de Sesión de Elemento"
 
-msgid "Items"
-msgstr "Elementos"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Elementos"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
@@ -532,6 +547,9 @@ msgid "Late submission allowed"
 msgstr "Envio tarde permitido"
 
 msgid "Leave a comment"
+msgstr ""
+
+msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -564,11 +582,11 @@ msgstr "Administrar Bloques de Rúbrica"
 msgid "Manage test properties"
 msgstr "Administrar las propiedades de prueba"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "Gestionar Pruebas"
+
+msgid "Manage tests"
+msgstr "Gestionar pruebas"
 
 msgid "Mark for review"
 msgstr "Marcar para revisión"
@@ -823,6 +841,15 @@ msgid "Scorer"
 msgstr "Puntaje"
 
 msgid "Scoring"
+msgstr ""
+
+msgid "Scratch Pad"
+msgstr ""
+
+msgid "Scratch pad"
+msgstr ""
+
+msgid "Scratchpad"
 msgstr ""
 
 msgid "Section %d"
@@ -1153,7 +1180,7 @@ msgstr "Desmarcar para revisión"
 msgid "Unknown error."
 msgstr "Error desconocido."
 
-msgid "Unlink to use sperated durations"
+msgid "Unlink to use separated durations"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
@@ -1224,6 +1251,9 @@ msgstr "Si la respuesta de un candidato que ha superado la duración máxima de 
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Si la respuesta de un candidato que ha superado la duración máxima aún debe ser aceptada."
+
+msgid "White on black"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Quién puede ver el bloque rúbrica durante la entrega."

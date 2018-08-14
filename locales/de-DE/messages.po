@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:45:43\n"
+"PO-Revision-Date: 2018-08-14T14:23:51\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -47,7 +47,7 @@ msgid "add a new weight"
 msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr ""
+msgstr "ZIP-Datei mit QTI/APIP Tests und Elementen hinzufügen"
 
 msgid "Add selected item(s) here."
 msgstr "Hier ausgewählte(s) Element(e) hinzufügen."
@@ -174,6 +174,18 @@ msgstr "Autor"
 
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Hilfsdatei konnte unter dem angegebenen Pfad \"%s\" nicht gefunden werden."
+
+msgid "Black on cream"
+msgstr ""
+
+msgid "Black on light blue"
+msgstr ""
+
+msgid "Black on magenta"
+msgstr ""
+
+msgid "Black on white"
+msgstr ""
 
 msgid "Calculator"
 msgstr ""
@@ -349,7 +361,7 @@ msgid "Export"
 msgstr "Exportieren"
 
 msgid "Export failed for the test \"%s"
-msgstr ""
+msgstr "Fehler beim Exportieren in Test: %s"
 
 msgid "Export metadata"
 msgstr ""
@@ -376,7 +388,7 @@ msgid "File not found!"
 msgstr ""
 
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 msgid "finished"
 msgstr "Abgeschlossen"
@@ -397,6 +409,9 @@ msgid "Flagged"
 msgstr "Markiert"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
+msgid "Gray on green (low contrast option)"
 msgstr ""
 
 msgid "Hide Review"
@@ -507,11 +522,11 @@ msgstr "Element Referenz-Eigenschaften"
 msgid "Item Session Control"
 msgstr "Element-Sitzungskontrolle"
 
-msgid "Items"
-msgstr "Elemente"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Elemente"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elemente können manuell zu einer oder mehreren Kategorien hinzugefügt werden."
@@ -532,6 +547,9 @@ msgid "Late submission allowed"
 msgstr "Spätere Bereitstellung erlaubt"
 
 msgid "Leave a comment"
+msgstr ""
+
+msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -564,11 +582,11 @@ msgstr "Rubrik-Blöcke verwalten"
 msgid "Manage test properties"
 msgstr "Test-Eigenschaften verwalten"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "Tests verwalten"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr "Zur Bewertung markieren"
@@ -825,6 +843,15 @@ msgstr "Punktezähler"
 msgid "Scoring"
 msgstr ""
 
+msgid "Scratch Pad"
+msgstr ""
+
+msgid "Scratch pad"
+msgstr ""
+
+msgid "Scratchpad"
+msgstr ""
+
 msgid "Section %d"
 msgstr ""
 
@@ -1027,7 +1054,7 @@ msgid "The identifier of the section."
 msgstr "Der Bezeichner des Abschnitts."
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr ""
+msgstr "Das IMS QTI Element, in der IMS Manifest Datei referenziert als \"%s\", wurder bereits in der Element-Bank gespeichert."
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "IMS QTI Test Paket konnte nicht importiert werden."
@@ -1111,7 +1138,7 @@ msgid "This test has been suspended"
 msgstr "Dieser Test wurde suspendiert"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "Dieser Test wurde terminiert"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "Zeitbegrenzung für Element \"%s\" wurde erreicht."
@@ -1152,14 +1179,14 @@ msgstr ""
 msgid "Unknown error."
 msgstr "Unbekannter Fehler."
 
-msgid "Unlink to use sperated durations"
+msgid "Unlink to use separated durations"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "QTI 2.1 Testpaket-Datei hochladen"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "Strg/Meta-Taste oder Lasso für Mehrfachauswahl verwenden"
 
 msgid "Validate Responses"
 msgstr "Antworten validieren"
@@ -1223,6 +1250,9 @@ msgstr "Soll die Antwort eines Kandidaten, der die maximale Dauer des Tests übe
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Soll die Antwort eines Kandidaten, der die maximale Dauer überschritten hat, trotzdem akzeptiert werden?"
+
+msgid "White on black"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Wer den Rubrik-Block während der Bereitstellung sehen kann."

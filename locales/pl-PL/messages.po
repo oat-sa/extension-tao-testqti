@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T11:45:46\n"
+"PO-Revision-Date: 2018-08-14T14:23:53\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: pl-PL\n"
@@ -173,6 +173,18 @@ msgid "Author"
 msgstr ""
 
 msgid "Auxiliary file not found at location \"%s\"."
+msgstr ""
+
+msgid "Black on cream"
+msgstr ""
+
+msgid "Black on light blue"
+msgstr ""
+
+msgid "Black on magenta"
+msgstr ""
+
+msgid "Black on white"
 msgstr ""
 
 msgid "Calculator"
@@ -398,6 +410,9 @@ msgstr ""
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
 
+msgid "Gray on green (low contrast option)"
+msgstr ""
+
 msgid "Hide Review"
 msgstr ""
 
@@ -506,10 +521,10 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
-msgid "Items"
+msgid "items"
 msgstr ""
 
-msgid "items"
+msgid "Items"
 msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -531,6 +546,9 @@ msgid "Late submission allowed"
 msgstr ""
 
 msgid "Leave a comment"
+msgstr ""
+
+msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -563,10 +581,10 @@ msgstr ""
 msgid "Manage test properties"
 msgstr ""
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr ""
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr ""
 
 msgid "Mark for review"
@@ -822,6 +840,15 @@ msgid "Scorer"
 msgstr ""
 
 msgid "Scoring"
+msgstr ""
+
+msgid "Scratch Pad"
+msgstr ""
+
+msgid "Scratch pad"
+msgstr ""
+
+msgid "Scratchpad"
 msgstr ""
 
 msgid "Section %d"
@@ -1151,7 +1178,7 @@ msgstr ""
 msgid "Unknown error."
 msgstr ""
 
-msgid "Unlink to use sperated durations"
+msgid "Unlink to use separated durations"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
@@ -1221,6 +1248,9 @@ msgid "Whether a candidate's response that is beyond the maximum duration of the
 msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
+msgstr ""
+
+msgid "White on black"
 msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
