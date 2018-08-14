@@ -1053,7 +1053,7 @@ msgid "The identifier of the section."
 msgstr "Il nome della sezione"
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr ""
+msgstr "L' item IMS QTI riferito a \"% s\" nel file IMS Manifest era stato già memorizzato nella banca item."
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "Il pacchetto test IMS QTI non può essere importato."
@@ -1137,7 +1137,7 @@ msgid "This test has been suspended"
 msgstr "Questo test è stato sospeso"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "Questo test è stato terminato"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "Limite di tempo raggiunto per item \"% s\"."

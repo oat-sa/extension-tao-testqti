@@ -387,7 +387,7 @@ msgid "File not found!"
 msgstr ""
 
 msgid "Filter"
-msgstr ""
+msgstr "Sía"
 
 msgid "finished"
 msgstr ""
@@ -1185,7 +1185,7 @@ msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Hlaða upp QTI 2.1 prófapakkaskrá"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "Notaðu Ctrl/Meta lykil eða Lasso til að velja margt"
 
 msgid "Validate Responses"
 msgstr "Staðfestu svör"

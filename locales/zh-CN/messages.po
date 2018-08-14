@@ -387,7 +387,7 @@ msgid "File not found!"
 msgstr ""
 
 msgid "Filter"
-msgstr ""
+msgstr "过滤条件"
 
 msgid "finished"
 msgstr ""
@@ -1185,7 +1185,7 @@ msgid "Upload a QTI 2.1 Test Package File"
 msgstr "上传一个QTI 2.1考试包文件"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "使用Ctrl/Meta键或套索的多重选择"
 
 msgid "Validate Responses"
 msgstr "验证回应"

@@ -176,16 +176,16 @@ msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Archivo auxiliar no encontrado en la ubicación \"%s\"."
 
 msgid "Black on cream"
-msgstr ""
+msgstr "Negro sobre crema"
 
 msgid "Black on light blue"
-msgstr ""
+msgstr "Negro sobre azul celeste"
 
 msgid "Black on magenta"
-msgstr ""
+msgstr "Negro sobre magenta"
 
 msgid "Black on white"
-msgstr ""
+msgstr "Negro sobre blanco"
 
 msgid "Calculator"
 msgstr "Calculadora"
@@ -412,7 +412,7 @@ msgid "Force the item to be considered as informational and not taken into accou
 msgstr ""
 
 msgid "Gray on green (low contrast option)"
-msgstr ""
+msgstr "Gris sobre verde (opcion de bajo contraste)"
 
 msgid "Hide Review"
 msgstr "Esconder revisión"
@@ -550,7 +550,7 @@ msgid "Leave a comment"
 msgstr ""
 
 msgid "Light yellow on royal blue"
-msgstr ""
+msgstr "Amarillo claro sobre azul real"
 
 msgid "Line Reader"
 msgstr "Lector de línea"
@@ -844,13 +844,13 @@ msgid "Scoring"
 msgstr ""
 
 msgid "Scratch Pad"
-msgstr ""
+msgstr "Bloc de Notas"
 
 msgid "Scratch pad"
-msgstr ""
+msgstr "Bloc de notas"
 
 msgid "Scratchpad"
-msgstr ""
+msgstr "Bloc de notas"
 
 msgid "Section %d"
 msgstr ""
@@ -1003,7 +1003,7 @@ msgid "Test-Taker Tools"
 msgstr ""
 
 msgid "Tests"
-msgstr ""
+msgstr "Pruebas"
 
 msgid "Text content"
 msgstr ""
@@ -1015,28 +1015,28 @@ msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "El archivo 'imsmanifest.xml' encontrado en el archivo no es válido."
 
 msgid "The assessment has been created but is not already running."
-msgstr ""
+msgstr "Se creó la evaluación pero aún no funciona."
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
+msgstr "La evaluación fue suspendida por un coordinador autorizado. Si desea retomar su evaluación, vuelva a iniciarla y contacte a su coordinador si es necesario."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr ""
+msgstr "La evaluación ha sido suspendida. Para reanudar su evaluación, por favor reinicie."
 
 msgid "The assessment has been terminated."
-msgstr ""
+msgstr "La evaluación se ha terminado."
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
 msgstr "La evaluación se ha terminado. Ya no puede interactuar con ella."
 
 msgid "The assessment is still running."
-msgstr ""
+msgstr "La evaluación sigue ejecutándose."
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr ""
+msgstr "Al candidato no se le permite enviar respuestas equivocadas."
 
 msgid "The connection seems to be back, please proceed"
 msgstr "La conexión parece estar de vuelta, por favor proceda"
@@ -1139,7 +1139,7 @@ msgid "This test has been suspended"
 msgstr "Esta prueba ha sido suspendida"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "Esta prueba es terminado"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "Alcanzó el límite de tiempo para el ítem \"%s\"."
@@ -1187,7 +1187,7 @@ msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Subir un Archivo de Paquete de Prueba QTI 2.1"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "Utilice Ctrl/Alt o Lasso para selección múltiple"
 
 msgid "Validate Responses"
 msgstr "Respuestas Validadas"
@@ -1253,7 +1253,7 @@ msgid "Whether a candidate's response that is beyond the maximum duration should
 msgstr "Si la respuesta de un candidato que ha superado la duración máxima aún debe ser aceptada."
 
 msgid "White on black"
-msgstr ""
+msgstr "Blanco sobre negro"
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Quién puede ver el bloque rúbrica durante la entrega."
@@ -1271,7 +1271,7 @@ msgid "Yes"
 msgstr "Sí"
 
 msgid "You answered all %s question(s)"
-msgstr ""
+msgstr "Usted respondio a las %s preguntas"
 
 msgid "You answered all %s question(s) in this section"
 msgstr "Usted respondio a las %s preguntas en esta sección"

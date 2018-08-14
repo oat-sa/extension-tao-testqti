@@ -1137,7 +1137,7 @@ msgid "This test has been suspended"
 msgstr "Ce test a été suspendu"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "Ce test a pris fin"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "Limite de temps atteinte pour l'élément \"%s\"."

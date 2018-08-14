@@ -388,7 +388,7 @@ msgid "File not found!"
 msgstr ""
 
 msgid "Filter"
-msgstr ""
+msgstr "フィルター"
 
 msgid "finished"
 msgstr "終了"
@@ -1054,7 +1054,7 @@ msgid "The identifier of the section."
 msgstr "セクションの識別子"
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr ""
+msgstr "IMSマニフェストファイルで、\"%s\" として参照されたIMS QTIアイテムは既にアイテムバンクの保管されています。"
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "IMS QTIのテストパッケージはインポートできませんでした。"
@@ -1138,7 +1138,7 @@ msgid "This test has been suspended"
 msgstr "テストは一時中断されました。"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "テストは強制終了されました。"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "アイテム\"%s\"の回答時間が制限に達しました。"
@@ -1186,7 +1186,7 @@ msgid "Upload a QTI 2.1 Test Package File"
 msgstr "QTI 2.1テストアイテムファイルのアップロード"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "複数選択のためにCtrl / Metaキーまたはラッソを使用してください"
 
 msgid "Validate Responses"
 msgstr "操作の検証"
