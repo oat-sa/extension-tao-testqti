@@ -43,6 +43,17 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
     const INITIAL_STATE_MESSAGE = 'The assessment has been created but is not already running.';
     const RUNNING_STATE_MESSAGE = 'The assessment is still running.';
 
+    public function __construct(array $options = array())
+    {
+        // make translation system register strings
+        __('The assessment has been suspended. To resume your assessment, please relaunch it.');
+        __('The assessment has been terminated. You cannot interact with it anymore.');
+        __('The assessment has been created but is not already running.');
+        __('The assessment is still running.');
+
+        parent::__construct($options);
+    }
+
     /**
      * Gets a message related to the state of the assessment test session
      * @param mixed $testSession
