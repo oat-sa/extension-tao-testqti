@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.2.0-sprint60\n"
-"PO-Revision-Date: 2017-09-22T12:37:41\n"
+"Project-Id-Version: TAO 3.3.0-sprint83\n"
+"PO-Revision-Date: 2018-08-14T14:23:52\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -27,6 +27,9 @@ msgstr "Un pacchetto di test QTI"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Una risorsa remota in riferimento al test QTI  '% s' non può essere recuperata."
+
+msgid "A response to every question in this item is required."
+msgstr ""
 
 msgid "A response to this item is required."
 msgstr ""
@@ -112,6 +115,9 @@ msgstr ""
 msgid "An error occurred during the test initialization!"
 msgstr ""
 
+msgid "An error occurred during the test, please content your administrator."
+msgstr ""
+
 msgid "An error occurred!"
 msgstr ""
 
@@ -168,6 +174,18 @@ msgstr "Autore"
 
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "File ausiliario non trovato nella posizione \"% s\""
+
+msgid "Black on cream"
+msgstr ""
+
+msgid "Black on light blue"
+msgstr ""
+
+msgid "Black on magenta"
+msgstr ""
+
+msgid "Black on white"
+msgstr ""
 
 msgid "Calculator"
 msgstr "Calcolatrice"
@@ -292,6 +310,9 @@ msgstr ""
 msgid "Do not flag the current item for later review"
 msgstr "Non contrassegnare l'item corrente per una revisione successiva"
 
+msgid "Do not show alert on timeout"
+msgstr ""
+
 msgid "Eliminate choices"
 msgstr ""
 
@@ -310,10 +331,10 @@ msgstr "Abilita selezione"
 msgid "Enable the item review screen / navigator."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr "Fine test"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Fine test"
 
 msgid "Enter a blueprint"
@@ -341,6 +362,9 @@ msgstr "Esporta"
 msgid "Export failed for the test \"%s"
 msgstr ""
 
+msgid "Export metadata"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr "Esporta QTI Package 2.1 Test"
 
@@ -362,6 +386,9 @@ msgstr ""
 msgid "File not found!"
 msgstr ""
 
+msgid "Filter"
+msgstr ""
+
 msgid "finished"
 msgstr "completato"
 
@@ -381,6 +408,9 @@ msgid "Flagged"
 msgstr "Contrassegnato"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
+msgid "Gray on green (low contrast option)"
 msgstr ""
 
 msgid "Hide Review"
@@ -422,8 +452,8 @@ msgstr "Se richiesto, deve apparire almeno una volta nella selezione"
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
 msgstr "Se impostato, provoca l'ordine degli elementi figlio da randomizzare, altrimenti utilizza l'ordine in cui sono definiti gli elementi figlio."
 
-msgid "If the candidate can skip the item, without submitting a response."
-msgstr "Se il candidato può ignorare l'item, senza presentare una risposta."
+msgid "If the candidate can skip the item, without submitting a response (default is true)."
+msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
 msgstr ""
@@ -435,6 +465,9 @@ msgid "Import"
 msgstr "Importa"
 
 msgid "Import a QTI/APIP Content Package"
+msgstr ""
+
+msgid "Import QTI TEST into \"%s"
 msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
@@ -461,6 +494,9 @@ msgstr "Singolo"
 msgid "Informational Item Usage"
 msgstr ""
 
+msgid "Internal server error!"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr "é già usato nel test."
 
@@ -485,11 +521,11 @@ msgstr "Item Reference Properties"
 msgid "Item Session Control"
 msgstr "Sessione di controllo item"
 
-msgid "Items"
-msgstr "Item"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Item"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Gli item possono opzionalmente essere assegnati a una o più categorie"
@@ -512,11 +548,20 @@ msgstr "Presentazione tardiva concessa"
 msgid "Leave a comment"
 msgstr ""
 
+msgid "Light yellow on royal blue"
+msgstr ""
+
 msgid "Line Reader"
 msgstr ""
 
 msgid "Linear"
 msgstr "Lineare"
+
+msgid "Link durations to activate the guided navigation"
+msgstr ""
+
+msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
+msgstr ""
 
 msgid "Magnifier"
 msgstr ""
@@ -539,6 +584,9 @@ msgstr "Gestisci proprietà del test"
 msgid "Manage Tests"
 msgstr "Gestisci Test"
 
+msgid "Manage tests"
+msgstr ""
+
 msgid "Mark for review"
 msgstr "Segna per la revisione"
 
@@ -553,6 +601,9 @@ msgstr "Numero massimo di tentativi"
 
 msgid "Maximum Duration"
 msgstr "Durata massima"
+
+msgid "Maximum duration : the items times out when the duration reaches 0."
+msgstr ""
 
 msgid "Maximum duration for the all test."
 msgstr "Durata massima di tutto il test"
@@ -571,6 +622,9 @@ msgstr ""
 
 msgid "Minimum Duration"
 msgstr "Durata minima"
+
+msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
+msgstr ""
 
 msgid "Minimum duration for the test."
 msgstr "Durata minima per il test."
@@ -595,6 +649,9 @@ msgstr "Muovi giù"
 
 msgid "Move Up"
 msgstr "Muovi su"
+
+msgid "Moving to the next item without time limit reached message."
+msgstr ""
 
 msgid "Navigation"
 msgstr "Navigazione"
@@ -785,6 +842,21 @@ msgstr "Segnapunti"
 msgid "Scoring"
 msgstr ""
 
+msgid "Scratch Pad"
+msgstr ""
+
+msgid "Scratch pad"
+msgstr ""
+
+msgid "Scratchpad"
+msgstr ""
+
+msgid "Section %d"
+msgstr ""
+
+msgid "Section %d of %d"
+msgstr ""
+
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
 msgstr "La sezione livello categoria consente la configurazione delle categorie degli item che la compongono tutti in una volta. Una categoria in grigio significa che tutti gli item hanno quella categoria. Una categoria in bianco significa che solo pochi item hanno quella categoria."
 
@@ -863,9 +935,6 @@ msgstr "Simultaneo"
 msgid "Skip"
 msgstr "Salta"
 
-msgid "Skip  and go to the next item"
-msgstr "Salta e vai al prossimo item"
-
 msgid "Skip &amp; End Test"
 msgstr "Salta & Fine test"
 
@@ -874,6 +943,9 @@ msgstr "Salta & fine test"
 
 msgid "Skip and go to the end of the test"
 msgstr "Salta e vai alla fine del test"
+
+msgid "Skip and go to the next item"
+msgstr "Salta e vai al prossimo item"
 
 msgid "Skip to the end of the test"
 msgstr "Salta alla fine del test"
@@ -929,6 +1001,9 @@ msgstr "Stato della prova"
 msgid "Test-Taker Tools"
 msgstr ""
 
+msgid "Tests"
+msgstr ""
+
 msgid "Text content"
 msgstr ""
 
@@ -942,6 +1017,9 @@ msgid "The assessment has been created but is not already running."
 msgstr ""
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
@@ -964,6 +1042,9 @@ msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "La dipendenza dalla IMS QTI Assessment Item Ref \"% s\" nel file manifesto IMS non può essere risolto. "
+
+msgid "The following identifiers are not unique accross the test : %s"
+msgstr ""
 
 msgid "The identifier of the item reference."
 msgstr "Identificativo dell'item di riferimento"
@@ -1031,6 +1112,9 @@ msgstr "La modalità di presentazione definisce quando le risposte del candidato
 msgid "The test has been closed/suspended!"
 msgstr ""
 
+msgid "The test has been paused, we are unable to connect to the server."
+msgstr ""
+
 msgid "The test has not been saved."
 msgstr ""
 
@@ -1039,6 +1123,9 @@ msgstr "L'identificatore parte di test."
 
 msgid "The test title."
 msgstr "Il titolo del test."
+
+msgid "There is not outcomes!"
+msgstr ""
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
 msgstr "Questo vincolo incide sulla visibilità del feedback dopo la fine dell'ultimo tentativo."
@@ -1058,8 +1145,14 @@ msgstr "Limite di tempo raggiunto per item \"% s\"."
 msgid "Time limit reached, this part of the test has ended."
 msgstr "Limite di tempo raggiunto, questa parte del test è terminata."
 
+msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
+msgstr ""
+
 msgid "Time Limits"
 msgstr "Limite di tempo"
+
+msgid "Time Remaining"
+msgstr ""
 
 msgid "Title"
 msgstr "Titolo"
@@ -1085,8 +1178,14 @@ msgstr "Deseleziona per la revisione"
 msgid "Unknown error."
 msgstr "Errore sconosciuto."
 
+msgid "Unlink to use separated durations"
+msgstr ""
+
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Aggiornamento a QTI 2.1 Test Package File"
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
+msgstr ""
 
 msgid "Validate Responses"
 msgstr "Convalida Risposte"
@@ -1121,6 +1220,12 @@ msgstr ""
 msgid "Warning – You have %s remaining to complete this test part."
 msgstr ""
 
+msgid "Warning – You have %s remaining to complete this test."
+msgstr ""
+
+msgid "We are unable to connect the server to submit your results."
+msgstr ""
+
 msgid "We are unable to connect to the server to retrieve the next item."
 msgstr ""
 
@@ -1144,6 +1249,9 @@ msgstr "Se la risposta di un candidato avviene oltre la durata massima della par
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Se la risposta di un candidato avviene oltre la durata massima, essa deve essere ancora accettata"
+
+msgid "White on black"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Chi può visualizzare il blocco rubrica durante la somministrazione."
@@ -1181,7 +1289,7 @@ msgstr ""
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Hai terminato questa parte della prova. Se clicchi su Sì non potrai più tornare a questa sezione."
 
-msgid "You are encountering a prolonged connectivity loss"
+msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
@@ -1206,8 +1314,5 @@ msgid "Zoom in"
 msgstr ""
 
 msgid "Zoom out"
-msgstr ""
-
-msgid "Time Remaining"
 msgstr ""
 
