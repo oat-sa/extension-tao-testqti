@@ -22,20 +22,24 @@ use oat\oatbox\event\EventManagerAwareTrait;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
 use oat\oatbox\service\ServiceManager;
+use oat\tao\model\import\ImportHandlerHelperTrait;
+use oat\tao\model\import\TaskParameterProviderInterface;
 use oat\tao\model\upload\UploadService;
 use oat\taoQtiTest\models\event\QtiTestImportEvent;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
- * Imprthandler for QTI packages
+ * Import handler for QTI packages
  *
  * @access  public
  * @author  Joel Bout, <joel@taotesting.com>
  * @package taoQTI
  */
-class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_import_ImportHandler, PhpSerializable
+class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_import_ImportHandler, PhpSerializable, ServiceLocatorAwareInterface, TaskParameterProviderInterface
 {
     use PhpSerializeStateless;
     use EventManagerAwareTrait;
+    use ImportHandlerHelperTrait;
 
     /**
      * (non-PHPdoc)
@@ -58,30 +62,23 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
     }
 
     /**
-     * (non-PHPdoc)
-     * @see tao_models_classes_import_ImportHandler::import()
+     * @param core_kernel_classes_Class   $class
+     * @param tao_helpers_form_Form|array $form
+     * @return common_report_Report
      */
     public function import($class, $form)
     {
         try {
-            $fileInfo = $form->getValue('source');
+            $uploadedFile = $this->fetchUploadedFile($form);
 
-            if (isset($fileInfo['uploaded_file'])) {
+            // The zip extraction is a long process that can exceed the 30s timeout
+            helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
-                /** @var  UploadService $uploadService */
-                $uploadService = ServiceManager::getServiceManager()->get(UploadService::SERVICE_ID);
-                $uploadedFile = $uploadService->getUploadedFile($fileInfo['uploaded_file']);
+            $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);
 
-                // The zip extraction is a long process that can exceed the 30s timeout
-                helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
+            helpers_TimeOutHelper::reset();
 
-                $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);
-
-                helpers_TimeOutHelper::reset();
-                $uploadService->remove($uploadService->getUploadedFlyFile($fileInfo['uploaded_file']));
-            } else {
-                throw new common_exception_Error('No source file for import');
-            }
+            $this->getUploadService()->remove($uploadedFile);
 
             if (common_report_Report::TYPE_SUCCESS == $report->getType()) {
                 $this->getEventManager()->trigger(new QtiTestImportEvent($report));

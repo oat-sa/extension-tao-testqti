@@ -22,41 +22,53 @@
 /**
  * Export Handler for QTI tests.
  *
- * @access public
- * @author Joel Bout, <joel@taotesting.com>
+ * @access  public
+ * @author  Joel Bout, <joel@taotesting.com>
  * @package taoQtiTest
  */
 class taoQtiTest_models_classes_export_TestExport22 extends taoQtiTest_models_classes_export_TestExport
 {
 
     /**
-     * (non-PHPdoc)
-     * @see tao_models_classes_export_ExportHandler::getLabel()
+     * @return string
      */
     public function getLabel()
     {
         return __('QTI Test Package 2.2');
     }
-    
+
+    /**
+     * @param core_kernel_classes_Resource $testResource
+     * @param ZipArchive                   $zip
+     * @param DOMDocument                  $manifest
+     * @return taoQtiTest_models_classes_export_QtiTestExporter|taoQtiTest_models_classes_export_QtiTestExporter22
+     */
     protected function createExporter(core_kernel_classes_Resource $testResource, ZipArchive $zip, DOMDocument $manifest)
     {
         return new taoQtiTest_models_classes_export_QtiTestExporter22($testResource, $zip, $manifest);
     }
-    
+
+    /**
+     * @return DOMDocument
+     */
     protected function createManifest()
     {
         return taoQtiTest_helpers_Utils::emptyImsManifest('2.2');
     }
 
+    /**
+     * @param core_kernel_classes_Resource $resource
+     * @return tao_helpers_form_Form
+     */
     public function getExportForm(core_kernel_classes_Resource $resource)
     {
         if ($resource instanceof core_kernel_classes_Class) {
-            $formData = array('class' => $resource);
+            $formData = ['class' => $resource];
         } else {
-            $formData = array('instance' => $resource);
+            $formData = ['instance' => $resource];
         }
-        $form = new taoQtiTest_models_classes_export_QtiTest22ExportForm($formData);
 
-        return $form->getForm();
+        return (new taoQtiTest_models_classes_export_QtiTest22ExportForm($formData))
+            ->getForm();
     }
 }

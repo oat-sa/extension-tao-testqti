@@ -22,9 +22,8 @@
 namespace oat\taoQtiTest\models\export\metadata;
 
 use oat\generis\model\OntologyAwareTrait;
-use oat\oatbox\filesystem\File;
 use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiItem\model\flyExporter\extractor\ExtractorException;
+use oat\taoQtiItem\model\flyExporter\simpleExporter\ItemExporter;
 use oat\taoQtiItem\model\flyExporter\simpleExporter\SimpleExporter;
 use qtism\data\AssessmentItemRef;
 use qtism\data\AssessmentSection;
@@ -37,12 +36,14 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
 {
     use OntologyAwareTrait;
 
-    const TEST_PART    = 'testPart';
+    const TEST_PART = 'testPart';
     const TEST_SECTION = 'section';
-    const TEST_ITEM    = 'assessmentItemRef';
+    const TEST_ITEM = 'assessmentItemRef';
     const ITEM_SHUFFLE = 'shuffle';
-    const ITEM_ORDER   = 'section-order';
-    const ITEM_URI   = 'uri';
+    const ITEM_ORDER = 'section-order';
+    const ITEM_URI = 'uri';
+
+    const OPTION_FILE_NAME = 'fileName';
 
     /**
      * Item exporter to handle each items
@@ -66,10 +67,9 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
     protected $assessmentItemData = [];
 
     /**
-     * Main action to launch export
-     *
      * @param string $uri
-     * @return File
+     * @return string
+     * @throws \common_exception_Error
      */
     public function export($uri)
     {
@@ -78,11 +78,11 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
         $testData = $this->getAssessmentData();
 
         $finalData = [];
-        foreach ($testData as $data){
+        foreach ($testData as $data) {
             $item = new \core_kernel_classes_Resource($data[self::ITEM_URI]);
             unset($data[self::ITEM_URI]);
             $itemData = $this->getItemExporter()->getDataByItem($item);
-            foreach ($itemData as &$column){
+            foreach ($itemData as &$column) {
                 $column = array_merge($column, $data);
             }
             $finalData[] = $itemData;
@@ -90,7 +90,7 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
 
         $headers = array_merge($this->getItemExporter()->getHeaders(), $this->getHeaders());
 
-        return $this->getItemExporter()->save($headers, $finalData, true);
+        return $this->getItemExporter()->save($headers, $finalData);
     }
 
 
@@ -118,7 +118,7 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
                             self::ITEM_URI     => $item->getHref(),
                             self::TEST_PART    => $testPart->getIdentifier(),
                             self::TEST_SECTION => $section->getIdentifier(),
-                            self::ITEM_SHUFFLE => is_null($section->getOrdering()) ? 0 : (int) $section->getOrdering()->getShuffle(),
+                            self::ITEM_SHUFFLE => is_null($section->getOrdering()) ? 0 : (int)$section->getOrdering()->getShuffle(),
                             self::ITEM_ORDER   => $order,
                         ];
                         $order++;
@@ -126,6 +126,7 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
                 }
             }
         }
+
         return $this->assessmentItemData;
     }
 
@@ -146,9 +147,13 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
      */
     protected function getItemExporter()
     {
-        if (! $this->itemExporter) {
+        if (!$this->itemExporter) {
             $this->itemExporter = $this->getServiceLocator()->get(SimpleExporter::SERVICE_ID);
+            if ($this->hasOption(self::OPTION_FILE_NAME)) {
+                $this->itemExporter->setOption(ItemExporter::OPTION_FILE_LOCATION, $this->getOption(self::OPTION_FILE_NAME));
+            }
         }
+
         return $this->itemExporter;
     }
 }

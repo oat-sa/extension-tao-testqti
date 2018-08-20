@@ -493,6 +493,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $reportCtx->itemQtiResources = [];
         $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
         $reportCtx->createdClasses = [];
+
+        // 'uriResource' key is needed by javascript in tao/views/templates/form/import.tpl
+        $reportCtx->uriResource = $testResource->getUri();
+
         $report->setData($reportCtx);
 
         // Expected test.xml file location.
