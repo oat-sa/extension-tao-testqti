@@ -128,7 +128,7 @@ function(
             var lockTimers = function lockTimers(){
                 $locker.removeClass('unlocked')
                        .addClass('locked')
-                       .attr('title', __('Unlink to use sperated durations'));
+                       .attr('title', __('Unlink to use separated durations'));
 
                 //sync min to max
                 $minTimeField.val($maxTimeField.val()).trigger('change');

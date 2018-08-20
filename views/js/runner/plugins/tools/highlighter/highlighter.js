@@ -80,7 +80,8 @@ define([
         });
 
         // add event to automatically highlight the recently made selection if needed
-        $(document).on('mouseup.highlighter', function() {
+        // added touch event (as from TAO-6578)
+        $(document).on('mouseup.highlighter touchend.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
                 selection.removeAllRanges();

@@ -38,7 +38,7 @@ define([
     var buttonData = {
         skip : {
             control : 'skip',
-            title   : __('Skip  and go to the next item'),
+            title   : __('Skip and go to the next item'),
             icon    : 'external',
             text    : __('Skip')
         },
