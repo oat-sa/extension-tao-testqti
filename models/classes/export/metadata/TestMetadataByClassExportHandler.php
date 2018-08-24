@@ -20,15 +20,18 @@
 
 namespace oat\taoQtiTest\models\export\metadata;
 
+use common_report_Report as Report;
 use oat\oatbox\event\EventManagerAwareTrait;
 use \oat\taoQtiItem\model\Export\ItemMetadataByClassExportHandler;
-use oat\taoQtiItem\model\flyExporter\extractor\ExtractorException;
 use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
 
 class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
 {
     use EventManagerAwareTrait;
 
+    /**
+     * @return string
+     */
     public function getLabel()
     {
         return 'QTI Test Metadata';
@@ -36,26 +39,41 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
 
     public function export($formValues, $destPath)
     {
-        if (isset($formValues['filename']) && isset($formValues['uri'])) {
-            try {
-                $instance = new \core_kernel_classes_Resource(\tao_helpers_Uri::decode($formValues['uri']));
-                /** @var \core_kernel_classes_Resource $model */
-                $model = \taoQtiTest_models_classes_QtiTestService::singleton()->getTestModel($instance);
-                if ($model->getUri() != \taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI) {
-                    return \common_report_Report::createFailure(__('Metadata export is not available for test "%s."', $instance->getLabel()));
-                }
-
-                /** @var TestExporter $exporterService */
-                $exporterService = $this->getServiceManager()->get(TestMetadataExporter::SERVICE_ID);
-                $this->output(
-                    $exporterService->export($formValues['uri']),
-                    $formValues['filename']
-                );
-
-                $this->getEventManager()->trigger(new QtiTestMetadataExportEvent($instance));
-            } catch (ExtractorException $e) {
-                return \common_report_Report::createFailure('Selected object does not have any item to export.');
-            }
+        if (!isset($formValues['filename'])) {
+            return Report::createFailure('Missing filename for export using ' . __CLASS__);
         }
+
+        if (!isset($formValues['uri'])) {
+            return Report::createFailure('No uri selected for export using ' . __CLASS__);
+        }
+
+        $report = Report::createSuccess();
+
+        $instance = new \core_kernel_classes_Resource(\tao_helpers_Uri::decode($formValues['uri']));
+
+        /** @var \core_kernel_classes_Resource $model */
+        $model = \taoQtiTest_models_classes_QtiTestService::singleton()->getTestModel($instance);
+        if ($model->getUri() != \taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI) {
+            return Report::createFailure(__('Metadata export is not available for test "%s."', $instance->getLabel()));
+        }
+
+        $fileName = $formValues['filename'] .'_'. time() .'.csv';
+
+        if (!\tao_helpers_File::securityCheck($fileName, true)) {
+            throw new \Exception('Unauthorized file name');
+        }
+
+        /** @var TestExporter $exporterService */
+        $exporterService = $this->getServiceManager()->get(TestMetadataExporter::SERVICE_ID);
+        $exporterService->setOption(TestExporter::OPTION_FILE_NAME, $fileName);
+
+        $filePath = $exporterService->export($formValues['uri']);
+
+        $report->setData($filePath);
+        $report->setMessage(__('Test metadata successfully exported.'));
+
+        $this->getEventManager()->trigger(new QtiTestMetadataExportEvent($instance));
+
+        return $report;
     }
 }
