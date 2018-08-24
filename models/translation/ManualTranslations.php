@@ -45,6 +45,7 @@ class ManualTranslations
             __('The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required.'),
             __('The assessment has been suspended. To resume your assessment, please relaunch it.'),
             __('The assessment has been terminated.'),
+            __('The assessment has been terminated. You cannot interact with it anymore.'),
             __('The assessment is still running.'),
             __('The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank.'),
             __('This test has been terminated'),
