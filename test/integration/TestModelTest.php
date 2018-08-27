@@ -23,15 +23,11 @@ namespace oat\taoQtiTest\test\integration;
 use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\taoQtiTest\models\TestModelService;
 
-include_once dirname(__FILE__) . '/../includes/raw_start.php';
-
-
 class TestModelTest extends TaoPhpUnitTestRunner
 {
     public function setUp()
     {
         TaoPhpUnitTestRunner::initTest();
-        
     }
     
     /**
