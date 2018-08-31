@@ -277,7 +277,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $file = $this->getTestService()->getQtiTestFile($this->getItem());
         // revert backslashes introduced by dirname on windows
         $relPath = trim(str_replace('\\', '/',dirname($testRootDir->getRelPath($file))), '/');
-        $testHref = $newTestDir . (empty($relPath) ? '' : $relPath.'/') . 'test.xml';
+        $testHref = $newTestDir . 'test.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
         $this->getZip()->addFromString($testHref, $testXmlDocument);
@@ -290,7 +290,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             if ($f->getBasename() !== taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
 
                 // Add the file to the archive.
-                $fileHref = $newTestDir . ltrim($testRootDir->getRelPath($f), '/');
+                $fileHref = $newTestDir . $f->getBaseName();
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
                 $this->getZip()->addFromString($fileHref, $f->read());
                 $this->referenceAuxiliaryFile($fileHref);
