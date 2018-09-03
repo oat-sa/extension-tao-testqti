@@ -23,7 +23,6 @@ use oat\oatbox\service\ServiceManager;
 use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\taoQtiTest\models\export\metadata\TestExporter;
 
-
 /**
  * This test case focuses on testing the TestCompilerUtils helper.
  *
@@ -63,9 +62,7 @@ class TestExporterTest extends TaoPhpUnitTestRunner {
 
         \taoTests_models_classes_TestsService::singleton()->deleteClass($class);
 
-        $this->assertEquals(file_get_contents($expectedMeta),$file->read());
-
-
+        $this->assertEquals(file_get_contents($expectedMeta), $file);
     }
     
     public function metaProvider() {
