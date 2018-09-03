@@ -219,23 +219,6 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $report = common_report_Report::createSuccess(__('Export successful for the test "%s"', $this->getItem()->getLabel()));
         $identifiers = array();
 
-        $rootDir = $this->getTestService()->getQtiTestDir($this->getItem());
-        $file = $this->getTestService()->getQtiTestFile($this->getItem());
-        $extraPath = str_replace('\\', '/', dirname($rootDir->getRelPath($file)));
-        $extraPath = trim($extraPath, '/');
-
-        $extraReversePath = '';
-        if (empty($extraPath) === false) {
-            $n = count(explode('/', $extraPath));
-            $parts = array();
-
-            for ($i = 0; $i < $n; $i++) {
-                $parts[] = '..';
-            }
-
-            $extraReversePath = implode('/', $parts) . '/';
-        }
-
         foreach ($this->getItems() as $refIdentifier => $item) {
             $itemExporter = $this->createItemExporter($item);
             if (!in_array($itemExporter->buildIdentifier(), $identifiers)) {
@@ -244,7 +227,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             }
 
             // Modify the reference to the item in the test definition.
-            $newQtiItemXmlPath = $extraReversePath . '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
+            $newQtiItemXmlPath = '../../items/' . tao_helpers_Uri::getUniqueId($item->getUri()) . '/qti.xml';
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
 
@@ -274,9 +257,6 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
         $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()).'/';
         $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
-        $file = $this->getTestService()->getQtiTestFile($this->getItem());
-        // revert backslashes introduced by dirname on windows
-        $relPath = trim(str_replace('\\', '/',dirname($testRootDir->getRelPath($file))), '/');
         $testHref = $newTestDir . 'test.xml';
 
         common_Logger::t('TEST DEFINITION AT: ' . $testHref);
