@@ -31,7 +31,7 @@ class RestTestImportTest extends RestTestRunner
     public function testImport()
     {
         $endpoint = ROOT_URL.'taoQtiTest/RestQtiTests/import';
-        $file = __DIR__.'/samples/archives/QTI 2.1/basic/Basic.zip';
+        $file = __DIR__.'/../samples/archives/QTI 2.1/basic/Basic.zip';
         $this->assertFileExists($file);
         
         $post_data = array('qtiPackage' => new \CURLFile($file));
@@ -73,7 +73,7 @@ class RestTestImportTest extends RestTestRunner
     public function testError()
     {
         $endpoint = ROOT_URL.'taoQtiTest/RestQtiTests';
-        $file = __DIR__.'/samples/archives/QTI 2.1/invalid/MissingItemDependency.zip';
+        $file = __DIR__.'/../samples/archives/QTI 2.1/invalid/MissingItemDependency.zip';
         $this->assertFileExists($file);
         
         $post_data = array('qtiPackage' => new \CURLFile($file));
@@ -92,7 +92,7 @@ class RestTestImportTest extends RestTestRunner
     {
         $endpoint = ROOT_URL.'taoQtiTest/RestQtiTests';
         $post_data = array(
-            'qtiPackage' => new \CURLFile(__DIR__.'/samples/xml/compiler/meta/linear_nopreconditions_branchrules.xml')
+            'qtiPackage' => new \CURLFile(__DIR__.'/../samples/xml/compiler/meta/linear_nopreconditions_branchrules.xml')
         );
     
         $options = array(
