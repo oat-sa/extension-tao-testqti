@@ -62,7 +62,7 @@ class TestExporterTest extends TaoPhpUnitTestRunner {
 
         \taoTests_models_classes_TestsService::singleton()->deleteClass($class);
 
-        $this->assertEquals(file_get_contents($expectedMeta), $file);
+        $this->assertEquals(file_get_contents($expectedMeta), file_get_contents($file));
     }
     
     public function metaProvider() {
