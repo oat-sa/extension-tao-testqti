@@ -96,6 +96,9 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('2.24.2')) {
             $className = \taoQtiTest_helpers_SessionManager::DEFAULT_TEST_SESSION;
             try {
+                // create alias for old config to avoid occurring fatal error
+                class_alias(\oat\taoDelivery\model\execution\DeliveryServerService::class, 'taoDelivery_models_classes_DeliveryServerService');
+
                 $deliveryConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery')->getConfig('deliveryServer');
                 if ($deliveryConfig) {
                     $deliveryContainer = $deliveryConfig->getOption('deliveryContainer');
