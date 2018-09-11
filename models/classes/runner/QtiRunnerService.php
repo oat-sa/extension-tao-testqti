@@ -1155,7 +1155,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $session->endTestSession();
 
-            $this->finish($context, DeliveryExecution::STATE_FINISHED);
+            $this->finish($context, $this->getStateAfterExit());
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -2013,5 +2013,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         return $itemsRefs;
+    }
+
+    /**
+     * Get state of delivery execution after exit triggered by test taker
+     * @return string
+     */
+    protected function getStateAfterExit()
+    {
+        return DeliveryExecution::STATE_FINISHED;
     }
 }
