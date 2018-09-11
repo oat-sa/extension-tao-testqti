@@ -1155,7 +1155,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $session->endTestSession();
 
-            $this->finish($context, DeliveryExecution::STATE_TERMINATED);
+            $this->finish($context, DeliveryExecution::STATE_FINISHED);
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
