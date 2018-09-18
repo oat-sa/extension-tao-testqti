@@ -230,7 +230,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
     public function testQtiTestExporterWithTestWithLongPaths()
     {
         // import
-        $testFile = dirname(__FILE__) . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
         $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter'));
         $report = \taoQtiTest_models_classes_QtiTestService::singleton()
             ->importMultipleTests($class, $testFile);
