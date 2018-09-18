@@ -236,6 +236,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
             ->importMultipleTests($class, $testFile);
 
         $this->assertEquals($report->getType(), \common_report_Report::TYPE_SUCCESS);
+        $this->assertFalse($report->containsError());
 
         // find imported URI
         $resources = $class->getInstances();
@@ -281,5 +282,19 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
         $this->assertEquals(end($directoryWithTestXmlContents), 'test.xml');
 
         $class->delete(true);
+
+        $this->removeDirRecursively($dirForChecking);
+    }
+
+    protected function removeDirRecursively($dir)
+    {
+        foreach (glob($dir . '/*') as $file) {
+            if (is_dir($file)) {
+                $this->rrmdir($file);
+            } else {
+                unlink($file);
+            }
+        }
+        rmdir($dir);
     }
 }
