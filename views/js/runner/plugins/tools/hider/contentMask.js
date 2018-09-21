@@ -1,3 +1,6 @@
+/**
+ * ContentMask component
+ */
 define([
     'jquery',
     'lodash',

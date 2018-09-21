@@ -1,3 +1,8 @@
+/**
+ * Hider Test Runner Plugin
+ *
+ * Adds a button to the Toolbar which hides the ContentArea to prevents others to see the test taker's test
+ */
 define([
     'i18n',
     'taoTests/runner/plugin',
@@ -5,9 +10,15 @@ define([
 ], function (__, pluginFactory, contentMaskFactory) {
     'use strict';
 
+    /**
+     * Returns the configured plugin
+     */
     return pluginFactory({
         name: 'hider',
 
+        /**
+         * Initializes the plugin
+         */
         init : function init() {
             var self = this;
             var areaBroker = this.getAreaBroker();
@@ -53,6 +64,9 @@ define([
             ;
         },
 
+        /**
+         * The plugin's destroy phase
+         */
         destroy : function destroy() {
             if (this.button) {
                 this.button.off('click');
@@ -60,10 +74,16 @@ define([
             }
         },
 
+        /**
+         * Enable the button
+         */
         enable : function enable() {
             this.button.enable();
         },
 
+        /**
+         * Disable the button
+         */
         disable : function disable() {
             this.button.disable();
         }
