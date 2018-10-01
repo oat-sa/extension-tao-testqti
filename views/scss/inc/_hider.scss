@@ -1,5 +1,19 @@
 .hider-content-mask {
-  font-size: 25px;
-  margin-top: 25px;
-  text-align: center;
+  background-color: #ffffff;
+  display: table;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+
+  .hider-content-mask-inner {
+    display: table-cell;
+    vertical-align: middle;
+
+    p {
+      font-size: 14pt;
+      text-align: center;
+    }
+  }
 }

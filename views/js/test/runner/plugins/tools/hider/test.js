@@ -27,7 +27,9 @@ define([
     runnerFactory.registerProvider(providerName, providerMock());
 
     QUnit.module('pluginFactory');
-    QUnit.test('module', 3, function(assert) {
+    QUnit.test('module', function(assert) {
+        QUnit.expect(3);
+
         var runner = runnerFactory(providerName);
 
         assert.equal(typeof hiderFactory, 'function', 'The module exposes a function');
@@ -38,6 +40,8 @@ define([
     QUnit
         .cases(pluginApi)
         .test('Plugin API', 1, function(data, assert) {
+            QUnit.expect(1);
+
             var runner = runnerFactory(providerName);
             var plugin = hiderFactory(runner);
 
@@ -47,7 +51,9 @@ define([
 
     QUnit.module('Behavior');
 
-    QUnit.asyncTest('Hider button get inserted', 1, function(assert) {
+    QUnit.asyncTest('Hider button get inserted', function(assert) {
+        QUnit.expect(1);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
@@ -70,7 +76,9 @@ define([
         ;
     });
 
-    QUnit.asyncTest('Content mask is not visible by default', 2, function(assert) {
+    QUnit.asyncTest('Content mask is not visible by default', function(assert) {
+        QUnit.expect(2);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
@@ -78,15 +86,16 @@ define([
         plugin.init()
             .then(function() {
                 var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
 
                 areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
 
-                var $contentArea = runner.getAreaBroker().getContentArea();
-                var $contentMask = runner.getAreaBroker().getContainer().find('.hider-content-mask');
-
-                assert.ok($contentArea.is(':visible'), 'The content area is visible by default');
-                assert.ok($contentMask.hasClass('hidden'), 'The content mask is hidden by default');
-                QUnit.start();
+                setTimeout(function() {
+                    assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
+                    assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
+                    QUnit.start();
+                }, 0);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -95,7 +104,9 @@ define([
         ;
     });
 
-    QUnit.asyncTest('Content mask visible and content area hidden after click', 2, function(assert) {
+    QUnit.asyncTest('Content mask visible after clicking on button', function(assert) {
+        QUnit.expect(4);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
@@ -103,17 +114,24 @@ define([
         plugin.init()
             .then(function() {
                 var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
 
                 areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
 
-                plugin.button.trigger('click');
+                setTimeout(function() {
+                    assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
+                    assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
 
-                var $contentArea = runner.getAreaBroker().getContentArea();
-                var $contentMask = runner.getAreaBroker().getContainer().find('.hider-content-mask');
+                    plugin.button.trigger('click');
 
-                assert.ok(!$contentArea.is(':visible'), 'The content area is visible by default');
-                assert.ok(!$contentMask.hasClass('hidden'), 'The content mask is hidden by default');
-                QUnit.start();
+                    setTimeout(function() {
+                        assert.ok(plugin.contentMask.$component.hasClass('visible'), 'The content mask has got the following class: "visible"');
+                        assert.ok(!plugin.contentMask.$component.hasClass('hidden'), 'The content mask hasn\'t got the following class: "hidden"');
+
+                        QUnit.start();
+                    }, 0);
+                }, 0);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -122,7 +140,9 @@ define([
         ;
     });
 
-    QUnit.asyncTest('Content mask hidden and content area visible after 2nd click', 2, function(assert) {
+    QUnit.asyncTest('Content mask hidden after 2nd click on the button', function(assert) {
+        QUnit.expect(6);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
@@ -130,18 +150,32 @@ define([
         plugin.init()
             .then(function() {
                 var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
 
                 areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
 
-                plugin.button.trigger('click');
-                plugin.button.trigger('click');
+                setTimeout(function() {
+                    assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
+                    assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
 
-                var $contentArea = runner.getAreaBroker().getContentArea();
-                var $contentMask = runner.getAreaBroker().getContainer().find('.hider-content-mask');
+                    plugin.button.trigger('click');
 
-                assert.ok($contentArea.is(':visible'), 'The content area is visible by default');
-                assert.ok($contentMask.hasClass('hidden'), 'The content mask is hidden by default');
-                QUnit.start();
+                    setTimeout(function() {
+                        assert.ok(plugin.contentMask.$component.hasClass('visible'), 'The content mask has got the following class: "visible"');
+                        assert.ok(!plugin.contentMask.$component.hasClass('hidden'), 'The content mask hasn\'t got the following class: "hidden"');
+
+                        plugin.button.trigger('click');
+
+                        setTimeout(function() {
+                            assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
+                            assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
+
+
+                            QUnit.start();
+                        }, 0);
+                    }, 0);
+                }, 0);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -150,7 +184,9 @@ define([
         ;
     });
 
-    QUnit.asyncTest('Content mask hidden and content area visible after clicking on the contentArea parent', 2, function(assert) {
+    QUnit.asyncTest('Content mask hidden after click on contentArea', function(assert) {
+        QUnit.expect(6);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
@@ -158,18 +194,32 @@ define([
         plugin.init()
             .then(function() {
                 var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
 
                 areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
 
-                plugin.button.trigger('click');
-                areaBroker.getContentArea().parent().trigger('click');
+                setTimeout(function() {
+                    assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
+                    assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
 
-                var $contentArea = runner.getAreaBroker().getContentArea();
-                var $contentMask = runner.getAreaBroker().getContainer().find('.hider-content-mask');
+                    plugin.button.trigger('click');
 
-                assert.ok($contentArea.is(':visible'), 'The content area is visible by default');
-                assert.ok($contentMask.hasClass('hidden'), 'The content mask is hidden by default');
-                QUnit.start();
+                    setTimeout(function() {
+                        assert.ok(plugin.contentMask.$component.hasClass('visible'), 'The content mask has got the following class: "visible"');
+                        assert.ok(!plugin.contentMask.$component.hasClass('hidden'), 'The content mask hasn\'t got the following class: "hidden"');
+
+                        areaBroker.getContentArea().trigger('click');
+
+                        setTimeout(function() {
+                            assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
+                            assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
+
+
+                            QUnit.start();
+                        }, 0);
+                    }, 0);
+                }, 0);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -178,23 +228,35 @@ define([
         ;
     });
 
-    QUnit.asyncTest('destroy', 1, function(assert) {
+    QUnit.asyncTest('destroy', function(assert) {
+        QUnit.expect(1);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
 
         plugin.init()
             .then(function() {
-                plugin.destroy()
-                    .then(function() {
-                        assert.equal(plugin.contentMask.getElement(), null, 'The content mask got destroyed');
-                        QUnit.start();
-                    })
-                    .catch(function(err) {
-                        assert.ok(false, 'Error in the method: ' + err);
-                        QUnit.start();
-                    })
-                ;
+                var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
+
+                areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
+
+                setTimeout(function() {
+                    plugin.destroy()
+                        .then(function() {
+                            setTimeout(function() {
+                                assert.equal(plugin.contentMask.getElement(), null, 'The content mask got destroyed');
+                                QUnit.start();
+                            }, 0);
+                        })
+                        .catch(function(err) {
+                            assert.ok(false, 'Error in the method: ' + err);
+                            QUnit.start();
+                        })
+                    ;
+                }, 0);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -203,23 +265,33 @@ define([
         ;
     });
 
-    QUnit.asyncTest('enable', 1, function(assert) {
+    QUnit.asyncTest('enable', function(assert) {
+        QUnit.expect(1);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
 
         plugin.init()
             .then(function() {
-                plugin.enable()
-                    .then(function() {
-                        assert.equal(plugin.button.is('disabled'), false, 'The button is enabled');
-                        QUnit.start();
-                    })
-                    .catch(function(err) {
-                        assert.ok(false, 'Error in the method: ' + err);
-                        QUnit.start();
-                    })
-                ;
+                var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
+
+                areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
+
+                setTimeout(function() {
+                    plugin.enable()
+                        .then(function() {
+                            assert.equal(plugin.button.is('disabled'), false, 'The button is enabled');
+                            QUnit.start();
+                        })
+                        .catch(function(err) {
+                            assert.ok(false, 'Error in the method: ' + err);
+                            QUnit.start();
+                        })
+                    ;
+                }, 0);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -228,23 +300,33 @@ define([
         ;
     });
 
-    QUnit.asyncTest('disable', 1, function(assert) {
+    QUnit.asyncTest('disable', function(assert) {
+        QUnit.expect(1);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
 
         plugin.init()
             .then(function() {
-                plugin.disable()
-                    .then(function() {
-                        assert.equal(plugin.button.is('disabled'), true, 'The button is enabled');
-                        QUnit.start();
-                    })
-                    .catch(function(err) {
-                        assert.ok(false, 'Error in the method: ' + err);
-                        QUnit.start();
-                    })
-                ;
+                var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
+
+                areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
+
+                setTimeout(function() {
+                    plugin.disable()
+                        .then(function() {
+                            assert.equal(plugin.button.is('disabled'), true, 'The button is disabled');
+                            QUnit.start();
+                        })
+                        .catch(function(err) {
+                            assert.ok(false, 'Error in the method: ' + err);
+                            QUnit.start();
+                        })
+                    ;
+                }, 0);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -253,20 +335,28 @@ define([
         ;
     });
 
-    QUnit.asyncTest('enabletools renderitem', 2, function(assert) {
+    QUnit.asyncTest('enabletools renderitem', function(assert) {
+        QUnit.expect(2);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
 
         plugin.init()
             .then(function() {
+                var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
+
+                areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
+
                 runner.trigger('enabletools');
 
                 assert.equal(plugin.button.is('disabled'), false, 'The button is enabled after enabletools event');
 
-                runner.trigger('enabletools');
+                runner.trigger('renderitem');
 
-                assert.equal(plugin.button.is('renderitem'), false, 'The button is enabled after renderitem event');
+                assert.equal(plugin.button.is('disabled'), false, 'The button is enabled after renderitem event');
 
                 QUnit.start();
             })
@@ -277,13 +367,21 @@ define([
         ;
     });
 
-    QUnit.asyncTest('disabletools unloaditem', 2, function(assert) {
+    QUnit.asyncTest('disabletools unloaditem', function(assert) {
+        QUnit.expect(2);
+
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = hiderFactory(runner, areaBroker);
 
         plugin.init()
             .then(function() {
+                var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
+
+                areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
+
                 runner.trigger('disabletools');
 
                 assert.equal(plugin.button.is('disabled'), true, 'The button is disabled after disabletools event');

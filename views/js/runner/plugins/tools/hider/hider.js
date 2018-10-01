@@ -22,6 +22,8 @@ define([
         init : function init() {
             var self = this;
             var areaBroker = this.getAreaBroker();
+            var contentArea = areaBroker.getContentArea();
+            var testRunner = this.getTestRunner();
 
             this.button = areaBroker.getToolbox().createEntry({
                 control: 'hider',
@@ -30,38 +32,29 @@ define([
                 icon: 'eye-slash',
             });
 
-            this.contentMask = contentMaskFactory(areaBroker.getContentArea().parent(), {
-                content: __('Please, do not check my answers! Thanks :)'),
-            });
-
-            this.button.on('click', function() {
-                areaBroker.getContentArea().toggle();
-
-                if (areaBroker.getContentArea().is(':visible')) {
-                    self.contentMask.hide();
-                } else {
-                    self.contentMask.show();
-                }
-            });
-
-            areaBroker.getContentArea().parent().on('click', function() {
-                if (areaBroker.getContentArea().is(':hidden')) {
-                    self.getHost().trigger('contentMaskClicked');
-                }
-            });
-
-            this.getHost().on('contentMaskClicked', function() {
-                self.button.trigger('click');
-            });
-
-            this.getTestRunner()
+            testRunner
                 .on('enabletools renderitem', function() {
                     self.enable();
                 })
                 .on('disabletools unloaditem', function() {
                     self.disable();
                 })
+                .on('renderitem', function() {
+                    self.contentMask = contentMaskFactory(areaBroker.getContentArea(), {
+                        content: __('Please, do not check my answers! Thanks :)'),
+                    });
+                })
             ;
+
+            this.button.on('click', function() {
+                self.contentMask.trigger('toggle');
+            });
+
+            contentArea.on('click', function() {
+                if (self.contentMask && self.contentMask.is('visible')) {
+                    self.contentMask.trigger('toggle');
+                }
+            });
         },
 
         /**
@@ -70,6 +63,10 @@ define([
         destroy : function destroy() {
             if (this.button) {
                 this.button.off('click');
+                this.button.destroy();
+            }
+
+            if (this.contentMask) {
                 this.contentMask.destroy();
             }
         },

@@ -2,12 +2,11 @@
  * ContentMask component
  */
 define([
-    'jquery',
     'lodash',
     'i18n',
     'ui/component',
     'tpl!taoQtiTest/runner/plugins/tools/hider/contentMask',
-], function($, _, __, component, contentMaskTpl) {
+], function(_, __, component, contentMaskTpl) {
     'use strict';
 
     var defaultConfig = {
@@ -18,14 +17,29 @@ define([
         var api = {};
         var contentMask = component(api, defaultConfig);
 
-        contentMask.setTemplate(contentMaskTpl);
+        contentMask
+            .on('init', function() {
+                this.render($container);
+                this.setState('visible', false);
+                this.hide();
+            })
+            .on('toggle', function() {
+                if (this.is('visible')) {
+                    this.setState('visible', false);
+                    this.hide();
+                } else {
+                    this.setState('visible', true);
+                    this.show();
+                }
+            })
+        ;
 
-        contentMask.on('init', function () {
-            this.render($container);
-            this.hide();
+        _.defer(function() {
+            contentMask
+                .setTemplate(contentMaskTpl)
+                .init(config)
+            ;
         });
-
-        contentMask.init(config);
 
         return contentMask;
     };

@@ -1,3 +1,5 @@
 <div class="hider-content-mask">
-    <p>{{content}}</p>
+    <div class="hider-content-mask-inner">
+        <p>{{content}}</p>
+    </div>
 </div>
