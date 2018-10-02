@@ -3,15 +3,14 @@
 .test-runner-scope {
     .content-wrapper {
         p.key-navigation-group, div.key-navigation-group {
-            padding: 5px !important;
+            &:not(.qti-inlineInteraction){
+                padding: 5px !important;
+            }
         }
         .key-navigation-group:not(.qti-extendedTextInteraction):not(.qti-textEntryInteraction) {
-            border-width: 1px !important;
-            border-style: solid;
-            border-color: transparent; //do not mark it as important to allow color overriding
             &.focusin {
-                box-shadow: 0 0 9px 3px $info !important;
-                transition: box-shadow 200ms ease-out;
+                @include focus-style;
+                position:relative;
             }
             &.qti-interaction {
                 .qti-choice.key-navigation-highlight {
@@ -22,8 +21,7 @@
         span.key-navigation-group{
             border: none !important;
             &.focusin{
-                box-shadow: 0 0 9px 3px #0e5d91 !important;
-                transition: box-shadow 200ms ease-out;
+                @include focus-style;
             }
         }
     }
