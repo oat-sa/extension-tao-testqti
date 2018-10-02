@@ -94,7 +94,7 @@ define([
                 setTimeout(function() {
                     assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
                     QUnit.start();
-                }, 0);
+                }, 100);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -127,8 +127,8 @@ define([
                         assert.ok(!plugin.contentMask.$component.hasClass('hidden'), 'The content mask hasn\'t got the following class: "hidden"');
 
                         QUnit.start();
-                    }, 0);
-                }, 0);
+                    }, 100);
+                }, 100);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -167,9 +167,9 @@ define([
 
 
                             QUnit.start();
-                        }, 0);
-                    }, 0);
-                }, 0);
+                        }, 100);
+                    }, 100);
+                }, 100);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -206,9 +206,9 @@ define([
                             assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
 
                             QUnit.start();
-                        }, 0);
-                    }, 0);
-                }, 0);
+                        }, 100);
+                    }, 100);
+                }, 100);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -238,14 +238,14 @@ define([
                             setTimeout(function() {
                                 assert.equal(plugin.contentMask.getElement(), null, 'The content mask got destroyed');
                                 QUnit.start();
-                            }, 0);
+                            }, 100);
                         })
                         .catch(function(err) {
                             assert.ok(false, 'Error in the method: ' + err);
                             QUnit.start();
                         })
                     ;
-                }, 0);
+                }, 100);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -280,7 +280,7 @@ define([
                             QUnit.start();
                         })
                     ;
-                }, 0);
+                }, 100);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);
@@ -315,7 +315,7 @@ define([
                             QUnit.start();
                         })
                     ;
-                }, 0);
+                }, 100);
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in the method: ' + err);

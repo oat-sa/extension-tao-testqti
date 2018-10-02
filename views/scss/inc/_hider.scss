@@ -1,3 +1,8 @@
+.disable-scroll {
+  overflow: hidden;
+  height: 100%;
+}
+
 .hider-content-mask {
   background-color: #ffffff;
   display: table;

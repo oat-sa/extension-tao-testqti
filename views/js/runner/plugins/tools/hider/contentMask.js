@@ -36,8 +36,15 @@ define([
             .on('toggle', function() {
                 if (this.is('hidden')) {
                     this.show();
+                    $container.addClass('disable-scroll');
                 } else {
                     this.hide();
+                    $container.removeClass('disable-scroll');
+                }
+            })
+            .on('destroy', function() {
+                if ($container.hasClass('disable-scroll')) {
+                    $container.removeClass('disable-scroll');
                 }
             })
         ;
