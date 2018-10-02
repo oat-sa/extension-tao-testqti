@@ -44,16 +44,15 @@ define([
                         content: __('Please, do not check my answers! Thanks :)'),
                     });
                 })
+                .on('unloaditem', function() {
+                    if (self.contentMask) {
+                        self.contentMask.destroy();
+                    }
+                })
             ;
 
             this.button.on('click', function() {
                 self.contentMask.trigger('toggle');
-            });
-
-            contentArea.on('click', function() {
-                if (self.contentMask && self.contentMask.is('visible')) {
-                    self.contentMask.trigger('toggle');
-                }
             });
         },
 

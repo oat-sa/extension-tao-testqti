@@ -18,27 +18,32 @@ define([
         var contentMask = component(api, defaultConfig);
 
         contentMask
+            .setTemplate(contentMaskTpl)
             .on('init', function() {
                 this.render($container);
-                this.setState('visible', false);
                 this.hide();
             })
+            .on('render', function() {
+                var self = this;
+                var $element = this.getElement();
+
+                $element.on('click', function() {
+                    if (!self.is('hidden')) {
+                        self.trigger('toggle');
+                    }
+                });
+            })
             .on('toggle', function() {
-                if (this.is('visible')) {
-                    this.setState('visible', false);
-                    this.hide();
-                } else {
-                    this.setState('visible', true);
+                if (this.is('hidden')) {
                     this.show();
+                } else {
+                    this.hide();
                 }
             })
         ;
 
         _.defer(function() {
-            contentMask
-                .setTemplate(contentMaskTpl)
-                .init(config)
-            ;
+            contentMask.init(config);
         });
 
         return contentMask;

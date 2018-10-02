@@ -77,6 +77,33 @@ define([
     });
 
     QUnit.asyncTest('Content mask is not visible by default', function(assert) {
+        QUnit.expect(1);
+
+        var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
+        var plugin = hiderFactory(runner, areaBroker);
+
+        plugin.init()
+            .then(function() {
+                var $container = areaBroker.getToolboxArea();
+                var testRunner = plugin.getTestRunner();
+
+                areaBroker.getToolbox().render($container);
+                testRunner.trigger('renderitem');
+
+                setTimeout(function() {
+                    assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
+                    QUnit.start();
+                }, 0);
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Error in the method: ' + err);
+                QUnit.start();
+            })
+        ;
+    });
+
+    QUnit.asyncTest('Content mask visible after clicking on button', function(assert) {
         QUnit.expect(2);
 
         var runner = runnerFactory(providerName);
@@ -92,41 +119,11 @@ define([
                 testRunner.trigger('renderitem');
 
                 setTimeout(function() {
-                    assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
-                    assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
-                    QUnit.start();
-                }, 0);
-            })
-            .catch(function(err) {
-                assert.ok(false, 'Error in the method: ' + err);
-                QUnit.start();
-            })
-        ;
-    });
-
-    QUnit.asyncTest('Content mask visible after clicking on button', function(assert) {
-        QUnit.expect(4);
-
-        var runner = runnerFactory(providerName);
-        var areaBroker = runner.getAreaBroker();
-        var plugin = hiderFactory(runner, areaBroker);
-
-        plugin.init()
-            .then(function() {
-                var $container = areaBroker.getToolboxArea();
-                var testRunner = plugin.getTestRunner();
-
-                areaBroker.getToolbox().render($container);
-                testRunner.trigger('renderitem');
-
-                setTimeout(function() {
-                    assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
                     assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
 
                     plugin.button.trigger('click');
 
                     setTimeout(function() {
-                        assert.ok(plugin.contentMask.$component.hasClass('visible'), 'The content mask has got the following class: "visible"');
                         assert.ok(!plugin.contentMask.$component.hasClass('hidden'), 'The content mask hasn\'t got the following class: "hidden"');
 
                         QUnit.start();
@@ -141,7 +138,7 @@ define([
     });
 
     QUnit.asyncTest('Content mask hidden after 2nd click on the button', function(assert) {
-        QUnit.expect(6);
+        QUnit.expect(3);
 
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
@@ -156,19 +153,16 @@ define([
                 testRunner.trigger('renderitem');
 
                 setTimeout(function() {
-                    assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
                     assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
 
                     plugin.button.trigger('click');
 
                     setTimeout(function() {
-                        assert.ok(plugin.contentMask.$component.hasClass('visible'), 'The content mask has got the following class: "visible"');
                         assert.ok(!plugin.contentMask.$component.hasClass('hidden'), 'The content mask hasn\'t got the following class: "hidden"');
 
                         plugin.button.trigger('click');
 
                         setTimeout(function() {
-                            assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
                             assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
 
 
@@ -185,7 +179,7 @@ define([
     });
 
     QUnit.asyncTest('Content mask hidden after click on contentArea', function(assert) {
-        QUnit.expect(6);
+        QUnit.expect(3);
 
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
@@ -200,21 +194,16 @@ define([
                 testRunner.trigger('renderitem');
 
                 setTimeout(function() {
-                    assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
                     assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
 
                     plugin.button.trigger('click');
 
                     setTimeout(function() {
-                        assert.ok(plugin.contentMask.$component.hasClass('visible'), 'The content mask has got the following class: "visible"');
                         assert.ok(!plugin.contentMask.$component.hasClass('hidden'), 'The content mask hasn\'t got the following class: "hidden"');
 
-                        areaBroker.getContentArea().trigger('click');
-
+                        plugin.contentMask.getElement().trigger('click');
                         setTimeout(function() {
-                            assert.ok(!plugin.contentMask.$component.hasClass('visible'), 'The content mask hasn\'t got the following class: "visible"');
                             assert.ok(plugin.contentMask.$component.hasClass('hidden'), 'The content mask has got the following class: "hidden"');
-
 
                             QUnit.start();
                         }, 0);
