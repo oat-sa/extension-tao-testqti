@@ -259,11 +259,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
         $this->assertTrue($zip->open($file, ZipArchive::CREATE));
 
         // dump exported archive to a directory to check that
-        $dirForChecking = tempnam(sys_get_temp_dir(), 'test-exporter-paths');
-        if (file_exists($dirForChecking) && is_file($dirForChecking)) {
-            unlink($dirForChecking);
-        }
-        mkdir($dirForChecking);
+        $dirForChecking = mkdir(uniqid(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test-exporter-paths', true));
 
         $this->assertTrue($zip->extractTo($dirForChecking));
 
