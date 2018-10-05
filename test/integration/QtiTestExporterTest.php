@@ -218,4 +218,67 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
         unlink($file);
     }
 
+    /**
+     * Scenario:
+     * 1. Imports archive from samples with long paths to tests
+     * 2. Exports created test
+     * 3. Checks that created test has short paths
+     *
+     * @throws \common_exception_Error
+     * @throws \common_exception_Unauthorized
+     */
+    public function testQtiTestExporterWithTestWithLongPaths()
+    {
+        // import
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
+        $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter'));
+        $report = \taoQtiTest_models_classes_QtiTestService::singleton()
+            ->importMultipleTests($class, $testFile);
+
+        $this->assertEquals($report->getType(), \common_report_Report::TYPE_SUCCESS);
+        $this->assertFalse($report->containsError());
+
+        // find imported URI
+        $resources = $class->getInstances();
+        $this->assertCount(1, $resources);
+        $resource = current($resources);
+        $uri = $resource->getUri();
+        $this->assertStringStartsWith('http', $uri);
+
+        // export just imported to ZIP
+        $file = $this->outputDir . 'qti_unit_test.zip';
+
+        $zip = new ZipArchive();
+        $this->assertTrue($zip->open($file, ZipArchive::CREATE));
+
+        $qtiTestExporter = new taoQtiTest_models_classes_export_QtiTestExporter(
+            new \core_kernel_classes_Resource($uri), $zip, taoQtiTest_helpers_Utils::emptyImsManifest()
+        );
+        $qtiTestExporter->export();
+        $zip->close();
+        $this->assertTrue($zip->open($file, ZipArchive::CREATE));
+
+        // dump exported archive to a directory to check that
+        $dirForChecking = mkdir(uniqid(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test-exporter-paths', true));
+
+        $this->assertTrue($zip->extractTo($dirForChecking));
+
+        // delete archive
+        $zip->close();
+        $this->assertFileExists($file);
+        unlink($file);
+
+        // check directory that archive was extracted to has short path to test.xml
+        $allDirectoriesInsideTestsDirectory = scandir($dirForChecking);
+        $this->assertEquals(end($allDirectoriesInsideTestsDirectory), 'tests');
+        $testsDirectory = $dirForChecking . '/tests/';
+        $testsDirectories = scandir($testsDirectory);
+        $directoryWithTestXml = $testsDirectory . end($testsDirectories);
+        $directoryWithTestXmlContents = scandir($directoryWithTestXml);
+        $this->assertEquals(end($directoryWithTestXmlContents), 'test.xml');
+
+        $class->delete(true);
+
+        \tao_helpers_File::delTree($dirForChecking);
+    }
 }
