@@ -279,18 +279,6 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
 
         $class->delete(true);
 
-        $this->removeDirRecursively($dirForChecking);
-    }
-
-    protected function removeDirRecursively($dir)
-    {
-        foreach (glob($dir . '/*') as $file) {
-            if (is_dir($file)) {
-                $this->rrmdir($file);
-            } else {
-                unlink($file);
-            }
-        }
-        rmdir($dir);
+        \tao_helpers_File::delTree($dirForChecking);
     }
 }
