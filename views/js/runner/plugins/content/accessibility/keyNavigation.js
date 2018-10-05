@@ -356,10 +356,6 @@ define([
             replace : true,
             loop : true,
             elements : navigators,
-        }).on('tab', function(){
-            this.next();
-        }).on('shift+tab', function(){
-            this.previous();
         });
     }
 
@@ -376,12 +372,6 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-
-            shortcut.add('tab shift+tab', function(){
-                if(!self.groupNavigator.isFocused()){
-                    self.groupNavigator.focus();
-                }
-            });
 
             //start disabled
             this.disable();
