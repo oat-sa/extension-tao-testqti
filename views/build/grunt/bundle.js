@@ -51,7 +51,8 @@ module.exports = function(grunt) {
                         include : [
                             //everything in runner/plugins
                             'taoQtiTest/runner/plugins/**/*'
-                        ]
+                        ],
+                        dependencies : []
                     }]
                 }
             }
