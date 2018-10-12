@@ -43,7 +43,7 @@ class QtiTestParserTest extends TaoPhpUnitTestRunner
 
     static public function samplesDir()
     {
-        return dirname(__FILE__) . '/samples/';
+        return dirname(__FILE__) . '/../samples/';
     }
 
     public function setUp()
