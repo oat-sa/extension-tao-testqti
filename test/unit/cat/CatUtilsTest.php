@@ -24,7 +24,7 @@ class CatUtilsTest extends TaoPhpUnitTestRunner
     {
         return [
             [
-                dirname(__FILE__) . '/../samples/xml/cat/single-adaptive-section.xml',
+                dirname(__FILE__) . '/../../samples/xml/cat/single-adaptive-section.xml',
                 [
                     'S01' => 
                     [

@@ -1683,5 +1683,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('26.1.2', '28.0.0');
+
     }
 }
