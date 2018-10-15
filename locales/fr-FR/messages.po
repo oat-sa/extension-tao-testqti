@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.2.0-sprint60\n"
-"PO-Revision-Date: 2017-09-26T10:06:08\n"
+"Project-Id-Version: TAO 3.3.0-sprint83\n"
+"PO-Revision-Date: 2018-08-14T14:23:52\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -27,6 +27,9 @@ msgstr "Un paquet test QTI"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Une resource distante incluse dans le test '%s' n'a pas pu être obtenue"
+
+msgid "A response to every question in this item is required."
+msgstr ""
 
 msgid "A response to this item is required."
 msgstr "Vous devez répondre à cette question"
@@ -112,6 +115,9 @@ msgstr ""
 msgid "An error occurred during the test initialization!"
 msgstr ""
 
+msgid "An error occurred during the test, please content your administrator."
+msgstr ""
+
 msgid "An error occurred!"
 msgstr ""
 
@@ -169,6 +175,18 @@ msgstr "Auteur"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr ""
 
+msgid "Black on cream"
+msgstr ""
+
+msgid "Black on light blue"
+msgstr ""
+
+msgid "Black on magenta"
+msgstr ""
+
+msgid "Black on white"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Calculatrice"
 
@@ -200,6 +218,9 @@ msgid "Clear all active highlights"
 msgstr ""
 
 msgid "Clear Highlights"
+msgstr ""
+
+msgid "Click to speak"
 msgstr ""
 
 msgid "Close Magnifier"
@@ -289,6 +310,9 @@ msgstr ""
 msgid "Do not flag the current item for later review"
 msgstr ""
 
+msgid "Do not show alert on timeout"
+msgstr ""
+
 msgid "Eliminate choices"
 msgstr ""
 
@@ -307,10 +331,10 @@ msgstr ""
 msgid "Enable the item review screen / navigator."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finir le test"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finir le test"
 
 msgid "Enter a blueprint"
@@ -338,6 +362,9 @@ msgstr ""
 msgid "Export failed for the test \"%s"
 msgstr ""
 
+msgid "Export metadata"
+msgstr ""
+
 msgid "Export QTI 2.1 Test Package"
 msgstr ""
 
@@ -359,6 +386,9 @@ msgstr ""
 msgid "File not found!"
 msgstr ""
 
+msgid "Filter"
+msgstr ""
+
 msgid "finished"
 msgstr "terminé"
 
@@ -378,6 +408,9 @@ msgid "Flagged"
 msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
+msgid "Gray on green (low contrast option)"
 msgstr ""
 
 msgid "Hide Review"
@@ -419,7 +452,7 @@ msgstr ""
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
 msgstr ""
 
-msgid "If the candidate can skip the item, without submitting a response."
+msgid "If the candidate can skip the item, without submitting a response (default is true)."
 msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
@@ -432,6 +465,9 @@ msgid "Import"
 msgstr ""
 
 msgid "Import a QTI/APIP Content Package"
+msgstr ""
+
+msgid "Import QTI TEST into \"%s"
 msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
@@ -456,6 +492,9 @@ msgid "Individual"
 msgstr "Individuel"
 
 msgid "Informational Item Usage"
+msgstr ""
+
+msgid "Internal server error!"
 msgstr ""
 
 msgid "is already used in the test."
@@ -509,10 +548,19 @@ msgstr ""
 msgid "Leave a comment"
 msgstr ""
 
+msgid "Light yellow on royal blue"
+msgstr ""
+
 msgid "Line Reader"
 msgstr ""
 
 msgid "Linear"
+msgstr ""
+
+msgid "Link durations to activate the guided navigation"
+msgstr ""
+
+msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
 msgstr ""
 
 msgid "Magnifier"
@@ -536,6 +584,9 @@ msgstr ""
 msgid "Manage Tests"
 msgstr ""
 
+msgid "Manage tests"
+msgstr ""
+
 msgid "Mark for review"
 msgstr ""
 
@@ -549,6 +600,9 @@ msgid "Max Attempts"
 msgstr ""
 
 msgid "Maximum Duration"
+msgstr ""
+
+msgid "Maximum duration : the items times out when the duration reaches 0."
 msgstr ""
 
 msgid "Maximum duration for the all test."
@@ -567,6 +621,9 @@ msgid "Metadata export is not available for test \"%s."
 msgstr ""
 
 msgid "Minimum Duration"
+msgstr ""
+
+msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
 msgstr ""
 
 msgid "Minimum duration for the test."
@@ -591,6 +648,9 @@ msgid "Move Down"
 msgstr ""
 
 msgid "Move Up"
+msgstr ""
+
+msgid "Moving to the next item without time limit reached message."
 msgstr ""
 
 msgid "Navigation"
@@ -689,6 +749,12 @@ msgstr ""
 msgid "Part %d"
 msgstr "Partie %d"
 
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
+msgstr ""
+
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
@@ -776,6 +842,21 @@ msgstr ""
 msgid "Scoring"
 msgstr ""
 
+msgid "Scratch Pad"
+msgstr ""
+
+msgid "Scratch pad"
+msgstr ""
+
+msgid "Scratchpad"
+msgstr ""
+
+msgid "Section %d"
+msgstr ""
+
+msgid "Section %d of %d"
+msgstr ""
+
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
 msgstr ""
 
@@ -821,6 +902,9 @@ msgstr ""
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr ""
 
+msgid "Settings"
+msgstr ""
+
 msgid "Show Feedback"
 msgstr ""
 
@@ -851,9 +935,6 @@ msgstr ""
 msgid "Skip"
 msgstr "Passer"
 
-msgid "Skip  and go to the next item"
-msgstr "Passer et aller à l'item suivant"
-
 msgid "Skip &amp; End Test"
 msgstr "Passer &amp; Finir le test"
 
@@ -862,6 +943,9 @@ msgstr "Passer et finir le test"
 
 msgid "Skip and go to the end of the test"
 msgstr "Passer et aller à la fin du test"
+
+msgid "Skip and go to the next item"
+msgstr "Passer et aller à l'item suivant"
 
 msgid "Skip to the end of the test"
 msgstr "Passer jusqu'à la fin du test"
@@ -875,8 +959,14 @@ msgstr "Passer à la prochaine section"
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Speech speed"
+msgstr ""
+
 msgid "Start Test-part"
 msgstr "Commencer la test-part"
+
+msgid "Stop"
+msgstr ""
 
 msgid "Submission"
 msgstr ""
@@ -911,7 +1001,13 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr ""
 
+msgid "Tests"
+msgstr ""
+
 msgid "Text content"
+msgstr ""
+
+msgid "Text to Speech"
 msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
@@ -921,6 +1017,9 @@ msgid "The assessment has been created but is not already running."
 msgstr ""
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr ""
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
@@ -942,6 +1041,9 @@ msgid "The connection seems to be back, please proceed"
 msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
+msgstr ""
+
+msgid "The following identifiers are not unique accross the test : %s"
 msgstr ""
 
 msgid "The identifier of the item reference."
@@ -1010,6 +1112,9 @@ msgstr ""
 msgid "The test has been closed/suspended!"
 msgstr ""
 
+msgid "The test has been paused, we are unable to connect to the server."
+msgstr ""
+
 msgid "The test has not been saved."
 msgstr ""
 
@@ -1017,6 +1122,9 @@ msgid "The test part identifier."
 msgstr ""
 
 msgid "The test title."
+msgstr ""
+
+msgid "There is not outcomes!"
 msgstr ""
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
@@ -1037,7 +1145,13 @@ msgstr "La limite de temps a été atteinte pour l'item \"%s\"."
 msgid "Time limit reached, this part of the test has ended."
 msgstr "La limite de temps a été atteinte, cette partie du test est terminé"
 
+msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
+msgstr ""
+
 msgid "Time Limits"
+msgstr ""
+
+msgid "Time Remaining"
 msgstr ""
 
 msgid "Title"
@@ -1064,8 +1178,14 @@ msgstr ""
 msgid "Unknown error."
 msgstr "Erreur inconnue."
 
+msgid "Unlink to use separated durations"
+msgstr ""
+
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Envoyer un fichier paquet de test QTI 2.1"
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
+msgstr ""
 
 msgid "Validate Responses"
 msgstr ""
@@ -1085,6 +1205,9 @@ msgstr ""
 msgid "Visible"
 msgstr ""
 
+msgid "Volume"
+msgstr ""
+
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "Attention - Il vous reste %s pour finir le test."
 
@@ -1096,6 +1219,12 @@ msgstr "Attention - Il vous reste %s pour finir la section."
 
 msgid "Warning – You have %s remaining to complete this test part."
 msgstr "Attention - Il vous reste %s pour finir la test part."
+
+msgid "Warning – You have %s remaining to complete this test."
+msgstr ""
+
+msgid "We are unable to connect the server to submit your results."
+msgstr ""
 
 msgid "We are unable to connect to the server to retrieve the next item."
 msgstr ""
@@ -1119,6 +1248,9 @@ msgid "Whether a candidate's response that is beyond the maximum duration of the
 msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
+msgstr ""
+
+msgid "White on black"
 msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
@@ -1157,7 +1289,7 @@ msgstr ""
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr ""
 
-msgid "You are encountering a prolonged connectivity loss"
+msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
@@ -1182,8 +1314,5 @@ msgid "Zoom in"
 msgstr ""
 
 msgid "Zoom out"
-msgstr ""
-
-msgid "Time Remaining"
 msgstr ""
 

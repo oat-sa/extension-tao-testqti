@@ -19,6 +19,7 @@
  *
  */
 
+use common_report_Report as Report;
 use oat\oatbox\event\EventManagerAwareTrait;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
@@ -27,8 +28,8 @@ use oat\taoQtiTest\models\event\QtiTestExportEvent;
 /**
  * Export Handler for QTI tests.
  *
- * @access public
- * @author Joel Bout, <joel@taotesting.com>
+ * @access  public
+ * @author  Joel Bout, <joel@taotesting.com>
  * @package taoQtiTest
  */
 class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_export_ExportHandler, PhpSerializable
@@ -37,8 +38,7 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
     use EventManagerAwareTrait;
 
     /**
-     * (non-PHPdoc)
-     * @see tao_models_classes_export_ExportHandler::getLabel()
+     * @return string
      */
     public function getLabel()
     {
@@ -46,86 +46,88 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
     }
 
     /**
-     * (non-PHPdoc)
-     * @see tao_models_classes_export_ExportHandler::getExportForm()
+     * @param core_kernel_classes_Resource $resource
+     * @return tao_helpers_form_Form
      */
     public function getExportForm(core_kernel_classes_Resource $resource)
     {
         if ($resource instanceof core_kernel_classes_Class) {
-            $formData = array('class' => $resource);
+            $formData = ['class' => $resource];
         } else {
-            $formData = array('instance' => $resource);
+            $formData = ['instance' => $resource];
         }
-        $form = new taoQtiTest_models_classes_export_QtiTest21ExportForm($formData);
 
-        return $form->getForm();
+        return (new taoQtiTest_models_classes_export_QtiTest21ExportForm($formData))
+            ->getForm();
     }
 
     /**
-     * (non-PHPdoc)
-     * @see tao_models_classes_export_ExportHandler::export()
+     * @param array  $formValues
+     * @param string $destination
+     * @return Report
+     * @throws common_Exception
+     * @throws common_exception_Error
      */
     public function export($formValues, $destination)
     {
-        $report = common_report_Report::createSuccess();
+        if (!isset($formValues['filename'])) {
+            return Report::createFailure('Missing filename for QTI Test export using ' . __CLASS__);
+        }
 
-        if (isset($formValues['filename']) === true) {
+        $instances = is_string($formValues['instances']) ? [$formValues['instances']] : $formValues['instances'];
 
-            $instances = is_string($formValues['instances']) ? array($formValues['instances']) : $formValues['instances'];
+        if (!count($instances)) {
+            return Report::createFailure("No instance in form to export");
+        }
 
-            if (count($instances) > 0) {
+        $report = Report::createSuccess();
 
-                $fileName = $formValues['filename'] . '_' . time() . '.zip';
-                $path = tao_helpers_File::concat(array($destination, $fileName));
+        $fileName = $formValues['filename'] . '_' . time() . '.zip';
+        $path = tao_helpers_File::concat([$destination, $fileName]);
 
-                if (tao_helpers_File::securityCheck($path, true) === false) {
-                    throw new common_Exception('Unauthorized file name for QTI Test ZIP archive.');
-                }
-                // Create a new ZIP archive to store data related to the QTI Test.
-                $zip = new ZipArchive();
-                if ($zip->open($path, ZipArchive::CREATE) !== true) {
-                    throw new common_Exception("Unable to create ZIP archive for QTI Test at location '" . $path . "'.");
-                }
-                // Create an empty IMS Manifest as a basis.
-                $manifest = $this->createManifest();
+        if (tao_helpers_File::securityCheck($path, true) === false) {
+            throw new common_Exception('Unauthorized file name for QTI Test ZIP archive.');
+        }
+        // Create a new ZIP archive to store data related to the QTI Test.
+        $zip = new ZipArchive();
+        if ($zip->open($path, ZipArchive::CREATE) !== true) {
+            throw new common_Exception("Unable to create ZIP archive for QTI Test at location '" . $path . "'.");
+        }
+        // Create an empty IMS Manifest as a basis.
+        $manifest = $this->createManifest();
 
-                foreach ($instances as $instance) {
-                    $testResource = new core_kernel_classes_Resource($instance);
-                    $testExporter = $this->createExporter($testResource, $zip, $manifest);
-                    common_Logger::d('Export ' . $instance);
-                    $subReport = $testExporter->export();
-                    if ($report->getType() !== common_report_Report::TYPE_ERROR &&
-                        ($subReport->containsError() || $subReport->getType() === common_report_Report::TYPE_ERROR)
-                    ) {
-                        $report->setType(common_report_Report::TYPE_ERROR);
-                        $report->setMessage(__('Not all test could be exported'));
-                    }
-                    $report->add($subReport);
-                }
-
-                $report->setData($path);
-                $zip->close();
-
-                if (!$report->containsError() && $formValues['uri']) {
-                    $this->getEventManager()->trigger(new QtiTestExportEvent(new core_kernel_classes_Resource($formValues['uri'])));
-                }
-
-            } else {
-                common_Logger::w("No instance in form to export");
-
+        foreach ($instances as $instance) {
+            $testResource = new core_kernel_classes_Resource($instance);
+            $testExporter = $this->createExporter($testResource, $zip, $manifest);
+            $subReport = $testExporter->export();
+            if ($report->getType() !== Report::TYPE_ERROR &&
+                ($subReport->containsError() || $subReport->getType() === Report::TYPE_ERROR)
+            ) {
+                $report->setType(Report::TYPE_ERROR);
+                $report->setMessage(__('Not all test could be exported'));
             }
-        } else {
-            common_Logger::w("Missing filename for QTI Test export using Export Handler '" . __CLASS__ . "'.");
+            $report->add($subReport);
+        }
+
+        $zip->close();
+
+        $subjectUri = isset($formValues['uri']) ? $formValues['uri'] : $formValues['classUri'];
+
+        if (!$report->containsError() && $subjectUri) {
+            $this->getEventManager()->trigger(new QtiTestExportEvent(new core_kernel_classes_Resource($subjectUri)));
+
+            $report->setData($path);
+            $report->setMessage(__('Resource(s) successfully exported.'));
         }
 
         return $report;
     }
-    
+
     protected function createExporter(core_kernel_classes_Resource $testResource, ZipArchive $zip, DOMDocument $manifest)
     {
         return new taoQtiTest_models_classes_export_QtiTestExporter($testResource, $zip, $manifest);
     }
-    
+
     protected function createManifest()
     {
         return taoQtiTest_helpers_Utils::emptyImsManifest('2.1');
