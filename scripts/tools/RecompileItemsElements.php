@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2018 (original work) Open Assessment Technologies SA;
  */
  
 namespace oat\taoQtiTest\scripts\tools;
@@ -112,7 +112,16 @@ class RecompileItemsElements extends ScriptAction
             $compiledDeliveryClass = $this->getClass(DeliveryAssemblyService::CLASS_URI);
             if ($compiledDeliveryClass->exists() === true) {
                 foreach ($compiledDeliveryClass->getInstances(true) as $compiledDelivery) {
-                    $this->getAssessmentsFromDelivery($compiledDelivery);
+                    try {
+                        $this->getAssessmentsFromDelivery($compiledDelivery);
+                    } catch (\Exception $e) {
+                        $this->report->add(
+                            new Report(
+                                Report::TYPE_WARNING,
+                                "Delivery {$compiledDelivery->getUri()} was skipped with message: '{$e->getMessage()}'"
+                            )
+                        );
+                    }
                 }
             }
         } else {
