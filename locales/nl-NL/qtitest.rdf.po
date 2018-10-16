@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T14:23:53\n"
+"Project-Id-Version: TAO 3.3.0-sprint86\n"
+"PO-Revision-Date: 2018-09-26T12:04:43\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -13,40 +13,40 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "QTI 2.1 Toets Driver"
 
-# http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
+# did my best...not sure where it is used
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
-msgstr ""
+msgstr "Driver en configuratie/constructie tool implementatie de test interface voor uitvoeren van QTI 2.1 compliance tests "
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Definition"
-msgstr ""
+msgstr "QTI 2.1 Toets definitie"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Definition Uri"
-msgstr ""
+msgstr "QTI 2.1 Toets definitie Uri"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Compilation"
-msgstr ""
+msgstr "QTI 2.1 Toets compilatie"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation Uri"
-msgstr ""
+msgstr "QTI 2.1 Toets compilatie Uri"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI test runner"
-msgstr ""
+msgstr "QTI toets starter"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.1 test"
-msgstr ""
+msgstr "Start een QTI 2.1 toets"
 
