@@ -30,6 +30,8 @@ use Prophecy\Argument;
 use ReflectionClass;
 use Prophecy\Prophet;
 
+include_once dirname(__FILE__) . '/../../../../includes/raw_start.php';
+
 /**
  * Test the {@link \oat\taoQtiTest\models\runner\time\QtiTimer}
  *
