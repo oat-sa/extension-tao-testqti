@@ -158,7 +158,7 @@ return array(
 
     /**
      * Specify the unique title for informational items
-     * if this parameter set to `false` - will be used default label from the item
+     * if this parameter set to `false` - default label from the item will be used
      */
     'test-taker-review-informational-item-title' => 'Instructions',
 
