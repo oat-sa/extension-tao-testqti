@@ -213,6 +213,7 @@ define([
     function initContentNavigation(testRunner){
 
         var itemNavigators = [];
+        console.log(testRunner);
         var $content = testRunner.getAreaBroker().getContentArea();
 
         //the item focusable body elements are considered scrollable
@@ -224,7 +225,8 @@ define([
             var $itemElement = $(this);
             if($itemElement.hasClass('qti-interaction')){
                 itemNavigators = _.union(itemNavigators, initInteractionNavigation($itemElement));
-            }else{
+            } else {
+                console.log("not interaction");
                 itemNavigators.push(keyNavigator({
                     elements : navigableDomElement.createFromDoms($itemElement),
                     group : $itemElement,
@@ -264,7 +266,9 @@ define([
         $interaction.off('.keyNavigation');
 
         //search for inputs that represent the interaction focusable choices
-        $inputs = $interaction.is(':input') ? $interaction : $interaction.find(':input');
+        $inputs = $interaction.is(".qti-textEntryInteraction,.qti-endAttemptInteraction") ?
+            $interaction : $interaction.find('.qti-simpleChoice,.qti-choice.qti-gap,textarea,li.qti-choice,.qti-choice.qti-hottext,input[type=file],input[type=text],td label input[type=checkbox],.noUi-handle,div.target');
+
         interactionNavigables = navigableDomElement.createFromDoms($inputs);
 
         if (interactionNavigables.length) {
@@ -272,15 +276,31 @@ define([
                 elements : interactionNavigables,
                 group : $interaction,
                 loop : false
-            }).on('right down', function(){
+
+            }).on('right down', function(cursor, key){
                 this.next();
-            }).on('left up', function(){
+                var nextCursor = $(this.getCursor().navigable.getElement()).data('serial');
+                var prevCursor = $(cursor).data('serial');
+                $interaction.trigger('keynav', {cursor: nextCursor, prevCursor: prevCursor, action: key});
+
+            }).on('left up', function(cursor, key){
                 this.previous();
+                var nextCursor = $(this.getCursor().navigable.getElement()).data('serial');
+                var prevCursor = $(cursor).data('serial');
+                $interaction.trigger('keynav', {cursor: nextCursor, prevCursor: prevCursor, action: key});
+
+            }).on('enter space', function(cursor, key){
+                var nextCursor = $(this.getCursor().navigable.getElement()).data('serial');
+                var prevCursor = $(cursor).data('serial');
+                $interaction.trigger('keynav', {cursor: nextCursor, prevCursor: prevCursor, action: key});
+                this.trigger('focus', this.getCursor());
+
             }).on('activate', function(cursor){
                 var $elt = cursor.navigable.getElement();
 
                 //jQuery <= 1.9.0 the checkbox values are set
                 //after the click event if triggerred with jQuery
+                //native click
                 if($elt.is(':checkbox')){
                     $elt.each(function(){
                         this.click();
@@ -290,15 +310,18 @@ define([
                 }
 
             }).on('focus', function(cursor){
+                //fake-focus whole interaction
+                cursor.navigable.getElement().parents('[class^="col-"]').addClass('focusin');
                 cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
             }).on('blur', function(cursor){
+                //fake-focus whole interaction
+                cursor.navigable.getElement().parents('[class^="col-"]').removeClass('focusin');
                 cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
             }));
         }
 
         return interactionNavigators;
     }
-
     /**
      * Init the navigation of test rubric blocks
      * It returns an array of keyNavigator ids as the content is dynamically determined
