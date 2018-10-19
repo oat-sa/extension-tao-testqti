@@ -56,6 +56,11 @@ class exportMultipleQtiTestsToDir extends ScriptAction
      */
     private $params = [];
 
+    /**
+     * @var int
+     */
+    private $total = 0;
+
     public function provideDescription()
     {
         return 'TAO QTI Test exporter - QTI Test Exporter';
@@ -123,38 +128,49 @@ class exportMultipleQtiTestsToDir extends ScriptAction
 
     private function exportTests()
     {
-        // Create a new ZIP archive to store data related to the QTI Test.
-        $zip = new ZipArchive();
-        $manifest = \taoQtiTest_helpers_Utils::emptyImsManifest('2.1');
-
         $report = common_report_Report::createInfo('Start Test Exporter');
-        $total = count($this->params);
+        $this->total = count($this->params);
         foreach ($this->params as $testUri) {
             if ($testUri == '-d') {
-                $total--;
+                $this->total--;
                 // for the ScriptAction compatibility
                 continue;
             }
-            $resource = $this->getResource($testUri);
-            if($resource->exists()) {
-                $file = tempnam(sys_get_temp_dir(), 'testExport_');
-                $zip->open($file, ZipArchive::CREATE);
-                $exporter = new \taoQtiTest_models_classes_export_QtiTestExporter22($resource, $zip, $manifest);
-                $expReport = $exporter->export();
-                $zip->close();
-                $zipArchiveHandler = fopen($file, 'r');
-                $this->fileSystem->put($this->getFileName($testUri), $zipArchiveHandler);
-                fclose($zipArchiveHandler);
-                $expReport->add(common_report_Report::createInfo($file));
-                $report->add($expReport);
-            } else {
-                $total--;
-                $report->add($this->returnFailure('Resource does not found for the URI: ' . $testUri));
-            }
+            $report->add($this->exportTest($testUri));
         }
 
-        if ($total) {
-            $report->add($this->returnSuccess($total));
+        if ($this->total) {
+            $report->add($this->returnSuccess($this->total));
+        }
+
+        return $report;
+    }
+
+    /**
+     * @param $testUri
+     * @return common_report_Report
+     * @throws \common_exception_Error
+     */
+    private function exportTest($testUri)
+    {
+        // Create a new ZIP archive to store data related to the QTI Test.
+        $zip = new ZipArchive();
+        $manifest = \taoQtiTest_helpers_Utils::emptyImsManifest('2.1');
+        $resource = $this->getResource($testUri);
+        if($resource->exists()) {
+            $file = tempnam(sys_get_temp_dir(), 'testExport_');
+            $zip->open($file, ZipArchive::CREATE);
+            $exporter = new \taoQtiTest_models_classes_export_QtiTestExporter22($resource, $zip, $manifest);
+            $expReport = $exporter->export();
+            $zip->close();
+            $zipArchiveHandler = fopen($file, 'r');
+            $this->fileSystem->put($this->getFileName($testUri), $zipArchiveHandler);
+            fclose($zipArchiveHandler);
+            $expReport->add(common_report_Report::createInfo($file));
+            $report = $expReport;
+        } else {
+            $this->total--;
+            $report = $this->returnFailure('Resource does not found for the URI: ' . $testUri);
         }
 
         return $report;
