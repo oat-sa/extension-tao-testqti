@@ -2,19 +2,23 @@
 
 .test-runner-scope {
     .content-wrapper {
-        p.key-navigation-group, div.key-navigation-group {
-            &:not(.qti-inlineInteraction){
-                padding: 5px !important;
-            }
-        }
-        .key-navigation-group:not(.qti-extendedTextInteraction):not(.qti-textEntryInteraction) {
+        [class^="col-"] {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-right: 30px;
             &.focusin {
-                @include focus-style;
-                position:relative;
+                padding-left: 20px;
+                border-left: $lightBlueGrey solid 10px;
+                background: whiten($lightBlueGrey, 0.83);
+                outline: none;
             }
-            &.qti-interaction {
-                .qti-choice.key-navigation-highlight {
-                    background: whiten($info, .9) !important;
+            &:not(.focusin) {
+                padding-left: 30px;
+                outline: none;
+            }
+            &.qti-inlineInteraction{
+                &:focus {
+                    @include focus-style;
                 }
             }
         }
@@ -29,7 +33,7 @@
     .test-sidebar {
         .key-navigation-group {
             &.focusin {
-                background: whiten($info, .9);
+                @include focus-style;
             }
             .qti-navigator-filters {
                 .key-navigation-highlight {
