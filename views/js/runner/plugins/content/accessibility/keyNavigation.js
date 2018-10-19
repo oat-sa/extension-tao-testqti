@@ -213,7 +213,6 @@ define([
     function initContentNavigation(testRunner){
 
         var itemNavigators = [];
-        console.log(testRunner);
         var $content = testRunner.getAreaBroker().getContentArea();
 
         //the item focusable body elements are considered scrollable
@@ -223,18 +222,24 @@ define([
             return (!$(this).parents('.qti-interaction').length);
         }).each(function(){
             var $itemElement = $(this);
-            if($itemElement.hasClass('qti-interaction')){
-                itemNavigators = _.union(itemNavigators, initInteractionNavigation($itemElement));
-            } else {
-                console.log("not interaction");
-                itemNavigators.push(keyNavigator({
-                    elements : navigableDomElement.createFromDoms($itemElement),
-                    group : $itemElement,
-                    propagateTab : false
-                }));
-            }
-        });
+            var $itemContainer = $itemElement.parent();
 
+            itemNavigators.push(keyNavigator({
+                elements : navigableDomElement.createFromDoms($itemContainer),
+                group : $itemContainer,
+                loop : false
+            }).on('right left up down space enter activate', function(cursor, key){
+                console.log(key);
+                $itemElement.trigger('keynav', {action: key});
+            }).on('focus', function () {
+                console.log('focus');
+                $itemElement.trigger('keynav', {action: 'container-focus'});
+            }).on('blur', function () {
+                console.log('blur');
+                $itemElement.trigger('keynav', {action: 'container-blur'});
+            }));
+
+        });
         return itemNavigators;
     }
 
@@ -244,6 +249,7 @@ define([
      * @param {JQuery} $interaction - the interaction container
      * @returns {Array} array of navigators created from interaction container
      */
+    //UNUSED
     function initInteractionNavigation($interaction){
 
         var $inputs;
@@ -310,11 +316,11 @@ define([
                 }
 
             }).on('focus', function(cursor){
-                //fake-focus whole interaction
+                //container-focus whole interaction
                 cursor.navigable.getElement().parents('[class^="col-"]').addClass('focusin');
                 cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
             }).on('blur', function(cursor){
-                //fake-focus whole interaction
+                //container-focus whole interaction
                 cursor.navigable.getElement().parents('[class^="col-"]').removeClass('focusin');
                 cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
             }));

@@ -45,8 +45,8 @@ define([
                 .after('renderitem', function() {
                     //We focus first interaction in itemBody
                     var $input = self.getAreaBroker().getContentArea().find('.qti-itemBody')
-                        .find('.qti-simpleChoice,.qti-choice.qti-gap,textarea,li.qti-choice,.qti-choice.qti-hottext,input[type=file],input[type=text],td label input[type=checkbox],.noUi-handle,div.target')
-                        .not(':input[type=button], :input[type=submit], :input[type=reset]')
+                        //.find('.qti-simpleChoice,.qti-choice.qti-gap,textarea,li.qti-choice,.qti-choice.qti-hottext,input[type=file],input[type=text],td label input[type=checkbox],.noUi-handle,div.target')
+                        //.not(':input[type=button], :input[type=submit], :input[type=reset]')
                         .first();
 
                     var $cke = $input.closest('.qti-interaction').find('.cke');
