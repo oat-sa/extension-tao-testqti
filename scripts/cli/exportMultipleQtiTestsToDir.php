@@ -24,10 +24,9 @@ namespace oat\taoQtiTest\scripts\cli;
 
 use common_report_Report;
 use oat\generis\model\OntologyAwareTrait;
+use oat\oatbox\extension\script\ScriptAction;
 use oat\oatbox\filesystem\FileSystem;
 use oat\oatbox\filesystem\FileSystemService;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use oat\oatbox\action\Action;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use ZipArchive;
 
@@ -37,7 +36,7 @@ use ZipArchive;
  * Class exportMultipleTestsToDir
  * @package oat\taoQtiTest\scripts\cli
  */
-class exportMultipleQtiTestsToDir implements Action, ServiceLocatorAwareInterface
+class exportMultipleQtiTestsToDir extends ScriptAction
 {
     use OntologyAwareTrait;
     use ServiceLocatorAwareTrait;
@@ -53,10 +52,48 @@ class exportMultipleQtiTestsToDir implements Action, ServiceLocatorAwareInterfac
     protected $fileSystem;
 
     /**
+     * @var array
+     */
+    private $params = [];
+
+    public function provideDescription()
+    {
+        return 'TAO QTI Test exporter - QTI Test Exporter';
+    }
+
+    public function provideOptions()
+    {
+        return [
+            'testId' => [
+                'prefix' => 't',
+                'longPrefix' => 'testId',
+                'description' => 'List of the test ID\'s to export: `test_1 test_2 .. test_n`.'
+            ]
+        ];
+    }
+
+    protected function provideUsage()
+    {
+        // Overriding this method is option. Simply describe which option prefixes have to
+        // to be used in order to display the usage of the script to end user.
+        return [
+            'prefix' => 'h',
+            'longPrefix' => 'help',
+            'description' => 'Prints a help statement'
+        ];
+    }
+
+    public function __invoke($params)
+    {
+        $this->params = $params;
+        $report = parent::__invoke($params);
+        return $report;
+    }
+
+    /**
      * Load self::TEST_FOLDER_IMPORT directory
      *
      * @throws \Exception
-     * @throws \common_ext_ExtensionException
      */
     protected function init()
     {
@@ -72,11 +109,11 @@ class exportMultipleQtiTestsToDir implements Action, ServiceLocatorAwareInterfac
         $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
     }
 
-    public function __invoke($params)
+    public function run()
     {
         try {
             $this->init();
-            $report = $this->exportTests($params);
+            $report = $this->exportTests();
         } catch (\Exception $e) {
             $report = $this->returnFailure($e->getMessage());
         }
@@ -84,14 +121,20 @@ class exportMultipleQtiTestsToDir implements Action, ServiceLocatorAwareInterfac
         return $report;
     }
 
-    private function exportTests($list)
+    private function exportTests()
     {
         // Create a new ZIP archive to store data related to the QTI Test.
         $zip = new ZipArchive();
         $manifest = \taoQtiTest_helpers_Utils::emptyImsManifest('2.1');
 
         $report = common_report_Report::createInfo('Start Test Exporter');
-        foreach ($list as $testUri) {
+        $total = count($this->params);
+        foreach ($this->params as $testUri) {
+            if ($testUri == '-d') {
+                $total--;
+                // for the ScriptAction compatibility
+                continue;
+            }
             $resource = $this->getResource($testUri);
             if($resource->exists()) {
                 $file = tempnam(sys_get_temp_dir(), 'testExport_');
@@ -102,14 +145,16 @@ class exportMultipleQtiTestsToDir implements Action, ServiceLocatorAwareInterfac
                 $zipArchiveHandler = fopen($file, 'r');
                 $this->fileSystem->put($this->getFileName($testUri), $zipArchiveHandler);
                 fclose($zipArchiveHandler);
+                $expReport->add(common_report_Report::createInfo($file));
                 $report->add($expReport);
             } else {
-                $report->add($this->returnFailure('Resource does not found for URI: ' . $testUri));
+                $total--;
+                $report->add($this->returnFailure('Resource does not found for the URI: ' . $testUri));
             }
         }
 
-        if (count($list)) {
-            $report->add($this->returnSuccess(count($list)));
+        if ($total) {
+            $report->add($this->returnSuccess($total));
         }
 
         return $report;
