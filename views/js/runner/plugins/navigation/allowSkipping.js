@@ -66,44 +66,45 @@ define([
          * @returns {this}
          */
         init: function init() {
-            this.getTestRunner().before('move', function () {
-                var self          = this;
-                var testContext   = this.getTestContext();
-                var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
-                var testData      = this.getTestData() || {};
-                var testConfig    = testData.config || {};
-                var pluginsConfig = testConfig.plugins || {};
-                var config        = _.defaults(pluginsConfig.allowSkipping || {}, defaults);
-                var warning       = config.allowPartial
-                    ? __('A response to every question in this item is required.')
-                    : __('A response to this item is required.');
+            this.getTestRunner()
+                .before('nav-next move', function () {
+                    var self          = this;
+                    var testContext   = this.getTestContext();
+                    var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
+                    var testData      = this.getTestData() || {};
+                    var testConfig    = testData.config || {};
+                    var pluginsConfig = testConfig.plugins || {};
+                    var config        = _.defaults(pluginsConfig.allowSkipping || {}, defaults);
+                    var warning       = config.allowPartial
+                        ? __('A response to every question in this item is required.')
+                        : __('A response to this item is required.');
 
-                if ( isInteracting && testContext.enableAllowSkipping && !testContext.allowSkipping ) {
+                    if ( isInteracting && testContext.enableAllowSkipping && !testContext.allowSkipping ) {
 
-                    return new Promise(function (resolve, reject) {
-                        if(_.size(currentItemHelper.getDeclarations(self)) === 0){
-                            return resolve();
-                        }
-                        if (currentItemHelper.isAnswered(self, config.allowPartial)) {
-                            return resolve();
-                        }
+                        return new Promise(function (resolve, reject) {
+                            if(_.size(currentItemHelper.getDeclarations(self)) === 0){
+                                return resolve();
+                            }
+                            if (currentItemHelper.isAnswered(self, config.allowPartial)) {
+                                return resolve();
+                            }
 
-                        if (!self.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
+                            if (!self.getState('alerted.notallowed')) { // Only show one alert for itemSessionControl
 
-                            self.setState('alerted.notallowed', true);
-                            self.trigger(
-                                'alert.notallowed',
-                                warning,
-                                function () {
-                                    self.trigger('resumeitem');
-                                    reject();
-                                    self.setState('alerted.notallowed', false);
-                                }
-                            );
-                        }
-                    });
-                }
-            });
+                                self.setState('alerted.notallowed', true);
+                                self.trigger(
+                                    'alert.notallowed',
+                                    warning,
+                                    function () {
+                                        self.trigger('resumeitem');
+                                        reject();
+                                        self.setState('alerted.notallowed', false);
+                                    }
+                                );
+                            }
+                        });
+                    }
+                });
         }
     });
 });

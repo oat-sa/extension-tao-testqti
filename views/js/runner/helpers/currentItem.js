@@ -175,7 +175,7 @@ define([
 
         guessInteractionConstraintValues: function guessInteractionConstraintValues(runner) {
             var itemRunner = runner.itemRunner;
-            var itemBody = itemRunner._item.bdy || {};
+            var itemBody = (itemRunner._item && itemRunner._item.bdy) || {};
             var interactions = itemBody.elements || {};
 
             var constraintValues = {};
