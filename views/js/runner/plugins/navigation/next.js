@@ -128,19 +128,6 @@ define([
 
                 var warningScope = (nextPartWarning) ? 'part' : 'test';
 
-                var warningHelper = nextWarningHelper({
-                    endTestWarning:     testOptions.endTestWarning,
-                    isLast:             context.isLast,
-                    isLinear:           context.isLinear,
-                    nextItemWarning:    nextItemWarning,
-                    nextPartWarning:    nextPartWarning,
-                    nextPart:           mapHelper.getItemPart(map, nextItemPosition),
-                    remainingAttempts:  context.remainingAttempts,
-                    testPartId:         context.testPartId,
-                    unansweredWarning:  testOptions.unansweredWarning,
-                    stats:              statsHelper.getInstantStats(warningScope, testRunner),
-                    unansweredOnly:     unansweredOnly
-                });
 
                 function enableNav() {
                     testRunner.trigger('enablenav');
@@ -148,7 +135,20 @@ define([
 
                 testRunner.trigger('disablenav');
 
-                if(self.getState('enabled') !== false) {
+                if (self.getState('enabled') !== false) {
+                    var warningHelper = nextWarningHelper({
+                        endTestWarning:     testOptions.endTestWarning,
+                        isLast:             context.isLast,
+                        isLinear:           context.isLinear,
+                        nextItemWarning:    nextItemWarning,
+                        nextPartWarning:    nextPartWarning,
+                        nextPart:           mapHelper.getItemPart(map, nextItemPosition),
+                        remainingAttempts:  context.remainingAttempts,
+                        testPartId:         context.testPartId,
+                        unansweredWarning:  testOptions.unansweredWarning,
+                        stats:              statsHelper.getInstantStats(warningScope, testRunner),
+                        unansweredOnly:     unansweredOnly
+                    });
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
                         testRunner.trigger(
