@@ -224,9 +224,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     }
 
                     if ($forceInformationalTitles && $isItemInformational) {
-                        $label = $uniqueInformationalTitle;
+                        $itemUri = strstr($itemRef->getHref(), '|', true);
+                        $label = $uniqueInformationalTitle === false
+                            ? $this->getItemLabel($context, $itemUri, $useTitle)
+                            : $uniqueInformationalTitle;
 
-                    } else if ($forceTitles) {
+                    } elseif ($forceTitles) {
                         $label = __($uniqueTitle, $offsetSection + 1);
 
                     } else {
