@@ -217,116 +217,30 @@ define([
 
         //the item focusable body elements are considered scrollable
         $content.find('.key-navigation-focusable').addClass('key-navigation-scrollable');
-        $content.find('.key-navigation-focusable,.qti-interaction').filter(function(){
-            //filter out interaction as it will be managed separately
-            return (!$(this).parents('.qti-interaction').length);
-        }).each(function(){
-            var $itemElement = $(this);
-            var $itemContainer = $itemElement.parent();
+        $content.find('.qti-interaction:not(.select2-offscreen)').each(function(e){
+            var $currentElement =  $(this);//$itemElements.first();
+            var $itemContainer = $currentElement.is(".qti-inlineInteraction") ? $currentElement : $currentElement.parent();
 
             itemNavigators.push(keyNavigator({
                 elements : navigableDomElement.createFromDoms($itemContainer),
                 group : $itemContainer,
                 loop : false
             }).on('right left up down space enter activate', function(cursor, key){
-                console.log(key);
-                $itemElement.trigger('keynav', {action: key});
+                $currentElement.trigger('keynav', {action: key});
             }).on('focus', function () {
-                console.log('focus');
-                $itemElement.trigger('keynav', {action: 'container-focus'});
+                if($currentElement.is(".qti-inlineInteraction")){
+                    $currentElement.parent().parent().addClass("focusin");
+                }
+                $currentElement.trigger('keynav', {action: 'container-focus'});
             }).on('blur', function () {
-                console.log('blur');
-                $itemElement.trigger('keynav', {action: 'container-blur'});
+                if($currentElement.is(".qti-inlineInteraction")){
+                    $currentElement.parent().parent().removeClass("focusin");
+                }
+                $currentElement.trigger('keynav', {action: 'container-blur'});
             }));
 
         });
         return itemNavigators;
-    }
-
-    /**
-     * Init interaction key navigation from the interaction navigator
-     *
-     * @param {JQuery} $interaction - the interaction container
-     * @returns {Array} array of navigators created from interaction container
-     */
-    //UNUSED
-    function initInteractionNavigation($interaction){
-
-        var $inputs;
-        var interactionNavigables;
-        var interactionNavigators = [];
-
-        //add navigable elements from prompt
-        $interaction.find('.key-navigation-focusable').each(function(){
-            var $nav = $(this);
-            if(!$nav.closest('.qti-choice').length){
-                interactionNavigators.push(keyNavigator({
-                    elements : navigableDomElement.createFromDoms($nav),
-                    group : $nav,
-                    propagateTab : false
-                }));
-            }
-        });
-
-        //reset interaction custom key navigation to override the behaviour with the new one
-        $interaction.off('.keyNavigation');
-
-        //search for inputs that represent the interaction focusable choices
-        $inputs = $interaction.is(".qti-textEntryInteraction,.qti-endAttemptInteraction") ?
-            $interaction : $interaction.find('.qti-simpleChoice,.qti-choice.qti-gap,textarea,li.qti-choice,.qti-choice.qti-hottext,input[type=file],input[type=text],td label input[type=checkbox],.noUi-handle,div.target');
-
-        interactionNavigables = navigableDomElement.createFromDoms($inputs);
-
-        if (interactionNavigables.length) {
-            interactionNavigators.push(keyNavigator({
-                elements : interactionNavigables,
-                group : $interaction,
-                loop : false
-
-            }).on('right down', function(cursor, key){
-                this.next();
-                var nextCursor = $(this.getCursor().navigable.getElement()).data('serial');
-                var prevCursor = $(cursor).data('serial');
-                $interaction.trigger('keynav', {cursor: nextCursor, prevCursor: prevCursor, action: key});
-
-            }).on('left up', function(cursor, key){
-                this.previous();
-                var nextCursor = $(this.getCursor().navigable.getElement()).data('serial');
-                var prevCursor = $(cursor).data('serial');
-                $interaction.trigger('keynav', {cursor: nextCursor, prevCursor: prevCursor, action: key});
-
-            }).on('enter space', function(cursor, key){
-                var nextCursor = $(this.getCursor().navigable.getElement()).data('serial');
-                var prevCursor = $(cursor).data('serial');
-                $interaction.trigger('keynav', {cursor: nextCursor, prevCursor: prevCursor, action: key});
-                this.trigger('focus', this.getCursor());
-
-            }).on('activate', function(cursor){
-                var $elt = cursor.navigable.getElement();
-
-                //jQuery <= 1.9.0 the checkbox values are set
-                //after the click event if triggerred with jQuery
-                //native click
-                if($elt.is(':checkbox')){
-                    $elt.each(function(){
-                        this.click();
-                    });
-                } else {
-                    $elt.click();
-                }
-
-            }).on('focus', function(cursor){
-                //container-focus whole interaction
-                cursor.navigable.getElement().parents('[class^="col-"]').addClass('focusin');
-                cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
-            }).on('blur', function(cursor){
-                //container-focus whole interaction
-                cursor.navigable.getElement().parents('[class^="col-"]').removeClass('focusin');
-                cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
-            }));
-        }
-
-        return interactionNavigators;
     }
     /**
      * Init the navigation of test rubric blocks
