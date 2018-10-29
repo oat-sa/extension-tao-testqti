@@ -56,6 +56,7 @@ use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\RegisterToolsStateStorage;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
@@ -1684,5 +1685,11 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('26.1.2', '29.0.0');
 
+        if ($this->isVersion('29.0.0')) {
+            $registerToolsStateStorage = new RegisterToolsStateStorage();
+            $registerToolsStateStorage->setServiceLocator($this->getServiceManager());
+            $registerToolsStateStorage([]);
+            $this->setVersion('29.1.0');
+        }
     }
 }

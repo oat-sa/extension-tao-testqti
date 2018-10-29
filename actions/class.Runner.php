@@ -283,7 +283,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 }
             }
 
-            $result = $this->getRunnerService()->init($serviceContext);
+            $result = $this->getRunnerService()->init($serviceContext, $toolsStates);
             $this->getRunnerService()->persist($serviceContext);
 
             $response['success'] = $result;
@@ -293,6 +293,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
                 $response['lastStoreId'] = $lastStoreId;
                 $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext);
+                $response['tools_states'] = $toolsStates;
             }
 
         } catch (common_Exception $e) {
@@ -549,6 +550,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             //to read JSON encoded params
             $params = $this->getRequest()->getRawParameters();
+
+            // here handling POST
             $itemResponse = isset($params['itemResponse']) ? $params['itemResponse'] : null;
 
             if(!is_null($itemResponse) && ! empty($itemDefinition)) {
@@ -627,6 +630,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $direction         = $this->getRequestParameter('direction');
         $scope             = $this->getRequestParameter('scope');
         $start             = $this->hasRequestParameter('start');
+        $toolStates             = $this->getRequestParameter('tool_states');
+        if ($toolStates) {
+            $toolStates = json_decode($toolStates, true);
+        }
 
         try {
             $this->checkSecurityToken();
@@ -642,7 +649,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->saveItemResponses(false);
 
             $serviceContext->getTestSession()->initItemTimer();
-            $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
+            $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref, $toolStates);
 
             $response = [
                 'success' => $result
