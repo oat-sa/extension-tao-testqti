@@ -80,7 +80,8 @@ class ToolsStateStorage extends ConfigurableService
         return $rowsUpdated;
     }
 
-    public function storeStates($deliveryExecutionId, $states) {
+    public function storeStates($deliveryExecutionId, $states)
+    {
         foreach ($states as $toolName => $state) {
             $rowsUpdated = $this->updateState($deliveryExecutionId, $toolName, $state);
             if (0 === $rowsUpdated) {
@@ -117,5 +118,21 @@ class ToolsStateStorage extends ConfigurableService
         }
 
         return $returnValue;
+    }
+
+    /**
+     * @param $deoliveryExecutionId
+     * @return bool whether deleted successfully
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
+    public function deleteStates($deoliveryExecutionId)
+    {
+        $sql = 'DELETE FROM ' . self::TABLE_NAME . '
+            WHERE ' . self::DELIVERY_EXECUTION_ID_COLUMN . ' = ?';
+
+        if ($this->getPersistence()->exec($sql, [$deoliveryExecutionId]) === false) {
+            return false;
+        }
+        return true;
     }
 }
