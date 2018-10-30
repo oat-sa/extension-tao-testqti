@@ -245,11 +245,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * * Resumed test sessions.
      *
      * @param RunnerServiceContext $context
-     * @param array $toolsStates
      * @return boolean
      * @throws \common_Exception
      */
-    public function init(RunnerServiceContext $context, &$toolsStates = null)
+    public function init(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
@@ -277,10 +276,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($session->isTimeout() === false) {
                 TestRunnerUtils::beginCandidateInteraction($session);
             }
-
-            /** @var ToolsStateStorage $toolsStateStorage */
-            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
-            $toolsStates = $toolsStateStorage->getStates($context->getTestExecutionUri());
 
             $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($session->getSessionId());
         } else {

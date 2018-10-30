@@ -33,6 +33,7 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
+use oat\taoQtiTest\models\runner\ToolsStateStorage;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -283,7 +284,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 }
             }
 
-            $result = $this->getRunnerService()->init($serviceContext, $toolsStates);
+            $result = $this->getRunnerService()->init($serviceContext);
             $this->getRunnerService()->persist($serviceContext);
 
             $response['success'] = $result;
@@ -293,7 +294,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
                 $response['lastStoreId'] = $lastStoreId;
                 $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext);
-                $response['tools_states'] = $toolsStates;
+
+                if ($serviceContext instanceof QtiRunnerServiceContext) {
+                    /** @var ToolsStateStorage $toolsStateStorage */
+                    $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+                    $toolsStates = $toolsStateStorage->getStates($serviceContext->getTestExecutionUri());
+
+                    $response['tools_states'] = $toolsStates;
+                }
             }
 
         } catch (common_Exception $e) {
