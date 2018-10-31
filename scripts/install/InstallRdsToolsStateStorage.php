@@ -23,9 +23,9 @@ namespace oat\taoQtiTest\scripts\install;
 use common_report_Report as Report;
 use Doctrine\DBAL\Schema\SchemaException;
 use oat\oatbox\extension\AbstractAction;
-use oat\taoQtiTest\models\runner\ToolsStateStorage;
+use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
 
-class RegisterToolsStateStorage extends AbstractAction
+class InstallRdsToolsStateStorage extends AbstractAction
 {
     /**
      * @param $params
@@ -44,28 +44,24 @@ class RegisterToolsStateStorage extends AbstractAction
         $schema = $schemaManager->createSchema();
         $fromSchema = clone $schema;
 
-        $revisionTable = $schema->createTable(ToolsStateStorage::TABLE_NAME);
+        $revisionTable = $schema->createTable(RdsToolsStateStorage::TABLE_NAME);
         $revisionTable->addOption('engine', 'MyISAM');
 
-        $revisionTable->addColumn(ToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, "string", array("notnull" => true, "length" => 255));
-        $revisionTable->addColumn(ToolsStateStorage::TOOL_NAME_COLUMN, "string", array("notnull" => true, "length" => 60));
+        $revisionTable->addColumn(RdsToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, "string", array("notnull" => true, "length" => 255));
+        $revisionTable->addColumn(RdsToolsStateStorage::TOOL_NAME_COLUMN, "string", array("notnull" => true, "length" => 60));
 
         $longtextThreshold = 16777215 + 1;
-        $revisionTable->addColumn(ToolsStateStorage::TOOL_STATE_COLUMN, "string", array("notnull" => false, "length" => $longtextThreshold));
+        $revisionTable->addColumn(RdsToolsStateStorage::TOOL_STATE_COLUMN, "string", array("notnull" => false, "length" => $longtextThreshold));
 
         $revisionTable->addUniqueIndex(
-            [ToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, ToolsStateStorage::TOOL_NAME_COLUMN],
-            'IDX_' . ToolsStateStorage::TABLE_NAME . '_' . 'execution_and_tool_name');
+            [RdsToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, RdsToolsStateStorage::TOOL_NAME_COLUMN],
+            'IDX_' . RdsToolsStateStorage::TABLE_NAME . '_' . 'execution_and_tool_name');
 
         $queries = $persistence->getPlatform()->getMigrateSchemaSql($fromSchema, $schema);
         foreach ($queries as $query) {
             $persistence->exec($query);
         }
 
-        $this->getServiceManager()->register(
-            ToolsStateStorage::SERVICE_ID,
-            new ToolsStateStorage([])
-        );
         return new Report(Report::TYPE_SUCCESS, 'Tool states service registered');
     }
 }

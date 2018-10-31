@@ -18,7 +18,7 @@
  *
  */
 
-namespace oat\taoQtiTest\models\runner;
+namespace oat\taoQtiTest\models\runner\toolsStates;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
@@ -28,11 +28,8 @@ use oat\taoResultServer\models\classes\ResultDeliveryExecutionDelete;
 use \core_kernel_classes_Resource;
 use oat\oatbox\service\ConfigurableService;
 
-class ToolsStateStorage extends ConfigurableService
+class RdsToolsStateStorage extends ToolsStateStorage
 {
-    use ResultDeliveryExecutionDelete;
-    const SERVICE_ID = 'taoQtiTest/ToolsStateStorage';
-
     /**
      * Constants for the database creation and data access
      *
@@ -42,14 +39,11 @@ class ToolsStateStorage extends ConfigurableService
     const TOOL_NAME_COLUMN = 'tool_name';
     const TOOL_STATE_COLUMN = 'tool_state';
 
-    /** result storage persistence identifier */
-    const OPTION_PERSISTENCE = 'persistence';
-
     /**
      * @return \common_persistence_SqlPersistence
      * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
      */
-    public function getPersistence()
+    protected function getPersistence()
     {
         $persistenceId = $this->hasOption(self::OPTION_PERSISTENCE) ?
             $this->getOption(self::OPTION_PERSISTENCE) : 'default';

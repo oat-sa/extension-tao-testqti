@@ -51,6 +51,7 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
 use oat\taoQtiTest\models\TestSessionService;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
@@ -250,6 +251,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function init(RunnerServiceContext $context)
     {
+        $a = $this->getServiceLocator()->get(\taoAltResultStorage_models_classes_KeyValueResultStorage::SERVICE_ID);
+        $b = $a->getOption(\taoAltResultStorage_models_classes_KeyValueResultStorage::OPTION_PERSISTENCE);
+        $perisistenceManager = $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_ID);
+
+        $c =                 $perisistenceManager->getPersistenceById($b);
+
+
+        var_dump($a);
+
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
@@ -1041,8 +1051,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $result = true;
 
         if ($context instanceof QtiRunnerServiceContext && is_array($toolStates)) {
-            /** @var ToolsStateStorage $toolsStateStorage */
-            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+            /** @var RdsToolsStateStorage $toolsStateStorage */
+            $toolsStateStorage = $this->getServiceManager()->get(RdsToolsStateStorage::SERVICE_ID);
 
             $toolsStateStorage->storeStates($context->getTestExecutionUri(), $toolStates);
         }
@@ -1205,8 +1215,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
 
             if ($context instanceof QtiRunnerServiceContext) {
-                /** @var ToolsStateStorage $toolsStateStorage */
-                $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+                /** @var RdsToolsStateStorage $toolsStateStorage */
+                $toolsStateStorage = $this->getServiceManager()->get(RdsToolsStateStorage::SERVICE_ID);
                 $toolsStates = $toolsStateStorage->deleteStates($context->getTestExecutionUri());
 
                 $response['tools_states'] = $toolsStates;

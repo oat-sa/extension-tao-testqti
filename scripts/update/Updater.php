@@ -36,6 +36,8 @@ use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
+use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
+use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
@@ -54,9 +56,9 @@ use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
+use oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
-use oat\taoQtiTest\scripts\install\RegisterToolsStateStorage;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
@@ -1686,9 +1688,15 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('26.1.2', '29.0.0');
 
         if ($this->isVersion('29.0.0')) {
-            $registerToolsStateStorage = new RegisterToolsStateStorage();
-            $registerToolsStateStorage->setServiceLocator($this->getServiceManager());
-            $registerToolsStateStorage([]);
+            $installRdsToolsStateStorage = new InstallRdsToolsStateStorage();
+            $installRdsToolsStateStorage->setServiceLocator($this->getServiceManager());
+            $installRdsToolsStateStorage([]);
+
+            $this->getServiceManager()->register(
+                ToolsStateStorage::SERVICE_ID,
+                new NoStorage([])
+            );
+
             $this->setVersion('29.1.0');
         }
     }
