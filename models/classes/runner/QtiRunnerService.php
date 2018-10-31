@@ -51,7 +51,7 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
-use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
+use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\TestSessionService;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
@@ -1041,8 +1041,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $result = true;
 
         if ($context instanceof QtiRunnerServiceContext && is_array($toolStates)) {
-            /** @var RdsToolsStateStorage $toolsStateStorage */
-            $toolsStateStorage = $this->getServiceManager()->get(RdsToolsStateStorage::SERVICE_ID);
+            /** @var ToolsStateStorage $toolsStateStorage */
+            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
 
             $toolsStateStorage->storeStates($context->getTestExecutionUri(), $toolStates);
         }
@@ -1205,8 +1205,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             }
 
             if ($context instanceof QtiRunnerServiceContext) {
-                /** @var RdsToolsStateStorage $toolsStateStorage */
-                $toolsStateStorage = $this->getServiceManager()->get(RdsToolsStateStorage::SERVICE_ID);
+                /** @var ToolsStateStorage $toolsStateStorage */
+                $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
                 $toolsStates = $toolsStateStorage->deleteStates($context->getTestExecutionUri());
 
                 $response['tools_states'] = $toolsStates;
