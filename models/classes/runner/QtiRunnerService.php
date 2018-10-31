@@ -251,15 +251,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function init(RunnerServiceContext $context)
     {
-        $a = $this->getServiceLocator()->get(\taoAltResultStorage_models_classes_KeyValueResultStorage::SERVICE_ID);
-        $b = $a->getOption(\taoAltResultStorage_models_classes_KeyValueResultStorage::OPTION_PERSISTENCE);
-        $perisistenceManager = $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_ID);
-
-        $c =                 $perisistenceManager->getPersistenceById($b);
-
-
-        var_dump($a);
-
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
@@ -822,7 +813,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $responses)
     {
-        // here from frontend
         if ($context instanceof QtiRunnerServiceContext) {
 
             $session = $this->getCurrentAssessmentSession($context);

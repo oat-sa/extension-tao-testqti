@@ -558,8 +558,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             //to read JSON encoded params
             $params = $this->getRequest()->getRawParameters();
-
-            // here handling POST
             $itemResponse = isset($params['itemResponse']) ? $params['itemResponse'] : null;
 
             if(!is_null($itemResponse) && ! empty($itemDefinition)) {
