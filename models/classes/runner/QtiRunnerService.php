@@ -1204,13 +1204,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $result = false;
             }
 
-            if ($context instanceof QtiRunnerServiceContext) {
-                /** @var ToolsStateStorage $toolsStateStorage */
-                $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
-                $toolsStates = $toolsStateStorage->deleteStates($context->getTestExecutionUri());
+            /** @var ToolsStateStorage $toolsStateStorage */
+            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+            $toolsStates = $toolsStateStorage->deleteStates($context->getTestExecutionUri());
 
-                $response['tools_states'] = $toolsStates;
-            }
+            $response['tools_states'] = $toolsStates;
 
             $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($executionUri);
         } else {
