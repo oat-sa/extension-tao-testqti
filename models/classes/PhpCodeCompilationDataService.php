@@ -15,7 +15,9 @@ use qtism\data\QtiComponent;
 class PhpCodeCompilationDataService extends CompilationDataService
 {
     protected $cacheDir;
-    
+
+    const OPTION_CACHE_COMPACT_TEST_FILE = 'cacheCompactTestFile';
+
     public function __construct($options = []) {
         parent::__construct($options);
         
@@ -38,11 +40,15 @@ class PhpCodeCompilationDataService extends CompilationDataService
         $dir = $this->ensureCacheDirectory($compilationDirectory);
         $cacheKey = $this->cacheKey($cacheInfo);
         $cacheFile = "${dir}/${cacheKey}.php";
-        
-        if (!is_file($cacheFile)) {
+
+        if ($this->useCompactCacheFile() && !is_file($cacheFile)) {
+            $data = $compilationDirectory->read($path);
+            file_put_contents($cacheFile, $data);
+        } else {
             $data = $compilationDirectory->read($path);
             file_put_contents($cacheFile, $data);
         }
+
         
         try {
             $doc = new PhpDocument();
@@ -54,7 +60,17 @@ class PhpCodeCompilationDataService extends CompilationDataService
         
         return $doc->getDocumentComponent();
     }
-    
+
+    /**
+     * @return bool|mixed
+     */
+    protected function useCompactCacheFile()
+    {
+        $value = $this->getOption(static::OPTION_CACHE_COMPACT_TEST_FILE);
+
+        return is_null($value) ? true : $value;
+    }
+
     protected function ensureCacheDirectory(\tao_models_classes_service_StorageDirectory $compilationDirectory)
     {
         $dirId = md5($compilationDirectory->getId());

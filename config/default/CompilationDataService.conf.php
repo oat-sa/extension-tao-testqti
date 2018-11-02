@@ -17,5 +17,10 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  *               
  * 
- */  
-return new oat\taoQtiTest\models\PhpCodeCompilationDataService();
+ */
+
+use oat\taoQtiTest\models\PhpCodeCompilationDataService;
+
+return new oat\taoQtiTest\models\PhpCodeCompilationDataService([
+    PhpCodeCompilationDataService::OPTION_CACHE_COMPACT_TEST_FILE => true
+]);
