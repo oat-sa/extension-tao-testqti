@@ -38,7 +38,14 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 
     const OPTION_CONFIG = 'config';
 
+    /**
+     * @deprecated since version 29.2.0, to be removed in 30.0.0. Use QtiRunnerService::TOOL_ITEM_THEME_SWITCHER instead
+     */
     const TOOL_ITEM_THEME_SWITCHER = 'itemThemeSwitcher';
+
+    /**
+     * @deprecated since version 29.2.0, to be removed in 30.0.0. Use QtiRunnerService::TOOL_ITEM_THEME_SWITCHER_KEY instead
+     */
     const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
 
     const TARGET_CLIENT = 'client';
@@ -119,12 +126,6 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 ],
                 'guidedNavigation' => isset($rawConfig['guidedNavigation']) ? $rawConfig['guidedNavigation'] : false,
             ];
-
-            if ($this->isThemeSwitcherEnabled()) {
-                $themeSwitcherPlugin[self::TOOL_ITEM_THEME_SWITCHER]['activeNamespace'] = $this->getItemTheme();
-                $newPlugins = array_merge($config['plugins'], $themeSwitcherPlugin);
-                $config['plugins'] = $newPlugins;
-            }
         }
         return $config;
     }
@@ -225,32 +226,5 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     protected function getCategories(RunnerServiceContext $context)
     {
         return $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
-    }
-
-    /**
-     * Check if itemThemeSwitch plugin is enabled
-     *
-     * @return bool
-     */
-    private function isThemeSwitcherEnabled()
-    {
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoTests')->getConfig('test_runner_plugin_registry');
-
-        if (array_key_exists(self::TOOL_ITEM_THEME_SWITCHER_KEY, $config) && $config[self::TOOL_ITEM_THEME_SWITCHER_KEY]['active']) {
-            return true;
-        }
-    }
-
-    /**
-     * Get test theme from the available DeliveryThemeProviders
-     *
-     * @return string
-     */
-    private function getItemTheme()
-    {
-        /** @var ThemeService $themeService */
-        $themeService = $this->getServiceLocator()->get(ThemeService::SERVICE_ID);
-
-        return $themeService->getTheme()->getId();
     }
 }
