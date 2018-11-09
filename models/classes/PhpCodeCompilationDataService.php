@@ -44,11 +44,12 @@ class PhpCodeCompilationDataService extends CompilationDataService
         if ($this->useCompactCacheFile() && !is_file($cacheFile)) {
             $data = $compilationDirectory->read($path);
             file_put_contents($cacheFile, $data);
-        } else {
+        }
+
+        if (!$this->useCompactCacheFile()) {
             $data = $compilationDirectory->read($path);
             file_put_contents($cacheFile, $data);
         }
-
         
         try {
             $doc = new PhpDocument();

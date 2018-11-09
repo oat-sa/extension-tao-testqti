@@ -27,7 +27,6 @@ use oat\oatbox\filesystem\Directory;
 use oat\taoQtiTest\models\CompilationDataService;
 use qtism\data\AssessmentTest;
 use oat\taoQtiTest\models\QtiTestExtractionFailedException;
-use oat\generis\common\exception\FileReadFailedException;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -232,7 +231,7 @@ class taoQtiTest_helpers_Utils {
                 $directory,
                 taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME
             );
-        } catch (FileReadFailedException $e) {
+        } catch (\common_exception_FileReadFailedException $e) {
             throw new QtiTestExtractionFailedException($e->getMessage());
         }
     }
