@@ -36,6 +36,7 @@ class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDe
     const VAR_STORE_ID = 'client_store_id';
     const VAR_EVENTS_QUEUE = 'events_queue';
     const VAR_CAT = 'cat';
+    const VAR_KV_DATA = 'kv_data';
     const VAR_HREF_INDEX = 'item_href_index';
 
     /**
@@ -366,5 +367,46 @@ class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDe
         }
 
         return false;
+    }
+
+    /**
+     * Sets a value in the Extended State.
+     *
+     * @param string $key
+     * @param string $value
+     * @return ExtendedState
+     */
+    public function setValue($key, $value)
+    {
+        $this->state[self::VAR_KV_DATA][$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Gets a value from the Extended State.
+     *
+     * @param string $key
+     * @return string
+     */
+    public function getValue($key)
+    {
+        return isset($this->state[self::VAR_KV_DATA][$key]) ? $this->state[self::VAR_KV_DATA][$key] : null;
+    }
+
+    /**
+     * Removes a value from the ExtendedState.
+     *
+     * @param string $assessmentSectionId
+     * @param string $key
+     * @return ExtendedState
+     */
+    public function removeValue($assessmentSectionId, $key)
+    {
+        if (isset($this->state[self::VAR_KV_DATA][$key])) {
+            unset($this->state[self::VAR_KV_DATA][$key]);
+        }
+
+        return $this;
     }
 }

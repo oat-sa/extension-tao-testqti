@@ -305,4 +305,47 @@ class ExtendedStateService extends ConfigurableService implements DeliveryExecut
 
         return $this->getStorageService()->persist($extendedState->getUserId(), $extendedState->getStorageKey());
     }
+
+    /**
+     * Set a value in the Extended State.
+     *
+     * @param string $testSessionId
+     * @param string $key
+     * @param string $value
+     * @throws \common_Exception
+     */
+    public function setValue($testSessionId, $key, $value)
+    {
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->setValue($key, $value);
+        $extendedState->save();
+    }
+
+    /**
+     * Get a value from the Extended State.
+     *
+     * @param string $testSessionId
+     * @param string $key
+     * @return string
+     * @throws \common_Exception
+     */
+    public function getValue($testSessionId, $key)
+    {
+        $extendedState = $this->getExtendedState($testSessionId);
+        return $extendedState->getValue($key);
+    }
+
+    /**
+     * Remove a value from the ExtendedState.
+     *
+     * @param string $testSessionId
+     * @param string $key
+     * @throws \common_Exception
+     */
+    public function removeValue($testSessionId, $key)
+    {
+        $extendedState = $this->getExtendedState($testSessionId);
+        $extendedState->removeValue($key);
+        $extendedState->save();
+    }
 }
