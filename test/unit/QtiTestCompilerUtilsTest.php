@@ -34,7 +34,7 @@ use \qtism\data\storage\xml\XmlDocument;
 class QtiTestCompilerUtilsTest extends TaoPhpUnitTestRunner {
     
     static public function samplesDir() {
-        return dirname(__FILE__) . '/samples/xml/compiler/meta/';
+        return dirname(__FILE__) . '/../samples/xml/compiler/meta/';
     }
     
     /**

@@ -29,7 +29,7 @@ class TestCategoryRulesGeneratorTest extends TaoPhpUnitTestRunner
     
     static public function samplesDir() 
     {
-        return dirname(__FILE__) . '/samples/xml/category_rules/';
+        return dirname(__FILE__) . '/../samples/xml/category_rules/';
     }
     
     public function testApplyAll()
