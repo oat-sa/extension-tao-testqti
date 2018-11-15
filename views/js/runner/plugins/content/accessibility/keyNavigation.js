@@ -34,6 +34,15 @@ define([
     'use strict';
 
     /**
+     * This array will contain class masks (will be checked with *=className) for which navigation from them should be disabled.
+     *
+     * @type {[string]}
+     */
+    const disallowedClasses = [
+        'cke_'
+    ];
+
+    /**
      * Init the navigation in the toolbar
      *
      * @param {Object} testRunner
@@ -51,10 +60,18 @@ define([
                 elements : navigables,
                 //start from the last button "goto next"
                 defaultPosition : navigables.length - 1
-            }).on('right down', function(){
-                this.next();
-            }).on('left up', function(){
-                this.previous();
+            }).on('right down', function(elem){
+                if (!allowedToNavigateFrom(elem)) {
+                    return false;
+                } else {
+                    this.next();
+                }
+            }).on('left up', function(elem){
+                if (!allowedToNavigateFrom(elem)) {
+                    return false;
+                } else {
+                    this.previous();
+                }
             }).on('activate', function(cursor){
                 cursor.navigable.getElement().click().mousedown();
             })];
@@ -116,12 +133,22 @@ define([
                     replace : true,
                     elements : navigableFilters,
                     group : $navigator
-                }).on('right', function(){
-                    this.next();
-                }).on('left', function(){
-                    this.previous();
-                }).on('down', function(){
-                    if(itemsNavigator){
+                }).on('right', function(elem){
+                    if (!allowedToNavigateFrom(elem)) {
+                        return false;
+                    } else {
+                        this.next();
+                    }
+                }).on('left', function(elem){
+                    if (!allowedToNavigateFrom(elem)) {
+                        return false;
+                    } else {
+                        this.previous();
+                    }
+                }).on('down', function(elem){
+                    if (!allowedToNavigateFrom(elem)) {
+                        return false;
+                    } else if(itemsNavigator){
                         _.defer(function(){
                             if(itemListingVisited){
                                 itemsNavigator.focus().first();
@@ -130,8 +157,10 @@ define([
                             }
                         });
                     }
-                }).on('up', function(){
-                    if(itemsNavigator){
+                }).on('up', function(elem){
+                    if (!allowedToNavigateFrom(elem)) {
+                        return false;
+                    } else if(itemsNavigator){
                         _.defer(function(){
                             itemsNavigator.last();
                         });
@@ -172,16 +201,28 @@ define([
                         }
                         return pos;
                     }
-                }).on('down', function(){
-                    this.next();
-                }).on('up', function(){
-                    this.previous();
-                }).on('right', function(){
-                    if(filtersNavigator){
+                }).on('down', function(elem){
+                    if (!allowedToNavigateFrom(elem)) {
+                        return false;
+                    } else {
+                        this.next();
+                    }
+                }).on('up', function(elem){
+                    if (!allowedToNavigateFrom(elem)) {
+                        return false;
+                    } else {
+                        this.previous();
+                    }
+                }).on('right', function(elem){
+                    if (!allowedToNavigateFrom(elem)) {
+                        return false;
+                    } else if(filtersNavigator){
                         filtersNavigator.focus().next();
                     }
-                }).on('left', function(){
-                    if(filtersNavigator){
+                }).on('left', function(elem){
+                    if (!allowedToNavigateFrom(elem)) {
+                        return false;
+                    } else if(filtersNavigator){
                         filtersNavigator.focus().previous();
                     }
                 }).on('activate', function(cursor){
@@ -272,10 +313,18 @@ define([
                 elements : interactionNavigables,
                 group : $interaction,
                 loop : false
-            }).on('right down', function(){
-                this.next();
-            }).on('left up', function(){
-                this.previous();
+            }).on('right down', function(elem){
+                if (!allowedToNavigateFrom(elem)) {
+                    return false;
+                } else {
+                    this.next();
+                }
+            }).on('left up', function(elem){
+                if (!allowedToNavigateFrom(elem)) {
+                    return false;
+                } else {
+                    this.previous();
+                }
             }).on('activate', function(cursor){
                 var $elt = cursor.navigable.getElement();
 
@@ -355,8 +404,36 @@ define([
             id : 'test-runner',
             replace : true,
             loop : true,
-            elements : navigators,
+            elements : navigators
+        }).on('tab', function(elem){
+            if (!allowedToNavigateFrom(elem)) {
+                return false;
+            } else {
+                this.next();
+            }
+        }).on('shift+tab', function(elem){
+            if (!allowedToNavigateFrom(elem)) {
+                return false;
+            } else {
+                this.previous();
+            }
         });
+    }
+
+    function allowedToNavigateFrom(element)
+    {
+        var disallowedClassIdx, disallowedClass;
+
+        if (disallowedClasses.length > 0) {
+            for (disallowedClassIdx in disallowedClasses) {
+                disallowedClass = disallowedClasses[disallowedClassIdx];
+                if ($(element).is('[class*="' + disallowedClass + '"]')) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -372,6 +449,15 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
+
+            shortcut.add('tab shift+tab', function(e){
+                if (!allowedToNavigateFrom(e.target)) {
+                    return false;
+                }
+                if(!self.groupNavigator.isFocused()){
+                    self.groupNavigator.focus();
+                }
+            });
 
             //start disabled
             this.disable();
