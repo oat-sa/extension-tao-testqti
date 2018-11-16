@@ -26,6 +26,7 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\filesystem\Directory;
 use oat\taoQtiTest\models\CompilationDataService;
 use qtism\data\AssessmentTest;
+use oat\taoQtiTest\models\QtiTestExtractionFailedException;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -220,14 +221,18 @@ class taoQtiTest_helpers_Utils {
      */
     static public function getTestDefinition($qtiTestCompilation)
     {
-        $directoryIds = explode('|', $qtiTestCompilation);
-        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[0]);
-        
-        $compilationDataService = ServiceManager::getServiceManager()->get(CompilationDataService::SERVICE_ID);
+        try {
+            $directoryIds = explode('|', $qtiTestCompilation);
+            $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[0]);
 
-        return $compilationDataService->readPhpCompilationData(
-            $directory,
-            taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME
-        );
+            $compilationDataService = ServiceManager::getServiceManager()->get(CompilationDataService::SERVICE_ID);
+
+            return $compilationDataService->readPhpCompilationData(
+                $directory,
+                taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME
+            );
+        } catch (\common_exception_FileReadFailedException $e) {
+            throw new QtiTestExtractionFailedException($e->getMessage());
+        }
     }
 }
