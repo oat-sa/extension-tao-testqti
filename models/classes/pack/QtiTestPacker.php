@@ -68,7 +68,7 @@ class QtiTestPacker implements Packable
                     ->pack();
             }
             $testPack       = new TestPack(self::$testType, $converter->toArray(), $items);
-        } catch(common_Exception $e){
+        } catch(\Exception $e){
             throw new common_Exception('Unable to pack test '. $test->getUri() . ' : ' . $e->getMessage());
         }
 
