@@ -27,6 +27,7 @@ use \taoQtiTest_models_classes_QtiTestService;
 use \core_kernel_classes_Resource;
 use \InvalidArgumentException;
 use \common_Exception;
+use Exception;
 
 /**
  * This class pack a QTI Test. Packing instead of compiling, aims
@@ -68,7 +69,7 @@ class QtiTestPacker implements Packable
                     ->pack();
             }
             $testPack       = new TestPack(self::$testType, $converter->toArray(), $items);
-        } catch(\Exception $e){
+        } catch(Exception $e){
             throw new common_Exception('Unable to pack test '. $test->getUri() . ' : ' . $e->getMessage());
         }
 
