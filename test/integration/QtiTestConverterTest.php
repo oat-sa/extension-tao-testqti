@@ -76,7 +76,6 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $result = $converter->toJson();
 
-        // @todo fix test case
         $this->assertEquals($expected, $result);
     }
 
