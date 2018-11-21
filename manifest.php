@@ -43,8 +43,8 @@ return array(
     'requires'    => array(
         'taoQtiItem' => '>=16.1.0',
         'taoTests'   => '>=7.10.0',
-        'tao'        => '>=19.20.0',
-        'generis'    => '>=6.14.0',
+        'tao'        => '>=21.10.2',
+        'generis'    => '>=7.12.1',
         'taoDelivery' => '>=10.0.0',
         'taoItems'   => '>=5.11.0',
     ),
