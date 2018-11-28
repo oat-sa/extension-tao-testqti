@@ -184,11 +184,10 @@ interface RunnerService extends DeliveryExecutionDelete
      * @param $direction
      * @param $scope
      * @param $ref
-     * @param string $toolStates
      * @return boolean
      * @throws \common_Exception
      */
-    public function move(RunnerServiceContext $context, $direction, $scope, $ref, $toolStates);
+    public function move(RunnerServiceContext $context, $direction, $scope, $ref);
 
     /**
      * Skips the current position to the provided scoped reference

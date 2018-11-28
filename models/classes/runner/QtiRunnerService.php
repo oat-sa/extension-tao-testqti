@@ -704,6 +704,37 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * @param RunnerServiceContext $context
+     * @param $toolStates
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
+    public function setToolsStates(RunnerServiceContext $context, $toolStates)
+    {
+        if ($context instanceof QtiRunnerServiceContext && is_array($toolStates)) {
+            /** @var ToolsStateStorage $toolsStateStorage */
+            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+
+            $toolsStateStorage->storeStates($context->getTestExecutionUri(), $toolStates);
+        }
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @return array
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
+    public function getToolsStates(RunnerServiceContext $context)
+    {
+        if ($context instanceof QtiRunnerServiceContext) {
+            /** @var ToolsStateStorage $toolsStateStorage */
+            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+            $toolsStates = $toolsStateStorage->getStates($context->getTestExecutionUri());
+            return $toolsStates;
+        }
+        return [];
+    }
+
+    /**
      * Parses the responses provided for a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
@@ -1032,20 +1063,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param $direction
      * @param $scope
      * @param $ref
-     * @param $toolStates
      * @return boolean
      * @throws \common_Exception
      */
-    public function move(RunnerServiceContext $context, $direction, $scope, $ref, $toolStates)
+    public function move(RunnerServiceContext $context, $direction, $scope, $ref)
     {
         $result = true;
-
-        if ($context instanceof QtiRunnerServiceContext && is_array($toolStates)) {
-            /** @var ToolsStateStorage $toolsStateStorage */
-            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
-
-            $toolsStateStorage->storeStates($context->getTestExecutionUri(), $toolStates);
-        }
 
         if ($context instanceof QtiRunnerServiceContext) {
             try {

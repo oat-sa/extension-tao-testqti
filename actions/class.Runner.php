@@ -294,14 +294,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
                 $response['lastStoreId'] = $lastStoreId;
                 $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext);
-
-                if ($serviceContext instanceof QtiRunnerServiceContext) {
-                    /** @var ToolsStateStorage $toolsStateStorage */
-                    $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
-                    $toolsStates = $toolsStateStorage->getStates($serviceContext->getTestExecutionUri());
-
-                    $response['tools_states'] = $toolsStates;
-                }
+                $response['tools_states'] = $this->getRunnerService()->getToolsStates($serviceContext);
             }
 
         } catch (common_Exception $e) {
@@ -652,10 +645,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->getRunnerService()->initServiceContext($serviceContext);
 
+            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
+
             $this->saveItemResponses(false);
 
             $serviceContext->getTestSession()->initItemTimer();
-            $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref, $toolStates);
+            $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
 
             $response = [
                 'success' => $result
@@ -699,10 +694,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $ref               = $this->getRequestParameter('ref');
         $scope             = $this->getRequestParameter('scope');
         $start             = $this->hasRequestParameter('start');
+        $toolStates             = $this->getRequestParameter('tool_states');
+        if ($toolStates) {
+            $toolStates = json_decode($toolStates, true);
+        }
 
         try {
             $this->checkSecurityToken();
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+
+            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
 
             $this->endItemTimer();
 
@@ -800,10 +801,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function exitTest()
     {
         $code = 200;
+        $toolStates             = $this->getRequestParameter('tool_states');
+        if ($toolStates) {
+            $toolStates = json_decode($toolStates, true);
+        }
 
         try {
             $this->checkSecurityToken();
             $serviceContext = $this->getServiceContext();
+
+            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer();
