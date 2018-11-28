@@ -43,6 +43,7 @@ use oat\taoQtiTest\models\CompilationDataService;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
 use oat\taoDelivery\model\container\delivery\ContainerProvider;
+use oat\tao\model\metadata\compiler\ResourceJsonMetadataCompiler;
 
 /**
  * A Test Compiler implementation that compiles a QTI Test and related QTI Items.
@@ -350,7 +351,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             // 9. Compile the test definition into PHP source code and put it
             // into the private directory.
             $this->compileTest($assessmentTest);
-            
+
+            // 9.1. Compile test meta data into JSON file.
+            $this->compileTestMetadata($this->getResource());
+
             // 10. Compile the test meta data into PHP array source code and put it
             // into the private directory.
             $this->compileMeta($assessmentTest);
@@ -825,7 +829,20 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 
         common_Logger::d("QTI-PHP Test Compilation file saved to stream.");
     }
-    
+
+    /**
+     * @param core_kernel_classes_Resource $resource
+     * @throws FileNotFoundException
+     * @throws common_Exception
+     */
+    protected function compileTestMetadata(core_kernel_classes_Resource $resource) {
+        /** @var ResourceJsonMetadataCompiler $jsonMetadataCompiler */
+        $jsonMetadataCompiler = $this->getServiceLocator()->get(ResourceJsonMetadataCompiler::SERVICE_ID);
+        $metadataJson = $jsonMetadataCompiler->compile($resource);
+
+        $this->getPrivateDirectory()->write(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_METADATA_FILENAME, json_encode($metadataJson));
+    }
+
     /**
      * Compile Adaptive Test Information.
      * 
