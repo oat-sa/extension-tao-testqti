@@ -26,6 +26,8 @@ define([
     'lodash',
     'i18n',
     'context',
+    'module',
+    'core/router',
     'core/promise',
     'core/communicator',
     'core/communicator/poll',
@@ -45,6 +47,8 @@ define([
     _,
     __,
     context,
+    module,
+    router,
     Promise,
     communicator,
     pollProvider,
@@ -195,11 +199,18 @@ define([
                 return proxyLoader();
             };
 
+            var moduleConfig = module.config();
+
             loadingBar.start();
 
             // verify required options
             if( ! _.every(requiredOptions, hasOption)) {
                 return onError(new TypeError(__('Missing required option %s', name)));
+            }
+
+            // dispatch any extra registered routes
+            if (moduleConfig && _.isArray(moduleConfig.extraRoutes) && moduleConfig.extraRoutes.length) {
+                router.dispatch(moduleConfig.extraRoutes);
             }
 
             //load the plugins and the proxy provider
