@@ -59,6 +59,12 @@ define([
                             testRunner.disableItem(context.itemIdentifier);
                         }
 
+                        // prevent all other messages which can overlap the dialog
+                        $('#feedback-box').addClass('hidden');
+                        setTimeout(function(){
+                            $('.feedback').remove();
+                            $('#feedback-box').removeClass('hidden');
+                        }, 3000);
                         // wait for the message acknowledge before leaving the runner
                         testRunner.trigger('alert.leave', data.message, resolve);
                     });
