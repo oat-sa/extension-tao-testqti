@@ -32,6 +32,20 @@ define([
     'use strict';
 
     /**
+     * Merge each item of a collection with the next
+     * @param {Object[]} collection
+     * @return {Object} the merged collection
+     */
+    var mergeCollection = function mergeCollection(collection){
+        return _.reduce(collection, function(acc, value){
+            if(value){
+                return _.merge(acc, value);
+            }
+            return acc;
+        }, {});
+    };
+
+    /**
      * Build the toolStateBridge instance.
      *
      *
@@ -39,18 +53,18 @@ define([
      * needs to be activated.
      *
      * @param {testStore} testStore - the testStore instance
-     * @param {Object} plugins - the collection of plugins,
+     * @param {String[]} activePlugins - the list of active plugins
      * @returns {toolStateBridge}
      */
-    return function toolStateBridgeFactory(testStore, plugins) {
+    return function toolStateBridgeFactory(testStore, activePlugins) {
 
         var tools = [];
 
         if(!testStore || !_.isFunction(testStore.getStore)){
-            throw new TypeError('The toolStateStore should be initialized with a testStore');
+            throw new TypeError('The toolStateBridge should be initialized with a testStore');
         }
-        if(!_.isPlainObject(plugins) || _.size(plugins) === 0){
-            throw new TypeError('The toolStateStore should be initialized with a the active plugins');
+        if(!_.isArray(activePlugins) || !activePlugins.length){
+            throw new TypeError('The toolStateBridge should be initialized with a the list of active plugins');
         }
 
         /**
@@ -59,26 +73,42 @@ define([
         return {
 
             /**
+             * Set the tools to manage the states.
+             * Each toolName MUST match a plugin name.
              *
+             * This trigger the change tracking in the testStore for the
+             * stores with the tool/plugin name.
+             *
+             * @param {String[]} toolNames - the list of tool names
+             * @returns {toolStateBridge} chains
              */
             setTools : function setTools(toolNames){
 
-                tools = _.filter(toolNames, function(toolName){
-                    return plugins && _.isPlainObject(plugins[toolName]) && plugins[toolName].active === true;
-                });
-                _.forEach(tools, function(toolName){
-                    testStore.trackChanges(toolName);
-                });
+                tools = _(toolNames)
+                    .filter(function(toolName){
+                        return _.contains(activePlugins, toolName);
+                    })
+                    .map(function(toolName){
+                        testStore.trackChanges(toolName);
+                        return toolName;
+                    })
+                    .value();
                 return this;
             },
 
-
+            /**
+             * Get the list of tools
+             * @returns {String[]} the list of configured tools
+             */
             getTools : function getTools(){
                 return tools;
             },
 
             /**
-             *
+             * Restore the state of the given tool
+             * @param {String} toolName - the name of the tool
+             * @param {Object} toolState - the state to restore
+             * @returns {Promise<Boolean>} resolves with true if restored
              */
             restoreState: function restoreState(toolName, toolState){
 
@@ -106,28 +136,50 @@ define([
                 return Promise.resolve(false);
             },
 
-            restore : function restore(states){
+            /**
+             * Restore the states of multiple tools
+             * @param {Object} states - key is the toolName and the value the state to resolve
+             * @returns {Promise<Object>} key is the restored toolName and the value is the status
+             */
+            restoreStates : function restoreStates(states){
                 var self = this;
                 return Promise.all(
                     _.map(states, function(toolState, toolName){
-                        return self.restoreState(toolName, toolState);
+                        return self.restoreState(toolName, toolState)
+                            .then(function(result){
+                                var formattedResult = {};
+                                formattedResult[toolName] = result;
+                                return formattedResult;
+                            });
                     })
-                );
+                )
+                .then(mergeCollection);
             },
 
-            getState : function getState(toolName){
-
-                if(testStore.hasChanges(toolName)){
+            /**
+             * Get the state of a given tool
+             * @param {String} toolName - the name of the tool
+             * @param {Boolean} [reset] - do we reset the change tracking ?
+             * @returns {Promise<Object|Boolean>} resolves with the state
+             */
+            getState : function getState(toolName, reset){
+                if(_.contains(tools, toolName) && testStore.hasChanges(toolName)){
                     return testStore
                         .getStore(toolName)
                         .then(function(toolStore){
-                            testStore.resetChanges(toolName);
+                            if(reset !== false){
+                                testStore.resetChanges(toolName);
+                            }
                             return toolStore.getItems();
                         });
                 }
                 return Promise.resolve(false);
             },
 
+            /**
+             * Get the state for all tools with changes
+             * @returns {Promise<Object>} resolves with the states
+             */
             getStates : function getStates(){
                 var self = this;
                 return Promise.all(
@@ -137,7 +189,7 @@ define([
                             .then(function(toolState){
                                 //format the state to keep the tool identifier
                                 var formattedState = {};
-                                if(toolState !== false){
+                                if(toolState){
                                     formattedState[toolName] = toolState;
                                     return formattedState;
                                 }
@@ -145,17 +197,8 @@ define([
                             });
                     })
                 )
-                .then(function(results){
-                    return _.reduce(results, function(acc, value){
-                        if(value){
-                            return _.merge(acc, value);
-                        }
-                        return acc;
-                    }, {});
-                });
-            },
-
-
+                .then(mergeCollection);
+            }
         };
     };
 });
