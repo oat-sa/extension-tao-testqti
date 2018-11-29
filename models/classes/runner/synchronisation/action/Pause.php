@@ -38,9 +38,15 @@ class Pause extends TestRunnerAction
     public function process()
     {
         $this->validate();
+        $toolStates = $this->getRequestParameter('toolStates');
+        if ($toolStates) {
+            $toolStates = json_decode($toolStates, true);
+        }
 
         try {
             $serviceContext = $this->getServiceContext();
+
+            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
 
             if ($this->getRequestParameter('offline') === true) {
                 $this->setOffline();

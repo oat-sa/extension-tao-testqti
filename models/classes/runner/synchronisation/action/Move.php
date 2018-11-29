@@ -49,11 +49,16 @@ class Move extends TestRunnerAction
         $direction = $this->getRequestParameter('direction');
         $scope     = $this->getRequestParameter('scope');
         $start     = ($this->getRequestParameter('start') !== false);
+        $toolStates = $this->getRequestParameter('toolStates');
+        if ($toolStates) {
+            $toolStates = json_decode($toolStates, true);
+        }
 
         try {
-
             /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getServiceContext(false);
+
+            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer($this->getTime());

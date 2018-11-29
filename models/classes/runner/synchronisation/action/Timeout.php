@@ -48,9 +48,15 @@ class Timeout extends TestRunnerAction
         $ref   = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
         $scope = $this->getRequestParameter('scope');
         $start = ($this->getRequestParameter('start') !== false);
+        $toolStates = $this->getRequestParameter('toolStates');
+        if ($toolStates) {
+            $toolStates = json_decode($toolStates, true);
+        }
 
         try {
             $serviceContext = $this->getServiceContext(false);
+
+            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer($this->getTime());
