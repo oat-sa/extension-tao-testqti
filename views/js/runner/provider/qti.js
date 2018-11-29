@@ -31,6 +31,7 @@ define([
     'taoTests/runner/probeOverseer',
     'taoTests/runner/testStore',
     'taoQtiTest/runner/provider/dataUpdater',
+    'taoQtiTest/runner/provider/toolStateBridgeFactory',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
@@ -49,6 +50,7 @@ define([
     probeOverseerFactory,
     testStoreFactory,
     dataUpdater,
+    toolStateBridgeFactory,
     currentItemHelper,
     mapHelper,
     navigationHelper,
@@ -194,6 +196,8 @@ define([
              * to a 3rd part component, the dataUpdater.
              */
             this.dataUpdater = dataUpdater(this.getDataHolder());
+
+            this.toolStateBridge = toolStateBridgeFactory(this.getTestStore(), this.getPlugins());
         },
 
         /**
@@ -283,6 +287,14 @@ define([
                 });
 
                 feedbackPromise.then(function(){
+                    return self.toolStateBridge.getStates();
+                })
+                .then(function(toolsStates){
+
+                    if(toolsStates && _.size(toolsStates) > 0){
+                        params.toolsStates = toolsStates;
+                    }
+
                     // ensure the answered state of the current item is correctly set and the stats are aligned
                     self.setTestMap(self.dataUpdater.updateStats());
                     //to be sure load start after unload...
@@ -515,18 +527,32 @@ define([
             return this.getTestStore().getStorageIdentifier().then(function(storeId){
 
                 //load data and current context in parallel at initialization
-                return self.getProxy().init({
-                    storeId : storeId
-                }).then(function(results){
+                return self.getProxy()
+                    .init({
+                        storeId : storeId
+                    })
+                    .then(function(response){
 
-                    self.dataUpdater.update(results);
+                        //fill the dataHolder, build the jump table, etc.
+                        self.dataUpdater.update(response);
 
-                    //set the plugin config from the test data
-                    self.dataUpdater.updatePluginsConfig(self.getPlugins());
+                        //set the plugin config from the test data
+                        self.dataUpdater.updatePluginsConfig(self.getPlugins());
 
-                    //this checks the received storeId and clear the volatiles stores
-                    self.getTestStore().clearVolatileIfStoreChange(results.lastStoreId);
-                });
+                        //this checks the received storeId and clear the volatiles stores
+                        return self.getTestStore()
+                                .clearVolatileIfStoreChange(response.lastStoreId)
+                                .then(function(){
+                                    return response;
+                                });
+
+                    })
+                    .then(function(response){
+                        if(response.toolsStates){
+                            self.toolStateBrdge.setTools(_.keys(response.toolsStates));
+                            return self.toolStateBridge.restore(response.toolsStates);
+                        }
+                    });
             });
         },
 
