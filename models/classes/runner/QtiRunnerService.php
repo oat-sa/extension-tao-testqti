@@ -1231,7 +1231,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
             $toolsStates = $toolsStateStorage->deleteStates($context->getTestExecutionUri());
 
-            $response['tools_states'] = $toolsStates;
+            $response['toolStates'] = $toolsStates;
 
             $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($executionUri);
         } else {

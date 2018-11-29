@@ -294,7 +294,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
                 $response['lastStoreId'] = $lastStoreId;
                 $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext);
-                $response['tools_states'] = $this->getRunnerService()->getToolsStates($serviceContext);
+                $response['toolStates'] = $this->getRunnerService()->getToolsStates($serviceContext);
             }
 
         } catch (common_Exception $e) {
