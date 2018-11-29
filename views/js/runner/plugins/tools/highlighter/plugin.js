@@ -40,6 +40,19 @@ define([
 
         name: 'highlighter',
 
+
+        /**
+         * Install plugin's functions
+         *
+         */
+        install : function install(){
+
+            var testRunner = this.getTestRunner();
+
+            //define the "highlighter" store as "volatile" (removed on browser change).
+            testRunner.getTestStore().setVolatile(this.getName());
+        },
+
         /**
          * Initialize the plugin (called during runner's init)
          */
@@ -51,7 +64,8 @@ define([
             var testConfig = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
 
-            var highlighter = highlighterFactory(testRunner);
+
+            var highlighter = highlighterFactory();
 
             // create buttons
             this.buttonMain = this.getAreaBroker().getToolbox().createEntry({
@@ -69,17 +83,16 @@ define([
             });
 
             // attach user events
-            this.buttonMain
-                .on('mousedown', function(e) { // using 'mousedown' instead of 'click' to avoid losing current selection
-                    e.preventDefault();
-                    testRunner.trigger('tool-highlight');
-                });
+            this.buttonMain.on('mousedown', function(e) {
+                // using 'mousedown' instead of 'click' to avoid losing current selection
+                e.preventDefault();
+                testRunner.trigger('tool-highlight');
+            });
 
-            this.buttonRemove
-                .on('click', function(e) {
-                    e.preventDefault();
-                    testRunner.trigger('tool-highlight-remove');
-                });
+            this.buttonRemove.on('click', function(e) {
+                e.preventDefault();
+                highlighter.clearHighlights();
+            });
 
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.toggle) {
@@ -114,8 +127,20 @@ define([
                 }
             }
 
-            //update plugin state based on changes
-            testRunner
+            highlighter
+                .on('start', function(){
+                    self.buttonMain.turnOn();
+                    self.trigger('start');
+                })
+                .on('end', function(){
+                    self.buttonMain.turnOff();
+                    self.trigger('end');
+                });
+
+            return testRunner.getPluginStore(self.getName()).then(function(highlighterStore){
+
+                //update plugin state based on changes
+                testRunner
                 .on('loaditem', togglePlugin)
                 .on('enabletools renderitem', function () {
                     self.enable();
@@ -123,33 +148,31 @@ define([
                 .on('renderitem', function() {
                     var testContext = testRunner.getTestContext();
                     if(isEnabled()){
-                        highlighter.restoreHighlight(testContext.itemIdentifier);
+                        return highlighterStore
+                            .getItem(testContext.itemIdentifier)
+                            .then(function(index){
+                                highlighter.restoreIndex(index);
+                            });
                     }
                 })
-                .on('beforeunloaditem', function() {
+                .before('skip move timeout', function() {
                     var testContext = testRunner.getTestContext();
                     if(isEnabled()){
-                        highlighter.saveHighlight(testContext.itemIdentifier);
+                        return highlighterStore.setItem(testContext.itemIdentifier, highlighter.getIndex());
                     }
                 })
                 .on('disabletools unloaditem', function () {
                     self.disable();
-                    highlighter.toggleHighlighting(false);
+                    if (isEnabled()) {
+                        highlighter.toggleHighlighting(false);
+                    }
                 })
                 .on('tool-highlight', function () {
                     if (isEnabled()) {
                         highlighter.trigger();
                     }
-                })
-                .on('tool-highlight-remove', function () {
-                    highlighter.clearHighlights();
-                })
-                .on('plugin-start.highlighter', function() {
-                    self.buttonMain.turnOn();
-                })
-                .on('plugin-end.highlighter', function() {
-                    self.buttonMain.turnOff();
                 });
+            });
         },
 
         /**
