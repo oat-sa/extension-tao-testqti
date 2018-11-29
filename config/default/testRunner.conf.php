@@ -563,5 +563,5 @@ return array(
     /**
      * Specifies runner tools that should keep its states in backend storage
      */
-    'tool-state-server-storage' => ['highlighter'],
+    'tool-state-server-storage' => [],
 );

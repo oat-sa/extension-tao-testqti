@@ -1699,7 +1699,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
-            $config['tool-state-server-storage'] = ['highlighter'];
+            $config['tool-state-server-storage'] = [];
             $extension->setConfig('testRunner', $config);
 
             $this->setVersion('29.3.0');
