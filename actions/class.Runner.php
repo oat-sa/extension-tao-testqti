@@ -629,7 +629,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $direction         = $this->getRequestParameter('direction');
         $scope             = $this->getRequestParameter('scope');
         $start             = $this->hasRequestParameter('start');
-        $toolStates             = $this->getRequestParameter('tool_states');
+        $toolStates             = $this->getRequestParameter('toolStates');
         if ($toolStates) {
             $toolStates = json_decode($toolStates, true);
         }
@@ -694,7 +694,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $ref               = $this->getRequestParameter('ref');
         $scope             = $this->getRequestParameter('scope');
         $start             = $this->hasRequestParameter('start');
-        $toolStates             = $this->getRequestParameter('tool_states');
+        $toolStates             = $this->getRequestParameter('toolStates');
         if ($toolStates) {
             $toolStates = json_decode($toolStates, true);
         }
@@ -749,10 +749,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $scope = $this->getRequestParameter('scope');
         $start = $this->hasRequestParameter('start');
         $late = $this->hasRequestParameter('late');
+        $toolStates             = $this->getRequestParameter('toolStates');
+        if ($toolStates) {
+            $toolStates = json_decode($toolStates, true);
+        }
 
         try {
             $this->checkSecurityToken();
             $serviceContext = $this->getServiceContext();
+
+            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer();
@@ -801,7 +807,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function exitTest()
     {
         $code = 200;
-        $toolStates             = $this->getRequestParameter('tool_states');
+        $toolStates             = $this->getRequestParameter('toolStates');
         if ($toolStates) {
             $toolStates = json_decode($toolStates, true);
         }
