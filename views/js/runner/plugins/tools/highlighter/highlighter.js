@@ -104,7 +104,7 @@ define([
             /**
              * Either highlight the current or selection, or toggle highlighting mode
              */
-            trigger: function trigger() {
+            highlight: function highlight() {
                 if (!isHighlighting) {
                     if (!selection.isCollapsed) {
                         this.toggleHighlighting(true);
@@ -134,7 +134,6 @@ define([
              * @returns {Array} index
              */
             getIndex: function getIndex() {
-                console.log(highlightHelper.getHighlightIndex());
                 return highlightHelper.getHighlightIndex();
             },
 

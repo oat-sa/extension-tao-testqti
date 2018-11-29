@@ -169,7 +169,7 @@ define([
                 })
                 .on('tool-highlight', function () {
                     if (isEnabled()) {
-                        highlighter.trigger();
+                        highlighter.highlight();
                     }
                 });
             });
