@@ -559,4 +559,9 @@ return array(
      * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
      */
     'guidedNavigation' => false,
+
+    /**
+     * Specifies runner tools that should keep its states in backend storage
+     */
+    'tool-state-server-storage' => ['highlighter'],
 );
