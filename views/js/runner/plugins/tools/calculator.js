@@ -27,10 +27,21 @@ define([
     'i18n',
     'ui/hider',
     'ui/calculator',
+    'ui/maths/calculator/basicCalculator',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory){
+], function (
+    $,
+    _,
+    __,
+    hider,
+    calculatorFactory,
+    basicCalculatorFactory,
+    shortcut,
+    namespaceHelper,
+    pluginFactory
+){
     'use strict';
 
     var _default = {
@@ -67,8 +78,10 @@ define([
                 var context = testRunner.getTestContext() || {},
                     options = context.options || {};
 
-                //to be activated with the special category x-tao-option-calculator
-                return !!options.calculator;
+                //to be activated with a special category from:
+                // - x-tao-option-calculator
+                // - x-tao-option-calculator-bodmas
+                return !!options.calculator || !!options.calculatorBodmas;
             }
 
             /**
@@ -84,10 +97,21 @@ define([
 
             /**
              * Build the calculator component
-             * @param {Function} [calcTpl] - an optional alternative template for the calculator
+             * @param {Function} [calcTpl] - An optional alternative template for the calculator.
+             *                               Only compatible with the four-functions version
              */
             function buildCalculator(calcTpl){
-                self.calculator = calculatorFactory(_.defaults({
+                var context = testRunner.getTestContext() || {};
+                var options = context.options || {};
+                var factory;
+
+                if (options.calculatorBodmas) {
+                    factory = basicCalculatorFactory;
+                } else {
+                    factory = calculatorFactory;
+                }
+
+                self.calculator = factory(_.defaults({
                     renderTo: self.$calculatorContainer,
                     replace: true,
                     draggableContainer: areaBroker.getContainer(),

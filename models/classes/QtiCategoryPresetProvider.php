@@ -156,6 +156,14 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'pluginId'      => 'calculator'
                 ]),
                 TestCategoryPreset::fromArray([
+                    'id'            => 'calculatorBodmas',
+                    'label'         => __('Calculator BODMAS'),
+                    'qtiCategory'   => 'x-tao-option-calculatorBodmas',
+                    'description'   => __('Allow the test-taker to use a calculator respecting the order of operations (BODMAS).'),
+                    'order'         => 400,
+                    'pluginId'      => 'calculator'
+                ]),
+                TestCategoryPreset::fromArray([
                     'id'            => 'highlighter',
                     'label'         => __('Highlighter'),
                     'qtiCategory'   => 'x-tao-option-highlighter',
