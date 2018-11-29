@@ -31,7 +31,7 @@ define([
     'taoTests/runner/probeOverseer',
     'taoTests/runner/testStore',
     'taoQtiTest/runner/provider/dataUpdater',
-    'taoQtiTest/runner/provider/toolStateBridgeFactory',
+    'taoQtiTest/runner/provider/toolStateBridge',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
@@ -197,7 +197,7 @@ define([
              */
             this.dataUpdater = dataUpdater(this.getDataHolder());
 
-            this.toolStateBridge = toolStateBridgeFactory(this.getTestStore(), this.getPlugins());
+            this.toolStateBridge = toolStateBridgeFactory(this.getTestStore(), _.keys(this.getPlugins()));
         },
 
         /**
@@ -549,8 +549,9 @@ define([
                     })
                     .then(function(response){
                         if(response.toolsStates){
-                            self.toolStateBrdge.setTools(_.keys(response.toolsStates));
-                            return self.toolStateBridge.restore(response.toolsStates);
+                            return self.toolStateBridge
+                                .setTools(_.keys(response.toolsStates))
+                                .restoreStates(response.toolsStates);
                         }
                     });
             });
