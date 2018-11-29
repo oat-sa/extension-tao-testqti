@@ -28,6 +28,7 @@ define([
     'ui/hider',
     'ui/calculator',
     'ui/maths/calculator/basicCalculator',
+    'ui/maths/calculator/scientificCalculator',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin'
@@ -38,19 +39,42 @@ define([
     hider,
     calculatorFactory,
     basicCalculatorFactory,
+    scientificCalculatorFactory,
     shortcut,
     namespaceHelper,
     pluginFactory
 ){
     'use strict';
 
-    var _default = {
+    /**
+     * Default config for calculator components
+     * @type {Object}
+     */
+    var defaultCalcConfig = {
         height : 360,
         width : 240,
         top : 50,
         left : 10,
         stackingScope: 'test-runner'
     };
+
+    /**
+     * Default config for BODMAS calculator component
+     * @type {Object}
+     */
+    var bodmasCalcConfig = _.defaults({
+        height : 360,
+        width : 240
+    }, defaultCalcConfig);
+
+    /**
+     * Default config for scientific calculator component
+     * @type {Object}
+     */
+    var scientificCalcConfig = _.defaults({
+        width: 450,
+        height: 400
+    }, defaultCalcConfig);
 
     /**
      * Returns the configured plugin
@@ -81,7 +105,8 @@ define([
                 //to be activated with a special category from:
                 // - x-tao-option-calculator
                 // - x-tao-option-calculator-bodmas
-                return !!options.calculator || !!options.calculatorBodmas;
+                // - x-tao-option-calculator-scientific
+                return !!options.calculator || !!options.calculatorBodma || !!options.calculatorScientific;
             }
 
             /**
@@ -103,12 +128,17 @@ define([
             function buildCalculator(calcTpl){
                 var context = testRunner.getTestContext() || {};
                 var options = context.options || {};
-                var factory;
+                var factory, calcConfig;
 
-                if (options.calculatorBodmas) {
+                if (options.calculatorScientific) {
+                    factory = scientificCalculatorFactory;
+                    calcConfig = scientificCalcConfig;
+                } else if (options.calculatorBodmas) {
                     factory = basicCalculatorFactory;
+                    calcConfig = bodmasCalcConfig;
                 } else {
                     factory = calculatorFactory;
+                    calcConfig = defaultCalcConfig;
                 }
 
                 self.calculator = factory(_.defaults({
@@ -116,7 +146,7 @@ define([
                     replace: true,
                     draggableContainer: areaBroker.getContainer(),
                     alternativeTemplate : calcTpl || null
-                }, _default)).on('show', function () {
+                }, calcConfig)).on('show', function () {
                     self.trigger('open');
                     self.button.turnOn();
                 }).on('hide', function () {
