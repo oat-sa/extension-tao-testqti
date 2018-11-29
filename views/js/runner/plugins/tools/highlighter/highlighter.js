@@ -88,6 +88,7 @@ define([
          * The highlighter instance
          */
         return eventifier({
+
             /**
              * toggle highlighting mode on and off
              * @param {Boolean} bool - wanted state

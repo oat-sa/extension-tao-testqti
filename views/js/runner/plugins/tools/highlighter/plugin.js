@@ -86,18 +86,24 @@ define([
             this.buttonMain.on('mousedown', function(e) {
                 // using 'mousedown' instead of 'click' to avoid losing current selection
                 e.preventDefault();
-                testRunner.trigger('tool-highlight');
+                if(isEnabled()){
+                    highlighter.highlight();
+                }
             });
 
             this.buttonRemove.on('click', function(e) {
                 e.preventDefault();
-                highlighter.clearHighlights();
+                if(isEnabled()){
+                    highlighter.clearHighlights();
+                }
             });
 
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.toggle) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
-                        testRunner.trigger('tool-highlight');
+                        if(isEnabled()){
+                            highlighter.highlight();
+                        }
                     }, { avoidInput: true, prevent: true });
                 }
             }
@@ -165,11 +171,6 @@ define([
                     self.disable();
                     if (isEnabled()) {
                         highlighter.toggleHighlighting(false);
-                    }
-                })
-                .on('tool-highlight', function () {
-                    if (isEnabled()) {
-                        highlighter.highlight();
                     }
                 });
             });
