@@ -1683,22 +1683,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('26.1.2');
         }
 
-        $this->skip('26.1.2', '29.4.0');
-
-        if ($this->isVersion('29.4.1')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-
-            $currentTarget = $config['timer']['target'];
-
-            if ($currentTarget === 'client') {
-                $config['timer']['target'] = TimePoint::TARGET_CLIENT;
-            } else {
-                $config['timer']['target'] = TimePoint::TARGET_SERVER;
-            }
-            
-            $extension->setConfig('testRunner', $config);
-            $this->setVersion('29.4.1');
-        }
+        $this->skip('26.1.2', '29.4.1');
     }
 }
