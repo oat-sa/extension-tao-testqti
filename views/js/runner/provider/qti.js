@@ -289,10 +289,10 @@ define([
                 feedbackPromise.then(function(){
                     return self.toolStateBridge.getStates();
                 })
-                .then(function(toolsStates){
+                .then(function(toolStates){
 
-                    if(toolsStates && _.size(toolsStates) > 0){
-                        params.toolsStates = toolsStates;
+                    if(toolStates && _.size(toolStates) > 0){
+                        params.toolStates = toolStates;
                     }
 
                     // ensure the answered state of the current item is correctly set and the stats are aligned
@@ -548,10 +548,10 @@ define([
 
                     })
                     .then(function(response){
-                        if(response.toolsStates){
+                        if(response.toolStates){
                             return self.toolStateBridge
-                                .setTools(_.keys(response.toolsStates))
-                                .restoreStates(response.toolsStates);
+                                .setTools(_.keys(response.toolStates))
+                                .restoreStates(response.toolStates);
                         }
                     });
             });
