@@ -209,7 +209,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         $last = false;
 
         if ($length) {
-            $last = $points[$length - 1]->getTimestamp();
+            $last = end($points)->getTimestamp();
         }
         
         return $last;

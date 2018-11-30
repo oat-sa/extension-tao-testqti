@@ -27,19 +27,54 @@ define([
     'i18n',
     'ui/hider',
     'ui/calculator',
+    'ui/maths/calculator/basicCalculator',
+    'ui/maths/calculator/scientificCalculator',
     'util/shortcut',
     'util/namespace',
     'taoTests/runner/plugin'
-], function ($, _, __, hider, calculatorFactory, shortcut, namespaceHelper, pluginFactory){
+], function (
+    $,
+    _,
+    __,
+    hider,
+    calculatorFactory,
+    basicCalculatorFactory,
+    scientificCalculatorFactory,
+    shortcut,
+    namespaceHelper,
+    pluginFactory
+){
     'use strict';
 
-    var _default = {
+    /**
+     * Default config for calculator components
+     * @type {Object}
+     */
+    var defaultCalcConfig = {
         height : 360,
         width : 240,
         top : 50,
         left : 10,
         stackingScope: 'test-runner'
     };
+
+    /**
+     * Default config for BODMAS calculator component
+     * @type {Object}
+     */
+    var bodmasCalcConfig = _.defaults({
+        height : 360,
+        width : 240
+    }, defaultCalcConfig);
+
+    /**
+     * Default config for scientific calculator component
+     * @type {Object}
+     */
+    var scientificCalcConfig = _.defaults({
+        width: 450,
+        height: 400
+    }, defaultCalcConfig);
 
     /**
      * Returns the configured plugin
@@ -67,8 +102,11 @@ define([
                 var context = testRunner.getTestContext() || {},
                     options = context.options || {};
 
-                //to be activated with the special category x-tao-option-calculator
-                return !!options.calculator;
+                //to be activated with a special category from:
+                // - x-tao-option-calculator
+                // - x-tao-option-calculator-bodmas
+                // - x-tao-option-calculator-scientific
+                return !!options.calculator || !!options.calculatorBodma || !!options.calculatorScientific;
             }
 
             /**
@@ -84,15 +122,31 @@ define([
 
             /**
              * Build the calculator component
-             * @param {Function} [calcTpl] - an optional alternative template for the calculator
+             * @param {Function} [calcTpl] - An optional alternative template for the calculator.
+             *                               Only compatible with the four-functions version
              */
             function buildCalculator(calcTpl){
-                self.calculator = calculatorFactory(_.defaults({
+                var context = testRunner.getTestContext() || {};
+                var options = context.options || {};
+                var factory, calcConfig;
+
+                if (options.calculatorScientific) {
+                    factory = scientificCalculatorFactory;
+                    calcConfig = scientificCalcConfig;
+                } else if (options.calculatorBodmas) {
+                    factory = basicCalculatorFactory;
+                    calcConfig = bodmasCalcConfig;
+                } else {
+                    factory = calculatorFactory;
+                    calcConfig = defaultCalcConfig;
+                }
+
+                self.calculator = factory(_.defaults({
                     renderTo: self.$calculatorContainer,
                     replace: true,
                     draggableContainer: areaBroker.getContainer(),
                     alternativeTemplate : calcTpl || null
-                }, _default)).on('show', function () {
+                }, calcConfig)).on('show', function () {
                     self.trigger('open');
                     self.button.turnOn();
                 }).on('hide', function () {

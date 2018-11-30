@@ -220,6 +220,24 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                     ];
                 }
 
+                if (!is_null($this->getTimer())) {
+                    if (!isset($timer)) {
+                        $timer = $this->getTimer();
+                    }
+
+                    $lastTimestamp = $timer->getLastRegisteredTimestamp();
+                    $firstTimestamp = $timer->getFirstTimestamp([]);
+                    $diffInSeconds = $lastTimestamp - $firstTimestamp;
+
+                    if (!isset($maxTimeSeconds)) {
+                        $maxTimeSeconds = $this->durationToMs($maxTime);
+                    }
+
+                    $maxTimeRemaining = $maxTimeSeconds - $diffInSeconds;
+                } else {
+                    $maxTimeRemaining = $this->durationToMs($maxTimeRemaining);
+                }
+
                 /** @var TimerLabelFormatterService $labelFormatter */
                 $labelFormatter = ServiceManager::getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
                 return [
@@ -231,7 +249,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                     'minTime'             => $this->durationToMs($minTime),
                     'minTimeRemaining'    => $this->durationToMs($minTimeRemaining),
                     'maxTime'             => $this->durationToMs($maxTime),
-                    'maxTimeRemaining'    => $this->durationToMs($maxTimeRemaining),
+                    'maxTimeRemaining'    => $maxTimeRemaining,
                 ];
             }
         }
