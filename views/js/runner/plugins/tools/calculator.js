@@ -106,7 +106,7 @@ define([
                 // - x-tao-option-calculator
                 // - x-tao-option-calculator-bodmas
                 // - x-tao-option-calculator-scientific
-                return !!options.calculator || !!options.calculatorBodma || !!options.calculatorScientific;
+                return !!options.calculator || !!options.calculatorBodmas || !!options.calculatorScientific;
             }
 
             /**
