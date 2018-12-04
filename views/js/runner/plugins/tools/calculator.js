@@ -152,7 +152,9 @@ define([
                 }).on('hide', function () {
                     self.trigger('close');
                     self.button.turnOff();
-                }).show();
+                }).after('render', function() {
+                    this.show();
+                });
             }
 
             /**
