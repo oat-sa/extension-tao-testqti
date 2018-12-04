@@ -725,22 +725,22 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function getToolsStates(RunnerServiceContext $context)
     {
+        $toolsStates = [];
         if ($context instanceof QtiRunnerServiceContext) {
             /** @var ToolsStateStorage $toolsStateStorage */
             $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
             $toolsStates = $toolsStateStorage->getStates($context->getTestExecutionUri());
-
-            // add those tools missing from the storage but presented on the config
-            $toolsEnabled = $this->getTestConfig()->getConfigValue('toolStateServerStorage');
-            foreach ($toolsEnabled as $toolEnabled) {
-                if (!array_key_exists($toolEnabled, $toolsStates)) {
-                    $toolsStates[$toolEnabled] = null;
-                }
-            }
-
-            return $toolsStates;
         }
-        return [];
+
+        // add those tools missing from the storage but presented on the config
+        $toolsEnabled = $this->getTestConfig()->getConfigValue('toolStateServerStorage');
+        foreach ($toolsEnabled as $toolEnabled) {
+            if (!array_key_exists($toolEnabled, $toolsStates)) {
+                $toolsStates[$toolEnabled] = null;
+            }
+        }
+
+        return $toolsStates;
     }
 
     /**
