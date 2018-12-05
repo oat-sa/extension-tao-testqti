@@ -21,6 +21,7 @@ namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\RunnerToolStates;
 
 /**
  * Class Move
@@ -31,6 +32,8 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
  */
 class Move extends TestRunnerAction
 {
+    use RunnerToolStates;
+
     /**
      * Process the move action.
      *
@@ -49,16 +52,12 @@ class Move extends TestRunnerAction
         $direction = $this->getRequestParameter('direction');
         $scope     = $this->getRequestParameter('scope');
         $start     = ($this->getRequestParameter('start') !== false);
-        $toolStates = $this->getRequestParameter('toolStates');
-        if ($toolStates) {
-            $toolStates = json_decode($toolStates, true);
-        }
 
         try {
             /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getServiceContext(false);
 
-            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
+            $this->saveToolStates();
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer($this->getTime());

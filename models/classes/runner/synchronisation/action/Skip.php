@@ -49,15 +49,11 @@ class Skip extends TestRunnerAction
 
         $scope = $this->getRequestParameter('scope');
         $start = ($this->getRequestParameter('start') !== false);
-        $toolStates = $this->getRequestParameter('toolStates');
-        if ($toolStates) {
-            $toolStates = json_decode($toolStates, true);
-        }
 
         try {
             $serviceContext = $this->getServiceContext();
 
-            $this->getRunnerService()->setToolsStates($serviceContext, $toolStates);
+            $this->saveToolStates();
 
             $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $this->getTime());
 

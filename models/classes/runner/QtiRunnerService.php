@@ -722,6 +722,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param RunnerServiceContext $context
      * @return array
      * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     * @throws \common_ext_ExtensionException
      */
     public function getToolsStates(RunnerServiceContext $context)
     {
