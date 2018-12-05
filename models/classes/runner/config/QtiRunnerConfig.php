@@ -48,6 +48,8 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
      */
     const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
 
+    const TARGET_CLIENT = 'client';
+
     /**
      * The test runner config
      * @var array
@@ -110,7 +112,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'target' => $target,
                     'resetAfterResume' => !empty($rawConfig['reset-timer-after-resume']),
                     'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
-                    'restoreTimerFromClient' => $target === TimePoint::TARGET_CLIENT,
+                    'restoreTimerFromClient' => $target === self::TARGET_CLIENT,
                 ],
                 'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
                 'enableValidateResponses' => isset($rawConfig['enable-validate-responses']) ? $rawConfig['enable-validate-responses'] : false,
