@@ -57,7 +57,7 @@ define([
             this.prepareParams = function prepareParams(actionParams){
 
                 //some parameters need to be JSON.stringified
-                var stringifyParams = ['itemState', 'itemResponse', 'toolsStates'];
+                var stringifyParams = ['itemState', 'itemResponse', 'toolStates'];
 
                 if(_.isPlainObject(actionParams)){
                     return _.mapValues(actionParams, function(value, key){
