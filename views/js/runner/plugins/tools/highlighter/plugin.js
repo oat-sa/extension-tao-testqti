@@ -59,10 +59,11 @@ define([
         init: function init() {
             var self = this;
 
-            var testRunner = this.getTestRunner();
-            var testData = testRunner.getTestData() || {};
-            var testConfig = testData.config || {};
+            var testRunner      = this.getTestRunner();
+            var testData        = testRunner.getTestData() || {};
+            var testConfig      = testData.config || {};
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
+            var hasHighlights   = false;
 
 
             var highlighter = highlighterFactory();
@@ -137,10 +138,12 @@ define([
                 .on('start', function(){
                     self.buttonMain.turnOn();
                     self.trigger('start');
+                    hasHighlights = true;
                 })
                 .on('end', function(){
                     self.buttonMain.turnOff();
                     self.trigger('end');
+                    hasHighlights = false;
                 });
 
             return testRunner.getPluginStore(self.getName()).then(function(highlighterStore){
@@ -157,13 +160,16 @@ define([
                         return highlighterStore
                             .getItem(testContext.itemIdentifier)
                             .then(function(index){
-                                highlighter.restoreIndex(index);
+                                if(index){
+                                    hasHighlights = true;
+                                    highlighter.restoreIndex(index);
+                                }
                             });
                     }
                 })
                 .before('skip move timeout', function() {
                     var testContext = testRunner.getTestContext();
-                    if(isEnabled()){
+                    if(isEnabled() && hasHighlights){
                         return highlighterStore.setItem(testContext.itemIdentifier, highlighter.getIndex());
                     }
                 })
