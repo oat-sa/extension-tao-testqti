@@ -56,7 +56,7 @@ abstract class ToolsStateStorageTestCase extends TestCase
         $this->assertEquals($states, $retrievedStates);
     }
 
-    public function testPartialUpdate()
+    public function testUpdate()
     {
         $storage = $this->getStorage();
 
@@ -69,11 +69,34 @@ abstract class ToolsStateStorageTestCase extends TestCase
 
         // update
         $statesForUpdate = [
-            'calculator' => 'calculator-state',
+            'highlighter' => 'highlighter-state2',
+            'magnifier' => 'magnifier-state2',
         ];
         $storage->storeStates('deliveryExecutionToUpdate', $statesForUpdate);
 
         $retrievedStates = $storage->getStates('deliveryExecutionToUpdate');
+
+        $this->assertEquals($statesForUpdate, $retrievedStates);
+    }
+
+    public function testUpdateDoesNotEraseNotPassedFields()
+    {
+        $storage = $this->getStorage();
+
+        // create
+        $statesForCreate = [
+            'highlighter' => 'highlighter-state',
+            'magnifier' => 'magnifier-state',
+        ];
+        $storage->storeStates('deliveryExecutionToUpdatePartially', $statesForCreate);
+
+        // update
+        $statesForUpdate = [
+            'calculator' => 'calculator-state',
+        ];
+        $storage->storeStates('deliveryExecutionToUpdatePartially', $statesForUpdate);
+
+        $retrievedStates = $storage->getStates('deliveryExecutionToUpdatePartially');
 
         $this->assertEquals(array_merge($statesForCreate, $statesForUpdate), $retrievedStates);
     }
