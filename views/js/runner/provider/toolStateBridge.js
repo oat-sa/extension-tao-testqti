@@ -89,7 +89,7 @@ define([
                         return _.contains(activePlugins, toolName);
                     })
                     .map(function(toolName){
-                        testStore.trackChanges(toolName);
+                        testStore.startChangeTracking(toolName);
                         return toolName;
                     })
                     .value();
