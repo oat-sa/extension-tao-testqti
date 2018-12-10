@@ -77,6 +77,7 @@ use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
+use oat\taoTests\models\runner\time\TimePoint;
 
 /**
  *
@@ -1685,9 +1686,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('26.1.2');
         }
 
-        $this->skip('26.1.2', '29.2.0');
+        $this->skip('26.1.2', '29.5.0');
 
-        if ($this->isVersion('29.2.0')) {
+        if ($this->isVersion('29.5.0')) {
             $installRdsToolsStateStorage = new InstallRdsToolsStateStorage();
             $installRdsToolsStateStorage->setServiceLocator($this->getServiceManager());
             $installRdsToolsStateStorage([]);
@@ -1702,7 +1703,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $config['tool-state-server-storage'] = [];
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('29.3.0');
+            $this->setVersion('29.6.0');
         }
     }
 }

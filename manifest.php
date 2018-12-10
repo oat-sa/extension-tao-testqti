@@ -38,12 +38,12 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '29.3.0',
+    'version'     => '29.5.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoQtiItem' => '>=18.0.0',
         'taoTests'   => '>=8.0.0',
-        'tao'        => '>=21.3.0',
+        'tao'        => '>=21.16.0',
         'generis'    => '>=7.11.0',
         'taoDelivery' => '>=11.0.0',
         'taoItems'   => '>=6.0.0',
@@ -76,7 +76,7 @@ return array(
             SyncChannelInstaller::class,
             RegisterTestContainer::class,
             SetUpQueueTasks::class,
-            \oat\taoQtiTest\scripts\install\RegisterToolsStateStorage::class,
+            \oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage::class,
         )
     ),
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
