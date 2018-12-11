@@ -276,6 +276,7 @@ define([
             var scopeMap = _.cloneDeep(map || {});
             var part;
             var section;
+            var partSections;
 
             // gets the current part and section
             if (context && context.testPartId) {
@@ -302,8 +303,17 @@ define([
             }
 
             // update the stats to reflect the scope
-            if (section) {
-                section.stats = this.computeItemStats(section.items);
+            if (context && context.options && context.options.reviewSkipahead) {
+                partSections = part.sections || {};
+                if (partSections) {
+                    _.each(partSections, function(partSection) {
+                        partSection.stats = this.computeItemStats(partSection.items);
+                    }, this);
+                }
+            } else {
+                if (section) {
+                    section.stats = this.computeItemStats(section.items);
+                }
             }
             if (part) {
                 part.stats = this.computeStats(part.sections);
@@ -435,6 +445,9 @@ define([
                 }
                 if (item.viewed) {
                     acc.viewed++;
+                }
+                if (item.categories && item.categories.includes('x-tao-option-review-skipahead')) {
+                    item.canBeSkipped = true;
                 }
                 acc.total++;
                 return acc;
