@@ -19,12 +19,14 @@
  */
 namespace oat\taoQtiTest\test\unit;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\TestCase;
 use oat\taoQtiTest\models\TestCategoryRulesGenerator;
 use oat\taoQtiTest\models\TestCategoryRulesUtils;
+use qtism\data\expressions\NumberCorrect;
+use qtism\data\expressions\operators\Sum;
 use qtism\data\storage\xml\XmlDocument;
 
-class TestCategoryRulesGeneratorTest extends TaoPhpUnitTestRunner 
+class TestCategoryRulesGeneratorTest extends TestCase
 {
     
     static public function samplesDir() 
@@ -53,21 +55,21 @@ class TestCategoryRulesGeneratorTest extends TaoPhpUnitTestRunner
         $this->assertCount(4, $setOutcomeValues);
         
         $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[0]->getIdentifier());
-        $this->assertInstanceOf('qtism\\data\\expressions\\NumberCorrect', $setOutcomeValues[0]->getExpression());
+        $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[0]->getExpression());
         $this->assertEquals(array('math'), $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
-        
+
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[1]->getIdentifier());
-        $this->assertInstanceOf('qtism\\data\\expressions\\operators\\Sum', $setOutcomeValues[1]->getExpression());
+        $this->assertInstanceOf(Sum::class, $setOutcomeValues[1]->getExpression());
         $this->assertEquals(array('math'), $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
         $this->assertEquals('', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
         $this->assertEquals('SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[2]->getIdentifier());
-        $this->assertInstanceOf('qtism\\data\\expressions\\NumberCorrect', $setOutcomeValues[2]->getExpression());
+        $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[2]->getExpression());
         $this->assertEquals(array('english'), $setOutcomeValues[2]->getExpression()->getIncludeCategories()->getArrayCopy());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[3]->getIdentifier());
-        $this->assertInstanceOf('qtism\\data\\expressions\\operators\\Sum', $setOutcomeValues[3]->getExpression());
+        $this->assertInstanceOf(Sum::class, $setOutcomeValues[3]->getExpression());
         $this->assertEquals(array('english'), $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
         $this->assertEquals('', $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getWeightIdentifier());
         $this->assertEquals('SCORE', $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getVariableIdentifier());
@@ -105,11 +107,11 @@ class TestCategoryRulesGeneratorTest extends TaoPhpUnitTestRunner
         $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
         $this->assertCount(2, $setOutcomeValues);
         $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[0]->getIdentifier());
-        $this->assertInstanceOf('qtism\\data\\expressions\\NumberCorrect', $setOutcomeValues[0]->getExpression());
+        $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[0]->getExpression());
         $this->assertEquals(array('math'), $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[1]->getIdentifier());
-        $this->assertInstanceOf('qtism\\data\\expressions\\NumberCorrect', $setOutcomeValues[1]->getExpression());
+        $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[1]->getExpression());
         $this->assertEquals(array('english'), $setOutcomeValues[1]->getExpression()->getIncludeCategories()->getArrayCopy());
     }
     
@@ -129,13 +131,13 @@ class TestCategoryRulesGeneratorTest extends TaoPhpUnitTestRunner
         $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
         $this->assertCount(2, $setOutcomeValues);
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[0]->getIdentifier());
-        $this->assertInstanceOf('qtism\\data\\expressions\\operators\\Sum', $setOutcomeValues[0]->getExpression());
+        $this->assertInstanceOf(Sum::class, $setOutcomeValues[0]->getExpression());
         $this->assertEquals(array('math'), $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
         $this->assertEquals('', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getWeightIdentifier());
         $this->assertEquals('SCORE', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[1]->getIdentifier());
-        $this->assertInstanceOf('qtism\\data\\expressions\\operators\\Sum', $setOutcomeValues[1]->getExpression());
+        $this->assertInstanceOf(Sum::class, $setOutcomeValues[1]->getExpression());
         $this->assertEquals(array('english'), $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
         $this->assertEquals('', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
         $this->assertEquals('SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());

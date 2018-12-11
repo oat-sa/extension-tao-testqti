@@ -19,8 +19,8 @@
  */
 namespace oat\taoQtiTest\test\integration;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\tao\model\TaoOntology;
-use oat\tao\test\TaoPhpUnitTestRunner;
 use \taoTests_models_classes_TestsService;
 use \taoQtiTest_models_classes_QtiTestService;
 use \common_ext_ExtensionsManager;
@@ -33,7 +33,7 @@ use \common_report_Report;
  * @author Aamir
  * @package taoQtiTest
  */
-class QtiTestServiceTest extends TaoPhpUnitTestRunner
+class QtiTestServiceTest extends GenerisPhpUnitTestRunner
 {
 
     /**
@@ -44,7 +44,6 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
 
     public function setUp()
     {
-        TaoPhpUnitTestRunner::initTest();
         common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();
@@ -57,7 +56,7 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
      */
     public function testService()
     {
-        $this->assertIsA($this->testService, 'taoQtiTest_models_classes_QtiTestService');
+        $this->assertIsA($this->testService, taoQtiTest_models_classes_QtiTestService::class);
     }
 
     /**
@@ -68,7 +67,7 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
     public function testCreateInstance()
     {
         $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), 'UnitTestQtiItem');
-        $this->assertInstanceOf('core_kernel_classes_Resource', $qtiTest);
+        $this->assertInstanceOf(\core_kernel_classes_Resource::class, $qtiTest);
         
         $this->assertTrue($qtiTest->isInstanceOf(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI)));
         return $qtiTest;
@@ -96,7 +95,7 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
     public function testCloneInstance($qtiTest)
     {
         $clone = $this->testService->cloneInstance($qtiTest, $this->testService->getRootclass());
-        $this->assertInstanceOf('\core_kernel_classes_Resource', $clone);
+        $this->assertInstanceOf(\core_kernel_classes_Resource::class, $clone);
         $this->assertTrue($clone->exists());
         
         return $clone;
@@ -161,12 +160,12 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
         foreach ($report as $rep){
             $result = $rep->getData();
            
-            $this->assertInstanceOf('core_kernel_classes_Class', $result->itemClass);
-            $this->assertInstanceOf('core_kernel_classes_Resource', $result->rdfsResource);
+            $this->assertInstanceOf(\core_kernel_classes_Class::class, $result->itemClass);
+            $this->assertInstanceOf(\core_kernel_classes_Resource::class, $result->rdfsResource);
             foreach ($result->items as $items){
-                $this->assertInstanceOf('core_kernel_classes_Resource', $items);
+                $this->assertInstanceOf(\core_kernel_classes_Resource::class, $items);
                 $type = current($items->getTypes());
-                $this->assertInstanceOf('core_kernel_classes_Resource', $type);
+                $this->assertInstanceOf(\core_kernel_classes_Resource::class, $type);
                 
                 $this->assertEquals($result->itemClass->getUri(),$type->getUri());
                 $expectedLabel = array('Unattended Luggage','Associate Things');
@@ -175,7 +174,6 @@ class QtiTestServiceTest extends TaoPhpUnitTestRunner
             $testService->deleteTest($result->rdfsResource);
             
         }
-        
     }
     
     /**
