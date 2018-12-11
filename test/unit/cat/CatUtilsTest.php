@@ -2,11 +2,11 @@
 
 namespace oat\taoQtiTest\test\unit\cat;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\TestCase;
 use oat\taoQtiTest\models\cat\CatUtils;
 use qtism\data\storage\xml\XmlDocument;
 
-class CatUtilsTest extends TaoPhpUnitTestRunner
+class CatUtilsTest extends TestCase
 {
     /**
      * @dataProvider getCatInfoProvider

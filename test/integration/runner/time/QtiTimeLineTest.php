@@ -19,17 +19,17 @@
 
 namespace oat\taoQtiTest\test\integration\runner\time;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
-use oat\tao\test\TaoPhpUnitTestRunner;
 
 /**
  * Test the {@link QtiTimeLine}
  *
  * @author Bertrand Chevrier, <taosupport@tudor.lu>
  */
-class QtiTimeLineTest extends TaoPhpUnitTestRunner
+class QtiTimeLineTest extends GenerisPhpUnitTestRunner
 {
 
     public function setUp()

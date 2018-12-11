@@ -21,8 +21,8 @@
 
 namespace oat\taoQtiTest\test\integration\runner;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\tao\model\state\StateStorage;
-use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\ExtendedState;
 use oat\taoQtiTest\models\runner\StorageManager;
 use Prophecy\Argument;
@@ -33,7 +33,7 @@ use Prophecy\Prophet;
  * @package oat\taoQtiTest\test\integration\runner
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-class ExtendedStateTest extends TaoPhpUnitTestRunner
+class ExtendedStateTest extends GenerisPhpUnitTestRunner
 {
     /**
      * @throws \common_ext_ExtensionException
@@ -83,7 +83,7 @@ class ExtendedStateTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophet->prophesize(StateStorage::class)->reveal();
 
         $extendedState = new ExtendedState();
-        $extendedState->setServiceLocator($this->getServiceManagerProphecy([
+        $extendedState->setServiceLocator($this->getServiceLocatorMock([
             StorageManager::SERVICE_ID => $mockStorageService
         ]));
 
@@ -274,13 +274,13 @@ class ExtendedStateTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
-        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+        $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
 
         
         $extendedState = new ExtendedState($testSessionId, $userId);
-        $extendedState->setServiceLocator($this->getServiceManagerProphecy([
+        $extendedState->setServiceLocator($this->getServiceLocatorMock([
             StorageManager::SERVICE_ID => $storageManager
         ]));
 
