@@ -222,8 +222,11 @@ define([
              */
             function isSkipaheadEnabled() {
                 var options = testContext.options || {};
+                var reviewConfig = testConfig.review || {};
 
-                return options.reviewSkipahead || false;
+                var isEnabled = (reviewConfig.allowSkipahead || false ) && (options.reviewSkipahead || false);
+
+                return isEnabled;
             }
 
             if (isSkipaheadEnabled()) {
