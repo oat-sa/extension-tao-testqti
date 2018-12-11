@@ -39,7 +39,8 @@ define([
         scope: 'test',
         canCollapse: false,
         preventsUnseen: true,
-        hidden: false
+        hidden: false,
+        skipaheadEnabled: false
     };
 
     /**
@@ -360,7 +361,7 @@ define([
                     cls.push('answered');
                     icon = icon || 'answered';
                 }
-                if (itm.viewed) {
+                if (itm.viewed || itm.canBeSkipped) {
                     cls.push('viewed');
                     icon = icon || 'viewed';
                 } else {
