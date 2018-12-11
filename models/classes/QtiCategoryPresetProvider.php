@@ -46,23 +46,6 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'order'         => 200,
                     'pluginId'      => 'review'
                 ]),
-                TestCategoryPreset::fromArray([
-                    'id'            => 'informational',
-                    'label'         => __('Informational Item Usage'),
-                    'qtiCategory'   => 'x-tao-itemusage-informational',
-                    'description'   => __('Force the item to be considered as informational and not taken into account in (un)answered / flagged counters.'),
-                    'order'         => 300,
-                    'pluginId'      => 'review'
-                ]),
-                TestCategoryPreset::fromArray([
-                    'id'            => 'nextSection',
-                    'label'         => __('Allow Section Skipping'),
-                    'qtiCategory'   => 'x-tao-option-nextSection',
-                    'description'   => __('Allow skipping of the current section.'),
-                    'order'         => 400,
-                    'pluginId'      => 'nextSection',
-                    'featureFlag'   => 'next-section'
-                ])
             ]
         );
 
@@ -221,9 +204,49 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                         'label'         => __('Enable Skipping Ahead'),
                         'qtiCategory'   => 'x-tao-option-review-skipahead',
                         'description'   => __('Enables skipping to items within this section. Requires the review screen option.'),
-                        'order'         => 500,
+                        'order'         => 300,
                         'pluginId'      => 'review',
                         'featureFlag'   => 'skip-ahead'
+                    ]),
+                    TestCategoryPreset::fromArray([
+                        'id'            => 'informational',
+                        'label'         => __('Informational Item Usage'),
+                        'qtiCategory'   => 'x-tao-itemusage-informational',
+                        'description'   => __('Force the item to be considered as informational and not taken into account in (un)answered / flagged counters.'),
+                        'order'         => 400,
+                        'pluginId'      => 'review'
+                    ]),
+                    TestCategoryPreset::fromArray([
+                        'id'            => 'nextSection',
+                        'label'         => __('Allow Section Skipping'),
+                        'qtiCategory'   => 'x-tao-option-nextSection',
+                        'description'   => __('Allow skipping of the current section.'),
+                        'order'         => 500,
+                        'pluginId'      => 'nextSection',
+                        'featureFlag'   => 'next-section'
+                    ])
+                ]
+            );
+        } else {
+            $presetService->register(
+                TestCategoryPresetProvider::GROUP_NAVIGATION,
+                [
+                    TestCategoryPreset::fromArray([
+                        'id'            => 'informational',
+                        'label'         => __('Informational Item Usage'),
+                        'qtiCategory'   => 'x-tao-itemusage-informational',
+                        'description'   => __('Force the item to be considered as informational and not taken into account in (un)answered / flagged counters.'),
+                        'order'         => 300,
+                        'pluginId'      => 'review'
+                    ]),
+                    TestCategoryPreset::fromArray([
+                        'id'            => 'nextSection',
+                        'label'         => __('Allow Section Skipping'),
+                        'qtiCategory'   => 'x-tao-option-nextSection',
+                        'description'   => __('Allow skipping of the current section.'),
+                        'order'         => 400,
+                        'pluginId'      => 'nextSection',
+                        'featureFlag'   => 'next-section'
                     ])
                 ]
             );
