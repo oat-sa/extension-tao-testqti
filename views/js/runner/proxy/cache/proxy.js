@@ -390,6 +390,18 @@ define([
             };
 
             /**
+             * Flush the offline actions from the actionStore, keeping a copy (intended for file download)
+             * @returns {Promise} resolves with the store contents
+             */
+            this.exportActions = function exportActions() {
+                return this.queue.serie(function(){
+                    return self.actiontStore.flush().then(function(data){
+                        return data;
+                    });
+                });
+            };
+
+            /**
              * Mark action as performed in offline mode
              * Action to mark as offline will be defined by actionParams.actionId parameter value.
              *
