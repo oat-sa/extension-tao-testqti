@@ -215,6 +215,22 @@ define([
                 updateButton(self.toggleButton, getToggleButtonData(self.navigator));
             }
 
+            /**
+             * Checks if skipahead is enabled
+             *
+             * @returns {Boolean}
+             */
+            function isSkipaheadEnabled() {
+                var options = testContext.options || {};
+
+                return options.reviewSkipahead || false;
+            }
+
+            if (isSkipaheadEnabled()) {
+                navigatorConfig.skipaheadEnabled = true;
+                navigatorConfig.scope = 'testPart';
+            }
+
             this.navigator = navigatorFactory(navigatorConfig, testMap, testContext)
                 .on('selected', function(position, previousPosition){
                     previousItemPosition = previousPosition;
