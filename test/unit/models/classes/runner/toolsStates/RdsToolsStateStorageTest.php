@@ -26,6 +26,9 @@ use Prophecy\Argument;
 
 class RdsToolsStateStorageTest extends ToolsStateStorageTestCase
 {
+    /**
+     * @var RdsToolsStateStorage
+     */
     private $storage;
 
     /**
@@ -36,6 +39,12 @@ class RdsToolsStateStorageTest extends ToolsStateStorageTestCase
         return $this->storage;
     }
 
+    /**
+     * Deploys the storage and prepares it for testing
+     *
+     * @throws \common_Exception
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
     public function setUp()
     {
         $databaseMock = $this->getSqlMock('tools_states');

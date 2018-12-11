@@ -60,6 +60,15 @@ class RdsToolsStateStorage extends ToolsStateStorage
         return $this->getPersistence()->getPlatform()->getQueryBuilder();
     }
 
+    /**
+     * Updates one state
+     *
+     * @param string $deliveryExecutionId
+     * @param string $toolName
+     * @param string $state
+     * @return bool whether the value has actually changed in the storage
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
     private function updateState($deliveryExecutionId, $toolName, $state)
     {
         $sql = "UPDATE " . self::TABLE_NAME . " SET " . self::TOOL_STATE_COLUMN . " =:state
@@ -71,14 +80,21 @@ class RdsToolsStateStorage extends ToolsStateStorage
             'tool_name' => $toolName,
         ]);
 
-        return $rowsUpdated;
+        return $rowsUpdated !== 0;
     }
 
+    /**
+     * Updates those states which are already persisted in the storage and inserts new ones
+     *
+     * @param string $deliveryExecutionId
+     * @param array $states
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
     public function storeStates($deliveryExecutionId, $states)
     {
         foreach ($states as $toolName => $state) {
-            $rowsUpdated = $this->updateState($deliveryExecutionId, $toolName, $state);
-            if (0 === $rowsUpdated) {
+            $hasRowActuallyChanged = $this->updateState($deliveryExecutionId, $toolName, $state);
+            if (!$hasRowActuallyChanged) {
                 try {
                     $this->getPersistence()->insert(self::TABLE_NAME, [
                         self::DELIVERY_EXECUTION_ID_COLUMN => $deliveryExecutionId,
@@ -115,16 +131,16 @@ class RdsToolsStateStorage extends ToolsStateStorage
     }
 
     /**
-     * @param $deoliveryExecutionId
+     * @param string $deliveryExecutionId
      * @return bool whether deleted successfully
      * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
      */
-    public function deleteStates($deoliveryExecutionId)
+    public function deleteStates($deliveryExecutionId)
     {
         $sql = 'DELETE FROM ' . self::TABLE_NAME . '
             WHERE ' . self::DELIVERY_EXECUTION_ID_COLUMN . ' = ?';
 
-        if ($this->getPersistence()->exec($sql, [$deoliveryExecutionId]) === false) {
+        if ($this->getPersistence()->exec($sql, [$deliveryExecutionId]) === false) {
             return false;
         }
         return true;

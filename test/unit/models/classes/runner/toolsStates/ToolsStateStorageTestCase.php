@@ -39,6 +39,9 @@ abstract class ToolsStateStorageTestCase extends TestCase
      */
     abstract protected function getStorage();
 
+    /**
+     * Creates new values in the storage and checks they exist
+     */
     public function testCreate()
     {
         $storage = $this->getStorage();
@@ -56,6 +59,9 @@ abstract class ToolsStateStorageTestCase extends TestCase
         $this->assertEquals($states, $retrievedStates);
     }
 
+    /**
+     * Checks update changes values persisted in the storage
+     */
     public function testUpdate()
     {
         $storage = $this->getStorage();
@@ -79,6 +85,9 @@ abstract class ToolsStateStorageTestCase extends TestCase
         $this->assertEquals($statesForUpdate, $retrievedStates);
     }
 
+    /**
+     * Checks update adds new values and keeps old ones
+     */
     public function testUpdateDoesNotEraseNotPassedFields()
     {
         $storage = $this->getStorage();
@@ -101,6 +110,9 @@ abstract class ToolsStateStorageTestCase extends TestCase
         $this->assertEquals(array_merge($statesForCreate, $statesForUpdate), $retrievedStates);
     }
 
+    /**
+     * Checks there aren't records in the storage after removal
+     */
     public function testRemoval()
     {
         $storage = $this->getStorage();

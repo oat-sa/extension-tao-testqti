@@ -41,14 +41,14 @@ abstract class ToolsStateStorage extends ConfigurableService
     abstract public function storeStates($deliveryExecutionId, $states);
 
     /**
-     * @param $deliveryExecutionId
+     * @param string $deliveryExecutionId
      * @return array
      */
     abstract public function getStates($deliveryExecutionId);
 
     /**
-     * @param $deoliveryExecutionId
+     * @param string $deliveryExecutionId
      * @return bool whether deleted successfully
      */
-    abstract public function deleteStates($deoliveryExecutionId);
+    abstract public function deleteStates($deliveryExecutionId);
 }

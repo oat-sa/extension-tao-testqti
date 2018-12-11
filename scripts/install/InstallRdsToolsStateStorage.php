@@ -47,11 +47,11 @@ class InstallRdsToolsStateStorage extends AbstractAction
         $revisionTable = $schema->createTable(RdsToolsStateStorage::TABLE_NAME);
         $revisionTable->addOption('engine', 'MyISAM');
 
-        $revisionTable->addColumn(RdsToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, "string", array("notnull" => true, "length" => 255));
-        $revisionTable->addColumn(RdsToolsStateStorage::TOOL_NAME_COLUMN, "string", array("notnull" => true, "length" => 60));
+        $revisionTable->addColumn(RdsToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, 'string', array('notnull' => true, 'length' => 255));
+        $revisionTable->addColumn(RdsToolsStateStorage::TOOL_NAME_COLUMN, 'string', array('notnull' => true, 'length' => 60));
 
         $longtextThreshold = 16777215 + 1;
-        $revisionTable->addColumn(RdsToolsStateStorage::TOOL_STATE_COLUMN, "string", array("notnull" => false, "length" => $longtextThreshold));
+        $revisionTable->addColumn(RdsToolsStateStorage::TOOL_STATE_COLUMN, 'string', array('notnull' => false, 'length' => $longtextThreshold));
 
         $revisionTable->addUniqueIndex(
             [RdsToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, RdsToolsStateStorage::TOOL_NAME_COLUMN],
