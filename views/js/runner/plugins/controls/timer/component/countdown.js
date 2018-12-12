@@ -43,7 +43,7 @@ define([
     'tpl!taoQtiTest/runner/plugins/controls/timer/component/tpl/countdown',
     'ui/tooltip',
     'css!taoQtiTest/runner/plugins/controls/timer/component/css/countdown.css'
-], function ($, _, timeEncoder, pollingFactory, timerFactory, component, countdownTpl) {
+], function ($, _, timeEncoder, pollingFactory, timerFactory, component, countdownTpl, tooltip) {
     'use strict';
 
     //Precision is milliseconds
@@ -290,29 +290,21 @@ define([
 
             if (this.is('rendered') && this.is('running') &&
                 _.isString(message) && !_.isEmpty(message)) {
+                var tooltipInstance;
 
                 $time
                     .removeClass('txt-success txt-info txt-warning txt-danger txt-error')
                     .addClass('txt-' + level);
 
                 if(this.config.displayWarning === true){
-
-                    this.getElement().qtip({
-                        show: { ready: true },
-                        hide: {
-                            event : false,
-                            inactive: warningTimeout[level] || 2000
-                        },
-                        suppress: false,
-                        theme : level,
-                        content: {
-                            text : message
-                        },
-                        position: {
-                            my: 'top center',
-                            at: 'bottom center'
-                        }
-                    });
+                    tooltipInstance = tooltip(this.getElement(),{
+                        placement: 'bottom',
+                        theme: level,
+                        title: message
+                    }).show();
+                    setTimeout(function () {
+                        tooltipInstance.hide();
+                    },warningTimeout[level] || 2000);
                 }
             }
         });
