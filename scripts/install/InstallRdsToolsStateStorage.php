@@ -21,14 +21,19 @@
 namespace oat\taoQtiTest\scripts\install;
 
 use common_report_Report as Report;
-use Doctrine\DBAL\Schema\SchemaException;
 use oat\oatbox\extension\AbstractAction;
 use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
 
+/**
+ * Deploys the tool states schema
+ *
+ * Class InstallRdsToolsStateStorage
+ * @package oat\taoQtiTest\scripts\install
+ */
 class InstallRdsToolsStateStorage extends AbstractAction
 {
     /**
-     * @param $params
+     * @param array $params
      * @return Report
      * @throws \common_Exception
      * @throws \oat\oatbox\service\exception\InvalidServiceManagerException

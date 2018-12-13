@@ -19,18 +19,40 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\oatbox\service\ServiceManager;
+
 trait RunnerToolStates
 {
+    /**
+     * @param string $name
+     * @return string
+     */
     abstract public function hasRequestParameter($name);
 
+    /**
+     * @param string $name
+     * @return string mixed
+     */
     abstract public function getRequestParameter($name);
 
+    /**
+     * @return string
+     */
     abstract public function getRawRequestParameter();
 
+    /**
+     * @return ServiceManager
+     */
     abstract public function getServiceLocator();
 
+    /**
+     * @return RunnerService
+     */
     abstract public function getRunnerService();
 
+    /**
+     * @return RunnerServiceContext
+     */
     abstract public function getServiceContext();
 
     /**
@@ -44,10 +66,11 @@ trait RunnerToolStates
     protected function saveToolStates()
     {
         $toolStateParameter = 'toolStates';
-        if ($this->hasRequestParameter($toolStateParameter)) {
+        $param = $this->getRawRequestParameter($toolStateParameter);
+        if ($param) {
             // since the parameter content is a JSON string
             // we need to load it using the raw mode
-            if ($param = $this->getRawRequestParameter($toolStateParameter)) {
+            if ($param) {
                 $toolStates = json_decode($param, true);
 
                 if (count($toolStates) > 0) {

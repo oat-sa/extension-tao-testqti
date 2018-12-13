@@ -20,10 +20,23 @@
 
 namespace oat\taoQtiTest\models\runner\toolsStates;
 
+/**
+ * Key-value implementation of tools state storage
+ *
+ * Class KvToolsStateStorage
+ * @package oat\taoQtiTest\models\runner\toolsStates
+ */
 class KvToolsStateStorage extends ToolsStateStorage
 {
+    /**
+     * Key prefix for states in the global key-value storage
+     */
     const PREFIX_STATES = 'ToolsStateStorage:states';
-    const ALLOW_PARTIAL_UPDATES = true;
+
+    /**
+     * Do less 'set' queries and more 'get' queries
+     */
+    const ALLOW_PARTIAL_UPDATES = false;
 
     /**
      * @return \common_persistence_AdvKeyValuePersistence
@@ -73,8 +86,8 @@ class KvToolsStateStorage extends ToolsStateStorage
      *
      * @throws \common_exception_Error
      */
-    public function deleteStates($deoliveryExecutionId)
+    public function deleteStates($deliveryExecutionId)
     {
-        return $this->getPersistence()->del(self::PREFIX_STATES . $deoliveryExecutionId);
+        return $this->getPersistence()->del(self::PREFIX_STATES . $deliveryExecutionId);
     }
 }

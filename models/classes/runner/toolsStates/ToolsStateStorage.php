@@ -38,6 +38,13 @@ abstract class ToolsStateStorage extends ConfigurableService
         return $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_ID)->getPersistenceById($persistenceId);
     }
 
+    /**
+     * Put the states associated with delivery into the storage
+     *
+     * @param string $deliveryExecutionId
+     * @param array $states
+     * @return mixed
+     */
     abstract public function storeStates($deliveryExecutionId, $states);
 
     /**

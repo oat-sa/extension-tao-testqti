@@ -41,7 +41,7 @@ class NoStorage extends ToolsStateStorage
     /**
      * @inheritdoc
      */
-    public function deleteStates($deoliveryExecutionId)
+    public function deleteStates($deliveryExecutionId)
     {
         return true;
     }
