@@ -20,14 +20,19 @@
 
 namespace oat\taoQtiTest\test\integration;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\tao\model\TaoOntology;
-use oat\tao\test\TaoPhpUnitTestRunner;
-use \taoQtiTest_models_classes_QtiTestService;
-use \taoQtiTest_models_classes_export_TestExport;
-use \tao_helpers_Uri;
-use \ZipArchive;
-use \taoQtiTest_models_classes_export_QtiTestExporter;
-use \taoQtiTest_helpers_Utils;
+use taoQtiTest_models_classes_QtiTestService;
+use taoQtiTest_models_classes_export_TestExport;
+use tao_helpers_Uri;
+use tao_helpers_form_Form;
+use tao_helpers_form_FormElement;
+use tao_helpers_form_xhtml_Form;
+use ZipArchive;
+use taoQtiTest_models_classes_export_QtiTestExporter;
+use taoQtiTest_helpers_Utils;
+use core_kernel_classes_Resource;
+use common_report_Report;
 
 /**
  * This test case focuses on testing the export_TestExport and export_QtiTestExporter models.
@@ -35,7 +40,7 @@ use \taoQtiTest_helpers_Utils;
  * @author Aamir
  * @package taoQtiTest
  */
-class QtiTestExporterTest extends TaoPhpUnitTestRunner
+class QtiTestExporterTest extends GenerisPhpUnitTestRunner
 {
 
     private $dataDir = '';
@@ -44,13 +49,10 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
 
     public function setUp()
     {
-        TaoPhpUnitTestRunner::initTest();
+        parent::initTest();
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();
         $this->dataDir = dirname(__FILE__) . '/data/';
-        
-        
         $this->outputDir = sys_get_temp_dir() . '/' ;
-
     }
 
     /**
@@ -60,7 +62,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
      */
     public function testService()
     {
-        $this->assertIsA($this->testService, 'taoQtiTest_models_classes_QtiTestService');
+        $this->assertInstanceOf(taoQtiTest_models_classes_QtiTestService::class, $this->testService);
     }
 
     /**
@@ -71,7 +73,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
     public function testCreateInstance()
     {
         $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), 'UnitTestQtiItem');
-        $this->assertInstanceOf('core_kernel_classes_Resource', $qtiTest);
+        $this->assertInstanceOf(core_kernel_classes_Resource::class, $qtiTest);
 
         $type = current($qtiTest->getTypes());
         $this->assertEquals(TaoOntology::TEST_CLASS_URI, $type->getUri());
@@ -87,7 +89,7 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
     public function testInitExport()
     {
         $testExport = new taoQtiTest_models_classes_export_TestExport();
-        $this->assertInstanceOf('taoQtiTest_models_classes_export_TestExport', $testExport);
+        $this->assertInstanceOf(taoQtiTest_models_classes_export_TestExport::class, $testExport);
 
         return $testExport;
     }
@@ -104,8 +106,8 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
     public function testExportFormCreate($testExport, $qtiTest)
     {
         $form = $testExport->getExportForm($qtiTest);
-        $this->assertInstanceOf('tao_helpers_form_Form', $form);
-        $this->assertInstanceOf('tao_helpers_form_xhtml_Form', $form);
+        $this->assertInstanceOf(tao_helpers_form_Form::class, $form);
+        $this->assertInstanceOf(tao_helpers_form_xhtml_Form::class, $form);
 
         return $form;
     }
@@ -136,11 +138,11 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
         $this->assertEquals(2, count($form->getElements()));
 
         $elmSource = $form->getElement('filename');
-        $this->assertInstanceOf('tao_helpers_form_FormElement', $elmSource);
+        $this->assertInstanceOf(tao_helpers_form_FormElement::class, $elmSource);
         $elmSource->setValue('qti_unit_test');
 
         $elmInstance = $form->getElement('instances');
-        $this->assertInstanceOf('tao_helpers_form_FormElement', $elmInstance);
+        $this->assertInstanceOf(tao_helpers_form_FormElement::class, $elmInstance);
 
         $uri = tao_helpers_Uri::encode($qtiTest->getUri());
         $elmInstance->setOptions(array(
@@ -181,9 +183,11 @@ class QtiTestExporterTest extends TaoPhpUnitTestRunner
      */
     public function testExportFormSubmit($testExport, $form)
     {
-        $report = $testExport->export($form->getValues(), $this->outputDir);
+        $formValues = $form->getValues();
+        $formValues['uri'] = 'TEST_URI';
+        $report = $testExport->export($formValues, $this->outputDir);
 
-        $this->assertInstanceOf('common_report_Report', $report);
+        $this->assertInstanceOf(common_report_Report::class, $report);
         $file = $report->getData();
         
         $this->assertInternalType('string', $file);

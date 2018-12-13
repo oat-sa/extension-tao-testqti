@@ -19,13 +19,13 @@
  */
 namespace oat\taoQtiTest\test\integration;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
-use \taoQtiTest_models_classes_ManifestParser;
-use \taoQtiTest_models_classes_QtiTestCompiler;
-use \core_kernel_classes_Resource;
-use \core_kernel_classes_Property;
-use \tao_models_classes_service_FileStorage;
-use \common_report_Report;
+use oat\generis\test\GenerisPhpUnitTestRunner;
+use taoQtiTest_models_classes_ManifestParser;
+use taoQtiTest_models_classes_QtiTestCompiler;
+use core_kernel_classes_Resource;
+use core_kernel_classes_Property;
+use tao_models_classes_service_FileStorage;
+use common_report_Report;
 
 /**
  * This test case focuses on testing the ManifestParser model.
@@ -33,7 +33,7 @@ use \common_report_Report;
  * @author Aamir
  * @package taoQtiTest
  */
-class QtiTestParserTest extends TaoPhpUnitTestRunner
+class QtiTestParserTest extends GenerisPhpUnitTestRunner
 {
 
     static public function dataDir()
@@ -48,7 +48,7 @@ class QtiTestParserTest extends TaoPhpUnitTestRunner
 
     public function setUp()
     {
-        TaoPhpUnitTestRunner::initTest();
+        parent::initTest();
     }
 
     /**
@@ -103,11 +103,11 @@ class QtiTestParserTest extends TaoPhpUnitTestRunner
         
         $storage = tao_models_classes_service_FileStorage::singleton();
         
-        $this->assertIsA($content, 'core_kernel_classes_Resource');
-        $this->assertIsA($storage, 'tao_models_classes_service_FileStorage');
+        $this->assertIsA($content, core_kernel_classes_Resource::class);
+        $this->assertIsA($storage, tao_models_classes_service_FileStorage::class);
         
         $compiler = new taoQtiTest_models_classes_QtiTestCompiler($content, $storage);
-        $this->assertIsA($compiler, 'taoQtiTest_models_classes_QtiTestCompiler');
+        $this->assertIsA($compiler, taoQtiTest_models_classes_QtiTestCompiler::class);
         
         return $compiler;
     }
@@ -122,7 +122,7 @@ class QtiTestParserTest extends TaoPhpUnitTestRunner
      */
     public function testQtiTextCompilerCompile($compiler)
     {
-        $compiler->setServiceLocator($this->getServiceManagerProphecy());
+        $compiler->setServiceLocator($this->getServiceLocatorMock([]));
         $report = $compiler->compile();
         $this->assertEquals($report->getType(), common_report_Report::TYPE_ERROR);
         $serviceCall = $report->getData();

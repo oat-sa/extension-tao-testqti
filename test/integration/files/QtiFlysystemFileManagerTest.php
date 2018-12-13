@@ -19,12 +19,13 @@
 
 namespace oat\taoQtiTest\test\integration\files;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\GenerisPhpUnitTestRunner;
+use oat\taoQtiTest\models\files\QtiFlysystemFile;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\filesystem\FileSystemService;
 
-class QtiFlysystemFileManagerTest extends TaoPhpUnitTestRunner
+class QtiFlysystemFileManagerTest extends GenerisPhpUnitTestRunner
 {
     protected $serviceLocator;
     protected $fileManager;
@@ -60,7 +61,7 @@ class QtiFlysystemFileManagerTest extends TaoPhpUnitTestRunner
     {
         $file = $this->fileManager->createFromData('pouet', 'text/plain', 'myfile.txt');
         
-        $this->assertInstanceOf('oat\\taoQtiTest\\models\\files\\QtiFlysystemFile', $file);
+        $this->assertInstanceOf(QtiFlysystemFile::class, $file);
         $this->assertEquals('pouet', $file->getData());
         $this->assertEquals('text/plain', $file->getMimeType());
         $this->assertTrue($file->hasFilename());

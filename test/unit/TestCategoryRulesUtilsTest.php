@@ -19,13 +19,18 @@
  */
 namespace oat\taoQtiTest\test\unit;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\TestCase;
 use oat\taoQtiTest\models\TestCategoryRulesUtils;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
+use qtism\data\expressions\NumberCorrect;
+use qtism\data\processing\OutcomeProcessing;
+use qtism\data\rules\SetOutcomeValue;
+use qtism\data\state\DefaultValue;
+use qtism\data\state\OutcomeDeclaration;
 use qtism\data\storage\xml\XmlDocument;
 
-class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner 
+class TestCategoryRulesUtilsTest extends TestCase
 {
     
     static public function samplesDir() 
@@ -117,14 +122,14 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         TestCategoryRulesUtils::appendOutcomeDeclarationToTest($doc->getDocumentComponent(), 'TEST', BaseType::FLOAT, 0.0);
         
         $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('TEST');
-        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
         $this->assertCount(1, $doc->getDocumentComponent()->getComponentsByClassName('outcomeDeclaration'));
         $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
         $this->assertEquals(BaseType::FLOAT, $outcome->getBaseType());
         $this->assertEquals('TEST', $outcome->getIdentifier());
         
         $defaultValue = $outcome->getDefaultValue();
-        $this->assertInstanceOf('qtism\\data\state\\DefaultValue', $defaultValue);
+        $this->assertInstanceOf(DefaultValue::class, $defaultValue);
         $values = $defaultValue->getValues();
         $this->assertCount(1, $values);
         $this->assertEquals(0., $values[0]->getValue());
@@ -133,7 +138,7 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         TestCategoryRulesUtils::appendOutcomeDeclarationToTest($doc->getDocumentComponent(), 'TEST', BaseType::FLOAT, 0.0);
         
         $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('TEST');
-        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
         $this->assertEquals(1, count($doc->getDocumentComponent()->getComponentsByClassName('outcomeDeclaration')));
     }
     
@@ -148,13 +153,13 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         );
         
         $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX);
-        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
         $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
         $this->assertEquals(BaseType::INTEGER, $outcome->getBaseType());
         $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX, $outcome->getIdentifier());
         
         $defaultValue = $outcome->getDefaultValue();
-        $this->assertInstanceOf('qtism\\data\state\\DefaultValue', $defaultValue);
+        $this->assertInstanceOf(DefaultValue::class, $defaultValue);
         $values = $defaultValue->getValues();
         $this->assertCount(1, $values);
         $this->assertTrue(is_int($values[0]->getValue()));
@@ -172,7 +177,7 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         );
         
         $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX);
-        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
         $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
         $this->assertEquals(BaseType::INTEGER, $outcome->getBaseType());
         $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $outcome->getIdentifier());
@@ -192,7 +197,7 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         );
         
         $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX);
-        $this->assertInstanceOf('qtism\\data\\state\\OutcomeDeclaration', $outcome);
+        $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
         $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
         $this->assertEquals(BaseType::FLOAT, $outcome->getBaseType());
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $outcome->getIdentifier());
@@ -208,14 +213,14 @@ class TestCategoryRulesUtilsTest extends TaoPhpUnitTestRunner
         
         TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($doc->getDocumentComponent(), 'math', 'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX);
         
-        $this->assertInstanceOf('qtism\\data\\processing\\OutcomeProcessing', $doc->getDocumentComponent()->getOutcomeProcessing());
+        $this->assertInstanceOf(OutcomeProcessing::class, $doc->getDocumentComponent()->getOutcomeProcessing());
         $outcomeRules = $doc->getDocumentComponent()->getOutcomeProcessing()->getOutcomeRules();
         $this->assertCount(1, $outcomeRules);
         
-        $this->assertInstanceOf('qtism\\data\\rules\\setOutcomeValue', $outcomeRules[0]);
+        $this->assertInstanceOf(SetOutcomeValue::class, $outcomeRules[0]);
         $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $outcomeRules[0]->getIdentifier());
         
-        $this->assertInstanceOF('qtism\\data\\expressions\\NumberCorrect', $outcomeRules[0]->getExpression());
+        $this->assertInstanceOF(NumberCorrect::class, $outcomeRules[0]->getExpression());
         $this->assertEquals(array('math'), $outcomeRules[0]->getExpression()->getIncludeCategories()->getArrayCopy());
         
         // If a second call to TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing occurs for a variable wich

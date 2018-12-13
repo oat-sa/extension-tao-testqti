@@ -20,8 +20,8 @@
 namespace oat\taoQtiTest\test\integration\pack;
 
 use \core_kernel_classes_Resource;
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\pack\QtiTestPacker;
-use oat\tao\test\TaoPhpUnitTestRunner;
 
 
 /**
@@ -30,7 +30,7 @@ use oat\tao\test\TaoPhpUnitTestRunner;
  * @author Bertrand Chevrier, <taosupport@tudor.lu>
  * @package taoTests
  */
-class QtiTestPackerTest extends TaoPhpUnitTestRunner
+class QtiTestPackerTest extends GenerisPhpUnitTestRunner
 {
 
     public function setUp()
@@ -48,19 +48,13 @@ class QtiTestPackerTest extends TaoPhpUnitTestRunner
 
 
     /**
-     * @todo fix test case (throws MissingTestmodelException instead of expected)
-     *
      * Test the exception when a wrong content is given to the parser
-     *
-     * @expectedException \common_Exception
      */
     public function testWrongContentToPack(){
+        $this->expectException(\common_Exception::class);
 
         $testPacker = new QtiTestPacker();
-
-        $directory = $this->getMockBuilder(\tao_models_classes_service_StorageDirectory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $directory = $this->createMock(\tao_models_classes_service_StorageDirectory::class);
 
         $testPacker->packTest(new core_kernel_classes_Resource('foo'), $directory);
     }

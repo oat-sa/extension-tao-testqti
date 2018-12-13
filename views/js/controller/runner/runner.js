@@ -116,6 +116,8 @@ define([
             var exitReason;
             var $container = $('.runner');
             var logger     = loggerFactory('controller/runner', { runnerOptions : runnerOptions });
+            var preventFeedback = false;
+            var errorFeedback = null;
 
             /**
              * Does the option exists ?
@@ -164,7 +166,9 @@ define([
                     displayMessage = __('An error occurred during the test, please content your administrator.') + " " + displayMessage;
                     return exit(displayMessage, 'error');
                 }
-                feedback().error(displayMessage, { timeout : -1 });
+                if (!preventFeedback) {
+                    errorFeedback = feedback().error(displayMessage, {timeout: -1});
+                }
             };
 
             /**
@@ -248,6 +252,15 @@ define([
 
                             // at the end, we are redirected to the exit URL
                             exit(exitReason);
+                        })
+                        .on('disablefeedbackalerts', function() {
+                            if (errorFeedback) {
+                                errorFeedback.close();
+                            }
+                            preventFeedback = true;
+                        })
+                        .on('enablefeedbackalerts', function() {
+                            preventFeedback = false;
                         })
                         .init();
                 })
