@@ -64,7 +64,8 @@ define([
             test: 'scope-test',
             testPart: 'scope-test-part',
             testSection: 'scope-test-section'
-        }
+        },
+        skippable: 'skippable'
     };
 
     /**
@@ -122,7 +123,9 @@ define([
         notInformational: ':not(.info)',
         informational: '.info',
         hidden: '.hidden',
-        disabled : '.disabled'
+        disabled : '.disabled',
+        skippable: '.skippable',
+        notSkippable: ':not(.skippable)'
     };
 
     /**
@@ -302,10 +305,15 @@ define([
 
                 this.autoScroll();
 
+                this.setState('skipahead-enabled', this.config.skipaheadEnabled);
                 this.setState('prevents-unseen', this.config.preventsUnseen);
-                if (this.config.preventsUnseen) {
-                    // disables all unseen items to prevent the test taker has access to.
-                    this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
+                if (!this.config.skipaheadEnabled) {
+                    this.controls.$tree.find(_selectors.skippable).removeClass(_cssCls.skippable);
+
+                    if (this.config.preventsUnseen) {
+                        // disables all unseen items to prevent the test taker has access to.
+                        this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
+                    }
                 }
             } else {
                 this.controls.$filterBar.hide();
@@ -361,12 +369,16 @@ define([
                     cls.push('answered');
                     icon = icon || 'answered';
                 }
-                if (itm.viewed || itm.canBeSkipped) {
+                if (itm.viewed) {
                     cls.push('viewed');
                     icon = icon || 'viewed';
                 } else {
                     cls.push('unseen');
                     icon = icon || 'unseen';
+
+                    if (itm.canBeSkipped) {
+                        cls.push('skippable');
+                    }
                 }
 
                 itm.cls = cls.join(' ');
