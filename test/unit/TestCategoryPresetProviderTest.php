@@ -22,14 +22,14 @@
  */
 namespace oat\taoQtiTest\test\unit;
 
+use oat\generis\test\TestCase;
 use Prophecy\Argument;
-use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\tao\model\plugins\PluginModule;
 use oat\taoQtiTest\models\TestCategoryPreset;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoTests\models\runner\plugins\TestPluginService;
 
-class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
+class TestCategoryPresetProviderTest extends TestCase
 {
     public function testSort()
     {
@@ -114,7 +114,7 @@ class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
 
         $pluginService = $this->prophesize(TestPluginService::class);
         $presetProvider = new TestCategoryPresetProvider([], $allPresets);
-        $presetProvider->setServiceLocator($this->getServiceManagerProphecy([
+        $presetProvider->setServiceLocator($this->getServiceLocatorMock([
             TestPluginService::SERVICE_ID => $pluginService->reveal()
         ]));
         $sortedPresetGroups = $presetProvider->getPresets();
@@ -224,7 +224,7 @@ class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
             'active'      => false
         ]));
         $presetProvider = new TestCategoryPresetProvider([], $allPresets);
-        $presetProvider->setServiceLocator($this->getServiceManagerProphecy([
+        $presetProvider->setServiceLocator($this->getServiceLocatorMock([
             TestPluginService::SERVICE_ID => $pluginService->reveal()
         ]));
 
@@ -357,7 +357,7 @@ class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
         $pluginService->getPlugin(Argument::type('string'))->willReturn($plugin->reveal());
 
         $presetProvider = new TestCategoryPresetProvider([], $allPresets);
-        $presetProvider->setServiceLocator($this->getServiceManagerProphecy([
+        $presetProvider->setServiceLocator($this->getServiceLocatorMock([
             TestPluginService::SERVICE_ID => $pluginService->reveal()
         ]));
 
@@ -366,4 +366,3 @@ class TestCategoryPresetProviderTest extends TaoPhpUnitTestRunner
         $this->assertSame($result, $availablePresets, 'The available presets match the given configuration');
     }
 }
-

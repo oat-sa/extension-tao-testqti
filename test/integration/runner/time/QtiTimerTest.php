@@ -19,25 +19,23 @@
 
 namespace oat\taoQtiTest\test\integration\runner\time;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoTests\models\runner\time\TimePoint;
-use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\taoTests\models\runner\time\Timer;
 use oat\taoTests\models\runner\time\TimeStorage;
 use Prophecy\Argument;
 use ReflectionClass;
 use Prophecy\Prophet;
 
-include_once dirname(__FILE__) . '/../../../../includes/raw_start.php';
-
 /**
  * Test the {@link \oat\taoQtiTest\models\runner\time\QtiTimer}
  *
  * @author Aleh Hutnikau, <hutnikau@1pt.com>
  */
-class QtiTimerTest extends TaoPhpUnitTestRunner
+class QtiTimerTest extends GenerisPhpUnitTestRunner
 {
     /**
      * @throws \common_ext_ExtensionException
@@ -547,9 +545,7 @@ class QtiTimerTest extends TaoPhpUnitTestRunner
         $timePoints = $timeLine->getPoints();
         $this->assertEquals($extraTime, $newTimer->getExtraTime());
         $this->assertEquals(5, $newTimer->getConsumedExtraTime(null, 20));
-
-        // @todo fix test case (it returns 5 instead of 25)
-        $this->assertEquals(25, $newTimer->getConsumedExtraTime($tags));
+        $this->assertEquals(5, $newTimer->getConsumedExtraTime($tags));
         $this->assertEquals(2, count($timePoints));
         $this->assertEquals(1459335000.0000, $timePoints[0]->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[0]->getTarget());

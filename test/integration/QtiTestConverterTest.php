@@ -19,7 +19,7 @@
  */
 namespace oat\taoQtiTest\test\integration;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use \taoQtiTest_models_classes_QtiTestConverter;
@@ -31,7 +31,7 @@ use \taoQtiTest_models_classes_QtiTestConverter;
  * @package taoQtiTest
  
  */
-class QtiTestConverterTest extends TaoPhpUnitTestRunner
+class QtiTestConverterTest extends GenerisPhpUnitTestRunner
 {
 
     /**
@@ -76,7 +76,6 @@ class QtiTestConverterTest extends TaoPhpUnitTestRunner
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $result = $converter->toJson();
 
-        // @todo fix test case
         $this->assertEquals($expected, $result);
     }
 
