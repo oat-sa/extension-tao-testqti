@@ -1249,12 +1249,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $result = false;
             }
 
-            /** @var ToolsStateStorage $toolsStateStorage */
-            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
-            $toolsStates = $toolsStateStorage->deleteStates($context->getTestExecutionUri());
-
-            $response['toolStates'] = $toolsStates;
-
             $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($executionUri);
         } else {
             throw new \common_exception_InvalidArgumentType(
@@ -1966,6 +1960,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         } else {
             $status = $this->deleteExecutionStatesBasedOnSession($request, $storage, $userUri);
         }
+
+        /** @var ToolsStateStorage $toolsStateStorage */
+        $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+        $toolsStateStorage->deleteStates($request->getDeliveryExecution()->getIdentifier());
 
         return $status;
     }
