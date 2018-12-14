@@ -20,11 +20,15 @@
 
 namespace oat\taoQtiTest\test\integration;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\tao\model\TaoOntology;
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\tao\model\upload\UploadService;
 use taoQtiTest_models_classes_import_TestImport;
-use \common_report_Report;
-use \core_kernel_classes_Class;
+use common_report_Report;
+use core_kernel_classes_Class;
+use tao_helpers_form_Form;
+use tao_helpers_form_xhtml_Form;
+use tao_helpers_form_FormElement;
 
 /**
  * This test case focuses on testing the import_TestImport model.
@@ -32,7 +36,7 @@ use \core_kernel_classes_Class;
  * @author Aamir
  * @package taoQtiTest
  */
-class QtiTestImportTest extends TaoPhpUnitTestRunner
+class QtiTestImportTest extends GenerisPhpUnitTestRunner
 {
 
     private $dataDir = '';
@@ -41,7 +45,7 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
 
     public function setUp()
     {
-        TaoPhpUnitTestRunner::initTest();
+        parent::initTest();
         $this->dataDir = dirname(__FILE__) . '/data/';
         
         $this->tmpDir = sys_get_temp_dir() . '/' ;
@@ -55,7 +59,7 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
     public function testInitImport()
     {
         $testImport = new taoQtiTest_models_classes_import_TestImport();
-        $this->assertInstanceOf('taoQtiTest_models_classes_import_TestImport', $testImport);
+        $this->assertInstanceOf(taoQtiTest_models_classes_import_TestImport::class, $testImport);
 
         return $testImport;
     }
@@ -71,8 +75,8 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
     {
         $form = $testImport->getForm();
 
-        $this->assertInstanceOf('tao_helpers_form_Form', $form);
-        $this->assertInstanceOf('tao_helpers_form_xhtml_Form', $form);
+        $this->assertInstanceOf(tao_helpers_form_Form::class, $form);
+        $this->assertInstanceOf(tao_helpers_form_xhtml_Form::class, $form);
 
         return $form;
     }
@@ -101,7 +105,7 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
         $this->assertEquals(2, count($form->getElements()));
 
         $elmSource = $form->getElement('source');
-        $this->assertInstanceOf('tao_helpers_form_FormElement', $elmSource);
+        $this->assertInstanceOf(tao_helpers_form_FormElement::class, $elmSource);
 
         $elmSource->setValue(array(
             'uploaded_file' => $this->dataDir . 'qtitest.xml'
@@ -114,7 +118,7 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
         ));
 
         $elmSentQti = $form->getElement('import_sent_qti');
-        $this->assertInstanceOf('tao_helpers_form_FormElement', $elmSentQti);
+        $this->assertInstanceOf(tao_helpers_form_FormElement::class, $elmSentQti);
         $elmSentQti->setValue(1);
     }
 
@@ -148,13 +152,18 @@ class QtiTestImportTest extends TaoPhpUnitTestRunner
      */
     public function testImportFormSubmit($testImport, $form)
     {
+        $uploadServiceMock = $this->prophesize(UploadService::class)->reveal();
+        $serviceLocatorMock = $this->getServiceLocatorMock([
+            UploadService::SERVICE_ID => $uploadServiceMock
+        ]);
+        $testImport->setServiceLocator($serviceLocatorMock);
+
         $class = new core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI);
         
         $report = $testImport->import($class, $form);
-        $this->assertInstanceOf('common_report_Report', $report);
+        $this->assertInstanceOf(common_report_Report::class, $report);
 
         // As the QTI Package has no test into it, the report has to be TYPE_ERROR.
-        // 'qti_package.zip'. @todo have a TYPE_SUCCESS case.
         $this->assertEquals($report->getType(), common_report_Report::TYPE_ERROR);
     }
 

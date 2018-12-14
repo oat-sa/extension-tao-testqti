@@ -151,7 +151,8 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     {
         $channels = $this->getOption(self::OPTION_CHANNELS);
         $channel = new $channels[$channelType][$channelName];
-        $this->getServiceManager()->propagate($channel);
+        $this->propagate($channel);
+
         return $channel;
     }
 

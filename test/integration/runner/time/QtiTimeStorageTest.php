@@ -19,12 +19,13 @@
 
 namespace oat\taoQtiTest\test\integration\runner\time;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\tao\model\state\StateStorage;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStorageJsonFormat;
-use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoTests\models\runner\time\TimeStorage;
 use Prophecy\Argument;
 use Prophecy\Prophet;
 
@@ -33,7 +34,7 @@ use Prophecy\Prophet;
  *
  * @author Aleh hutnikau, <hutnikau@1pt.com>
  */
-class QtiTimeStorageTest extends TaoPhpUnitTestRunner
+class QtiTimeStorageTest extends GenerisPhpUnitTestRunner
 {
     /**
      * @var string
@@ -59,7 +60,7 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
     public function testConstructor()
     {
         $storage = new QtiTimeStorage($this->testSessionId, $this->userId);
-        $this->assertInstanceOf('\oat\taoTests\models\runner\time\TimeStorage', $storage);
+        $this->assertInstanceOf(TimeStorage::class, $storage);
         $this->assertEquals($this->testSessionId, $this->getSessionId($storage));
     }
 
@@ -98,7 +99,7 @@ class QtiTimeStorageTest extends TaoPhpUnitTestRunner
      */
     protected function getSessionId(QtiTimeStorage $storage)
     {
-        $reflectionClass = new \ReflectionClass('oat\taoQtiTest\models\runner\time\QtiTimeStorage');
+        $reflectionClass = new \ReflectionClass(QtiTimeStorage::class);
         $reflectionProperty = $reflectionClass->getProperty('testSessionId');
         $reflectionProperty->setAccessible(true);
         return $reflectionProperty->getValue($storage);
