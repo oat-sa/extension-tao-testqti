@@ -56,7 +56,6 @@ use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
