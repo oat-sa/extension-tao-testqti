@@ -215,24 +215,6 @@ define([
                 updateButton(self.toggleButton, getToggleButtonData(self.navigator));
             }
 
-            /**
-             * Checks if skipahead is enabled
-             *
-             * @returns {Boolean}
-             */
-            function isSkipaheadEnabled() {
-                var options = testContext.options || {};
-                var reviewConfig = testConfig.review || {};
-
-                var isEnabled = (reviewConfig.allowSkipahead || false ) && (options.reviewSkipahead || false);
-
-                return isEnabled;
-            }
-
-            if (isSkipaheadEnabled()) {
-                navigatorConfig.skipaheadEnabled = true;
-            }
-
             this.navigator = navigatorFactory(navigatorConfig, testMap, testContext)
                 .on('selected', function(position, previousPosition){
                     previousItemPosition = previousPosition;

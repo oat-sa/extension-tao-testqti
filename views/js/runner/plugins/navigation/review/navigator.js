@@ -307,7 +307,7 @@ define([
                 this.setState('skipahead-enabled', this.config.skipaheadEnabled);
                 this.setState('prevents-unseen', this.config.preventsUnseen);
 
-                isSkipaheadEnabled = this.config.allowSkipahead && activeSection && activeSection.canBeSkipped;
+                isSkipaheadEnabled = activeSection && activeSection.canBeSkipped;
 
                 if (this.config.preventsUnseen && !isSkipaheadEnabled) {
                     // disables all unseen items to prevent the test taker has access to.
