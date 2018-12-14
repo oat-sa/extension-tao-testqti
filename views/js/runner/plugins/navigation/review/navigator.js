@@ -63,8 +63,7 @@ define([
             test: 'scope-test',
             testPart: 'scope-test-part',
             testSection: 'scope-test-section'
-        },
-        skippable: 'skippable'
+        }
     };
 
     /**
@@ -122,9 +121,7 @@ define([
         notInformational: ':not(.info)',
         informational: '.info',
         hidden: '.hidden',
-        disabled : '.disabled',
-        skippable: '.skippable',
-        notSkippable: ':not(.skippable)'
+        disabled : '.disabled'
     };
 
     /**
@@ -378,7 +375,6 @@ define([
                     icon = icon || 'unseen';
 
                     if (itm.categories && itm.categories.includes('x-tao-option-review-skipahead')) {
-                        cls.push('skippable');
                         scopedSection.canBeSkipped = true;
                     }
                 }
