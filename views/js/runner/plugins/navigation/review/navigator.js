@@ -307,7 +307,7 @@ define([
                 this.setState('skipahead-enabled', this.config.skipaheadEnabled);
                 this.setState('prevents-unseen', this.config.preventsUnseen);
 
-                isSkipaheadEnabled = activeItem && activeItem.categories && activeItem.categories.includes('x-tao-option-review-skipahead');
+                isSkipaheadEnabled = activeItem && activeItem.categories && (_.indexOf(activeItem.categories, 'x-tao-option-review-skipahead') >= 0);
 
                 if (this.config.preventsUnseen && !isSkipaheadEnabled) {
                     // disables all unseen items to prevent the test taker has access to.
