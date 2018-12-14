@@ -284,7 +284,7 @@ define([
                 total: 0
             };
             var totalQuestions = this.getProgressionTotal(progression, 'questions');
-            var activeSection;
+            var activeSection, isSkipaheadEnabled;
 
                 this.map = map;
             this.progression = progression;
@@ -310,7 +310,9 @@ define([
                 this.setState('skipahead-enabled', this.config.skipaheadEnabled);
                 this.setState('prevents-unseen', this.config.preventsUnseen);
 
-                if (this.config.preventsUnseen && !(activeSection && activeSection.canBeSkipped)) {
+                isSkipaheadEnabled = this.config.allowSkipahead && activeSection && activeSection.canBeSkipped;
+
+                if (this.config.preventsUnseen && !isSkipaheadEnabled) {
                     // disables all unseen items to prevent the test taker has access to.
                     this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
                 }
