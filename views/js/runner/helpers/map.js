@@ -306,7 +306,7 @@ define([
             if (context && context.options && context.options.reviewSkipahead) {
                 partSections = part.sections || {};
                 if (partSections) {
-                    _.each(partSections, function(partSection) {
+                    _.forEach(partSections, function(partSection) {
                         partSection.stats = this.computeItemStats(partSection.items);
                     }, this);
                 }
