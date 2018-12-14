@@ -27,7 +27,7 @@ define([
 
     var testStoreMock = {
         getStore : function getStore(){},
-        trackChanges : function trackChanges() {}
+        startChangeTracking : function startChangeTracking() {}
     };
 
     var pluginsMocks = ['timer', 'feedback', 'highlighter', 'magnifier'];
@@ -104,7 +104,7 @@ define([
 
         toolStateBridge = toolStateBridgeFactory({
             getStore : function(){},
-            trackChanges : function(storeName){
+            startChangeTracking : function startChangeTracking(storeName){
                 assert.equal(storeName, 'highlighter', 'Change tracking is set up for the highlighter');
             }
         }, pluginsMocks);
@@ -150,7 +150,7 @@ define([
                     }
                 });
             },
-            trackChanges: function(){},
+            startChangeTracking: function startChangeTracking(){},
             resetChanges: function(name){
                 assert.equal(name, 'highlighter', 'The change tracking is reset');
             }
@@ -200,7 +200,7 @@ define([
                     }
                 });
             },
-            trackChanges: function(){},
+            startChangeTracking: function startChangeTracking(){},
             hasChanges : function(){},
             resetChanges: function(name){
                 assert.ok(tools.indexOf(name) > -1, 'restoring the state reset the changes');
@@ -254,7 +254,7 @@ define([
                     }
                 });
             },
-            trackChanges: function(){},
+            startChangeTracking: function startChangeTracking(){},
             hasChanges : function(name){
                 assert.equal(name, 'highlighter', 'The method checks if the highlighter has changes');
                 return true;
@@ -289,7 +289,7 @@ define([
                     }
                 });
             },
-            trackChanges: function(){},
+            startChangeTracking: function startChangeTracking(){},
             hasChanges : function(name){
                 assert.equal(name, 'highlighter', 'The method checks if the highlighter has changes');
                 return false;
@@ -338,7 +338,7 @@ define([
                     }
                 });
             },
-            trackChanges: function(){},
+            startChangeTracking: function startChangeTracking(){},
             hasChanges : function(){
                 return true;
             },
@@ -386,7 +386,7 @@ define([
                     }
                 });
             },
-            trackChanges: function(){},
+            startChangeTracking: function startChangeTracking(){},
             hasChanges : function(name){
                 return name === 'highlighter';
             },
