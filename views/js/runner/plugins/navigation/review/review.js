@@ -231,7 +231,6 @@ define([
 
             if (isSkipaheadEnabled()) {
                 navigatorConfig.skipaheadEnabled = true;
-                navigatorConfig.scope = 'testPart';
             }
 
             this.navigator = navigatorFactory(navigatorConfig, testMap, testContext)
