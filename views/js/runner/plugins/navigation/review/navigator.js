@@ -281,9 +281,9 @@ define([
                 total: 0
             };
             var totalQuestions = this.getProgressionTotal(progression, 'questions');
-            var activeSection, isSkipaheadEnabled;
+            var activeItem, isSkipaheadEnabled;
 
-                this.map = map;
+            this.map = map;
             this.progression = progression;
 
             // update the info panel
@@ -302,12 +302,12 @@ define([
 
                 this.autoScroll();
 
-                activeSection = mapHelper.getActiveSection(scopedMap);
+                activeItem = mapHelper.getActiveItem(scopedMap);
 
                 this.setState('skipahead-enabled', this.config.skipaheadEnabled);
                 this.setState('prevents-unseen', this.config.preventsUnseen);
 
-                isSkipaheadEnabled = activeSection && activeSection.canBeSkipped;
+                isSkipaheadEnabled = activeItem && activeItem.categories && activeItem.categories.includes('x-tao-option-review-skipahead');
 
                 if (this.config.preventsUnseen && !isSkipaheadEnabled) {
                     // disables all unseen items to prevent the test taker has access to.
@@ -373,10 +373,6 @@ define([
                 } else {
                     cls.push('unseen');
                     icon = icon || 'unseen';
-
-                    if (itm.categories && itm.categories.includes('x-tao-option-review-skipahead')) {
-                        scopedSection.canBeSkipped = true;
-                    }
                 }
 
                 itm.cls = cls.join(' ');
