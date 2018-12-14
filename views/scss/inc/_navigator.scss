@@ -89,11 +89,6 @@ $borderColor: $textHighlight;
             .qti-navigator-icon, .qti-navigator-label {
                 cursor: not-allowed!important;
             }
-            &.skippable {
-                .qti-navigator-icon, .qti-navigator-label {
-                    cursor: pointer !important;
-                }
-            }
         }
     }
 
