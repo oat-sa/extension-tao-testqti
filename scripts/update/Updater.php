@@ -1689,10 +1689,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('26.1.2', '29.6.1');
 
         if ($this->isVersion('29.6.1')) {
-            $installRdsToolsStateStorage = new InstallRdsToolsStateStorage();
-            $installRdsToolsStateStorage->setServiceLocator($this->getServiceManager());
-            $installRdsToolsStateStorage([]);
-
             $this->getServiceManager()->register(
                 ToolsStateStorage::SERVICE_ID,
                 new NoStorage([])
