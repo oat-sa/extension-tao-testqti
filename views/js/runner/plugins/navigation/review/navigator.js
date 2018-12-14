@@ -314,6 +314,9 @@ define([
                         // disables all unseen items to prevent the test taker has access to.
                         this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
                     }
+                } else {
+                    // disables all unseen and not skippable items to prevent the test taker has access to.
+                    this.controls.$tree.find(_selectors.unseen + _selectors.notSkippable).addClass(_cssCls.disabled);
                 }
             } else {
                 this.controls.$filterBar.hide();
