@@ -39,8 +39,7 @@ define([
         scope: 'test',
         canCollapse: false,
         preventsUnseen: true,
-        hidden: false,
-        skipaheadEnabled: false
+        hidden: false
     };
 
     /**
@@ -285,8 +284,9 @@ define([
                 total: 0
             };
             var totalQuestions = this.getProgressionTotal(progression, 'questions');
+            var activeSection;
 
-            this.map = map;
+                this.map = map;
             this.progression = progression;
 
             // update the info panel
@@ -305,10 +305,12 @@ define([
 
                 this.autoScroll();
 
+                activeSection = mapHelper.getActiveSection(scopedMap);
+
                 this.setState('skipahead-enabled', this.config.skipaheadEnabled);
                 this.setState('prevents-unseen', this.config.preventsUnseen);
 
-                if (this.config.preventsUnseen && !this.config.skipaheadEnabled) {
+                if (this.config.preventsUnseen && !(activeSection && activeSection.canBeSkipped)) {
                     // disables all unseen items to prevent the test taker has access to.
                     this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
                 }
@@ -347,7 +349,7 @@ define([
             item.active = true;
 
             // adjust each item with additional meta
-            return mapHelper.each(scopedMap, function(itm) {
+            return mapHelper.each(scopedMap, function(itm, scopedSection) {
                 var cls = [];
                 var icon = '';
 
@@ -373,8 +375,9 @@ define([
                     cls.push('unseen');
                     icon = icon || 'unseen';
 
-                    if (itm.canBeSkipped) {
+                    if (itm.categories && itm.categories.includes('x-tao-option-review-skipahead')) {
                         cls.push('skippable');
+                        scopedSection.canBeSkipped = true;
                     }
                 }
 
