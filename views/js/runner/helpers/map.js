@@ -91,6 +91,28 @@ define([
         },
 
         /**
+         * Get active section from the test map
+         * @param {Object} map - The assessment test map
+         * @returns {Object} the active section
+         */
+        getActiveSection: function getActiveSection(map) {
+            var parts = this.getParts(map),
+                result = {};
+
+            _.forEach(parts, function (part) {
+                var sections = part.sections;
+                if (sections) {
+                    _.forEach(sections, function (section) {
+                        if (section.active) {
+                            result = section;
+                        }
+                    });
+                }
+            });
+            return result;
+        },
+
+        /**
          * Return the list of remaining sections.
          * @param {Object} map - The assessment test map
          * @param {String} sectionId - The next sections will be gathered once this sectionId has been reached
@@ -445,9 +467,6 @@ define([
                 }
                 if (item.viewed) {
                     acc.viewed++;
-                }
-                if (item.categories && item.categories.includes('x-tao-option-review-skipahead')) {
-                    item.canBeSkipped = true;
                 }
                 acc.total++;
                 return acc;
