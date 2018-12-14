@@ -91,11 +91,11 @@ define([
         },
 
         /**
-         * Get active section from the test map
+         * Get active item from the test map
          * @param {Object} map - The assessment test map
-         * @returns {Object} the active section
+         * @returns {Object} the active item
          */
-        getActiveSection: function getActiveSection(map) {
+        getActiveItem: function getActiveItem(map) {
             var parts = this.getParts(map),
                 result = {};
 
@@ -104,7 +104,12 @@ define([
                 if (sections) {
                     _.forEach(sections, function (section) {
                         if (section.active) {
-                            result = section;
+                            var items = section.items;
+                            _.forEach(items, function(item) {
+                                if (item.active) {
+                                    result = item;
+                                }
+                            });
                         }
                     });
                 }
@@ -325,17 +330,8 @@ define([
             }
 
             // update the stats to reflect the scope
-            if (context && context.options && context.options.reviewSkipahead) {
-                partSections = part.sections || {};
-                if (partSections && !(scope === 'section' || scope === 'testSection')) {
-                    _.forEach(partSections, function(partSection) {
-                        partSection.stats = this.computeItemStats(partSection.items);
-                    }, this);
-                }
-            } else {
-                if (section) {
-                    section.stats = this.computeItemStats(section.items);
-                }
+            if (section) {
+                section.stats = this.computeItemStats(section.items);
             }
             if (part) {
                 part.stats = this.computeStats(part.sections);
