@@ -51,7 +51,7 @@ class RdsToolsStateStorage extends ToolsStateStorage
     private function getQueryBuilder()
     {
         /**@var \common_persistence_sql_pdo_mysql_Driver $driver */
-        return $this->getPersistence()->getPlatform()->getQueryBuilder();
+        return $this->getPersistence()->getPlatForm()->getQueryBuilder();
     }
 
     /**
