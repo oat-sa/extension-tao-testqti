@@ -305,7 +305,7 @@ define([
             // update the stats to reflect the scope
             if (context && context.options && context.options.reviewSkipahead) {
                 partSections = part.sections || {};
-                if (partSections) {
+                if (partSections && !(scope === 'section' || scope === 'testSection')) {
                     _.forEach(partSections, function(partSection) {
                         partSection.stats = this.computeItemStats(partSection.items);
                     }, this);
