@@ -348,7 +348,7 @@ define([
             item.active = true;
 
             // adjust each item with additional meta
-            return mapHelper.each(scopedMap, function(itm, scopedSection) {
+            return mapHelper.each(scopedMap, function(itm) {
                 var cls = [];
                 var icon = '';
 

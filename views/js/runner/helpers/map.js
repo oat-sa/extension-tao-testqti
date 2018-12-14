@@ -303,7 +303,6 @@ define([
             var scopeMap = _.cloneDeep(map || {});
             var part;
             var section;
-            var partSections;
 
             // gets the current part and section
             if (context && context.testPartId) {
