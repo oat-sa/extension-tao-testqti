@@ -21,7 +21,7 @@
 namespace oat\taoQtiTest\test\integration\runner\time;
 
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorageFormat;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
@@ -32,7 +32,7 @@ use oat\taoTests\models\runner\time\TimePoint;
  * @package oat\taoQtiTest\test\integration\runner\time
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-class QtiTimeStoragePackedFormatTest extends TaoPhpUnitTestRunner
+class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
 {
     /**
      * @throws \common_ext_ExtensionException

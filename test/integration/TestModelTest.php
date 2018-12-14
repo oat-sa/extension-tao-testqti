@@ -20,18 +20,11 @@
 
 namespace oat\taoQtiTest\test\integration;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\TestModelService;
 
-include_once dirname(__FILE__) . '/../../includes/raw_start.php';
-
-class TestModelTest extends TaoPhpUnitTestRunner
+class TestModelTest extends GenerisPhpUnitTestRunner
 {
-    public function setUp()
-    {
-        TaoPhpUnitTestRunner::initTest();
-    }
-    
     /**
      *
      * @author Lionel Lecaque, lionel@taotesting.com

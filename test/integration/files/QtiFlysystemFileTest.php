@@ -19,14 +19,14 @@
 
 namespace oat\taoQtiTest\test\integration\files;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\files\QtiFlysystemFile;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\filesystem\FileSystemService;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 
-class QtiFlysystemFileTest extends TaoPhpUnitTestRunner
+class QtiFlysystemFileTest extends GenerisPhpUnitTestRunner
 {
     protected $serviceLocator;
     protected $filesystem;

@@ -20,8 +20,8 @@
 
 namespace oat\taoQtiTest\test\integration\runner;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\tao\model\state\StateStorage;
-use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\StorageManager;
 use Prophecy\Argument;
 use Prophecy\Prophet;
@@ -31,7 +31,7 @@ use Prophecy\Prophet;
  * @package oat\taoQtiTest\test\integration\runner
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-class StorageManagerTest extends TaoPhpUnitTestRunner
+class StorageManagerTest extends GenerisPhpUnitTestRunner
 {
     /**
      * @throws \common_ext_ExtensionException
@@ -51,7 +51,7 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophet->prophesize(StateStorage::class)->reveal();
 
         $storageManager = new StorageManager([]);
-        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+        $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorageService
         ]));
 
@@ -88,7 +88,7 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
-        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+        $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
 
@@ -115,7 +115,7 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
-        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+        $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
 
@@ -158,7 +158,7 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
-        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+        $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
 
@@ -205,7 +205,7 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
-        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+        $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
 
@@ -288,7 +288,7 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
-        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+        $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
         
@@ -392,7 +392,7 @@ class StorageManagerTest extends TaoPhpUnitTestRunner
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
-        $storageManager->setServiceLocator($this->getServiceManagerProphecy([
+        $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
 

@@ -58,9 +58,13 @@ define([
                         if (context && context.itemIdentifier) {
                             testRunner.disableItem(context.itemIdentifier);
                         }
-
                         // wait for the message acknowledge before leaving the runner
-                        testRunner.trigger('alert.leave', data.message, resolve);
+                        testRunner
+                            .trigger('disablefeedbackalerts')
+                            .trigger('alert.leave', data.message, function() {
+                                testRunner.trigger('enablefeedbackalerts');
+                                resolve();
+                            });
                     });
                 }
             });

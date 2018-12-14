@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\runner;
 use common_persistence_AdvKeyValuePersistence;
 use common_persistence_KeyValuePersistence;
 use oat\libCat\result\ItemResult;
+use oat\tao\model\theme\ThemeService;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -89,6 +90,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
 
+    const TOOL_ITEM_THEME_SWITCHER = 'itemThemeSwitcher';
+    const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
 
     /**
      * The test runner config
@@ -363,6 +366,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $response['config'] = $this->getTestConfig()->getConfig();
 
+            if ($this->isThemeSwitcherEnabled()) {
+                $themeSwitcherPlugin = [
+                    self::TOOL_ITEM_THEME_SWITCHER => [
+                        "activeNamespace" => $this->getCurrentThemeId(),
+                    ],
+                ];
+
+                $response["config"]["plugins"] = array_merge($response["config"]["plugins"], $themeSwitcherPlugin);
+            }
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -2038,5 +2050,35 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     protected function getStateAfterExit()
     {
         return DeliveryExecution::STATE_FINISHED;
+    }
+
+    /**
+     * Returns that the Theme Switcher Plugin is enabled or not
+     *
+     * @return bool
+     * @throws \common_ext_ExtensionException
+     */
+    private function isThemeSwitcherEnabled()
+    {
+        /** @var \common_ext_ExtensionsManager $extensionsManager */
+        $extensionsManager = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID);
+        $config = $extensionsManager->getExtensionById("taoTests")->getConfig("test_runner_plugin_registry");
+
+        return array_key_exists(self::TOOL_ITEM_THEME_SWITCHER_KEY, $config)
+            && $config[self::TOOL_ITEM_THEME_SWITCHER_KEY]["active"] === true;
+    }
+
+    /**
+     * Returns the ID of the current theme
+     *
+     * @return string
+     * @throws \common_exception_InconsistentData
+     */
+    private function getCurrentThemeId()
+    {
+        /** @var ThemeService $themeService */
+        $themeService = $this->getServiceLocator()->get(ThemeService::SERVICE_ID);
+
+        return $themeService->getTheme()->getId();
     }
 }
