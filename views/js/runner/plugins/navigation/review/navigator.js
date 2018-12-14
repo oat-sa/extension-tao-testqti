@@ -307,16 +307,10 @@ define([
 
                 this.setState('skipahead-enabled', this.config.skipaheadEnabled);
                 this.setState('prevents-unseen', this.config.preventsUnseen);
-                if (!this.config.skipaheadEnabled) {
-                    this.controls.$tree.find(_selectors.skippable).removeClass(_cssCls.skippable);
 
-                    if (this.config.preventsUnseen) {
-                        // disables all unseen items to prevent the test taker has access to.
-                        this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
-                    }
-                } else {
-                    // disables all unseen and not skippable items to prevent the test taker has access to.
-                    this.controls.$tree.find(_selectors.unseen + _selectors.notSkippable).addClass(_cssCls.disabled);
+                if (this.config.preventsUnseen && !this.config.skipaheadEnabled) {
+                    // disables all unseen items to prevent the test taker has access to.
+                    this.controls.$tree.find(_selectors.unseen).addClass(_cssCls.disabled);
                 }
             } else {
                 this.controls.$filterBar.hide();
