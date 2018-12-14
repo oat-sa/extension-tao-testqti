@@ -20,6 +20,12 @@
 
 namespace oat\taoQtiTest\models\runner\toolsStates;
 
+/**
+ * Empty implementation of tools states storage
+ *
+ * Class NoStorage
+ * @package oat\taoQtiTest\models\runner\toolsStates
+ */
 class NoStorage extends ToolsStateStorage
 {
     /**

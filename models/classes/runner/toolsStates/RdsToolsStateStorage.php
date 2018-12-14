@@ -20,13 +20,8 @@
 
 namespace oat\taoQtiTest\models\runner\toolsStates;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Query\QueryBuilder;
-use oat\taoResultServer\models\classes\ResultDeliveryExecutionDelete;
-use \core_kernel_classes_Resource;
-use oat\oatbox\service\ConfigurableService;
 
 class RdsToolsStateStorage extends ToolsStateStorage
 {
@@ -34,7 +29,7 @@ class RdsToolsStateStorage extends ToolsStateStorage
      * Constants for the database creation and data access
      *
      */
-    const TABLE_NAME = "runner_tool_states";
+    const TABLE_NAME = 'runner_tool_states';
     const DELIVERY_EXECUTION_ID_COLUMN = 'delivery_execution_id';
     const TOOL_NAME_COLUMN = 'tool_name';
     const TOOL_STATE_COLUMN = 'tool_state';
@@ -45,8 +40,7 @@ class RdsToolsStateStorage extends ToolsStateStorage
      */
     protected function getPersistence()
     {
-        $persistenceId = $this->hasOption(self::OPTION_PERSISTENCE) ?
-            $this->getOption(self::OPTION_PERSISTENCE) : 'default';
+        $persistenceId = $this->getOption(self::OPTION_PERSISTENCE) ?: 'default';
         return $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_ID)->getPersistenceById($persistenceId);
     }
 

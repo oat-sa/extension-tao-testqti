@@ -22,6 +22,12 @@ namespace oat\taoQtiTest\models\runner\toolsStates;
 
 use oat\oatbox\service\ConfigurableService;
 
+/**
+ * Service for persisting states of runners plugins
+ *
+ * Class ToolsStateStorage
+ * @package oat\taoQtiTest\models\runner\toolsStates
+ */
 abstract class ToolsStateStorage extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/ToolsStateStorage';
@@ -33,8 +39,7 @@ abstract class ToolsStateStorage extends ConfigurableService
      */
     protected function getPersistence()
     {
-        $persistenceId = $this->hasOption(self::OPTION_PERSISTENCE) ?
-            $this->getOption(self::OPTION_PERSISTENCE) : 'default';
+        $persistenceId = $this->getOption(self::OPTION_PERSISTENCE) ?: 'default';
         return $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_ID)->getPersistenceById($persistenceId);
     }
 
