@@ -65,24 +65,21 @@ trait RunnerToolStates
      */
     protected function saveToolStates()
     {
-        $toolStateParameter = 'toolStates';
-        $param = $this->getRawRequestParameter($toolStateParameter);
+        // since the parameter content is a JSON string
+        // we need to load it using the raw mode
+        $param = $this->getRawRequestParameter('toolStates');
         if ($param) {
-            // since the parameter content is a JSON string
-            // we need to load it using the raw mode
-            if ($param) {
-                $toolStates = json_decode($param, true);
+            $toolStates = json_decode($param, true);
 
-                if (count($toolStates) > 0) {
-                    array_walk($toolStates, function (&$toolState) {
-                        $toolState = json_encode($toolState);
-                    });
-                    $this->getRunnerService()->setToolsStates(
-                        $this->getServiceContext(),
-                        $toolStates
-                    );
-                    return true;
-                }
+            if (count($toolStates) > 0) {
+                array_walk($toolStates, function (&$toolState) {
+                    $toolState = json_encode($toolState);
+                });
+                $this->getRunnerService()->setToolsStates(
+                    $this->getServiceContext(),
+                    $toolStates
+                );
+                return true;
             }
         }
         return false;
