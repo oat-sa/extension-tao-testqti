@@ -220,20 +220,20 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                     ];
                 }
 
-                if (!is_null($this->getTimer())) {
-                    if (!isset($timer)) {
-                        $timer = $this->getTimer();
+                if (!is_null($this->getTimer()) && isset($timer)) {
+                    $lastTimestamp = $timer->getLastTimestamp([$identifier]);
+                    if ($lastTimestamp) {
+                        $firstTimestamp = $timer->getFirstTimestamp([$identifier]);
+                        $diffInSeconds = $lastTimestamp - $firstTimestamp;
+
+                        if (!isset($maxTimeSeconds)) {
+                            $maxTimeSeconds = $this->durationToMs($maxTime);
+                        }
+
+                        $maxTimeRemaining = $maxTimeSeconds - $diffInSeconds;
+                    } else {
+                        $maxTimeRemaining = $this->durationToMs($maxTimeRemaining);
                     }
-
-                    $lastTimestamp = $timer->getLastRegisteredTimestamp();
-                    $firstTimestamp = $timer->getFirstTimestamp([]);
-                    $diffInSeconds = $lastTimestamp - $firstTimestamp;
-
-                    if (!isset($maxTimeSeconds)) {
-                        $maxTimeSeconds = $this->durationToMs($maxTime);
-                    }
-
-                    $maxTimeRemaining = $maxTimeSeconds - $diffInSeconds;
                 } else {
                     $maxTimeRemaining = $this->durationToMs($maxTimeRemaining);
                 }
