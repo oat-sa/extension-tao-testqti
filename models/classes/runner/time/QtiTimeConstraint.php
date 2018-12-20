@@ -219,7 +219,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                         'remaining' => $timer->getRemainingExtraTime($identifier, $maxTimeSeconds, $this->timerTarget),
                     ];
                 }
-                
+
                 /** @var TimerLabelFormatterService $labelFormatter */
                 $labelFormatter = ServiceManager::getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
                 return [
