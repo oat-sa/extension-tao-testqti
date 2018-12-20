@@ -187,7 +187,7 @@ define([
             });
 
             //intercept offline navigation errors
-            testRunner.before('error', function(e, err) {
+            testRunner.before('error.connectivity', function(e, err) {
 
                 // detect and prevent connectivity errors
                 if (proxy.isConnectivityError(err)){
