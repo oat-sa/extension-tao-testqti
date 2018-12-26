@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\scripts\install;
 use common_report_Report as Report;
 use oat\oatbox\extension\AbstractAction;
 use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
+use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 
 /**
  * Deploys the tool states schema
@@ -62,10 +63,15 @@ class InstallRdsToolsStateStorage extends AbstractAction
             [RdsToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, RdsToolsStateStorage::TOOL_NAME_COLUMN],
             'IDX_' . RdsToolsStateStorage::TABLE_NAME . '_' . 'execution_and_tool_name');
 
-        $queries = $persistence->getPlatform()->getMigrateSchemaSql($fromSchema, $schema);
+        $queries = $persistence->getPlatorm()->getMigrateSchemaSql($fromSchema, $schema);
         foreach ($queries as $query) {
             $persistence->exec($query);
         }
+
+        $this->getServiceManager()->register(
+            ToolsStateStorage::SERVICE_ID,
+            new RdsToolsStateStorage([])
+        );
 
         return new Report(Report::TYPE_SUCCESS, 'Tool states service registered');
     }

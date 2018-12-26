@@ -96,7 +96,10 @@ class RdsToolsStateStorage extends ToolsStateStorage
                         self::TOOL_STATE_COLUMN => $state,
                     ]);
                 } catch (\PDOException $exception) {
+                    // when PDO implementation of RDS is used as a persistence
+                    // unfortunately the exception is very broad so it can cover more than intended cases
                 } catch (UniqueConstraintViolationException $exception) {
+                    // when DBAL implementation of RDS is used as a persistence
                 }
             }
         };
@@ -131,12 +134,12 @@ class RdsToolsStateStorage extends ToolsStateStorage
      */
     public function deleteStates($deliveryExecutionId)
     {
-        $sql = 'DELETE FROM ' . self::TABLE_NAME . '
-            WHERE ' . self::DELIVERY_EXECUTION_ID_COLUMN . ' = ?';
+        $this->getQueryBuilder()
+            ->delete(self::TABLE_NAME)
+            ->where(self::DELIVERY_EXECUTION_ID_COLUMN . ' = :delivery_execution_id')
+            ->setParameter('delivery_execution_id', $deliveryExecutionId)
+            ->execute();
 
-        if ($this->getPersistence()->exec($sql, [$deliveryExecutionId]) === false) {
-            return false;
-        }
         return true;
     }
 }

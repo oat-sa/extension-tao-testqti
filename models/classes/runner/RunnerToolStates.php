@@ -36,9 +36,10 @@ trait RunnerToolStates
     abstract public function getRequestParameter($name);
 
     /**
+     * @param string $name
      * @return string
      */
-    abstract public function getRawRequestParameter();
+    abstract public function getRawRequestParameter($name);
 
     /**
      * @return ServiceManager
