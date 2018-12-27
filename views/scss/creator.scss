@@ -98,6 +98,12 @@
         @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
         @include vendor-prefix(flex, 0 1 auto, property, (-ms-, -webkit-, ''));
         height: 100%;
+
+        .duration-group {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+        }
     }
 
     .test-creator-items{
@@ -692,7 +698,8 @@
 
         .duration-ctrl-wrapper {
             z-index: 500;
-
         }
+       
     }
+
 }
