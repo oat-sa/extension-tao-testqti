@@ -91,6 +91,33 @@ define([
         },
 
         /**
+         * Get active item from the test map
+         * @param {Object} map - The assessment test map
+         * @returns {Object} the active item
+         */
+        getActiveItem: function getActiveItem(map) {
+            var parts = this.getParts(map),
+                result = {};
+
+            _.forEach(parts, function (part) {
+                var sections = part.sections;
+                if (sections) {
+                    _.forEach(sections, function (section) {
+                        if (section.active) {
+                            var items = section.items;
+                            _.forEach(items, function(item) {
+                                if (item.active) {
+                                    result = item;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            return result;
+        },
+
+        /**
          * Return the list of remaining sections.
          * @param {Object} map - The assessment test map
          * @param {String} sectionId - The next sections will be gathered once this sectionId has been reached

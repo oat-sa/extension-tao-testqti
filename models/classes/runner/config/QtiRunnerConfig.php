@@ -101,6 +101,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
                     'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
                     'displaySubsectionTitle' => !empty($rawConfig['test-taker-review-display-subsection-title']),
+                    'allowSkipahead' => isset($rawConfig['test-taker-review-skipahead']) ? $rawConfig['test-taker-review-skipahead'] : false,
                 ],
                 'exitButton' => !empty($rawConfig['exitButton']),
                 'nextSection' => !empty($rawConfig['next-section']),
