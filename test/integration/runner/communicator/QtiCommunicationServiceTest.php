@@ -19,11 +19,10 @@
 
 namespace oat\taoQtiTest\test\integration\runner\communicator;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\communicator\CommunicationChannel as CommunicationChannelInterface;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use Prophecy\Prophet;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionState;
 
@@ -33,7 +32,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
  * @package oat\taoQtiTest\models\runner\communicator
  * @author Aleh Hutnikau, <hutnikau@1pt.com>
  */
-class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
+class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
 {
 
     /**
@@ -42,7 +41,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testProcessInput()
     {
         $service = new QtiCommunicationService([]);
-        $service->setServiceLocator($this->getServiceManagerProphecy());
+        $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
         $channel3 = new CommunicationChannel2();
@@ -66,31 +65,23 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     }
 
     /**
-     * @expectedException \common_exception_InconsistentData
+     * @param $input
+     * @param $expectedException
+     * @throws \common_exception_InconsistentData
+     *
+     * @dataProvider dataProviderTestProcessInputThrowsException
      */
-    public function testProcessInputException()
+    public function testProcessInputThrowsException($input, $expectedException)
     {
+        $this->expectException($expectedException);
+
         $service = new QtiCommunicationService([]);
-        $service->setServiceLocator($this->getServiceManagerProphecy());
+        $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
         $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
 
-        $service->processInput($context, [['channel' => $channel->getName()]]); //no message
-    }
-
-    /**
-     * @expectedException \common_exception_InconsistentData
-     */
-    public function testProcessInputException2()
-    {
-        $service = new QtiCommunicationService([]);
-        $service->setServiceLocator($this->getServiceManagerProphecy());
-        $channel = new CommunicationChannel();
-        $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
-        $context = $this->getQtiRunnerServiceContext(AssessmentTestSessionState::SUSPENDED);
-
-        $service->processInput($context, [['message' => 'foo']]); //no channel
+        $service->processInput($context, [$input]);
     }
 
     /**
@@ -99,7 +90,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testProcessOutput()
     {
         $service = new QtiCommunicationService([]);
-        $service->setServiceLocator($this->getServiceManagerProphecy());
+        $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
         $channel3 = new CommunicationChannel2();
@@ -131,7 +122,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testAttachChannel()
     {
         $service = new QtiCommunicationService([]);
-        $service->setServiceLocator($this->getServiceManagerProphecy());
+        $service->setServiceLocator($this->getServiceLocatorMock());
         $this->assertEquals(null, $service->getOption(QtiCommunicationService::OPTION_CHANNELS));
 
         $channel = new CommunicationChannel();
@@ -160,7 +151,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testAttachChannelException()
     {
         $service = new QtiCommunicationService([]);
-        $service->setServiceLocator($this->getServiceManagerProphecy());
+        $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
@@ -172,7 +163,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testDetachChannel()
     {
         $service = new QtiCommunicationService([]);
-        $service->setServiceLocator($this->getServiceManagerProphecy());
+        $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
@@ -208,7 +199,7 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
     public function testDetachChannelException()
     {
         $service = new QtiCommunicationService([]);
-        $service->setServiceLocator($this->getServiceManagerProphecy());
+        $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
         $channel2 = new CommunicationChannel2();
         $service->attachChannel($channel, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
@@ -217,19 +208,39 @@ class QtiCommunicationServiceTest extends TaoPhpUnitTestRunner
 
     /**
      * @param $sessionState
-     * @return AssessmentTestSession Assessment test session mock
+     * @return QtiRunnerServiceContext|\PHPUnit_Framework_MockObject_MockObject test session mock
      */
     private function getQtiRunnerServiceContext($sessionState)
     {
-        $prophet = new Prophet();
+        $sessionMock = $this->createMock(AssessmentTestSession::class);
+        $sessionMock->expects($this->any())
+            ->method('getState')
+            ->willReturn($sessionState);
 
-        $sessionProphecy = $prophet->prophesize('qtism\runtime\test\integrations\AssessmentTestSession');
-        $sessionProphecy->getState()->willReturn($sessionState);
+        $contextMock = $this->createMock(QtiRunnerServiceContext::class);
+        $contextMock->expects($this->any())
+            ->method('getTestSession')
+            ->willReturn($sessionMock);
 
-        $contextProphecy = $prophet->prophesize('oat\taoQtiTest\models\runner\QtiRunnerServiceContext');
-        $contextProphecy->getTestSession()->willReturn($sessionProphecy->reveal());
+        return $contextMock;
+    }
 
-        return $contextProphecy->reveal();
+    /**
+     * Data provider for testProcessInputThrowsException
+     *
+     * @return array
+     */
+    public function dataProviderTestProcessInputThrowsException() {
+        return [
+            'Without message' => [
+                'input' => ['channel' => 'TestChannel'],
+                'expectedException' => \common_exception_InconsistentData::class
+            ],
+            'Without channel' => [
+                'input' => ['message' => 'foo'],
+                'expectedException' => \common_exception_InconsistentData::class
+            ]
+        ];
     }
 }
 

@@ -156,6 +156,22 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'pluginId'      => 'calculator'
                 ]),
                 TestCategoryPreset::fromArray([
+                    'id'            => 'calculatorBodmas',
+                    'label'         => __('Calculator BODMAS'),
+                    'qtiCategory'   => 'x-tao-option-calculatorBodmas',
+                    'description'   => __('Allow the test-taker to use a calculator respecting the order of operations (BODMAS).'),
+                    'order'         => 400,
+                    'pluginId'      => 'calculator'
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'calculatorScientific',
+                    'label'         => __('Scientific Calculator'),
+                    'qtiCategory'   => 'x-tao-option-calculator-scientific',
+                    'description'   => __('Allow the test-taker to use a scientific calculator.'),
+                    'order'         => 400,
+                    'pluginId'      => 'calculator'
+                ]),
+                TestCategoryPreset::fromArray([
                     'id'            => 'highlighter',
                     'label'         => __('Highlighter'),
                     'qtiCategory'   => 'x-tao-option-highlighter',
@@ -189,6 +205,29 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                 ])
             ]
         );
+
+        //TAO-7239, register new feature category only if it is enabled in config
+        /** @var \common_ext_ExtensionsManager $tt */
+        $extManager = $presetService->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID);
+        $testRunnerConfig = $extManager->getExtensionById('taoQtiTest')->getConfig('testRunner');
+
+        $isSkipaheadEnabled = isset($testRunnerConfig['test-taker-review-skipahead']) && $testRunnerConfig['test-taker-review-skipahead'];
+        if ($isSkipaheadEnabled) {
+            $presetService->register(
+                TestCategoryPresetProvider::GROUP_NAVIGATION,
+                [
+                    TestCategoryPreset::fromArray([
+                        'id'            => 'skipAhead',
+                        'label'         => __('Enable Skipping Ahead'),
+                        'qtiCategory'   => 'x-tao-option-review-skipahead',
+                        'description'   => __('Enables skipping to items within this section. Requires the review screen option.'),
+                        'order'         => 250,
+                        'pluginId'      => 'review',
+                        'featureFlag'   => 'skip-ahead'
+                    ]),
+                ]
+            );
+        }
     }
 
 }

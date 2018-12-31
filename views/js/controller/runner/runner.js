@@ -26,6 +26,8 @@ define([
     'lodash',
     'i18n',
     'context',
+    'module',
+    'core/router',
     'core/promise',
     'core/communicator',
     'core/communicator/poll',
@@ -45,6 +47,8 @@ define([
     _,
     __,
     context,
+    module,
+    router,
     Promise,
     communicator,
     pollProvider,
@@ -112,6 +116,8 @@ define([
             var exitReason;
             var $container = $('.runner');
             var logger     = loggerFactory('controller/runner', { runnerOptions : runnerOptions });
+            var preventFeedback = false;
+            var errorFeedback = null;
 
             /**
              * Does the option exists ?
@@ -160,7 +166,9 @@ define([
                     displayMessage = __('An error occurred during the test, please content your administrator.') + " " + displayMessage;
                     return exit(displayMessage, 'error');
                 }
-                feedback().error(displayMessage, { timeout : -1 });
+                if (!preventFeedback) {
+                    errorFeedback = feedback().error(displayMessage, {timeout: -1});
+                }
             };
 
             /**
@@ -195,11 +203,18 @@ define([
                 return proxyLoader();
             };
 
+            var moduleConfig = module.config();
+
             loadingBar.start();
 
             // verify required options
             if( ! _.every(requiredOptions, hasOption)) {
                 return onError(new TypeError(__('Missing required option %s', name)));
+            }
+
+            // dispatch any extra registered routes
+            if (moduleConfig && _.isArray(moduleConfig.extraRoutes) && moduleConfig.extraRoutes.length) {
+                router.dispatch(moduleConfig.extraRoutes);
             }
 
             //load the plugins and the proxy provider
@@ -237,6 +252,15 @@ define([
 
                             // at the end, we are redirected to the exit URL
                             exit(exitReason);
+                        })
+                        .on('disablefeedbackalerts', function() {
+                            if (errorFeedback) {
+                                errorFeedback.close();
+                            }
+                            preventFeedback = true;
+                        })
+                        .on('enablefeedbackalerts', function() {
+                            preventFeedback = false;
                         })
                         .init();
                 })
