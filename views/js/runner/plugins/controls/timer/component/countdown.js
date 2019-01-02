@@ -286,6 +286,7 @@ define([
             }
         })
         .on('warn', function(message, level){
+            var instance;
             level = level || 'warning';
 
             if (this.is('rendered') && this.is('running') &&
@@ -297,14 +298,17 @@ define([
                     .addClass('txt-' + level);
 
                 if(this.config.displayWarning === true){
-                    tooltipInstance = tooltip(this.getElement(),{
-                        placement: 'bottom',
-                        theme: level,
-                        title: message
-                    }).show();
+                    instance = tooltip.instance(this.getElement(), {
+                        trigger: 'manual',
+                        theme : level,
+                        title: message,
+                        placement:'bottom'
+                    });
+                    instance.show();
                     setTimeout(function () {
-                        tooltipInstance.hide();
-                    },warningTimeout[level] || 2000);
+                        instance.hide();
+                        instance.dispose();
+                    }, warningTimeout[level] || 2000);
                 }
             }
         });
