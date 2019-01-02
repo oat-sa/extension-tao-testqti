@@ -100,9 +100,16 @@
         height: 100%;
 
         .duration-group {
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
+            @include flex-container(nowrap, row);
+            @include vendor-prefix(align-items, center, property, (-ms-, -webkit-, ''));
+        }
+
+        .duration-ctrl-wrapper, .incrementer-ctrl-wrapper {
+            .incrementer {
+                text-align: center;
+                padding-right: 14px;
+                padding-left: 0;
+            }
         }
     }
 
