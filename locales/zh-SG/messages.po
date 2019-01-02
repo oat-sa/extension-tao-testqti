@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T14:23:55\n"
+"Project-Id-Version: TAO 3.3.0-sprint91\n"
+"PO-Revision-Date: 2018-12-14T16:17:18\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-SG\n"
@@ -94,7 +94,13 @@ msgstr ""
 msgid "Allow the test-taker to use a basic calculator."
 msgstr ""
 
+msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
+msgstr ""
+
 msgid "Allow the test-taker to use a movable magnifier tool."
+msgstr ""
+
+msgid "Allow the test-taker to use a scientific calculator."
 msgstr ""
 
 msgid "Allow the test-taker to visually isolate a line of text."
@@ -188,6 +194,9 @@ msgid "Black on white"
 msgstr ""
 
 msgid "Calculator"
+msgstr ""
+
+msgid "Calculator BODMAS"
 msgstr ""
 
 msgid "Cancel"
@@ -328,7 +337,13 @@ msgstr ""
 msgid "Enable selection"
 msgstr ""
 
+msgid "Enable Skipping Ahead"
+msgstr ""
+
 msgid "Enable the item review screen / navigator."
+msgstr ""
+
+msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
 msgid "End test"
@@ -818,6 +833,9 @@ msgstr ""
 msgid "Reset filters"
 msgstr ""
 
+msgid "Resource(s) successfully exported."
+msgstr ""
+
 msgid "Review"
 msgstr ""
 
@@ -836,16 +854,19 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+msgid "Scientific Calculator"
+msgstr ""
+
 msgid "Scorer"
 msgstr ""
 
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -987,6 +1008,9 @@ msgid "Test"
 msgstr ""
 
 msgid "Test constructor"
+msgstr ""
+
+msgid "Test metadata successfully exported."
 msgstr ""
 
 msgid "Test Navigation"
