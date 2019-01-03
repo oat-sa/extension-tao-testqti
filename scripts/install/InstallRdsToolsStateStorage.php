@@ -63,7 +63,7 @@ class InstallRdsToolsStateStorage extends AbstractAction
             [RdsToolsStateStorage::COLUMN_DELIVERY_EXECUTION_ID, RdsToolsStateStorage::COLUMN_TOOL_NAME],
             'IDX_' . RdsToolsStateStorage::TABLE_NAME . '_' . 'execution_and_tool_name');
 
-        $queries = $persistence->getPlatorm()->getMigrateSchemaSql($fromSchema, $schema);
+        $queries = $persistence->getPlatform()->getMigrateSchemaSql($fromSchema, $schema);
         foreach ($queries as $query) {
             $persistence->exec($query);
         }

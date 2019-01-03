@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\toolsStates;
 
+use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
 use oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage;
 use Prophecy\Argument;
@@ -56,7 +57,15 @@ class RdsToolsStateStorageTest extends ToolsStateStorageTestCase
             \common_persistence_Manager::SERVICE_ID => $persistanceManagerProphecy,
         ]);
 
-        $installRdsToolsStateStorage = new InstallRdsToolsStateStorage();
+        $fakeManager = $this->getMockBuilder(ServiceManager::class)->setMethods(['register'])->disableOriginalConstructor()->getMock();
+        /** @var InstallRdsToolsStateStorage $installRdsToolsStateStorage */
+        $installRdsToolsStateStorage = $this->getMockBuilder(InstallRdsToolsStateStorage::class)->setMethods(['getServiceManager'])->getMock();
+        $installRdsToolsStateStorage->expects($this->any())
+            ->method('getServiceManager')
+            ->willReturn(
+                $fakeManager
+            );
+
         $installRdsToolsStateStorage->setServiceLocator($serviceManagerMock);
         $installRdsToolsStateStorage([]);
 
