@@ -1967,7 +1967,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         try{
             $metadataElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::METADATA_FILE_NAME);
         }catch(\tao_models_classes_FileNotFoundException $e){
-            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
+            \common_Logger::e('Old delivery that does not contain the compiled portable element data in the item '.$itemRef.'. Original message: ' . $e->getMessage());
+        }catch(\Exception $e) {
+            \common_Logger::e('An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage());
         }
         return $metadataElements;
     }
