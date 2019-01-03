@@ -405,9 +405,6 @@ define([
                             self.actiontStore.push(action.action, action.parameters);
                         });
                         return data;
-                    })
-                    .catch(function(err){
-                        throw err;
                     });
                 });
             };
