@@ -30,9 +30,9 @@ class RdsToolsStateStorage extends ToolsStateStorage
      *
      */
     const TABLE_NAME = 'runner_tool_states';
-    const DELIVERY_EXECUTION_ID_COLUMN = 'delivery_execution_id';
-    const TOOL_NAME_COLUMN = 'tool_name';
-    const TOOL_STATE_COLUMN = 'tool_state';
+    const COLUMN_DELIVERY_EXECUTION_ID = 'delivery_execution_id';
+    const COLUMN_TOOL_NAME = 'tool_name';
+    const COLUMN_TOOL_STATE = 'tool_state';
 
     /**
      * @return \common_persistence_SqlPersistence
@@ -65,16 +65,16 @@ class RdsToolsStateStorage extends ToolsStateStorage
      */
     private function updateState($deliveryExecutionId, $toolName, $state)
     {
-        $sql = "UPDATE " . self::TABLE_NAME . " SET " . self::TOOL_STATE_COLUMN . " =:state
-        WHERE " . self::DELIVERY_EXECUTION_ID_COLUMN . ' =:delivery_execution_id AND  ' . self::TOOL_NAME_COLUMN . ' =:tool_name';
+        $qb = $this->getQueryBuilder()
+            ->update(self::TABLE_NAME)
+            ->set(self::COLUMN_TOOL_STATE, ':state')
+            ->where(self::COLUMN_DELIVERY_EXECUTION_ID .' = :delivery_execution_id')
+            ->andWhere(self::COLUMN_TOOL_NAME .' = :tool_name')
+            ->setParameter('state', $state)
+            ->setParameter('delivery_execution_id', $deliveryExecutionId)
+            ->setParameter('tool_name', $toolName);
 
-        $rowsUpdated = $this->getPersistence()->exec($sql, [
-            'state' => $state,
-            'delivery_execution_id' => $deliveryExecutionId,
-            'tool_name' => $toolName,
-        ]);
-
-        return $rowsUpdated !== 0;
+        return $qb->execute() !== 0;
     }
 
     /**
@@ -91,9 +91,9 @@ class RdsToolsStateStorage extends ToolsStateStorage
             if (!$hasRowActuallyChanged) {
                 try {
                     $this->getPersistence()->insert(self::TABLE_NAME, [
-                        self::DELIVERY_EXECUTION_ID_COLUMN => $deliveryExecutionId,
-                        self::TOOL_NAME_COLUMN => $toolName,
-                        self::TOOL_STATE_COLUMN => $state,
+                        self::COLUMN_DELIVERY_EXECUTION_ID => $deliveryExecutionId,
+                        self::COLUMN_TOOL_NAME => $toolName,
+                        self::COLUMN_TOOL_STATE => $state,
                     ]);
                 } catch (\PDOException $exception) {
                     // when PDO implementation of RDS is used as a persistence
@@ -115,13 +115,13 @@ class RdsToolsStateStorage extends ToolsStateStorage
         $qb = $this->getQueryBuilder()
             ->select('*')
             ->from(self::TABLE_NAME)
-            ->where(self::DELIVERY_EXECUTION_ID_COLUMN . ' = :delivery_execution_id')
+            ->where(self::COLUMN_DELIVERY_EXECUTION_ID . ' = :delivery_execution_id')
             ->setParameter('delivery_execution_id', $deliveryExecutionId);
 
         $returnValue = [];
 
         foreach ($qb->execute()->fetchAll() as $variable) {
-            $returnValue[$variable[self::TOOL_NAME_COLUMN]] = $variable[self::TOOL_STATE_COLUMN];
+            $returnValue[$variable[self::COLUMN_TOOL_NAME]] = $variable[self::COLUMN_TOOL_STATE];
         }
 
         return $returnValue;
@@ -136,7 +136,7 @@ class RdsToolsStateStorage extends ToolsStateStorage
     {
         $this->getQueryBuilder()
             ->delete(self::TABLE_NAME)
-            ->where(self::DELIVERY_EXECUTION_ID_COLUMN . ' = :delivery_execution_id')
+            ->where(self::COLUMN_DELIVERY_EXECUTION_ID . ' = :delivery_execution_id')
             ->setParameter('delivery_execution_id', $deliveryExecutionId)
             ->execute();
 

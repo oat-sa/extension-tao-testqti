@@ -724,7 +724,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         if ($context instanceof QtiRunnerServiceContext && is_array($toolStates)) {
             /** @var ToolsStateStorage $toolsStateStorage */
-            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+            $toolsStateStorage = $this->getServiceLocator()->get(ToolsStateStorage::SERVICE_ID);
 
             $toolsStateStorage->storeStates($context->getTestExecutionUri(), $toolStates);
         }
@@ -748,7 +748,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
         if ($context instanceof QtiRunnerServiceContext) {
             /** @var ToolsStateStorage $toolsStateStorage */
-            $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+            $toolsStateStorage = $this->getServiceLocator()->get(ToolsStateStorage::SERVICE_ID);
             $toolsStates = $toolsStateStorage->getStates($context->getTestExecutionUri());
         }
 
@@ -1967,7 +1967,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
 
         /** @var ToolsStateStorage $toolsStateStorage */
-        $toolsStateStorage = $this->getServiceManager()->get(ToolsStateStorage::SERVICE_ID);
+        $toolsStateStorage = $this->getServiceLocator()->get(ToolsStateStorage::SERVICE_ID);
         $toolsStateStorage->deleteStates($request->getDeliveryExecution()->getIdentifier());
 
         return $status;

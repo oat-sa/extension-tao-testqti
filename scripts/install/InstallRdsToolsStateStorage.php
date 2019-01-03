@@ -53,14 +53,14 @@ class InstallRdsToolsStateStorage extends AbstractAction
         $revisionTable = $schema->createTable(RdsToolsStateStorage::TABLE_NAME);
         $revisionTable->addOption('engine', 'MyISAM');
 
-        $revisionTable->addColumn(RdsToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, 'string', array('notnull' => true, 'length' => 255));
-        $revisionTable->addColumn(RdsToolsStateStorage::TOOL_NAME_COLUMN, 'string', array('notnull' => true, 'length' => 60));
+        $revisionTable->addColumn(RdsToolsStateStorage::COLUMN_DELIVERY_EXECUTION_ID, 'string', array('notnull' => true, 'length' => 255));
+        $revisionTable->addColumn(RdsToolsStateStorage::COLUMN_TOOL_NAME, 'string', array('notnull' => true, 'length' => 60));
 
         $longtextThreshold = 16777215 + 1;
-        $revisionTable->addColumn(RdsToolsStateStorage::TOOL_STATE_COLUMN, 'string', array('notnull' => false, 'length' => $longtextThreshold));
+        $revisionTable->addColumn(RdsToolsStateStorage::COLUMN_TOOL_STATE, 'string', array('notnull' => false, 'length' => $longtextThreshold));
 
         $revisionTable->addUniqueIndex(
-            [RdsToolsStateStorage::DELIVERY_EXECUTION_ID_COLUMN, RdsToolsStateStorage::TOOL_NAME_COLUMN],
+            [RdsToolsStateStorage::COLUMN_DELIVERY_EXECUTION_ID, RdsToolsStateStorage::COLUMN_TOOL_NAME],
             'IDX_' . RdsToolsStateStorage::TABLE_NAME . '_' . 'execution_and_tool_name');
 
         $queries = $persistence->getPlatorm()->getMigrateSchemaSql($fromSchema, $schema);

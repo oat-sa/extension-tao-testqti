@@ -48,7 +48,6 @@ abstract class ToolsStateStorage extends ConfigurableService
      *
      * @param string $deliveryExecutionId
      * @param array $states
-     * @return mixed
      */
     abstract public function storeStates($deliveryExecutionId, $states);
 

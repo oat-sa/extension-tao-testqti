@@ -20,8 +20,8 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\toolsStates;
 
+use oat\taoQtiTest\models\runner\toolsStates\KvToolsStateStorage;
 use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
-use oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage;
 use Prophecy\Argument;
 
 class KvToolsStateStorageTest extends ToolsStateStorageTestCase
@@ -38,8 +38,16 @@ class KvToolsStateStorageTest extends ToolsStateStorageTestCase
 
     public function setUp()
     {
-        $this->markTestSkipped('Unfortunetely we don\'t have mock for common_persistence_AdvKeyValuePersistence yet. So the KV tool state storage cannot be tested.');
+        $persistence = new \common_persistence_AdvKeyValuePersistence([], new \common_persistence_InMemoryAdvKvDriver());
 
-        // @todo put a mock storage in this->storage
+        $this->storage = new KvToolsStateStorage();
+        $this->storage->setOption(KvToolsStateStorage::OPTION_PERSISTENCE, $persistence);
+
+        $persistanceManagerProphecy = $this->prophesize(\common_persistence_Manager::class);
+        $persistanceManagerProphecy->getPersistenceById(Argument::any())->willReturn($persistence);
+        $serviceManagerMock = $this->getServiceLocatorMock([
+            \common_persistence_Manager::SERVICE_ID => $persistanceManagerProphecy,
+        ]);
+        $this->storage->setServiceLocator($serviceManagerMock);
     }
 }

@@ -34,11 +34,6 @@ class KvToolsStateStorage extends ToolsStateStorage
     const PREFIX_STATES = 'ToolsStateStorage:states';
 
     /**
-     * Do less 'set' queries and more 'get' queries
-     */
-    const ALLOW_PARTIAL_UPDATES = false;
-
-    /**
      * @return \common_persistence_AdvKeyValuePersistence
      * @throws \common_exception_Error
      */
@@ -58,16 +53,6 @@ class KvToolsStateStorage extends ToolsStateStorage
      */
     public function storeStates($deliveryExecutionId, $states)
     {
-        // handle possible partial update
-        if (self::ALLOW_PARTIAL_UPDATES) {
-            $fetchedStates = $this->getStates($deliveryExecutionId);
-            foreach ($fetchedStates as $toolName => $fetchedState) {
-                if (!array_key_exists($toolName, $states)) {
-                    $states[$toolName] = $fetchedState;
-                }
-            }
-        }
-
         $this->getPersistence()->hmSet(self::PREFIX_STATES . $deliveryExecutionId, $states);
     }
 
