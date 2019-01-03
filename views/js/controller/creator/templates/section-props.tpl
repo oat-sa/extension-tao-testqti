@@ -384,7 +384,7 @@
             <div class="col-5">
                 <label for="section-min-time">{{__ 'Minimum Duration'}}</label>
             </div>
-            <div class="col-6">
+            <div class="col-6 duration-group">
                 <input type="text" name="section-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
@@ -401,7 +401,7 @@
             <div class="col-5">
                 <label for="section-max-time">{{__ 'Maximum Duration'}}</label>
             </div>
-            <div class="col-6">
+            <div class="col-6 duration-group">
                 <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
