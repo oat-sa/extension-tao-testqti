@@ -297,10 +297,9 @@ define([
                     .addClass('txt-' + level);
 
                 if(this.config.displayWarning === true){
-                    countdownTooltip = tooltip.create(this.getElement(), {
+                    countdownTooltip = tooltip.create(this.getElement(), message, {
                         trigger: 'manual',
                         theme : level,
-                        title: message,
                         placement:'bottom'
                     });
                     countdownTooltip.show();
