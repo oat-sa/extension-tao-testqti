@@ -1696,9 +1696,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('29.7.0');
         }
 
-        $this->skip('29.7.0', '29.7.2');
+        $this->skip('29.7.0', '29.7.3');
 
-        if ($this->isVersion('29.7.2')) {
+        if ($this->isVersion('29.7.3')) {
             $this->getServiceManager()->register(
                 ToolsStateStorage::SERVICE_ID,
                 new NoStorage([])
