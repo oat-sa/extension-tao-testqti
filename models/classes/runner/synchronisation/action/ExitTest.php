@@ -47,9 +47,10 @@ class ExitTest extends TestRunnerAction
         $this->validate();
 
         try {
-
             /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getServiceContext();
+
+            $this->saveToolStates();
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer($this->getTime());

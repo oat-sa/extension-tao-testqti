@@ -52,6 +52,8 @@ class Timeout extends TestRunnerAction
         try {
             $serviceContext = $this->getServiceContext(false);
 
+            $this->saveToolStates();
+
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer($this->getTime());
                 $this->saveItemState();

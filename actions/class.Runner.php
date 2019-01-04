@@ -33,6 +33,8 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
+use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
+use oat\taoQtiTest\models\runner\RunnerToolStates;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -41,6 +43,7 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
  */
 class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 {
+    use RunnerToolStates;
 
     /**
      * The current test session
@@ -293,6 +296,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
                 $response['lastStoreId'] = $lastStoreId;
                 $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext);
+                $response['toolStates'] = $this->getToolStates($serviceContext);
             }
 
         } catch (common_Exception $e) {
@@ -640,6 +644,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->initServiceContext($serviceContext);
 
             $this->saveItemResponses(false);
+            $this->saveToolStates();
 
             $serviceContext->getTestSession()->initItemTimer();
             $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
@@ -690,6 +695,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             $this->checkSecurityToken();
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+
+            $this->saveToolStates();
 
             $this->endItemTimer();
 
@@ -748,6 +755,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->initServiceContext($serviceContext);
 
             $this->saveItemResponses();
+            $this->saveToolStates();
 
             $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref, $late);
 
@@ -800,6 +808,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->initServiceContext($serviceContext);
 
             $this->saveItemResponses();
+            $this->saveToolStates();
 
             $response = [
                 'success' => $this->getRunnerService()->exitTest($serviceContext),
@@ -1038,5 +1047,22 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected function getRunnerService()
     {
         return $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
+    }
+
+    /**
+     *
+     * For RunnerToolStates
+     *
+     * @param $name
+     * @return mixed
+     * @throws common_exception_MissingParameter
+     */
+    protected function getRawRequestParameter($name)
+    {
+        $parameters = $this->getRequest()->getRawParameters();
+        if (!array_key_exists($name, $parameters)) {
+            throw new common_exception_MissingParameter(sprintf('No such parameter "%s"', $name));
+        }
+        return $parameters[$name];
     }
 }

@@ -52,6 +52,9 @@ class Skip extends TestRunnerAction
 
         try {
             $serviceContext = $this->getServiceContext();
+
+            $this->saveToolStates();
+
             $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $this->getTime());
 
             if ($this->getRequestParameter('offline') === true) {
