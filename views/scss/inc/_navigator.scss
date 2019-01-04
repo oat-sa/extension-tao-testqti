@@ -84,7 +84,7 @@ $borderColor: $textHighlight;
             cursor: default;
         }
     }
-    &.prevents-unseen {
+    &.prevents-unseen:not(.skipahead-enabled) {
         .unseen {
             .qti-navigator-icon, .qti-navigator-label {
                 cursor: not-allowed!important;

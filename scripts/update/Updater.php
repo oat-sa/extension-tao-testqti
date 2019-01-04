@@ -1683,6 +1683,17 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('26.1.2');
         }
 
-        $this->skip('26.1.2', '30.0.0');
+        $this->skip('26.1.2', '29.6.1');
+
+        if ($this->isVersion('29.6.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-skipahead'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('29.7.0');
+        }
+
+        $this->skip('29.7.0', '30.0.0');
     }
 }
