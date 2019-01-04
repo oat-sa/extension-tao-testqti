@@ -286,28 +286,27 @@ define([
             }
         })
         .on('warn', function(message, level){
-            var instance;
+            var countdownTooltip;
             level = level || 'warning';
 
             if (this.is('rendered') && this.is('running') &&
                 _.isString(message) && !_.isEmpty(message)) {
-                var tooltipInstance;
 
                 $time
                     .removeClass('txt-success txt-info txt-warning txt-danger txt-error')
                     .addClass('txt-' + level);
 
                 if(this.config.displayWarning === true){
-                    instance = tooltip.instance(this.getElement(), {
+                    countdownTooltip = tooltip.create(this.getElement(), {
                         trigger: 'manual',
                         theme : level,
                         title: message,
                         placement:'bottom'
                     });
-                    instance.show();
+                    countdownTooltip.show();
                     setTimeout(function () {
-                        instance.hide();
-                        instance.dispose();
+                        countdownTooltip.hide();
+                        countdownTooltip.dispose();
                     }, warningTimeout[level] || 2000);
                 }
             }
