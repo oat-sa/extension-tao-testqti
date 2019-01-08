@@ -65,7 +65,6 @@ define([
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var hasHighlights   = false;
 
-
             var highlighter = highlighterFactory();
 
             // create buttons
@@ -134,51 +133,64 @@ define([
                 }
             }
 
-            highlighter
-                .on('start', function(){
-                    self.buttonMain.turnOn();
-                    self.trigger('start');
-                    hasHighlights = true;
-                })
-                .on('end', function(){
-                    self.buttonMain.turnOff();
-                    self.trigger('end');
-                    hasHighlights = false;
-                });
-
+            /**
+             * Load the store and hook the behavior
+             */
             return testRunner.getPluginStore(self.getName()).then(function(highlighterStore){
 
-                //update plugin state based on changes
-                testRunner
-                .on('loaditem', togglePlugin)
-                .on('enabletools renderitem', function () {
-                    self.enable();
-                })
-                .on('renderitem', function() {
-                    var testContext = testRunner.getTestContext();
-                    if(isEnabled()){
-                        return highlighterStore
-                            .getItem(testContext.itemIdentifier)
-                            .then(function(index){
-                                if(index){
-                                    hasHighlights = true;
-                                    highlighter.restoreIndex(index);
-                                }
-                            });
-                    }
-                })
-                .before('skip move timeout', function() {
+                /**
+                 * Save the highlighter state in the store
+                 * @returns {Promise} resolves one the save is done
+                 */
+                function save() {
                     var testContext = testRunner.getTestContext();
                     if(isEnabled() && hasHighlights){
                         return highlighterStore.setItem(testContext.itemIdentifier, highlighter.getIndex());
                     }
-                })
-                .on('disabletools unloaditem', function () {
-                    self.disable();
-                    if (isEnabled()) {
-                        highlighter.toggleHighlighting(false);
-                    }
-                });
+                    return Promise.resolve(false);
+                }
+
+                highlighter
+                    .on('start', function(){
+                        self.buttonMain.turnOn();
+                        self.trigger('start');
+                        hasHighlights = true;
+                    })
+                    .on('end', function(){
+                        self.buttonMain.turnOff();
+                        self.trigger('end');
+                        return save();
+                    });
+
+                //update plugin state based on changes
+                testRunner
+                    .on('loaditem', togglePlugin)
+                    .on('enabletools renderitem', function () {
+                        self.enable();
+                    })
+                    .on('renderitem', function() {
+                        var testContext = testRunner.getTestContext();
+                        if(isEnabled()){
+                            hasHighlights = false;
+                            return highlighterStore
+                                .getItem(testContext.itemIdentifier)
+                                .then(function(index){
+                                    if(index){
+                                        hasHighlights = true;
+                                        highlighter.restoreIndex(index);
+                                    }
+                                });
+                        }
+                    })
+                    .before('skip move timeout', function() {
+                        return save();
+                    })
+                    .on('disabletools unloaditem', function () {
+                        self.disable();
+                        if (isEnabled()) {
+                            highlighter.toggleHighlighting(false);
+                        }
+                    });
             });
         },
 
