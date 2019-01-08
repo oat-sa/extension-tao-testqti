@@ -32,7 +32,6 @@ use oat\taoQtiTest\models\runner\session\UserUriAware;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
-use oat\taoResultServer\models\classes\ResultServerService;
 use taoQtiTest_helpers_TestSessionStorage;
 
 /**
@@ -59,10 +58,19 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     protected function loadSession(DeliveryExecution $deliveryExecution)
     {
         $session = null;
-        $inputParameters = $this->getRuntimeInputParameters($deliveryExecution);
-
-        $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
-        $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
+        $sessionId = $deliveryExecution->getIdentifier();
+        try {
+            $inputParameters = $this->getRuntimeInputParameters($deliveryExecution);
+            $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
+            $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
+        } catch (\common_exception_NoContent $e) {
+            self::$cache[$sessionId] = [
+                'session' => null,
+                'storage' => null,
+                'compilation' => null
+            ];
+            return;
+        }
 
         /** @var DeliveryServerService $deliveryServerService */
         $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
@@ -78,8 +86,6 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
             $sessionManager,
             new BinaryAssessmentTestSeeker($testDefinition), $userId
         );
-
-        $sessionId = $deliveryExecution->getIdentifier();
 
         if ($qtiStorage->exists($sessionId)) {
             $session = $qtiStorage->retrieve($testDefinition, $sessionId);
