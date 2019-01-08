@@ -126,6 +126,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'amount' => isset($rawConfig['item-cache-size']) ? intval($rawConfig['item-cache-size']) : 3,
                 ],
                 'guidedNavigation' => isset($rawConfig['guidedNavigation']) ? $rawConfig['guidedNavigation'] : false,
+                'toolStateServerStorage' => isset($rawConfig['tool-state-server-storage']) ? $rawConfig['tool-state-server-storage'] : [],
             ];
         }
         return $config;
