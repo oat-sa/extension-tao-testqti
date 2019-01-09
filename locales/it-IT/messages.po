@@ -1311,7 +1311,7 @@ msgid "You are about to go to the previous item. Click OK to continue and go to 
 msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr " Hai terminato la prova. Una volta chiusa la prova non potrai più ritornare alle domande. Sei sicuro di voler chiudere la prova?"
+msgstr "Hai terminato la prova. Una volta chiusa la prova non potrai più ritornare alle domande. Sei sicuro di voler chiudere la prova?"
 
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
