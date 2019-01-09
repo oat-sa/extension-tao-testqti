@@ -144,7 +144,7 @@ define([
                  */
                 function save() {
                     var testContext = testRunner.getTestContext();
-                    if(isEnabled() && hasHighlights){
+                    if(isEnabled() && hasHighlights && testContext.itemIdentifier){
                         return highlighterStore.setItem(testContext.itemIdentifier, highlighter.getIndex());
                     }
                     return Promise.resolve(false);
@@ -159,7 +159,6 @@ define([
                     .on('end', function(){
                         self.buttonMain.turnOff();
                         self.trigger('end');
-                        return save();
                     });
 
                 //update plugin state based on changes
@@ -179,6 +178,13 @@ define([
                                         hasHighlights = true;
                                         highlighter.restoreIndex(index);
                                     }
+                                })
+                                .then(function(){
+                                    //save highlighter state during the item session,
+                                    //when the highlighting ends
+                                    highlighter.on('end.save', function(){
+                                        return save();
+                                    });
                                 });
                         }
                     })
@@ -188,7 +194,9 @@ define([
                     .on('disabletools unloaditem', function () {
                         self.disable();
                         if (isEnabled()) {
-                            highlighter.toggleHighlighting(false);
+                            highlighter
+                                .off('end.save')
+                                .toggleHighlighting(false);
                         }
                     });
             });

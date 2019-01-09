@@ -548,7 +548,8 @@ define([
 
                     })
                     .then(function(response){
-                        if(response.toolStates){
+                        var isNewStore = !response.lastStoreId || response.lastStoreId !== storeId;
+                        if( response.toolStates && isNewStore ){
                             return self.toolStateBridge
                                 .setTools(_.keys(response.toolStates))
                                 .restoreStates(response.toolStates);
