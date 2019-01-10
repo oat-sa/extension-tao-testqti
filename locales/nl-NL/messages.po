@@ -95,7 +95,7 @@ msgid "Allow the test-taker to use a basic calculator."
 msgstr "Sta de kandidaat toe om een standaard rekenmachine te gebruiken."
 
 msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
-msgstr "Sta de kandidaat toe om een calculator the gebruiken die "
+msgstr ""
 
 msgid "Allow the test-taker to use a movable magnifier tool."
 msgstr "Sta de kandidaat toe om een beweegbaar vergrootglas te gebruiken."
