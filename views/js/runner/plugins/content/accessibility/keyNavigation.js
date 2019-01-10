@@ -38,9 +38,7 @@ define([
      *
      * @type {[string]}
      */
-    const disallowedClasses = [
-        'cke_'
-    ];
+    const ignoredClass = 'no-key-navigation';
 
     /**
      * Init the navigation in the toolbar
@@ -422,16 +420,10 @@ define([
 
     function allowedToNavigateFrom(element)
     {
-        var disallowedClassIdx, disallowedClass;
         var $element = $(element);
 
-        if (disallowedClasses.length > 0) {
-            for (disallowedClassIdx in disallowedClasses) {
-                disallowedClass = disallowedClasses[disallowedClassIdx];
-                if ($element.is('[class*="' + disallowedClass + '"]')) {
-                    return false;
-                }
-            }
+        if ($element.hasClass(ignoredClass) || $element.parents('.' + ignoredClass).length > 0) {
+            return false;
         }
 
         return true;
