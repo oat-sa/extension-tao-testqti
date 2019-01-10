@@ -423,11 +423,12 @@ define([
     function allowedToNavigateFrom(element)
     {
         var disallowedClassIdx, disallowedClass;
+        var $element = $(element);
 
         if (disallowedClasses.length > 0) {
             for (disallowedClassIdx in disallowedClasses) {
                 disallowedClass = disallowedClasses[disallowedClassIdx];
-                if ($(element).is('[class*="' + disallowedClass + '"]')) {
+                if ($element.is('[class*="' + disallowedClass + '"]')) {
                     return false;
                 }
             }
@@ -450,15 +451,6 @@ define([
             var self = this;
             var testRunner = this.getTestRunner();
 
-            shortcut.add('tab shift+tab', function(e){
-                if (!allowedToNavigateFrom(e.target)) {
-                    return false;
-                }
-                if(!self.groupNavigator.isFocused()){
-                    self.groupNavigator.focus();
-                }
-            });
-
             //start disabled
             this.disable();
 
@@ -466,6 +458,16 @@ define([
             testRunner
                 .after('renderitem', function () {
                     self.groupNavigator = initTestRunnerNavigation(testRunner);
+
+                    shortcut.add('tab shift+tab', function(e){
+                        if (!allowedToNavigateFrom(e.target)) {
+                            return false;
+                        }
+                        if(!self.groupNavigator.isFocused()){
+                            self.groupNavigator.focus();
+                        }
+                    });
+
                     self.enable();
                 })
                 .on('unloaditem', function () {
