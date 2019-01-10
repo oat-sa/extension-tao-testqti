@@ -19,8 +19,8 @@
  */
 namespace oat\taoQtiTest\test\integration;
 
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\oatbox\service\ServiceManager;
-use oat\tao\test\TaoPhpUnitTestRunner;
 use oat\taoQtiTest\models\export\metadata\TestExporter;
 
 /**
@@ -30,7 +30,7 @@ use oat\taoQtiTest\models\export\metadata\TestExporter;
  * @package taoQtiTest
  * 
  */
-class TestExporterTest extends TaoPhpUnitTestRunner {
+class TestExporterTest extends GenerisPhpUnitTestRunner {
 
     private $testCreatedUri;
 

@@ -23,8 +23,9 @@ define([
     'helpers',
     'taoQtiTest/runner/helpers/map',
     'json!taoQtiTest/test/runner/helpers/map/map.json',
-    'json!taoQtiTest/test/runner/helpers/map/light-map.json'
-], function(_, helpers, mapHelper, mapSample, lightMapSample) {
+    'json!taoQtiTest/test/runner/helpers/map/light-map.json',
+    'json!taoQtiTest/test/runner/helpers/map/mapWithActives.json'
+], function(_, helpers, mapHelper, mapSample, lightMapSample, activeMapSample) {
     'use strict';
 
     QUnit.module('helpers/map');
@@ -136,6 +137,14 @@ define([
         assert.deepEqual(mapHelper.getSections(mapSample), _.extend({}, mapSample.parts['testPart-1'].sections, mapSample.parts['testPart-2'].sections), 'The map helper getSection provides the right sections');
         assert.deepEqual(mapHelper.getSections({}), {}, 'The map helper getSection does not provide any section when the map is wrong');
         assert.deepEqual(mapHelper.getSections(), {}, 'The map helper getSection does not provide any section when the map does not exist');
+    });
+
+
+    QUnit.test('helpers/map.getActiveItem', function(assert) {
+        QUnit.expect(3);
+        assert.deepEqual(mapHelper.getActiveItem(activeMapSample), _.extend({}, activeMapSample.parts['testPart-1'].sections['assessmentSection-2'].items['item-4']), 'The map helper getSection provide the active item from map');
+        assert.deepEqual(mapHelper.getActiveItem(mapSample), {}, 'The map helper getActiveItem does not provide any item when there is no active items');
+        assert.deepEqual(mapHelper.getActiveItem(), {}, 'The map helper getActiveItem does not provide any item when the map does not exist');
     });
 
 

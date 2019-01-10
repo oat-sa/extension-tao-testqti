@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\runner;
 use common_persistence_AdvKeyValuePersistence;
 use common_persistence_KeyValuePersistence;
 use oat\libCat\result\ItemResult;
+use oat\tao\model\theme\ThemeService;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -51,6 +52,7 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\TestSessionService;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
@@ -89,6 +91,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
 
+    const TOOL_ITEM_THEME_SWITCHER = 'itemThemeSwitcher';
+    const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
 
     /**
      * The test runner config
@@ -363,6 +367,15 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $response['config'] = $this->getTestConfig()->getConfig();
 
+            if ($this->isThemeSwitcherEnabled()) {
+                $themeSwitcherPlugin = [
+                    self::TOOL_ITEM_THEME_SWITCHER => [
+                        "activeNamespace" => $this->getCurrentThemeId(),
+                    ],
+                ];
+
+                $response["config"]["plugins"] = array_merge($response["config"]["plugins"], $themeSwitcherPlugin);
+            }
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -700,6 +713,52 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $context
             );
         }
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @param $toolStates
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
+    public function setToolsStates(RunnerServiceContext $context, $toolStates)
+    {
+        if ($context instanceof QtiRunnerServiceContext && is_array($toolStates)) {
+            /** @var ToolsStateStorage $toolsStateStorage */
+            $toolsStateStorage = $this->getServiceLocator()->get(ToolsStateStorage::SERVICE_ID);
+
+            $toolsStateStorage->storeStates($context->getTestExecutionUri(), $toolStates);
+        }
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @return array
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     * @throws \common_ext_ExtensionException
+     */
+    public function getToolsStates(RunnerServiceContext $context)
+    {
+        $toolsStates = [];
+
+        // add those tools missing from the storage but presented on the config
+        $toolsEnabled = $this->getTestConfig()->getConfigValue('toolStateServerStorage');
+
+        if (count($toolsEnabled) === 0) {
+            return [];
+        }
+        if ($context instanceof QtiRunnerServiceContext) {
+            /** @var ToolsStateStorage $toolsStateStorage */
+            $toolsStateStorage = $this->getServiceLocator()->get(ToolsStateStorage::SERVICE_ID);
+            $toolsStates = $toolsStateStorage->getStates($context->getTestExecutionUri());
+        }
+
+        foreach ($toolsEnabled as $toolEnabled) {
+            if (!array_key_exists($toolEnabled, $toolsStates)) {
+                $toolsStates[$toolEnabled] = null;
+            }
+        }
+
+        return $toolsStates;
     }
 
     /**
@@ -1907,6 +1966,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $status = $this->deleteExecutionStatesBasedOnSession($request, $storage, $userUri);
         }
 
+        /** @var ToolsStateStorage $toolsStateStorage */
+        $toolsStateStorage = $this->getServiceLocator()->get(ToolsStateStorage::SERVICE_ID);
+        $toolsStateStorage->deleteStates($request->getDeliveryExecution()->getIdentifier());
+
         return $status;
     }
 
@@ -2038,5 +2101,35 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     protected function getStateAfterExit()
     {
         return DeliveryExecution::STATE_FINISHED;
+    }
+
+    /**
+     * Returns that the Theme Switcher Plugin is enabled or not
+     *
+     * @return bool
+     * @throws \common_ext_ExtensionException
+     */
+    private function isThemeSwitcherEnabled()
+    {
+        /** @var \common_ext_ExtensionsManager $extensionsManager */
+        $extensionsManager = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID);
+        $config = $extensionsManager->getExtensionById("taoTests")->getConfig("test_runner_plugin_registry");
+
+        return array_key_exists(self::TOOL_ITEM_THEME_SWITCHER_KEY, $config)
+            && $config[self::TOOL_ITEM_THEME_SWITCHER_KEY]["active"] === true;
+    }
+
+    /**
+     * Returns the ID of the current theme
+     *
+     * @return string
+     * @throws \common_exception_InconsistentData
+     */
+    private function getCurrentThemeId()
+    {
+        /** @var ThemeService $themeService */
+        $themeService = $this->getServiceLocator()->get(ThemeService::SERVICE_ID);
+
+        return $themeService->getTheme()->getId();
     }
 }

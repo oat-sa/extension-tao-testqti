@@ -20,7 +20,7 @@
 
 namespace oat\taoQtiTest\test\integration\runner\time;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use qtism\data\SectionPart;
 use qtism\data\TimeLimits;
@@ -33,14 +33,18 @@ use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-class QtiTimeConstraintTest extends TaoPhpUnitTestRunner
+class QtiTimeConstraintTest extends GenerisPhpUnitTestRunner
 {
+    /** @var TimerLabelFormatterService */
+    private $labelFormatter = null;
+
     /**
      * @throws \common_ext_ExtensionException
      */
     public function setUp()
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        $this->labelFormatter = ServiceManager::getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
     }
 
     /**
@@ -49,7 +53,6 @@ class QtiTimeConstraintTest extends TaoPhpUnitTestRunner
      */
     public function providesEncodingCases()
     {
-        $labelFormatter = ServiceManager::getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
         return [
             [   //min, max duration, with time spent
                 new  QtiDuration('PT300S'),
@@ -59,7 +62,7 @@ class QtiTimeConstraintTest extends TaoPhpUnitTestRunner
                 'item-1',
                 false,
                 [
-                    'label'               => $labelFormatter->format('item-1'),
+                    'label'               => 'item-1',
                     'source'              => 'item-1',
                     'qtiClassName'        => 'assessmentItemRef',
                     'allowLateSubmission' => false,
@@ -78,7 +81,7 @@ class QtiTimeConstraintTest extends TaoPhpUnitTestRunner
                 'section-2',
                 false,
                 [
-                    'label'               => $labelFormatter->format('section-2'),
+                    'label'               => 'section-2',
                     'source'              => 'section-2',
                     'qtiClassName'        => 'assessmentSection',
                     'allowLateSubmission' => false,
@@ -106,7 +109,7 @@ class QtiTimeConstraintTest extends TaoPhpUnitTestRunner
                 'test-1',
                 true,
                 [
-                    'label'               => $labelFormatter->format('test-1'),
+                    'label'               => 'test-1',
                     'source'              => 'test-1',
                     'qtiClassName'        => 'assessmentTest',
                     'allowLateSubmission' => true,
@@ -129,6 +132,10 @@ class QtiTimeConstraintTest extends TaoPhpUnitTestRunner
      */
     public function testEncode($min, $max, $spent, $type, $id, $lateSubmission, $expected)
     {
+        if (isset($expected['label'])) {
+            $expected['label'] = $this->labelFormatter->format($expected['label']);
+        }
+
         //TimeLimits is a pojo, no need to stub
         $timeLimits = null;
         if($min != null || $max != null){
@@ -140,7 +147,7 @@ class QtiTimeConstraintTest extends TaoPhpUnitTestRunner
         $source->getTimeLimits()->willReturn($timeLimits);
         $source->getIdentifier()->willReturn($id);
         $source->getQtiClassName()->willReturn($type);
-        //todo: use getServiceManager in QtiTimeConstraint
+
         $timeConstraint = new QtiTimeConstraint($source->reveal(), $spent);
 
         $encoded = json_encode($timeConstraint);

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint86\n"
-"PO-Revision-Date: 2018-09-26T12:04:43\n"
+"Project-Id-Version: TAO 3.3.0-sprint91\n"
+"PO-Revision-Date: 2019-01-04T13:33:46\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -94,8 +94,14 @@ msgstr "Sta de kandidaat toe om stukken van het item te bedekken met een verplaa
 msgid "Allow the test-taker to use a basic calculator."
 msgstr "Sta de kandidaat toe om een standaard rekenmachine te gebruiken."
 
+msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
+msgstr ""
+
 msgid "Allow the test-taker to use a movable magnifier tool."
 msgstr "Sta de kandidaat toe om een beweegbaar vergrootglas te gebruiken."
+
+msgid "Allow the test-taker to use a scientific calculator."
+msgstr ""
 
 msgid "Allow the test-taker to visually isolate a line of text."
 msgstr "Sta de kandidaat toe om visueel een stuk tekst te isoleren."
@@ -189,6 +195,9 @@ msgstr ""
 
 msgid "Calculator"
 msgstr "Rekenmachine"
+
+msgid "Calculator BODMAS"
+msgstr ""
 
 msgid "Cancel"
 msgstr "Annuleren"
@@ -328,14 +337,20 @@ msgstr "Schakel herzieningsscherm optie in "
 msgid "Enable selection"
 msgstr "Schakel selectie in"
 
+msgid "Enable Skipping Ahead"
+msgstr ""
+
 msgid "Enable the item review screen / navigator."
 msgstr "Schakel het item herzieningsscherm in / navigator."
 
-msgid "End Test"
-msgstr "Eindig toets"
+msgid "Enables skipping to items within this section. Requires the review screen option."
+msgstr ""
 
 msgid "End test"
 msgstr "Einde examen"
+
+msgid "End Test"
+msgstr "Eindig toets"
 
 msgid "Enter a blueprint"
 msgstr "Voer een blauwdruk in"
@@ -840,16 +855,19 @@ msgstr "Rubriek blokken"
 msgid "Save"
 msgstr "Opslaan"
 
+msgid "Scientific Calculator"
+msgstr ""
+
 msgid "Scorer"
 msgstr "Puntenteller"
 
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"

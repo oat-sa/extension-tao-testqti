@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint83\n"
-"PO-Revision-Date: 2018-08-14T14:23:51\n"
+"Project-Id-Version: TAO 3.3.0-sprint91\n"
+"PO-Revision-Date: 2019-01-04T13:33:33\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -94,7 +94,13 @@ msgstr ""
 msgid "Allow the test-taker to use a basic calculator."
 msgstr ""
 
+msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
+msgstr ""
+
 msgid "Allow the test-taker to use a movable magnifier tool."
+msgstr ""
+
+msgid "Allow the test-taker to use a scientific calculator."
 msgstr ""
 
 msgid "Allow the test-taker to visually isolate a line of text."
@@ -189,6 +195,9 @@ msgstr "Negro sobre blanco"
 
 msgid "Calculator"
 msgstr "Calculadora"
+
+msgid "Calculator BODMAS"
+msgstr ""
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -328,8 +337,14 @@ msgstr "Activar la pantalla de revisión"
 msgid "Enable selection"
 msgstr "Habilitar selección"
 
+msgid "Enable Skipping Ahead"
+msgstr ""
+
 msgid "Enable the item review screen / navigator."
 msgstr "Activar la pantalla de revisión/navegador de ítems."
+
+msgid "Enables skipping to items within this section. Requires the review screen option."
+msgstr ""
 
 msgid "End test"
 msgstr "Finalizar prueba"
@@ -819,6 +834,9 @@ msgstr "Campo requerido"
 msgid "Reset filters"
 msgstr "Restaurar filtros"
 
+msgid "Resource(s) successfully exported."
+msgstr ""
+
 msgid "Review"
 msgstr "Revisión"
 
@@ -837,17 +855,20 @@ msgstr "Bloque de Rúbrica"
 msgid "Save"
 msgstr "Guardar"
 
+msgid "Scientific Calculator"
+msgstr ""
+
 msgid "Scorer"
 msgstr "Puntaje"
 
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch Pad"
-msgstr "Bloc de Notas"
-
 msgid "Scratch pad"
 msgstr "Bloc de notas"
+
+msgid "Scratch Pad"
+msgstr "Bloc de Notas"
 
 msgid "Scratchpad"
 msgstr "Bloc de notas"
@@ -989,6 +1010,9 @@ msgstr "Prueba"
 
 msgid "Test constructor"
 msgstr "Constructor de prueba"
+
+msgid "Test metadata successfully exported."
+msgstr ""
 
 msgid "Test Navigation"
 msgstr ""

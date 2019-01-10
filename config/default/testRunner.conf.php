@@ -192,6 +192,17 @@ return array(
     'test-taker-review-display-subsection-title' => true,
 
     /**
+     * Option to display to the test developer the Skipahead option
+     * If it's set to true, test developer will see and be able to allow skipahead inside the selected section
+     * If it's set to false, test won't see and won't be able to allow skipahead inside the selected section
+     * Also, if some tests will have skipahead enabled for some sections and this option is set to false, then
+     * skipahead won't work until this config value is set to true
+     *
+     * @type boolean
+     */
+    'test-taker-review-skipahead' => false,
+
+    /**
      * Enable/Disable warning message about unanswered items at the end of the test.
      * @type boolean
      */
@@ -559,4 +570,9 @@ return array(
      * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
      */
     'guidedNavigation' => false,
+
+    /**
+     * Specifies runner tools that should keep its states in backend storage
+     */
+    'tool-state-server-storage' => [],
 );

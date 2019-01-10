@@ -19,7 +19,7 @@
  */
 namespace oat\taoQtiTest\test\unit;
 
-use oat\tao\test\TaoPhpUnitTestRunner;
+use oat\generis\test\TestCase;
 use \taoQtiTest_helpers_TestCompilerUtils;
 use \qtism\data\storage\xml\XmlDocument;
 
@@ -31,7 +31,7 @@ use \qtism\data\storage\xml\XmlDocument;
  * @package taoQtiTest
  * 
  */
-class QtiTestCompilerUtilsTest extends TaoPhpUnitTestRunner {
+class QtiTestCompilerUtilsTest extends TestCase {
     
     static public function samplesDir() {
         return dirname(__FILE__) . '/../samples/xml/compiler/meta/';

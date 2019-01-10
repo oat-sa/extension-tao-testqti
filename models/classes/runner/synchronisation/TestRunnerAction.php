@@ -26,6 +26,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\RunnerParamParserTrait;
+use oat\taoQtiTest\models\runner\RunnerToolStates;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -38,7 +39,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
     use RunnerParamParserTrait;
-
+    use RunnerToolStates;
 
     const OFFLINE_VARIABLE = 'OFFLINE_ITEM';
 
@@ -130,6 +131,17 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     public function getRequestParameter($name)
     {
         return $this->hasRequestParameter($name) ? $this->parameters[$name] : false;
+    }
+
+    /**
+     * For RunnerToolStates
+     *
+     * @param $name
+     * @return bool|mixed
+     */
+    public function getRawRequestParameter($name)
+    {
+        return $this->getRequestParameter($name);
     }
 
     /**

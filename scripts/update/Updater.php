@@ -36,6 +36,8 @@ use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
+use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
+use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
@@ -74,6 +76,7 @@ use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
+use oat\taoTests\models\runner\time\TimePoint;
 
 /**
  *
@@ -1682,6 +1685,33 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('26.1.2');
         }
 
-        $this->skip('26.1.2', '29.2.1');
+        $this->skip('26.1.2', '29.6.1');
+
+        if ($this->isVersion('29.6.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['test-taker-review-skipahead'] = false;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('29.7.0');
+        }
+
+        $this->skip('29.7.0', '29.7.3');
+
+        if ($this->isVersion('29.7.3')) {
+            $this->getServiceManager()->register(
+                ToolsStateStorage::SERVICE_ID,
+                new NoStorage([])
+            );
+
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['tool-state-server-storage'] = [];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('29.8.0');
+        }
+
+        $this->skip('29.8.0', '30.0.1');
     }
 }

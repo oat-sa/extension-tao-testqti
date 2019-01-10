@@ -55,44 +55,60 @@ define([
                 }
             };
 
+            this.setState('enabled', true);
+
             //change plugin state
             testRunner
                 .on('error', function(err){
                     var message = err;
                     var type = 'error';
-
-                    if ('object' === typeof err) {
-                        message = err.message;
-                        type = err.type;
-                    }
-
-                    if (!message) {
-                        switch (type) {
-                            case 'TestState':
-                                message = __('The test has been closed/suspended!');
-                                break;
-
-                            case 'FileNotFound':
-                                message = __('File not found!');
-                                break;
-
-                            default:
-                                message = __('An error occurred!');
+                    if (self.getState('enabled')) {
+                        if ('object' === typeof err) {
+                            message = err.message;
+                            type = err.type;
                         }
-                    }
 
-                    currentFeedback = feedback().error(message);
+                        if (!message) {
+                            switch (type) {
+                                case 'TestState':
+                                    message = __('The test has been closed/suspended!');
+                                    break;
+
+                                case 'FileNotFound':
+                                    message = __('File not found!');
+                                    break;
+
+                                default:
+                                    message = __('An error occurred!');
+                            }
+                        }
+
+                        currentFeedback = feedback().error(message);
+                    }
                 })
                 .on('danger', function(message){
-                    currentFeedback = feedback().danger(message);
+                    if (self.getState('enabled')) {
+                        currentFeedback = feedback().danger(message);
+                    }
                 })
                 .on('warning', function(message){
-                    currentFeedback = feedback().warning(message);
+                    if (self.getState('enabled')) {
+                        currentFeedback = feedback().warning(message);
+                    }
                 })
                 .on('info', function(message){
-                    currentFeedback = feedback().info(message);
+                    if (self.getState('enabled')) {
+                        currentFeedback = feedback().info(message);
+                    }
                 })
-                .on('alert.* confirm.* unloaditem', closeCurrent);
+                .on('alert.* confirm.* unloaditem', closeCurrent)
+                .on('disablefeedbackalerts', function() {
+                    closeCurrent();
+                    self.setState('enabled', false);
+                })
+                .on('enablefeedbackalerts', function() {
+                    self.setState('enabled', true);
+                });
         }
     });
 });
