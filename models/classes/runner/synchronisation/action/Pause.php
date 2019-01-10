@@ -42,6 +42,8 @@ class Pause extends TestRunnerAction
         try {
             $serviceContext = $this->getServiceContext();
 
+            $this->saveToolStates();
+
             if ($this->getRequestParameter('offline') === true) {
                 $this->setOffline();
             }
