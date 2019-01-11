@@ -24,10 +24,12 @@
 define([
     'lodash',
     'jquery',
+    'core/eventifier',
     'ui/highlighter'
 ], function (
     _,
     $,
+    eventifier,
     highlighterFactory
 ) {
     'use strict';
@@ -56,7 +58,7 @@ define([
     /**
      * The highlighter Factory
      */
-    return function(testRunner) {
+    return function testHighlighterFactory() {
 
         /**
          * Are we in highlight mode, meaning that each new selection is automatically highlighted
@@ -66,12 +68,6 @@ define([
         var isHighlighting = false;
 
         /**
-         * Store, for each item, an array containing the its highlight index
-         * @type {Object}
-         */
-        var itemsHighlights = {};
-
-        /**
          * The helper that does the highlight magic
          */
         var highlightHelper = highlighterFactory({
@@ -79,8 +75,8 @@ define([
             containerSelector: '.qti-itemBody'
         });
 
-        // add event to automatically highlight the recently made selection if needed
-        // added touch event (as from TAO-6578)
+        //add event to automatically highlight the recently made selection if needed
+        //added touch event (as from TAO-6578)
         $(document).on('mouseup.highlighter touchend.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
@@ -91,7 +87,8 @@ define([
         /**
          * The highlighter instance
          */
-        return {
+        return eventifier({
+
             /**
              * toggle highlighting mode on and off
              * @param {Boolean} bool - wanted state
@@ -99,21 +96,21 @@ define([
             toggleHighlighting: function toggleHighlighting(bool) {
                 isHighlighting = bool;
                 if (isHighlighting) {
-                    testRunner.trigger('plugin-start.highlighter');
+                    this.trigger('start');
                 } else {
-                    testRunner.trigger('plugin-end.highlighter');
+                    this.trigger('end');
                 }
             },
 
             /**
              * Either highlight the current or selection, or toggle highlighting mode
              */
-            trigger: function trigger() {
+            highlight: function highlight() {
                 if (!isHighlighting) {
                     if (!selection.isCollapsed) {
-                        testRunner.trigger('plugin-start.highlighter');
+                        this.toggleHighlighting(true);
                         highlightHelper.highlightRanges(getAllRanges());
-                        testRunner.trigger('plugin-end.highlighter');
+                        this.toggleHighlighting(false);
                         selection.removeAllRanges();
                     } else {
                         this.toggleHighlighting(true);
@@ -124,26 +121,21 @@ define([
             },
 
             /**
-             * save the highlight index for the current item
-             * @param itemId
+             * restore the highlight from a given index
+             * @param {Array} index
              */
-            saveHighlight: function saveHighlight(itemId) {
-                var index = highlightHelper.getHighlightIndex();
-                if (index && index.length > 0) {
-                    itemsHighlights[itemId] = index;
-                }
-            },
-
-
-            /**
-             * restore the highlight index on the current item
-             * @param itemId
-             */
-            restoreHighlight: function restoreHighlight(itemId) {
-                var index = itemsHighlights[itemId];
+            restoreIndex: function restoreIndex(index) {
                 if (index && index.length > 0) {
                     highlightHelper.highlightFromIndex(index);
                 }
+            },
+
+            /**
+             * Get the current index
+             * @returns {Array} index
+             */
+            getIndex: function getIndex() {
+                return highlightHelper.getHighlightIndex();
             },
 
             /**
@@ -153,6 +145,6 @@ define([
                 highlightHelper.clearHighlights();
                 selection.removeAllRanges();
             }
-        };
+        });
     };
 });
