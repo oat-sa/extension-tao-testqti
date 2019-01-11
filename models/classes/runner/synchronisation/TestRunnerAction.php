@@ -69,7 +69,6 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
      */
     protected function setOffline()
     {
-
         $serviceContext = $this->getServiceContext();
         $itemRef = ($this->hasRequestParameter('itemDefinition'))
             ? $this->getRequestParameter('itemDefinition')
