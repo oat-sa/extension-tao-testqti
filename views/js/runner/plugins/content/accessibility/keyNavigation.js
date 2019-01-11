@@ -421,7 +421,7 @@ define([
     /**
      * Checks whether element is navigable from
      *
-     * @param {DOMElement} element
+     * @param {HTMLElement} element
      * @returns {boolean}
      */
     function allowedToNavigateFrom(element)
