@@ -34,7 +34,7 @@ define([
     'use strict';
 
     /**
-     * This array will contain class masks (will be checked with *=className) for which navigation from them should be disabled.
+     * When an either element or its parents having this class - navigation from it would be disabled.
      *
      * @type {[string]}
      */
@@ -418,6 +418,12 @@ define([
         });
     }
 
+    /**
+     * Checks whether element is navigable from
+     *
+     * @param element
+     * @returns {boolean}
+     */
     function allowedToNavigateFrom(element)
     {
         var $element = $(element);
