@@ -34,7 +34,7 @@ define([
     'use strict';
 
     /**
-     * When an either element or its parents having this class - navigation from it would be disabled.
+     * When either an element or its parents have this class - navigation from it would be disabled.
      *
      * @type {[string]}
      */
