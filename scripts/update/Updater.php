@@ -1712,6 +1712,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('29.8.0');
         }
 
-        $this->skip('29.8.0', '30.0.1');
+        $this->skip('29.8.0', '30.0.2');
     }
 }
