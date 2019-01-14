@@ -1216,13 +1216,18 @@ function (
         };
 
         var config = module.config();
+        var _isEmptyItemWarningModalEnabled = function() {
+            return config
+                && config.qtiTools
+                && config.qtiTools.emptyItemWarningModal;
+        };
+
         if (config) {
             actionBarTools.register(config.qtiTools);
         }
 
         return {
             start: function (testContext) {
-
                 $controls = {
                     // navigation
                     $moveForward: $('[data-control="move-forward"]'),
@@ -1307,7 +1312,17 @@ function (
 
                 $controls.$forwardButtons.click(function () {
                     if (!$(this).hasClass('disabled')) {
-                        TestRunner.moveForward();
+                        if (_isEmptyItemWarningModalEnabled()) {
+                            $doc
+                                .off('testRunner:moveForward')
+                                .on('testRunner:moveForward', function() {
+                                    TestRunner.moveForward();
+                                });
+
+                            $doc.trigger('testRunner:displayEmptyItemWarningModal');
+                        } else {
+                            TestRunner.moveForward();
+                        }
                     }
                 });
 
@@ -1384,7 +1399,6 @@ function (
                 }).on('heightchange', function(e, height) {
                     $controls.$itemFrame.height(height);
                 });
-
             }
         };
     });
