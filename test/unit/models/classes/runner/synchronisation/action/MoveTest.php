@@ -313,7 +313,7 @@ class MoveTest extends TestCase
      */
     private function createSubjectWithParameters($requestParameters = [])
     {
-        $subject = new Move('testMove', microtime(), $requestParameters);
+        $subject = new Move('test', microtime(), $requestParameters);
 
         $services = [
             QtiRunnerService::SERVICE_ID => $this->qtiRunnerService,
