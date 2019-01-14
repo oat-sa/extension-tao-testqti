@@ -19,11 +19,12 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
+use common_exception_Unauthorized;
+use common_Logger;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
+use stdClass;
 
 /**
- * Class NextItemData
- *
  * @package oat\taoQtiTest\models\runner\synchronisation\action
  */
 class NextItemData extends TestRunnerAction
@@ -51,8 +52,8 @@ class NextItemData extends TestRunnerAction
 
         try {
             if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
-                \common_Logger::w('Attempt to disclose the next items without the configuration');
-                throw new \common_exception_Unauthorized();
+                common_Logger::w('Attempt to disclose the next items without the configuration');
+                throw new common_exception_Unauthorized();
             }
 
             $response = [];
@@ -86,7 +87,7 @@ class NextItemData extends TestRunnerAction
 
         $itemState = $this->getRunnerService()->getItemState($serviceContext, $itemIdentifier);
         if ($itemState === null || !count($itemState)) {
-            $itemState = new \stdClass();
+            $itemState = new stdClass();
         }
 
         return [

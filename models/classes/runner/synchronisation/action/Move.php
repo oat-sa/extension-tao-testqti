@@ -22,6 +22,8 @@ namespace oat\taoQtiTest\models\runner\synchronisation\action;
 use common_Exception;
 use common_exception_Error;
 use common_exception_InconsistentData;
+use common_Logger;
+use Exception;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
@@ -88,15 +90,15 @@ class Move extends TestRunnerAction
                 }
             }
 
-            \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
+            common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
 
             if ($start === true) {
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
                 $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
             }
-        } catch (\Exception $e) {
-            \common_Logger::e($e->getMessage());
+        } catch (Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
         }
 
