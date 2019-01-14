@@ -80,9 +80,9 @@ class NextItemData extends TestRunnerAction
     protected function getItemData($itemIdentifier)
     {
         $serviceContext = $this->getServiceContext();
-        $itemRef        = $this->getRunnerService()->getItemHref($serviceContext, $itemIdentifier);
-        $itemData       = $this->getRunnerService()->getItemData($serviceContext, $itemRef);
-        $baseUrl        = $this->getRunnerService()->getItemPublicUrl($serviceContext, $itemRef);
+        $itemRef = $this->getRunnerService()->getItemHref($serviceContext, $itemIdentifier);
+        $itemData = $this->getRunnerService()->getItemData($serviceContext, $itemRef);
+        $baseUrl = $this->getRunnerService()->getItemPublicUrl($serviceContext, $itemRef);
 
         $itemState = $this->getRunnerService()->getItemState($serviceContext, $itemIdentifier);
         if ($itemState === null || !count($itemState)) {
@@ -90,9 +90,9 @@ class NextItemData extends TestRunnerAction
         }
 
         return [
-            'baseUrl'        => $baseUrl,
-            'itemData'       => $itemData,
-            'itemState'      => $itemState,
+            'baseUrl' => $baseUrl,
+            'itemData' => $itemData,
+            'itemState' => $itemState,
             'itemIdentifier' => $itemIdentifier,
         ];
     }

@@ -44,7 +44,7 @@ class Skip extends TestRunnerAction
     {
         $this->validate();
 
-        $ref       = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
+        $ref = $this->getRequestParameter('ref') === false ? null : $this->getRequestParameter('ref');
         $itemDuration = null;
 
         $scope = $this->getRequestParameter('scope');

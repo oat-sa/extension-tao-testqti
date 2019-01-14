@@ -81,6 +81,48 @@ class NextItemDataTest extends TestCase
         ], $subject->process());
     }
 
+    public function testSuccessfulResponseWithMultipleItemDefinitions()
+    {
+        $itemDefinition = ['itemId1', 'itemId2', 'itemId3'];
+        $requestParameters = $this->getRequiredRequestParameters($itemDefinition);
+
+        $this->setItemCacheEnabledConfigExpectation(true);
+
+        $this->qtiRunnerService
+            ->method('getItemState')
+            ->willReturnMap([
+                [$this->qtiRunnerServiceContext, 'itemId1', 'expectedItemState1'],
+                [$this->qtiRunnerServiceContext, 'itemId2', 'expectedItemState2'],
+                [$this->qtiRunnerServiceContext, 'itemId3', 'expectedItemState3'],
+            ]);
+
+        $subject = $this->createSubjectWithParameters($requestParameters);
+
+        $this->assertEquals([
+            'success' => true,
+            'items' => [
+                [
+                    'baseUrl' => null,
+                    'itemData' => null,
+                    'itemState' => 'expectedItemState1',
+                    'itemIdentifier' => 'itemId1',
+                ],
+                [
+                    'baseUrl' => null,
+                    'itemData' => null,
+                    'itemState' => 'expectedItemState2',
+                    'itemIdentifier' => 'itemId2',
+                ],
+                [
+                    'baseUrl' => null,
+                    'itemData' => null,
+                    'itemState' => 'expectedItemState3',
+                    'itemIdentifier' => 'itemId3',
+                ]
+            ]
+        ], $subject->process());
+    }
+
     /**
      * @param array $requestParameters
      *
@@ -98,18 +140,18 @@ class NextItemDataTest extends TestCase
     }
 
     /**
+     * @param mixed $itemDefinition
      * @param mixed $testDefinition
      * @param mixed $testCompilation
      * @param mixed $serviceCallId
-     * @param mixed $itemDefinition
      *
      * @return array
      */
     private function getRequiredRequestParameters(
+        $itemDefinition = null,
         $testDefinition = null,
         $testCompilation = null,
-        $serviceCallId = null,
-        $itemDefinition = null
+        $serviceCallId = null
     ) {
         return [
             'testDefinition' => $testDefinition,
@@ -126,7 +168,6 @@ class NextItemDataTest extends TestCase
     {
         $runnerConfig = $this->createMock(RunnerConfig::class);
         $runnerConfig
-            ->expects($this->once())
             ->method('getConfigValue')
             ->with('itemCaching.enabled')
             ->willReturn($isEnabled);
