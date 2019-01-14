@@ -41,7 +41,7 @@ class NextItemData extends TestRunnerAction
     {
         $this->validate();
 
-        $itemIdentifier = ($this->hasRequestParameter('itemDefinition'))
+        $itemIdentifier = $this->hasRequestParameter('itemDefinition')
             ? $this->getRequestParameter('itemDefinition')
             : null;
 
@@ -51,7 +51,7 @@ class NextItemData extends TestRunnerAction
 
         try {
             if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
-                \common_Logger::w("Attempt to disclose the next items without the configuration");
+                \common_Logger::w('Attempt to disclose the next items without the configuration');
                 throw new \common_exception_Unauthorized();
             }
 
@@ -64,7 +64,6 @@ class NextItemData extends TestRunnerAction
             if (isset($response['items'])) {
                 $response['success'] = true;
             }
-
         } catch (\Exception $e) {
             $response = $this->getErrorResponse($e);
         }
@@ -86,7 +85,7 @@ class NextItemData extends TestRunnerAction
         $baseUrl        = $this->getRunnerService()->getItemPublicUrl($serviceContext, $itemRef);
 
         $itemState = $this->getRunnerService()->getItemState($serviceContext, $itemIdentifier);
-        if ( is_null($itemState) || !count($itemState)) {
+        if ($itemState === null || !count($itemState)) {
             $itemState = new \stdClass();
         }
 
@@ -107,5 +106,4 @@ class NextItemData extends TestRunnerAction
     {
         return array_merge(parent::getRequiredFields(), ['itemDefinition']);
     }
-
 }
