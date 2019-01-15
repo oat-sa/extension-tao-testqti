@@ -54,19 +54,27 @@ define([
 
             /**
              * Load the timers, from the given timeConstraints and reading the current value in the store
+             * @param {store} timeStore - where the values are read
              * @param {Object} config - the current config, especially for the warnings
              * @return {Promise<Object[]>} the list of timers for the current context
              */
-            this.loadTimers = function loadTimers(config){
+            this.loadTimers = function loadTimers(timeStore, config){
                 var testContext = testRunner.getTestContext();
                 var timeConstraints = testContext.timeConstraints;
                 var isLinear = !!testContext.isLinear;
                 var timers = timersFactory(timeConstraints, isLinear, config);
-
-                //As it was found during TAO-7415 investigations, Promise is not needed anymore -
-                //timer remaining time recalculation already done in taoQtiTest/views/js/runner/plugins/controls/timer/timers.js:155
-                //timeStore variable in arguments was left there until further investigations, to not to break any functionality.
-                return timers;
+                return Promise.all(
+                    _.map(timers, function(timer){
+                        return timeStore.getItem('consumed_' + timer.id).then(function(savedConsumedTime){
+                            if (_.isNumber(savedConsumedTime) && savedConsumedTime >= 0 && config.restoreTimerFromClient) {
+                                timer.remainingTime = timer.originalTime + timer.extraTime.total - savedConsumedTime;
+                            }
+                        });
+                    })
+                )
+                .then(function(){
+                    return timers;
+                });
             };
 
             /**
@@ -143,7 +151,7 @@ define([
                             var testContext = testRunner.getTestContext();
                             //update the timers before each item
                             if(self.timerbox && testContext.timeConstraints){
-                                return self.loadTimers(config)
+                                return self.loadTimers(timeStore, config)
                                     .then(function(timers){
                                         return self.timerbox.update(timers);
                                     })
