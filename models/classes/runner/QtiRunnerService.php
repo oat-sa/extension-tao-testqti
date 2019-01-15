@@ -199,7 +199,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $serviceContext->setUserUri($userUri);
 
         $sessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
-        $sessionService->registerTestSession($serviceContext->getTestSession(), $serviceContext->getStorage(), $serviceContext->getCompilationDirectory());
+        $sessionService->registerTestSession(
+            $serviceContext->getTestSession(),
+            $serviceContext->getStorage(),
+            $serviceContext->getCompilationDirectory()
+        );
 
         return $serviceContext;
     }
