@@ -36,9 +36,9 @@ define([
     /**
      * When either an element or its parents have this class - navigation from it would be disabled.
      *
-     * @type {[string]}
+     * @type {String}
      */
-    const ignoredClass = 'no-key-navigation';
+    var ignoredClass = 'no-key-navigation';
 
     /**
      * Init the navigation in the toolbar
