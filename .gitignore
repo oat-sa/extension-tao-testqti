@@ -3,3 +3,5 @@
 /.buildpath
 composer.lock
 /vendor/
+var/
+phpunit.xml
