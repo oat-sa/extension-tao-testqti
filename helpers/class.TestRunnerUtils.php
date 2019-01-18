@@ -41,7 +41,7 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 * Utility methods for the QtiTest Test Runner.
 *
 * @author Jérôme Bogaerts <jerome@taotesting.com>
-*
+* @deprecated Please use oat\taoQtiTest\helpers\TestRunnerUtils instead of this class.
 */
 class taoQtiTest_helpers_TestRunnerUtils {
     
