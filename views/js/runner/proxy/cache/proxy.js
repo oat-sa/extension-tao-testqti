@@ -390,6 +390,26 @@ define([
             };
 
             /**
+             * Flush the offline actions from the actionStore before reinserting them.
+             * The exported copy can be used for file download.
+             * The retained copy can still be synced as the test progresses.
+             *
+             * @returns {Promise} resolves with the store contents
+             */
+            this.exportActions = function exportActions() {
+                var actions;
+                return this.queue.serie(function(){
+                    return self.actiontStore.flush().then(function(data){
+                        actions = data;
+                        _.forEach(actions, function (action) {
+                            self.actiontStore.push(action.action, action.parameters);
+                        });
+                        return data;
+                    });
+                });
+            };
+
+            /**
              * Mark action as performed in offline mode
              * Action to mark as offline will be defined by actionParams.actionId parameter value.
              *

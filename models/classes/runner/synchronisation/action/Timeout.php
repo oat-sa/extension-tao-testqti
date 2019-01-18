@@ -19,11 +19,13 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
+use common_Exception;
+use common_exception_Error;
+use common_exception_InconsistentData;
+use Exception;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
 /**
- * Class Timeout
- *
  * Timeout item into the test context.
  *
  * @package oat\taoQtiTest\models\runner\synchronisation\action
@@ -40,17 +42,20 @@ class Timeout extends TestRunnerAction
      * Start next timer.
      *
      * @return array
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_InconsistentData
      */
     public function process()
     {
         $this->validate();
 
-        $ref   = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
+        $ref = $this->getRequestParameter('ref') ?: null;
         $scope = $this->getRequestParameter('scope');
         $start = ($this->getRequestParameter('start') !== false);
 
         try {
-            $serviceContext = $this->getServiceContext(false);
+            $serviceContext = $this->getServiceContext();
 
             $this->saveToolStates();
 
@@ -81,14 +86,13 @@ class Timeout extends TestRunnerAction
                 }
             }
 
-            if($start == true){
-
+            if ($start == true) {
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
                 $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $response = $this->getErrorResponse($e);
         }
 
@@ -104,5 +108,4 @@ class Timeout extends TestRunnerAction
     {
         return array_merge(parent::getRequiredFields(), ['scope']);
     }
-
 }

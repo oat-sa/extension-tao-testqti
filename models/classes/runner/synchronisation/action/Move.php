@@ -19,21 +19,21 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
+use common_Exception;
+use common_exception_Error;
+use common_exception_InconsistentData;
+use common_Logger;
+use Exception;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\RunnerToolStates;
 
 /**
- * Class Move
- *
  * Move forward or back item into the test context.
  *
  * @package oat\taoQtiTest\models\runner\synchronisation\action
  */
 class Move extends TestRunnerAction
 {
-    use RunnerToolStates;
-
     /**
      * Process the move action.
      *
@@ -43,19 +43,22 @@ class Move extends TestRunnerAction
      * Start next timer.
      *
      * @return array
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_InconsistentData
      */
     public function process()
     {
         $this->validate();
 
-        $ref       = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
+        $ref = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
         $direction = $this->getRequestParameter('direction');
-        $scope     = $this->getRequestParameter('scope');
-        $start     = ($this->getRequestParameter('start') !== false);
+        $scope = $this->getRequestParameter('scope');
+        $start = ($this->getRequestParameter('start') !== false);
 
         try {
             /** @var QtiRunnerServiceContext $serviceContext */
-            $serviceContext = $this->getServiceContext(false);
+            $serviceContext = $this->getServiceContext();
 
             $this->saveToolStates();
 
@@ -87,17 +90,15 @@ class Move extends TestRunnerAction
                 }
             }
 
-            \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
+            common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
 
             if ($start === true) {
-
                 // start the timer only when move starts the item session
                 // and after context build to avoid timing error
                 $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
             }
-
-        } catch (\Exception $e) {
-            \common_Logger::e($e->getMessage());
+        } catch (Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
         }
 
