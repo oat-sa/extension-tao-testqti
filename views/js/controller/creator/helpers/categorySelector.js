@@ -133,7 +133,7 @@ define([
                 });
 
                 // enable help tooltips
-                tooltip($container);
+                tooltip.lookup($container);
             },
 
             /**
