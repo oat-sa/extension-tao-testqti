@@ -207,7 +207,7 @@ define([
 
                     // update the UI to reflect the data
                     if (!activated) {
-                        $feedbackActivated.removeAttr('checked');
+                        $feedbackActivated.prop('checked', false);
                     }
                     changeFeedback(activated);
                 }
