@@ -43,7 +43,7 @@ define([
     'tpl!taoQtiTest/runner/plugins/controls/timer/component/tpl/countdown',
     'ui/tooltip',
     'css!taoQtiTest/runner/plugins/controls/timer/component/css/countdown.css'
-], function ($, _, timeEncoder, pollingFactory, timerFactory, component, countdownTpl) {
+], function ($, _, timeEncoder, pollingFactory, timerFactory, component, countdownTpl, tooltip) {
     'use strict';
 
     //Precision is milliseconds
@@ -286,6 +286,7 @@ define([
             }
         })
         .on('warn', function(message, level){
+            var countdownTooltip;
             level = level || 'warning';
 
             if (this.is('rendered') && this.is('running') &&
@@ -296,23 +297,16 @@ define([
                     .addClass('txt-' + level);
 
                 if(this.config.displayWarning === true){
-
-                    this.getElement().qtip({
-                        show: { ready: true },
-                        hide: {
-                            event : false,
-                            inactive: warningTimeout[level] || 2000
-                        },
-                        suppress: false,
+                    countdownTooltip = tooltip.create(this.getElement(), message, {
+                        trigger: 'manual',
                         theme : level,
-                        content: {
-                            text : message
-                        },
-                        position: {
-                            my: 'top center',
-                            at: 'bottom center'
-                        }
+                        placement:'bottom'
                     });
+                    countdownTooltip.show();
+                    setTimeout(function () {
+                        countdownTooltip.hide();
+                        countdownTooltip.dispose();
+                    }, warningTimeout[level] || 2000);
                 }
             }
         });
