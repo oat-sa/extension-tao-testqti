@@ -64,6 +64,7 @@ define([], function () {
             remainingAttempts   = typeof(options.remainingAttempts) === 'undefined' ? -1 : options.remainingAttempts,
             testPartId          = options.testPartId || '',
             unansweredOnly      = toBoolean(options.unansweredOnly, false),
+            rememberUserChoice  = toBoolean(options.rememberUserChoice, false),
 
             warnBeforeNext = shouldWarnBeforeNext(),
             warnBeforeEnd = shouldWarnBeforeEnd();
@@ -157,6 +158,14 @@ define([], function () {
         }
 
         /**
+         * Check if platform config forces a warning for linear test items (TAO-7419)
+         * @returns {Boolean}
+         */
+        function mustWarnBeforeNext() {
+            return isLinear && nextItemWarning;
+        }
+
+        /**
          * The helper object
          */
         return {
@@ -165,7 +174,8 @@ define([], function () {
             },
             shouldWarnBeforeNext: function () {
                 return warnBeforeNext;
-            }
+            },
+            mustWarnBeforeNext: mustWarnBeforeNext
         };
     };
 

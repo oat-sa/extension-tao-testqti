@@ -127,7 +127,7 @@ define([
                     && testOptions.unansweredWarning;
 
                 var warningScope = (nextPartWarning) ? 'part' : 'test';
-
+                var warningHelper;
 
                 function enableNav() {
                     testRunner.trigger('enablenav');
@@ -136,21 +136,25 @@ define([
                 testRunner.trigger('disablenav');
 
                 if (self.getState('enabled') !== false) {
-                    var warningHelper = nextWarningHelper({
+                    warningHelper = nextWarningHelper({
                         endTestWarning:     testOptions.endTestWarning,
                         isLast:             context.isLast,
                         isLinear:           context.isLinear,
-                        nextItemWarning:    nextItemWarning,
-                        nextPartWarning:    nextPartWarning,
+                        nextItemWarning:    nextItemWarning || testConfig.forceEnableNextItemWarning,
+                        nextPartWarning:    nextPartWarning || testConfig.forceEnableNextItemWarning,
                         nextPart:           mapHelper.getItemPart(map, nextItemPosition),
                         remainingAttempts:  context.remainingAttempts,
                         testPartId:         context.testPartId,
                         unansweredWarning:  testOptions.unansweredWarning,
                         stats:              statsHelper.getInstantStats(warningScope, testRunner),
-                        unansweredOnly:     unansweredOnly
+                        unansweredOnly:     unansweredOnly,
+                        rememberUserChoice: testConfig.enableNextItemWarningCheckbox
                     });
 
-                    if (warningHelper.shouldWarnBeforeEnd()) {
+                    if (warningHelper.mustWarnBeforeNext()) {
+                        testRunner.trigger('warn-next'); // handled in nextItemWarning plugin
+                    }
+                    else if (warningHelper.shouldWarnBeforeEnd()) {
                         testRunner.trigger(
                             'confirm.endTest',
                             messages.getExitMessage(

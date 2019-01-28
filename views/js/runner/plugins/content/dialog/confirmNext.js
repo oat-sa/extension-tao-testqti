@@ -22,8 +22,9 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'ui/dialog'
-], function ($, _, __, dialog) {
+    'ui/dialog',
+    'tpl!ui/dialog/tpl/checkbox'
+], function ($, _, __, dialog, checkboxTpl) {
     'use strict';
 
     /**
@@ -60,6 +61,7 @@ define([
         dialogOptions = {
             heading: heading,
             message: message,
+            content: 'content', // try to insert checkbox here?
             checkbox: checkboxParams,
             autoRender: true,
             autoDestroy: true,
