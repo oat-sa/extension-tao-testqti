@@ -1713,5 +1713,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('29.8.0', '30.2.4');
+
+        if ($this->isVersion('30.2.4')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['force-enable-next-item-warning'] = true;
+            $config['enable-next-item-warning-checkbox'] = true;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('30.3.0');
+        }
+
     }
 }

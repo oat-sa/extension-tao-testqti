@@ -575,4 +575,12 @@ return array(
      * Specifies runner tools that should keep its states in backend storage
      */
     'tool-state-server-storage' => [],
+
+    /**
+     * Defines whether to always show a warning dialog before moving to next item
+     * Also, if shown, should the dialog contain a "don't show again" checkbox
+     */
+    'force-enable-next-item-warning' => false,
+    'enable-next-item-warning-checkbox' => true,
+
 );
