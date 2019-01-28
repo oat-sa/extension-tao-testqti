@@ -88,6 +88,8 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData();
+            var testConfig = testData.config || {};
 
             var toggle = function toggle(){
                 var context = testRunner.getTestContext();
@@ -123,6 +125,8 @@ define([
                             doSkip, // if the test taker accept
                             enable  // if the test taker refuse
                         );
+                    } else if (context.isLinear && testConfig.forceEnableNextItemWarning) {
+                        testRunner.trigger('warn-skip'); // handled in nextItemWarning plugin
                     } else {
                         doSkip();
                     }

@@ -27,8 +27,9 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
-    'taoQtiTest/runner/plugins/content/dialog/confirmNext'
-], function ($, _, __, pluginFactory, mapHelper, confirmNext){
+    'ui/dialog',
+    'tpl!ui/dialog/tpl/checkbox'
+], function ($, _, __, pluginFactory, mapHelper, dialog, checkboxTpl){
     'use strict';
 
     /**
@@ -46,7 +47,7 @@ define([
             var testData = testRunner.getTestData();
             var testConfig = testData.config || {};
             var testStore = testRunner.getTestStore(); // we'll store user's checkbox choice in here
-            testStore.setVolatile(this.getName());
+            testStore.setVolatile(self.getName());
 
             //plugin behavior
             /**
@@ -60,15 +61,12 @@ define([
                 var customNextMessage = 'message';
                 var checkboxParams = null;
 
-                console.info('config: force the warning?', testConfig.forceEnableNextItemWarning);
-                console.info('config: enable checkbox?', testConfig.enableNextItemWarningCheckbox);
-                console.log('action', action);
-                console.log('isAnswered?', item.answered);
+                console.log('isAnswered?', item.answered); // FIXME: wrong value!
 
+                // Handle disable & re-enable of navigation controls:
                 function enableNav() {
                     testRunner.trigger('enablenav');
                 }
-
                 testRunner.trigger('disablenav');
 
                 // Different variants of message text:
@@ -83,39 +81,38 @@ define([
                 }
 
                 // Load testStore checkbox value (async)
-                testStore.getStore('confirmNext').then(function(store) {
+                testStore.getStore(self.getName()).then(function(store) {
                     store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
                         //checkboxValue = _.isUndefined(checkboxValue) ? false : checkboxValue;
-                        console.log('store.getItem', checkboxValue);
+                        console.log('store.getItem dontShowNextItemWarning', checkboxValue);
 
                         // Define checkbox only if enabled by config:
-                        if (testConfig.enableNextItemWarningCheckbox) {
+                        if (testConfig.enableNextItemWarningCheckbox && checkboxValue !== true) {
                             checkboxParams = {
-                                text: __("Don't show this again next time"),
                                 checked: checkboxValue,
                                 submitChecked: function() {
-                                    // Store value of a checkbox:
+                                    // Store value of checkbox:
                                     store.setItem('dontShowNextItemWarning', true)
-                                    .then(function(success) {
+                                    .then(function() {
                                         store.getItems()
                                             .then(function(storeContents) {
-                                                console.log('store.setItem', storeContents);
+                                                console.log('store.setItem', true, 'store:', storeContents);
                                             });
                                     });
                                 },
                                 submitUnchecked: function() {
-                                    // Store value of a checkbox:
+                                    // Store value of checkbox:
                                     store.setItem('dontShowNextItemWarning', false)
-                                    .then(function(success) {
+                                    .then(function() {
                                         store.getItems()
                                             .then(function(storeContents) {
-                                                console.log('store.setItem', storeContents);
+                                                console.log('store.setItem', false, 'store:', storeContents);
                                             });
                                     });
                                 },                                    };
                         }
                         // show special dialog:
-                        confirmNext(
+                        dialogConfirmNext(
                             __('Go to the next item?'),
                             customNextMessage,
                             _.partial(triggerNextAction, context), // if the test taker accepts
@@ -127,6 +124,82 @@ define([
                 });
             }
 
+            /**
+             * Displays a confirm message with a checkbox in it
+             * @param {String} heading - Above the main message
+             * @param {String} message - The displayed message
+             * @param {Function} accept - An action called when the dialog is accepted
+             * @param {Function} refuse - An action called when the dialog is refused
+             * @param {Object} checkboxParams - Checkbox options
+             * @param {Boolean} [checkboxParams.checked] - True to render it checked
+             * @param {Function} [checkboxParams.submitChecked] - Action called when dialog accepted with checkbox checked
+             * @param {Function} [checkboxParams.submitUnchecked] - Action called when dialog accepted with checkbox unchecked
+             * @returns {dialog} - Returns the dialog instance
+             */
+            function dialogConfirmNext(heading, message, accept, refuse, checkboxParams) {
+                var accepted = false;
+                var dialogOptions;
+                var dlg;
+                var content = null;
+                if (checkboxParams && checkboxParams.checked !== true) {
+                    content = checkboxTpl({
+                        checked: false,
+                        text: "Don't show this again next time",
+                        id: 'dont-show-again'
+                    });
+                }
+                dialogOptions = {
+                    heading: heading,
+                    message: message,
+                    content: content,
+                    autoRender: true,
+                    autoDestroy: true,
+                    buttons: [
+                        {
+                            id : 'cancel',
+                            type : 'regular',
+                            label : __('Cancel'),
+                            close: true
+                        },
+                        {
+                            id : 'ok',
+                            type : 'regular',
+                            label : __('Go to next item'),
+                            close: true
+                        }
+                    ],
+                    onOkBtn: function() {
+                        var $checkbox;
+                        accepted = true;
+                        if (_.isFunction(accept)) {
+                            accept.call(this);
+
+                            if (checkboxParams) {
+                                // handle checkbox callbacks:
+                                $checkbox = $('.modal input[name="dont-show-again"]');
+                                if ($checkbox.prop('checked') && _.isFunction(checkboxParams.submitChecked)) {
+                                    checkboxParams.submitChecked();
+                                }
+                                else if (!$checkbox.prop('checked') && _.isFunction(checkboxParams.submitUnchecked)) {
+                                    checkboxParams.submitUnchecked();
+                                }
+                            }
+                        }
+                    }
+                };
+                dlg = dialog(dialogOptions);
+
+                if (_.isFunction(refuse)) {
+                    dlg.on('closed.modal', function() {
+                        if (!accepted) {
+                            refuse.call(this);
+                        }
+                    });
+                }
+                return dlg;
+            }
+
+            // Actions to trigger when this plugin's dialog is accepted
             function triggerNextAction(context) {
                 if(context.isLast){
                     self.trigger('end');
@@ -136,10 +209,24 @@ define([
 
             // Attach this plugin to 'next' & 'skip' events
             testRunner
-                .on('warn-next', function(nextItemWarning) {
+                .on('init', function() {
+                    console.info('config: force the warning?', testConfig.forceEnableNextItemWarning);
+                    console.info('config: enable checkbox?', testConfig.enableNextItemWarningCheckbox);
+                    // Clear the stored value before each test:
+                    testStore.getStore(self.getName()).then(function(store) {
+                        store.setItem('dontShowNextItemWarning', null)
+                        .then(function() {
+                            store.getItems()
+                                .then(function(storeContents) {
+                                    console.log('store.setItem', true, 'store:', storeContents);
+                                });
+                        });
+                    });
+                })
+                .on('warn-next', function() {
                     doNextWarning('next');
                 })
-                .on('warn-skip', function(nextItemWarning) {
+                .on('warn-skip', function() {
                     doNextWarning('skip');
                 });
         }

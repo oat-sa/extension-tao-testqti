@@ -64,7 +64,6 @@ define([], function () {
             remainingAttempts   = typeof(options.remainingAttempts) === 'undefined' ? -1 : options.remainingAttempts,
             testPartId          = options.testPartId || '',
             unansweredOnly      = toBoolean(options.unansweredOnly, false),
-            rememberUserChoice  = toBoolean(options.rememberUserChoice, false),
 
             warnBeforeNext = shouldWarnBeforeNext(),
             warnBeforeEnd = shouldWarnBeforeEnd();
