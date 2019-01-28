@@ -26,12 +26,9 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/plugins/navigation/next/nextWarningHelper',
-    'taoQtiTest/runner/helpers/messages',
     'taoQtiTest/runner/helpers/map',
-    'taoQtiTest/runner/helpers/stats',
     'taoQtiTest/runner/plugins/content/dialog/confirmNext'
-], function ($, _, __, pluginFactory, nextWarningHelper, messages, mapHelper, statsHelper, confirmNext){
+], function ($, _, __, pluginFactory, mapHelper, confirmNext){
     'use strict';
 
     /**
@@ -60,11 +57,13 @@ define([
                 var map = testRunner.getTestMap();
                 var item = mapHelper.getItem(map, context.itemIdentifier);
 
-                var customNextMessage;
+                var customNextMessage = 'message';
                 var checkboxParams = null;
 
                 console.info('config: force the warning?', testConfig.forceEnableNextItemWarning);
                 console.info('config: enable checkbox?', testConfig.enableNextItemWarningCheckbox);
+                console.log('action', action);
+                console.log('isAnswered?', item.answered);
 
                 function enableNav() {
                     testRunner.trigger('enablenav');
@@ -72,63 +71,60 @@ define([
 
                 testRunner.trigger('disablenav');
 
-                if (self.getState('enabled') !== false) {
-                    // Different variants of message text:
-                    if (! item.answered) {
-                        customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
-                    }
-                    else if (action === 'next') {
-                        customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and change your answer.');
-                    }
-                    else if (action === 'skip') {
-                        customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
-                    }
-
-                    // Load testStore checkbox value (async)
-                    testStore.getStore('confirmNext').then(function(store) {
-                        store.getItem('dontShowNextItemWarning')
-                        .then(function(checkboxValue) {
-                            //checkboxValue = _.isUndefined(checkboxValue) ? false : checkboxValue;
-                            console.log('store.getItem', checkboxValue);
-
-                            // Define checkbox only if enabled by config:
-                            if (testConfig.enableNextItemWarningCheckbox) {
-                                checkboxParams = {
-                                    text: __("Don't show this again next time"),
-                                    checked: checkboxValue,
-                                    submitChecked: function() {
-                                        // Store value of a checkbox:
-                                        store.setItem('dontShowNextItemWarning', true)
-                                        .then(function(success) {
-                                            store.getItems()
-                                                .then(function(storeContents) {
-                                                    console.log('store.setItem', storeContents);
-                                                });
-                                        });
-                                    },
-                                    submitUnchecked: function() {
-                                        // Store value of a checkbox:
-                                        store.setItem('dontShowNextItemWarning', false)
-                                        .then(function(success) {
-                                            store.getItems()
-                                                .then(function(storeContents) {
-                                                    console.log('store.setItem', storeContents);
-                                                });
-                                        });
-                                    },                                    };
-                            }
-                            // show special dialog:
-                            confirmNext(
-                                __('Go to the next item?'),
-                                customNextMessage,
-                                _.partial(triggerNextAction, context), // if the test taker accept
-                                enableNav,                             // if he refuse
-                                checkboxParams
-                            );
-
-                        });
-                    });
+                // Different variants of message text:
+                if (! item.answered) {
+                    customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
                 }
+                else if (action === 'next') {
+                    customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and change your answer.');
+                }
+                else if (action === 'skip') {
+                    customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
+                }
+
+                // Load testStore checkbox value (async)
+                testStore.getStore('confirmNext').then(function(store) {
+                    store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
+                        //checkboxValue = _.isUndefined(checkboxValue) ? false : checkboxValue;
+                        console.log('store.getItem', checkboxValue);
+
+                        // Define checkbox only if enabled by config:
+                        if (testConfig.enableNextItemWarningCheckbox) {
+                            checkboxParams = {
+                                text: __("Don't show this again next time"),
+                                checked: checkboxValue,
+                                submitChecked: function() {
+                                    // Store value of a checkbox:
+                                    store.setItem('dontShowNextItemWarning', true)
+                                    .then(function(success) {
+                                        store.getItems()
+                                            .then(function(storeContents) {
+                                                console.log('store.setItem', storeContents);
+                                            });
+                                    });
+                                },
+                                submitUnchecked: function() {
+                                    // Store value of a checkbox:
+                                    store.setItem('dontShowNextItemWarning', false)
+                                    .then(function(success) {
+                                        store.getItems()
+                                            .then(function(storeContents) {
+                                                console.log('store.setItem', storeContents);
+                                            });
+                                    });
+                                },                                    };
+                        }
+                        // show special dialog:
+                        confirmNext(
+                            __('Go to the next item?'),
+                            customNextMessage,
+                            _.partial(triggerNextAction, context), // if the test taker accepts
+                            enableNav,                             // if he refuses
+                            checkboxParams
+                        );
+
+                    });
+                });
             }
 
             function triggerNextAction(context) {
@@ -141,24 +137,11 @@ define([
             // Attach this plugin to 'next' & 'skip' events
             testRunner
                 .on('warn-next', function(nextItemWarning) {
-                    doNextWarning(nextItemWarning, 'next');
+                    doNextWarning('next');
                 })
                 .on('warn-skip', function(nextItemWarning) {
-                    doNextWarning(nextItemWarning, 'skip');
+                    doNextWarning('skip');
                 });
-        },
-
-        /**
-         * Called during the runner's render phase
-         */
-        render : function render(){
-        },
-
-        /**
-         * Called during the runner's destroy phase
-         */
-        destroy : function destroy (){
-
         }
     });
 });

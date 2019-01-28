@@ -45,6 +45,7 @@ define([
      * @returns {dialog} - Returns the dialog instance
      */
     return function dialogConfirmNext(heading, message, accept, refuse, checkboxParams, options) {
+        console.log('dialogConfirmNext', heading, message,  checkboxParams, options);
         var accepted = false;
         var _options = {
             buttons: {
@@ -61,7 +62,11 @@ define([
         dialogOptions = {
             heading: heading,
             message: message,
-            content: 'content', // try to insert checkbox here?
+            content: checkboxTpl({
+                checked: true,
+                text: "Don't show this again next time",
+                id: 'dont-show-again'
+            }), // try to insert checkbox here?
             checkbox: checkboxParams,
             autoRender: true,
             autoDestroy: true,
