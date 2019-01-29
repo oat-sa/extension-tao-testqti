@@ -267,6 +267,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'navigation',
                 'active' => false,
                 'tags' => [ ]
+            ], [
+                'id' => 'nextItemWarning',
+                'name' => 'Next item warning',
+                'module' => 'taoQtiTest/runner/plugins/navigation/next/nextItemWarning',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Displays a dialog before next item',
+                'category' => 'navigation',
+                'active' => false,
+                'tags' => [ ]
             ]
         ],
         'tools' => [
