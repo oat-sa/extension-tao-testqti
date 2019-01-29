@@ -4,7 +4,7 @@ define([
 ], function(_, warningHelper){
     'use strict';
 
-    var warnBeforeEndData, warnBeforeNextData;
+    var warnBeforeEndData, warnBeforeNextData, mustWarnData;
 
     QUnit.module('warningHelper');
 
@@ -253,5 +253,39 @@ define([
             assert.ok(helper.shouldWarnBeforeEnd()  === data.output.warnEnd,  'shouldWarnBeforeEnd returns the correct value');
             assert.ok(helper.shouldWarnBeforeNext() === data.output.warnNext, 'shouldWarnBeforeNext returns the correct value');
         });
+
+
+    QUnit.module('Forced next item warning');
+
+    mustWarnData = [
+        {
+            title: 'Warning is displayed if platform config specifies it, and current part is linear',
+            input: {
+                forcedItemWarning: true,
+                isLinear: true
+            },
+            output: { warnNext: false, warnEnd: false, mustWarnNext: true }
+        },
+        {
+            title: 'Warning is not displayed if platform config specifies it, but current part is not linear',
+            input: {
+                forcedItemWarning: true,
+                isLinear: false
+            },
+            output: { warnNext: false, warnEnd: false, mustWarnNext: false }
+        }
+    ];
+
+    QUnit
+    .cases(mustWarnData)
+    .test('Next item warning', function(data, assert){
+        var helper = warningHelper(data.input);
+
+        QUnit.expect(3);
+
+        assert.ok(helper.shouldWarnBeforeEnd()  === data.output.warnEnd,  'shouldWarnBeforeEnd returns the correct value');
+        assert.ok(helper.shouldWarnBeforeNext() === data.output.warnNext, 'shouldWarnBeforeNext returns the correct value');
+        assert.ok(helper.mustWarnBeforeNext() === data.output.mustWarnNext, 'mustWarnBeforeNext returns the correct value');
+    });
 
 });
