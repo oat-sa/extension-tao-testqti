@@ -59,9 +59,7 @@ define([
 
                 var customNextMessage = 'message';
                 var checkboxParams = null;
-                var itemPartiallyAnswered = currentItemHelper.isAnswered(self, true);
-
-                console.log('itemPartiallyAnswered?', itemPartiallyAnswered); // FIXME:
+                var itemPartiallyAnswered = currentItemHelper.isAnswered(testRunner, true);
 
                 // Handle disable & re-enable of navigation controls:
                 function enableNav() {
@@ -83,7 +81,6 @@ define([
                 // Load testStore checkbox value (async)
                 testStore.getStore(self.getName()).then(function(store) {
                     store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
-                        console.log('store.getItem dontShowNextItemWarning', checkboxValue);
 
                         // Show the warning unless user has turned it off:
                         if (checkboxValue !== true) {
@@ -199,8 +196,8 @@ define([
             // Attach this plugin to 'next' & 'skip' events
             testRunner
                 .on('init', function() {
-                    console.info('config: force the warning?', testConfig.forceEnableNextItemWarning);
-                    console.info('config: enable checkbox?', testConfig.enableNextItemWarningCheckbox);
+                    console.warn('config: force the warning?', testConfig.forceEnableNextItemWarning);
+                    console.warn('config: enable checkbox?', testConfig.enableNextItemWarningCheckbox);
                     // Clear the stored checkbox value before each test:
                     testStore.getStore(self.getName()).then(function(store) {
                         store.setItem('dontShowNextItemWarning', null);

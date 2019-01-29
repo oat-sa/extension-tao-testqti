@@ -31,10 +31,12 @@ define([
     'taoQtiTest/runner/helpers/messages',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/stats',
+    'taoQtiTest/runner/helpers/currentItem',
     'util/shortcut',
     'util/namespace',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, statsHelper, shortcut, namespaceHelper, buttonTpl){
+], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages,
+    mapHelper, statsHelper, currentItemHelper, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -195,7 +197,7 @@ define([
             });
 
             if(testConfig.allowShortcuts && pluginShortcuts.trigger){
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function() {
                     if (self.getState('enabled') === true) {
                         testRunner.trigger('nav-next', true);
                     }
