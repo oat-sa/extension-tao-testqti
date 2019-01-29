@@ -29,6 +29,7 @@ use oat\taoQtiTest\scripts\install\RegisterTestImporters;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
+use oat\taoQtiTest\scripts\install\SetNextItemWarningConfig;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -38,7 +39,7 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '30.3.0',
+    'version'     => '30.5.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoQtiItem' => '>=18.0.0',
@@ -75,7 +76,8 @@ return array(
             SetSynchronisationService::class,
             SyncChannelInstaller::class,
             RegisterTestContainer::class,
-            SetUpQueueTasks::class
+            SetUpQueueTasks::class,
+            SetNextItemWarningConfig::class
         )
     ),
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
