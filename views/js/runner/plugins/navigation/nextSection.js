@@ -48,21 +48,10 @@ define([
                 }
             }
 
-            function nextSection() {
-                testRunner.next('section');
-            }
-
-            this.$element = $(buttonTpl({
-                control : 'next-section',
-                title   : __('Skip to the next section'),
-                icon    : 'fast-forward',
-                text    : __('Next Section')
-            }));
-
-            this.$element.on('click', function(e){
+            function doNextSection() {
                 var context = testRunner.getTestContext();
                 var enable = _.bind(self.enable, self);
-                e.preventDefault();
+
                 if(self.getState('enabled') !== false){
                     self.disable();
 
@@ -72,8 +61,8 @@ define([
                             messages.getExitMessage(
                                 __('Once you close this section, you cannot return to it or change your answers.'),
                                 'section', testRunner),
-                            nextSection, // if the test taker accept
-                            enable,      // if the test taker refuse
+                            _.partial(testRunner.next, 'section'), // if the test taker accept
+                            enable,                              // if the test taker refuse
                             {
                                 buttons: {
                                     labels: {
@@ -84,9 +73,21 @@ define([
                             }
                         );
                     } else {
-                        nextSection();
+                        testRunner.next('section');
                     }
                 }
+            }
+
+            this.$element = $(buttonTpl({
+                control : 'next-section',
+                title   : __('Skip to the next section'),
+                icon    : 'fast-forward',
+                text    : __('Next Section')
+            }));
+
+            this.$element.on('click', function(e){
+                e.preventDefault();
+                testRunner.trigger('nav-nextsection');
             });
 
             this.disable();
@@ -105,6 +106,9 @@ define([
                 })
                 .on('shownav', function(){
                     self.show();
+                })
+                .on('nav-nextsection', function(){
+                    doNextSection();
                 });
         },
 

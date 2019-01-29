@@ -64,11 +64,9 @@ define([], function () {
             remainingAttempts   = typeof(options.remainingAttempts) === 'undefined' ? -1 : options.remainingAttempts,
             testPartId          = options.testPartId || '',
             unansweredOnly      = toBoolean(options.unansweredOnly, false),
-            forcedItemWarning   = toBoolean(options.forcedItemWarning, false),
 
             warnBeforeNext = shouldWarnBeforeNext(),
-            warnBeforeEnd = shouldWarnBeforeEnd(),
-            mustWarnNext = mustWarnBeforeNext();
+            warnBeforeEnd = shouldWarnBeforeEnd();
 
         /**
          * Decide if we should display a warning before moving to the next item.
@@ -79,14 +77,6 @@ define([], function () {
             return nextItemWarning
                 && !itemCanBeTriedAtWill();
                 //&& !exitTimedSectionWarning(); //todo: this should be implemented to prevent a double warning!
-        }
-
-        /**
-         * Check if platform config *forces* the warning to display for linear test items (TAO-7419)
-         * @returns {Boolean}
-         */
-        function mustWarnBeforeNext() {
-            return isLinear && forcedItemWarning;
         }
 
         /**
@@ -175,9 +165,6 @@ define([], function () {
             },
             shouldWarnBeforeNext: function () {
                 return warnBeforeNext;
-            },
-            mustWarnBeforeNext: function() {
-                return mustWarnNext;
             }
         };
     };

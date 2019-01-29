@@ -163,9 +163,6 @@ define([
                             enableNav                              // if he refuse
                         );
                     }
-                    else if (warningHelper.mustWarnBeforeNext()) {
-                        testRunner.trigger('warn-next'); // handled in nextItemWarning plugin
-                    }
                     else if (warningHelper.shouldWarnBeforeNext()) {
                         testRunner.trigger(
                             'confirm.next',

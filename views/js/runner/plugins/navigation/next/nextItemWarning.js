@@ -26,11 +26,11 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/navigation',
     'taoQtiTest/runner/helpers/currentItem',
     'ui/dialog',
     'tpl!ui/dialog/tpl/checkbox'
-], function ($, _, __, pluginFactory, mapHelper, currentItemHelper, dialog, checkboxTpl){
+], function ($, _, __, pluginFactory, navHelper, currentItemHelper, dialog, checkboxTpl){
     'use strict';
 
     /**
@@ -45,6 +45,7 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
+            var context;
             var testData = testRunner.getTestData();
             var testConfig = testData.config || {};
             var testStore = testRunner.getTestStore(); // we'll store user's checkbox choice in here
@@ -55,8 +56,6 @@ define([
              * @param {String} action - 'next' or 'skip'
              */
             function doNextWarning(action) {
-                var context = testRunner.getTestContext();
-
                 var customNextMessage = 'message';
                 var checkboxParams = null;
                 var itemPartiallyAnswered = currentItemHelper.isAnswered(testRunner, true);
@@ -100,13 +99,13 @@ define([
                             dialogConfirmNext(
                                 __('Go to the next item?'),
                                 customNextMessage,
-                                _.partial(triggerNextAction, context), // if the test taker accepts
+                                _.partial(triggerNextAction, testRunner.getTestContext()), // if the test taker accepts
                                 enableNav,                             // if he refuses
                                 checkboxParams
                             );
                         }
                         else {
-                            triggerNextAction(context);
+                            triggerNextAction(testRunner.getTestContext());
                         }
                     });
                 });
@@ -186,8 +185,8 @@ define([
             }
 
             // Actions to trigger when this plugin's dialog is accepted
-            function triggerNextAction(context) {
-                if(context.isLast){
+            function triggerNextAction(testContext) {
+                if(testContext.isLast){
                     self.trigger('end');
                 }
                 testRunner.next();
@@ -203,11 +202,17 @@ define([
                         store.setItem('dontShowNextItemWarning', null);
                     });
                 })
-                .on('warn-next', function() {
-                    doNextWarning('next');
+                .before('nav-skip', function() {
+                    context = testRunner.getTestContext();
+                    if (context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
+                        doNextWarning('skip');
+                    }
                 })
-                .on('warn-skip', function() {
-                    doNextWarning('skip');
+                .before('nav-next nav-nextsection', function() {
+                    context = testRunner.getTestContext();
+                    if (context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
+                        doNextWarning('next');
+                    }
                 });
         }
     });
