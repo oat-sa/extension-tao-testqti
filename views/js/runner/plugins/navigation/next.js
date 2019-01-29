@@ -140,21 +140,18 @@ define([
                         endTestWarning:     testOptions.endTestWarning,
                         isLast:             context.isLast,
                         isLinear:           context.isLinear,
-                        nextItemWarning:    nextItemWarning || testConfig.forceEnableNextItemWarning,
-                        nextPartWarning:    nextPartWarning || testConfig.forceEnableNextItemWarning,
+                        nextItemWarning:    nextItemWarning,
+                        nextPartWarning:    nextPartWarning,
                         nextPart:           mapHelper.getItemPart(map, nextItemPosition),
                         remainingAttempts:  context.remainingAttempts,
                         testPartId:         context.testPartId,
                         unansweredWarning:  testOptions.unansweredWarning,
                         stats:              statsHelper.getInstantStats(warningScope, testRunner),
                         unansweredOnly:     unansweredOnly,
-                        rememberUserChoice: testConfig.enableNextItemWarningCheckbox
+                        forcedItemWarning:  testConfig.forceEnableNextItemWarning
                     });
 
-                    if (warningHelper.mustWarnBeforeNext()) {
-                        testRunner.trigger('warn-next'); // handled in nextItemWarning plugin
-                    }
-                    else if (warningHelper.shouldWarnBeforeEnd()) {
+                    if (warningHelper.shouldWarnBeforeEnd()) {
                         testRunner.trigger(
                             'confirm.endTest',
                             messages.getExitMessage(
@@ -163,16 +160,19 @@ define([
                             _.partial(triggerNextAction, context), // if the test taker accept
                             enableNav                              // if he refuse
                         );
-
-                    } else if (warningHelper.shouldWarnBeforeNext()) {
+                    }
+                    else if (warningHelper.mustWarnBeforeNext()) {
+                        testRunner.trigger('warn-next'); // handled in nextItemWarning plugin
+                    }
+                    else if (warningHelper.shouldWarnBeforeNext()) {
                         testRunner.trigger(
                             'confirm.next',
                             __('You are about to go to the next item. Click OK to continue and go to the next item.'),
                             _.partial(triggerNextAction, context), // if the test taker accept
                             enableNav                              // if he refuse
                         );
-
-                    } else {
+                    }
+                    else {
                         triggerNextAction(context);
                     }
                 }

@@ -27,9 +27,10 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/currentItem',
     'ui/dialog',
     'tpl!ui/dialog/tpl/checkbox'
-], function ($, _, __, pluginFactory, mapHelper, dialog, checkboxTpl){
+], function ($, _, __, pluginFactory, mapHelper, currentItemHelper, dialog, checkboxTpl){
     'use strict';
 
     /**
@@ -55,13 +56,12 @@ define([
              */
             function doNextWarning(action) {
                 var context = testRunner.getTestContext();
-                var map = testRunner.getTestMap();
-                var item = mapHelper.getItem(map, context.itemIdentifier);
 
                 var customNextMessage = 'message';
                 var checkboxParams = null;
+                var itemPartiallyAnswered = currentItemHelper.isAnswered(self, true);
 
-                console.log('isAnswered?', item.answered); // FIXME: wrong value!
+                console.log('itemPartiallyAnswered?', itemPartiallyAnswered); // FIXME:
 
                 // Handle disable & re-enable of navigation controls:
                 function enableNav() {
@@ -70,7 +70,7 @@ define([
                 testRunner.trigger('disablenav');
 
                 // Different variants of message text:
-                if (! item.answered) {
+                if (! itemPartiallyAnswered) {
                     customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
                 }
                 else if (action === 'next') {
@@ -83,43 +83,34 @@ define([
                 // Load testStore checkbox value (async)
                 testStore.getStore(self.getName()).then(function(store) {
                     store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
-                        //checkboxValue = _.isUndefined(checkboxValue) ? false : checkboxValue;
                         console.log('store.getItem dontShowNextItemWarning', checkboxValue);
 
-                        // Define checkbox only if enabled by config:
-                        if (testConfig.enableNextItemWarningCheckbox && checkboxValue !== true) {
-                            checkboxParams = {
-                                checked: checkboxValue,
-                                submitChecked: function() {
-                                    // Store value of checkbox:
-                                    store.setItem('dontShowNextItemWarning', true)
-                                    .then(function() {
-                                        store.getItems()
-                                            .then(function(storeContents) {
-                                                console.log('store.setItem', true, 'store:', storeContents);
-                                            });
-                                    });
-                                },
-                                submitUnchecked: function() {
-                                    // Store value of checkbox:
-                                    store.setItem('dontShowNextItemWarning', false)
-                                    .then(function() {
-                                        store.getItems()
-                                            .then(function(storeContents) {
-                                                console.log('store.setItem', false, 'store:', storeContents);
-                                            });
-                                    });
-                                },                                    };
+                        // Show the warning unless user has turned it off:
+                        if (checkboxValue !== true) {
+                            // Define checkbox only if enabled by config:
+                            if (testConfig.enableNextItemWarningCheckbox) {
+                                checkboxParams = {
+                                    checked: checkboxValue,
+                                    submitChecked: function() {
+                                        store.setItem('dontShowNextItemWarning', true);
+                                    },
+                                    submitUnchecked: function() {
+                                        store.setItem('dontShowNextItemWarning', false);
+                                    },
+                                };
+                            }
+                            // show special dialog:
+                            dialogConfirmNext(
+                                __('Go to the next item?'),
+                                customNextMessage,
+                                _.partial(triggerNextAction, context), // if the test taker accepts
+                                enableNav,                             // if he refuses
+                                checkboxParams
+                            );
                         }
-                        // show special dialog:
-                        dialogConfirmNext(
-                            __('Go to the next item?'),
-                            customNextMessage,
-                            _.partial(triggerNextAction, context), // if the test taker accepts
-                            enableNav,                             // if he refuses
-                            checkboxParams
-                        );
-
+                        else {
+                            triggerNextAction(context);
+                        }
                     });
                 });
             }
@@ -154,20 +145,18 @@ define([
                     content: content,
                     autoRender: true,
                     autoDestroy: true,
-                    buttons: [
-                        {
-                            id : 'cancel',
-                            type : 'regular',
-                            label : __('Cancel'),
-                            close: true
-                        },
-                        {
-                            id : 'ok',
-                            type : 'regular',
-                            label : __('Go to next item'),
-                            close: true
-                        }
-                    ],
+                    buttons: [{
+                        id : 'cancel',
+                        type : 'regular',
+                        label : __('Cancel'),
+                        close: true
+                    },
+                    {
+                        id : 'ok',
+                        type : 'regular',
+                        label : __('Go to next item'),
+                        close: true
+                    }],
                     onOkBtn: function() {
                         var $checkbox;
                         accepted = true;
@@ -176,7 +165,7 @@ define([
 
                             if (checkboxParams) {
                                 // handle checkbox callbacks:
-                                $checkbox = $('.modal input[name="dont-show-again"]');
+                                $checkbox = $('input[name="dont-show-again"]', this);
                                 if ($checkbox.prop('checked') && _.isFunction(checkboxParams.submitChecked)) {
                                     checkboxParams.submitChecked();
                                 }
@@ -212,15 +201,9 @@ define([
                 .on('init', function() {
                     console.info('config: force the warning?', testConfig.forceEnableNextItemWarning);
                     console.info('config: enable checkbox?', testConfig.enableNextItemWarningCheckbox);
-                    // Clear the stored value before each test:
+                    // Clear the stored checkbox value before each test:
                     testStore.getStore(self.getName()).then(function(store) {
-                        store.setItem('dontShowNextItemWarning', null)
-                        .then(function() {
-                            store.getItems()
-                                .then(function(storeContents) {
-                                    console.log('store.setItem', true, 'store:', storeContents);
-                                });
-                        });
+                        store.setItem('dontShowNextItemWarning', null);
                     });
                 })
                 .on('warn-next', function() {
