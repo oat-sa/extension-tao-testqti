@@ -31,12 +31,10 @@ define([
     'taoQtiTest/runner/helpers/messages',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/stats',
-    'taoQtiTest/runner/helpers/currentItem',
     'util/shortcut',
     'util/namespace',
     'tpl!taoQtiTest/runner/plugins/templates/button'
-], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages,
-    mapHelper, statsHelper, currentItemHelper, shortcut, namespaceHelper, buttonTpl){
+], function ($, _, __, hider, pluginFactory, nextWarningHelper, messages, mapHelper, statsHelper, shortcut, namespaceHelper, buttonTpl){
     'use strict';
 
     /**
@@ -129,7 +127,7 @@ define([
                     && testOptions.unansweredWarning;
 
                 var warningScope = (nextPartWarning) ? 'part' : 'test';
-                var warningHelper;
+
 
                 function enableNav() {
                     testRunner.trigger('enablenav');
@@ -138,7 +136,7 @@ define([
                 testRunner.trigger('disablenav');
 
                 if (self.getState('enabled') !== false) {
-                    warningHelper = nextWarningHelper({
+                    var warningHelper = nextWarningHelper({
                         endTestWarning:     testOptions.endTestWarning,
                         isLast:             context.isLast,
                         isLinear:           context.isLinear,
@@ -149,8 +147,7 @@ define([
                         testPartId:         context.testPartId,
                         unansweredWarning:  testOptions.unansweredWarning,
                         stats:              statsHelper.getInstantStats(warningScope, testRunner),
-                        unansweredOnly:     unansweredOnly,
-                        forcedItemWarning:  testConfig.forceEnableNextItemWarning
+                        unansweredOnly:     unansweredOnly
                     });
 
                     if (warningHelper.shouldWarnBeforeEnd()) {
@@ -162,16 +159,16 @@ define([
                             _.partial(triggerNextAction, context), // if the test taker accept
                             enableNav                              // if he refuse
                         );
-                    }
-                    else if (warningHelper.shouldWarnBeforeNext()) {
+
+                    } else if (warningHelper.shouldWarnBeforeNext()) {
                         testRunner.trigger(
                             'confirm.next',
                             __('You are about to go to the next item. Click OK to continue and go to the next item.'),
                             _.partial(triggerNextAction, context), // if the test taker accept
                             enableNav                              // if he refuse
                         );
-                    }
-                    else {
+
+                    } else {
                         triggerNextAction(context);
                     }
                 }
@@ -194,7 +191,7 @@ define([
             });
 
             if(testConfig.allowShortcuts && pluginShortcuts.trigger){
-                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function() {
+                shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
                     if (self.getState('enabled') === true) {
                         testRunner.trigger('nav-next', true);
                     }
