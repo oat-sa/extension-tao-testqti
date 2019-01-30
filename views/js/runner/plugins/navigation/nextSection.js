@@ -61,8 +61,8 @@ define([
                             messages.getExitMessage(
                                 __('Once you close this section, you cannot return to it or change your answers.'),
                                 'section', testRunner),
-                            _.partial(testRunner.next, 'section'), // if the test taker accept
-                            enable,                              // if the test taker refuse
+                            triggerNextAction,      // if the test taker accept
+                            enable,                 // if the test taker refuse
                             {
                                 buttons: {
                                     labels: {
@@ -73,9 +73,13 @@ define([
                             }
                         );
                     } else {
-                        testRunner.next('section');
+                        triggerNextAction();
                     }
                 }
+            }
+
+            function triggerNextAction() {
+                testRunner.next('section');
             }
 
             this.$element = $(buttonTpl({
