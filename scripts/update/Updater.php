@@ -1715,6 +1715,18 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('29.8.0', '30.4.0');
 
         if ($this->isVersion('30.4.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'nextItemWarning',
+                'name' => 'Next item warning',
+                'module' => 'taoQtiTest/runner/plugins/navigation/next/nextItemWarning',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Displays a dialog before next item',
+                'category' => 'navigation',
+                'active' => false,
+                'tags' => [ ]
+            ]));
+
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['force-enable-next-item-warning'] = false;
