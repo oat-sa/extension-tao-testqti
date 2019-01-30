@@ -27,9 +27,8 @@ define([
     'i18n',
     'taoTests/runner/plugin',
     'taoQtiTest/runner/helpers/currentItem',
-    'ui/dialog',
-    'tpl!ui/dialog/tpl/checkbox'
-], function ($, _, __, pluginFactory, currentItemHelper, dialog, checkboxTpl){
+    'taoQtiTest/runner/plugins/navigation/next/dialogConfirmNext'
+], function ($, _, __, pluginFactory, currentItemHelper, dialogConfirmNext){
     'use strict';
 
     /**
@@ -111,79 +110,6 @@ define([
                         }
                     });
                 });
-            }
-
-            /**
-             * Displays a confirm message with a checkbox in it
-             * @param {String} heading - Above the main message
-             * @param {String} message - The displayed message
-             * @param {Function} accept - An action called when the dialog is accepted
-             * @param {Function} refuse - An action called when the dialog is refused
-             * @param {Object} checkboxParams - Checkbox options
-             * @param {Boolean} [checkboxParams.checked] - True to render it checked
-             * @param {Function} [checkboxParams.submitChecked] - Action called when dialog accepted with checkbox checked
-             * @param {Function} [checkboxParams.submitUnchecked] - Action called when dialog accepted with checkbox unchecked
-             * @returns {dialog} - Returns the dialog instance
-             */
-            function dialogConfirmNext(heading, message, accept, refuse, checkboxParams) {
-                var accepted = false;
-                var dialogOptions;
-                var dlg;
-                var content = null;
-                if (checkboxParams && checkboxParams.checked !== true) {
-                    content = checkboxTpl({
-                        checked: false,
-                        text: "Don't show this again next time",
-                        id: 'dont-show-again'
-                    });
-                }
-                dialogOptions = {
-                    heading: heading,
-                    message: message,
-                    content: content,
-                    autoRender: true,
-                    autoDestroy: true,
-                    buttons: [{
-                        id : 'cancel',
-                        type : 'regular',
-                        label : __('Cancel'),
-                        close: true
-                    },
-                    {
-                        id : 'ok',
-                        type : 'info',
-                        label : __('Go to next item'),
-                        close: true
-                    }],
-                    onOkBtn: function() {
-                        var $checkbox;
-                        accepted = true;
-                        if (_.isFunction(accept)) {
-                            accept.call(this);
-
-                            if (checkboxParams) {
-                                // handle checkbox callbacks:
-                                $checkbox = $('input[name="dont-show-again"]', this);
-                                if ($checkbox.prop('checked') && _.isFunction(checkboxParams.submitChecked)) {
-                                    checkboxParams.submitChecked();
-                                }
-                                else if (!$checkbox.prop('checked') && _.isFunction(checkboxParams.submitUnchecked)) {
-                                    checkboxParams.submitUnchecked();
-                                }
-                            }
-                        }
-                    }
-                };
-                dlg = dialog(dialogOptions);
-
-                if (_.isFunction(refuse)) {
-                    dlg.on('closed.modal', function() {
-                        if (!accepted) {
-                            refuse.call(this);
-                        }
-                    });
-                }
-                return dlg;
             }
 
             // Actions to trigger when this plugin's dialog is accepted
