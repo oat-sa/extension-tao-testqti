@@ -55,9 +55,23 @@ define([
              */
             function doNextWarning(action) {
                 var context = testRunner.getTestContext();
-                var customNextMessage = 'message';
                 var checkboxParams = null;
-                var itemPartiallyAnswered = currentItemHelper.isAnswered(testRunner, true);
+
+                // Provides different variants of message text:
+                function getCustomNextMessage() {
+                    var customNextMessage;
+                    var itemPartiallyAnswered = currentItemHelper.isAnswered(testRunner, true);
+                    if (! itemPartiallyAnswered) {
+                        customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
+                    }
+                    else if (action === 'next') {
+                        customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and change your answer.');
+                    }
+                    else if (action === 'skip') {
+                        customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
+                    }
+                    return customNextMessage;
+                }
 
                 // Handle disable & re-enable of navigation controls:
                 function enableNav() {
@@ -83,22 +97,10 @@ define([
                                     },
                                 };
                             }
-
-                            // Different variants of message text:
-                            if (! itemPartiallyAnswered) {
-                                customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
-                            }
-                            else if (action === 'next') {
-                                customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and change your answer.');
-                            }
-                            else if (action === 'skip') {
-                                customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
-                            }
-
                             // show special dialog:
                             dialogConfirmNext(
                                 __('Go to the next item?'),
-                                customNextMessage,
+                                getCustomNextMessage(),
                                 _.partial(triggerNextAction, context), // if the test taker accepts
                                 enableNav,                             // if he refuses
                                 checkboxParams

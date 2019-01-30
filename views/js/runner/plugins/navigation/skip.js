@@ -112,17 +112,17 @@ define([
                             messages.getExitMessage(
                                 __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
                                 'test', testRunner),
-                            _.partial(triggerNextAction, context),  // if the test taker accept
-                            enable                                  // if the test taker refuse
+                            triggerNextAction,  // if the test taker accept
+                            enable              // if the test taker refuse
                         );
                     } else {
-                        triggerNextAction(context);
+                        triggerNextAction();
                     }
                 }
             }
 
-            function triggerNextAction(context) {
-                testRunner.skip(context);
+            function triggerNextAction() {
+                testRunner.skip();
             }
 
             this.$element = createElement(testRunner.getTestContext());
