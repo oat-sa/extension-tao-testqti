@@ -26,11 +26,10 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
-    'taoQtiTest/runner/helpers/navigation',
     'taoQtiTest/runner/helpers/currentItem',
     'ui/dialog',
     'tpl!ui/dialog/tpl/checkbox'
-], function ($, _, __, pluginFactory, navHelper, currentItemHelper, dialog, checkboxTpl){
+], function ($, _, __, pluginFactory, currentItemHelper, dialog, checkboxTpl){
     'use strict';
 
     /**
@@ -45,7 +44,6 @@ define([
         init : function init(){
             var self = this;
             var testRunner = this.getTestRunner();
-            var context;
             var testData = testRunner.getTestData();
             var testConfig = testData.config || {};
             var testStore = testRunner.getTestStore(); // we'll store user's checkbox choice in here
@@ -56,6 +54,7 @@ define([
              * @param {String} action - 'next' or 'skip'
              */
             function doNextWarning(action) {
+                var context = testRunner.getTestContext();
                 var customNextMessage = 'message';
                 var checkboxParams = null;
                 var itemPartiallyAnswered = currentItemHelper.isAnswered(testRunner, true);
@@ -65,17 +64,6 @@ define([
                     testRunner.trigger('enablenav');
                 }
                 testRunner.trigger('disablenav');
-
-                // Different variants of message text:
-                if (! itemPartiallyAnswered) {
-                    customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
-                }
-                else if (action === 'next') {
-                    customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and change your answer.');
-                }
-                else if (action === 'skip') {
-                    customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
-                }
 
                 // Load testStore checkbox value (async)
                 testStore.getStore(self.getName()).then(function(store) {
@@ -95,17 +83,29 @@ define([
                                     },
                                 };
                             }
+
+                            // Different variants of message text:
+                            if (! itemPartiallyAnswered) {
+                                customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
+                            }
+                            else if (action === 'next') {
+                                customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and change your answer.');
+                            }
+                            else if (action === 'skip') {
+                                customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
+                            }
+
                             // show special dialog:
                             dialogConfirmNext(
                                 __('Go to the next item?'),
                                 customNextMessage,
-                                _.partial(triggerNextAction, testRunner.getTestContext()), // if the test taker accepts
+                                _.partial(triggerNextAction, context), // if the test taker accepts
                                 enableNav,                             // if he refuses
                                 checkboxParams
                             );
                         }
                         else {
-                            triggerNextAction(testRunner.getTestContext());
+                            triggerNextAction(context);
                         }
                     });
                 });
@@ -149,7 +149,7 @@ define([
                     },
                     {
                         id : 'ok',
-                        type : 'regular',
+                        type : 'info',
                         label : __('Go to next item'),
                         close: true
                     }],
@@ -195,21 +195,19 @@ define([
             // Attach this plugin to 'next' & 'skip' events
             testRunner
                 .on('init', function() {
-                    console.warn('config: force the warning?', testConfig.forceEnableNextItemWarning);
-                    console.warn('config: enable checkbox?', testConfig.enableNextItemWarningCheckbox);
                     // Clear the stored checkbox value before each test:
                     testStore.getStore(self.getName()).then(function(store) {
                         store.setItem('dontShowNextItemWarning', null);
                     });
                 })
                 .before('nav-skip', function() {
-                    context = testRunner.getTestContext();
+                    var context = testRunner.getTestContext();
                     if (context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
                         doNextWarning('skip');
                     }
                 })
                 .before('nav-next nav-nextsection', function() {
-                    context = testRunner.getTestContext();
+                    var context = testRunner.getTestContext();
                     if (context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
                         doNextWarning('next');
                     }
