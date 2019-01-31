@@ -50,6 +50,7 @@ define([
 
             /**
              * Provides different variants of message text
+             * @param {String} action - 'next' or 'skip'
              * @returns {String}
              */
             function getCustomNextMessage(action) {
@@ -63,6 +64,10 @@ define([
                 }
                 else if (action === 'skip') {
                     customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
+                }
+                else {
+                    // more generic message for default case:
+                    customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back.');
                 }
                 return customNextMessage;
             }
@@ -120,6 +125,7 @@ define([
                     }
                     if (err && err.cancel === true) {
                         testRunner.trigger('enablenav');
+                        return Promise.reject(); // to cancel the move
                     }
                 });
             }
