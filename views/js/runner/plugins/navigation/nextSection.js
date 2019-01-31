@@ -48,37 +48,7 @@ define([
                 }
             }
 
-            function doNextSection() {
-                var context = testRunner.getTestContext();
-                var enable = _.bind(self.enable, self);
-
-                if(self.getState('enabled') !== false){
-                    self.disable();
-
-                    if(context.options.nextSectionWarning){
-                        testRunner.trigger(
-                            'confirm.nextsection',
-                            messages.getExitMessage(
-                                __('Once you close this section, you cannot return to it or change your answers.'),
-                                'section', testRunner),
-                            triggerNextAction,      // if the test taker accept
-                            enable,                 // if the test taker refuse
-                            {
-                                buttons: {
-                                    labels: {
-                                        ok: __('Close this Section'),
-                                        cancel:  __('Review my Answers')
-                                    }
-                                }
-                            }
-                        );
-                    } else {
-                        triggerNextAction();
-                    }
-                }
-            }
-
-            function triggerNextAction() {
+            function nextSection() {
                 testRunner.next('section');
             }
 
@@ -90,8 +60,33 @@ define([
             }));
 
             this.$element.on('click', function(e){
+                var context = testRunner.getTestContext();
+                var enable = _.bind(self.enable, self);
                 e.preventDefault();
-                testRunner.trigger('nav-nextsection');
+                if(self.getState('enabled') !== false){
+                    self.disable();
+
+                    if(context.options.nextSectionWarning){
+                        testRunner.trigger(
+                            'confirm.nextsection',
+                            messages.getExitMessage(
+                                __('Once you close this section, you cannot return to it or change your answers.'),
+                                'section', testRunner),
+                            nextSection, // if the test taker accept
+                            enable,      // if the test taker refuse
+                            {
+                                buttons: {
+                                    labels: {
+                                        ok: __('Close this Section'),
+                                        cancel:  __('Review my Answers')
+                                    }
+                                }
+                            }
+                        );
+                    } else {
+                        nextSection();
+                    }
+                }
             });
 
             this.disable();
@@ -110,9 +105,6 @@ define([
                 })
                 .on('shownav', function(){
                     self.show();
-                })
-                .on('nav-nextsection', function(){
-                    doNextSection();
                 });
         },
 

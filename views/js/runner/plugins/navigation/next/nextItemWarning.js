@@ -48,76 +48,77 @@ define([
             var testStore = testRunner.getTestStore(); // we'll store user's checkbox choice in here
             testStore.setVolatile(self.getName());
 
-            //plugin behavior
             /**
-             * @param {String} action - 'next' or 'skip'
+             * Provides different variants of message text
+             * @returns {String}
              */
-            function doNextWarning(action) {
-                var context = testRunner.getTestContext();
-                var checkboxParams = null;
-
-                // Provides different variants of message text:
-                function getCustomNextMessage() {
-                    var customNextMessage;
-                    var itemPartiallyAnswered = currentItemHelper.isAnswered(testRunner, true);
-                    if (! itemPartiallyAnswered) {
-                        customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
-                    }
-                    else if (action === 'next') {
-                        customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and change your answer.');
-                    }
-                    else if (action === 'skip') {
-                        customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
-                    }
-                    return customNextMessage;
+            function getCustomNextMessage(action) {
+                var customNextMessage;
+                var itemPartiallyAnswered = currentItemHelper.isAnswered(testRunner, true);
+                if (! itemPartiallyAnswered) {
+                    customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and provide an answer.');
                 }
-
-                // Handle disable & re-enable of navigation controls:
-                function enableNav() {
-                    testRunner.trigger('enablenav');
+                else if (action === 'next') {
+                    customNextMessage = __('Are you sure you want to go to the next item? You will not be able to go back and change your answer.');
                 }
-                testRunner.trigger('disablenav');
-
-                // Load testStore checkbox value (async)
-                testStore.getStore(self.getName()).then(function(store) {
-                    store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
-
-                        // Show the warning unless user has turned it off:
-                        if (checkboxValue !== true) {
-                            // Define checkbox only if enabled by config:
-                            if (testConfig.enableNextItemWarningCheckbox) {
-                                checkboxParams = {
-                                    checked: checkboxValue,
-                                    submitChecked: function() {
-                                        store.setItem('dontShowNextItemWarning', true);
-                                    },
-                                    submitUnchecked: function() {
-                                        store.setItem('dontShowNextItemWarning', false);
-                                    },
-                                };
-                            }
-                            // show special dialog:
-                            dialogConfirmNext(
-                                __('Go to the next item?'),
-                                getCustomNextMessage(),
-                                _.partial(triggerNextAction, context), // if the test taker accepts
-                                enableNav,                             // if he refuses
-                                checkboxParams
-                            );
-                        }
-                        else {
-                            triggerNextAction(context);
-                        }
-                    });
-                });
+                else if (action === 'skip') {
+                    customNextMessage = __('Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer.');
+                }
+                return customNextMessage;
             }
 
-            // Actions to trigger when this plugin's dialog is accepted
-            function triggerNextAction(testContext) {
-                if(testContext.isLast){
-                    self.trigger('end');
-                }
-                testRunner.next();
+            //plugin behavior
+            /**
+             * Checks configuration, shows a dialog asking to confirm the nav action
+             *
+             * @param {String} action - 'next' or 'skip'
+             * @returns {Promise} - resolves if dialog accepted or not shown, rejects if dialog cancelled
+             */
+            function doNextWarning(action) {
+                //var context = testRunner.getTestContext();
+                var checkboxParams = null;
+
+                testRunner.trigger('disablenav');
+
+                return new Promise(function(resolve, reject) {
+                    // Load testStore checkbox value (async)
+                    testStore.getStore(self.getName()).then(function(store) {
+                        store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
+
+                            function cancel() {
+                                testRunner.trigger('enablenav');
+                                reject();
+                            }
+
+                            // Show the warning unless user has turned it off:
+                            if (checkboxValue !== true) {
+                                // Define checkbox only if enabled by config:
+                                if (testConfig.enableNextItemWarningCheckbox) {
+                                    checkboxParams = {
+                                        checked: checkboxValue,
+                                        submitChecked: function() {
+                                            store.setItem('dontShowNextItemWarning', true);
+                                        },
+                                        submitUnchecked: function() {
+                                            store.setItem('dontShowNextItemWarning', false);
+                                        },
+                                    };
+                                }
+                                // show special dialog:
+                                dialogConfirmNext(
+                                    __('Go to the next item?'),
+                                    getCustomNextMessage(action),
+                                    resolve, // if the test taker accepts
+                                    cancel,  // if he refuses
+                                    checkboxParams
+                                );
+                            }
+                            else {
+                                resolve();
+                            }
+                        });
+                    });
+                });
             }
 
             // Attach this plugin to 'next' & 'skip' events
@@ -128,18 +129,19 @@ define([
                         store.setItem('dontShowNextItemWarning', null);
                     });
                 })
-                .before('nav-skip', function() {
+                .before('skip', function() {
                     var context = testRunner.getTestContext();
                     if (context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
-                        doNextWarning('skip');
+                        return doNextWarning('skip');
                     }
                 })
-                .before('nav-next nav-nextsection', function() {
+                .before('move', function(e, type) {
                     var context = testRunner.getTestContext();
-                    if (context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
-                        doNextWarning('next');
+                    if (type === 'next' && context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
+                        return doNextWarning('next');
                     }
                 });
+
         }
     });
 });

@@ -101,8 +101,16 @@ define([
             };
 
             function doSkip() {
+                testRunner.skip();
+            }
+
+            this.$element = createElement(testRunner.getTestContext());
+
+            this.$element.on('click', function(e){
                 var enable = _.bind(self.enable, self);
                 var context = testRunner.getTestContext();
+
+                e.preventDefault();
 
                 if(self.getState('enabled') !== false){
                     self.disable();
@@ -112,24 +120,13 @@ define([
                             messages.getExitMessage(
                                 __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
                                 'test', testRunner),
-                            triggerNextAction,  // if the test taker accept
-                            enable              // if the test taker refuse
+                            doSkip, // if the test taker accept
+                            enable  // if the test taker refuse
                         );
                     } else {
-                        triggerNextAction();
+                        doSkip();
                     }
                 }
-            }
-
-            function triggerNextAction() {
-                testRunner.skip();
-            }
-
-            this.$element = createElement(testRunner.getTestContext());
-
-            this.$element.on('click', function(e){
-                e.preventDefault();
-                testRunner.trigger('nav-skip');
             });
 
             toggle();
@@ -152,9 +149,6 @@ define([
                 })
                 .on('shownav', function(){
                     self.show();
-                })
-                .on('nav-skip', function(){
-                    doSkip();
                 });
         },
 
