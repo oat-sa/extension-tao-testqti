@@ -40,9 +40,8 @@ define([
      * @param {Function} [checkboxParams.submitUnchecked] - Action called when dialog accepted with checkbox unchecked
      * @returns {dialog} - Returns the dialog instance
      */
-    return function dialogConfirmNext(heading, message, accept, refuse, checkboxParams) {
+    return function dialogConfirmNext(heading, message, accept, refuse, checkboxParams, dialogOptions) {
         var accepted = false;
-        var dialogOptions;
         var dlg;
         var content = null;
         if (checkboxParams && checkboxParams.checked !== true) {
@@ -52,7 +51,7 @@ define([
                 id: 'dont-show-again'
             });
         }
-        dialogOptions = {
+        dialogOptions = _.defaults({
             heading: heading,
             message: message,
             content: content,
@@ -88,7 +87,8 @@ define([
                     }
                 }
             }
-        };
+        }, dialogOptions);
+
         dlg = dialog(dialogOptions);
 
         if (_.isFunction(refuse)) {
