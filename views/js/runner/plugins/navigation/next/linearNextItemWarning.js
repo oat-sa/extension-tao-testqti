@@ -17,7 +17,7 @@
  */
 
 /**
- * Test Runner Navigation Plugin : nextItemWarning
+ * Test Runner Navigation Plugin : linearNextItemWarning
  *
  * @author Martin Nicholson <martin@taotesting.com>
  */
@@ -35,7 +35,7 @@ define([
      * Returns the configured plugin
      */
     return pluginFactory({
-        name : 'nextItemWarning',
+        name : 'linearNextItemWarning',
 
         /**
          * Initialize the plugin (called during runner's init)
@@ -84,20 +84,20 @@ define([
 
                 // Load testStore checkbox value (async)
                 return testStore.getStore(self.getName()).then(function(store) {
-                    return store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
+                    return store.getItem('dontShowLinearNextItemWarning').then(function(checkboxValue) {
                         var checkboxParams = null;
 
                         // Show the warning unless user has turned it off:
                         if (checkboxValue !== true) {
                             // Define checkbox only if enabled by config:
-                            if (testConfig.enableNextItemWarningCheckbox) {
+                            if (testConfig.enableLinearNextItemWarningCheckbox) {
                                 checkboxParams = {
                                     checked: checkboxValue,
                                     submitChecked: function() {
-                                        store.setItem('dontShowNextItemWarning', true);
+                                        store.setItem('dontShowLinearNextItemWarning', true);
                                     },
                                     submitUnchecked: function() {
-                                        store.setItem('dontShowNextItemWarning', false);
+                                        store.setItem('dontShowLinearNextItemWarning', false);
                                     },
                                 };
                             }
@@ -135,7 +135,7 @@ define([
                 .on('init', function() {
                     // Clear the stored checkbox value before each test:
                     testStore.getStore(self.getName()).then(function(store) {
-                        store.setItem('dontShowNextItemWarning', null);
+                        store.setItem('dontShowLinearNextItemWarning', null);
                     });
                 })
                 .before('move skip', function(e, type, scope) {
@@ -150,10 +150,10 @@ define([
                             return;
                         }
                         // Show dialog if conditions met:
-                        else if (type === 'next' && !context.isLast && testConfig.forceEnableNextItemWarning) {
+                        else if (type === 'next' && !context.isLast && testConfig.forceEnableLinearNextItemWarning) {
                             return doNextWarning('next');
                         }
-                        else if (e.name === 'skip' && !context.isLast && testConfig.forceEnableNextItemWarning) {
+                        else if (e.name === 'skip' && !context.isLast && testConfig.forceEnableLinearNextItemWarning) {
                             return doNextWarning('skip');
                         }
                     }

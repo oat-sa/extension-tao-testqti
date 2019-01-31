@@ -1717,11 +1717,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('30.4.0')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
-                'id' => 'nextItemWarning',
-                'name' => 'Next item warning',
-                'module' => 'taoQtiTest/runner/plugins/navigation/next/nextItemWarning',
+                'id' => 'linearNextItemWarning',
+                'name' => 'Linear next item warning',
+                'module' => 'taoQtiTest/runner/plugins/navigation/next/linearNextItemWarning',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
-                'description' => 'Displays a dialog before next item',
+                'description' => 'Displays a dialog before next item in linear test parts',
                 'category' => 'navigation',
                 'active' => false,
                 'tags' => [ ]
@@ -1729,8 +1729,8 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
-            $config['force-enable-next-item-warning'] = false;
-            $config['enable-next-item-warning-checkbox'] = true;
+            $config['force-enable-linear-next-item-warning'] = false;
+            $config['enable-linear-next-item-warning-checkbox'] = true;
             $extension->setConfig('testRunner', $config);
 
             $this->setVersion('30.5.0');

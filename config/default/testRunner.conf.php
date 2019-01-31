@@ -581,13 +581,13 @@ return array(
      * Only applies to *linear* test parts, and only when *linearNextItemWarning* plugin is enabled
      * @type boolean
      */
-    'force-enable-next-item-warning' => false,
+    'force-enable-linear-next-item-warning' => false,
 
     /**
-     * If 'force-enable-next-item-warning' is true, should the dialog contain a "don't show again" checkbox?
+     * If 'force-enable-linear-next-item-warning' is true, should the dialog contain a "don't show again" checkbox?
      * Only applies to *linear* test parts, and only when *linearNextItemWarning* plugin is enabled
      * @type boolean
      */
-    'enable-next-item-warning-checkbox' => true,
+    'enable-linear-next-item-warning-checkbox' => true,
 
 );

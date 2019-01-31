@@ -28,7 +28,7 @@ use oat\tao\model\ClientLibConfigRegistry;
 /**
  * Enables the guided navigation
  */
-class SetNextItemWarningConfig extends \common_ext_action_InstallAction
+class SetLinearNextItemWarningConfig extends \common_ext_action_InstallAction
 {
     /**
      * @param $params
@@ -39,8 +39,8 @@ class SetNextItemWarningConfig extends \common_ext_action_InstallAction
 
         $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
         $config = $extension->getConfig('testRunner');
-        $config['force-enable-next-item-warning'] = false;
-        $config['enable-next-item-warning-checkbox'] = true;
+        $config['force-enable-linear-next-item-warning'] = false;
+        $config['enable-linear-next-item-warning-checkbox'] = true;
         $extension->setConfig('testRunner', $config);
 
         return new \common_report_Report(
