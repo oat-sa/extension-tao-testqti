@@ -129,16 +129,24 @@ define([
                         store.setItem('dontShowNextItemWarning', null);
                     });
                 })
-                .before('skip', function() {
+                .before('move skip', function(e, type, scope) {
                     var context = testRunner.getTestContext();
-                    if (context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
-                        return doNextWarning('skip');
-                    }
-                })
-                .before('move', function(e, type) {
-                    var context = testRunner.getTestContext();
-                    if (type === 'next' && context.isLinear && !context.isLast && testConfig.forceEnableNextItemWarning) {
-                        return doNextWarning('next');
+                    if (context.isLinear) {
+                        // Do nothing if nextSection warning imminent:
+                        if (scope === 'section' && context.options.nextSectionWarning) {
+                            return Promise.resolve();
+                        }
+                        // Do nothing if endOfPart warning imminent:
+                        else if (context.options.nextPartWarning) {
+                            return Promise.resolve();
+                        }
+                        // Show dialog if conditions met:
+                        else if (type === 'next' && !context.isLast && testConfig.forceEnableNextItemWarning) {
+                            return doNextWarning('next');
+                        }
+                        else if (e.name === 'skip' && !context.isLast && testConfig.forceEnableNextItemWarning) {
+                            return doNextWarning('skip');
+                        }
                     }
                 });
 
