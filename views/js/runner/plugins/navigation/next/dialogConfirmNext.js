@@ -69,7 +69,7 @@ define([
                 label : __('Go to next item'),
                 close: true
             }],
-            onOkBtn: function() {
+            onOkBtn: function onOkBtn() {
                 var $checkbox;
                 accepted = true;
                 if (_.isFunction(accept)) {

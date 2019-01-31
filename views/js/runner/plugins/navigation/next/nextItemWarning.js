@@ -75,49 +75,52 @@ define([
              * @returns {Promise} - resolves if dialog accepted or not shown, rejects if dialog cancelled
              */
             function doNextWarning(action) {
-                //var context = testRunner.getTestContext();
-                var checkboxParams = null;
-
                 testRunner.trigger('disablenav');
 
-                return new Promise(function(resolve, reject) {
-                    // Load testStore checkbox value (async)
-                    testStore.getStore(self.getName()).then(function(store) {
-                        store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
+                // Load testStore checkbox value (async)
+                return testStore.getStore(self.getName()).then(function(store) {
+                    return store.getItem('dontShowNextItemWarning').then(function(checkboxValue) {
+                        var checkboxParams = null;
 
-                            function cancel() {
-                                testRunner.trigger('enablenav');
-                                reject();
+                        // Show the warning unless user has turned it off:
+                        if (checkboxValue !== true) {
+                            // Define checkbox only if enabled by config:
+                            if (testConfig.enableNextItemWarningCheckbox) {
+                                checkboxParams = {
+                                    checked: checkboxValue,
+                                    submitChecked: function() {
+                                        store.setItem('dontShowNextItemWarning', true);
+                                    },
+                                    submitUnchecked: function() {
+                                        store.setItem('dontShowNextItemWarning', false);
+                                    },
+                                };
                             }
-
-                            // Show the warning unless user has turned it off:
-                            if (checkboxValue !== true) {
-                                // Define checkbox only if enabled by config:
-                                if (testConfig.enableNextItemWarningCheckbox) {
-                                    checkboxParams = {
-                                        checked: checkboxValue,
-                                        submitChecked: function() {
-                                            store.setItem('dontShowNextItemWarning', true);
-                                        },
-                                        submitUnchecked: function() {
-                                            store.setItem('dontShowNextItemWarning', false);
-                                        },
-                                    };
-                                }
+                            return new Promise(function(resolve, reject) {
                                 // show special dialog:
                                 dialogConfirmNext(
                                     __('Go to the next item?'),
                                     getCustomNextMessage(action),
                                     resolve, // if the test taker accepts
-                                    cancel,  // if he refuses
+                                    function cancel() { // if he refuses
+                                        reject({
+                                            cancel: true
+                                        });
+                                    },
                                     checkboxParams
                                 );
-                            }
-                            else {
-                                resolve();
-                            }
-                        });
+                            });
+                        }
                     });
+                })
+                .catch(function(err) {
+                    // if the rejection is due to an error, rethrow it
+                    if (err && err instanceof Error) {
+                        throw err;
+                    }
+                    if (err && err.cancel === true) {
+                        testRunner.trigger('enablenav');
+                    }
                 });
             }
 
@@ -134,11 +137,11 @@ define([
                     if (context.isLinear) {
                         // Do nothing if nextSection warning imminent:
                         if (scope === 'section' && context.options.nextSectionWarning) {
-                            return Promise.resolve();
+                            return;
                         }
                         // Do nothing if endOfPart warning imminent:
                         else if (context.options.nextPartWarning) {
-                            return Promise.resolve();
+                            return;
                         }
                         // Show dialog if conditions met:
                         else if (type === 'next' && !context.isLast && testConfig.forceEnableNextItemWarning) {
