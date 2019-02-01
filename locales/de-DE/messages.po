@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint91\n"
-"PO-Revision-Date: 2019-01-04T13:33:30\n"
+"Project-Id-Version: TAO 3.3.0-sprint95\n"
+"PO-Revision-Date: 2019-02-01T09:43:23\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -160,8 +160,20 @@ msgstr ""
 msgid "Answered"
 msgstr "Beantwortet"
 
+msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
+msgstr ""
+
 msgid "Are you sure you want to end the test?"
 msgstr "Sind Sie sicher, dass Sie den Test beenden möchten?"
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back."
+msgstr ""
 
 msgid "Area Masking"
 msgstr ""
@@ -426,6 +438,12 @@ msgstr "Markiert"
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
 
+msgid "Go to next item"
+msgstr ""
+
+msgid "Go to the next item?"
+msgstr ""
+
 msgid "Gray on green (low contrast option)"
 msgstr ""
 
@@ -537,11 +555,11 @@ msgstr "Element Referenz-Eigenschaften"
 msgid "Item Session Control"
 msgstr "Element-Sitzungskontrolle"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Elemente"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elemente können manuell zu einer oder mehreren Kategorien hinzugefügt werden."
@@ -597,11 +615,11 @@ msgstr "Rubrik-Blöcke verwalten"
 msgid "Manage test properties"
 msgstr "Test-Eigenschaften verwalten"
 
-msgid "Manage Tests"
-msgstr "Tests verwalten"
-
 msgid "Manage tests"
 msgstr ""
+
+msgid "Manage Tests"
+msgstr "Tests verwalten"
 
 msgid "Mark for review"
 msgstr "Zur Bewertung markieren"
@@ -723,11 +741,11 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "Nicht gemischt, die Position bleibt festgelegt."
 
-msgid "OK"
-msgstr ""
-
 msgid "Ok"
 msgstr "OK"
+
+msgid "OK"
+msgstr ""
 
 msgid "OK & End test"
 msgstr ""
