@@ -575,4 +575,19 @@ return array(
      * Specifies runner tools that should keep its states in backend storage
      */
     'tool-state-server-storage' => [],
+
+    /**
+     * Defines whether to always show a warning dialog before moving to next item
+     * Only applies to *linear* test parts, and only when *linearNextItemWarning* plugin is enabled
+     * @type boolean
+     */
+    'force-enable-linear-next-item-warning' => false,
+
+    /**
+     * If 'force-enable-linear-next-item-warning' is true, should the dialog contain a "don't show again" checkbox?
+     * Only applies to *linear* test parts, and only when *linearNextItemWarning* plugin is enabled
+     * @type boolean
+     */
+    'enable-linear-next-item-warning-checkbox' => true,
+
 );
