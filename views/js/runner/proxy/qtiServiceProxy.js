@@ -123,10 +123,11 @@ define([
                         }
                     }
                 };
+                var returnXhr = true;
 
                 console.log('TR.request', url, data);
 
-                return centralRequest(url, data, method, headers, background, noToken, ajaxParams, true);
+                return centralRequest(url, data, method, headers, background, noToken, ajaxParams, returnXhr);
 
                 //run the request, just a function wrapper
                 // var runRequest = function runRequest() {
