@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2019 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -28,8 +28,8 @@ define([
     'core/communicator',
     'taoQtiTest/runner/config/qtiServiceConfig',
     'util/httpErrorParser',
-    'core/dataProvider/request'
-], function($, _, __, Promise, promiseQueue, communicatorFactory, configFactory, httpErrorParser, centralRequest) {
+    'core/request'
+], function($, _, __, Promise, promiseQueue, communicatorFactory, configFactory, httpErrorParser, coreRequest) {
     'use strict';
 
     /**
@@ -82,144 +82,55 @@ define([
              * @returns {Promise}
              */
             this.request = function request(url, reqParams, contentType, noToken) {
-
-                var noop;
                 var data = self.prepareParams(reqParams);
-                var method = reqParams ? 'POST' : 'GET';
-                var headers = {};
-                var background = false;
-                var ajaxParams = {
-                    async : true,
-                    timeout : self.configStorage.getTimeout(),
-                    contentType : contentType || noop,
-                    success: function() {
-                        console.log('qti ajax done');
-                        self.setOnline();
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        var resData;
-                        console.log('qti ajax failed');
-
-                        try {
-                            resData = JSON.parse(jqXHR.responseText);
-                        } catch(err) {
-                            resData = {};
-                        }
-
-                        resData = _.defaults(resData, {
-                            success: false,
-                            source: 'network',
-                            cause : url,
-                            purpose: 'proxy',
-                            context: this,
-                            code: jqXHR.status,
-                            sent: jqXHR.readyState > 0,
-                            type: textStatus || 'error',
-                            message: errorThrown || __('An error occurred!')
-                        });
-                        if (self.isConnectivityError(resData)) {
-                            self.setOffline('request');
-                            //return resolve(data);
-                        }
-                    }
-                };
-                var returnXhr = true;
-
                 console.log('TR.request', url, data);
 
-                return centralRequest(url, data, method, headers, background, noToken, ajaxParams, returnXhr);
+                return coreRequest({
+                    url: url,
+                    data: data,
+                    method: reqParams ? 'POST' : 'GET',
+                    contentType: contentType,
+                    background: false,
+                    noToken: noToken
+                })
+                .then(function(response) {
+                    console.log('qti ajax done');
+                    self.setOnline();
 
-                //run the request, just a function wrapper
-                // var runRequest = function runRequest() {
-                //     console.log('qtiServiceProxy runRequest()', url);
-                //     return new Promise(function(resolve, reject) {
-                //         var token;
-                //         var noop;
-                //         var headers        = {};
-                //         var action         = reqParams ? 'POST' : 'GET';
-                //         var preparedParams = self.prepareParams(reqParams);
-                //         var tokenHandler   = self.getTokenHandler();
+                    if (response && response.success) {
+                        console.log('resp', response);
+                        return Promise.resolve(response);
+                    } else {
+                        return Promise.reject(response);
+                    }
+                })
+                .catch(function(error, jqXHR) { // jqXHR param currently not returned by core/request
+                    var resData;
+                    if (!jqXHR) jqXHR = {};
+                    console.error('qti ajax failed', error);
 
-                //         if (!noToken) {
-                //             token = tokenHandler.getToken();
-                //             if (token) {
-                //                 headers['X-Auth-Token'] = token;
-                //                 console.log('qtiServiceProxy: set X-Auth-Token header', token);
-                //             }
-                //         }
+                    try {
+                        resData = JSON.parse(jqXHR.responseText);
+                    } catch(err) {
+                        resData = {};
+                    }
 
-                //         $.ajax({
-                //             url : url,
-                //             type : action,
-                //             cache : false,
-                //             data : preparedParams,
-                //             headers : headers,
-                //             async : true,
-                //             dataType : 'json',
-                //             contentType : contentType || noop,
-                //             beforeSend: function() {
-                //                 console.log('sending...');
-                //             },
-                //             timeout : self.configStorage.getTimeout()
-                //         })
-                //             .done(function(data) {
-
-                //                 if (data && data.token) {
-                //                     console.log('qtiServiceProxy set new token', data.token);
-                //                     tokenHandler.setToken(data.token);
-                //                 }
-
-                //                 self.setOnline();
-
-                //                 if (data && data.success) {
-                //                     resolve(data);
-                //                 } else {
-                //                     reject(data);
-                //                 }
-                //             })
-                //             .fail(function(jqXHR, textStatus, errorThrown) {
-                //                 var data;
-
-                //                 try {
-                //                     data = JSON.parse(jqXHR.responseText);
-                //                 } catch(err) {
-                //                     data = {};
-                //                 }
-
-                //                 data = _.defaults(data, {
-                //                     success: false,
-                //                     source: 'network',
-                //                     cause : url,
-                //                     purpose: 'proxy',
-                //                     context: this,
-                //                     code: jqXHR.status,
-                //                     sent: jqXHR.readyState > 0,
-                //                     type: textStatus || 'error',
-                //                     message: errorThrown || __('An error occurred!')
-                //                 });
-
-                //                 if (data.token) {
-                //                     tokenHandler.setToken(data.token);
-                //                 } else if (!noToken) {
-                //                     tokenHandler.setToken(token);
-                //                 }
-
-                //                 if(self.isConnectivityError(data)){
-                //                     self.setOffline('request');
-                //                     return resolve(data);
-                //                 }
-
-                //                 reject(httpErrorParser.parse(jqXHR, textStatus, errorThrown));
-                //             });
-                //     });
-                // };
-
-                // //no token protection, run the request
-                // if (noToken === true) {
-                //     return runRequest();
-                // }
-
-                // return this.queue.serie(runRequest);
+                    resData = _.defaults(resData, {
+                        success: false,
+                        source: 'network',
+                        cause : url,
+                        purpose: 'proxy',
+                        context: this,
+                        code: jqXHR.status || error.code, // ?
+                        sent: jqXHR.readyState > 0, // ?
+                        type: 'error',
+                        message: error || __('An error occurred!')
+                    });
+                    if (self.isConnectivityError(resData)) {
+                        self.setOffline('request');
+                    }
+                    return Promise.reject();
+                });
             };
         },
 
