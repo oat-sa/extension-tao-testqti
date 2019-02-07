@@ -90,8 +90,9 @@ define([
                     data: data,
                     method: reqParams ? 'POST' : 'GET',
                     contentType: contentType,
+                    noToken: noToken,
                     background: false,
-                    noToken: noToken
+                    sequential: true
                 })
                 .then(function(response) {
                     console.log('qti ajax done');
