@@ -92,7 +92,8 @@ define([
                     contentType: contentType,
                     noToken: noToken,
                     background: false,
-                    sequential: true
+                    sequential: true,
+                    timeout: self.configStorage.getTimeout()
                 })
                 .then(function(response) {
                     console.log('qti ajax done');
