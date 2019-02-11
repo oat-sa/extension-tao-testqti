@@ -19,14 +19,16 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
+use common_Exception;
+use common_exception_Error;
+use common_exception_InconsistentData;
+use common_Logger;
+use Exception;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
 /**
- * Class ExitTest
- * 
  * Exit the current test abruptly
- *
  *
  * @package oat\taoQtiTest\models\runner\synchronisation\action
  */
@@ -41,30 +43,33 @@ class ExitTest extends TestRunnerAction
      * Start next timer.
      *
      * @return array
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_InconsistentData
      */
     public function process()
     {
         $this->validate();
 
         try {
-
             /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getServiceContext();
+
+            $this->saveToolStates();
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer($this->getTime());
                 $this->saveItemState();
             }
-            $this->initServiceContext();
 
+            $this->initServiceContext();
             $this->saveItemResponses();
 
             $response = [
                 'success' => $this->getRunnerService()->exitTest($serviceContext),
             ];
-
-        } catch (\Exception $e) {
-            \common_Logger::e($e->getMessage());
+        } catch (Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
         }
 

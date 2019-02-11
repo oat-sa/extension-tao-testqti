@@ -36,6 +36,8 @@ use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
+use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
+use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
@@ -1695,5 +1697,46 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('29.7.0', '29.7.3');
+
+        if ($this->isVersion('29.7.3')) {
+            $this->getServiceManager()->register(
+                ToolsStateStorage::SERVICE_ID,
+                new NoStorage([])
+            );
+
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['tool-state-server-storage'] = [];
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('29.8.0');
+        }
+
+        $this->skip('29.8.0', '30.4.0');
+
+        if ($this->isVersion('30.4.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'linearNextItemWarning',
+                'name' => 'Linear next item warning',
+                'module' => 'taoQtiTest/runner/plugins/navigation/next/linearNextItemWarning',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Displays a dialog before next item in linear test parts',
+                'category' => 'navigation',
+                'active' => false,
+                'tags' => [ ]
+            ]));
+
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['force-enable-linear-next-item-warning'] = false;
+            $config['enable-linear-next-item-warning-checkbox'] = true;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('30.5.0');
+        }
+        
+       $this->skip('30.5.0', '30.5.1');
+
     }
 }

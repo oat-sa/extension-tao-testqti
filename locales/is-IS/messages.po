@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint91\n"
-"PO-Revision-Date: 2018-12-14T16:17:16\n"
+"Project-Id-Version: TAO 3.3.0-sprint95\n"
+"PO-Revision-Date: 2019-02-01T09:43:26\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: is-IS\n"
@@ -160,7 +160,19 @@ msgstr ""
 msgid "Answered"
 msgstr ""
 
+msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
+msgstr ""
+
 msgid "Are you sure you want to end the test?"
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back."
 msgstr ""
 
 msgid "Area Masking"
@@ -425,6 +437,12 @@ msgstr ""
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
 
+msgid "Go to next item"
+msgstr ""
+
+msgid "Go to the next item?"
+msgstr ""
+
 msgid "Gray on green (low contrast option)"
 msgstr ""
 
@@ -536,11 +554,11 @@ msgstr "Tilvísunareiginleikar atriðis"
 msgid "Item Session Control"
 msgstr "Stjórn á atriðisaðgerð"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Atriði"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Atriði má tengja við einn eða fleiri flokka."
@@ -596,11 +614,11 @@ msgstr "Sýsla fyrirmælablokkir"
 msgid "Manage test properties"
 msgstr "Sýsla með eiginleika prófs"
 
-msgid "Manage Tests"
-msgstr "Sýsla með próf"
-
 msgid "Manage tests"
 msgstr ""
+
+msgid "Manage Tests"
+msgstr "Sýsla með próf"
 
 msgid "Mark for review"
 msgstr ""
@@ -722,10 +740,10 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "Ekki stokkað, staðsetning föst."
 
-msgid "OK"
+msgid "Ok"
 msgstr ""
 
-msgid "Ok"
+msgid "OK"
 msgstr ""
 
 msgid "OK & End test"

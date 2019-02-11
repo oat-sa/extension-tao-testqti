@@ -126,6 +126,9 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'amount' => isset($rawConfig['item-cache-size']) ? intval($rawConfig['item-cache-size']) : 3,
                 ],
                 'guidedNavigation' => isset($rawConfig['guidedNavigation']) ? $rawConfig['guidedNavigation'] : false,
+                'toolStateServerStorage' => isset($rawConfig['tool-state-server-storage']) ? $rawConfig['tool-state-server-storage'] : [],
+                'forceEnableLinearNextItemWarning' => isset($rawConfig['force-enable-linear-next-item-warning']) ? $rawConfig['force-enable-linear-next-item-warning'] : false,
+                'enableLinearNextItemWarningCheckbox' => isset($rawConfig['enable-linear-next-item-warning-checkbox']) ? $rawConfig['enable-linear-next-item-warning-checkbox'] : true,
             ];
         }
         return $config;

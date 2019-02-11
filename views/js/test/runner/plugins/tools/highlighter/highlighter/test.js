@@ -20,16 +20,10 @@
  */
 define([
     'jquery',
-    'lodash',
-    'helpers',
-    'taoTests/runner/runner',
-    'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/highlighter/highlighter'
-], function($, _, helpers, runnerFactory, providerMock, highlighterFactory) {
+], function($, highlighterFactory) {
     'use strict';
 
-    var providerName = 'mock';
-    runnerFactory.registerProvider(providerName, providerMock());
 
     QUnit.module('highlighterFactory');
 
@@ -40,8 +34,7 @@ define([
     QUnit.module('highlight mode');
 
     QUnit.test('Toggle highlight mode on/off', function(assert) {
-        var runner = runnerFactory(providerName);
-        var highlighter = highlighterFactory(runner);
+        var highlighter = highlighterFactory();
         var selection = window.getSelection();
         var range = document.createRange();
         var container = document.getElementsByClassName('qti-itemBody')[0];
@@ -50,7 +43,7 @@ define([
         selection.removeAllRanges();
 
         // switch on highlight mode
-        highlighter.trigger();
+        highlighter.highlight();
 
         // create first selection
         range.setStart(container.firstChild, 0);
@@ -81,7 +74,7 @@ define([
         assert.equal(highlightedElement.textContent.trim(), 'highlight', 'correct content has been highlighted');
 
         // switch off highlight mode
-        highlighter.trigger();
+        highlighter.highlight();
 
         // create third selection
         range.setStart(container.childNodes[3], ' as much as you '.length);
@@ -100,7 +93,7 @@ define([
     QUnit.module('one shot highlight');
 
     QUnit.test('Highlight current selection, if any', function(assert) {
-        var highlighter = highlighterFactory(runnerFactory(providerName));
+        var highlighter = highlighterFactory();
         var selection = window.getSelection();
         var range = document.createRange();
         var container = document.getElementsByClassName('qti-itemBody')[0];
@@ -114,7 +107,7 @@ define([
 
         assert.equal(selection.toString().trim(), sampleText, 'selection is correct');
 
-        highlighter.trigger();
+        highlighter.highlight();
 
         highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
 
@@ -123,7 +116,7 @@ define([
     });
 
     QUnit.test('Do not perform highlight if selection is collapsed', function(assert) {
-        var highlighter = highlighterFactory(runnerFactory(providerName));
+        var highlighter = highlighterFactory();
         var selection = window.getSelection();
         var range = document.createRange();
         var container = document.getElementsByClassName('qti-itemBody')[0];
@@ -137,7 +130,7 @@ define([
 
         assert.equal(selection.toString().trim(), '', 'selection is correct');
 
-        highlighter.trigger();
+        highlighter.highlight();
 
         highlightedElement = document.getElementsByClassName('txt-user-highlight')[0];
 
