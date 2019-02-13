@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint95\n"
-"PO-Revision-Date: 2019-02-01T09:43:26\n"
+"PO-Revision-Date: 2019-02-13T07:33:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -1188,7 +1188,7 @@ msgid "Time limit reached, this part of the test has ended."
 msgstr "Limite di tempo raggiunto, questa parte del test è terminata."
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr ""
+msgstr "Il tempo a tua disposizione per svolgere la prova è terminato. Puoi comunque rispondre a questa domanda, ma non puoi tornare a nessuna delle domande precedenti."
 
 msgid "Time Limits"
 msgstr "Limite di tempo"
