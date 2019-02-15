@@ -82,12 +82,11 @@ define([
              * @returns {Promise}
              */
             this.request = function request(url, reqParams, contentType, noToken) {
-                var data = self.prepareParams(reqParams);
-                console.log('TR.request', url, data);
+                console.log('TR.request', url);
 
                 return coreRequest({
                     url: url,
-                    data: data,
+                    data: self.prepareParams(reqParams),
                     method: reqParams ? 'POST' : 'GET',
                     contentType: contentType,
                     noToken: noToken,
@@ -96,28 +95,27 @@ define([
                     timeout: self.configStorage.getTimeout()
                 })
                 .then(function(response) {
-                    console.log('qti ajax done');
+                    console.log('qti ajax done', response);
                     self.setOnline();
 
                     if (response && response.success) {
-                        console.log('resp', response);
                         return Promise.resolve(response);
                     } else {
                         return Promise.reject(response);
                     }
                 })
                 .catch(function(error, jqXHR) { // jqXHR param currently not returned by core/request
-                    var resData;
+                    var data;
                     if (!jqXHR) jqXHR = {};
                     console.error('qti ajax failed', error);
 
                     try {
-                        resData = JSON.parse(jqXHR.responseText);
+                        data = JSON.parse(jqXHR.responseText);
                     } catch(err) {
-                        resData = {};
+                        data = {};
                     }
 
-                    resData = _.defaults(resData, {
+                    data = _.defaults(data, {
                         success: false,
                         source: 'network',
                         cause : url,
@@ -128,10 +126,10 @@ define([
                         type: 'error',
                         message: error || __('An error occurred!')
                     });
-                    if (self.isConnectivityError(resData)) {
+                    if (self.isConnectivityError(data)) {
                         self.setOffline('request');
                     }
-                    return Promise.reject();
+                    return Promise.reject(error);
                 });
             };
         },

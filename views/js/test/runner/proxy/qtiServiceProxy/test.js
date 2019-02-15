@@ -130,6 +130,9 @@ define([
                 url: '/*',
                 status: caseData.ajaxSuccess ? 200 : 500,
                 responseText: caseData.response,
+                headers: {
+                    'X-CSRF-Token': caseData.response.token
+                },
                 response: function(settings) {
                     assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
                 }
@@ -139,41 +142,52 @@ define([
 
             proxy.install();
 
-            proxy.getTokenHandler().setToken(caseData.token);
-
             proxy.on('init', function(promise, config) {
                 assert.ok(true, 'The proxy has fired the "init" event');
                 assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "init" event');
                 assert.equal(config, initConfig, 'The proxy has provided the config object through the "init" event');
             });
 
-            result = proxy.init();
+            proxy.getTokenHandler().setToken(caseData.token).then(function() {
 
-            assert.equal(typeof result, 'object', 'The proxy.init method has returned a promise');
+                result = proxy.init();
 
-            result
-                .then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
+                assert.equal(typeof result, 'object', 'The proxy.init method has returned a promise');
 
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
+                result
+                    .then(function(data) {
+                        if (caseData.success) {
+                            assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                        } else {
+                            assert.ok(false, 'The proxy must throw an error!');
+                        }
 
-                    QUnit.start();
-                })
-                .catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                        // Token handling responsibility now lies with core/request
+                        // Tokens won't be returned here
+                        // if (data.token) {
+                        //     proxy.getTokenHandler().getToken().then(function(storedToken) {
+                        //         assert.equal(storedToken, data.token, 'The proxy must update the security token');
+                        //     });
+                        // }
 
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
-                    }
+                        QUnit.start();
+                    })
+                    .catch(function(err) {
+                        assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
 
-                    QUnit.start();
-                });
+                        // Token handling responsibility now lies with core/request
+                        // Tokens won't be returned here
+                        // if (err.token) {
+                        //     console.log(err.token);
+                        //     proxy.getTokenHandler().getToken().then(function(storedToken) {
+                        //         assert.equal(storedToken, err.token, 'The proxy must update the security token');
+                        //     });
+                        // }
+
+                        QUnit.start();
+                    });
+            });
+
         });
 
 
