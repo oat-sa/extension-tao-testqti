@@ -249,7 +249,7 @@ define([
      * @param {Object} testRunner
      * @returns {Array} of keyNavigator ids
      */
-    function initContentNavigation(testRunner){
+    function initDefaultContentNavigation(testRunner){
 
         var itemNavigators = [];
         var $content = testRunner.getAreaBroker().getContentArea();
@@ -273,6 +273,51 @@ define([
         });
 
         return itemNavigators;
+    }
+
+    /**
+     * Init the navigation in the item content
+     * Navigable item content are interaction choices and body element with the special class "key-navigation-focusable"
+     * It returns an array of keyNavigators as the content is dynamically determined
+     *
+     * @param {Object} testRunner
+     * @returns {Array} of keyNavigator ids
+     */
+    function initAllContentButtonsNavigation(testRunner){
+        var navigableElements = [];
+        var $content = testRunner.getAreaBroker().getContentArea();
+        var $qtiIteractionsNodeList = $content.find('.key-navigation-focusable,.qti-interaction').filter(function(){
+            //filter out interaction as it will be managed separately
+            return (!$(this).parents('.qti-interaction').length);
+        });
+        var $qtiChoiceNodesList = $qtiIteractionsNodeList.find('.qti-choice');
+
+        //the item focusable body elements are considered scrollable
+        $content.find('.key-navigation-focusable').addClass('key-navigation-scrollable');
+
+        $qtiChoiceNodesList.each(function(){
+            var $itemElement = $(this);
+
+            navigableElements.push(keyNavigator({
+                elements : navigableDomElement.createFromDoms($itemElement),
+                group : $itemElement,
+                propagateTab : false
+            }).on('activate', function(cursor){
+                var $elt = cursor.navigable.getElement();
+                //jQuery <= 1.9.0 the checkbox values are set
+                //after the click event if triggerred with jQuery
+                if($elt.is(':checkbox')){
+                    $elt.each(function(){
+                        this.click();
+                    });
+                } else {
+                    $elt.click();
+                }
+
+            }));
+        });
+
+        return navigableElements;
     }
 
     /**
@@ -379,7 +424,7 @@ define([
      * @param testRunner
      * @returns {*}
      */
-    function initTestRunnerNavigation(testRunner){
+    function initTestRunnerNavigation(testRunner, state){
 
         var navigators;
 
@@ -388,13 +433,24 @@ define([
             document.activeElement.blur();
         }
 
-        navigators = _.union(
-            initRubricNavigation(testRunner),
-            initContentNavigation(testRunner),
-            initToolbarNavigation(testRunner),
-            initNavigatorNavigation(testRunner),
-            initHeaderNavigation(testRunner)
-        );
+        if (state.contentNavigatorType === 'default') {
+            navigators = _.union(
+                initRubricNavigation(testRunner),
+                initDefaultContentNavigation(testRunner),
+                initToolbarNavigation(testRunner),
+                initNavigatorNavigation(testRunner),
+                initHeaderNavigation(testRunner),
+            );
+        } else {
+            navigators = _.union(
+                initRubricNavigation(testRunner),
+                initAllContentButtonsNavigation(testRunner),
+                initToolbarNavigation(testRunner),
+                initNavigatorNavigation(testRunner),
+                initHeaderNavigation(testRunner),
+            );
+        }
+
 
         navigators = navigableGroupElement.createFromNavigators(navigators);
 
@@ -448,6 +504,9 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
+            var state = {
+                contentNavigatorType: 'default',
+            };
 
             //start disabled
             this.disable();
@@ -455,7 +514,7 @@ define([
             //update plugin state based on changes
             testRunner
                 .after('renderitem', function () {
-                    self.groupNavigator = initTestRunnerNavigation(testRunner);
+                    self.groupNavigator = initTestRunnerNavigation(testRunner, state);
 
                     shortcut.add('tab shift+tab', function(e){
                         if (!allowedToNavigateFrom(e.target)) {
@@ -465,11 +524,15 @@ define([
                             self.groupNavigator.focus();
                         }
                     });
-
-                    self.enable();
                 })
                 .on('unloaditem', function () {
                     self.disable();
+                })
+                .on('contentLinearTabNavigation', function() {
+                    state.contentNavigatorType = 'linear';
+                })
+                .on('contentDefaultTabNavigation', function() {
+                  state.contentNavigatorType = 'default';
                 });
         },
 
