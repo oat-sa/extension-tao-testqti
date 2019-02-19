@@ -328,7 +328,12 @@ return array(
             /**
              * The optional amd path to an alternative template, e.g. myExtension/runner/plugins/tool/calculator/template.tpl
              */
-            'template' => ''
+            'template' => '',
+            /**
+             * Angle measurement default
+             * @type boolean
+             */
+            'degree' => true
         ]
     ],
 

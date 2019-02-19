@@ -73,7 +73,12 @@ define([
      */
     var scientificCalcConfig = _.defaults({
         width: 450,
-        height: 400
+        height: 400,
+        calculator: {
+            maths: {
+                degree: false
+            }
+        }
     }, defaultCalcConfig);
 
     /**
@@ -133,6 +138,9 @@ define([
                 if (options.calculatorScientific) {
                     factory = scientificCalculatorFactory;
                     calcConfig = scientificCalcConfig;
+                    calcConfig.calculator.maths.degree = _.isUndefined(config.degree)
+                        ? scientificCalcConfig.calculator.maths.degree
+                        : config.degree;
                 } else if (options.calculatorBodmas) {
                     factory = basicCalculatorFactory;
                     calcConfig = bodmasCalcConfig;
