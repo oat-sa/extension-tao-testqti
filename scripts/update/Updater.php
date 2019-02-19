@@ -1744,7 +1744,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $config['plugins']['calculator']['degree'] = true;
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('30.5.4');
+            $this->setVersion('30.6.3');
         }
 
     }
