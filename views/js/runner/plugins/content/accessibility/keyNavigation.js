@@ -250,7 +250,6 @@ define([
      * @returns {Array} of keyNavigator ids
      */
     function initDefaultContentNavigation(testRunner){
-
         var itemNavigators = [];
         var $content = testRunner.getAreaBroker().getContentArea();
 
@@ -425,7 +424,7 @@ define([
      * @returns {*}
      */
     function initTestRunnerNavigation(testRunner, state){
-
+        var keyNavigatorItem;
         var navigators;
 
         //blur current focused element, to reinitialize keyboard navigation
@@ -433,33 +432,39 @@ define([
             document.activeElement.blur();
         }
 
-        if (state.contentNavigatorType === 'default') {
-            navigators = _.union(
-                initRubricNavigation(testRunner),
-                initDefaultContentNavigation(testRunner),
-                initToolbarNavigation(testRunner),
-                initNavigatorNavigation(testRunner),
-                initHeaderNavigation(testRunner),
-            );
-        } else {
-            navigators = _.union(
-                initRubricNavigation(testRunner),
-                initAllContentButtonsNavigation(testRunner),
-                initToolbarNavigation(testRunner),
-                initNavigatorNavigation(testRunner),
-                initHeaderNavigation(testRunner),
-            );
+        switch (state.contentNavigatorType) {
+            case 'linear' :
+                navigators = _.union(
+                    initRubricNavigation(testRunner),
+                    initAllContentButtonsNavigation(testRunner),
+                    initToolbarNavigation(testRunner),
+                    initNavigatorNavigation(testRunner),
+                    initHeaderNavigation(testRunner),
+                );
+            break;
+
+            default:
+                navigators = _.union(
+                    initRubricNavigation(testRunner),
+                    initDefaultContentNavigation(testRunner),
+                    initToolbarNavigation(testRunner),
+                    initNavigatorNavigation(testRunner),
+                    initHeaderNavigation(testRunner),
+                );
+            break;
         }
 
 
         navigators = navigableGroupElement.createFromNavigators(navigators);
 
-        return keyNavigator({
+        keyNavigatorItem = keyNavigator({
             id : 'test-runner',
             replace : true,
             loop : true,
             elements : navigators
-        }).on('tab', function(elem){
+        });
+
+        keyNavigatorItem.on('tab', function(elem){
             if (!allowedToNavigateFrom(elem)) {
                 return false;
             } else {
@@ -472,6 +477,29 @@ define([
                 this.previous();
             }
         });
+
+        if ( state.contentNavigatorType === 'linear' ) {
+            keyNavigatorItem.on('right', function(elem){
+
+                var isCurrentElementFirst = $(elem).is(':first-child');
+
+                if (!allowedToNavigateFrom(elem)) {
+                    return false;
+                } else {
+                    isCurrentElementFirst && this.next();
+                }
+            }).on('left', function(elem){
+                var isCurrentElementLast = $(elem).is(':last-child');
+
+                if (!allowedToNavigateFrom(elem)) {
+                    return false;
+                } else {
+                    isCurrentElementLast && this.previous();
+                }
+            });
+        }
+
+        return keyNavigatorItem;
     }
 
     /**
