@@ -26,9 +26,10 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/plugins/navigation/next/dialogConfirmNext'
-], function ($, _, __, pluginFactory, currentItemHelper, dialogConfirmNext){
+], function ($, _, __, pluginFactory, mapHelper, currentItemHelper, dialogConfirmNext){
     'use strict';
 
     /**
