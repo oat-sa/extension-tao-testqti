@@ -76,7 +76,7 @@ define([
         height: 400,
         calculator: {
             maths: {
-                degree: false
+                degree: true
             }
         }
     }, defaultCalcConfig);
