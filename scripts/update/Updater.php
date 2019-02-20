@@ -1736,7 +1736,16 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('30.5.0');
         }
         
-       $this->skip('30.5.0', '30.5.3');
+        $this->skip('30.5.0', '30.5.3');
+
+        if ($this->isVersion('30.5.3')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['calculator']['degree'] = true;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('30.6.0');
+        }
 
     }
 }
