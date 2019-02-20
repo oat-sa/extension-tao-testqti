@@ -73,7 +73,6 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
-use oat\taoDelivery\model\execution\StateServiceInterface;
 
 /**
  * Class QtiRunnerService
@@ -109,7 +108,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Get the data folder from a given item definition
      * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
-     * @return string the path
+     * @return array the path
      * @throws \common_Exception
      */
     private function loadItemData($itemRef, $path)
@@ -1001,8 +1000,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function getFeedbacks(RunnerServiceContext $context, $itemRef)
     {
-        $feedbacks = array();
-
         if ($context instanceof QtiRunnerServiceContext) {
             return $this->loadItemData($itemRef, QtiJsonItemCompiler::VAR_ELT_FILE_NAME);
         } else {
@@ -1014,8 +1011,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $context
             );
         }
-
-        return $feedbacks;
     }
 
     /**
