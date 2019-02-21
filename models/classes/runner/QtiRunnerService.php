@@ -1790,7 +1790,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param RunnerServiceContext $context
      * @throws \common_exception_InvalidArgumentType
      */
-    protected function assertQtiRunnerServiceContext(RunnerServiceContext $context)
+    public function assertQtiRunnerServiceContext(RunnerServiceContext $context)
     {
         if (!$context instanceof QtiRunnerServiceContext) {
             throw new \common_exception_InvalidArgumentType(

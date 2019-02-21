@@ -1,4 +1,24 @@
 <?php
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
+ */
+/**
+ * @author Péter Halász <peter@taotesting.com>
+ */
 
 namespace oat\taoQtiTest\models\runner;
 
@@ -7,8 +27,6 @@ use oat\taoQtiTest\models\runner\map\RunnerMap;
 
 /**
  * Service class for the offline version of Qti Test Runner
- *
- * @package oat\taoQtiTest\models\runner
  */
 class OfflineQtiRunnerService extends ConfigurableService
 {
@@ -17,7 +35,7 @@ class OfflineQtiRunnerService extends ConfigurableService
     /**
      * Returns an array of items, containing also confident data, like branching and response processing rules
      *
-     * @param $serviceContext
+     * @param RunnerServiceContext $serviceContext
      * @return array
      * @throws \common_Exception
      * @throws \common_exception_Error
@@ -27,8 +45,9 @@ class OfflineQtiRunnerService extends ConfigurableService
      */
     public function getItems($serviceContext)
     {
-        /** @var QtiRunnerService $runnerService */
-        $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
+        $this->getRunnerService()->assertQtiRunnerServiceContext($serviceContext);
+
+        $runnerService = $this->getRunnerService();
         $testMap = $runnerService->getTestMap($serviceContext);
         $items = [];
 
@@ -40,7 +59,6 @@ class OfflineQtiRunnerService extends ConfigurableService
                 'itemData' => $runnerService->getItemData($serviceContext, $itemRef),
                 'itemState' => $runnerService->getItemState($serviceContext, $itemIdentifier),
                 'itemMetaData' => $runnerService->getFeedbacks($serviceContext, $itemRef),
-                'itemBranchingRules' => $serviceContext->getTestMeta()['branchRules'],
                 'itemIdentifier' => $itemIdentifier,
                 'portableElements' => $runnerService->getItemPortableElements($serviceContext, $itemRef),
             ];
@@ -49,7 +67,22 @@ class OfflineQtiRunnerService extends ConfigurableService
     }
 
     /**
-     * @param $testMap
+     * @param RunnerServiceContext $serviceContext
+     * @return mixed
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getBranchingRules($serviceContext)
+    {
+        $this->getRunnerService()->assertQtiRunnerServiceContext($serviceContext);
+
+        /** @var QtiRunnerServiceContext $serviceContext */
+        return $serviceContext->getTestMeta()['branchRules'];
+    }
+
+    /**
+     * Returns the item identifiers
+     *
+     * @param array $testMap
      * @return array
      */
     private function getItemIdentifiersFromTestMap($testMap)
@@ -62,6 +95,8 @@ class OfflineQtiRunnerService extends ConfigurableService
     }
 
     /**
+     * Calls itself recursively to return identifiers from nested arrays
+     *
      * @param $array
      * @param $identifiers
      * @return array
@@ -84,5 +119,13 @@ class OfflineQtiRunnerService extends ConfigurableService
         }
 
         return array_keys($array[$identifier]);
+    }
+
+    /**
+     * @return ConfigurableService|QtiRunnerService
+     */
+    private function getRunnerService()
+    {
+        return $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
     }
 }
