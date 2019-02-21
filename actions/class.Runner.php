@@ -1047,38 +1047,69 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     protected function getInitResponse()
     {
+        /** @var QtiRunnerServiceContext $serviceContext */
         $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
 
-        if ($this->hasRequestParameter('clientState')) {
-            $clientState = $this->getRequestParameter('clientState');
-            if ('paused' === $clientState) {
-                $this->getRunnerService()->pause($serviceContext);
-                $this->getRunnerService()->check($serviceContext);
-            }
-        }
-
-        $lastStoreId = false;
-
-        if ($this->hasRequestParameter('storeId')){
-            $receivedStoreId =  $this->getRequestParameter('storeId');
-            if(preg_match('/^[a-z0-9\-]+$/i', $receivedStoreId)) {
-                $lastStoreId = $this->getRunnerService()->switchClientStoreId($serviceContext, $receivedStoreId);
-            }
+        if (
+            $this->hasRequestParameter('clientState')
+            && $this->getRequestParameter('clientState') === 'paused'
+        ) {
+            $this->getRunnerService()->pause($serviceContext);
+            $this->getRunnerService()->check($serviceContext);
         }
 
         $result = $this->getRunnerService()->init($serviceContext);
         $this->getRunnerService()->persist($serviceContext);
 
-        $response['success'] = $result;
+        return $this->getInitSerializedResponse($result, $serviceContext);
+    }
 
-        if ($result) {
-            $response['testData'] = $this->getRunnerService()->getTestData($serviceContext);
-            $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-            $response['lastStoreId'] = $lastStoreId;
-            $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext);
-            $response['toolStates'] = $this->getToolStates();
+    /**
+     * Checks the storeId request parameter and returns the last store id if set, false otherwise
+     *
+     * @param QtiRunnerServiceContext $serviceContext
+     * @return string|boolean
+     * @throws common_exception_InvalidArgumentType
+     */
+    private function getClientStoreId($serviceContext)
+    {
+        if (
+            $this->hasRequestParameter('storeId')
+            && preg_match('/^[a-z0-9\-]+$/i', $this->getRequestParameter('storeId'))
+        ) {
+            return $this->getRunnerService()->switchClientStoreId(
+                $serviceContext,
+                $this->getRequestParameter('storeId')
+            );
         }
 
-        return $response;
+        return false;
+    }
+
+    /**
+     * @param bool $isInitialized
+     * @param QtiRunnerServiceContext $serviceContext
+     * @return array
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     * @throws common_Exception
+     * @throws common_exception_InvalidArgumentType
+     * @throws common_ext_ExtensionException
+     */
+    private function getInitSerializedResponse($isInitialized, $serviceContext)
+    {
+        if ($isInitialized) {
+            return [
+                'success' => true,
+                'testData' => $this->getRunnerService()->getTestData($serviceContext),
+                'testContext' => $this->getRunnerService()->getTestContext($serviceContext),
+                'testMap' => $this->getRunnerService()->getTestMap($serviceContext),
+                'toolStates' => $this->getToolStates(),
+                'lastStoreId' => $this->getClientStoreId($serviceContext),
+            ];
+        }
+
+        return [
+            'success' => false,
+        ];
     }
 }
