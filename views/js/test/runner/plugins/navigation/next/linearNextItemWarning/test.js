@@ -29,12 +29,6 @@ define([
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
 
-    // mock the item we will get (informational or not)
-    mapHelper.getItemAt = function(map, isInfo) {
-        return {
-            informational: isInfo
-        };
-    };
 
     /**
      * The following tests applies to all plugins
@@ -111,64 +105,79 @@ define([
      */
     QUnit.module('Behavior');
 
+    // No dialog expected
     QUnit.cases([
         {
             title: 'when the next part warning is set',
-            context: {
+            testContext: {
                 enableAllowSkipping: false,
                 allowSkipping: false,
                 options: {
                     nextPartWarning: true,
                     nextSectionWarning: false
                 }
+            },
+            item: {
+                informational: false
             }
         },
         {
             title: 'when the next section warning is set',
-            context: {
+            testContext: {
                 isLinear: true,
                 options: {
                     nextPartWarning: false,
                     nextSectionWarning: true
                 }
             },
-            scope: 'section'
+            scope: 'section',
+            item: {
+                informational: false
+            }
         },
         {
             title: 'when the item is informational',
-            context: {
+            testContext: {
                 isLinear: true,
                 options: {
                     nextPartWarning: false,
                     nextSectionWarning: false
-                },
-                position: true
+                }
+            },
+            item: {
+                informational: true
             }
         },
         {
             title: 'when the item is the last item',
-            context: {
+            testContext: {
                 isLinear: true,
                 options: {
                     nextPartWarning: false,
                     nextSectionWarning: false
                 },
                 isLast: true
+            },
+            item: {
+                informational: false
             }
         },
         {
             title: 'when the config setting is undefined',
-            context: {
+            testContext: {
                 options: {
                     nextPartWarning: false,
                     nextSectionWarning: false
                 },
                 isLinear: true
+            },
+            item: {
+                informational: false
             }
         },
         {
             title: 'when the config setting is explicitly false',
-            context: {
+            testContext: {
                 options: {
                     nextPartWarning: false,
                     nextSectionWarning: false
@@ -177,16 +186,22 @@ define([
             },
             testConfig: {
                 forceEnableLinearNextItemWarning: false
+            },
+            item: {
+                informational: false
             }
         },
         {
             title: 'when the test is not linear',
-            context: {
+            testContext: {
                 options: {
                     nextPartWarning: false,
                     nextSectionWarning: false
                 },
                 isLinear: false
+            },
+            item: {
+                informational: false
             }
         }
     ])
@@ -206,14 +221,17 @@ define([
                 config: caseData.testConfig
             };
         };
-
+        // mock the item we will get (informational or not)
+        mapHelper.getItemAt = function() {
+            return caseData.item;
+        };
 
         QUnit.expect(1);
 
         plugin
             .init()
             .then(function() {
-                runner.setTestContext(caseData.context);
+                runner.setTestContext(caseData.testContext);
 
                 // dialog would be instantiated *before* move occurs
                 runner.on('move', function() {
@@ -230,11 +248,12 @@ define([
             });
     });
 
+    // Dialog expected
     QUnit.cases([
         {
             title: 'when a next warning is needed',
             event: 'next',
-            context: {
+            testContext: {
                 isLinear: true,
                 options: {
                     nextPartWarning: false,
@@ -244,12 +263,15 @@ define([
             },
             testConfig: {
                 forceEnableLinearNextItemWarning: true
+            },
+            item: {
+                informational: false
             }
         },
         {
             title: 'when a skip warning is needed',
             event: 'skip',
-            context: {
+            testContext: {
                 isLinear: true,
                 options: {
                     nextPartWarning: false,
@@ -259,6 +281,9 @@ define([
             },
             testConfig: {
                 forceEnableLinearNextItemWarning: true
+            },
+            item: {
+                informational: false
             }
         }
     ])
@@ -287,7 +312,7 @@ define([
         plugin
             .init()
             .then(function() {
-                runner.setTestContext(caseData.context);
+                runner.setTestContext(caseData.testContext);
 
                 runner.on('disablenav', function() {
                     assert.ok(true, 'The dialog interrupted the move');
