@@ -54,38 +54,35 @@ class OfflineQtiRunnerService extends ConfigurableService
      */
     private function getItemIdentifiersFromTestMap($testMap)
     {
-        $identifiers = [];
+        return $this->getSubIdentifiersRecursively($testMap, [
+            RunnerMap::MAP_ATTRIBUTE_PARTS,
+            RunnerMap::MAP_ATTRIBUTE_SECTIONS,
+            RunnerMap::MAP_ATTRIBUTE_ITEMS,
+        ]);
+    }
 
-        if (!array_key_exists(RunnerMap::MAP_ATTRIBUTE_PARTS, $testMap)) {
-            return $identifiers;
-        }
+    /**
+     * @param $array
+     * @param $identifiers
+     * @return array
+     */
+    private function getSubIdentifiersRecursively($array, $identifiers)
+    {
+        $identifier = array_shift($identifiers);
 
-        $partIdentifiers = array_keys($testMap[RunnerMap::MAP_ATTRIBUTE_PARTS]);
+        if (count($identifiers) > 0) {
+            $result = [];
 
-        foreach ($partIdentifiers as $partIdentifier) {
-            $part = $testMap[RunnerMap::MAP_ATTRIBUTE_PARTS][$partIdentifier];
-
-            if (!array_key_exists(RunnerMap::MAP_ATTRIBUTE_SECTIONS, $part)) {
-                continue;
+            foreach ($array[$identifier] as $key => $value) {
+                $result[] = $this->getSubIdentifiersRecursively(
+                    $array[$identifier][$key],
+                    $identifier
+                );
             }
 
-            $sectionIdentifiers = array_keys($part[RunnerMap::MAP_ATTRIBUTE_SECTIONS]);
-
-            foreach ($sectionIdentifiers as $sectionIdentifier) {
-                $section = $part[RunnerMap::MAP_ATTRIBUTE_SECTIONS][$sectionIdentifier];
-
-                if (!array_key_exists(RunnerMap::MAP_ATTRIBUTE_ITEMS, $section)) {
-                    continue;
-                }
-
-                $itemIdentifiers = array_keys($section[RunnerMap::MAP_ATTRIBUTE_ITEMS]);
-
-                foreach ($itemIdentifiers as $itemIdentifier) {
-                    $identifiers[] = $itemIdentifier;
-                }
-            }
+            return array_merge(...$result);
         }
 
-        return $identifiers;
+        return array_keys($array[$identifier]);
     }
 }

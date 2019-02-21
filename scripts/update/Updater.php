@@ -1735,7 +1735,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('30.5.0');
         }
-        
+
         $this->skip('30.5.0', '30.5.3');
 
         if ($this->isVersion('30.5.3')) {
@@ -1745,6 +1745,12 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
 
             $this->setVersion('30.6.0');
+        }
+
+        if ($this->isVersion('30.6.0')) {
+            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'OfflineRunner')));
+
+            $this->setVersion('30.7.0');
         }
 
     }
