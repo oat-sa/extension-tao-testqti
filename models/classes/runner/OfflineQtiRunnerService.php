@@ -76,7 +76,7 @@ class OfflineQtiRunnerService extends ConfigurableService
             foreach ($array[$identifier] as $key => $value) {
                 $result[] = $this->getSubIdentifiersRecursively(
                     $array[$identifier][$key],
-                    $identifier
+                    $identifiers
                 );
             }
 
