@@ -26,10 +26,10 @@ define([
     'core/promise',
     'core/promiseQueue',
     'core/communicator',
+    'ui/feedback',
     'taoQtiTest/runner/config/qtiServiceConfig',
-    'util/httpErrorParser',
     'core/request'
-], function($, _, __, Promise, promiseQueue, communicatorFactory, configFactory, httpErrorParser, coreRequest) {
+], function($, _, __, Promise, promiseQueue, communicatorFactory, feedback, configFactory, coreRequest) {
     'use strict';
 
     /**
@@ -82,8 +82,6 @@ define([
              * @returns {Promise}
              */
             this.request = function request(url, reqParams, contentType, noToken) {
-                console.log('TR.request', url);
-
                 return coreRequest({
                     url: url,
                     data: self.prepareParams(reqParams),
@@ -95,7 +93,6 @@ define([
                     timeout: self.configStorage.getTimeout()
                 })
                 .then(function(response) {
-                    console.log('qti ajax done', response);
                     self.setOnline();
 
                     if (response && response.success) {
@@ -104,31 +101,11 @@ define([
                         return Promise.reject(response);
                     }
                 })
-                .catch(function(error, jqXHR) { // jqXHR param currently not returned by core/request
-                    var data;
-                    if (!jqXHR) jqXHR = {};
-                    console.error('qti ajax failed', error);
-
-                    try {
-                        data = JSON.parse(jqXHR.responseText);
-                    } catch(err) {
-                        data = {};
-                    }
-
-                    data = _.defaults(data, {
-                        success: false,
-                        source: 'network',
-                        cause : url,
-                        purpose: 'proxy',
-                        context: this,
-                        code: jqXHR.status || error.code, // ?
-                        sent: jqXHR.readyState > 0, // ?
-                        type: 'error',
-                        message: error || __('An error occurred!')
-                    });
-                    if (self.isConnectivityError(data)) {
+                .catch(function(error) {
+                    if (error.data && self.isConnectivityError(error.data)) {
                         self.setOffline('request');
                     }
+                    feedback().error(error);
                     return Promise.reject(error);
                 });
             };

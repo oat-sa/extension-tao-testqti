@@ -82,21 +82,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @param int [$httpStatus]
      * @param bool [$token]
      */
-    protected function returnJson($data, $httpStatus = 200, $token = true)
+    protected function returnJson($data, $httpStatus = 200)
     {
-        // auto append the CSRF token to the result
-        if ($token) {
-            if (is_array($data)) {
-                if ($data['success'] || $httpStatus != 403) {
-                    $data['token'] = $this->getTokenService()->createToken();
-                }
-            } else if (is_object($data)) {
-                if ($data->success || $httpStatus != 403) {
-                    $data->token = $this->getTokenService()->createToken();
-                }
-            }
-        }
-
         try {
             // auto append platform messages, if any
             if ($this->serviceContext && !isset($data['messages'])) {
@@ -266,6 +253,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
         $response = [];
+
+        $this->checkSecurityToken();
 
         try {
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
