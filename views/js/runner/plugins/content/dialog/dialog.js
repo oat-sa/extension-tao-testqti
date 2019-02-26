@@ -47,6 +47,19 @@ define([
     var actionPrefix = 'tool-' + pluginName + '-';
 
     /**
+     * Some default options for the plugin
+     * @type {Object}
+     */
+    var defaultOptions = {
+        alert: {
+            focus: 'ok'
+        },
+        confirm: {
+            focus: 'ok'
+        }
+    };
+
+    /**
      * Returns the configured plugin
      */
     return pluginFactory({
@@ -59,6 +72,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
+            var pluginConfig = _.defaults((testConfig.plugins || {})[pluginName] || {}, defaultOptions);
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
             var alerts = [];
             var confirms = [];
@@ -137,7 +151,7 @@ define([
                 stack.push(handle);
                 opened.push(handle);
 
-                handle.dialog.focus();
+                handle.dialog.focus(options.focus);
                 handle.dialog.on('closed.modal', function() {
                     removeHandle(stack, handle.dialog);
                     removeHandle(opened, handle.dialog);
@@ -204,11 +218,11 @@ define([
 
             //change plugin state
             testRunner
-                .before('alert.*', function(e, msg, accept) {
-                    addHandle(e.namespace, alerts, dialogAlert, msg, accept, accept);
+                .before('alert.*', function(e, msg, accept, options) {
+                    addHandle(e.namespace, alerts, dialogAlert, msg, accept, accept, _.merge({}, pluginConfig.alert, options));
                 })
                 .before('confirm.*', function(e, msg, accept, reject, options) {
-                    addHandle(e.namespace, confirms, dialogConfirm, msg, accept, reject, options);
+                    addHandle(e.namespace, confirms, dialogConfirm, msg, accept, reject, _.merge({}, pluginConfig.confirm, options));
                 })
                 .before('closedialog.*', function(e, accept) {
                     closeDialogs(e.namespace, accept);

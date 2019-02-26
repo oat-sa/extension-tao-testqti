@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint95\n"
-"PO-Revision-Date: 2019-02-13T07:33:21\n"
+"Project-Id-Version: TAO 3.3.0-sprint96\n"
+"PO-Revision-Date: 2019-02-18T09:53:53\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -792,7 +792,7 @@ msgid "Please confirm you want to leave the test."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
-msgstr ""
+msgstr "Attendi il ripristino della connessione."
 
 msgid "Preview the covered area"
 msgstr ""
@@ -1080,7 +1080,7 @@ msgid "The candidate is not allowed to submit invalid responses."
 msgstr "Il candidato non è autorizzato a inviare le risposte sbagliate."
 
 msgid "The connection seems to be back, please proceed"
-msgstr ""
+msgstr "La connessione è stata ripristinata"
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "La dipendenza dalla IMS QTI Assessment Item Ref \"% s\" nel file manifesto IMS non può essere risolto. "
@@ -1266,10 +1266,10 @@ msgid "Warning – You have %s remaining to complete this test."
 msgstr ""
 
 msgid "We are unable to connect the server to submit your results."
-msgstr ""
+msgstr " "
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr ""
+msgstr " "
 
 msgid "Weight"
 msgstr ""
@@ -1332,7 +1332,7 @@ msgid "You are about to submit the test. You will not be able to access this tes
 msgstr "Hai terminato la prova. Una volta chiusa la prova non potrai più ritornare alle domande. Sei sicuro di voler chiudere la prova?"
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr ""
+msgstr "Si sono verificati problemi di connessione. "
 
 msgid "You have %s item(s) marked for review."
 msgstr " "
