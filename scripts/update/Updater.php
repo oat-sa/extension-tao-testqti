@@ -1747,5 +1747,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('30.5.0.1');
         }
 
+        $this->skip('30.5.0.1', '30.5.0.2');
+
     }
 }
