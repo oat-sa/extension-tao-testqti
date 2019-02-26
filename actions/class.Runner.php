@@ -31,6 +31,7 @@ use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
@@ -267,11 +268,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Initializes the delivery session
+     * @throws common_Exception
      */
     public function init()
     {
+        /** @var QtiRunnerServiceContext $serviceContext */
+        $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+
         try {
-            $this->returnJson($this->getInitResponse());
+            $this->returnJson($this->getInitResponse($serviceContext));
         } catch (\Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
@@ -1037,6 +1042,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
+     * @param QtiRunnerServiceContext $serviceContext
+     * @return array
      * @throws QtiRunnerClosedException
      * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
      * @throws \qtism\runtime\storage\common\StorageException
@@ -1045,11 +1052,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @throws common_exception_InvalidArgumentType
      * @throws common_ext_ExtensionException
      */
-    protected function getInitResponse()
+    protected function getInitResponse($serviceContext)
     {
-        /** @var QtiRunnerServiceContext $serviceContext */
-        $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
-
         if (
             $this->hasRequestParameter('clientState')
             && $this->getRequestParameter('clientState') === 'paused'

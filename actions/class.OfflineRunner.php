@@ -23,6 +23,7 @@
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\map\TestMapBranchRuleExtender;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
 
 class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
@@ -34,8 +35,9 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
     public function init()
     {
         try {
+            /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
-            $response = $this->getInitResponse();
+            $response = $this->getInitResponse($serviceContext);
             $response['testMap'] = $this->attachBranchingRulesToResponse($response['testMap'], $serviceContext);
             $response['items'] = $this->getOfflineRunnerService()->getItems($serviceContext);
 
