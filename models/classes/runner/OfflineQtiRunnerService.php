@@ -54,6 +54,7 @@ class OfflineQtiRunnerService extends ConfigurableService
         foreach ($this->getItemIdentifiersFromTestMap($testMap) as $itemIdentifier) {
             $itemRef = $runnerService->getItemHref($serviceContext, $itemIdentifier);
 
+            /** @var QtiRunnerServiceContext $serviceContext */
             $items[$itemIdentifier] = [
                 'baseUrl' => $runnerService->getItemPublicUrl($serviceContext, $itemRef),
                 'itemData' => $runnerService->getItemData($serviceContext, $itemRef),
@@ -63,20 +64,8 @@ class OfflineQtiRunnerService extends ConfigurableService
                 'portableElements' => $runnerService->getItemPortableElements($serviceContext, $itemRef),
             ];
         }
+
         return $items;
-    }
-
-    /**
-     * @param RunnerServiceContext $serviceContext
-     * @return mixed
-     * @throws \common_exception_InvalidArgumentType
-     */
-    public function getBranchingRules($serviceContext)
-    {
-        $this->getRunnerService()->assertQtiRunnerServiceContext($serviceContext);
-
-        /** @var QtiRunnerServiceContext $serviceContext */
-        return $serviceContext->getTestMeta()['branchRules'];
     }
 
     /**

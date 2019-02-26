@@ -21,7 +21,9 @@
  */
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiTest\models\runner\map\TestMapBranchRuleExtender;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
+use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
 
 class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
 {
@@ -34,9 +36,8 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
         try {
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $response = $this->getInitResponse();
-
+            $response['testMap'] = $this->attachBranchingRulesToResponse($response['testMap'], $serviceContext);
             $response['items'] = $this->getOfflineRunnerService()->getItems($serviceContext);
-            $response['testBranchingRules'] = $this->getOfflineRunnerService()->getBranchingRules($serviceContext);
 
             $this->returnJson($response);
         } catch (\Exception $e) {
@@ -48,10 +49,36 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
     }
 
     /**
+     * TODO
+     * @param $testMap
+     * @param $serviceContext
+     * @return array
+     * @throws common_exception_Error
+     * @throws common_exception_InconsistentData
+     * @throws core_kernel_persistence_Exception
+     * @throws \oat\tao\model\websource\WebsourceNotFound
+     */
+    private function attachBranchingRulesToResponse($testMap, $serviceContext)
+    {
+        $serializedTestDefinition = $this->getTestDefinitionSerializerService()->getSerializedTestDefinition($serviceContext);
+        $branchRuleExtender = new TestMapBranchRuleExtender($testMap, $serializedTestDefinition);
+
+        return $branchRuleExtender->getTestMapWithBranchRules();
+    }
+
+    /**
      * @return ConfigurableService|OfflineQtiRunnerService
      */
     private function getOfflineRunnerService()
     {
         return $this->getServiceLocator()->get(OfflineQtiRunnerService::SERVICE_ID);
+    }
+
+    /**
+     * @return TestDefinitionSerializerService
+     */
+    private function getTestDefinitionSerializerService()
+    {
+        return $this->getServiceLocator()->get(\oat\taoQtiTest\models\runner\TestDefinitionSerializerService::SERVICE_ID);
     }
 }
