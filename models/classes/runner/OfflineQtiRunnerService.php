@@ -42,7 +42,7 @@ class OfflineQtiRunnerService extends ConfigurableService
      * @throws \common_exception_InconsistentData
      * @throws \common_exception_InvalidArgumentType
      */
-    public function getItems($serviceContext)
+    public function getItems(RunnerServiceContext $serviceContext)
     {
         $this->getRunnerService()->assertQtiRunnerServiceContext($serviceContext);
 

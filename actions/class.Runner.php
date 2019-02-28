@@ -1052,7 +1052,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @throws common_exception_InvalidArgumentType
      * @throws common_ext_ExtensionException
      */
-    protected function getInitResponse($serviceContext)
+    protected function getInitResponse(QtiRunnerServiceContext $serviceContext)
     {
         if (
             $this->hasRequestParameter('clientState')
@@ -1065,7 +1065,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $result = $this->getRunnerService()->init($serviceContext);
         $this->getRunnerService()->persist($serviceContext);
 
-        return $this->getInitSerializedResponse($result, $serviceContext);
+        if (!$result) {
+            return array_merge(...[
+                $this->getInitSerializedResponse($serviceContext),
+                [ 'success' => true ],
+            ]);
+        }
+
+        return [
+            'success' => false,
+        ];
     }
 
     /**
@@ -1075,7 +1084,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @return string|boolean
      * @throws common_exception_InvalidArgumentType
      */
-    private function getClientStoreId($serviceContext)
+    private function getClientStoreId(QtiRunnerServiceContext $serviceContext)
     {
         if (
             $this->hasRequestParameter('storeId')
@@ -1091,7 +1100,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
-     * @param bool $isInitialized
      * @param QtiRunnerServiceContext $serviceContext
      * @return array
      * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
@@ -1099,21 +1107,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @throws common_exception_InvalidArgumentType
      * @throws common_ext_ExtensionException
      */
-    private function getInitSerializedResponse($isInitialized, $serviceContext)
+    private function getInitSerializedResponse(QtiRunnerServiceContext $serviceContext)
     {
-        if ($isInitialized) {
-            return [
-                'success' => true,
-                'testData' => $this->getRunnerService()->getTestData($serviceContext),
-                'testContext' => $this->getRunnerService()->getTestContext($serviceContext),
-                'testMap' => $this->getRunnerService()->getTestMap($serviceContext),
-                'toolStates' => $this->getToolStates(),
-                'lastStoreId' => $this->getClientStoreId($serviceContext),
-            ];
-        }
-
         return [
-            'success' => false,
+            'success' => true,
+            'testData' => $this->getRunnerService()->getTestData($serviceContext),
+            'testContext' => $this->getRunnerService()->getTestContext($serviceContext),
+            'testMap' => $this->getRunnerService()->getTestMap($serviceContext),
+            'toolStates' => $this->getToolStates(),
+            'lastStoreId' => $this->getClientStoreId($serviceContext),
         ];
     }
 }

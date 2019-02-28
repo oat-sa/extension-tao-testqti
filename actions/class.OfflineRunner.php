@@ -38,8 +38,11 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
             /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $response = $this->getInitResponse($serviceContext);
-            $response['testMap'] = $this->attachBranchingRulesToResponse($response['testMap'], $serviceContext);
-            $response['items'] = $this->getOfflineRunnerService()->getItems($serviceContext);
+
+            if ($response['success'] === true) {
+                $response['testMap'] = $this->attachBranchingRulesToResponse($response['testMap'], $serviceContext);
+                $response['items'] = $this->getOfflineRunnerService()->getItems($serviceContext);
+            }
 
             $this->returnJson($response);
         } catch (\Exception $e) {
@@ -52,15 +55,15 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
 
     /**
      * Attaches the branching rules to the test map
-     * @param $testMap
-     * @param $serviceContext
+     * @param array $testMap
+     * @param QtiRunnerServiceContext $serviceContext
      * @return array
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      * @throws core_kernel_persistence_Exception
      * @throws \oat\tao\model\websource\WebsourceNotFound
      */
-    private function attachBranchingRulesToResponse($testMap, $serviceContext)
+    private function attachBranchingRulesToResponse(array $testMap, QtiRunnerServiceContext $serviceContext)
     {
         $serializedTestDefinition = $this->getTestDefinitionSerializerService()->getSerializedTestDefinition($serviceContext);
         $branchRuleExtender = new TestMapBranchRuleExtender();
