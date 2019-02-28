@@ -73,7 +73,6 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
-use oat\taoDelivery\model\execution\StateServiceInterface;
 
 /**
  * Class QtiRunnerService
@@ -659,8 +658,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Gets the state of a particular item
      * @param RunnerServiceContext $context
-     * @param $itemRef
-     * @return array
+     * @param string $itemRef
+     * @return array|null
      * @throws \common_Exception
      */
     public function getItemState(RunnerServiceContext $context, $itemRef)

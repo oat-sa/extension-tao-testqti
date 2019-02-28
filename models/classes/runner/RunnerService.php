@@ -101,7 +101,7 @@ interface RunnerService extends DeliveryExecutionDelete
      * Gets the state of a particular item
      * @param RunnerServiceContext $context
      * @param $itemRef
-     * @return array
+     * @return array|null
      * @throws \common_Exception
      */
     public function getItemState(RunnerServiceContext $context, $itemRef);
