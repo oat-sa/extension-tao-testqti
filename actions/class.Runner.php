@@ -1065,7 +1065,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $result = $this->getRunnerService()->init($serviceContext);
         $this->getRunnerService()->persist($serviceContext);
 
-        if (!$result) {
+        if ($result) {
             return array_merge(...[
                 $this->getInitSerializedResponse($serviceContext),
                 [ 'success' => true ],
