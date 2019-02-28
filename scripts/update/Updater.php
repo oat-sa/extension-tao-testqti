@@ -1756,7 +1756,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $config['plugins']['dialog']['confirm']['focus'] = 'ok';
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('30.7.1');
+            $this->setVersion('30.7.0');
         }
+
+        $this->skip('30.7.0', '30.7.1');
     }
 }
