@@ -228,6 +228,29 @@ define([
                 return count > 0 && empty === 0;
             }
             return count > 0 && empty < count;
+        },
+
+        /**
+         * Tells if the current item contains a shared stimulus
+         *
+         * @param {Object} runner - testRunner instance
+         * @param {String} itemId
+         * @returns {Promise<Boolean>}
+         */
+        containsStimulus: function containsStimulus(runner, itemId) {
+            return runner.getProxy().getItem(itemId)
+                .then(function(fullItem) {
+                    var xinc;
+                    try {
+                        xinc = fullItem.itemData.assets.xinclude;
+                        console.log('item', itemId, 'xinc values', _.values(xinc));
+                        return !!xinc;
+                    }
+                    catch (e) { // Property Error?
+                        return false;
+                    }
+                });
+
         }
     };
 
