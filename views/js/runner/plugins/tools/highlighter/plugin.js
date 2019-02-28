@@ -29,8 +29,10 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
+    'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/plugins/tools/highlighter/highlighter'
-], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, highlighterFactory) {
+], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, mapHelper, itemHelper, highlighterFactory) {
     'use strict';
 
     /**
@@ -46,7 +48,6 @@ define([
          *
          */
         install : function install(){
-
             var testRunner = this.getTestRunner();
 
             //define the "highlighter" store as "volatile" (removed on browser change).
@@ -62,10 +63,30 @@ define([
             var testRunner      = this.getTestRunner();
             var testData        = testRunner.getTestData() || {};
             var testConfig      = testData.config || {};
+            var testContext     = testRunner.getTestContext();
+            var testMap         = testRunner.getTestMap();
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var hasHighlights   = false;
 
-            var highlighter = highlighterFactory();
+            // we may need to run two highlighter plugins on one page:
+            // - one for item-level highlights, which persist for the Test session
+            // - another for stimulus-level highlights, which should persist across multiple sessions
+            //
+            // TODO: load 2nd highlighter *only when item contains stimuli*
+            var highlighter = highlighterFactory({
+                className: 'txt-user-highlight',
+                containerSelector: '.qti-itemBody',
+                containersBlackList: ['fig'],
+                id: 'highlighter'
+            });
+            var stimulusHighlighter = highlighterFactory({
+                className: 'txt-user-highlight-stimulus',
+                containerSelector: 'fig.qti-include',
+                id: 'stimulusHighlighter'
+            });
+            // TODO: possibly store them in array and use _.foreach to avoid duplication
+            // (might not be worth it)
+            // var highlighters = [];
 
             // create buttons
             this.buttonMain = this.getAreaBroker().getToolbox().createEntry({
@@ -88,6 +109,7 @@ define([
                 e.preventDefault();
                 if(isEnabled()){
                     highlighter.highlight();
+                    stimulusHighlighter.highlight();
                 }
             });
 
@@ -95,6 +117,7 @@ define([
                 e.preventDefault();
                 if(isEnabled()){
                     highlighter.clearHighlights();
+                    stimulusHighlighter.clearHighlights();
                 }
             });
 
@@ -103,6 +126,7 @@ define([
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
                         if(isEnabled()){
                             highlighter.highlight();
+                            stimulusHighlighter.highlight();
                         }
                     }, { avoidInput: true, prevent: true });
                 }
@@ -134,58 +158,161 @@ define([
             }
 
             /**
+             * Gets a volatile store for temporary state
+             * @returns {Promise}
+             */
+            function getVolatileStore() {
+                return testRunner.getTestStore().getStore(self.getName()); // 'highlighter'
+            }
+
+            /**
+             * Gets a second, non-volatile store for persisted state
+             * @returns {Promise}
+             */
+            function getPersistentStore() {
+                return testRunner.getTestStore().getStore(self.getName() + '-persistent'); // 'highlighter-persistent'
+            }
+
+            /**
              * Load the store and hook the behavior
              */
-            return testRunner.getPluginStore(self.getName()).then(function(highlighterStore){
+            //return testRunner.getPluginStore(self.getName()).then(function(highlighterStore){
+            return Promise.all([
+                getVolatileStore(),
+                getPersistentStore()
+            ])
+            .then(function(stores) {
+                var highlighterVolatileStore = stores[0];
+                var highlighterPersistentStore = stores[1];
 
                 /**
                  * Save the highlighter state in the store
                  * @returns {Promise} resolves one the save is done
                  */
                 function save() {
-                    var testContext = testRunner.getTestContext();
+                    return Promise.all([
+                        saveVolatile(),
+                        savePersistent()
+                    ]);
+                }
+
+                /**
+                 * Save the highlighter state in the store
+                 * @returns {Promise} resolves once the save is done
+                 */
+                function saveVolatile() {
+                    var volatileHighlights = highlighter.getIndex();
                     if(isEnabled() && hasHighlights && testContext.itemIdentifier){
-                        return highlighterStore.setItem(testContext.itemIdentifier, highlighter.getIndex());
+                        console.log('Saving', volatileHighlights.length, 'volatile highlights');
+                        return highlighterVolatileStore.setItem(testContext.itemIdentifier, volatileHighlights);
                     }
                     return Promise.resolve(false);
                 }
 
-                highlighter
-                    .on('start', function(){
-                        self.buttonMain.turnOn();
-                        self.trigger('start');
-                        hasHighlights = true;
-                    })
-                    .on('end', function(){
-                        self.buttonMain.turnOff();
-                        self.trigger('end');
-                    });
+                /**
+                 * Save the persistent highlighter state in the persistent store
+                 * @returns {Promise} resolves once the save is done
+                 */
+                function savePersistent() {
+                    var stimulusHighlights = stimulusHighlighter.getIndex();
+                    if (isEnabled() && hasHighlights && testContext.itemIdentifier) {
+                        console.log('Saving', stimulusHighlights.length, 'permanent highlights');
+                        return highlighterPersistentStore.setItem(testContext.itemIdentifier, stimulusHighlights);
+                    }
+                    return Promise.resolve(false);
+                }
+
+                /**
+                 * Save the highlighter state in the store
+                 * @returns {Promise} resolves one the save is done
+                 */
+                function load() {
+                    return Promise.all([
+                        loadVolatile(),
+                        loadPersistent()
+                    ]);
+                }
+
+                /**
+                 * Load the volatile highlighter state from the volatile store
+                 * @returns {Promise} resolves once the load is done
+                 */
+                function loadVolatile() {
+                    return highlighterVolatileStore
+                        .getItem(testContext.itemIdentifier)
+                        .then(function(index){
+                            console.log('getVolatile', testContext.itemIdentifier, index);
+                            if(index){
+                                hasHighlights = true;
+                                highlighter.restoreIndex(index);
+                            }
+                        })
+                        .then(function(){
+                            //save highlighter state during the item session,
+                            //when the highlighting ends
+                            highlighter.on('end.save', function(){
+                                return save();
+                            });
+                        });
+                }
+
+                /**
+                 * Load the persistent highlighter state from the persistent store
+                 * @returns {Promise} resolves once the load is done
+                 */
+                function loadPersistent() {
+                    return highlighterPersistentStore
+                        .getItem(testContext.itemIdentifier) // which stimulus?
+                        .then(function(index){
+                            console.log('getPersistent', testContext.itemIdentifier, index);
+                            if(index){
+                                hasHighlights = true;
+                                stimulusHighlighter.restoreIndex(index);
+                            }
+                        })
+                        .then(function(){
+                            //save highlighter state during the item session,
+                            //when the highlighting ends
+                            stimulusHighlighter.on('end.save', function(){
+                                return save();
+                            });
+                        });
+                }
+
+                // attach start/end listeners to all highlighter instances
+                _.forEach([highlighter, stimulusHighlighter], function(instance) {
+                    instance
+                        .on('start', function(){
+                            self.buttonMain.turnOn();
+                            self.trigger('start');
+                            hasHighlights = true;
+                        })
+                        .on('end', function(){
+                            self.buttonMain.turnOff();
+                            self.trigger('end');
+                        });
+                });
 
                 //update plugin state based on changes
                 testRunner
-                    .on('loaditem', togglePlugin)
+                    .on('loaditem', function() {
+                        //get item id & stimulus filename
+                        var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+                        itemHelper.containsStimulus(testRunner, item.id)
+                            .then(function(stimCheck) {
+                                console.warn('stimulus in this item?', stimCheck);
+                                // NOW we can instantiate the stimulusHighlighter, etc (but how many?)
+                            });
+
+                        togglePlugin();
+                    })
                     .on('enabletools renderitem', function () {
                         self.enable();
                     })
                     .on('renderitem', function() {
-                        var testContext = testRunner.getTestContext();
-                        if(isEnabled()){
+                        if (isEnabled()) {
                             hasHighlights = false;
-                            return highlighterStore
-                                .getItem(testContext.itemIdentifier)
-                                .then(function(index){
-                                    if(index){
-                                        hasHighlights = true;
-                                        highlighter.restoreIndex(index);
-                                    }
-                                })
-                                .then(function(){
-                                    //save highlighter state during the item session,
-                                    //when the highlighting ends
-                                    highlighter.on('end.save', function(){
-                                        return save();
-                                    });
-                                });
+                            return load();
                         }
                     })
                     .before('skip move timeout', function() {
@@ -194,9 +321,11 @@ define([
                     .on('disabletools unloaditem', function () {
                         self.disable();
                         if (isEnabled()) {
-                            highlighter
-                                .off('end.save')
-                                .toggleHighlighting(false);
+                            _.forEach([highlighter, stimulusHighlighter], function(instance) {
+                                instance
+                                    .off('end.save')
+                                    .toggleHighlighting(false);
+                            });
                         }
                     });
             });

@@ -52,13 +52,14 @@ define([
         for (i = 0; i < selection.rangeCount; i++) {
             allRanges.push(selection.getRangeAt(i));
         }
+        //console.warn('getAllRanges()', allRanges);
         return allRanges;
     }
 
     /**
      * The highlighter Factory
      */
-    return function testHighlighterFactory() {
+    return function testHighlighterFactory(options) {
 
         /**
          * Are we in highlight mode, meaning that each new selection is automatically highlighted
@@ -71,8 +72,10 @@ define([
          * The helper that does the highlight magic
          */
         var highlightHelper = highlighterFactory({
-            className: 'txt-user-highlight',
-            containerSelector: '.qti-itemBody'
+            className: options.className || 'txt-user-highlight',
+            containerSelector: options.containerSelector || '.qti-itemBody',
+            containersBlackList: options.containersBlackList || [],
+            id: options.id // debugging
         });
 
         //add event to automatically highlight the recently made selection if needed
@@ -80,7 +83,10 @@ define([
         $(document).on('mouseup.highlighter touchend.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
-                selection.removeAllRanges();
+                // delay discarding the global selection, to allow time for multiple highlighters to complete their work
+                setTimeout(function() {
+                    selection.removeAllRanges();
+                }, 250);
             }
         });
 
@@ -100,18 +106,24 @@ define([
                 } else {
                     this.trigger('end');
                 }
+                console.log(options.id, 'toggleHighlighting()', bool ? 'start' : 'end');
+                window[options.id] = isHighlighting;
             },
 
             /**
              * Either highlight the current or selection, or toggle highlighting mode
              */
             highlight: function highlight() {
+                console.warn(options.id, 'highlight()');
                 if (!isHighlighting) {
                     if (!selection.isCollapsed) {
                         this.toggleHighlighting(true);
                         highlightHelper.highlightRanges(getAllRanges());
                         this.toggleHighlighting(false);
-                        selection.removeAllRanges();
+                        // delay discarding the global selection, to allow time for multiple highlighters logic
+                        setTimeout(function() {
+                            selection.removeAllRanges();
+                        }, 250);
                     } else {
                         this.toggleHighlighting(true);
                     }
