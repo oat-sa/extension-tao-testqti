@@ -32,9 +32,9 @@ class TestDefinitionSerializerService extends ConfigurableService
     private function parseXmlToArray($filePath)
     {
         $xml = simplexml_load_file($filePath);
-        $json = json_decode(json_encode($xml), true);
+        $parsedXml = json_decode(json_encode($xml), true);
 
-        return $this->setSubObjectToArray($json, [
+        return $this->setSubObjectToArray($parsedXml, [
             taoQtiTest_models_classes_QtiTestService::XML_TEST_PART,
             taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_SECTION,
             taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_ITEM_REF,

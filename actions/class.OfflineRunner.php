@@ -77,10 +77,10 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
     }
 
     /**
-     * @return TestDefinitionSerializerService
+     * @return ConfigurableService|TestDefinitionSerializerService
      */
     private function getTestDefinitionSerializerService()
     {
-        return $this->getServiceLocator()->get(\oat\taoQtiTest\models\runner\TestDefinitionSerializerService::SERVICE_ID);
+        return $this->getServiceLocator()->get(TestDefinitionSerializerService::SERVICE_ID);
     }
 }
