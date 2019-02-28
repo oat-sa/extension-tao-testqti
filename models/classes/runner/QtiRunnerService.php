@@ -994,23 +994,26 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param string $itemRef  the item reference
      * @return array the feedbacks data
      * @throws \common_Exception
-     * @throws \common_exception_InconsistentData
      * @throws \common_exception_InvalidArgumentType
-     * @throws \tao_models_classes_FileNotFoundException
+     * @deprecated since version 30.7.0, to be removed in 31.0.0. Use getItemVariableElementsData() instead
      */
     public function getFeedbacks(RunnerServiceContext $context, $itemRef)
     {
-        if ($context instanceof QtiRunnerServiceContext) {
-            return $this->loadItemData($itemRef, QtiJsonItemCompiler::VAR_ELT_FILE_NAME);
-        } else {
-            throw new \common_exception_InvalidArgumentType(
-                'QtiRunnerService',
-                'getFeedbacks',
-                0,
-                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
-                $context
-            );
-        }
+        return $this->getItemVariableElementsData($context, $itemRef);
+    }
+
+    /**
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @return array
+     * @throws \common_Exception
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getItemVariableElementsData(RunnerServiceContext $context, $itemRef)
+    {
+        $this->assertQtiRunnerServiceContext($context);
+
+        return $this->loadItemData($itemRef, QtiJsonItemCompiler::VAR_ELT_FILE_NAME);
     }
 
     /**

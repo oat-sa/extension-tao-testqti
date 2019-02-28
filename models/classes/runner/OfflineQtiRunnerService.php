@@ -41,7 +41,6 @@ class OfflineQtiRunnerService extends ConfigurableService
      * @throws \common_exception_Error
      * @throws \common_exception_InconsistentData
      * @throws \common_exception_InvalidArgumentType
-     * @throws \tao_models_classes_FileNotFoundException
      */
     public function getItems($serviceContext)
     {
@@ -57,15 +56,43 @@ class OfflineQtiRunnerService extends ConfigurableService
             /** @var QtiRunnerServiceContext $serviceContext */
             $items[$itemIdentifier] = [
                 'baseUrl' => $runnerService->getItemPublicUrl($serviceContext, $itemRef),
-                'itemData' => $runnerService->getItemData($serviceContext, $itemRef),
+                'itemData' => $this->getItemData($serviceContext, $itemRef),
                 'itemState' => $runnerService->getItemState($serviceContext, $itemIdentifier),
-                'itemMetaData' => $runnerService->getFeedbacks($serviceContext, $itemRef),
                 'itemIdentifier' => $itemIdentifier,
                 'portableElements' => $runnerService->getItemPortableElements($serviceContext, $itemRef),
             ];
         }
 
         return $items;
+    }
+
+    /**
+     * Returns the itemData, extending with the variable elements
+     *
+     * @param RunnerServiceContext $context
+     * @param string $itemRef
+     * @return array
+     * @throws \common_exception_InvalidArgumentType
+     * @throws \common_Exception
+     */
+    public function getItemData(RunnerServiceContext $context, $itemRef)
+    {
+        $this->getRunnerService()->assertQtiRunnerServiceContext($context);
+
+        $itemData = $this->getRunnerService()->getItemData($context, $itemRef);
+        $itemDataVariable = $this->getRunnerService()->getItemVariableElementsData($context, $itemRef);
+        $responses = $itemData['data']['responses'];
+
+        foreach (array_keys($responses) as $responseId) {
+            if (array_key_exists($responseId, $itemDataVariable)) {
+                $itemData['data']['responses'][$responseId] = array_merge(...[
+                    $responses[$responseId],
+                    $itemDataVariable[$responseId],
+                ]);
+            }
+        }
+
+        return $itemData;
     }
 
     /**
