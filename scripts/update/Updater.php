@@ -1760,9 +1760,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(OfflineQtiRunnerService::SERVICE_ID, $offlineQtiRunnerService);
             $this->getServiceManager()->register(TestDefinitionSerializerService::SERVICE_ID, $testDefinitionSerializerService);
 
-
             $this->setVersion('30.7.0');
         }
-
     }
 }
