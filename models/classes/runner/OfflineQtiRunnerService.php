@@ -75,7 +75,7 @@ class OfflineQtiRunnerService extends ConfigurableService
      * @throws \common_exception_InvalidArgumentType
      * @throws \common_Exception
      */
-    public function getItemData(RunnerServiceContext $context, $itemRef)
+    private function getItemData(RunnerServiceContext $context, $itemRef)
     {
         $this->getRunnerService()->assertQtiRunnerServiceContext($context);
 
@@ -120,7 +120,6 @@ class OfflineQtiRunnerService extends ConfigurableService
     private function getSubIdentifiersRecursively($array, $identifiers)
     {
         $identifier = array_shift($identifiers);
-
         if (count($identifiers) > 0) {
             $result = [];
 
