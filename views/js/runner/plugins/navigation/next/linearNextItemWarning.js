@@ -26,9 +26,10 @@ define([
     'lodash',
     'i18n',
     'taoTests/runner/plugin',
+    'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/plugins/navigation/next/dialogConfirmNext'
-], function ($, _, __, pluginFactory, currentItemHelper, dialogConfirmNext){
+], function ($, _, __, pluginFactory, mapHelper, currentItemHelper, dialogConfirmNext){
     'use strict';
 
     /**
@@ -140,6 +141,9 @@ define([
                 })
                 .before('move skip', function(e, type, scope) {
                     var context = testRunner.getTestContext();
+                    var map = testRunner.getTestMap();
+                    var item = mapHelper.getItemAt(map, context.itemPosition);
+
                     if (context.isLinear) {
                         // Do nothing if nextSection warning imminent:
                         if (scope === 'section' && context.options.nextSectionWarning) {
@@ -147,6 +151,10 @@ define([
                         }
                         // Do nothing if endOfPart warning imminent:
                         else if (context.options.nextPartWarning) {
+                            return;
+                        }
+                        // Do nothing if 'informational item':
+                        else if (item.informational) {
                             return;
                         }
                         // Show dialog if conditions met:

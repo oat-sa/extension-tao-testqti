@@ -76,7 +76,7 @@ class NextItemData extends TestRunnerAction
      * Create the item definition response for a given item
      * @param string $itemIdentifier the item id
      * @return array the item data
-     * @throws
+     * @throws \common_Exception
      */
     protected function getItemData($itemIdentifier)
     {
