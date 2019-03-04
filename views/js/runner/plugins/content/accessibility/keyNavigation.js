@@ -41,6 +41,16 @@ define([
     var ignoredClass = 'no-key-navigation';
 
     /**
+     * If we have now config from backend side - we set this default dataset
+     *
+     * @typedef {object}
+     * @properties {string} contentNavigatorType - ('default' | 'linear') - type of content navigation
+     */
+    var defaultPluginState = {
+      contentNavigatorType: 'default',
+    };
+
+    /**
      * Init the navigation in the toolbar
      *
      * @param {Object} testRunner
@@ -276,8 +286,8 @@ define([
 
     /**
      * Init the navigation in the item content
-     * Navigable item content are interaction choices and body element with the special class "key-navigation-focusable"
-     * It returns an array of keyNavigators as the content is dynamically determined
+     * Navigable item content are interaction choices only
+     * It's works with templates for default key
      *
      * @param {Object} testRunner
      * @returns {Array} of keyNavigator ids
@@ -465,16 +475,12 @@ define([
         });
 
         keyNavigatorItem.on('tab', function(elem){
-            if (!allowedToNavigateFrom(elem)) {
-                return false;
-            } else {
-                this.next();
+            if (allowedToNavigateFrom(elem)) {
+              this.next();
             }
         }).on('shift+tab', function(elem){
-            if (!allowedToNavigateFrom(elem)) {
-                return false;
-            } else {
-                this.previous();
+            if (allowedToNavigateFrom(elem)) {
+              this.previous();
             }
         });
 
@@ -483,19 +489,12 @@ define([
 
                 var isCurrentElementFirst = $(elem).is(':first-child');
 
-                if (!allowedToNavigateFrom(elem)) {
-                    return false;
-                } else {
-                    isCurrentElementFirst && this.next();
-                }
+                isCurrentElementFirst && allowedToNavigateFrom(elem) && this.next();
+
             }).on('left', function(elem){
                 var isCurrentElementLast = $(elem).is(':last-child');
 
-                if (!allowedToNavigateFrom(elem)) {
-                    return false;
-                } else {
-                    isCurrentElementLast && this.previous();
-                }
+                isCurrentElementLast && allowedToNavigateFrom(elem) && this.previous();
             });
         }
 
@@ -532,17 +531,19 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
-            var state = {
-                contentNavigatorType: 'default',
-            };
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
+            var plaginState = _.defaults((testConfig.plugins || {})[name] || {}, defaultPluginState);
 
             //start disabled
             this.disable();
 
-            //update plugin state based on changes
+            /**
+             *  Update plugin state based on changes
+             */
             testRunner
                 .after('renderitem', function () {
-                    self.groupNavigator = initTestRunnerNavigation(testRunner, state);
+                    self.groupNavigator = initTestRunnerNavigation(testRunner, plaginState);
 
                     shortcut.add('tab shift+tab', function(e){
                         if (!allowedToNavigateFrom(e.target)) {
@@ -556,11 +557,12 @@ define([
                 .on('unloaditem', function () {
                     self.disable();
                 })
-                .on('contentLinearTabNavigation', function() {
-                    state.contentNavigatorType = 'linear';
-                })
-                .on('contentDefaultTabNavigation', function() {
-                  state.contentNavigatorType = 'default';
+                /**
+                 * @param {string} type - type of content tab navigation,
+                 * can be: 'default' || 'linear'
+                 */
+                .on('setContentTabNavigationType', function(type) {
+                    plaginState.contentNavigatorType = type;
                 });
         },
 
