@@ -306,12 +306,13 @@ define([
 
         $qtiChoiceNodesList.each(function(){
             var $itemElement = $(this);
-
-            navigableElements.push(keyNavigator({
+            var keyNavigatorItem = keyNavigator({
                 elements : navigableDomElement.createFromDoms($itemElement),
                 group : $itemElement,
                 propagateTab : false
-            }).on('activate', function(cursor){
+            });
+
+            keyNavigatorItem.on('activate', function(cursor){
                 var $elt = cursor.navigable.getElement();
                 //jQuery <= 1.9.0 the checkbox values are set
                 //after the click event if triggerred with jQuery
@@ -323,7 +324,9 @@ define([
                     $elt.click();
                 }
 
-            }));
+            })
+
+            navigableElements.push(keyNavigatorItem);
         });
 
         return navigableElements;
@@ -361,11 +364,13 @@ define([
         interactionNavigables = navigableDomElement.createFromDoms($inputs);
 
         if (interactionNavigables.length) {
-            interactionNavigators.push(keyNavigator({
+            var keyNavigatorItem = keyNavigator({
                 elements : interactionNavigables,
                 group : $interaction,
                 loop : false
-            }).on('right down', function(elem){
+            });
+
+            keyNavigatorItem.on('right down', function(elem){
                 if (!allowedToNavigateFrom(elem)) {
                     return false;
                 } else {
@@ -394,7 +399,9 @@ define([
                 cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
             }).on('blur', function(cursor){
                 cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
-            }));
+            });
+
+            interactionNavigators.push(keyNavigatorItem);
         }
 
         return interactionNavigators;
