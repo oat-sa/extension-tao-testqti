@@ -553,7 +553,7 @@ define( [
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedConfirmMessage = 'exit?';
 
-        QUnit.expect(6);
+        assert.expect(6);
 
         if (data.config) {
             runner.setTestData({
