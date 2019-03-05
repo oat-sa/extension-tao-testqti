@@ -328,7 +328,40 @@ return array(
             /**
              * The optional amd path to an alternative template, e.g. myExtension/runner/plugins/tool/calculator/template.tpl
              */
-            'template' => ''
+            'template' => '',
+            /**
+             * Angle measurement default
+             * @type boolean
+             */
+            'degree' => true
+        ],
+
+        /**
+         * The plugin responsible of the runner's dialogs (alert and confirm)
+         */
+        'dialog' => [
+            /**
+             * Config for alert dialogs
+             * @type array
+             */
+            'alert' => [
+                /**
+                 * Which button to focus by default
+                 * @type string
+                 */
+                'focus' => 'ok'
+            ],
+            /**
+             * Config for confirm dialogs
+             * @type array
+             */
+            'confirm' => [
+                /**
+                 * Which button to focus by default
+                 * @type string
+                 */
+                'focus' => 'ok'
+            ]
         ]
     ],
 

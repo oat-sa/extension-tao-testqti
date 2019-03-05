@@ -30,7 +30,9 @@ define([
             hide: function() {
                 this.trigger('closed.modal');
             },
-            focus : _.noop
+            focus : function(btn) {
+                dialogConfirm.trigger('focus', btn, dlg);
+            }
         });
 
         dlg.on('okbtn.modal', function() {

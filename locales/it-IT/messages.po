@@ -1188,7 +1188,7 @@ msgid "Time limit reached, this part of the test has ended."
 msgstr "Limite di tempo raggiunto, questa parte del test è terminata."
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr "Il tempo a tua disposizione per svolgere la prova è terminato. Puoi comunque rispondre a questa domanda, ma non puoi tornare a nessuna delle domande precedenti."
+msgstr "Il tempo a tua disposizione per svolgere la prova è terminato. Puoi comunque rispondere a questa domanda, ma non puoi tornare a nessuna delle domande precedenti."
 
 msgid "Time Limits"
 msgstr "Limite di tempo"

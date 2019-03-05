@@ -19,7 +19,7 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define( [
-    
+
     'lodash',
     'async',
     'helpers',
@@ -30,7 +30,7 @@ define( [
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/content/dialog/dialog'
 ], function(
-   
+
     _,
     async,
     helpers,
@@ -536,10 +536,74 @@ define( [
             } );
     } );
 
+    QUnit.cases.init([{
+        title: 'Default',
+        focus: 'ok'
+    }, {
+        title: 'OK button',
+        config: 'ok',
+        focus: 'ok'
+    }, {
+        title: 'Cancel button',
+        config: 'cancel',
+        focus: 'cancel'
+    }]).test('focus on button', function(data, assert) {
+        var ready = assert.async();
+        var runner = runnerFactory(providerName);
+        var dialog = dialogFactory(runner, runner.getAreaBroker());
+        var expectedConfirmMessage = 'exit?';
+
+        QUnit.expect(6);
+
+        if (data.config) {
+            runner.setTestData({
+                config: {
+                    plugins: {
+                        dialog: {
+                            confirm: {
+                                focus: data.config
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        dialogConfirm
+            .on('create', function(message) {
+                assert.ok(true, 'A confirm dialog has been created');
+                assert.equal(message, expectedConfirmMessage, 'The expected confirm message has been displayed');
+            })
+            .on('focus', function(btn) {
+                assert.equal(btn, data.focus, "The button '" + data.focus + "' should be focused");
+                runner.trigger('closedialog');
+            })
+            .on('close', function() {
+                assert.ok(true, 'The confirm dialog has been closed');
+                ready();
+            });
+
+        dialog.init()
+            .then(function() {
+                assert.equal(dialog.getState('init'), true, 'The plugin is initialized');
+
+                runner.trigger('confirm', expectedConfirmMessage, function() {
+                    assert.ok(false, 'The confirm message should not be accepted');
+                }, function() {
+                    assert.ok(true, 'The confirm message has been rejected');
+                });
+            })
+            .catch(function(err) {
+                console.log(err);
+                assert.ok(false, 'The init method must not fail');
+                ready();
+            });
+    });
+
     QUnit.test( 'namespace alert', function( assert ) {
         var ready = assert.async();
-        var runner = runnerFactory( providerName );
-        var dialog = dialogFactory( runner, runner.getAreaBroker() );
+        var runner = runnerFactory(providerName);
+        var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'Hello';
         var count = 0;
 
