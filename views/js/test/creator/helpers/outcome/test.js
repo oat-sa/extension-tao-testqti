@@ -18,13 +18,12 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-define([
+define( [
+
     'lodash',
     'taoQtiTest/controller/creator/helpers/outcome',
     'json!taoQtiTest/test/creator/samples/outcomes.json'
-], function (_,
-             outcomeHelper,
-             testModelSample) {
+], function(  _, outcomeHelper, testModelSample ) {
     'use strict';
 
     var createOutcomeCases, createOutcomeErrorCases;
@@ -32,113 +31,103 @@ define([
     var addOutcomeCases, addOutcomeErrorCases;
     var replaceOutcomesCases, replaceOutcomesErrorCases;
     var outcomeHelperApi = [
-        {title: 'getProcessingRuleExpression'},
-        {title: 'getProcessingRuleProperty'},
-        {title: 'getOutcomeDeclarations'},
-        {title: 'getOutcomeProcessingRules'},
-        {title: 'eachOutcomeDeclarations'},
-        {title: 'eachOutcomeProcessingRules'},
-        {title: 'eachOutcomeProcessingRuleExpressions'},
-        {title: 'listOutcomes'},
-        {title: 'removeOutcomes'},
-        {title: 'createOutcome'},
-        {title: 'addOutcomeProcessing'},
-        {title: 'addOutcome'},
-        {title: 'replaceOutcomes'}
+        { title: 'getProcessingRuleExpression' },
+        { title: 'getProcessingRuleProperty' },
+        { title: 'getOutcomeDeclarations' },
+        { title: 'getOutcomeProcessingRules' },
+        { title: 'eachOutcomeDeclarations' },
+        { title: 'eachOutcomeProcessingRules' },
+        { title: 'eachOutcomeProcessingRuleExpressions' },
+        { title: 'listOutcomes' },
+        { title: 'removeOutcomes' },
+        { title: 'createOutcome' },
+        { title: 'addOutcomeProcessing' },
+        { title: 'addOutcome' },
+        { title: 'replaceOutcomes' }
     ];
 
+    QUnit.module( 'helpers/outcome' );
 
-    QUnit.module('helpers/outcome');
-
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof outcomeHelper, 'object', "The outcome helper module exposes an object");
-    });
-
+    QUnit.test( 'module', function( assert ) {
+        assert.expect( 1 );
+        assert.equal( typeof outcomeHelper, 'object', 'The outcome helper module exposes an object' );
+    } );
 
     QUnit
-        .cases(outcomeHelperApi)
-        .test('helpers/outcome API ', function (data, assert) {
-            QUnit.expect(1);
-            assert.equal(typeof outcomeHelper[data.title], 'function', 'The outcome helper exposes a "' + data.title + '" function');
-        });
+        .cases.init( outcomeHelperApi )
+        .test( 'helpers/outcome API ', function( data, assert ) {
+            assert.expect( 1 );
+            assert.equal( typeof outcomeHelper[ data.title ], 'function', 'The outcome helper exposes a "' + data.title + '" function' );
+        } );
 
-
-    QUnit.test('helpers/outcome.getProcessingRuleExpression()', function (assert) {
-        QUnit.expect(4);
-        outcomeHelper.eachOutcomeProcessingRules(testModelSample, function (outcomeRule) {
-            var expression = outcomeHelper.getProcessingRuleExpression(outcomeRule, 'setOutcomeValue.gte.divide.sum.testVariables');
-            if (expression) {
-                assert.equal(typeof expression, 'object', 'An expression has been found from the outcome');
-                assert.equal(expression['qti-type'], 'testVariables', 'An expression has been found from the outcome');
+    QUnit.test( 'helpers/outcome.getProcessingRuleExpression()', function( assert ) {
+        assert.expect( 4 );
+        outcomeHelper.eachOutcomeProcessingRules( testModelSample, function( outcomeRule ) {
+            var expression = outcomeHelper.getProcessingRuleExpression( outcomeRule, 'setOutcomeValue.gte.divide.sum.testVariables' );
+            if ( expression ) {
+                assert.equal( typeof expression, 'object', 'An expression has been found from the outcome' );
+                assert.equal( expression[ 'qti-type' ], 'testVariables', 'An expression has been found from the outcome' );
             }
-        });
-    });
+        } );
+    } );
 
+    QUnit.test( 'helpers/outcome.getProcessingRuleProperty()', function( assert ) {
+        var expectedValues = [ 70, 70 ];
+        var values = _( outcomeHelper.getOutcomeProcessingRules( testModelSample ) ).map( function( outcomeRule ) {
+            return outcomeHelper.getProcessingRuleProperty( outcomeRule, 'setOutcomeValue.gte.baseValue.value' );
+        } ).compact().value();
 
-    QUnit.test('helpers/outcome.getProcessingRuleProperty()', function (assert) {
-        var expectedValues = [70, 70];
-        var values = _(outcomeHelper.getOutcomeProcessingRules(testModelSample)).map(function (outcomeRule) {
-            return outcomeHelper.getProcessingRuleProperty(outcomeRule, 'setOutcomeValue.gte.baseValue.value');
-        }).compact().value();
+        assert.expect( 1 );
+        assert.deepEqual( values, expectedValues, 'The outcome helper returns the right property value' );
+    } );
 
-        QUnit.expect(1);
-        assert.deepEqual(values, expectedValues, 'The outcome helper returns the right property value');
-    });
-
-
-    QUnit.test('helpers/outcome.getOutcomeDeclarations()', function (assert) {
-        var testModel = _.cloneDeep(testModelSample);
-        QUnit.expect(2);
-        assert.equal(outcomeHelper.getOutcomeDeclarations(testModel), testModel.outcomeDeclarations, 'The outcome helper returns the right outcome declarations');
+    QUnit.test( 'helpers/outcome.getOutcomeDeclarations()', function( assert ) {
+        var testModel = _.cloneDeep( testModelSample );
+        assert.expect( 2 );
+        assert.equal( outcomeHelper.getOutcomeDeclarations( testModel ), testModel.outcomeDeclarations, 'The outcome helper returns the right outcome declarations' );
 
         testModel.outcomeDeclarations = null;
-        assert.deepEqual(outcomeHelper.getOutcomeDeclarations(testModel), [], 'The outcome helper returns the right outcome declarations');
-    });
+        assert.deepEqual( outcomeHelper.getOutcomeDeclarations( testModel ), [], 'The outcome helper returns the right outcome declarations' );
+    } );
 
-
-    QUnit.test('helpers/outcome.getOutcomeProcessingRules()', function (assert) {
-        var testModel = _.cloneDeep(testModelSample);
-        QUnit.expect(2);
-        assert.equal(outcomeHelper.getOutcomeProcessingRules(testModel), testModel.outcomeProcessing.outcomeRules, 'The outcome helper returns the right outcome processing rules');
+    QUnit.test( 'helpers/outcome.getOutcomeProcessingRules()', function( assert ) {
+        var testModel = _.cloneDeep( testModelSample );
+        assert.expect( 2 );
+        assert.equal( outcomeHelper.getOutcomeProcessingRules( testModel ), testModel.outcomeProcessing.outcomeRules, 'The outcome helper returns the right outcome processing rules' );
 
         testModel.outcomeProcessing.outcomeRules = null;
-        assert.deepEqual(outcomeHelper.getOutcomeProcessingRules(testModel), [], 'The outcome helper returns the right outcome processing rules');
-    });
+        assert.deepEqual( outcomeHelper.getOutcomeProcessingRules( testModel ), [], 'The outcome helper returns the right outcome processing rules' );
+    } );
 
-
-    QUnit.test('helpers/outcome.eachOutcomeDeclarations()', function (assert) {
-        var path = ['SCORE_MATH', 'SCORE_HISTORY', 'PASS_MATH', 'PASS_HISTORY'];
+    QUnit.test( 'helpers/outcome.eachOutcomeDeclarations()', function( assert ) {
+        var path = [ 'SCORE_MATH', 'SCORE_HISTORY', 'PASS_MATH', 'PASS_HISTORY' ];
         var pointer = 0;
 
-        outcomeHelper.eachOutcomeDeclarations(testModelSample, function (outcome) {
-            assert.equal(outcome.identifier, path[pointer], 'The outcome helper loop over the right declaration');
+        outcomeHelper.eachOutcomeDeclarations( testModelSample, function( outcome ) {
+            assert.equal( outcome.identifier, path[ pointer ], 'The outcome helper loop over the right declaration' );
             pointer++;
-        });
+        } );
 
-        QUnit.expect(1 + path.length);
+        assert.expect( 1 + path.length );
 
-        assert.equal(pointer, path.length, 'The outcome helper returns the right declarations');
-    });
+        assert.equal( pointer, path.length, 'The outcome helper returns the right declarations' );
+    } );
 
-
-    QUnit.test('helpers/outcome.eachOutcomeProcessingRules()', function (assert) {
-        var path = ['SCORE_MATH', 'SCORE_HISTORY', 'PASS_MATH', 'PASS_HISTORY'];
+    QUnit.test( 'helpers/outcome.eachOutcomeProcessingRules()', function( assert ) {
+        var path = [ 'SCORE_MATH', 'SCORE_HISTORY', 'PASS_MATH', 'PASS_HISTORY' ];
         var pointer = 0;
 
-        outcomeHelper.eachOutcomeProcessingRules(testModelSample, function (outcome) {
-            assert.equal(outcome.identifier, path[pointer], 'The outcome helper loop over the right rule');
+        outcomeHelper.eachOutcomeProcessingRules( testModelSample, function( outcome ) {
+            assert.equal( outcome.identifier, path[ pointer ], 'The outcome helper loop over the right rule' );
             pointer++;
-        });
+        } );
 
-        QUnit.expect(1 + path.length);
+        assert.expect( 1 + path.length );
 
-        assert.equal(pointer, path.length, 'The outcome helper returns the right rules');
-    });
+        assert.equal( pointer, path.length, 'The outcome helper returns the right rules' );
+    } );
 
-
-    QUnit.test('helpers/outcome.eachOutcomeProcessingRuleExpressions()', function (assert) {
+    QUnit.test( 'helpers/outcome.eachOutcomeProcessingRuleExpressions()', function( assert ) {
         var path = [
             'setOutcomeValue', 'sum', 'testVariables',
             'setOutcomeValue', 'sum', 'testVariables',
@@ -147,90 +136,85 @@ define([
         ];
         var pointer = 0;
 
-        outcomeHelper.eachOutcomeProcessingRuleExpressions(testModelSample, function (outcome) {
-            assert.equal(outcome['qti-type'], path[pointer], 'The outcome helper loop over the right rule');
+        outcomeHelper.eachOutcomeProcessingRuleExpressions( testModelSample, function( outcome ) {
+            assert.equal( outcome[ 'qti-type' ], path[ pointer ], 'The outcome helper loop over the right rule' );
             pointer++;
-        });
+        } );
 
-        QUnit.expect(1 + path.length);
+        assert.expect( 1 + path.length );
 
-        assert.equal(pointer, path.length, 'The outcome helper returns the right rules');
-    });
+        assert.equal( pointer, path.length, 'The outcome helper returns the right rules' );
+    } );
 
-
-    QUnit.test('helpers/outcome.listOutcomes()', function (assert) {
-        var expectedOutcomes = ['SCORE_MATH', 'SCORE_HISTORY', 'PASS_MATH', 'PASS_HISTORY'];
-        var outcomes = outcomeHelper.listOutcomes(testModelSample);
-
-        outcomes.sort();
-        expectedOutcomes.sort();
-
-        QUnit.expect(1);
-
-        assert.deepEqual(outcomes, expectedOutcomes, 'The outcome helper returns the right outcomes');
-    });
-
-
-    QUnit.test('helpers/outcome.listOutcomes(callback)', function (assert) {
-        var expectedOutcomes = ['SCORE_MATH', 'SCORE_HISTORY'];
-        var outcomes = outcomeHelper.listOutcomes(testModelSample, function (outcome) {
-            return outcome.identifier.indexOf('SCORE_') === 0;
-        });
+    QUnit.test( 'helpers/outcome.listOutcomes()', function( assert ) {
+        var expectedOutcomes = [ 'SCORE_MATH', 'SCORE_HISTORY', 'PASS_MATH', 'PASS_HISTORY' ];
+        var outcomes = outcomeHelper.listOutcomes( testModelSample );
 
         outcomes.sort();
         expectedOutcomes.sort();
 
-        QUnit.expect(1);
+        assert.expect( 1 );
 
-        assert.deepEqual(outcomes, expectedOutcomes, 'The outcome helper returns the right outcomes');
-    });
+        assert.deepEqual( outcomes, expectedOutcomes, 'The outcome helper returns the right outcomes' );
+    } );
 
+    QUnit.test( 'helpers/outcome.listOutcomes(callback)', function( assert ) {
+        var expectedOutcomes = [ 'SCORE_MATH', 'SCORE_HISTORY' ];
+        var outcomes = outcomeHelper.listOutcomes( testModelSample, function( outcome ) {
+            return outcome.identifier.indexOf( 'SCORE_' ) === 0;
+        } );
 
-    QUnit.test('helpers/outcome.removeOutcomes() #list', function (assert) {
-        var testModel = _.cloneDeep(testModelSample);
+        outcomes.sort();
+        expectedOutcomes.sort();
+
+        assert.expect( 1 );
+
+        assert.deepEqual( outcomes, expectedOutcomes, 'The outcome helper returns the right outcomes' );
+    } );
+
+    QUnit.test( 'helpers/outcome.removeOutcomes() #list', function( assert ) {
+        var testModel = _.cloneDeep( testModelSample );
         var outcomeToRemove = 'SCORE_MATH';
         var countDeclarations = testModel.outcomeDeclarations.length;
         var countRules = testModel.outcomeProcessing.outcomeRules.length;
 
-        QUnit.expect(6);
+        assert.expect( 6 );
 
-        assert.equal(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'There is an outcome declaration');
-        assert.equal(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'There is an outcome rule');
+        assert.equal( testModel.outcomeDeclarations[ 0 ].identifier, outcomeToRemove, 'There is an outcome declaration' );
+        assert.equal( testModel.outcomeProcessing.outcomeRules[ 0 ].identifier, outcomeToRemove, 'There is an outcome rule' );
 
-        outcomeHelper.removeOutcomes(testModel, 'SCORE_MATH');
+        outcomeHelper.removeOutcomes( testModel, 'SCORE_MATH' );
 
-        assert.notEqual(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'The outcome declaration has been removed');
-        assert.notEqual(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'The outcome rule has been removed');
+        assert.notEqual( testModel.outcomeDeclarations[ 0 ].identifier, outcomeToRemove, 'The outcome declaration has been removed' );
+        assert.notEqual( testModel.outcomeProcessing.outcomeRules[ 0 ].identifier, outcomeToRemove, 'The outcome rule has been removed' );
 
-        assert.equal(testModel.outcomeDeclarations.length, countDeclarations - 1, 'The number of outcomes declarations is accurate');
-        assert.equal(testModel.outcomeProcessing.outcomeRules.length, countRules - 1, 'The number of outcomes rules is accurate');
-    });
+        assert.equal( testModel.outcomeDeclarations.length, countDeclarations - 1, 'The number of outcomes declarations is accurate' );
+        assert.equal( testModel.outcomeProcessing.outcomeRules.length, countRules - 1, 'The number of outcomes rules is accurate' );
+    } );
 
-
-    QUnit.test('helpers/outcome.removeOutcomes() #callback', function (assert) {
-        var testModel = _.cloneDeep(testModelSample);
+    QUnit.test( 'helpers/outcome.removeOutcomes() #callback', function( assert ) {
+        var testModel = _.cloneDeep( testModelSample );
         var outcomeToRemove = 'SCORE_MATH';
         var countDeclarations = testModel.outcomeDeclarations.length;
         var countRules = testModel.outcomeProcessing.outcomeRules.length;
 
-        QUnit.expect(6);
+        assert.expect( 6 );
 
-        assert.equal(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'There is an outcome declaration');
-        assert.equal(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'There is an outcome rule');
+        assert.equal( testModel.outcomeDeclarations[ 0 ].identifier, outcomeToRemove, 'There is an outcome declaration' );
+        assert.equal( testModel.outcomeProcessing.outcomeRules[ 0 ].identifier, outcomeToRemove, 'There is an outcome rule' );
 
-        outcomeHelper.removeOutcomes(testModel, function(outcome) {
-            return outcomeHelper.getOutcomeIdentifier(outcome) === 'SCORE_MATH';
-        });
+        outcomeHelper.removeOutcomes( testModel, function( outcome ) {
+            return outcomeHelper.getOutcomeIdentifier( outcome ) === 'SCORE_MATH';
+        } );
 
-        assert.notEqual(testModel.outcomeDeclarations[0].identifier, outcomeToRemove, 'The outcome declaration has been removed');
-        assert.notEqual(testModel.outcomeProcessing.outcomeRules[0].identifier, outcomeToRemove, 'The outcome rule has been removed');
+        assert.notEqual( testModel.outcomeDeclarations[ 0 ].identifier, outcomeToRemove, 'The outcome declaration has been removed' );
+        assert.notEqual( testModel.outcomeProcessing.outcomeRules[ 0 ].identifier, outcomeToRemove, 'The outcome rule has been removed' );
 
-        assert.equal(testModel.outcomeDeclarations.length, countDeclarations - 1, 'The number of outcomes declarations is accurate');
-        assert.equal(testModel.outcomeProcessing.outcomeRules.length, countRules - 1, 'The number of outcomes rules is accurate');
-    });
+        assert.equal( testModel.outcomeDeclarations.length, countDeclarations - 1, 'The number of outcomes declarations is accurate' );
+        assert.equal( testModel.outcomeProcessing.outcomeRules.length, countRules - 1, 'The number of outcomes rules is accurate' );
+    } );
 
-
-    createOutcomeCases = [{
+    createOutcomeCases = [ {
         title: 'default',
         identifier: 'FOO_BAR',
         outcome: {
@@ -326,40 +310,38 @@ define([
             cardinality: 0,
             baseType: 3
         }
-    }];
+    } ];
 
     QUnit
-        .cases(createOutcomeCases)
-        .test('helpers/outcome.createOutcome() ', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(outcomeHelper.createOutcome(data.identifier, data.type, data.cardinality), data.outcome, 'The outcome helper has provided the expected outcome declaration');
-        });
+        .cases.init( createOutcomeCases )
+        .test( 'helpers/outcome.createOutcome() ', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( outcomeHelper.createOutcome( data.identifier, data.type, data.cardinality ), data.outcome, 'The outcome helper has provided the expected outcome declaration' );
+        } );
 
-
-    createOutcomeErrorCases = [{
+    createOutcomeErrorCases = [ {
         title: 'Missing identifier'
     }, {
         title: 'Empty identifier',
         identifier: ''
     }, {
         title: 'Wrong identifier',
-        identifier: {foo: 'bar'}
+        identifier: { foo: 'bar' }
     }, {
         title: 'Bad identifier',
         identifier: '12 foo bar'
-    }];
+    } ];
 
     QUnit
-        .cases(createOutcomeErrorCases)
-        .test('helpers/outcome.createOutcome()#error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                outcomeHelper.createOutcome(data.identifier);
-            }, 'An error must be thrown when the identifier is wrong');
-        });
+        .cases.init( createOutcomeErrorCases )
+        .test( 'helpers/outcome.createOutcome()#error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                outcomeHelper.createOutcome( data.identifier );
+            }, 'An error must be thrown when the identifier is wrong' );
+        } );
 
-
-    addOutcomeProcessingCases = [{
+    addOutcomeProcessingCases = [ {
         title: 'Create the collection',
         testModel: {},
         processingRule: {
@@ -368,9 +350,9 @@ define([
         expected: {
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'foo'
-                }]
+                } ]
             }
         }
     }, {
@@ -386,9 +368,9 @@ define([
         expected: {
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'foo'
-                }]
+                } ]
             }
         }
     }, {
@@ -396,9 +378,9 @@ define([
         testModel: {
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'foo'
-                }]
+                } ]
             }
         },
         processingRule: {
@@ -407,25 +389,24 @@ define([
         expected: {
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'foo'
                 }, {
                     'qti-type': 'bar'
-                }]
+                } ]
             }
         }
-    }];
+    } ];
 
     QUnit
-        .cases(addOutcomeProcessingCases)
-        .test('helpers/outcome.addOutcomeProcessing() ', function (data, assert) {
-            QUnit.expect(2);
-            assert.deepEqual(outcomeHelper.addOutcomeProcessing(data.testModel, data.processingRule), data.processingRule, 'The outcome helper has returned the outcome processing rule declaration');
-            assert.deepEqual(data.testModel, data.expected, 'The outcome helper has added the outcome processing rule declaration');
-        });
+        .cases.init( addOutcomeProcessingCases )
+        .test( 'helpers/outcome.addOutcomeProcessing() ', function( data, assert ) {
+            assert.expect( 2 );
+            assert.deepEqual( outcomeHelper.addOutcomeProcessing( data.testModel, data.processingRule ), data.processingRule, 'The outcome helper has returned the outcome processing rule declaration' );
+            assert.deepEqual( data.testModel, data.expected, 'The outcome helper has added the outcome processing rule declaration' );
+        } );
 
-
-    addOutcomeProcessingErrorCases = [{
+    addOutcomeProcessingErrorCases = [ {
         title: 'Missing processing rule',
         testModel: {}
     }, {
@@ -442,21 +423,20 @@ define([
         title: 'Invalid processing rule type (wrong)',
         testModel: {},
         processingRule: {
-            'qti-type': {foo: 'bar'}
+            'qti-type': { foo: 'bar' }
         }
-    }];
+    } ];
 
     QUnit
-        .cases(addOutcomeProcessingErrorCases)
-        .test('helpers/outcome.addOutcomeProcessing()#error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                outcomeHelper.addOutcomeProcessing(data.testModel, data.processingRule);
-            }, 'An error must be thrown when the input is wrong');
-        });
+        .cases.init( addOutcomeProcessingErrorCases )
+        .test( 'helpers/outcome.addOutcomeProcessing()#error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                outcomeHelper.addOutcomeProcessing( data.testModel, data.processingRule );
+            }, 'An error must be thrown when the input is wrong' );
+        } );
 
-
-    addOutcomeCases = [{
+    addOutcomeCases = [ {
         title: 'Create the collection',
         testModel: {},
         outcome: {
@@ -464,31 +444,31 @@ define([
             identifier: 'foo'
         },
         expected: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }]
+            } ]
         }
     }, {
         title: 'Update the collection',
         testModel: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }]
+            } ]
         },
         outcome: {
             'qti-type': 'outcomeDeclaration',
             identifier: 'bar'
         },
         expected: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
             }, {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'bar'
-            }]
+            } ]
         }
     }, {
         title: 'Create the collection of processing rules',
@@ -502,16 +482,16 @@ define([
             identifier: 'foo'
         },
         expected: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }],
+            } ],
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'foo',
                     identifier: 'foo'
-                }]
+                } ]
             }
         }
     }, {
@@ -519,9 +499,9 @@ define([
         testModel: {
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'foo'
-                }]
+                } ]
             }
         },
         outcome: {
@@ -533,32 +513,31 @@ define([
             identifier: 'foo'
         },
         expected: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }],
+            } ],
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'foo'
                 }, {
                     'qti-type': 'bar',
                     identifier: 'foo'
-                }]
+                } ]
             }
         }
-    }];
+    } ];
 
     QUnit
-        .cases(addOutcomeCases)
-        .test('helpers/outcome.addOutcome() ', function (data, assert) {
-            QUnit.expect(2);
-            assert.deepEqual(outcomeHelper.addOutcome(data.testModel, data.outcome, data.processingRule), data.outcome, 'The outcome helper has returned the outcome declaration');
-            assert.deepEqual(data.testModel, data.expected, 'The outcome helper has added the outcome declaration');
-        });
+        .cases.init( addOutcomeCases )
+        .test( 'helpers/outcome.addOutcome() ', function( data, assert ) {
+            assert.expect( 2 );
+            assert.deepEqual( outcomeHelper.addOutcome( data.testModel, data.outcome, data.processingRule ), data.outcome, 'The outcome helper has returned the outcome declaration' );
+            assert.deepEqual( data.testModel, data.expected, 'The outcome helper has added the outcome declaration' );
+        } );
 
-
-    addOutcomeErrorCases = [{
+    addOutcomeErrorCases = [ {
         title: 'Missing outcome',
         testModel: {}
     }, {
@@ -625,7 +604,7 @@ define([
             identifier: 'foo'
         },
         processingRule: {
-            'qti-type': {foo: 'bar'}
+            'qti-type': { foo: 'bar' }
         }
     }, {
         title: 'Invalid processing rule (bad identifier)',
@@ -638,133 +617,131 @@ define([
             'qti-type': 'type',
             identifier: 'bar'
         }
-    }];
+    } ];
 
     QUnit
-        .cases(addOutcomeErrorCases)
-        .test('helpers/outcome.addOutcome()#error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                outcomeHelper.addOutcome(data.testModel, data.outcome, data.processingRule);
-            }, 'An error must be thrown when the input is wrong');
-        });
+        .cases.init( addOutcomeErrorCases )
+        .test( 'helpers/outcome.addOutcome()#error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                outcomeHelper.addOutcome( data.testModel, data.outcome, data.processingRule );
+            }, 'An error must be thrown when the input is wrong' );
+        } );
 
-
-    replaceOutcomesCases = [{
+    replaceOutcomesCases = [ {
         title: 'Create the collections',
         testModel: {},
         outcomes: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }],
+            } ],
             outcomeProcessing: {
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'bar'
-                }]
+                } ]
             }
         },
         expected: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }],
+            } ],
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'bar'
-                }]
+                } ]
             }
         }
     }, {
         title: 'Replace the collections',
         testModel: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'outcome1'
             }, {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'outcome2'
-            }],
+            } ],
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'foo'
                 }, {
                     'qti-type': 'foo'
-                }]
+                } ]
             }
         },
         outcomes: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }],
+            } ],
             outcomeProcessing: {
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'bar'
-                }]
+                } ]
             }
         },
         expected: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }],
+            } ],
             outcomeProcessing: {
                 'qti-type': 'outcomeProcessing',
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'bar'
-                }]
+                } ]
             }
         }
-    }];
+    } ];
 
     QUnit
-        .cases(replaceOutcomesCases)
-        .test('helpers/outcome.replaceOutcomes() ', function (data, assert) {
-            QUnit.expect(1);
-            outcomeHelper.replaceOutcomes(data.testModel, data.outcomes);
-            assert.deepEqual(data.testModel, data.expected, 'The outcome helper has replaced the outcome declarations');
-        });
+        .cases.init( replaceOutcomesCases )
+        .test( 'helpers/outcome.replaceOutcomes() ', function( data, assert ) {
+            assert.expect( 1 );
+            outcomeHelper.replaceOutcomes( data.testModel, data.outcomes );
+            assert.deepEqual( data.testModel, data.expected, 'The outcome helper has replaced the outcome declarations' );
+        } );
 
-
-    replaceOutcomesErrorCases = [{
+    replaceOutcomesErrorCases = [ {
         title: 'Wrong outcome declaration',
         testModel: {},
         outcomes: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'foo',
                 identifier: 'foo'
-            }],
+            } ],
             outcomeProcessing: {
-                outcomeRules: [{
+                outcomeRules: [ {
                     'qti-type': 'bar'
-                }]
+                } ]
             }
         }
     }, {
         title: 'Wrong processing rule',
         testModel: {},
         outcomes: {
-            outcomeDeclarations: [{
+            outcomeDeclarations: [ {
                 'qti-type': 'outcomeDeclaration',
                 identifier: 'foo'
-            }],
+            } ],
             outcomeProcessing: {
-                outcomeRules: [{
+                outcomeRules: [ {
                     foo: 'bar'
-                }]
+                } ]
             }
         }
-    }];
+    } ];
 
     QUnit
-        .cases(replaceOutcomesErrorCases)
-        .test('helpers/outcome.replaceOutcomes()#error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                outcomeHelper.replaceOutcomes(data.testModel, data.outcomes);
-            }, 'An error must be thrown when the input is wrong');
-        });
-});
+        .cases.init( replaceOutcomesErrorCases )
+        .test( 'helpers/outcome.replaceOutcomes()#error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                outcomeHelper.replaceOutcomes( data.testModel, data.outcomes );
+            }, 'An error must be thrown when the input is wrong' );
+        } );
+} );

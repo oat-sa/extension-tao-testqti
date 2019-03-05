@@ -16,225 +16,222 @@
  * Copyright (c) 2018 (original work) Open Assessment Technologies SA
  */
 
-define([
+define( [
+    
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/controls/progressbar/progressbar',
     'json!taoQtiTest/test/runner/plugins/controls/progressbar/plugin/map.json'
-], function (runnerFactory, providerMock, pluginFactory, testMap) {
+], function(  runnerFactory, providerMock, pluginFactory, testMap ) {
     'use strict';
 
     var providerName = 'mock';
-    runnerFactory.registerProvider(providerName, providerMock());
+    runnerFactory.registerProvider( providerName, providerMock() );
 
     /**
      * Generic tests
      */
-    QUnit.module('pluginFactory');
+    QUnit.module( 'pluginFactory' );
 
+    QUnit.test( 'module', function( assert ) {
+        var runner = runnerFactory( providerName );
 
-    QUnit.test('module', function (assert) {
-        var runner = runnerFactory(providerName);
+        assert.expect( 3 );
 
-        QUnit.expect(3);
+        assert.equal( typeof pluginFactory, 'function', 'The pluginFactory module exposes a function' );
+        assert.equal( typeof pluginFactory( runner ), 'object', 'The plugin factory produces an instance' );
+        assert.notStrictEqual( pluginFactory( runner ), pluginFactory( runner ), 'The plugin factory provides a different instance on each call' );
+    } );
 
-        assert.equal(typeof pluginFactory, 'function', "The pluginFactory module exposes a function");
-        assert.equal(typeof pluginFactory(runner), 'object', "The plugin factory produces an instance");
-        assert.notStrictEqual(pluginFactory(runner), pluginFactory(runner), "The plugin factory provides a different instance on each call");
-    });
+    QUnit.module( 'Plugin API' );
 
-
-    QUnit.module('Plugin API');
-
-
-    QUnit.cases([
-        {title: 'init'},
-        {title: 'render'},
-        {title: 'finish'},
-        {title: 'destroy'},
-        {title: 'trigger'},
-        {title: 'getTestRunner'},
-        {title: 'getAreaBroker'},
-        {title: 'getConfig'},
-        {title: 'setConfig'},
-        {title: 'getState'},
-        {title: 'setState'},
-        {title: 'show'},
-        {title: 'hide'},
-        {title: 'enable'},
-        {title: 'disable'}
-    ]).test('plugin API ', function (data, assert) {
-        var runner = runnerFactory(providerName);
-        var plugin = pluginFactory(runner);
-        QUnit.expect(1);
-        assert.equal(typeof plugin[data.title], 'function', 'The pluginFactory instances expose a "' + data.title + '" function');
-    });
-
+    QUnit.cases.init( [
+        { title: 'init' },
+        { title: 'render' },
+        { title: 'finish' },
+        { title: 'destroy' },
+        { title: 'trigger' },
+        { title: 'getTestRunner' },
+        { title: 'getAreaBroker' },
+        { title: 'getConfig' },
+        { title: 'setConfig' },
+        { title: 'getState' },
+        { title: 'setState' },
+        { title: 'show' },
+        { title: 'hide' },
+        { title: 'enable' },
+        { title: 'disable' }
+    ] ).test( 'plugin API ', function( data, assert ) {
+        var runner = runnerFactory( providerName );
+        var plugin = pluginFactory( runner );
+        assert.expect( 1 );
+        assert.equal( typeof plugin[ data.title ], 'function', 'The pluginFactory instances expose a "' + data.title + '" function' );
+    } );
 
     /**
      * Behavior
      */
-    QUnit.module('Lifecycle');
+    QUnit.module( 'Lifecycle' );
 
-
-    QUnit.asyncTest('render/destroy', function (assert) {
-        var runner = runnerFactory(providerName),
+    QUnit.test( 'render/destroy', function( assert ) {
+        var ready = assert.async();
+        var runner = runnerFactory( providerName ),
             areaBroker = runner.getAreaBroker(),
-            plugin = pluginFactory(runner, areaBroker),
+            plugin = pluginFactory( runner, areaBroker ),
             $container = areaBroker.getControlArea();
 
-        QUnit.expect(4);
+        assert.expect( 4 );
 
-        runner.setTestContext({
+        runner.setTestContext( {
             itemPosition: 3,
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-1'
-        });
+        } );
 
-        runner.setTestData({
+        runner.setTestData( {
             config: {}
-        });
+        } );
 
-        runner.setTestMap(testMap);
+        runner.setTestMap( testMap );
 
         plugin.init()
-            .then(function () {
-                assert.equal(plugin.getState('init'), true, 'The plugin has been initialized');
+            .then( function() {
+                assert.equal( plugin.getState( 'init' ), true, 'The plugin has been initialized' );
 
-                assert.equal($container.find('.progress-box').length, 0, 'The plugin has not been inserted yet');
+                assert.equal( $container.find( '.progress-box' ).length, 0, 'The plugin has not been inserted yet' );
 
                 // Plugin rendering
-                return plugin.render().then(function () {
+                return plugin.render().then( function() {
 
-                    assert.equal($container.find('.progress-box').length, 1, 'The plugin has been inserted in the right place');
+                    assert.equal( $container.find( '.progress-box' ).length, 1, 'The plugin has been inserted in the right place' );
 
-                    // plugin destroying
-                    return plugin.destroy().then(function () {
+                    // Plugin destroying
+                    return plugin.destroy().then( function() {
 
-                        assert.equal($container.find('.progress-box').length, 0, 'The plugin has been removed');
+                        assert.equal( $container.find( '.progress-box' ).length, 0, 'The plugin has been removed' );
 
-                        QUnit.start();
-                    });
-                });
-            })
-            .catch(function (err) {
-                assert.ok(false, 'Unexpected failure : ' + err.message);
-                QUnit.start();
-            });
-    });
+                        ready();
+                    } );
+                } );
+            } )
+            .catch( function( err ) {
+                assert.ok( false, 'Unexpected failure : ' + err.message );
+                ready();
+            } );
+    } );
 
-
-    QUnit.asyncTest('show/hide', function (assert) {
-        var runner = runnerFactory(providerName),
+    QUnit.test( 'show/hide', function( assert ) {
+        var ready = assert.async();
+        var runner = runnerFactory( providerName ),
             areaBroker = runner.getAreaBroker(),
-            plugin = pluginFactory(runner, areaBroker),
+            plugin = pluginFactory( runner, areaBroker ),
             $container = areaBroker.getControlArea();
 
-        QUnit.expect(7);
+        assert.expect( 7 );
 
-        runner.setTestContext({
+        runner.setTestContext( {
             itemPosition: 3,
             testPartId: 'testPart-1',
             sectionId: 'assessmentSection-1'
-        });
+        } );
 
-        runner.setTestData({
+        runner.setTestData( {
             config: {}
-        });
+        } );
 
-        runner.setTestMap(testMap);
+        runner.setTestMap( testMap );
 
         plugin.init()
-            .then(function () {
-                assert.equal(plugin.getState('init'), true, 'The plugin has been initialized');
+            .then( function() {
+                assert.equal( plugin.getState( 'init' ), true, 'The plugin has been initialized' );
 
-                assert.equal($container.find('.progress-box').length, 0, 'The plugin has not been inserted yet');
+                assert.equal( $container.find( '.progress-box' ).length, 0, 'The plugin has not been inserted yet' );
 
                 // Plugin rendering
-                return plugin.render().then(function () {
+                return plugin.render().then( function() {
 
-                    assert.equal($container.find('.progress-box').length, 1, 'The plugin has been inserted in the right place');
-                    assert.equal($container.find('.progress-box:visible').length, 1, 'The plugin is visible');
+                    assert.equal( $container.find( '.progress-box' ).length, 1, 'The plugin has been inserted in the right place' );
+                    assert.equal( $container.find( '.progress-box:visible' ).length, 1, 'The plugin is visible' );
 
-                    return plugin.hide().then(function () {
+                    return plugin.hide().then( function() {
 
-                        assert.equal($container.find('.progress-box:visible').length, 0, 'The plugin is now hidden');
+                        assert.equal( $container.find( '.progress-box:visible' ).length, 0, 'The plugin is now hidden' );
 
-                        return plugin.show().then(function () {
+                        return plugin.show().then( function() {
 
-                            assert.equal($container.find('.progress-box:visible').length, 1, 'The plugin is now visible');
+                            assert.equal( $container.find( '.progress-box:visible' ).length, 1, 'The plugin is now visible' );
 
-                            // plugin destroying
-                            return plugin.destroy().then(function () {
+                            // Plugin destroying
+                            return plugin.destroy().then( function() {
 
-                                assert.equal($container.find('.progress-box').length, 0, 'The plugin has been removed');
+                                assert.equal( $container.find( '.progress-box' ).length, 0, 'The plugin has been removed' );
 
-                                QUnit.start();
-                            });
-                        });
-                    });
-                });
-            })
-            .catch(function (err) {
-                assert.ok(false, 'Unexpected failure : ' + err.message);
-                QUnit.start();
-            });
-    });
+                                ready();
+                            } );
+                        } );
+                    } );
+                } );
+            } )
+            .catch( function( err ) {
+                assert.ok( false, 'Unexpected failure : ' + err.message );
+                ready();
+            } );
+    } );
 
+    QUnit.module( 'Options' );
 
-    QUnit.module('Options');
-
-    QUnit.asyncTest('hide on informational', function (assert) {
-        var runner = runnerFactory(providerName),
+    QUnit.test( 'hide on informational', function( assert ) {
+        var ready = assert.async();
+        var runner = runnerFactory( providerName ),
             areaBroker = runner.getAreaBroker(),
-            plugin = pluginFactory(runner, areaBroker),
+            plugin = pluginFactory( runner, areaBroker ),
             $container = areaBroker.getControlArea();
 
-        QUnit.expect(5);
+        assert.expect( 5 );
 
-        runner.setTestContext({
+        runner.setTestContext( {
             itemPosition: 1,
             testPartId: 'testPart-intro',
             sectionId: 'assessmentSection-intro'
-        });
+        } );
 
-        runner.setTestData({
+        runner.setTestData( {
             config: {
                 progressIndicator: {
                     type: 'questions'
                 }
             }
-        });
+        } );
 
-        runner.setTestMap(testMap);
+        runner.setTestMap( testMap );
 
         plugin.init()
-            .then(function () {
+            .then( function() {
                 var testRunner = plugin.getTestRunner();
                 var testData = testRunner.getTestData();
 
-                assert.equal(plugin.getState('init'), true, 'The plugin has been initialized');
+                assert.equal( plugin.getState( 'init' ), true, 'The plugin has been initialized' );
 
-                assert.equal($container.find('.progress-box').length, 0, 'The plugin has not been inserted yet');
+                assert.equal( $container.find( '.progress-box' ).length, 0, 'The plugin has not been inserted yet' );
 
                 // Plugin rendering
-                return plugin.render().then(function () {
+                return plugin.render().then( function() {
 
-                    assert.equal($container.find('.progress-box').length, 1, 'The plugin has been inserted in the right place');
-                    assert.equal($container.find('.progress-box:visible').length, 0, 'The plugin is not visible');
+                    assert.equal( $container.find( '.progress-box' ).length, 1, 'The plugin has been inserted in the right place' );
+                    assert.equal( $container.find( '.progress-box:visible' ).length, 0, 'The plugin is not visible' );
 
-                    // plugin destroying
-                    return plugin.destroy().then(function () {
+                    // Plugin destroying
+                    return plugin.destroy().then( function() {
 
-                        assert.equal($container.find('.progress-box').length, 0, 'The plugin has been removed');
+                        assert.equal( $container.find( '.progress-box' ).length, 0, 'The plugin has been removed' );
 
-                        QUnit.start();
-                    });
-                });
-            })
-            .catch(function (err) {
-                assert.ok(false, 'Unexpected failure : ' + err.message);
-                QUnit.start();
-            });
-    });
-});
+                        ready();
+                    } );
+                } );
+            } )
+            .catch( function( err ) {
+                assert.ok( false, 'Unexpected failure : ' + err.message );
+                ready();
+            } );
+    } );
+} );

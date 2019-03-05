@@ -21,41 +21,39 @@
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define([
-    'taoQtiTest/runner/config/assetManager'
-], function(getAssetManager) {
+define( [  'taoQtiTest/runner/config/assetManager' ], function(  getAssetManager ) {
     'use strict';
 
-    QUnit.module('API');
+    QUnit.module( 'API' );
 
-    QUnit.test('module', function(assert) {
-        QUnit.expect(1);
+    QUnit.test( 'module', function( assert ) {
+        assert.expect( 1 );
 
-        assert.equal(typeof getAssetManager, 'function', 'The module exposes a function');
-    });
+        assert.equal( typeof getAssetManager, 'function', 'The module exposes a function' );
+    } );
 
-    QUnit.module('Behavior');
+    QUnit.module( 'Behavior' );
 
-    QUnit.test('retrieval', function(assert) {
+    QUnit.test( 'retrieval', function( assert ) {
 
-        QUnit.expect(4);
+        assert.expect( 4 );
 
-        assert.equal(typeof getAssetManager('foo'), 'object', 'The function returns an object');
-        assert.equal(typeof getAssetManager('bar'), 'object', 'The function returns an object');
-        assert.deepEqual(getAssetManager('foo'), getAssetManager('foo'), 'The function returns the same object from the same id');
-        assert.notDeepEqual(getAssetManager('foo'), getAssetManager('bar'), 'The function returns different objects from the differents id');
-    });
+        assert.equal( typeof getAssetManager( 'foo' ), 'object', 'The function returns an object' );
+        assert.equal( typeof getAssetManager( 'bar' ), 'object', 'The function returns an object' );
+        assert.deepEqual( getAssetManager( 'foo' ), getAssetManager( 'foo' ), 'The function returns the same object from the same id' );
+        assert.notDeepEqual( getAssetManager( 'foo' ), getAssetManager( 'bar' ), 'The function returns different objects from the differents id' );
+    } );
 
-    QUnit.test('asset manager', function(assert) {
+    QUnit.test( 'asset manager', function( assert ) {
         var assetManager;
 
-        QUnit.expect(4);
+        assert.expect( 4 );
 
-        assetManager = getAssetManager('noz');
+        assetManager = getAssetManager( 'noz' );
 
-        assert.equal(typeof assetManager, 'object', 'The asset manager is an object');
-        assert.equal(typeof assetManager.addStrategy, 'function', 'The asset manager has the correct methods');
-        assert.equal(typeof assetManager.resolve, 'function', 'The asset manager has the correct methods');
-        assert.equal(assetManager._strategies.length, 5, 'The asset manager comes with configured strategies');
-    });
-});
+        assert.equal( typeof assetManager, 'object', 'The asset manager is an object' );
+        assert.equal( typeof assetManager.addStrategy, 'function', 'The asset manager has the correct methods' );
+        assert.equal( typeof assetManager.resolve, 'function', 'The asset manager has the correct methods' );
+        assert.equal( assetManager._strategies.length, 5, 'The asset manager comes with configured strategies' );
+    } );
+} );

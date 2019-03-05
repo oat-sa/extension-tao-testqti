@@ -18,31 +18,31 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
-define([
+define( [
+    
     'lodash',
     'helpers',
     'taoQtiTest/runner/helpers/messages'
-], function (_, helpers, messagesHelper) {
+], function(  _, helpers, messagesHelper ) {
     'use strict';
 
     var messagesHelperApi = [
         { title: 'getExitMessage' }
     ];
 
-    QUnit.module('helpers/messages');
+    QUnit.module( 'helpers/messages' );
 
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof messagesHelper, 'object', "The messages helper module exposes an object");
-    });
+    QUnit.test( 'module', function( assert ) {
+        assert.expect( 1 );
+        assert.equal( typeof messagesHelper, 'object', 'The messages helper module exposes an object' );
+    } );
 
     QUnit
-        .cases(messagesHelperApi)
-        .test('helpers/messages API ', function (data, assert) {
-            QUnit.expect(1);
-            assert.equal(typeof messagesHelper[data.title], 'function', 'The messages helper expose a "' + data.title + '" function');
-        });
+        .cases.init( messagesHelperApi )
+        .test( 'helpers/messages API ', function( data, assert ) {
+            assert.expect( 1 );
+            assert.equal( typeof messagesHelper[ data.title ], 'function', 'The messages helper expose a "' + data.title + '" function' );
+        } );
 
     /**
      * Build a fake test runner
@@ -53,22 +53,22 @@ define([
      * @param {Object} declarations
      * @returns {Object}
      */
-    function runnerMock(map, context, data, responses, declarations) {
+    function runnerMock( map, context, data, responses, declarations ) {
         return {
-            getTestContext: function () {
+            getTestContext: function() {
                 return context;
             },
-            getTestMap: function () {
+            getTestMap: function() {
                 return map;
             },
-            getTestData: function () {
+            getTestData: function() {
                 return data;
             },
             itemRunner: {
                 _item: {
                     responses: declarations
                 },
-                getResponses: function () {
+                getResponses: function() {
                     return responses;
                 }
             }
@@ -76,7 +76,7 @@ define([
     }
 
     QUnit
-        .cases([
+        .cases.init( [
             {
                 title: 'all answered, none flagged',
                 testStats:      { answered: 3 },
@@ -168,8 +168,8 @@ define([
                 partMessage:    'You have 1 unanswered question(s).',
                 sectionMessage: 'You answered only 2 of the 3 question(s) in this section.'
             }
-        ])
-        .test('helpers/messages.getExitMessage (enabled)', function (testData, assert) {
+        ] )
+        .test( 'helpers/messages.getExitMessage (enabled)', function( testData, assert ) {
             var context = {
                 itemPosition: 1,
                 itemAnswered: testData.currentItemAnswered
@@ -181,9 +181,9 @@ define([
             };
             var map = {
                 jumps: [
-                    {position: 0, identifier: 'item1', section: 'section1', part: 'part1'},
-                    {position: 1, identifier: 'item2', section: 'section1', part: 'part1'},
-                    {position: 2, identifier: 'item3', section: 'section1', part: 'part1'}
+                    { position: 0, identifier: 'item1', section: 'section1', part: 'part1' },
+                    { position: 1, identifier: 'item2', section: 'section1', part: 'part1' },
+                    { position: 2, identifier: 'item3', section: 'section1', part: 'part1' }
                 ],
                 parts: {
                     part1: {
@@ -194,41 +194,41 @@ define([
                                     item2: {},
                                     item3: {}
                                 },
-                                stats: _.defaults(testData.sectionStats, {
+                                stats: _.defaults( testData.sectionStats, {
                                     questions: 3,
                                     answered: 3,
                                     flagged: 0,
                                     viewed: 0,
                                     total: 3
-                                })
+                                } )
                             }
                         },
-                        stats: _.defaults(testData.partStats, {
+                        stats: _.defaults( testData.partStats, {
                             questions: 3,
                             answered: 3,
                             flagged: 0,
                             viewed: 0,
                             total: 3
-                        })
+                        } )
                     }
                 },
-                stats: _.defaults(testData.testStats, {
+                stats: _.defaults( testData.testStats, {
                     questions: 3,
                     answered: 3,
                     flagged: 0,
                     viewed: 0,
                     total: 3
-                })
+                } )
             };
             var declarations = {
-                "responsedeclaration": {
-                    "identifier": "RESPONSE",
-                    "serial": "responsedeclaration",
-                    "qtiClass": "responseDeclaration",
-                    "attributes": {
-                        "identifier": "RESPONSE", "cardinality": "single", "baseType": "string"
+                'responsedeclaration': {
+                    'identifier': 'RESPONSE',
+                    'serial': 'responsedeclaration',
+                    'qtiClass': 'responseDeclaration',
+                    'attributes': {
+                        'identifier': 'RESPONSE', 'cardinality': 'single', 'baseType': 'string'
                     },
-                    "defaultValue": []
+                    'defaultValue': []
                 }
             };
             var responses = {
@@ -236,20 +236,20 @@ define([
                     base: testData.currentItemResponse
                 }
             };
-            var runner = runnerMock(map, context, data, responses, declarations);
+            var runner = runnerMock( map, context, data, responses, declarations );
             var message = 'This is a test.';
 
-            QUnit.expect(6);
+            assert.expect( 6 );
 
-            assert.equal(messagesHelper.getExitMessage(message, 'test', runner), testData.testMessage + ' ' + message, 'message include the right stats for test scope');
-            assert.equal(messagesHelper.getExitMessage(message, 'part', runner), testData.partMessage + ' ' + message, 'message include the right stats for part scope');
-            assert.equal(messagesHelper.getExitMessage(message, 'section', runner), testData.sectionMessage + ' ' + message, 'message include the right stats for section scope');
+            assert.equal( messagesHelper.getExitMessage( message, 'test', runner ), testData.testMessage + ' ' + message, 'message include the right stats for test scope' );
+            assert.equal( messagesHelper.getExitMessage( message, 'part', runner ), testData.partMessage + ' ' + message, 'message include the right stats for part scope' );
+            assert.equal( messagesHelper.getExitMessage( message, 'section', runner ), testData.sectionMessage + ' ' + message, 'message include the right stats for section scope' );
 
             data.config.enableUnansweredItemsWarning = false;
 
-            assert.equal(messagesHelper.getExitMessage(message, 'test', runner), message, 'no stats in test scope when option is disabled');
-            assert.equal(messagesHelper.getExitMessage(message, 'part', runner), message, 'no stats in part scope when option is disabled');
-            assert.equal(messagesHelper.getExitMessage(message, 'section', runner), message, 'no stats in session scope when option is disabled');
-        });
+            assert.equal( messagesHelper.getExitMessage( message, 'test', runner ), message, 'no stats in test scope when option is disabled' );
+            assert.equal( messagesHelper.getExitMessage( message, 'part', runner ), message, 'no stats in part scope when option is disabled' );
+            assert.equal( messagesHelper.getExitMessage( message, 'section', runner ), message, 'no stats in session scope when option is disabled' );
+        } );
 
-});
+} );

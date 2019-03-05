@@ -18,7 +18,8 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-define([
+define( [
+    
     'lodash',
     'taoQtiTest/controller/creator/modelOverseer',
     'taoQtiTest/controller/creator/helpers/scoring',
@@ -33,25 +34,28 @@ define([
     'json!taoQtiTest/test/creator/samples/scoringCut.json',
     'json!taoQtiTest/test/creator/samples/scoringCutCategory.json',
     'json!taoQtiTest/test/creator/samples/scoringNoOutcomes.json'
-], function (_,
-             modelOverseerFactory,
-             scoringHelper,
-             scoringSample,
-             scoringWeightedSample,
-             scoringNoneSample,
-             scoringCustomSample,
-             scoringTotalSample,
-             scoringTotalWeightedSample,
-             scoringTotalCategorySample,
-             scoringTotalCategoryWeightedSample,
-             scoringCutSample,
-             scoringCutCategorySample,
-             scoringNoOutcomesSample) {
+], function(
+   
+    _,
+    modelOverseerFactory,
+    scoringHelper,
+    scoringSample,
+    scoringWeightedSample,
+    scoringNoneSample,
+    scoringCustomSample,
+    scoringTotalSample,
+    scoringTotalWeightedSample,
+    scoringTotalCategorySample,
+    scoringTotalCategoryWeightedSample,
+    scoringCutSample,
+    scoringCutCategorySample,
+    scoringNoOutcomesSample
+) {
     'use strict';
 
     var scoringHelperApi = [
-        {title: 'init'},
-        {title: 'generate'}
+        { title: 'init' },
+        { title: 'generate' }
     ];
 
     var scoringInitCases = [
@@ -194,138 +198,133 @@ define([
         }
     ];
 
+    QUnit.module( 'helpers/scoring' );
 
-    QUnit.module('helpers/scoring');
-
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof scoringHelper, 'object', "The scoring helper module exposes an object");
-    });
-
+    QUnit.test( 'module', function( assert ) {
+        assert.expect( 1 );
+        assert.equal( typeof scoringHelper, 'object', 'The scoring helper module exposes an object' );
+    } );
 
     QUnit
-        .cases(scoringHelperApi)
-        .test('helpers/scoring API ', function (data, assert) {
-            QUnit.expect(1);
-            assert.equal(typeof scoringHelper[data.title], 'function', 'The scoring helper exposes a "' + data.title + '" function');
-        });
-
+        .cases.init( scoringHelperApi )
+        .test( 'helpers/scoring API ', function( data, assert ) {
+            assert.expect( 1 );
+            assert.equal( typeof scoringHelper[ data.title ], 'function', 'The scoring helper exposes a "' + data.title + '" function' );
+        } );
 
     QUnit
-        .cases(scoringInitCases)
-        .asyncTest('helpers/scoring.init() ', function (data, assert) {
-            var model = _.cloneDeep(data.model);
-            var modelOverseer = modelOverseerFactory(model);
+        .cases.init( scoringInitCases )
+        .test( 'helpers/scoring.init() ', function( data, assert ) {
+            var ready = assert.async();
+            var model = _.cloneDeep( data.model );
+            var modelOverseer = modelOverseerFactory( model );
 
-            QUnit.expect(5);
+            assert.expect( 5 );
 
-            modelOverseer.on('scoring-init', function() {
-                assert.equal(typeof model.scoring, 'object', 'The scoring descriptor has been set');
-                assert.equal(model.scoring.outcomeProcessing, data.outcomeProcessing, 'The right scoring processing mode has been detected');
-                assert.equal(model.scoring.categoryScore, data.categoryScore, 'The right categoryScore option has been set');
-                assert.equal(model.scoring.cutScore, data.cutScore, 'The right cutScore has been loaded');
-                assert.equal(model.scoring.weightIdentifier, data.weightIdentifier, 'The right weightIdentifier has been loaded');
+            modelOverseer.on( 'scoring-init', function() {
+                assert.equal( typeof model.scoring, 'object', 'The scoring descriptor has been set' );
+                assert.equal( model.scoring.outcomeProcessing, data.outcomeProcessing, 'The right scoring processing mode has been detected' );
+                assert.equal( model.scoring.categoryScore, data.categoryScore, 'The right categoryScore option has been set' );
+                assert.equal( model.scoring.cutScore, data.cutScore, 'The right cutScore has been loaded' );
+                assert.equal( model.scoring.weightIdentifier, data.weightIdentifier, 'The right weightIdentifier has been loaded' );
 
-               QUnit.start();
-            });
+                ready();
+            } );
 
-            scoringHelper.init(modelOverseer);
-        });
+            scoringHelper.init( modelOverseer );
+        } );
 
+    QUnit.test( 'helpers/scoring.init() #error', function( assert ) {
+        assert.expect( 2 );
 
-    QUnit.test('helpers/scoring.init() #error', function (assert) {
-        QUnit.expect(2);
-
-        assert.throws(function () {
+        assert.throws( function() {
             scoringHelper.init();
-        }, 'The scoring helper should throw an error if no modelOverseer is provided!');
+        }, 'The scoring helper should throw an error if no modelOverseer is provided!' );
 
-        assert.throws(function () {
-            scoringHelper.init({});
-        }, 'The scoring helper should throw an error if an invalid modelOverseer is provided!');
-    });
-
+        assert.throws( function() {
+            scoringHelper.init( {} );
+        }, 'The scoring helper should throw an error if an invalid modelOverseer is provided!' );
+    } );
 
     QUnit
-        .cases(scoringGenerateCases)
-        .asyncTest('helpers/scoring.generate() ', function (data, assert) {
-            var model = _.cloneDeep(data.model);
-            var modelOverseer = modelOverseerFactory(model);
+        .cases.init( scoringGenerateCases )
+        .test( 'helpers/scoring.generate() ', function( data, assert ) {
+            var ready = assert.async();
+            var model = _.cloneDeep( data.model );
+            var modelOverseer = modelOverseerFactory( model );
 
-            QUnit.expect(2);
+            assert.expect( 2 );
 
-            modelOverseer.on('scoring-init', function() {
+            modelOverseer.on( 'scoring-init', function() {
                 model.scoring.outcomeProcessing = data.outcomeProcessing;
                 model.scoring.categoryScore = data.categoryScore;
                 model.scoring.cutScore = data.cutScore;
                 model.scoring.weightIdentifier = data.weightIdentifier;
 
-                modelOverseer.trigger('scoring-change');
-            });
+                modelOverseer.trigger( 'scoring-change' );
+            } );
 
-            modelOverseer.on('scoring-write', function(writtenModel) {
+            modelOverseer.on( 'scoring-write', function( writtenModel ) {
 
-                model = _.omit(model, 'scoring');
-                writtenModel = _.omit(writtenModel, 'scoring');
+                model = _.omit( model, 'scoring' );
+                writtenModel = _.omit( writtenModel, 'scoring' );
 
-                assert.deepEqual(writtenModel, data.expected, 'The written model is as expected');
-                assert.deepEqual(model, data.expected, 'The score processing has been set');
+                assert.deepEqual( writtenModel, data.expected, 'The written model is as expected' );
+                assert.deepEqual( model, data.expected, 'The score processing has been set' );
 
-                QUnit.start();
-            });
+                ready();
+            } );
 
-            scoringHelper.init(modelOverseer);
-        });
+            scoringHelper.init( modelOverseer );
+        } );
 
+    QUnit.test( 'helpers/scoring.generate() #no scoring', function( assert ) {
+        var ready = assert.async();
+        var model = _.cloneDeep( scoringCustomSample );
+        var modelOverseer = modelOverseerFactory( model );
 
-    QUnit.asyncTest('helpers/scoring.generate() #no scoring', function (assert) {
-        var model = _.cloneDeep(scoringCustomSample);
-        var modelOverseer = modelOverseerFactory(model);
+        assert.expect( 2 );
 
-        QUnit.expect(2);
-
-        modelOverseer.on('scoring-init', function() {
+        modelOverseer.on( 'scoring-init', function() {
             delete model.scoring;
 
-            modelOverseer.trigger('scoring-change');
-        });
+            modelOverseer.trigger( 'scoring-change' );
+        } );
 
-        modelOverseer.on('scoring-write', function(writtenModel) {
+        modelOverseer.on( 'scoring-write', function( writtenModel ) {
 
-            model = _.omit(model, 'scoring');
-            writtenModel = _.omit(writtenModel, 'scoring');
+            model = _.omit( model, 'scoring' );
+            writtenModel = _.omit( writtenModel, 'scoring' );
 
-            assert.deepEqual(writtenModel, scoringCustomSample, 'The written model is as expected');
-            assert.deepEqual(model, scoringCustomSample, 'The score processing has been set');
+            assert.deepEqual( writtenModel, scoringCustomSample, 'The written model is as expected' );
+            assert.deepEqual( model, scoringCustomSample, 'The score processing has been set' );
 
-            QUnit.start();
-        });
+            ready();
+        } );
 
-        scoringHelper.init(modelOverseer);
-    });
+        scoringHelper.init( modelOverseer );
+    } );
 
-
-    QUnit.test('helpers/scoring.generate() #error', function (assert) {
+    QUnit.test( 'helpers/scoring.generate() #error', function( assert ) {
         var model = {
             scoring: {
                 outcomeProcessing: 'foo'
             }
         };
-        var modelOverseer = modelOverseerFactory(model);
+        var modelOverseer = modelOverseerFactory( model );
 
-        QUnit.expect(3);
+        assert.expect( 3 );
 
-        assert.throws(function () {
+        assert.throws( function() {
             scoringHelper.generate();
-        }, 'The scoring helper should throw an error if no modelOverseer is provided!');
+        }, 'The scoring helper should throw an error if no modelOverseer is provided!' );
 
-        assert.throws(function () {
-            scoringHelper.generate(model);
-        }, 'The scoring helper should throw an error if an invalid modelOverseer is provided!');
+        assert.throws( function() {
+            scoringHelper.generate( model );
+        }, 'The scoring helper should throw an error if an invalid modelOverseer is provided!' );
 
-        assert.throws(function () {
-            scoringHelper.generate(modelOverseer);
-        }, 'The scoring helper should throw an error if the processing mode is unknown!');
-    });
-});
+        assert.throws( function() {
+            scoringHelper.generate( modelOverseer );
+        }, 'The scoring helper should throw an error if the processing mode is unknown!' );
+    } );
+} );

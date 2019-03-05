@@ -18,11 +18,12 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
-define([
+define( [
+    
     'jquery',
     'lodash',
     'taoQtiTest/testRunner/actionBar/markForReview'
-], function($, _, markForReview) {
+], function(  $, _, markForReview ) {
     'use strict';
 
     // global mock for button config
@@ -32,82 +33,78 @@ define([
         hook: 'taoQtiTest/testRunner/actionBar/markForReview'
     };
 
+    QUnit.module( 'markForReview' );
 
-    QUnit.module('markForReview');
-
-
-    QUnit.test('module', function(assert) {
-        assert.equal(typeof markForReview, 'object', "The markForReview module exposes an object");
-    });
-
+    QUnit.test( 'module', function( assert ) {
+        assert.equal( typeof markForReview, 'object', 'The markForReview module exposes an object' );
+    } );
 
     var markForReviewApi = [
-        { name : 'init', title : 'init' },
-        { name : 'clear', title : 'clear' },
-        { name : 'render', title : 'render' },
-        { name : 'bindTo', title : 'bindTo' },
-        { name : 'bindEvents', title : 'bindEvents' },
-        { name : 'unbindEvents', title : 'unbindEvents' },
-        { name : 'isVisible', title : 'isVisible' },
-        { name : 'hasMenu', title : 'hasMenu' },
-        { name : 'isMenuOpen', title : 'isMenuOpen' },
-        { name : 'closeMenu', title : 'closeMenu' },
-        { name : 'openMenu', title : 'openMenu' },
-        { name : 'toggleMenu', title : 'toggleMenu' },
-        { name : 'setActive', title : 'setActive' },
-        { name : 'trigger', title : 'trigger' },
-        { name : 'on', title : 'on' },
-        { name : 'off', title : 'off' },
-        { name : 'setup', title : 'setup' },
-        { name : 'action', title : 'action' },
-        { name : 'menuAction', title : 'menuAction' }
+        { name: 'init', title: 'init' },
+        { name: 'clear', title: 'clear' },
+        { name: 'render', title: 'render' },
+        { name: 'bindTo', title: 'bindTo' },
+        { name: 'bindEvents', title: 'bindEvents' },
+        { name: 'unbindEvents', title: 'unbindEvents' },
+        { name: 'isVisible', title: 'isVisible' },
+        { name: 'hasMenu', title: 'hasMenu' },
+        { name: 'isMenuOpen', title: 'isMenuOpen' },
+        { name: 'closeMenu', title: 'closeMenu' },
+        { name: 'openMenu', title: 'openMenu' },
+        { name: 'toggleMenu', title: 'toggleMenu' },
+        { name: 'setActive', title: 'setActive' },
+        { name: 'trigger', title: 'trigger' },
+        { name: 'on', title: 'on' },
+        { name: 'off', title: 'off' },
+        { name: 'setup', title: 'setup' },
+        { name: 'action', title: 'action' },
+        { name: 'menuAction', title: 'menuAction' }
     ];
 
     QUnit
-        .cases(markForReviewApi)
-        .test('API ', function(data, assert) {
-            assert.equal(typeof markForReview[data.name], 'function', 'The markForReview module exposes a "' + data.title + '" function');
-        });
+        .cases.init( markForReviewApi )
+        .test( 'API ', function( data, assert ) {
+            assert.equal( typeof markForReview[ data.name ], 'function', 'The markForReview module exposes a "' + data.title + '" function' );
+        } );
 
-
-    QUnit.test('button enabled/disabled', function(assert) {
+    QUnit.test( 'button enabled/disabled', function( assert ) {
         var testContextMock = {
             reviewScreen: false,
             considerProgress: true,
             navigatorMap: [],
-            categories : []
+            categories: []
         };
-        
+
         testContextMock.reviewScreen = true;
-        markForReview.init('markForReview', configMock, testContextMock, {});
-        assert.ok(!markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is enabled and the right itemRef category is not set');
+        markForReview.init( 'markForReview', configMock, testContextMock, {} );
+        assert.ok( !markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is enabled and the right itemRef category is not set' );
 
         testContextMock.reviewScreen = false;
-        markForReview.init('markForReview', configMock, testContextMock, {});
-        assert.ok(!markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is disabled and the right itemRef category is not set');
-        
-        //add special category to enable markForReview
-        testContextMock.categories.push('x-tao-option-markReview');
-        
+        markForReview.init( 'markForReview', configMock, testContextMock, {} );
+        assert.ok( !markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is disabled and the right itemRef category is not set' );
+
+        //Add special category to enable markForReview
+        testContextMock.categories.push( 'x-tao-option-markReview' );
+
         testContextMock.reviewScreen = true;
-        markForReview.init('markForReview', configMock, testContextMock, {});
-        assert.ok(markForReview.isVisible(), 'The markForReview button is visible when the test taker screen is enabled and the right itemRef category is set');
+        markForReview.init( 'markForReview', configMock, testContextMock, {} );
+        assert.ok( markForReview.isVisible(), 'The markForReview button is visible when the test taker screen is enabled and the right itemRef category is set' );
 
         testContextMock.reviewScreen = false;
-        markForReview.init('markForReview', configMock, testContextMock, {});
-        assert.ok(!markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is disabled and the right itemRef category is set');
-    });
+        markForReview.init( 'markForReview', configMock, testContextMock, {} );
+        assert.ok( !markForReview.isVisible(), 'The markForReview button is not visible when the test taker screen is disabled and the right itemRef category is set' );
+    } );
 
-
-    QUnit.asyncTest('button install/uninstall', function(assert) {
+    QUnit.test( 'button install/uninstall', function( assert ) {
+        var ready = assert.async();
         var callExpected = true;
         var testRunnerMock = {
             markForReview: function() {
-                if (callExpected) {
-                    assert.ok(true, 'The button must trigger a call to markForReview');
-                    QUnit.start();
+                if ( callExpected ) {
+                    assert.ok( true, 'The button must trigger a call to markForReview' );
+                    ready();
                 } else {
-                    assert.ok(false, 'The button must not trigger a call to markForReview');
+                    assert.ok( false, 'The button must not trigger a call to markForReview' );
                 }
             }
         };
@@ -118,28 +115,26 @@ define([
             navigatorMap: []
         };
 
-        var $container = $('#mark-for-review-1');
+        var $container = $( '#mark-for-review-1' );
         var $btn;
 
-        markForReview.init('markForReview', configMock, testContextMock, testRunnerMock);
+        markForReview.init( 'markForReview', configMock, testContextMock, testRunnerMock );
         $btn = markForReview.render();
-        $container.append($btn);
+        $container.append( $btn );
 
         $btn.click();
 
         markForReview.clear();
 
-        QUnit.stop();
-        _.defer(function() {
-            assert.ok(true, 'The button is uninstalled and did not trigger a call to markForReview');
-            QUnit.start();
-        }, 100);
+        var ready = assert.async();
+        _.defer( function() {
+            assert.ok( true, 'The button is uninstalled and did not trigger a call to markForReview' );
+            ready();
+        }, 100 );
         $btn.click();
+    } );
 
-    });
-
-
-    QUnit.test('button active/idle', function(assert) {
+    QUnit.test( 'button active/idle', function( assert ) {
         var testRunnerMock = {
             markForReview: function() {}
         };
@@ -151,36 +146,36 @@ define([
             itemFlagged: true
         };
 
-        var $container = $('#mark-for-review-2');
+        var $container = $( '#mark-for-review-2' );
         var $btn;
 
-        markForReview.init('markForReview', configMock, testContextMock, testRunnerMock);
+        markForReview.init( 'markForReview', configMock, testContextMock, testRunnerMock );
         $btn = markForReview.render();
-        $container.append($btn);
+        $container.append( $btn );
 
-        assert.ok($btn.hasClass('active'), 'The markForReview button is activated when the current item is flagged');
+        assert.ok( $btn.hasClass( 'active' ), 'The markForReview button is activated when the current item is flagged' );
 
-        $container = $('#mark-for-review-3');
+        $container = $( '#mark-for-review-3' );
 
         testContextMock.itemFlagged = false;
-        markForReview.init('markForReview', configMock, testContextMock, testRunnerMock);
+        markForReview.init( 'markForReview', configMock, testContextMock, testRunnerMock );
         $btn = markForReview.render();
-        $container.append($btn);
+        $container.append( $btn );
 
-        assert.ok(!$btn.hasClass('active'), 'The markForReview button is idled when the current item is not flagged');
-    });
+        assert.ok( !$btn.hasClass( 'active' ), 'The markForReview button is idled when the current item is not flagged' );
+    } );
 
-
-    QUnit.asyncTest('button click', function(assert) {
+    QUnit.test( 'button click', function( assert ) {
         var expectedFlag = true;
         var expectedPosition = 1;
+        var ready = assert.async(4);
 
         var testRunnerMock = {
-            markForReview: function(flag, itemPosition) {
-                assert.equal(flag, expectedFlag, 'The markForReview button must call the markForReview action with the right flag state');
-                assert.equal(itemPosition, expectedPosition, 'The markForReview button must call the markForReview action with the right item position');
-                assert.equal(!$btn.hasClass('active'), flag, 'The markForReview button is active when the current item is flagged, or idle when the current item is not flagged');
-                QUnit.start();
+            markForReview: function( flag, itemPosition ) {
+                assert.equal( flag, expectedFlag, 'The markForReview button must call the markForReview action with the right flag state' );
+                assert.equal( itemPosition, expectedPosition, 'The markForReview button must call the markForReview action with the right item position' );
+                assert.equal( !$btn.hasClass( 'active' ), flag, 'The markForReview button is active when the current item is flagged, or idle when the current item is not flagged' );
+                ready();
             }
         };
 
@@ -192,30 +187,27 @@ define([
             itemPosition: 1
         };
 
-        var $container = $('#mark-for-review-4');
+        var $container = $( '#mark-for-review-4' );
         var $btn;
 
-        markForReview.init('markForReview', configMock, testContextMock, testRunnerMock);
+        markForReview.init( 'markForReview', configMock, testContextMock, testRunnerMock );
         $btn = markForReview.render();
-        $container.append($btn);
+        $container.append( $btn );
 
-        assert.ok(!$btn.hasClass('active'), 'The markForReview button is idled when the current item is not flagged');
+        assert.ok( !$btn.hasClass( 'active' ), 'The markForReview button is idled when the current item is not flagged' );
 
         $btn.click();
 
-        QUnit.stop();
         expectedFlag = false;
         $btn.click();
 
-        QUnit.stop();
         expectedFlag = true;
         expectedPosition = 2;
         testContextMock.itemPosition = 2;
         $btn.click();
 
-        QUnit.stop();
         expectedFlag = false;
         $btn.click();
-    });
+    } );
 
-});
+} );

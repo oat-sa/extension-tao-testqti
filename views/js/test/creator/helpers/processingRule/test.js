@@ -18,10 +18,11 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-define([
+define( [
+    
     'lodash',
     'taoQtiTest/controller/creator/helpers/processingRule'
-], function (_, processingRule) {
+], function(  _, processingRule ) {
     'use strict';
 
     var createCases, createErrorCases;
@@ -43,45 +44,41 @@ define([
     var outcomeIfCases, outcomeIfErrorCases;
     var outcomeElseCases, outcomeElseErrorCases;
     var processingRuleApi = [
-        {title: 'create'},
-        {title: 'setExpression'},
-        {title: 'addExpression'},
-        {title: 'setOutcomeValue'},
-        {title: 'gte'},
-        {title: 'lte'},
-        {title: 'divide'},
-        {title: 'sum'},
-        {title: 'testVariables'},
-        {title: 'outcomeMaximum'},
-        {title: 'numberPresented'},
-        {title: 'baseValue'},
-        {title: 'variable'},
-        {title: 'match'},
-        {title: 'isNull'},
-        {title: 'outcomeCondition'},
-        {title: 'outcomeIf'},
-        {title: 'outcomeElse'}
+        { title: 'create' },
+        { title: 'setExpression' },
+        { title: 'addExpression' },
+        { title: 'setOutcomeValue' },
+        { title: 'gte' },
+        { title: 'lte' },
+        { title: 'divide' },
+        { title: 'sum' },
+        { title: 'testVariables' },
+        { title: 'outcomeMaximum' },
+        { title: 'numberPresented' },
+        { title: 'baseValue' },
+        { title: 'variable' },
+        { title: 'match' },
+        { title: 'isNull' },
+        { title: 'outcomeCondition' },
+        { title: 'outcomeIf' },
+        { title: 'outcomeElse' }
     ];
 
+    QUnit.module( 'helpers/processingRule' );
 
-    QUnit.module('helpers/processingRule');
-
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof processingRule, 'object', "The processingRule helper module exposes an object");
-    });
-
+    QUnit.test( 'module', function( assert ) {
+        assert.expect( 1 );
+        assert.equal( typeof processingRule, 'object', 'The processingRule helper module exposes an object' );
+    } );
 
     QUnit
-        .cases(processingRuleApi)
-        .test('helpers/processingRule API ', function (data, assert) {
-            QUnit.expect(1);
-            assert.equal(typeof processingRule[data.title], 'function', 'The processingRule helper exposes a "' + data.title + '" function');
-        });
+        .cases.init( processingRuleApi )
+        .test( 'helpers/processingRule API ', function( data, assert ) {
+            assert.expect( 1 );
+            assert.equal( typeof processingRule[ data.title ], 'function', 'The processingRule helper exposes a "' + data.title + '" function' );
+        } );
 
-
-    createCases = [{
+    createCases = [ {
         title: 'only the type',
         type: 'foo',
         expected: {
@@ -110,18 +107,18 @@ define([
     }, {
         title: 'type and array expression',
         type: 'foo',
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression2'
-        }],
+        } ],
         expected: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression2'
-            }]
+            } ]
         }
     }, {
         title: 'type, identifier, expression',
@@ -141,31 +138,30 @@ define([
         title: 'type, identifier, array expression',
         type: 'foo',
         identifier: 'bar',
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression2'
-        }],
+        } ],
         expected: {
             'qti-type': 'foo',
             identifier: 'bar',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression2'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(createCases)
-        .test('helpers/processingRule.create()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.create(data.type, data.identifier, data.expression), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( createCases )
+        .test( 'helpers/processingRule.create()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.create( data.type, data.identifier, data.expression ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    createErrorCases = [{
+    createErrorCases = [ {
         title: 'Missing type',
         identifier: 'foo'
     }, {
@@ -174,12 +170,12 @@ define([
         identifier: 'foo'
     }, {
         title: 'Wrong type',
-        type: {foo: 'bar'},
+        type: { foo: 'bar' },
         identifier: 'foo'
     }, {
         title: 'Wrong identifier',
         type: 'foo',
-        identifier: {foo: 'bar'}
+        identifier: { foo: 'bar' }
     }, {
         title: 'Bad identifier',
         type: 'foo',
@@ -191,20 +187,19 @@ define([
     }, {
         title: 'Invalid expressions',
         type: 'foo',
-        expression: [{}]
-    }];
+        expression: [ {} ]
+    } ];
 
     QUnit
-        .cases(createErrorCases)
-        .test('helpers/processingRule.create() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.create(data.type, data.identifier, data.expression);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( createErrorCases )
+        .test( 'helpers/processingRule.create() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.create( data.type, data.identifier, data.expression );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    setExpressionCases = [{
+    setExpressionCases = [ {
         title: 'Set expression',
         processingRule: {
             'qti-type': 'foo'
@@ -223,18 +218,18 @@ define([
         processingRule: {
             'qti-type': 'foo'
         },
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression1'
-        }],
+        } ],
         expected: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression1'
-            }]
+            } ]
         }
     }, {
         title: 'Replace expression',
@@ -257,34 +252,34 @@ define([
         title: 'Replace array expression',
         processingRule: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'old1'
             }, {
                 'qti-type': 'old1'
-            }]
+            } ]
         },
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression1'
-        }],
+        } ],
         expected: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression1'
-            }]
+            } ]
         }
     }, {
         title: 'Replace expression, existing array',
         processingRule: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'old1'
             }, {
                 'qti-type': 'old1'
-            }]
+            } ]
         },
         expression: {
             'qti-type': 'expression'
@@ -304,32 +299,31 @@ define([
                 'qti-type': 'old'
             }
         },
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression1'
-        }],
+        } ],
         expected: {
             'qti-type': 'foo',
             expression: null,
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression1'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(setExpressionCases)
-        .test('helpers/processingRule.setExpression()', function (data, assert) {
-            QUnit.expect(1);
-            processingRule.setExpression(data.processingRule, data.expression);
-            assert.deepEqual(data.processingRule, data.expected, 'The processingRule helper has correctly updated the processing rule');
-        });
+        .cases.init( setExpressionCases )
+        .test( 'helpers/processingRule.setExpression()', function( data, assert ) {
+            assert.expect( 1 );
+            processingRule.setExpression( data.processingRule, data.expression );
+            assert.deepEqual( data.processingRule, data.expected, 'The processingRule helper has correctly updated the processing rule' );
+        } );
 
-
-    setExpressionErrorCases = [{
+    setExpressionErrorCases = [ {
         title: 'Invalid expression',
         processingRule: {
             'qti-type': 'foo'
@@ -340,20 +334,19 @@ define([
         processingRule: {
             'qti-type': 'foo'
         },
-        expression: [{}]
-    }];
+        expression: [ {} ]
+    } ];
 
     QUnit
-        .cases(setExpressionErrorCases)
-        .test('helpers/processingRule.setExpression() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.setExpression(data.processingRule, data.expression);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( setExpressionErrorCases )
+        .test( 'helpers/processingRule.setExpression() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.setExpression( data.processingRule, data.expression );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    addExpressionCases = [{
+    addExpressionCases = [ {
         title: 'Set expression',
         processingRule: {
             'qti-type': 'foo'
@@ -372,18 +365,18 @@ define([
         processingRule: {
             'qti-type': 'foo'
         },
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression1'
-        }],
+        } ],
         expected: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression1'
-            }]
+            } ]
         }
     }, {
         title: 'Add expression',
@@ -399,30 +392,30 @@ define([
         expected: {
             'qti-type': 'foo',
             expression: null,
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'old'
             }, {
                 'qti-type': 'expression'
-            }]
+            } ]
         }
     }, {
         title: 'Add array expression',
         processingRule: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'old1'
             }, {
                 'qti-type': 'old1'
-            }]
+            } ]
         },
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression1'
-        }],
+        } ],
         expected: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'old1'
             }, {
                 'qti-type': 'old1'
@@ -430,30 +423,30 @@ define([
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression1'
-            }]
+            } ]
         }
     }, {
         title: 'Add expression, existing array',
         processingRule: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'old1'
             }, {
                 'qti-type': 'old1'
-            }]
+            } ]
         },
         expression: {
             'qti-type': 'expression'
         },
         expected: {
             'qti-type': 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'old1'
             }, {
                 'qti-type': 'old1'
             }, {
                 'qti-type': 'expression'
-            }]
+            } ]
         }
     }, {
         title: 'Add array expression, existing single',
@@ -463,34 +456,33 @@ define([
                 'qti-type': 'old'
             }
         },
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression1'
-        }],
+        } ],
         expected: {
             'qti-type': 'foo',
             expression: null,
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'old'
             }, {
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression1'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(addExpressionCases)
-        .test('helpers/processingRule.addExpression()', function (data, assert) {
-            QUnit.expect(1);
-            processingRule.addExpression(data.processingRule, data.expression);
-            assert.deepEqual(data.processingRule, data.expected, 'The processingRule helper has correctly updated the processing rule');
-        });
+        .cases.init( addExpressionCases )
+        .test( 'helpers/processingRule.addExpression()', function( data, assert ) {
+            assert.expect( 1 );
+            processingRule.addExpression( data.processingRule, data.expression );
+            assert.deepEqual( data.processingRule, data.expected, 'The processingRule helper has correctly updated the processing rule' );
+        } );
 
-
-    addExpressionErrorCases = [{
+    addExpressionErrorCases = [ {
         title: 'Invalid expression',
         processingRule: {
             'qti-type': 'foo'
@@ -501,20 +493,19 @@ define([
         processingRule: {
             'qti-type': 'foo'
         },
-        expression: [{}]
-    }];
+        expression: [ {} ]
+    } ];
 
     QUnit
-        .cases(addExpressionErrorCases)
-        .test('helpers/processingRule.setExpression() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.addExpression(data.processingRule, data.expression);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( addExpressionErrorCases )
+        .test( 'helpers/processingRule.setExpression() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.addExpression( data.processingRule, data.expression );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    setOutcomeValueCases = [{
+    setOutcomeValueCases = [ {
         title: 'Identifier only',
         identifier: 'foo',
         expected: {
@@ -537,55 +528,53 @@ define([
     }, {
         title: 'Identifier and array expression',
         identifier: 'foo',
-        expression: [{
+        expression: [ {
             'qti-type': 'expression1'
         }, {
             'qti-type': 'expression2'
-        }],
+        } ],
         expected: {
             'qti-type': 'setOutcomeValue',
             identifier: 'foo',
-            expressions: [{
+            expressions: [ {
                 'qti-type': 'expression1'
             }, {
                 'qti-type': 'expression2'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(setOutcomeValueCases)
-        .test('helpers/processingRule.setOutcomeValue()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.setOutcomeValue(data.identifier, data.expression), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( setOutcomeValueCases )
+        .test( 'helpers/processingRule.setOutcomeValue()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.setOutcomeValue( data.identifier, data.expression ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    setOutcomeValueErrorCases = [{
+    setOutcomeValueErrorCases = [ {
         title: 'Missing identifier'
     }, {
         title: 'Empty identifier',
         identifier: ''
     }, {
         title: 'Wrong identifier',
-        identifier: {foo: 'bar'}
+        identifier: { foo: 'bar' }
     }, {
         title: 'Bad identifier',
         type: 'foo',
         identifier: '12 foo bar'
-    }];
+    } ];
 
     QUnit
-        .cases(setOutcomeValueErrorCases)
-        .test('helpers/processingRule.setOutcomeValue() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.setOutcomeValue(data.identifier, data.expression);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( setOutcomeValueErrorCases )
+        .test( 'helpers/processingRule.setOutcomeValue() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.setOutcomeValue( data.identifier, data.expression );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    gteCases = [{
+    gteCases = [ {
         title: 'left and right',
         left: {
             'qti-type': 'left'
@@ -597,26 +586,25 @@ define([
             'qti-type': 'gte',
             minOperands: 2,
             maxOperands: 2,
-            acceptedCardinalities: [0],
-            acceptedBaseTypes: [2, 3],
-            expressions: [{
+            acceptedCardinalities: [ 0 ],
+            acceptedBaseTypes: [ 2, 3 ],
+            expressions: [ {
                 'qti-type': 'left'
             }, {
                 'qti-type': 'right'
-            }]
+            } ]
         }
 
-    }];
+    } ];
 
     QUnit
-        .cases(gteCases)
-        .test('helpers/processingRule.gte()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.gte(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( gteCases )
+        .test( 'helpers/processingRule.gte()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.gte( data.left, data.right ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    lteCases = [{
+    lteCases = [ {
         title: 'left and right',
         left: {
             'qti-type': 'left'
@@ -628,26 +616,25 @@ define([
             'qti-type': 'lte',
             minOperands: 2,
             maxOperands: 2,
-            acceptedCardinalities: [0],
-            acceptedBaseTypes: [2, 3],
-            expressions: [{
+            acceptedCardinalities: [ 0 ],
+            acceptedBaseTypes: [ 2, 3 ],
+            expressions: [ {
                 'qti-type': 'left'
             }, {
                 'qti-type': 'right'
-            }]
+            } ]
         }
 
-    }];
+    } ];
 
     QUnit
-        .cases(lteCases)
-        .test('helpers/processingRule.lte()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.lte(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( lteCases )
+        .test( 'helpers/processingRule.lte()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.lte( data.left, data.right ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    divideCases = [{
+    divideCases = [ {
         title: 'left and right',
         left: {
             'qti-type': 'left'
@@ -659,26 +646,25 @@ define([
             'qti-type': 'divide',
             minOperands: 2,
             maxOperands: 2,
-            acceptedCardinalities: [0],
-            acceptedBaseTypes: [2, 3],
-            expressions: [{
+            acceptedCardinalities: [ 0 ],
+            acceptedBaseTypes: [ 2, 3 ],
+            expressions: [ {
                 'qti-type': 'left'
             }, {
                 'qti-type': 'right'
-            }]
+            } ]
         }
 
-    }];
+    } ];
 
     QUnit
-        .cases(divideCases)
-        .test('helpers/processingRule.divide()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.divide(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( divideCases )
+        .test( 'helpers/processingRule.divide()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.divide( data.left, data.right ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    sumCases = [{
+    sumCases = [ {
         title: 'single term',
         terms: {
             'qti-type': 'term1'
@@ -687,42 +673,41 @@ define([
             'qti-type': 'sum',
             minOperands: 1,
             maxOperands: -1,
-            acceptedCardinalities: [0, 1, 2],
-            acceptedBaseTypes: [2, 3],
-            expressions: [{
+            acceptedCardinalities: [ 0, 1, 2 ],
+            acceptedBaseTypes: [ 2, 3 ],
+            expressions: [ {
                 'qti-type': 'term1'
-            }]
+            } ]
         }
     }, {
         title: 'several terms',
-        terms: [{
+        terms: [ {
             'qti-type': 'term1'
         }, {
             'qti-type': 'term2'
-        }],
+        } ],
         expected: {
             'qti-type': 'sum',
             minOperands: 1,
             maxOperands: -1,
-            acceptedCardinalities: [0, 1, 2],
-            acceptedBaseTypes: [2, 3],
-            expressions: [{
+            acceptedCardinalities: [ 0, 1, 2 ],
+            acceptedBaseTypes: [ 2, 3 ],
+            expressions: [ {
                 'qti-type': 'term1'
             }, {
                 'qti-type': 'term2'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(sumCases)
-        .test('helpers/processingRule.sum()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.sum(data.terms), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( sumCases )
+        .test( 'helpers/processingRule.sum()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.sum( data.terms ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    testVariablesCases = [{
+    testVariablesCases = [ {
         title: 'only identifier',
         identifier: 'foo',
         expected: {
@@ -783,20 +768,20 @@ define([
             baseType: -1,
             weightIdentifier: '',
             sectionIdentifier: '',
-            includeCategories: ['bar'],
+            includeCategories: [ 'bar' ],
             excludeCategories: []
         }
     }, {
         title: 'identifier and one category to include as array',
         identifier: 'foo',
-        includeCategories: ['bar'],
+        includeCategories: [ 'bar' ],
         expected: {
             'qti-type': 'testVariables',
             variableIdentifier: 'foo',
             baseType: -1,
             weightIdentifier: '',
             sectionIdentifier: '',
-            includeCategories: ['bar'],
+            includeCategories: [ 'bar' ],
             excludeCategories: []
         }
     }, {
@@ -810,12 +795,12 @@ define([
             weightIdentifier: '',
             sectionIdentifier: '',
             includeCategories: [],
-            excludeCategories: ['bar']
+            excludeCategories: [ 'bar' ]
         }
     }, {
         title: 'identifier and one category to exclude as array',
         identifier: 'foo',
-        excludeCategories: ['bar'],
+        excludeCategories: [ 'bar' ],
         expected: {
             'qti-type': 'testVariables',
             variableIdentifier: 'foo',
@@ -823,47 +808,45 @@ define([
             weightIdentifier: '',
             sectionIdentifier: '',
             includeCategories: [],
-            excludeCategories: ['bar']
+            excludeCategories: [ 'bar' ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(testVariablesCases)
-        .test('helpers/processingRule.testVariables()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.testVariables(data.identifier, data.type, data.weight, data.includeCategories, data.excludeCategories), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( testVariablesCases )
+        .test( 'helpers/processingRule.testVariables()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.testVariables( data.identifier, data.type, data.weight, data.includeCategories, data.excludeCategories ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    testVariablesErrorCases = [{
+    testVariablesErrorCases = [ {
         title: 'Missing identifier'
     }, {
         title: 'Empty identifier',
         identifier: ''
     }, {
         title: 'Wrong identifier',
-        identifier: {foo: 'bar'}
+        identifier: { foo: 'bar' }
     }, {
         title: 'Wrong weight identifier',
         identifier: 'foo',
-        weight: {foo: 'bar'}
+        weight: { foo: 'bar' }
     }, {
         title: 'Bad weight identifier',
         identifier: 'foo',
         weight: '12 foo bar'
-    }];
+    } ];
 
     QUnit
-        .cases(testVariablesErrorCases)
-        .test('helpers/processingRule.testVariables() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.testVariables(data.identifier, data.type, data.weight, data.includeCategories, data.excludeCategories);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( testVariablesErrorCases )
+        .test( 'helpers/processingRule.testVariables() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.testVariables( data.identifier, data.type, data.weight, data.includeCategories, data.excludeCategories );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    outcomeMaximumCases = [{
+    outcomeMaximumCases = [ {
         title: 'only identifier',
         identifier: 'foo',
         expected: {
@@ -895,19 +878,19 @@ define([
             outcomeIdentifier: 'foo',
             weightIdentifier: '',
             sectionIdentifier: '',
-            includeCategories: ['bar'],
+            includeCategories: [ 'bar' ],
             excludeCategories: []
         }
     }, {
         title: 'identifier and one category to include as array',
         identifier: 'foo',
-        includeCategories: ['bar'],
+        includeCategories: [ 'bar' ],
         expected: {
             'qti-type': 'outcomeMaximum',
             outcomeIdentifier: 'foo',
             weightIdentifier: '',
             sectionIdentifier: '',
-            includeCategories: ['bar'],
+            includeCategories: [ 'bar' ],
             excludeCategories: []
         }
     }, {
@@ -920,59 +903,57 @@ define([
             weightIdentifier: '',
             sectionIdentifier: '',
             includeCategories: [],
-            excludeCategories: ['bar']
+            excludeCategories: [ 'bar' ]
         }
     }, {
         title: 'identifier and one category to exclude as array',
         identifier: 'foo',
-        excludeCategories: ['bar'],
+        excludeCategories: [ 'bar' ],
         expected: {
             'qti-type': 'outcomeMaximum',
             outcomeIdentifier: 'foo',
             weightIdentifier: '',
             sectionIdentifier: '',
             includeCategories: [],
-            excludeCategories: ['bar']
+            excludeCategories: [ 'bar' ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(outcomeMaximumCases)
-        .test('helpers/processingRule.outcomeMaximum()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.outcomeMaximum(data.identifier, data.weight, data.includeCategories, data.excludeCategories), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( outcomeMaximumCases )
+        .test( 'helpers/processingRule.outcomeMaximum()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.outcomeMaximum( data.identifier, data.weight, data.includeCategories, data.excludeCategories ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    outcomeMaximumErrorCases = [{
+    outcomeMaximumErrorCases = [ {
         title: 'Missing identifier'
     }, {
         title: 'Empty identifier',
         identifier: ''
     }, {
         title: 'Wrong identifier',
-        identifier: {foo: 'bar'}
+        identifier: { foo: 'bar' }
     }, {
         title: 'Wrong weight identifier',
         identifier: 'foo',
-        weight: {foo: 'bar'}
+        weight: { foo: 'bar' }
     }, {
         title: 'Bad weight identifier',
         identifier: 'foo',
         weight: '12 foo bar'
-    }];
+    } ];
 
     QUnit
-        .cases(outcomeMaximumErrorCases)
-        .test('helpers/processingRule.outcomeMaximum() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.outcomeMaximum(data.identifier, data.weight, data.includeCategories, data.excludeCategories);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( outcomeMaximumErrorCases )
+        .test( 'helpers/processingRule.outcomeMaximum() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.outcomeMaximum( data.identifier, data.weight, data.includeCategories, data.excludeCategories );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    numberPresentedCases = [{
+    numberPresentedCases = [ {
         title: 'no categories',
         expected: {
             'qti-type': 'numberPresented',
@@ -986,16 +967,16 @@ define([
         expected: {
             'qti-type': 'numberPresented',
             sectionIdentifier: '',
-            includeCategories: ['bar'],
+            includeCategories: [ 'bar' ],
             excludeCategories: []
         }
     }, {
         title: 'category to include as array',
-        includeCategories: ['bar'],
+        includeCategories: [ 'bar' ],
         expected: {
             'qti-type': 'numberPresented',
             sectionIdentifier: '',
-            includeCategories: ['bar'],
+            includeCategories: [ 'bar' ],
             excludeCategories: []
         }
     }, {
@@ -1005,28 +986,27 @@ define([
             'qti-type': 'numberPresented',
             sectionIdentifier: '',
             includeCategories: [],
-            excludeCategories: ['bar']
+            excludeCategories: [ 'bar' ]
         }
     }, {
         title: 'category to exclude as array',
-        excludeCategories: ['bar'],
+        excludeCategories: [ 'bar' ],
         expected: {
             'qti-type': 'numberPresented',
             sectionIdentifier: '',
             includeCategories: [],
-            excludeCategories: ['bar']
+            excludeCategories: [ 'bar' ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(numberPresentedCases)
-        .test('helpers/processingRule.numberPresented()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.numberPresented(data.includeCategories, data.excludeCategories), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( numberPresentedCases )
+        .test( 'helpers/processingRule.numberPresented()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.numberPresented( data.includeCategories, data.excludeCategories ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    baseValueCases = [{
+    baseValueCases = [ {
         title: 'no input',
         expected: {
             'qti-type': 'baseValue',
@@ -1068,17 +1048,16 @@ define([
             baseType: 3,
             value: 7
         }
-    }];
+    } ];
 
     QUnit
-        .cases(baseValueCases)
-        .test('helpers/processingRule.baseValue()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.baseValue(data.value, data.type), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( baseValueCases )
+        .test( 'helpers/processingRule.baseValue()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.baseValue( data.value, data.type ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    variableCases = [{
+    variableCases = [ {
         title: 'identifier',
         identifier: 'foo',
         expected: {
@@ -1095,45 +1074,43 @@ define([
             identifier: 'foo',
             weightIdentifier: 'bar'
         }
-    }];
+    } ];
 
     QUnit
-        .cases(variableCases)
-        .test('helpers/processingRule.variable()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.variable(data.identifier, data.weight), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( variableCases )
+        .test( 'helpers/processingRule.variable()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.variable( data.identifier, data.weight ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    variableErrorCases = [{
+    variableErrorCases = [ {
         title: 'Missing identifier'
     }, {
         title: 'Empty identifier',
         identifier: ''
     }, {
         title: 'Wrong identifier',
-        identifier: {foo: 'bar'}
+        identifier: { foo: 'bar' }
     }, {
         title: 'Wrong weight identifier',
         identifier: 'foo',
-        weight: {foo: 'bar'}
+        weight: { foo: 'bar' }
     }, {
         title: 'Bad weight identifier',
         identifier: 'foo',
         weight: '12 foo bar'
-    }];
+    } ];
 
     QUnit
-        .cases(variableErrorCases)
-        .test('helpers/processingRule.variables() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.variable(data.identifier, data.weight);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( variableErrorCases )
+        .test( 'helpers/processingRule.variables() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.variable( data.identifier, data.weight );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    matchCases = [{
+    matchCases = [ {
         title: 'left and right',
         left: {
             'qti-type': 'left'
@@ -1145,13 +1122,13 @@ define([
             'qti-type': 'match',
             minOperands: 2,
             maxOperands: 2,
-            acceptedCardinalities: [4],
-            acceptedBaseTypes: [4],
-            expressions: [{
+            acceptedCardinalities: [ 4 ],
+            acceptedBaseTypes: [ 4 ],
+            expressions: [ {
                 'qti-type': 'left'
             }, {
                 'qti-type': 'right'
-            }]
+            } ]
         }
     }, {
         title: 'left and right, default type',
@@ -1165,25 +1142,24 @@ define([
             'qti-type': 'match',
             minOperands: 2,
             maxOperands: 2,
-            acceptedCardinalities: [4],
-            acceptedBaseTypes: [4],
-            expressions: [{
+            acceptedCardinalities: [ 4 ],
+            acceptedBaseTypes: [ 4 ],
+            expressions: [ {
                 'qti-type': 'left'
             }, {
                 'qti-type': 'right'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(matchCases)
-        .test('helpers/processingRule.match()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.match(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( matchCases )
+        .test( 'helpers/processingRule.match()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.match( data.left, data.right ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    isNullCases = [{
+    isNullCases = [ {
         title: 'with parameter',
         expression: {
             'qti-type': 'foo'
@@ -1192,45 +1168,43 @@ define([
             'qti-type': 'isNull',
             minOperands: 1,
             maxOperands: 1,
-            acceptedCardinalities: [5],
-            acceptedBaseTypes: [12],
-            expressions: [{
+            acceptedCardinalities: [ 5 ],
+            acceptedBaseTypes: [ 12 ],
+            expressions: [ {
                 'qti-type': 'foo'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(isNullCases)
-        .test('helpers/processingRule.isNull()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.isNull(data.expression), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( isNullCases )
+        .test( 'helpers/processingRule.isNull()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.isNull( data.expression ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    isNullErrorCases = [{
+    isNullErrorCases = [ {
         title: 'without parameter',
         expected: {
             'qti-type': 'isNull',
             minOperands: 1,
             maxOperands: 1,
-            acceptedCardinalities: [5],
-            acceptedBaseTypes: [12],
+            acceptedCardinalities: [ 5 ],
+            acceptedBaseTypes: [ 12 ],
             expressions: []
         }
-    }];
+    } ];
 
     QUnit
-        .cases(isNullErrorCases)
-        .test('helpers/processingRule.isNull() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.isNull(data.expression);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( isNullErrorCases )
+        .test( 'helpers/processingRule.isNull() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.isNull( data.expression );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    outcomeConditionCases = [{
+    outcomeConditionCases = [ {
         title: 'If but no Else',
         outcomeIf: {
             'qti-type': 'outcomeIf'
@@ -1260,17 +1234,16 @@ define([
                 'qti-type': 'outcomeElse'
             }
         }
-    }];
+    } ];
 
     QUnit
-        .cases(outcomeConditionCases)
-        .test('helpers/processingRule.outcomeCondition()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.outcomeCondition(data.outcomeIf, data.outcomeElse), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( outcomeConditionCases )
+        .test( 'helpers/processingRule.outcomeCondition()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.outcomeCondition( data.outcomeIf, data.outcomeElse ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    outcomeConditionErrorCases = [{
+    outcomeConditionErrorCases = [ {
         title: 'No If nor Else'
     }, {
         title: 'An invalid If',
@@ -1294,19 +1267,18 @@ define([
         outcomeElse: {
             'qti-type': 'outcomeIf'
         }
-    }];
+    } ];
 
     QUnit
-        .cases(outcomeConditionErrorCases)
-        .test('helpers/processingRule.outcomeCondition() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.outcomeCondition(data.outcomeIf, data.outcomeElse);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( outcomeConditionErrorCases )
+        .test( 'helpers/processingRule.outcomeCondition() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.outcomeCondition( data.outcomeIf, data.outcomeElse );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    outcomeIfCases = [{
+    outcomeIfCases = [ {
         title: 'An Expression, but empty Instruction',
         expression: {
             'qti-type': 'match'
@@ -1332,42 +1304,41 @@ define([
             expression: {
                 'qti-type': 'match'
             },
-            outcomeRules: [{
+            outcomeRules: [ {
                 'qti-type': 'foo'
-            }]
+            } ]
         }
     }, {
         title: 'An Expression and a list of Instruction',
         expression: {
             'qti-type': 'match'
         },
-        instruction: [{
+        instruction: [ {
             'qti-type': 'foo'
         }, {
             'qti-type': 'bar'
-        }],
+        } ],
         expected: {
             'qti-type': 'outcomeIf',
             expression: {
                 'qti-type': 'match'
             },
-            outcomeRules: [{
+            outcomeRules: [ {
                 'qti-type': 'foo'
             }, {
                 'qti-type': 'bar'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(outcomeIfCases)
-        .test('helpers/processingRule.outcomeIf()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.outcomeIf(data.expression, data.instruction), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( outcomeIfCases )
+        .test( 'helpers/processingRule.outcomeIf()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.outcomeIf( data.expression, data.instruction ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    outcomeIfErrorCases = [{
+    outcomeIfErrorCases = [ {
         title: 'No Expression nor Instruction'
     }, {
         title: 'An invalid Expression',
@@ -1384,24 +1355,23 @@ define([
         expression: {
             'qti-type': 'match'
         },
-        instruction: [{
+        instruction: [ {
             'qti-type': 'foo'
         }, {
             foo: 'bar'
-        }]
-    }];
+        } ]
+    } ];
 
     QUnit
-        .cases(outcomeIfErrorCases)
-        .test('helpers/processingRule.outcomeIf() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.outcomeIf(data.expression, data.instruction);
-            }, 'The processingRule throws error when the input is wrong');
-        });
+        .cases.init( outcomeIfErrorCases )
+        .test( 'helpers/processingRule.outcomeIf() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.outcomeIf( data.expression, data.instruction );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
 
-
-    outcomeElseCases = [{
+    outcomeElseCases = [ {
         title: 'An empty Instruction',
         instruction: [],
         expected: {
@@ -1415,55 +1385,54 @@ define([
         },
         expected: {
             'qti-type': 'outcomeElse',
-            outcomeRules: [{
+            outcomeRules: [ {
                 'qti-type': 'foo'
-            }]
+            } ]
         }
     }, {
         title: 'A list of Instruction',
-        instruction: [{
+        instruction: [ {
             'qti-type': 'foo'
         }, {
             'qti-type': 'bar'
-        }],
+        } ],
         expected: {
             'qti-type': 'outcomeElse',
-            outcomeRules: [{
+            outcomeRules: [ {
                 'qti-type': 'foo'
             }, {
                 'qti-type': 'bar'
-            }]
+            } ]
         }
-    }];
+    } ];
 
     QUnit
-        .cases(outcomeElseCases)
-        .test('helpers/processingRule.outcomeElse()', function (data, assert) {
-            QUnit.expect(1);
-            assert.deepEqual(processingRule.outcomeElse(data.instruction), data.expected, 'The processingRule helper has created the expected processing rule');
-        });
+        .cases.init( outcomeElseCases )
+        .test( 'helpers/processingRule.outcomeElse()', function( data, assert ) {
+            assert.expect( 1 );
+            assert.deepEqual( processingRule.outcomeElse( data.instruction ), data.expected, 'The processingRule helper has created the expected processing rule' );
+        } );
 
-
-    outcomeElseErrorCases = [{
+    outcomeElseErrorCases = [ {
         title: 'No Instruction'
     }, {
         title: 'An invalid Instruction',
         instruction: {}
     }, {
         title: 'An invalid Instruction in an array',
-        instruction: [{
+        instruction: [ {
             'qti-type': 'foo'
         }, {
             foo: 'bar'
-        }]
-    }];
+        } ]
+    } ];
 
     QUnit
-        .cases(outcomeElseErrorCases)
-        .test('helpers/processingRule.outcomeElse() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
-                processingRule.outcomeElse(data.instruction);
-            }, 'The processingRule throws error when the input is wrong');
-        });
-});
+        .cases.init( outcomeElseErrorCases )
+        .test( 'helpers/processingRule.outcomeElse() #error', function( data, assert ) {
+            assert.expect( 1 );
+            assert.throws( function() {
+                processingRule.outcomeElse( data.instruction );
+            }, 'The processingRule throws error when the input is wrong' );
+        } );
+} );

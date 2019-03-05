@@ -74,7 +74,7 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
             var $cutScoreLine = $('.test-cut-score', $view);
             var $weightIdentifierLine = $('.test-weight-identifier', $view);
             var $descriptions = $('.test-outcome-processing-description', $view);
-            var $generate = $('[data-action="generate-outcomes"]', $view);
+            var $generate = $('[data-action='generate-outcomes']', $view);
             var $title = $('.test-creator-test > h1 [data-bind=title]');
             var scoringState = JSON.stringify(testModel.scoring);
 
@@ -86,7 +86,7 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
                 hider.toggle($categoryScoreLine, noOptions);
                 hider.toggle($weightIdentifierLine, noOptions);
                 hider.hide($descriptions);
-                hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
+                hider.show($descriptions.filter('[data-key='' + scoring.outcomeProcessing + '']'));
 
                 if (scoringState !== newScoringState) {
                     /**

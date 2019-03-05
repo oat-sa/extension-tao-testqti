@@ -18,47 +18,49 @@
 /**
  * @author Dieter Raber <dieter@taotesting.com>
  */
-define([
+define( [
+    
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/answerElimination/eliminator'
-], function($, runnerFactory, providerMock, eliminatorFactory) {
+], function(  $, runnerFactory, providerMock, eliminatorFactory ) {
     'use strict';
 
     var providerName = 'mock';
-    runnerFactory.registerProvider(providerName, providerMock());
+    runnerFactory.registerProvider( providerName, providerMock() );
 
-    QUnit.module('eliminatorFactory');
+    QUnit.module( 'eliminatorFactory' );
 
-    QUnit.test('module', function(assert) {
-        assert.ok(typeof eliminatorFactory === 'function', 'Module exposes a function');
-    });
+    QUnit.test( 'module', function( assert ) {
+        assert.ok( typeof eliminatorFactory === 'function', 'Module exposes a function' );
+    } );
 
-    QUnit.module('Eliminator Mode');
+    QUnit.module( 'Eliminator Mode' );
 
-    QUnit.asyncTest('Toggle eliminator mode on/off', function(assert) {
-        var runner      = runnerFactory(providerName);
+    QUnit.test( 'Toggle eliminator mode on/off', function( assert ) {
+        var ready = assert.async();
+        var runner      = runnerFactory( providerName );
         var areaBroker  = runner.getAreaBroker();
-        var eliminator  = eliminatorFactory(runner, areaBroker);
-        var interaction = document.querySelector('.qti-choiceInteraction');
+        var eliminator  = eliminatorFactory( runner, areaBroker );
+        var interaction = document.querySelector( '.qti-choiceInteraction' );
 
-        runner.setTestContext({
+        runner.setTestContext( {
             options: {
                 eliminator: true
             }
-        });
+        } );
 
-        areaBroker.getContentArea().append(interaction);
+        areaBroker.getContentArea().append( interaction );
         eliminator.init()
-            .then(function() {
-                runner.trigger('renderitem');
-                runner.trigger('tool-eliminator-toggle');
-                assert.ok(interaction.classList.contains('eliminable'), 'Class "eliminable" has been added');
-                runner.trigger('tool-eliminator-toggle');
-                assert.ok(!interaction.classList.contains('eliminable'), 'Class "eliminable" has been removed');
-                QUnit.start();
-            });
-    });
+            .then( function() {
+                runner.trigger( 'renderitem' );
+                runner.trigger( 'tool-eliminator-toggle' );
+                assert.ok( interaction.classList.contains( 'eliminable' ), 'Class "eliminable" has been added' );
+                runner.trigger( 'tool-eliminator-toggle' );
+                assert.ok( !interaction.classList.contains( 'eliminable' ), 'Class "eliminable" has been removed' );
+                ready();
+            } );
+    } );
 
-});
+} );

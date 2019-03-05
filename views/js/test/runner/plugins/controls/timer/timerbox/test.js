@@ -16,26 +16,26 @@
  * Copyright (c) 2018 (original work) Open Assessment Technologies SA ;
  */
 /**
- * Test the timer's plugin timerbox component
+ * Test the time\'s plugin timerbox component
  */
-define([
+define( [
+    
     'jquery',
     'taoQtiTest/runner/plugins/controls/timer/component/timerbox'
-], function($, timerboxFactory) {
+], function(  $, timerboxFactory ) {
     'use strict';
 
+    QUnit.module( 'API' );
 
-    QUnit.module('API');
+    QUnit.test( 'module', function( assert ) {
+        assert.expect( 3 );
 
-    QUnit.test('module', function(assert) {
-        QUnit.expect(3);
+        assert.equal( typeof timerboxFactory, 'function', 'The timerboxFactory module exposes a function' );
+        assert.equal( typeof timerboxFactory(), 'object', 'The timerboxFactory factory produces an object' );
+        assert.notStrictEqual( timerboxFactory(), timerboxFactory(), 'The timerboxFactory factory provides a different object on each call' );
+    } );
 
-        assert.equal(typeof timerboxFactory, 'function', "The timerboxFactory module exposes a function");
-        assert.equal(typeof timerboxFactory(), 'object', "The timerboxFactory factory produces an object");
-        assert.notStrictEqual(timerboxFactory(), timerboxFactory(), "The timerboxFactory factory provides a different object on each call");
-    });
-
-    QUnit.cases([
+    QUnit.cases.init([
         { title : 'init' },
         { title : 'destroy' },
         { title : 'render' },
@@ -54,7 +54,7 @@ define([
         assert.equal(typeof instance[data.title], 'function', 'The timerboxFactory exposes the component method "' + data.title);
     });
 
-    QUnit.cases([
+    QUnit.cases.init([
         { title : 'on' },
         { title : 'off' },
         { title : 'trigger' },
@@ -65,7 +65,7 @@ define([
         assert.equal(typeof instance[data.title], 'function', 'The timerboxFactory exposes the eventifier method "' + data.title);
     });
 
-    QUnit.cases([
+    QUnit.cases.init([
         { title : 'update' },
         { title : 'start' },
         { title : 'stop' },
@@ -79,60 +79,62 @@ define([
     });
 
 
-    QUnit.module('Behavior');
+    QUnit.module( 'Behavior' );
 
-    QUnit.asyncTest('Lifecycle', function(assert) {
-        var $container = $('#qunit-fixture');
+    QUnit.test( 'Lifecycle', function( assert ) {
+        var ready = assert.async();
+        var $container = $( '#qunit-fixture' );
 
-        QUnit.expect(2);
+        assert.expect( 2 );
 
-        timerboxFactory({})
-        .on('init', function(){
-            assert.ok( !this.is('rendered'), 'The component is not rendered');
-            this.render($container);
-        })
-        .on('render', function(){
+        timerboxFactory( {} )
+        .on( 'init', function() {
+            assert.ok( !this.is( 'rendered' ), 'The component is not rendered' );
+            this.render( $container );
+        } )
+        .on( 'render', function() {
 
-            assert.ok(this.is('rendered'), 'The component is now rendered');
+            assert.ok( this.is( 'rendered' ), 'The component is now rendered' );
 
             this.destroy();
-        })
-        .on('destroy', function(){
+        } )
+        .on( 'destroy', function() {
 
-            QUnit.start();
-        });
-    });
+            ready();
+        } );
+    } );
 
-    QUnit.asyncTest('Rendering', function(assert) {
-        var $container = $('#qunit-fixture');
+    QUnit.test( 'Rendering', function( assert ) {
+        var ready = assert.async();
+        var $container = $( '#qunit-fixture' );
 
-        QUnit.expect(7);
+        assert.expect( 7 );
 
-        assert.equal($('.timer-box', $container).length, 0, 'The component does not exists yet');
+        assert.equal( $( '.timer-box', $container ).length, 0, 'The component does not exists yet' );
 
-        timerboxFactory({
-            timers : {
-                'timer-1' : {
-                    id : 'timer-1',
-                    label : 'Timer 01',
+        timerboxFactory( {
+            timers: {
+                'timer-1': {
+                    id: 'timer-1',
+                    label: 'Timer 01',
                     remainingTime: 10000
                 },
-                'timer-2' : {
-                    id : 'timer-2',
-                    label : 'Timer 02',
+                'timer-2': {
+                    id: 'timer-2',
+                    label: 'Timer 02',
                     remainingTime: 5000
                 }
             }
-        })
-        .on('init', function(){
-            this.render($container);
-        })
-        .on('update', function(){
+        } )
+        .on( 'init', function() {
+            this.render( $container );
+        } )
+        .on( 'update', function() {
 
             var $element = this.getElement();
 
-            assert.equal($('.timer-box', $container).length, 1, 'The component has been inserted');
-            assert.equal($('.timer-box', $container)[0], $element[0], 'The component element is correct');
+            assert.equal( $( '.timer-box', $container ).length, 1, 'The component has been inserted' );
+            assert.equal( $( '.timer-box', $container )[ 0 ], $element[ 0 ], 'The component element is correct' );
 
             assert.equal($('.timer-toggler', $element).length, 1, 'The time toggler is rendered');
             assert.equal($('.countdown', $element).length, 2, '2 timers are rendered');
@@ -140,42 +142,43 @@ define([
             assert.equal($('.countdown[data-control="timer-2"]', $element).length, 1, 'The correct timer is added');
 
             this.destroy();
-        })
-        .on('destroy', function(){
+        } )
+        .on( 'destroy', function() {
 
-            QUnit.start();
-        });
-    });
+            ready();
+        } );
+    } );
 
-    QUnit.asyncTest('start/stop timers', function(assert) {
-        var $container = $('#qunit-fixture');
+    QUnit.test( 'start/stop timers', function( assert ) {
+        var ready = assert.async();
+        var $container = $( '#qunit-fixture' );
         var startCount = 0;
         var stopCount = 0;
 
-        QUnit.expect(12);
+        assert.expect( 12 );
 
-        timerboxFactory({
-            timers : {
-                'timer-1' : {
-                    id : 'timer-1',
-                    label : 'Timer 01',
+        timerboxFactory( {
+            timers: {
+                'timer-1': {
+                    id: 'timer-1',
+                    label: 'Timer 01',
                     remainingTime: 5000
                 },
-                'timer-2' : {
-                    id : 'timer-2',
-                    label : 'Timer 02',
+                'timer-2': {
+                    id: 'timer-2',
+                    label: 'Timer 02',
                     remainingTime: 5000
                 }
             }
-        })
-        .on('init', function(){
-            this.render($container);
-        })
-        .on('update', function(){
+        } )
+        .on( 'init', function() {
+            this.render( $container );
+        } )
+        .on( 'update', function() {
 
             this.start();
-        })
-        .on('timerstart', function(timer){
+        } )
+        .on( 'timerstart', function( timer ) {
             var self = this;
 
             assert.equal(typeof timer, 'object', 'The give timer is an object');
@@ -183,57 +186,57 @@ define([
             assert.equal(timer.remainingTime, 5000, 'Timers just get started');
             startCount++;
 
-            if(startCount >= 2){
-                setTimeout(function(){
+            if ( startCount >= 2 ) {
+                setTimeout( function() {
                     self.stop();
-                }, 2000);
+                }, 2000 );
             }
-        })
-        .on('timerstop', function(timer){
-            assert.equal(typeof timer, 'object', 'The give timer is an object');
-            assert.equal(typeof timer.id, 'string', 'The give timer has an id');
-            assert.ok(timer.remainingTime < 5000, 'Some time elasped');
+        } )
+        .on( 'timerstop', function( timer ) {
+            assert.equal( typeof timer, 'object', 'The give timer is an object' );
+            assert.equal( typeof timer.id, 'string', 'The give timer has an id' );
+            assert.ok( timer.remainingTime < 5000, 'Some time elasped' );
             stopCount++;
 
-            if(stopCount >= 2){
+            if ( stopCount >= 2 ) {
                 this.destroy();
             }
-        })
-        .on('destroy', function(){
+        } )
+        .on( 'destroy', function() {
 
-            QUnit.start();
-        });
-    });
+            ready();
+        } );
+    } );
 
+    QUnit.test( 'Update timers', function( assert ) {
+        var ready = assert.async();
+        var $container = $( '#qunit-fixture' );
 
-    QUnit.asyncTest('Update timers', function(assert) {
-        var $container = $('#qunit-fixture');
+        assert.expect( 11 );
 
-        QUnit.expect(11);
+        assert.equal( $( '.timer-box', $container ).length, 0, 'The component does not exists yet' );
 
-        assert.equal($('.timer-box', $container).length, 0, 'The component does not exists yet');
-
-        timerboxFactory({
-            timers : {
-                'timer-1' : {
-                    id : 'timer-1',
-                    label : 'Timer 01',
+        timerboxFactory( {
+            timers: {
+                'timer-1': {
+                    id: 'timer-1',
+                    label: 'Timer 01',
                     remainingTime: 10000
                 },
-                'timer-2' : {
-                    id : 'timer-2',
-                    label : 'Timer 02',
+                'timer-2': {
+                    id: 'timer-2',
+                    label: 'Timer 02',
                     remainingTime: 5000
                 }
             }
-        })
-        .on('init', function(){
-            this.render($container);
-        })
-        .on('update.first', function(){
+        } )
+        .on( 'init', function() {
+            this.render( $container );
+        } )
+        .on( 'update.first', function() {
 
             var $element = this.getElement();
-            this.off('update.first');
+            this.off( 'update.first' );
 
             assert.equal($('.countdown', $element).length, 2, '2 timers are rendered');
             assert.equal($('.countdown[data-control="timer-1"]', $element).length, 1, 'The correct timer is added');
@@ -267,27 +270,27 @@ define([
                     label : 'Timer 03',
                     remainingTime: 50000
                 }
-            });
-        })
-        .on('destroy', function(){
+            } );
+        } )
+        .on( 'destroy', function() {
 
-            QUnit.start();
-        });
-    });
+            ready();
+        } );
+    } );
 
+    QUnit.module( 'Visual test' );
 
-    QUnit.module('Visual test');
+    QUnit.test( 'Countdow', function( assert ) {
+        var ready = assert.async();
+        var container = document.querySelector( '#visual' );
 
-    QUnit.asyncTest('Countdow', function(assert) {
-        var container = document.querySelector('#visual');
-
-        QUnit.expect(1);
+        assert.expect( 1 );
 
         timerboxFactory()
-        .on('init', function(){
-            this.render(container);
-        })
-        .on('render', function(){
+        .on( 'init', function() {
+            this.render( container );
+        } )
+        .on( 'render', function() {
             var self = this;
             this.update({
                 'timer-1' : {
@@ -304,25 +307,25 @@ define([
                         threshold : 1000
                     }]
                 },
-                'timer-2' : {
-                    id : 'timer-2',
-                    label : 'Timer 02',
+                'timer-2': {
+                    id: 'timer-2',
+                    label: 'Timer 02',
                     remainingTime: 1500
                 }
-            }).then(function(){
+            } ).then( function() {
                 self.start();
-            });
-        })
-        .on('timerend', function(timer){
-            if(timer.id === 'timer-1'){
-                assert.ok(true);
-                QUnit.start();
+            } );
+        } )
+        .on( 'timerend', function( timer ) {
+            if ( timer.id === 'timer-1' ) {
+                assert.ok( true );
+                ready();
             }
-        })
-        .on('error', function(err){
-            assert.ok(false, err.message);
-            QUnit.start();
-        });
-    });
+        } )
+        .on( 'error', function( err ) {
+            assert.ok( false, err.message );
+            ready();
+        } );
+    } );
 
-});
+} );

@@ -1,20 +1,21 @@
-define([
+define( [
+    
     'lodash',
     'taoQtiTest/runner/plugins/navigation/next/nextWarningHelper'
-], function(_, warningHelper){
+], function(  _, warningHelper ) {
     'use strict';
 
     var warnBeforeEndData, warnBeforeNextData;
 
-    QUnit.module('warningHelper');
+    QUnit.module( 'warningHelper' );
 
-    QUnit.test('module', function(assert){
-        QUnit.expect(1);
+    QUnit.test( 'module', function( assert ) {
+        assert.expect( 1 );
 
-        assert.ok(typeof warningHelper === 'function', 'The module expose a function');
-    });
+        assert.ok( typeof warningHelper === 'function', 'The module expose a function' );
+    } );
 
-    QUnit.module('End test warning');
+    QUnit.module( 'End test warning' );
 
     warnBeforeEndData = [
         {
@@ -147,20 +148,18 @@ define([
         }
     ];
 
-
     QUnit
-        .cases(warnBeforeEndData)
-        .test('End test warning', function(data, assert){
-            var helper = warningHelper(data.input);
+        .cases.init( warnBeforeEndData )
+        .test( 'End test warning', function( data, assert ) {
+            var helper = warningHelper( data.input );
 
-            QUnit.expect(2);
+            assert.expect( 2 );
 
-            assert.ok(helper.shouldWarnBeforeEnd()  === data.output.warnEnd,  'shouldWarnBeforeEnd returns the correct value');
-            assert.ok(helper.shouldWarnBeforeNext() === data.output.warnNext, 'shouldWarnBeforeNext returns the correct value');
-        });
+            assert.ok( helper.shouldWarnBeforeEnd()  === data.output.warnEnd,  'shouldWarnBeforeEnd returns the correct value' );
+            assert.ok( helper.shouldWarnBeforeNext() === data.output.warnNext, 'shouldWarnBeforeNext returns the correct value' );
+        } );
 
-
-    QUnit.module('Next item warning');
+    QUnit.module( 'Next item warning' );
 
     warnBeforeNextData = [
         {
@@ -244,14 +243,14 @@ define([
     ];
 
     QUnit
-        .cases(warnBeforeNextData)
-        .test('Next item warning', function(data, assert){
-            var helper = warningHelper(data.input);
+        .cases.init( warnBeforeNextData )
+        .test( 'Next item warning', function( data, assert ) {
+            var helper = warningHelper( data.input );
 
-            QUnit.expect(2);
+            assert.expect( 2 );
 
-            assert.ok(helper.shouldWarnBeforeEnd()  === data.output.warnEnd,  'shouldWarnBeforeEnd returns the correct value');
-            assert.ok(helper.shouldWarnBeforeNext() === data.output.warnNext, 'shouldWarnBeforeNext returns the correct value');
-        });
+            assert.ok( helper.shouldWarnBeforeEnd()  === data.output.warnEnd,  'shouldWarnBeforeEnd returns the correct value' );
+            assert.ok( helper.shouldWarnBeforeNext() === data.output.warnNext, 'shouldWarnBeforeNext returns the correct value' );
+        } );
 
-});
+} );
