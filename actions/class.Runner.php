@@ -53,6 +53,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * taoQtiTest_actions_Runner constructor.
+     * @\oat\tao\model\routing\AnnotationReader\security("hide");
      */
     public function __construct()
     {

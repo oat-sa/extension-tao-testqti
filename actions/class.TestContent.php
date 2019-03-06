@@ -125,6 +125,7 @@ class taoQtiTest_actions_TestContent extends tao_actions_CommonModule
      * Delete a file from the item directory
      * 
      * @throws common_exception_MissingParameter
+     * @deprecated to be deleted
      */
     public function delete() {
 
