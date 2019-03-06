@@ -241,17 +241,21 @@ define([
             return runner.getProxy().getItem(itemId)
                 .then(function(fullItem) {
                     var xinc;
+                    console.log(fullItem);
                     try {
-                        xinc = fullItem.itemData.assets.xinclude;
+                        xinc = fullItem.itemData.assets.xinclude; // only includes 1 value per item
                         console.log('item', itemId, 'xinc values', _.values(xinc));
                         return !!xinc;
                     }
-                    catch (e) { // Property Error?
+                    catch (e) { // TypeError accessing property
                         return false;
                     }
                 });
 
         }
+
+        // TODO: countTextStimuli: function()
+
     };
 
     return currentItemHelper;

@@ -78,6 +78,8 @@ define([
             id: options.id // debugging
         });
 
+        var storageType = options.storageType || 'volatile';
+
         //add event to automatically highlight the recently made selection if needed
         //added touch event (as from TAO-6578)
         $(document).on('mouseup.highlighter touchend.highlighter', function() {
@@ -156,6 +158,14 @@ define([
             clearHighlights: function clearHighlights() {
                 highlightHelper.clearHighlights();
                 selection.removeAllRanges();
+            },
+
+            /**
+             * Get the instance's configured storage type
+             * @returns {String} volatile|persistent
+             */
+            getStorageType: function getStorageType() {
+                return storageType;
             }
         });
     };
