@@ -21,8 +21,9 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+    'jquery',
     'lodash'
-], function (_) {
+], function ($, _) {
     'use strict';
 
     /**
@@ -231,31 +232,32 @@ define([
         },
 
         /**
-         * Tells if the current item contains a shared stimulus
+         * Gets list of shared stimuli serials in the current item
          *
          * @param {Object} runner - testRunner instance
          * @param {String} itemId
-         * @returns {Promise<Boolean>}
+         * @returns {Promise<Array>}
          */
-        containsStimulus: function containsStimulus(runner, itemId) {
+        getStimuli: function getStimuli(runner, itemId) {
             return runner.getProxy().getItem(itemId)
                 .then(function(fullItem) {
-                    var xinc;
+                    console.warn('item', itemId);
                     console.log(fullItem);
                     try {
-                        xinc = fullItem.itemData.assets.xinclude; // only includes 1 value per item
-                        console.log('item', itemId, 'xinc values', _.values(xinc));
-                        return !!xinc;
+                        return _(fullItem.itemData.data.body.elements)
+                            .values()
+                            .pluck('serial')
+                            .filter(function(serial) {
+                                return serial.indexOf('xinclude') === 0;
+                            })
+                            .value();
                     }
                     catch (e) { // TypeError accessing property
-                        return false;
+                        return [];
                     }
                 });
 
         }
-
-        // TODO: countTextStimuli: function()
-
     };
 
     return currentItemHelper;

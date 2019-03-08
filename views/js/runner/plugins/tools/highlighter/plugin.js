@@ -35,14 +35,6 @@ define([
 ], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, mapHelper, itemHelper, highlighterFactory) {
     'use strict';
 
-    var containsText = function containsText(domNode) {
-        return _(Array.from(domNode.childNodes))
-                .some(function(child) {
-                    return child.nodeType === child.TEXT_NODE;
-                });
-    };
-    console.warn('body contains text?', containsText(document.body)); // ok
-
     /**
      * Returns the configured plugin
      */
@@ -75,28 +67,42 @@ define([
             var testMap         = testRunner.getTestMap();
             var pluginShortcuts = (testConfig.shortcuts || {})[this.getName()] || {};
             var hasHighlights   = false;
+            var itemId          = testContext.itemIdentifier;
 
-            // we may need to run multiplt highlighter plugins on one page:
-            // - one for item-level highlights, which persist for the Test session
-            // - others for stimulus-level highlights, which should persist across multiple sessions
-            //
-            // TODO: load 2nd highlighter *only when item contains stimuli*
+
+            /**
+             * @var {Array} highlighters - Highlighters collection
+             * We can run multiple instances of the highlighter plugin on one page:
+             * - one for item-level highlights, which persist for the Test session
+             * - others for stimulus-level highlights, which should persist across multiple sessions (TAO-7617)
+             */
             var highlighters = [];
 
+            /**
+             * Instantiates new highlighter and adds it to array
+             * @param {Object} options
+             * @param {String} options.containerSelector - selector for the unique root DOM node the HL will work on
+             * @param {String} options.className - class applied to highlighted spans
+             * @param {String} options.storageType - volatile or persistent
+             * @param {String} options.id
+             */
+            function addHighlighter(options) {
+                highlighters.push(highlighterFactory({
+                    className: options.className,
+                    containerSelector: options.containerSelector,
+                    storageType: options.storageType,
+                    id: options.id
+                }));
+            }
+
+            // Create the first (item-level) highlighter instance:
             addHighlighter({
                 className: 'txt-user-highlight',
                 containerSelector: '.qti-itemBody',
-                containersBlackList: ['fig'],
+                containersBlackList: ['fig'], // FIXME: blacklist stopped working
                 storageType: 'volatile',
-                id: 'highlighter' // debugging
+                id: 'item-highlighter'
             });
-            addHighlighter({
-                className: 'txt-user-highlight-stimulus',
-                containerSelector: 'fig.qti-include',
-                storageType: 'persistent',
-                id: 'stimulusHighlighter' // debugging
-            });
-
 
             // create buttons
             this.buttonMain = this.getAreaBroker().getToolbox().createEntry({
@@ -171,20 +177,6 @@ define([
             }
 
             /**
-             * Instantiates new highlighter and adds it to array
-             * @param {String} containerSelector - selector for the unique root DOM node the HL will work on
-             * @param {String} className - class applied to highlighted spans
-             */
-            function addHighlighter(options) {
-                highlighters.push(highlighterFactory({
-                    className: options.className,
-                    containerSelector: options.containerSelector,
-                    id: options.id || 'highlighter' + highlighters.length, // debugging?
-                    storageType: options.storageType
-                }));
-            }
-
-            /**
              * Gets a volatile store for temporary state
              * @returns {Promise}
              */
@@ -235,9 +227,9 @@ define([
                         })
                         .map(function(instance) {
                             var highlightsIndex = instance.getIndex();
-                            if (isEnabled() && hasHighlights && testContext.itemIdentifier) {
+                            if (isEnabled() && hasHighlights && itemId) {
                                 console.log('Saving', highlightsIndex.length, 'volatile highlights');
-                                return highlighterVolatileStore.setItem(testContext.itemIdentifier, highlightsIndex);
+                                return highlighterVolatileStore.setItem(itemId, highlightsIndex);
                             }
                         })
                         .value()
@@ -260,10 +252,12 @@ define([
                         })
                         .map(function(instance) {
                             var highlightsIndex = instance.getIndex();
-                            if (isEnabled() && hasHighlights && testContext.itemIdentifier) {
-                                console.log('Saving', highlightsIndex.length, 'permanent highlights');
-                                return highlighterPersistentStore.setItem(testContext.itemIdentifier, highlightsIndex);
+                            var key = instance.getId();
+                            if (isEnabled() && hasHighlights && key) {
+                                console.log('Saving', highlightsIndex.length, 'permanent highlights for id', key);
+                                return highlighterPersistentStore.setItem(key, highlightsIndex);
                             }
+                            return false;
                         })
                         .value()
                     ).then(function(results) {
@@ -273,36 +267,35 @@ define([
                 }
 
                 /**
-                 * Save the highlighter state in the store
-                 * @returns {Promise} resolves one the save is done
+                 * Load the highlighters states from the store
+                 * @returns {Promise} resolves once the load is done
                  */
-                function load() {
-                    return Promise.all([
-                        loadVolatile(),
-                        loadPersistent()
-                    ]);
-                }
+                // function load() {
+                //     return Promise.all([
+                //         loadVolatile(),
+                //         loadPersistent()
+                //     ]);
+                // }
 
                 /**
                  * Load the volatile highlighter state from the volatile store
                  * @returns {Promise} resolves once the load is done
                  */
                 function loadVolatile() {
-                    // TODO: filter highlighters based on storage option
                     return highlighterVolatileStore
-                        .getItem(testContext.itemIdentifier)
+                        .getItem(itemId)
                         .then(function(index){
-                            console.log('getVolatile', testContext.itemIdentifier, index);
-                            if(index){
+                            console.log('getVolatile', itemId, index);
+                            if (index) {
                                 hasHighlights = true;
-                                highlighters[0].restoreIndex(index); // FIXME:
+                                highlighters[0].restoreIndex(index);
                             }
                         })
                         .then(function(){
                             //save highlighter state during the item session,
                             //when the highlighting ends
-                            highlighters[0].on('end.save', function(){ // FIXME:
-                                return save();
+                            highlighters[0].on('end.save', function() {
+                                return saveVolatile();
                             });
                         });
                 }
@@ -312,26 +305,43 @@ define([
                  * @returns {Promise} resolves once the load is done
                  */
                 function loadPersistent() {
-                    // TODO: filter highlighters based on storage option
-                    return highlighterPersistentStore
-                        .getItem(testContext.itemIdentifier) // which stimulus?
-                        .then(function(index){
-                            console.log('getPersistent', testContext.itemIdentifier, index);
-                            if(index){
-                                hasHighlights = true;
-                                highlighters[1].restoreIndex(index); // FIXME:
-                            }
+                    // Filter highlighter list based on storageType:
+                    return Promise.all(
+                        _(highlighters)
+                        .filter(function(hl) {
+                            return hl.getStorageType() === 'persistent';
                         })
-                        .then(function(){
-                            //save highlighter state during the item session,
-                            //when the highlighting ends
-                            highlighters[1].on('end.save', function() { // FIXME:
-                                return save();
-                            });
-                        });
+                        .map(function(instance) {
+                            var key = instance.getId();
+                            return highlighterPersistentStore
+                                .getItem(key)
+                                .then(function(index) {
+                                    console.log('getPersistent', key, index);
+                                    if (index) {
+                                        hasHighlights = true;
+                                        instance.restoreIndex(index);
+                                    }
+                                })
+                                .then(function() {
+                                    //save highlighter state during the item session,
+                                    //when the highlighting ends
+                                    instance.on('end.save', function() {
+                                        return savePersistent();
+                                    });
+                                })
+                                .then(function() {
+                                    return true;
+                                });
+                        })
+                        .value()
+                    )
+                    .then(function(results) {
+                        // if every setItem() returned true, return true
+                        return _.every(results);
+                    });
                 }
 
-                // attach start/end listeners to all highlighter instances
+                // Attach start/end listeners to all highlighter instances:
                 _.forEach(highlighters, function(instance) {
                     instance
                         .on('start', function(){
@@ -348,36 +358,64 @@ define([
                 //update plugin state based on changes
                 testRunner
                     .on('loaditem', function() {
-                        //get item id & stimulus filename
-                        var textStimuli;
-                        var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
-                        itemHelper.containsStimulus(testRunner, item.id)
-                            .then(function(stimCheck) {
-                                console.warn('stimulus in this item?', stimCheck);
-                                if (stimCheck) {
-                                    // NOW we can instantiate the stimulusHighlighter, etc (but how many?)
-                                    // count xincludes on the page, then filter the ones containing text
-                                    textStimuli = $('.qti-itemBody .qti-include').filter(function(i, $elem) {
-                                        console.log($elem); // FIXME: not reached
-                                        return containsText($elem);
-                                    });
-                                    console.log('stimuli with text:', textStimuli.length);
-                                }
-                            });
-
+                        // var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+                        itemId = testRunner.getTestContext().itemIdentifier;
+                        console.warn('loaditem', itemId);
                         togglePlugin();
                     })
                     .on('enabletools renderitem', function () {
                         self.enable();
                     })
                     .on('renderitem', function() {
+                        var textStimuli;
+                        // var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+                        itemId = testRunner.getTestContext().itemIdentifier;
+                        console.warn('renderitem', itemId);
+
+                        // Load volatile (item-level) highlights from store:
                         if (isEnabled()) {
                             hasHighlights = false;
-                            return load();
+                            loadVolatile();
                         }
+
+                        // Count xincludes in this item:
+                        itemHelper.getStimuli(testRunner, itemId)
+                            .then(function(stimuli) {
+                                console.warn('stimuli in this item?', stimuli);
+                                if (stimuli.length > 0) {
+
+                                    // Filter the ones containing text:
+                                    textStimuli = stimuli.filter(function(stimulusSerial) {
+                                        var domNode = $('.qti-include[data-serial="' + stimulusSerial + '"]').get(0);
+                                        return _(Array.from(domNode.childNodes))
+                                                .some(function(child) {
+                                                    return child.nodeType === child.TEXT_NODE;
+                                                });
+                                    });
+                                    console.warn('stimuli with text:', textStimuli);
+
+                                    // NOW we can instantiate the extra highlighters:
+                                    _.forEach(textStimuli, function(textStimulusSerial, i) {
+                                        addHighlighter({
+                                            className: 'txt-user-highlight-stimulus' + (i+1),
+                                            containerSelector: '.qti-include[data-serial="' + textStimulusSerial + '"]',
+                                            storageType: 'persistent',
+                                            id: textStimulusSerial
+                                        });
+                                    });
+
+                                    // Load stimulus highlights from store:
+                                    loadPersistent();
+                                }
+                            });
                     })
                     .before('skip move timeout', function() {
                         return save();
+                    })
+                    .on('unloaditem', function () {
+                        // var item = mapHelper.getItemAt(testMap, testContext.itemPosition);
+                        itemId = testRunner.getTestContext().itemIdentifier;
+                        console.warn('unloaditem', itemId);
                     })
                     .on('disabletools unloaditem', function () {
                         self.disable();

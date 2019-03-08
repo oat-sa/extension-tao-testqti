@@ -75,7 +75,7 @@ define([
             className: options.className || 'txt-user-highlight',
             containerSelector: options.containerSelector || '.qti-itemBody',
             containersBlackList: options.containersBlackList || [],
-            id: options.id // debugging
+            id: options.id
         });
 
         var storageType = options.storageType || 'volatile';
@@ -166,6 +166,14 @@ define([
              */
             getStorageType: function getStorageType() {
                 return storageType;
+            },
+
+            /**
+             * Getter for the instance's id
+             * @returns {String}
+             */
+            getId: function getId() {
+                return options.id;
             }
         });
     };
