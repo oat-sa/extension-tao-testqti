@@ -108,7 +108,7 @@ define([
                 } else {
                     this.trigger('end');
                 }
-                console.log(options.id, 'toggleHighlighting()', bool ? 'start' : 'end');
+                // console.log(options.id, 'toggleHighlighting()', bool ? 'start' : 'end');
                 window[options.id] = isHighlighting;
             },
 

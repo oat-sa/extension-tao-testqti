@@ -184,9 +184,10 @@ define([
             _.forEach(interactions, function(interaction) {
                 var attributes = interaction.attributes || {};
                 var qtiClass = interaction.__proto__.qtiClass;
+                var constraintProperty;
 
                 if (interactionMinConstraintProperties.hasOwnProperty(qtiClass)) {
-                    var constraintProperty = interactionMinConstraintProperties[qtiClass];
+                    constraintProperty = interactionMinConstraintProperties[qtiClass];
                     constraintValues[attributes.responseIdentifier] = attributes[constraintProperty];
                 }
             });
@@ -241,22 +242,20 @@ define([
         getStimuli: function getStimuli(runner, itemId) {
             return runner.getProxy().getItem(itemId)
                 .then(function(fullItem) {
-                    console.warn('item', itemId);
-                    console.log(fullItem);
                     try {
                         return _(fullItem.itemData.data.body.elements)
                             .values()
-                            .pluck('serial')
-                            .filter(function(serial) {
-                                return serial.indexOf('xinclude') === 0;
+                            .filter(function(element) {
+                                return element.serial.indexOf('xinclude') === 0;
                             })
+                            .pluck('attributes')
+                            .pluck('href')
                             .value();
                     }
                     catch (e) { // TypeError accessing property
                         return [];
                     }
                 });
-
         }
     };
 
