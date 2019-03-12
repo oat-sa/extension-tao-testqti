@@ -46,7 +46,7 @@ define([
      * @typedef {object}
      * @properties {string} contentNavigatorType - ('default' | 'linear') - type of content navigation
      */
-    var defaultPluginState = {
+    var defaultPluginConfig = {
       contentNavigatorType: 'default',
     };
 
@@ -440,7 +440,7 @@ define([
      * @param testRunner
      * @returns {*}
      */
-    function initTestRunnerNavigation(testRunner, state){
+    function initTestRunnerNavigation(testRunner, config){
         var keyNavigatorItem;
         var navigators;
 
@@ -449,7 +449,7 @@ define([
             document.activeElement.blur();
         }
 
-        switch (state.contentNavigatorType) {
+        switch (config.contentNavigatorType) {
             case 'linear' :
                 navigators = _.union(
                     initRubricNavigation(testRunner),
@@ -483,25 +483,29 @@ define([
 
         keyNavigatorItem.on('tab', function(elem){
             if (allowedToNavigateFrom(elem)) {
-              this.next();
+                this.next();
             }
         }).on('shift+tab', function(elem){
             if (allowedToNavigateFrom(elem)) {
-              this.previous();
+                this.previous();
             }
         });
 
-        if ( state.contentNavigatorType === 'linear' ) {
+        if ( config.contentNavigatorType === 'linear' ) {
             keyNavigatorItem.on('right', function(elem){
 
                 var isCurrentElementFirst = $(elem).is(':first-child');
 
-                isCurrentElementFirst && allowedToNavigateFrom(elem) && this.next();
+                if ( isCurrentElementFirst && allowedToNavigateFrom(elem) ) {
+                    this.next();
+                }
 
             }).on('left', function(elem){
                 var isCurrentElementLast = $(elem).is(':last-child');
 
-                isCurrentElementLast && allowedToNavigateFrom(elem) && this.previous();
+                if ( isCurrentElementLast && allowedToNavigateFrom(elem) ) {
+                    this.previous();
+                }
             });
         }
 
@@ -540,7 +544,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
-            var plaginState = _.defaults((testConfig.plugins || {})[name] || {}, defaultPluginState);
+            var plaginConfig = _.defaults((testConfig.plugins || {})[name] || {}, defaultPluginConfig);
 
             //start disabled
             this.disable();
@@ -550,7 +554,7 @@ define([
              */
             testRunner
                 .after('renderitem', function () {
-                    self.groupNavigator = initTestRunnerNavigation(testRunner, plaginState);
+                    self.groupNavigator = initTestRunnerNavigation(testRunner, plaginConfig);
 
                     shortcut.add('tab shift+tab', function(e){
                         if (!allowedToNavigateFrom(e.target)) {
@@ -569,7 +573,7 @@ define([
                  * can be: 'default' || 'linear'
                  */
                 .on('setcontenttabtype', function(type) {
-                    plaginState.contentNavigatorType = type;
+                    plaginConfig.contentNavigatorType = type;
                 });
         },
 
