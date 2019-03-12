@@ -334,6 +334,16 @@ return array(
              * @type boolean
              */
             'degree' => true
+        ],
+
+        /**
+         * A student tool that provides a text highlighter
+         */
+        'highlighter' => [
+            /**
+             * Determines if highlights on stimuli can persist between test sessions
+             */
+            'stimuliPersistentStorage' => true
         ]
     ],
 

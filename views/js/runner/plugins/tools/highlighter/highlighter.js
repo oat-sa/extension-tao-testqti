@@ -58,6 +58,13 @@ define([
 
     /**
      * The highlighter Factory
+     * @param {Object} options
+     * @param {String} [options.className]
+     * @param {String} [options.containerSelector]
+     * @param {Array} [options.containersBlackList]
+     * @param {String} [options.storageType]
+     * @param {String} [options.id]
+     * @returns {Object} the highlighter plugin
      */
     return function testHighlighterFactory(options) {
 
@@ -108,7 +115,6 @@ define([
                 } else {
                     this.trigger('end');
                 }
-                // console.log(options.id, 'toggleHighlighting()', bool ? 'start' : 'end');
                 window[options.id] = isHighlighting;
             },
 
@@ -116,7 +122,6 @@ define([
              * Either highlight the current or selection, or toggle highlighting mode
              */
             highlight: function highlight() {
-                console.warn(options.id, 'highlight()');
                 if (!isHighlighting) {
                     if (!selection.isCollapsed) {
                         this.toggleHighlighting(true);
