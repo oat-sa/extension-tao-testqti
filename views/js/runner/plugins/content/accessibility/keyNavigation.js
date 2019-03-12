@@ -324,7 +324,7 @@ define([
                     $elt.click();
                 }
 
-            })
+            });
 
             navigableElements.push(keyNavigatorItem);
         });
