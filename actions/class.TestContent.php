@@ -120,11 +120,12 @@ class taoQtiTest_actions_TestContent extends tao_actions_CommonModule
         
         tao_helpers_Http::returnFile($path);
     }
-    
+
     /**
      * Delete a file from the item directory
-     * 
+     *
      * @throws common_exception_MissingParameter
+     * @deprecated to be deleted
      */
     public function delete() {
 
@@ -135,18 +136,18 @@ class taoQtiTest_actions_TestContent extends tao_actions_CommonModule
         }
         $testUri = $this->getRequestParameter('uri');
         $test = new core_kernel_classes_Resource($testUri);
-        
+
         if (!$this->hasRequestParameter('path')) {
             throw new common_exception_MissingParameter('path', __METHOD__);
         }
-        
-        $baseDir = taoQtiTest_helpers_ResourceManager::getBaseDir($test); 
+
+        $baseDir = taoQtiTest_helpers_ResourceManager::getBaseDir($test);
         $path = $baseDir.ltrim($this->getRequestParameter('path'), '/');
 
-        //TODO path traversal and null byte poison check ? 
+        //TODO path traversal and null byte poison check ?
         if(is_file($path) && !is_dir($path)){
             $deleted = unlink($path);
-        } 
+        }
         echo json_encode(array('deleted' => $deleted));
     }
 }

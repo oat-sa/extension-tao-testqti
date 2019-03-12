@@ -1759,6 +1759,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('30.7.0');
         }
 
-        $this->skip('30.7.0', '31.1.0');
+        $this->skip('30.7.0', '32.0.0');
+
+        if ($this->isVersion('32.0.0')) {
+          $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+          $config = $extension->getConfig('testRunner');
+          $config['plugins']['keyNavigation']['contentNavigatorType'] = 'default';
+          $extension->setConfig('testRunner', $config);
+          $this->setVersion('32.1.0');
+      }
     }
 }

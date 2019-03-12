@@ -544,7 +544,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
-            var plaginConfig = _.defaults((testConfig.plugins || {})[name] || {}, defaultPluginConfig);
+            var plaginConfig = _.defaults((testConfig.plugins || {})[self.getName()] || {}, defaultPluginConfig);
 
             //start disabled
             this.disable();
