@@ -568,7 +568,7 @@ define([
                  * @param {string} type - type of content tab navigation,
                  * can be: 'default' || 'linear'
                  */
-                .on('setContentTabNavigationType', function(type) {
+                .on('setcontenttabtype', function(type) {
                     plaginState.contentNavigatorType = type;
                 });
         },
