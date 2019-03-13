@@ -19,31 +19,31 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-define( [
-    
+define([
+
     'lodash',
     'taoQtiTest/runner/plugins/controls/progressbar/progress',
     'json!taoQtiTest/test/runner/plugins/controls/progressbar/progress/map.json'
-], function(  _, progressHelper, mapSample ) {
+], function(_, progressHelper, mapSample) {
     'use strict';
 
-    QUnit.module( 'helpers/progress' );
+    QUnit.module('helpers/progress');
 
-    QUnit.test( 'module', function( assert ) {
-        assert.expect( 1 );
-        assert.equal( typeof progressHelper, 'object', 'The progress helper module exposes an object' );
-    } );
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof progressHelper, 'object', 'The progress helper module exposes an object');
+    });
 
-    QUnit.cases.init( [
-        { title: 'computeStats' },
-        { title: 'computeIndicator' },
-        { title: 'computeProgress' }
-    ] ).test( 'helpers/progress API ', function( data, assert ) {
-        assert.expect( 1 );
+    QUnit.cases.init([
+        {title: 'computeStats'},
+        {title: 'computeIndicator'},
+        {title: 'computeProgress'}
+    ]).test('helpers/progress API ', function(data, assert) {
+        assert.expect(1);
         assert.equal(typeof progressHelper[data.title], 'function', 'The progress helper expose a "' + data.title + '" function');
-    } );
+    });
 
-    QUnit.cases.init( [
+    QUnit.cases.init([
         /** NON LINEAR - STANDARD **/
         {
             title: 'non linear - test scope',
@@ -410,7 +410,7 @@ define( [
             config: {
                 scope: 'test',
                 indicator: 'categories',
-                categories: [ 'SCORED' ]
+                categories: ['SCORED']
             },
             testMap: mapSample,
             testContext: {
@@ -473,7 +473,7 @@ define( [
             config: {
                 scope: 'testPart',
                 indicator: 'categories',
-                categories: [ 'SCORED' ]
+                categories: ['SCORED']
             },
             testMap: mapSample,
             testContext: {
@@ -536,7 +536,7 @@ define( [
             config: {
                 scope: 'testSection',
                 indicator: 'categories',
-                categories: [ 'SCORED' ]
+                categories: ['SCORED']
             },
             testMap: mapSample,
             testContext: {
@@ -602,7 +602,7 @@ define( [
             config: {
                 scope: 'test',
                 indicator: 'categories',
-                categories: [ 'SCORED', 'CAT2' ]
+                categories: ['SCORED', 'CAT2']
             },
             testMap: mapSample,
             testContext: {
@@ -665,7 +665,7 @@ define( [
             config: {
                 scope: 'testPart',
                 indicator: 'categories',
-                categories: [ 'SCORED', 'CAT2' ]
+                categories: ['SCORED', 'CAT2']
             },
             testMap: mapSample,
             testContext: {
@@ -728,7 +728,7 @@ define( [
             config: {
                 scope: 'testSection',
                 indicator: 'categories',
-                categories: [ 'SCORED', 'CAT2' ]
+                categories: ['SCORED', 'CAT2']
             },
             testMap: mapSample,
             testContext: {
@@ -1154,7 +1154,7 @@ define( [
             config: {
                 scope: 'test',
                 indicator: 'categories',
-                categories: [ 'SCORED' ]
+                categories: ['SCORED']
             },
             testMap: mapSample,
             testContext: {
@@ -1217,7 +1217,7 @@ define( [
             config: {
                 scope: 'testPart',
                 indicator: 'categories',
-                categories: [ 'SCORED' ]
+                categories: ['SCORED']
             },
             testMap: mapSample,
             testContext: {
@@ -1280,7 +1280,7 @@ define( [
             config: {
                 scope: 'testSection',
                 indicator: 'categories',
-                categories: [ 'SCORED' ]
+                categories: ['SCORED']
             },
             testMap: mapSample,
             testContext: {
@@ -1346,7 +1346,7 @@ define( [
             config: {
                 scope: 'test',
                 indicator: 'categories',
-                categories: [ 'SCORED', 'CAT2' ]
+                categories: ['SCORED', 'CAT2']
             },
             testMap: mapSample,
             testContext: {
@@ -1409,7 +1409,7 @@ define( [
             config: {
                 scope: 'testPart',
                 indicator: 'categories',
-                categories: [ 'SCORED', 'CAT2' ]
+                categories: ['SCORED', 'CAT2']
             },
             testMap: mapSample,
             testContext: {
@@ -1472,7 +1472,7 @@ define( [
             config: {
                 scope: 'testSection',
                 indicator: 'categories',
-                categories: [ 'SCORED', 'CAT2' ]
+                categories: ['SCORED', 'CAT2']
             },
             testMap: mapSample,
             testContext: {
@@ -1531,17 +1531,17 @@ define( [
                 }
             }
         }
-    ] ).test( 'helpers/progress.computeStats', function( data, assert ) {
-        assert.expect( 1 );
+    ]).test('helpers/progress.computeStats', function(data, assert) {
+        assert.expect(1);
 
         assert.deepEqual(
-            progressHelper.computeStats( data.testMap, data.testContext, data.config ),
+            progressHelper.computeStats(data.testMap, data.testContext, data.config),
             data.expected,
             'The progress helper computeStats provides the expected stats'
         );
-    } );
+    });
 
-    QUnit.cases.init( [ {
+    QUnit.cases.init([{
         title: 'default - percentage',
         expected: {
             position: 0,
@@ -1762,15 +1762,15 @@ define( [
             ratio: 28,
             label: 'Item 2 of 7'
         }
-    } ] ).test( 'helpers/progress.computeIndicator', function( data, assert ) {
-        assert.expect( 1 );
+    }]).test('helpers/progress.computeIndicator', function(data, assert) {
+        assert.expect(1);
 
-        assert.deepEqual( progressHelper.computeIndicator( data.stats, data.type, data.config ), data.expected, 'The progress helper computeIndicator provides the expected indicator' );
-    } );
+        assert.deepEqual(progressHelper.computeIndicator(data.stats, data.type, data.config), data.expected, 'The progress helper computeIndicator provides the expected indicator');
+    });
 
-    QUnit.cases.init( [ {
+    QUnit.cases.init([{
         title: 'no expected categories',
-        categories: [ 'SCORED' ],
+        categories: ['SCORED'],
         expectedCategories: [],
         expected: true
     }, {
@@ -1781,35 +1781,35 @@ define( [
     }, {
         title: 'missing expected categories',
         categories: [],
-        expectedCategories: [ 'MATH', 'HISTORY' ],
+        expectedCategories: ['MATH', 'HISTORY'],
         expected: false
     }, {
         title: 'missing expected category',
-        categories: [ 'SCORED' ],
-        expectedCategories: [ 'MATH' ],
+        categories: ['SCORED'],
+        expectedCategories: ['MATH'],
         expected: false
     }, {
         title: 'match expected category',
-        categories: [ 'SCORED', 'MATH' ],
-        expectedCategories: [ 'MATH' ],
+        categories: ['SCORED', 'MATH'],
+        expectedCategories: ['MATH'],
         expected: true
     }, {
         title: 'missing one of expected categories',
-        categories: [ 'SCORED', 'MATH' ],
-        expectedCategories: [ 'MATH', 'HISTORY' ],
+        categories: ['SCORED', 'MATH'],
+        expectedCategories: ['MATH', 'HISTORY'],
         expected: false
     }, {
         title: 'match expected categories',
-        categories: [ 'SCORED', 'MATH', 'HISTORY' ],
-        expectedCategories: [ 'MATH', 'HISTORY' ],
+        categories: ['SCORED', 'MATH', 'HISTORY'],
+        expectedCategories: ['MATH', 'HISTORY'],
         expected: true
-    } ] ).test( 'helpers/progress.isMatchedCategories', function( data, assert ) {
-        assert.expect( 1 );
+    }]).test('helpers/progress.isMatchedCategories', function(data, assert) {
+        assert.expect(1);
 
-        assert.equal( progressHelper.isMatchedCategories( data.categories, data.expectedCategories ), data.expected, 'The progress helper isMatchedCategories provides the expected result' );
-    } );
+        assert.equal(progressHelper.isMatchedCategories(data.categories, data.expectedCategories), data.expected, 'The progress helper isMatchedCategories provides the expected result');
+    });
 
-    QUnit.cases.init( [ {
+    QUnit.cases.init([{
         title: 'test scope, percentage',
         config: {
             scope: 'test',
@@ -1902,7 +1902,7 @@ define( [
         config: {
             scope: 'test',
             indicator: 'categories',
-            categories: [ 'SCORED' ]
+            categories: ['SCORED']
         },
         testMap: mapSample,
         testContext: {
@@ -2013,7 +2013,7 @@ define( [
         config: {
             scope: 'testPart',
             indicator: 'categories',
-            categories: [ 'SCORED' ]
+            categories: ['SCORED']
         },
         testMap: mapSample,
         testContext: {
@@ -2124,7 +2124,7 @@ define( [
         config: {
             scope: 'testSection',
             indicator: 'categories',
-            categories: [ 'SCORED' ]
+            categories: ['SCORED']
         },
         testMap: mapSample,
         testContext: {
@@ -2142,9 +2142,9 @@ define( [
             ratio: 50,
             label: 'Item 1 of 2'
         }
-    } ] ).test( 'helpers/progress.computeProgress', function( data, assert ) {
-        assert.expect( 1 );
+    }]).test('helpers/progress.computeProgress', function(data, assert) {
+        assert.expect(1);
 
-        assert.deepEqual( progressHelper.computeProgress( data.testMap, data.testContext, data.config ), data.expected, 'The progress helper computeProgress provides the expected stats' );
-    } );
-} );
+        assert.deepEqual(progressHelper.computeProgress(data.testMap, data.testContext, data.config), data.expected, 'The progress helper computeProgress provides the expected stats');
+    });
+});

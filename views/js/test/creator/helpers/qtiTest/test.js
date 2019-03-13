@@ -18,42 +18,42 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define( [
-    
+define([
+
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'json!taoQtiTest/test/creator/helpers/qtiTest/sample.json'
-], function(  qtiTestHelper, sampleModel ) {
+], function(qtiTestHelper, sampleModel) {
     'use strict';
 
-    QUnit.module( 'API' );
+    QUnit.module('API');
 
-    QUnit.test( 'module', function( assert ) {
-        assert.expect( 1 );
-        assert.equal( typeof qtiTestHelper, 'object', 'The module exposes an object' );
-    } );
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof qtiTestHelper, 'object', 'The module exposes an object');
+    });
 
-    QUnit.cases.init( [
-        { title: 'extractIdentifiers' },
-        { title: 'getIdentifiers' },
-        { title: 'getIdentifiersOf' },
-        { title: 'getAvailableIdentifier' },
-        { title: 'idAvailableValidator' }
-    ] ).test( 'method ', function( data, assert ) {
-        assert.expect( 1 );
-        assert.equal( typeof qtiTestHelper[ data.title ], 'function', 'The helper exposes a "' + data.title + '" method' );
-    } );
+    QUnit.cases.init([
+        {title: 'extractIdentifiers'},
+        {title: 'getIdentifiers'},
+        {title: 'getIdentifiersOf'},
+        {title: 'getAvailableIdentifier'},
+        {title: 'idAvailableValidator'}
+    ]).test('method ', function(data, assert) {
+        assert.expect(1);
+        assert.equal(typeof qtiTestHelper[data.title], 'function', 'The helper exposes a "' + data.title + '" method');
+    });
 
-    QUnit.module( 'identifiers' );
+    QUnit.module('identifiers');
 
-    QUnit.test( 'extract all identifiers', function( assert ) {
+    QUnit.test('extract all identifiers', function(assert) {
         var identifiers;
 
-        assert.expect( 2 );
+        assert.expect(2);
 
-        identifiers = qtiTestHelper.extractIdentifiers( sampleModel );
+        identifiers = qtiTestHelper.extractIdentifiers(sampleModel);
 
-        assert.ok( identifiers.length > 0, 'The identifiers are exported as an array' );
-        assert.deepEqual( identifiers, [ {
+        assert.ok(identifiers.length > 0, 'The identifiers are exported as an array');
+        assert.deepEqual(identifiers, [{
             'identifier': 'T1',
             'originalIdentifier': 't1',
             'type': 'assessmentTest',
@@ -193,18 +193,18 @@ define( [
             'originalIdentifier': 'PASS_ALL_RENDERING',
             'type': 'setOutcomeValue',
             'label': 'PASS_ALL_RENDERING'
-        } ], 'All identifiers have been extracted' );
-    } );
+        }], 'All identifiers have been extracted');
+    });
 
-    QUnit.test( 'extract only test, test parts and section identifiers', function( assert ) {
+    QUnit.test('extract only test, test parts and section identifiers', function(assert) {
         var identifiers;
 
-        assert.expect( 2 );
+        assert.expect(2);
 
-        identifiers = qtiTestHelper.extractIdentifiers( sampleModel, [ 'assessmentTest', 'testPart', 'assessmentSection' ] );
+        identifiers = qtiTestHelper.extractIdentifiers(sampleModel, ['assessmentTest', 'testPart', 'assessmentSection']);
 
-        assert.ok( identifiers.length > 0, 'The identifiers are exported as an array' );
-        assert.deepEqual( identifiers, [ {
+        assert.ok(identifiers.length > 0, 'The identifiers are exported as an array');
+        assert.deepEqual(identifiers, [{
             'identifier': 'T1',
             'originalIdentifier': 't1',
             'type': 'assessmentTest',
@@ -219,18 +219,18 @@ define( [
             'originalIdentifier': 'ts1',
             'type': 'assessmentSection',
             'label': 'Section+1'
-        } ], 'All identifiers have been extracted' );
-    } );
+        }], 'All identifiers have been extracted');
+    });
 
-    QUnit.test( 'exclude outcome identifiers', function( assert ) {
+    QUnit.test('exclude outcome identifiers', function(assert) {
         var identifiers;
 
-        assert.expect( 2 );
+        assert.expect(2);
 
-        identifiers = qtiTestHelper.extractIdentifiers( sampleModel, [], [ 'outcomeProcessing', 'outcomeDeclaration' ] );
+        identifiers = qtiTestHelper.extractIdentifiers(sampleModel, [], ['outcomeProcessing', 'outcomeDeclaration']);
 
-        assert.ok( identifiers.length > 0, 'The identifiers are exported as an array' );
-        assert.deepEqual( identifiers, [ {
+        assert.ok(identifiers.length > 0, 'The identifiers are exported as an array');
+        assert.deepEqual(identifiers, [{
             'identifier': 'T1',
             'originalIdentifier': 't1',
             'type': 'assessmentTest',
@@ -285,18 +285,18 @@ define( [
             'originalIdentifier': 'item-6',
             'type': 'assessmentItemRef',
             'label': 'item-6'
-        } ], 'All identifiers have been extracted' );
-    } );
+        }], 'All identifiers have been extracted');
+    });
 
-    QUnit.test( 'get all identifiers', function( assert ) {
+    QUnit.test('get all identifiers', function(assert) {
         var identifiers;
 
-        assert.expect( 2 );
+        assert.expect(2);
 
-        identifiers = qtiTestHelper.getIdentifiers( sampleModel );
+        identifiers = qtiTestHelper.getIdentifiers(sampleModel);
 
-        assert.ok( identifiers.length > 0, 'The identifiers are exported as an array' );
-        assert.deepEqual( identifiers, [
+        assert.ok(identifiers.length > 0, 'The identifiers are exported as an array');
+        assert.deepEqual(identifiers, [
             'T1',
             'SCORE_TOTAL',
             'SCORE_TOTAL_MAX',
@@ -312,18 +312,18 @@ define( [
             'ITEM-4',
             'ITEM-5',
             'ITEM-6'
-        ], 'All unique identifiers have been extracted' );
-    } );
+        ], 'All unique identifiers have been extracted');
+    });
 
-    QUnit.test( 'get test, parts, section and items identifiers', function( assert ) {
+    QUnit.test('get test, parts, section and items identifiers', function(assert) {
         var identifiers;
 
-        assert.expect( 2 );
+        assert.expect(2);
 
-        identifiers = qtiTestHelper.getIdentifiers( sampleModel, [ 'assessmentTest', 'testPart', 'assessmentSection', 'assessmentItemRef' ] );
+        identifiers = qtiTestHelper.getIdentifiers(sampleModel, ['assessmentTest', 'testPart', 'assessmentSection', 'assessmentItemRef']);
 
-        assert.ok( identifiers.length > 0, 'The identifiers are exported as an array' );
-        assert.deepEqual( identifiers, [
+        assert.ok(identifiers.length > 0, 'The identifiers are exported as an array');
+        assert.deepEqual(identifiers, [
             'T1',
             'TP1',
             'TS1',
@@ -333,90 +333,90 @@ define( [
             'ITEM-4',
             'ITEM-5',
             'ITEM-6'
-        ], 'All unique identifiers have been extracted' );
-    } );
+        ], 'All unique identifiers have been extracted');
+    });
 
-    QUnit.test( 'get items identifiers', function( assert ) {
+    QUnit.test('get items identifiers', function(assert) {
         var identifiers;
 
-        assert.expect( 2 );
+        assert.expect(2);
 
-        identifiers = qtiTestHelper.getIdentifiersOf( sampleModel, 'assessmentItemRef' );
+        identifiers = qtiTestHelper.getIdentifiersOf(sampleModel, 'assessmentItemRef');
 
-        assert.ok( identifiers.length > 0, 'The identifiers are exported as an array' );
-        assert.deepEqual( identifiers, [
+        assert.ok(identifiers.length > 0, 'The identifiers are exported as an array');
+        assert.deepEqual(identifiers, [
             'ITEM-1',
             'ITEM-2',
             'ITEM-3',
             'ITEM-4',
             'ITEM-5',
             'ITEM-6'
-        ], 'All unique identifiers have been extracted' );
+        ], 'All unique identifiers have been extracted');
 
-    } );
+    });
 
-    QUnit.test( 'get items identifiers', function( assert ) {
+    QUnit.test('get items identifiers', function(assert) {
         var identifier;
 
-        assert.expect( 4 );
+        assert.expect(4);
 
-        identifier = qtiTestHelper.getAvailableIdentifier( sampleModel, 'assessmentItemRef', 'item' );
-        assert.equal( identifier, 'item-7', 'The ids item-1 to item-6 are already in use' );
+        identifier = qtiTestHelper.getAvailableIdentifier(sampleModel, 'assessmentItemRef', 'item');
+        assert.equal(identifier, 'item-7', 'The ids item-1 to item-6 are already in use');
 
-        identifier = qtiTestHelper.getAvailableIdentifier( sampleModel, 'assessmentSection', 'section' );
-        assert.equal( identifier, 'section-1', 'The 1st id is available' );
+        identifier = qtiTestHelper.getAvailableIdentifier(sampleModel, 'assessmentSection', 'section');
+        assert.equal(identifier, 'section-1', 'The 1st id is available');
 
-        identifier = qtiTestHelper.getAvailableIdentifier( sampleModel, 'testPart' );
-        assert.equal( identifier, 'testPart-1', 'By default the suggestion is the qti type' );
+        identifier = qtiTestHelper.getAvailableIdentifier(sampleModel, 'testPart');
+        assert.equal(identifier, 'testPart-1', 'By default the suggestion is the qti type');
 
-        identifier = qtiTestHelper.getAvailableIdentifier( sampleModel, 'weight', 'WEIGHT' );
-        assert.equal( identifier, 'WEIGHT-1' );
+        identifier = qtiTestHelper.getAvailableIdentifier(sampleModel, 'weight', 'WEIGHT');
+        assert.equal(identifier, 'WEIGHT-1');
 
-    } );
+    });
 
-    QUnit.module( 'validators' );
+    QUnit.module('validators');
 
-    QUnit.test( 'idAvailableValidator is a validator', function( assert ) {
-        var identifierValidator =  qtiTestHelper.idAvailableValidator();
+    QUnit.test('idAvailableValidator is a validator', function(assert) {
+        var identifierValidator = qtiTestHelper.idAvailableValidator();
 
-        assert.expect( 3 );
+        assert.expect(3);
 
-        assert.equal( typeof identifierValidator, 'object', 'The method creates an object' );
-        assert.equal( typeof identifierValidator.validate, 'function', 'The generated validator has the validate method' );
-        assert.equal( identifierValidator.name, 'testIdAvailable', 'The validator name is correct' );
-    } );
+        assert.equal(typeof identifierValidator, 'object', 'The method creates an object');
+        assert.equal(typeof identifierValidator.validate, 'function', 'The generated validator has the validate method');
+        assert.equal(identifierValidator.name, 'testIdAvailable', 'The validator name is correct');
+    });
 
-    QUnit.test( 'idAvailableValidator validates by model', function( assert ) {
+    QUnit.test('idAvailableValidator validates by model', function(assert) {
         var ready = assert.async();
         var modelOverseerMock = {
             getModel: function getModel() {
                 return {
                     identifier: 'foo',
                     'qti-type': 'assessmentTest',
-                    testParts: [ {
+                    testParts: [{
                         identifier: 'bar',
                         'qti-type': 'testPart'
                     }, {
                         identifier: 'noz',
                         'qti-type': 'testPart',
-                        sections: [ {
+                        sections: [{
                             identifier: 'bee',
                             'qti-type': 'assessmentSection'
                         }, {
                             identifier: 'foo',
                             'qti-type': 'assessmentSection'
-                        } ]
-                    } ]
+                        }]
+                    }]
                 };
             }
         };
 
-        assert.expect( 1 );
+        assert.expect(1);
 
-        qtiTestHelper.idAvailableValidator( modelOverseerMock ).validate( 'foo', function( result ) {
-            assert.ok( !result, 'The validator invalidate the value' );
+        qtiTestHelper.idAvailableValidator(modelOverseerMock).validate('foo', function(result) {
+            assert.ok(!result, 'The validator invalidate the value');
             ready();
-        } );
-    } );
+        });
+    });
 
-} );
+});

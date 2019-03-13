@@ -18,84 +18,84 @@
 /**
  * @author Martin Nicholson <martin@taotesting.com>
  */
-define( [
+define([
 
     'jquery',
     'lodash',
     'taoQtiTest/runner/plugins/navigation/next/dialogConfirmNext'
-], function(  $, _, dialogConfirmNext ) {
+], function($, _, dialogConfirmNext) {
     'use strict';
 
-    QUnit.module( 'dialogConfirmNext' );
+    QUnit.module('dialogConfirmNext');
 
-    QUnit.test( 'module', function( assert ) {
+    QUnit.test('module', function(assert) {
         var conf1 = dialogConfirmNext();
         var conf2 = dialogConfirmNext();
-        assert.equal( typeof dialogConfirmNext, 'function', 'The dialogConfirmNext module exposes a function' );
-        assert.equal( typeof conf1, 'object', 'The dialogConfirmNext factory produces an object' );
-        assert.notStrictEqual( conf1, conf2, 'The dialogConfirmNext factory provides a different object on each call' );
+        assert.equal(typeof dialogConfirmNext, 'function', 'The dialogConfirmNext module exposes a function');
+        assert.equal(typeof conf1, 'object', 'The dialogConfirmNext factory produces an object');
+        assert.notStrictEqual(conf1, conf2, 'The dialogConfirmNext factory provides a different object on each call');
         conf1.destroy();
         conf2.destroy();
-    } );
+    });
 
     var dialogApi = [
-        { name: 'init' },
-        { name: 'destroy' },
-        { name: 'setButtons' },
-        { name: 'render' },
-        { name: 'show' },
-        { name: 'hide' },
-        { name: 'trigger' },
-        { name: 'on' },
-        { name: 'off' },
-        { name: 'getDom' }
+        {name: 'init'},
+        {name: 'destroy'},
+        {name: 'setButtons'},
+        {name: 'render'},
+        {name: 'show'},
+        {name: 'hide'},
+        {name: 'trigger'},
+        {name: 'on'},
+        {name: 'off'},
+        {name: 'getDom'}
     ];
 
     QUnit
-        .cases.init( dialogApi )
-        .test( 'instance API ', function( data, assert ) {
+        .cases.init(dialogApi)
+        .test('instance API ', function(data, assert) {
             var instance = dialogConfirmNext();
             assert.equal(typeof instance[data.name], 'function', 'The dialogConfirmNext instance exposes a "' + data.name + '" function');
             instance.destroy();
-        } );
+        });
 
-    QUnit.test( 'events', function( assert ) {
+    QUnit.test('events', function(assert) {
         var ready1 = assert.async();
         var heading = 'heading';
         var message = 'test';
         var renderTo = '#qunit-fixture';
         var eventRemoved = false;
-        var modal = dialogConfirmNext( heading, message, null, null, {}, { renderTo: renderTo } );
+        var modal = dialogConfirmNext(heading, message, null, null, {}, {renderTo: renderTo});
 
         var ready = assert.async();
 
-        modal.on( 'custom', function() {
-            if ( eventRemoved ) {
-                assert.ok( false, 'The dialog box has triggered a removed event' );
+        modal.on('custom', function() {
+            if (eventRemoved) {
+                assert.ok(false, 'The dialog box has triggered a removed event');
             } else {
-                assert.ok( true, 'The dialog box has triggered the custom event' );
-                modal.off( 'custom' );
+                assert.ok(true, 'The dialog box has triggered the custom event');
+                modal.off('custom');
                 eventRemoved = true;
-                setTimeout( function() {
-                    assert.ok( true, 'The dialog box has not triggered the remove event' );
+                setTimeout(function() {
+                    assert.ok(true, 'The dialog box has not triggered the remove event');
                     ready();
 
-                }, 250 );
-                modal.trigger( 'custom' );
+                }, 250);
+                modal.trigger('custom');
             }
             ready1();
-        } );
+        });
 
-        assert.equal( typeof modal, 'object', 'The dialog instance is an object' );
-        assert.equal( typeof modal.getDom(), 'object', 'The dialog instance gets a DOM element' );
-        assert.ok( !!modal.getDom().length, 'The dialog instance gets a DOM element' );
-        assert.equal( modal.getDom().find( 'h4' ).text(), heading, 'The dialog box displays the heading' );
-        assert.equal( modal.getDom().find( '.message' ).text(), message, 'The dialog box displays the message' );
+        assert.equal(typeof modal, 'object', 'The dialog instance is an object');
+        assert.equal(typeof modal.getDom(), 'object', 'The dialog instance gets a DOM element');
+        assert.ok(!!modal.getDom().length, 'The dialog instance gets a DOM element');
+        assert.equal(modal.getDom().find('h4').text(), heading, 'The dialog box displays the heading');
+        assert.equal(modal.getDom().find('.message').text(), message, 'The dialog box displays the message');
 
-        modal.trigger( 'custom' );
-    } );
+        modal.trigger('custom');
+    });
 
-    var confirmCases = [ {
+    var confirmCases = [{
         message: 'must accept',
         button: 'ok',
         title: 'accept'
@@ -103,26 +103,26 @@ define( [
         message: 'must refuse',
         button: 'cancel',
         title: 'refuse'
-    } ];
+    }];
 
     QUnit
-        .cases.init( confirmCases )
-        .test( 'use ', function( data, assert ) {
+        .cases.init(confirmCases)
+        .test('use ', function(data, assert) {
             var ready = assert.async();
             var accept = function() {
-                assert.equal( data.button, 'ok', 'The dialogConfirm has triggered the accept callback function when hitting the ok button!' );
+                assert.equal(data.button, 'ok', 'The dialogConfirm has triggered the accept callback function when hitting the ok button!');
                 ready();
             };
             var refuse = function() {
-                assert.equal( data.button, 'cancel', 'The dialogConfirm has triggered the refuse callback function when hitting the cancel button!' );
+                assert.equal(data.button, 'cancel', 'The dialogConfirm has triggered the refuse callback function when hitting the cancel button!');
                 ready();
             };
-            var modal = dialogConfirmNext( '', '', accept, refuse, {}, data.options || {} );
+            var modal = dialogConfirmNext('', '', accept, refuse, {}, data.options || {});
 
-            assert.equal( typeof modal, 'object', 'The dialogConfirm instance is an object' );
-            assert.equal( typeof modal.getDom(), 'object', 'The dialogConfirm instance gets a DOM element' );
-            assert.ok( !!modal.getDom().length, 'The dialogConfirm instance gets a DOM element' );
-            assert.equal( modal.getDom().parent().length, 1, 'The dialogConfirm box is rendered by default' );
+            assert.equal(typeof modal, 'object', 'The dialogConfirm instance is an object');
+            assert.equal(typeof modal.getDom(), 'object', 'The dialogConfirm instance gets a DOM element');
+            assert.ok(!!modal.getDom().length, 'The dialogConfirm instance gets a DOM element');
+            assert.equal(modal.getDom().parent().length, 1, 'The dialogConfirm box is rendered by default');
 
             assert.equal(modal.getDom().find('button').length, 2, "The dialogConfirm box displays 2 buttons");
             assert.equal(modal.getDom().find('button[data-control="ok"]').length, 1, "The dialogConfirm box displays a 'ok' button");
@@ -132,31 +132,31 @@ define( [
         });
 
     QUnit
-        .cases.init( [ 'checked', 'unchecked' ] )
-        .test( 'checkbox', function( data, assert ) {
+        .cases.init(['checked', 'unchecked'])
+        .test('checkbox', function(data, assert) {
             var ready = assert.async();
             var accept = function() {
-                assert.ok( true, 'The dialogConfirm has triggered the accept callback function when hitting the ok button!' );
+                assert.ok(true, 'The dialogConfirm has triggered the accept callback function when hitting the ok button!');
             };
             var checkedCb = function() {
-                assert.ok( true, 'The checked checkbox callback was called on accept' );
+                assert.ok(true, 'The checked checkbox callback was called on accept');
                 ready();
             };
             var uncheckedCb = function() {
-                assert.ok( true, 'The unchecked checkbox callback was called on accept' );
+                assert.ok(true, 'The unchecked checkbox callback was called on accept');
                 ready();
             };
 
             var modal = dialogConfirmNext('', '', accept, null, {submitChecked: checkedCb, submitUnchecked: uncheckedCb});
             var $checkbox = $('input[name="dont-show-again"]', modal.getDom());
 
-            if ( data === 'checked' ) {
-                $checkbox.prop( 'checked', true );
+            if (data === 'checked') {
+                $checkbox.prop('checked', true);
             } else {
-                $checkbox.prop( 'checked', false );
+                $checkbox.prop('checked', false);
             }
 
             modal.getDom().find('button[data-control="ok"]').click();
         });
 
-} );
+});

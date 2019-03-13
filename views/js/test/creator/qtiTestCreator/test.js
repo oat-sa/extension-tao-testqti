@@ -18,97 +18,99 @@
 /**
  * @author Christophe Noël <christophe@taotesting.com>
  */
-define( [
+define([
 
     'jquery',
     'lodash',
     'taoQtiTest/controller/creator/qtiTestCreator'
-], function(  $, _, qtiTestCreatorFactory ) {
+], function($, _, qtiTestCreatorFactory) {
     'use strict';
 
     var fixtureContainer = '#qunit-fixture';
 
-    QUnit.module( 'Module' );
+    QUnit.module('Module');
 
-    QUnit.test( 'Module export', function( assert ) {
-        assert.expect( 1 );
+    QUnit.test('Module export', function(assert) {
+        assert.expect(1);
 
-        assert.ok( typeof qtiTestCreatorFactory === 'function', 'The module expose a factory function' );
-    } );
+        assert.ok(typeof qtiTestCreatorFactory === 'function', 'The module expose a factory function');
+    });
 
     QUnit
-        .cases.init( [
-            { title: 'setTestModel' },
-            { title: 'getAreaBroker' },
-            { title: 'getModelOverseer' },
+        .cases.init([
+            {title: 'setTestModel'},
+            {title: 'getAreaBroker'},
+            {title: 'getModelOverseer'},
 
             // Eventifier
-            { title: 'on' },
-            { title: 'before' },
-            { title: 'after' }
-        ] )
-        .test( 'Instance API', function( data, assert ) {
-            var instance = qtiTestCreatorFactory( $( fixtureContainer ) );
-            assert.expect( 1 );
-            assert.ok( typeof instance[ data.title ] === 'function', 'instance implements ' + data.title );
-        } );
+            {title: 'on'},
+            {title: 'before'},
+            {title: 'after'}
+        ])
+        .test('Instance API', function(data, assert) {
+            var instance = qtiTestCreatorFactory($(fixtureContainer));
+            assert.expect(1);
+            assert.ok(typeof instance[data.title] === 'function', 'instance implements ' + data.title);
+        });
 
-    QUnit.module( 'Factory' );
+    QUnit.module('Factory');
 
     QUnit
-        .cases.init( [
-            { title: 'nothing' },
-            { title: 'empty object', $container: {} },
-            { title: 'string',       $container: 'container' }
-        ] )
-        .test( 'Throws TypeError if not given a valid container', function( data, assert ) {
-            assert.expect( 1 );
+        .cases.init([
+            {title: 'nothing'},
+            {title: 'empty object', $container: {}},
+            {title: 'string', $container: 'container'}
+        ])
+        .test('Throws TypeError if not given a valid container', function(data, assert) {
+            assert.expect(1);
 
-            assert.throws( function() { qtiTestCreatorFactory( data.$container ); }, TypeError );
-        } );
+            assert.throws(function() {
+                qtiTestCreatorFactory(data.$container);
+            }, TypeError);
+        });
 
-    QUnit.module( 'Modules context' );
+    QUnit.module('Modules context');
 
-    QUnit.test( 'Creates modelOverseer', function( assert ) {
-        var testCreator = qtiTestCreatorFactory( $( fixtureContainer ) ),
+    QUnit.test('Creates modelOverseer', function(assert) {
+        var testCreator = qtiTestCreatorFactory($(fixtureContainer)),
             modelOverseer;
 
-        assert.expect( 2 );
+        assert.expect(2);
 
         modelOverseer = testCreator.getModelOverseer();
-        assert.ok( _.isUndefined( modelOverseer ), 'modelOverseer is not created without model' );
+        assert.ok(_.isUndefined(modelOverseer), 'modelOverseer is not created without model');
 
-        testCreator.setTestModel( {} );
+        testCreator.setTestModel({});
         modelOverseer = testCreator.getModelOverseer();
 
-        assert.ok( _.isObject( modelOverseer ), 'modelOverseer has been created' );
-    } );
+        assert.ok(_.isObject(modelOverseer), 'modelOverseer has been created');
+    });
 
-    QUnit.test( 'Forward config to modelOverseer', function( assert ) {
+    QUnit.test('Forward config to modelOverseer', function(assert) {
         var config = {
                 option1: 'value1',
                 option2: 'value2'
             },
-            testCreator = qtiTestCreatorFactory( $( fixtureContainer ), config ),
+            testCreator = qtiTestCreatorFactory($(fixtureContainer), config),
             modelOverseer;
 
-        assert.expect( 2 );
+        assert.expect(2);
 
-        testCreator.setTestModel( {} );
+        testCreator.setTestModel({});
         modelOverseer = testCreator.getModelOverseer();
 
-        assert.ok( _.isObject( modelOverseer ), 'modelOverseer has been created' );
-        assert.deepEqual( modelOverseer.getConfig(), config, 'config has been forwarded to modelOverseer' );
-    } );
+        assert.ok(_.isObject(modelOverseer), 'modelOverseer has been created');
+        assert.deepEqual(modelOverseer.getConfig(), config, 'config has been forwarded to modelOverseer');
+    });
 
-    QUnit.test( 'Creates areaBroker', function( assert ) {
-        var testCreator = qtiTestCreatorFactory( $( fixtureContainer ) ),
+    QUnit.test('Creates areaBroker', function(assert) {
+        var testCreator = qtiTestCreatorFactory($(fixtureContainer)),
             areaBroker;
 
-        assert.expect( 1 );
+        assert.expect(1);
 
         areaBroker = testCreator.getAreaBroker();
-        assert.ok( _.isObject( areaBroker ), 'areaBroker has been created' );
-    } );
+        assert.ok(_.isObject(areaBroker), 'areaBroker has been created');
+    });
 
-} );
+});

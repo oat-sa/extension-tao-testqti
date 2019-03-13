@@ -35,7 +35,7 @@ define([
      */
     QUnit.module('pluginFactory');
 
-    QUnit.test('module',  function(assert) {
+    QUnit.test('module', function(assert) {
         assert.expect(3);
         var runner = runnerFactory(providerName);
         assert.equal(typeof pluginFactory, 'function', "The pluginFactory module exposes a function");

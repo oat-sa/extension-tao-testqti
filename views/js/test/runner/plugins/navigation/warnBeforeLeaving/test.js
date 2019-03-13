@@ -20,32 +20,32 @@
  * Test the module taoQtiTest/runner/plugins/navigation/warnBeforeLeaving.
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define( [
-    
+define([
+
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/navigation/warnBeforeLeaving'
-], function(  runnerFactory, providerMock, pluginFactory ) {
+], function(runnerFactory, providerMock, pluginFactory) {
     'use strict';
 
     var pluginApi;
     var providerName = 'mock';
-    runnerFactory.registerProvider( providerName, providerMock() );
+    runnerFactory.registerProvider(providerName, providerMock());
 
     /**
      * The following tests applies to all plugins
      */
-    QUnit.module( 'pluginFactory' );
+    QUnit.module('pluginFactory');
 
-    QUnit.test( 'module', function( assert ) {
-        var runner = runnerFactory( providerName );
+    QUnit.test('module', function(assert) {
+        var runner = runnerFactory(providerName);
 
-        assert.equal( typeof pluginFactory, 'function', 'The pluginFactory module exposes a function' );
-        assert.equal( typeof pluginFactory( runner ), 'object', 'The plugin factory produces an instance' );
-        assert.notStrictEqual( pluginFactory( runner ), pluginFactory( runner ), 'The plugin factory provides a different instance on each call' );
-    } );
+        assert.equal(typeof pluginFactory, 'function', 'The pluginFactory module exposes a function');
+        assert.equal(typeof pluginFactory(runner), 'object', 'The plugin factory produces an instance');
+        assert.notStrictEqual(pluginFactory(runner), pluginFactory(runner), 'The plugin factory provides a different instance on each call');
+    });
 
-    pluginApi = [ {
+    pluginApi = [{
         name: 'init',
         title: 'init'
     }, {
@@ -90,41 +90,41 @@ define( [
     }, {
         name: 'disable',
         title: 'disable'
-    } ];
+    }];
 
     QUnit
-        .cases.init( pluginApi )
-        .test( 'plugin API ', function( data, assert ) {
-            var runner = runnerFactory( providerName );
-            var timer = pluginFactory( runner );
-            assert.equal( typeof timer[ data.name ], 'function', 'The pluginFactory instances expose a "' + data.name + '" function' );
-        } );
+        .cases.init(pluginApi)
+        .test('plugin API ', function(data, assert) {
+            var runner = runnerFactory(providerName);
+            var timer = pluginFactory(runner);
+            assert.equal(typeof timer[data.name], 'function', 'The pluginFactory instances expose a "' + data.name + '" function');
+        });
 
-    QUnit.module( 'Behavior' );
+    QUnit.module('Behavior');
 
-    QUnit.test( 'Has the listener', function( assert ) {
+    QUnit.test('Has the listener', function(assert) {
         var ready = assert.async();
-        var runner = runnerFactory( providerName );
-        var plugin = pluginFactory( runner, runner.getAreaBroker() );
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
 
         var _wael = window.addEventListener;
 
-        assert.expect( 1 );
+        assert.expect(1);
 
         //Track the added listener
-        window.addEventListener = function( type, listener ) {
-            if ( type === 'beforeunload' ) {
-                assert.ok( true, 'The event is handled' );
+        window.addEventListener = function(type, listener) {
+            if (type === 'beforeunload') {
+                assert.ok(true, 'The event is handled');
                 ready();
             } else {
-                _wael( type, listener );
+                _wael(type, listener);
             }
         };
         plugin
             .init()
-            .catch( function( err ) {
-                assert.ok( false, err.message );
+            .catch(function(err) {
+                assert.ok(false, err.message);
                 ready();
-            } );
-    } );
-} );
+            });
+    });
+});

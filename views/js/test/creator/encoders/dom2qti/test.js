@@ -19,8 +19,8 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define( [
-    
+define([
+
     'jquery',
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'json!taoQtiTest/test/creator/encoders/dom2qti/rubricBlock.json',
@@ -30,7 +30,7 @@ define( [
     'json!taoQtiTest/test/creator/encoders/dom2qti/feedbackBlock.json',
     'tpl!taoQtiTest/test/creator/encoders/dom2qti/feedbackBlock'
 ], function(
-   
+
     $,
     dom2qti,
     rubricBlockJson,
@@ -43,11 +43,11 @@ define( [
     'use strict';
 
     var dom2qtiApi = [
-        { title: 'encode' },
-        { title: 'decode' }
+        {title: 'encode'},
+        {title: 'decode'}
     ];
 
-    var dom2qtiCases = [ {
+    var dom2qtiCases = [{
         title: 'structured rubric block',
         text: rubricBlockTpl(),
         model: rubricBlockJson
@@ -59,45 +59,45 @@ define( [
         title: 'feedback block',
         text: feedbackBlockTpl(),
         model: feedbackBlockJson
-    } ];
+    }];
 
-    QUnit.module( 'encoders/dom2qti' );
+    QUnit.module('encoders/dom2qti');
 
-    QUnit.test( 'module', function( assert ) {
-        assert.expect( 1 );
-        assert.equal( typeof dom2qti, 'object', 'The dom2qti encoder module exposes an object' );
-    } );
-
-    QUnit
-        .cases.init( dom2qtiApi )
-        .test( 'encoders/dom2qti API ', function( data, assert ) {
-            assert.expect( 1 );
-            assert.equal( typeof dom2qti[ data.title ], 'function', 'The dom2qti encoder exposes a "' + data.title + '" function' );
-        } );
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof dom2qti, 'object', 'The dom2qti encoder module exposes an object');
+    });
 
     QUnit
-        .cases.init( dom2qtiCases )
-        .test( 'encoders/dom2qti.encode() ', function( data, assert ) {
-            var result = dom2qti.encode( data.text );
+        .cases.init(dom2qtiApi)
+        .test('encoders/dom2qti API ', function(data, assert) {
+            assert.expect(1);
+            assert.equal(typeof dom2qti[data.title], 'function', 'The dom2qti encoder exposes a "' + data.title + '" function');
+        });
+
+    QUnit
+        .cases.init(dom2qtiCases)
+        .test('encoders/dom2qti.encode() ', function(data, assert) {
+            var result = dom2qti.encode(data.text);
             var pattern = /\s/g;
-            assert.expect( 1 );
-            assert.equal( result.replace( pattern, '' ), data.text.replace( pattern, '' ) );
-        } );
+            assert.expect(1);
+            assert.equal(result.replace(pattern, ''), data.text.replace(pattern, ''));
+        });
 
     QUnit
-        .cases.init( dom2qtiCases )
-        .test( 'encoders/dom2qti.encode() #already encoded ', function( data, assert ) {
-            var result = dom2qti.encode( data.model );
+        .cases.init(dom2qtiCases)
+        .test('encoders/dom2qti.encode() #already encoded ', function(data, assert) {
+            var result = dom2qti.encode(data.model);
             var pattern = /\s/g;
-            assert.expect( 1 );
-            assert.equal( result.replace( pattern, '' ), data.text.replace( pattern, '' ) );
-        } );
+            assert.expect(1);
+            assert.equal(result.replace(pattern, ''), data.text.replace(pattern, ''));
+        });
 
     QUnit
-        .cases.init( dom2qtiCases )
-        .test( 'encoders/dom2qti.decode() ', function( data, assert ) {
-            var result = dom2qti.decode( data.text.replace( /\s+/gm, ' ' ) );
-            assert.expect( 1 );
-            assert.deepEqual( result, data.model );
-        } );
-} );
+        .cases.init(dom2qtiCases)
+        .test('encoders/dom2qti.decode() ', function(data, assert) {
+            var result = dom2qti.decode(data.text.replace(/\s+/gm, ' '));
+            assert.expect(1);
+            assert.deepEqual(result, data.model);
+        });
+});

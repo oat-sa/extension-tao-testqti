@@ -16,10 +16,10 @@
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA ;
  *
  */
-define( [  'lodash', 'jquery', 'taoQtiTest/testRunner/testMetaData' ], function(  _, $, testMetaDataFactory ) {
+define(['lodash', 'jquery', 'taoQtiTest/testRunner/testMetaData'], function(_, $, testMetaDataFactory) {
     'use strict';
 
-    QUnit.test( 'Constructor', function( assert ) {
+    QUnit.test('Constructor', function(assert) {
         var testServiceCallId = 'http://sample/first.rdf#i14435993288775133.item-1.0';
         assert.throws(
             function() {
@@ -28,14 +28,14 @@ define( [  'lodash', 'jquery', 'taoQtiTest/testRunner/testMetaData' ], function(
             'testServiceCallId option is required'
         );
 
-        var testMetaData = testMetaDataFactory( {
+        var testMetaData = testMetaDataFactory({
             testServiceCallId: testServiceCallId
-        } );
+        });
 
-        assert.equal( testMetaData.getTestServiceCallId(), testServiceCallId );
-    } );
+        assert.equal(testMetaData.getTestServiceCallId(), testServiceCallId);
+    });
 
-    QUnit.test( 'setData', function( assert ) {
+    QUnit.test('setData', function(assert) {
         var testServiceCallId, testObject1, testObject2;
         testServiceCallId = 'http://sample/first.rdf#i14435993288775133.item-2.0';
         testObject1 = {
@@ -47,22 +47,22 @@ define( [  'lodash', 'jquery', 'taoQtiTest/testRunner/testMetaData' ], function(
             param2: 4
         };
 
-        var testMetaData = testMetaDataFactory( {
+        var testMetaData = testMetaDataFactory({
             testServiceCallId: testServiceCallId
-        } );
+        });
 
-        testMetaData.setData( testObject1 );
+        testMetaData.setData(testObject1);
 
         //Data should be cloned
-        assert.notEqual( testMetaData.getData(), testObject1 );
-        assert.deepEqual( testMetaData.getData(), testObject1 );
+        assert.notEqual(testMetaData.getData(), testObject1);
+        assert.deepEqual(testMetaData.getData(), testObject1);
 
         //Should not be overwritten
-        testMetaData.setData( testObject2 );
-        assert.deepEqual( testMetaData.getData(), testObject2 );
-    } );
+        testMetaData.setData(testObject2);
+        assert.deepEqual(testMetaData.getData(), testObject2);
+    });
 
-    QUnit.test( 'addData', function( assert ) {
+    QUnit.test('addData', function(assert) {
         var testServiceCallId, testObject1, testObject2;
         testServiceCallId = 'http://sample/first.rdf#i14435993288775133.item-3.0';
         testObject1 = {
@@ -74,22 +74,22 @@ define( [  'lodash', 'jquery', 'taoQtiTest/testRunner/testMetaData' ], function(
             param2: 4
         };
 
-        var testMetaData = testMetaDataFactory( {
+        var testMetaData = testMetaDataFactory({
             testServiceCallId: testServiceCallId
-        } );
+        });
 
-        testMetaData.setData( testObject1 );
+        testMetaData.setData(testObject1);
 
         //Should not be overwritten
-        testMetaData.addData( testObject2 );
-        assert.deepEqual( testMetaData.getData(), testObject1 );
+        testMetaData.addData(testObject2);
+        assert.deepEqual(testMetaData.getData(), testObject1);
 
         //Should be overwritten
-        testMetaData.addData( testObject2, true );
-        assert.deepEqual( testMetaData.getData(), testObject2 );
-    } );
+        testMetaData.addData(testObject2, true);
+        assert.deepEqual(testMetaData.getData(), testObject2);
+    });
 
-    QUnit.test( 'clearData', function( assert ) {
+    QUnit.test('clearData', function(assert) {
         var testServiceCallId, testServiceCallId2, testObject1;
         testServiceCallId = 'http://sample/first.rdf#i14435993288775133.item-4.0';
         testServiceCallId2 = 'http://sample/first.rdf#i14435993288775133.item-5.0';
@@ -98,40 +98,40 @@ define( [  'lodash', 'jquery', 'taoQtiTest/testRunner/testMetaData' ], function(
             param2: 2
         };
 
-        var testMetaData = testMetaDataFactory( {
+        var testMetaData = testMetaDataFactory({
             testServiceCallId: testServiceCallId
-        } );
+        });
 
-        testMetaData.setData( testObject1 );
-        assert.deepEqual( testMetaData.getData(), testObject1 );
+        testMetaData.setData(testObject1);
+        assert.deepEqual(testMetaData.getData(), testObject1);
 
-        var testMetaData2 = testMetaDataFactory( {
+        var testMetaData2 = testMetaDataFactory({
             testServiceCallId: testServiceCallId
-        } );
+        });
 
         //The same testServiceCallId - the same data
-        assert.deepEqual( testMetaData.getData(), testMetaData2.getData() );
+        assert.deepEqual(testMetaData.getData(), testMetaData2.getData());
 
-        var testMetaData3 = testMetaDataFactory( {
+        var testMetaData3 = testMetaDataFactory({
             testServiceCallId: testServiceCallId2
-        } );
+        });
 
         //Different testServiceCallId - different data
-        assert.deepEqual( testMetaData3.getData(), {} );
+        assert.deepEqual(testMetaData3.getData(), {});
 
         testMetaData.clearData();
-        assert.deepEqual( localStorage.getItem( testMetaData.getLocalStorageKey() ), null );
-        assert.deepEqual( testMetaData.getData(), {} );
-        assert.notEqual( localStorage.getItem( testMetaData3.getLocalStorageKey() ), null );
+        assert.deepEqual(localStorage.getItem(testMetaData.getLocalStorageKey()), null);
+        assert.deepEqual(testMetaData.getData(), {});
+        assert.notEqual(localStorage.getItem(testMetaData3.getLocalStorageKey()), null);
 
         testMetaData3.clearData();
-        assert.deepEqual( localStorage.getItem( testMetaData3.getLocalStorageKey() ), null );
+        assert.deepEqual(localStorage.getItem(testMetaData3.getLocalStorageKey()), null);
 
         //New testMetaData object created with cleared testServiceCallId should has no data.
-        var testMetaData4 = testMetaDataFactory( {
+        var testMetaData4 = testMetaDataFactory({
             testServiceCallId: testServiceCallId
-        } );
-        assert.deepEqual( testMetaData4.getData(), {} );
-    } );
+        });
+        assert.deepEqual(testMetaData4.getData(), {});
+    });
 
-} );
+});

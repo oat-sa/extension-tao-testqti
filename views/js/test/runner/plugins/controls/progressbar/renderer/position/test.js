@@ -18,111 +18,111 @@
 /**
  * Test the progressba\'s plugin percentage renderer
  */
-define( [
-    
+define([
+
     'jquery',
     'taoQtiTest/runner/plugins/controls/progressbar/renderer/position'
-], function(  $, positionRendererFactory ) {
+], function($, positionRendererFactory) {
     'use strict';
 
-    QUnit.module( 'API' );
+    QUnit.module('API');
 
-    QUnit.test( 'module', function( assert ) {
-        assert.expect( 3 );
+    QUnit.test('module', function(assert) {
+        assert.expect(3);
 
-        assert.equal( typeof positionRendererFactory, 'function', 'The positionRendererFactory module exposes a function' );
-        assert.equal( typeof positionRendererFactory(), 'object', 'The positionRendererFactory factory produces an object' );
-        assert.notStrictEqual( positionRendererFactory(), positionRendererFactory(), 'The positionRendererFactory factory provides a different object on each call' );
-    } );
+        assert.equal(typeof positionRendererFactory, 'function', 'The positionRendererFactory module exposes a function');
+        assert.equal(typeof positionRendererFactory(), 'object', 'The positionRendererFactory factory produces an object');
+        assert.notStrictEqual(positionRendererFactory(), positionRendererFactory(), 'The positionRendererFactory factory provides a different object on each call');
+    });
 
-    QUnit.cases.init( [
-        { title: 'init' },
-        { title: 'destroy' },
-        { title: 'render' },
-        { title: 'show' },
-        { title: 'hide' },
-        { title: 'enable' },
-        { title: 'disable' },
-        { title: 'is' },
-        { title: 'setState' },
-        { title: 'getContainer' },
-        { title: 'getElement' },
-        { title: 'getTemplate' },
-        { title: 'setTemplate' }
-    ] ).test( 'Component API ', function( data, assert ) {
+    QUnit.cases.init([
+        {title: 'init'},
+        {title: 'destroy'},
+        {title: 'render'},
+        {title: 'show'},
+        {title: 'hide'},
+        {title: 'enable'},
+        {title: 'disable'},
+        {title: 'is'},
+        {title: 'setState'},
+        {title: 'getContainer'},
+        {title: 'getElement'},
+        {title: 'getTemplate'},
+        {title: 'setTemplate'}
+    ]).test('Component API ', function(data, assert) {
         var instance = positionRendererFactory();
         assert.equal(typeof instance[data.title], 'function', 'The positionRendererFactory exposes the component method "' + data.title);
     });
 
-    QUnit.cases.init( [
-        { title: 'on' },
-        { title: 'off' },
-        { title: 'trigger' },
-        { title: 'before' },
-        { title: 'after' }
-    ] ).test( 'Eventifier API ', function( data, assert ) {
+    QUnit.cases.init([
+        {title: 'on'},
+        {title: 'off'},
+        {title: 'trigger'},
+        {title: 'before'},
+        {title: 'after'}
+    ]).test('Eventifier API ', function(data, assert) {
         var instance = positionRendererFactory();
         assert.equal(typeof instance[data.title], 'function', 'The positionRendererFactory exposes the eventifier method "' + data.title);
     });
 
-    QUnit.cases.init( [
-        { title: 'update' }
-    ] ).test( 'Instance API ', function( data, assert ) {
+    QUnit.cases.init([
+        {title: 'update'}
+    ]).test('Instance API ', function(data, assert) {
         var instance = positionRendererFactory();
         assert.equal(typeof instance[data.title], 'function', 'The positionRendererFactory exposes the method "' + data.title);
     });
 
 
-    QUnit.module( 'Behavior' );
+    QUnit.module('Behavior');
 
-    QUnit.test( 'Lifecycle', function( assert ) {
+    QUnit.test('Lifecycle', function(assert) {
         var ready = assert.async();
-        var $container = $( '#qunit-fixture' );
+        var $container = $('#qunit-fixture');
 
-        assert.expect( 1 );
+        assert.expect(1);
 
         positionRendererFactory()
-            .on( 'render', function() {
+            .on('render', function() {
 
-                assert.ok( this.is( 'rendered' ), 'The component is now rendered' );
+                assert.ok(this.is('rendered'), 'The component is now rendered');
                 this.destroy();
 
-            } )
-            .on( 'destroy', function() {
+            })
+            .on('destroy', function() {
 
                 ready();
 
-            } )
-            .render( $container );
-    } );
+            })
+            .render($container);
+    });
 
-    QUnit.test( 'Rendering hidden', function( assert ) {
+    QUnit.test('Rendering hidden', function(assert) {
         var ready = assert.async();
-        var $container = $( '#qunit-fixture' );
+        var $container = $('#qunit-fixture');
 
-        assert.expect( 3 );
+        assert.expect(3);
 
         positionRendererFactory()
-            .on( 'render', function() {
+            .on('render', function() {
 
-                assert.ok( this.is( 'rendered' ), 'The component is now rendered' );
-                assert.ok( this.is( 'hidden' ), 'The component is hidden' );
-                assert.ok( this.getElement().is( ':hidden' ), 'The component is rendered hidden' );
+                assert.ok(this.is('rendered'), 'The component is now rendered');
+                assert.ok(this.is('hidden'), 'The component is hidden');
+                assert.ok(this.getElement().is(':hidden'), 'The component is rendered hidden');
                 this.destroy();
 
-            } )
-            .on( 'destroy', function() {
+            })
+            .on('destroy', function() {
 
                 ready();
 
-            } )
+            })
             .hide()
-            .render( $container );
-    } );
+            .render($container);
+    });
 
-    QUnit.test( 'Rendering with label', function( assert ) {
+    QUnit.test('Rendering with label', function(assert) {
         var ready = assert.async();
-        var $container = $( '#qunit-fixture' );
+        var $container = $('#qunit-fixture');
         var data = {
             total: 3,
             position: 1,
@@ -130,13 +130,13 @@ define( [
             ratio: 33
         };
 
-        assert.expect( 9 );
+        assert.expect(9);
 
         assert.equal($('[data-control="progress-label"]', $container).length, 0, 'The component label does not exists yet');
         assert.equal($('[data-control="progress-bar"]', $container).length, 0, 'The component bar does not exists yet');
 
-        positionRendererFactory( {}, data )
-            .on( 'update', function() {
+        positionRendererFactory({}, data)
+            .on('update', function() {
 
                 assert.equal($('[data-control="progress-label"]', $container).length, 1, 'The component label has been inserted');
                 assert.equal($('[data-control="progress-bar"]', $container).length, 1, 'The component bar has been inserted');
@@ -150,17 +150,17 @@ define( [
 
                 this.destroy();
 
-            } )
-            .on( 'destroy', function() {
+            })
+            .on('destroy', function() {
 
                 ready();
-            } )
-            .render( $container );
-    } );
+            })
+            .render($container);
+    });
 
-    QUnit.test( 'Rendering without label', function( assert ) {
+    QUnit.test('Rendering without label', function(assert) {
         var ready = assert.async();
-        var $container = $( '#qunit-fixture' );
+        var $container = $('#qunit-fixture');
         var data = {
             total: 3,
             position: 1,
@@ -168,13 +168,13 @@ define( [
             ratio: 33
         };
 
-        assert.expect( 9 );
+        assert.expect(9);
 
         assert.equal($('[data-control="progress-label"]', $container).length, 0, 'The component label does not exists yet');
         assert.equal($('[data-control="progress-bar"]', $container).length, 0, 'The component bar does not exists yet');
 
-        positionRendererFactory( { showLabel: false }, data )
-            .on( 'update', function() {
+        positionRendererFactory({showLabel: false}, data)
+            .on('update', function() {
 
                 assert.equal($('[data-control="progress-label"]', $container).length, 1, 'The component label has been inserted');
                 assert.equal($('[data-control="progress-bar"]', $container).length, 1, 'The component bar has been inserted');
@@ -188,17 +188,17 @@ define( [
 
                 this.destroy();
 
-            } )
-            .on( 'destroy', function() {
+            })
+            .on('destroy', function() {
 
                 ready();
-            } )
-            .render( $container );
-    } );
+            })
+            .render($container);
+    });
 
-    QUnit.test( 'Update progression', function( assert ) {
+    QUnit.test('Update progression', function(assert) {
         var ready = assert.async();
-        var $container = $( '#qunit-fixture' );
+        var $container = $('#qunit-fixture');
         var data = {
             total: 3,
             position: 1,
@@ -206,21 +206,21 @@ define( [
             ratio: 33
         };
 
-        assert.expect( 14 );
+        assert.expect(14);
 
         assert.equal($('[data-control="progress-label"]', $container).length, 0, 'The component label does not exists yet');
         assert.equal($('[data-control="progress-bar"]', $container).length, 0, 'The component bar does not exists yet');
 
-        positionRendererFactory( {}, data )
-            .on( 'render', function() {
+        positionRendererFactory({}, data)
+            .on('render', function() {
                 var self = this;
-                setTimeout( function() {
+                setTimeout(function() {
                     data.label = 'Item 2 of 3';
                     data.ratio = 66;
-                    self.update( data );
-                }, 250 );
-            } )
-            .on( 'update', function() {
+                    self.update(data);
+                }, 250);
+            })
+            .on('update', function() {
 
                 assert.equal($('[data-control="progress-label"]', $container).length, 1, 'The component label has been inserted');
                 assert.equal($('[data-control="progress-bar"]', $container).length, 1, 'The component bar has been inserted');
@@ -230,35 +230,35 @@ define( [
                 assert.equal($('[data-control="progress-bar"] .progressbar-point.reached', $container).length, data.position, 'The component bar displays the correct position');
                 assert.equal($('[data-control="progress-bar"] .progressbar-point:eq(' + (data.position - 1) + ')', $container).hasClass('current'), true, 'The component bar displays the current position');
 
-                if ( data.ratio > 50 ) {
+                if (data.ratio > 50) {
                     this.destroy();
                 }
-            } )
-            .on( 'destroy', function() {
+            })
+            .on('destroy', function() {
                 ready();
-            } )
-            .render( $container );
-    } );
+            })
+            .render($container);
+    });
 
-    QUnit.module( 'Visual test' );
+    QUnit.module('Visual test');
 
-    QUnit.test( 'Show', function( assert ) {
+    QUnit.test('Show', function(assert) {
         var ready = assert.async();
-        var $container = document.querySelector( '#visual' );
+        var $container = document.querySelector('#visual');
 
-        assert.expect( 1 );
+        assert.expect(1);
 
-        positionRendererFactory( {}, {
+        positionRendererFactory({}, {
             total: 5,
             position: 3,
             label: 'Item 3 of 5',
             ratio: 60
-        } )
-            .on( 'render', function() {
-                assert.ok( true );
+        })
+            .on('render', function() {
+                assert.ok(true);
                 ready();
-            } )
-            .render( $container );
-    } );
+            })
+            .render($container);
+    });
 
-} );
+});

@@ -18,8 +18,8 @@
  * @author Alexander Zagovorichev <zagovorichev@1pt.com>
  */
 
-define( [
-    
+define([
+
     'jquery',
     'lodash',
     'module',
@@ -32,7 +32,7 @@ define( [
     'taoQtiItem/qtiCommonRenderer/renderers/Renderer',
     'taoQtiItem/qtiItem/helper/modalFeedback'
 ], function(
-   
+
     $,
     _,
     taoModule,
@@ -51,111 +51,111 @@ define( [
     var runner;
     var containerId = 'item-container';
 
-    QUnit.module( 'Item init', {
-        afterEach: function( assert ) {
-            if ( runner ) {
+    QUnit.module('Item init', {
+        afterEach: function(assert) {
+            if (runner) {
                 runner.clear();
             }
         }
-    } );
+    });
 
-    QUnit.test( 'Item data loading', function( assert ) {
+    QUnit.test('Item data loading', function(assert) {
         var ready = assert.async();
-        assert.expect( 2 );
+        assert.expect(2);
 
-        runner = qtiItemRunner( 'qti', itemData )
-            .on( 'init', function() {
+        runner = qtiItemRunner('qti', itemData)
+            .on('init', function() {
 
-                assert.ok( typeof this._item === 'object', 'The item data is loaded and mapped to an object' );
-                assert.ok( typeof this._item.bdy === 'object', 'The item contains a body object' );
+                assert.ok(typeof this._item === 'object', 'The item data is loaded and mapped to an object');
+                assert.ok(typeof this._item.bdy === 'object', 'The item contains a body object');
 
                 ready();
-            } ).init();
-    } );
+            }).init();
+    });
 
-    QUnit.module( 'Item render', {
-        afterEach: function( assert ) {
-            if ( runner ) {
+    QUnit.module('Item render', {
+        afterEach: function(assert) {
+            if (runner) {
                 runner.clear();
             }
         }
-    } );
+    });
 
-    QUnit.test( 'Item rendering', function( assert ) {
+    QUnit.test('Item rendering', function(assert) {
         var ready = assert.async();
-        assert.expect( 3 );
+        assert.expect(3);
 
-        var container = document.getElementById( containerId );
+        var container = document.getElementById(containerId);
 
-        assert.ok( container instanceof HTMLElement, 'the item container exists' );
-        assert.equal( container.children.length, 0, 'the container has no children' );
+        assert.ok(container instanceof HTMLElement, 'the item container exists');
+        assert.equal(container.children.length, 0, 'the container has no children');
 
-        runner = qtiItemRunner( 'qti', itemData )
-            .on( 'render', function() {
+        runner = qtiItemRunner('qti', itemData)
+            .on('render', function() {
 
-                assert.equal( container.children.length, 1, 'the container has children' );
+                assert.equal(container.children.length, 1, 'the container has children');
 
                 ready();
-            } )
+            })
             .init()
-            .render( container );
-    } );
+            .render(container);
+    });
 
-    QUnit.module( 'API', {
-        beforeEach: function setup( assert ) {
-            runner = qtiItemRunner( 'qti', itemData ).init();
+    QUnit.module('API', {
+        beforeEach: function setup(assert) {
+            runner = qtiItemRunner('qti', itemData).init();
         },
-        afterEach: function( assert ) {
-            if ( runner ) {
+        afterEach: function(assert) {
+            if (runner) {
                 runner.clear();
             }
         }
-    } );
+    });
 
     var pluginApi = [
-        { name: 'init', title: 'init' },
-        { name: 'render', title: 'render' },
-        { name: 'finish', title: 'finish' },
-        { name: 'destroy', title: 'destroy' },
-        { name: 'trigger', title: 'trigger' },
-        { name: 'getTestRunner', title: 'getTestRunner' },
-        { name: 'getAreaBroker', title: 'getAreaBroker' },
-        { name: 'getConfig', title: 'getConfig' },
-        { name: 'setConfig', title: 'setConfig' },
-        { name: 'getState', title: 'getState' },
-        { name: 'setState', title: 'setState' },
-        { name: 'show', title: 'show' },
-        { name: 'hide', title: 'hide' },
-        { name: 'enable', title: 'enable' },
-        { name: 'disable', title: 'disable' }
+        {name: 'init', title: 'init'},
+        {name: 'render', title: 'render'},
+        {name: 'finish', title: 'finish'},
+        {name: 'destroy', title: 'destroy'},
+        {name: 'trigger', title: 'trigger'},
+        {name: 'getTestRunner', title: 'getTestRunner'},
+        {name: 'getAreaBroker', title: 'getAreaBroker'},
+        {name: 'getConfig', title: 'getConfig'},
+        {name: 'setConfig', title: 'setConfig'},
+        {name: 'getState', title: 'getState'},
+        {name: 'setState', title: 'setState'},
+        {name: 'show', title: 'show'},
+        {name: 'hide', title: 'hide'},
+        {name: 'enable', title: 'enable'},
+        {name: 'disable', title: 'disable'}
     ];
 
     QUnit
-        .cases.init( pluginApi )
-        .test( 'plugin API ', function( data, assert ) {
-            var feedback = modalFeedback( runner );
-            assert.equal( typeof feedback[ data.name ], 'function', 'The modalDialogFeedback instances expose a "' + data.name + '" function' );
-        } );
+        .cases.init(pluginApi)
+        .test('plugin API ', function(data, assert) {
+            var feedback = modalFeedback(runner);
+            assert.equal(typeof feedback[data.name], 'function', 'The modalDialogFeedback instances expose a "' + data.name + '" function');
+        });
 
     var providerName = 'mock';
     var testRunner;
-    testRunnerFactory.registerProvider( providerName, providerMock() );
+    testRunnerFactory.registerProvider(providerName, providerMock());
 
-    QUnit.module( 'modalFeedback', {
-        afterEach: function setup( assert ) {
-            if ( runner ) {
+    QUnit.module('modalFeedback', {
+        afterEach: function setup(assert) {
+            if (runner) {
                 runner.clear();
             }
         }
-    } );
+    });
 
     var item;
     var testCases = [
         {
             title: 'choice interaction',
             itemSession: {
-                FEEDBACK_1: { base: { identifier: 'feedbackModal_1' } },
-                FEEDBACK_3: { base: { identifier: 'feedbackModal_3' } }
+                FEEDBACK_1: {base: {identifier: 'feedbackModal_1'}},
+                FEEDBACK_3: {base: {identifier: 'feedbackModal_3'}}
             },
             feedbacks: {
                 choice: [
@@ -179,9 +179,9 @@ define( [
         {
             title: 'choice & order interactions',
             itemSession: {
-                FEEDBACK_2: { base: { identifier: 'feedbackModal_2' } },
-                FEEDBACK_4: { base: { identifier: 'feedbackModal_4' } },
-                FEEDBACK_5: { base: { identifier: 'feedbackModal_5' } }//FeedbackModal_5 has the same content as the feedbackModal_4 so it won\'t be displayed
+                FEEDBACK_2: {base: {identifier: 'feedbackModal_2'}},
+                FEEDBACK_4: {base: {identifier: 'feedbackModal_4'}},
+                FEEDBACK_5: {base: {identifier: 'feedbackModal_5'}}//FeedbackModal_5 has the same content as the feedbackModal_4 so it won\'t be displayed
             },
             feedbacks: {
                 choice: [
@@ -206,12 +206,12 @@ define( [
         {
             title: 'choice & inline interactions',
             itemSession: {
-                FEEDBACK_1: { base: { identifier: 'feedbackModal_1' } },
-                FEEDBACK_3: { base: { identifier: 'feedbackModal_3' } },
-                FEEDBACK_6: { base: { identifier: 'feedbackModal_6' } },
-                FEEDBACK_7: { base: { identifier: 'feedbackModal_7' } },//Feedback #6 and #7 have the same title and text but even with different style, only the first one shall be displayed
-                FEEDBACK_8: { base: { identifier: 'feedbackModal_8' } },
-                FEEDBACK_9: { base: { identifier: 'feedbackModal_9' } }//Feedback #9 and #7 have the same title, text and style. The are related to inline iteractions that are both in the same block so contaier, so only the first one #7 will be displayed
+                FEEDBACK_1: {base: {identifier: 'feedbackModal_1'}},
+                FEEDBACK_3: {base: {identifier: 'feedbackModal_3'}},
+                FEEDBACK_6: {base: {identifier: 'feedbackModal_6'}},
+                FEEDBACK_7: {base: {identifier: 'feedbackModal_7'}}, //Feedback #6 and #7 have the same title and text but even with different style, only the first one shall be displayed
+                FEEDBACK_8: {base: {identifier: 'feedbackModal_8'}},
+                FEEDBACK_9: {base: {identifier: 'feedbackModal_9'}}//Feedback #9 and #7 have the same title, text and style. The are related to inline iteractions that are both in the same block so contaier, so only the first one #7 will be displayed
             },
             feedbacks: {
                 choice: [
@@ -247,102 +247,102 @@ define( [
         }
     ];
 
-    QUnit.cases.init( testCases )
-        .test( 'render feedbacks as alertMessage', function( testCase, assert ) {
+    QUnit.cases.init(testCases)
+        .test('render feedbacks as alertMessage', function(testCase, assert) {
             var ready = assert.async();
             var renderer;
 
-            renderer = new QtiRenderer( { baseUrl: './' } );
-            new QtiLoader().loadItemData( itemData, function( _item ) {
+            renderer = new QtiRenderer({baseUrl: './'});
+            new QtiLoader().loadItemData(itemData, function(_item) {
                 var self = this;
-                renderer.load( function() {
+                renderer.load(function() {
 
                     var result, $result, mFeedback;
                     var $choiceInteraction, $orderInteraction, $textEntryInteraction, $inlineChoiceInteraction, $inlineInteractionContainer;
                     var renderingQueue;
 
                     item = _item;
-                    item.setRenderer( this );
+                    item.setRenderer(this);
 
-                    testRunner = testRunnerFactory( providerName );
-                    testRunner.itemRunner = { _item: item };
+                    testRunner = testRunnerFactory(providerName);
+                    testRunner.itemRunner = {_item: item};
 
-                    result = item.render( {} );
+                    result = item.render({});
 
-                    assert.ok( typeof result === 'string', 'The renderer creates a string' );
-                    assert.ok( result.length > 0, 'The renderer create some output' );
+                    assert.ok(typeof result === 'string', 'The renderer creates a string');
+                    assert.ok(result.length > 0, 'The renderer create some output');
 
-                    $result = $( result );
+                    $result = $(result);
 
-                    $choiceInteraction = $( '.qti-choiceInteraction', $result );
-                    $orderInteraction = $( '.qti-orderInteraction', $result );
-                    $textEntryInteraction = $( '.qti-textEntryInteraction', $result );
-                    $inlineChoiceInteraction = $( '.qti-inlineChoiceInteraction', $result );
-                    $inlineInteractionContainer = $inlineChoiceInteraction.parent( '.col-12' );
+                    $choiceInteraction = $('.qti-choiceInteraction', $result);
+                    $orderInteraction = $('.qti-orderInteraction', $result);
+                    $textEntryInteraction = $('.qti-textEntryInteraction', $result);
+                    $inlineChoiceInteraction = $('.qti-inlineChoiceInteraction', $result);
+                    $inlineInteractionContainer = $inlineChoiceInteraction.parent('.col-12');
 
-                    assert.ok( $result.hasClass( 'qti-item' ), 'The result is a qti item' );
-                    assert.equal( $( '.qti-itemBody', $result ).length, 1, 'The result contains an item body' );
-                    assert.equal( $choiceInteraction.length, 1, 'The result contains a choice interaction' );
-                    assert.equal( $orderInteraction.length, 1, 'The result contains an order interaction' );
-                    assert.equal( $textEntryInteraction.length, 1, 'The result contains a text enry interaction' );
-                    assert.equal( $inlineChoiceInteraction.length, 1, 'The result contains an inline choice interaction' );
-                    assert.equal( $inlineInteractionContainer.length, 1, 'Inline interaction container found' );
-                    assert.equal( $( '.qti-modalFeedback', $result ).length, 0, 'no modal feedback yet' );
+                    assert.ok($result.hasClass('qti-item'), 'The result is a qti item');
+                    assert.equal($('.qti-itemBody', $result).length, 1, 'The result contains an item body');
+                    assert.equal($choiceInteraction.length, 1, 'The result contains a choice interaction');
+                    assert.equal($orderInteraction.length, 1, 'The result contains an order interaction');
+                    assert.equal($textEntryInteraction.length, 1, 'The result contains a text enry interaction');
+                    assert.equal($inlineChoiceInteraction.length, 1, 'The result contains an inline choice interaction');
+                    assert.equal($inlineInteractionContainer.length, 1, 'Inline interaction container found');
+                    assert.equal($('.qti-modalFeedback', $result).length, 0, 'no modal feedback yet');
 
                     //Render in dom
-                    $( '#' + containerId ).append( $result );
+                    $('#' + containerId).append($result);
 
                     testRunner
-                        .on( 'plugin-render.QtiModalFeedback', function( feedback ) {
+                        .on('plugin-render.QtiModalFeedback', function(feedback) {
 
                             var feedbacks;
-                            var $modalsBlock = $( '#modalFeedbacks', $result );
+                            var $modalsBlock = $('#modalFeedbacks', $result);
                             var countFeedbacks = testCase.feedbacks.choice.length + testCase.feedbacks.inline.length + testCase.feedbacks.order.length;
-                            assert.equal( feedback.getState( 'ready' ), true, 'The feedback is rendered' );
-                            assert.equal( $( '.qti-modalFeedback', $modalsBlock ).length, countFeedbacks, 'modal feedbacks in the special dom element' );
+                            assert.equal(feedback.getState('ready'), true, 'The feedback is rendered');
+                            assert.equal($('.qti-modalFeedback', $modalsBlock).length, countFeedbacks, 'modal feedbacks in the special dom element');
 
-                            feedbacks = testCase.feedbacks.choice.concat( testCase.feedbacks.order, testCase.feedbacks.inline );
-                            _.each( feedbacks, function( fb ) {
+                            feedbacks = testCase.feedbacks.choice.concat(testCase.feedbacks.order, testCase.feedbacks.inline);
+                            _.each(feedbacks, function(fb) {
 
-                                var $feedback = $result.find( '[data-identifier=' + fb.identifier + ']' );
-                                assert.equal( $feedback.length, 1, 'found feedback dom element for ' + fb.identifier );
+                                var $feedback = $result.find('[data-identifier=' + fb.identifier + ']');
+                                assert.equal($feedback.length, 1, 'found feedback dom element for ' + fb.identifier);
 
-                                if ( $feedback.length ) {
-                                    if ( fb.style ) {
-                                        assert.ok( $feedback.hasClass( fb.style ), 'style class correctly set' );
+                                if ($feedback.length) {
+                                    if (fb.style) {
+                                        assert.ok($feedback.hasClass(fb.style), 'style class correctly set');
                                     } else {
 
-                                        if ( $feedback[ 0 ].hasAttribute( 'class' ) ) {
-                                            assert.equal( $feedback.attr( 'class' ).trim(), 'modal qti-modalFeedback', 'the unique css class must be qti-modalFeedback' );
+                                        if ($feedback[0].hasAttribute('class')) {
+                                            assert.equal($feedback.attr('class').trim(), 'modal qti-modalFeedback', 'the unique css class must be qti-modalFeedback');
                                         } else {
-                                            assert.ok( false, 'the feedback must have class attribute' );
+                                            assert.ok(false, 'the feedback must have class attribute');
                                         }
                                     }
 
-                                    if ( fb.title ) {
-                                        assert.equal( $feedback.children( '.qti-title' ).length, 1, 'title found' );
-                                        assert.equal( $feedback.children( '.qti-title' ).text(), fb.title, 'title text ok' );
+                                    if (fb.title) {
+                                        assert.equal($feedback.children('.qti-title').length, 1, 'title found');
+                                        assert.equal($feedback.children('.qti-title').text(), fb.title, 'title text ok');
                                     } else {
-                                        assert.equal( $feedback.children( '.qti-title' ).length, 0, 'no title' );
+                                        assert.equal($feedback.children('.qti-title').length, 0, 'no title');
                                     }
-                                    assert.equal( $feedback.find( '.modal-body' ).length, 1, 'feedback body found' );
-                                    assert.equal( $feedback.find( '.modal-body' ).text().trim(), fb.text, 'feedback body correct' );
+                                    assert.equal($feedback.find('.modal-body').length, 1, 'feedback body found');
+                                    assert.equal($feedback.find('.modal-body').text().trim(), fb.text, 'feedback body correct');
                                 }
-                            } );
+                            });
 
                             feedback.destroy();
-                        } );
+                        });
 
-                    mFeedback = modalFeedback( testRunner, testRunner.getAreaBroker() );
+                    mFeedback = modalFeedback(testRunner, testRunner.getAreaBroker());
                     mFeedback.init();
                     mFeedback.render();
-                    renderingQueue = modalFeedbackHelper.getFeedbacks( item, testCase.itemSession );
-                    testRunner.trigger( 'modalFeedbacks', renderingQueue, function() {
-                        assert.ok( true, 'testRunner was resumed' );
+                    renderingQueue = modalFeedbackHelper.getFeedbacks(item, testCase.itemSession);
+                    testRunner.trigger('modalFeedbacks', renderingQueue, function() {
+                        assert.ok(true, 'testRunner was resumed');
                         ready();
-                    }, false );
+                    }, false);
 
-                }, self.getLoadedClasses() );
-            } );
-        } );
-} );
+                }, self.getLoadedClasses());
+            });
+        });
+});

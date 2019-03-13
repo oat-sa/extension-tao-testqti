@@ -18,38 +18,38 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-define( [
-    
+define([
+
     'lodash',
     'taoQtiTest/controller/creator/helpers/qtiElement'
-], function(  _, qtiElementHelper ) {
+], function(_, qtiElementHelper) {
     'use strict';
 
     var createCases, createErrorCases;
     var qtiElementLookupCases;
     var qtiElementPropertyCases;
     var qtiElementHelperApi = [
-        { title: 'create' },
-        { title: 'find' },
-        { title: 'lookupElement' },
-        { title: 'lookupProperty' }
+        {title: 'create'},
+        {title: 'find'},
+        {title: 'lookupElement'},
+        {title: 'lookupProperty'}
     ];
 
-    QUnit.module( 'helpers/qtiElement' );
+    QUnit.module('helpers/qtiElement');
 
-    QUnit.test( 'module', function( assert ) {
-        assert.expect( 1 );
-        assert.equal( typeof qtiElementHelper, 'object', 'The qtiElement helper module exposes an object' );
-    } );
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof qtiElementHelper, 'object', 'The qtiElement helper module exposes an object');
+    });
 
     QUnit
-        .cases.init( qtiElementHelperApi )
-        .test( 'helpers/qtiElement API ', function( data, assert ) {
-            assert.expect( 1 );
-            assert.equal( typeof qtiElementHelper[ data.title ], 'function', 'The qtiElement helper exposes a "' + data.title + '" function' );
-        } );
+        .cases.init(qtiElementHelperApi)
+        .test('helpers/qtiElement API ', function(data, assert) {
+            assert.expect(1);
+            assert.equal(typeof qtiElementHelper[data.title], 'function', 'The qtiElement helper exposes a "' + data.title + '" function');
+        });
 
-    createCases = [ {
+    createCases = [{
         title: 'simple',
         type: 'foo',
         expected: {
@@ -101,23 +101,23 @@ define( [
             prop1: 123,
             prop2: 'bar'
         }
-    } ];
+    }];
 
     QUnit
-        .cases.init( createCases )
-        .test( 'helpers/qtiElement.create() ', function( data, assert ) {
-            assert.expect( 1 );
-            assert.deepEqual( qtiElementHelper.create( data.type, data.identifier, data.properties ), data.expected, 'The qtiElement helper has created the expected element' );
-        } );
+        .cases.init(createCases)
+        .test('helpers/qtiElement.create() ', function(data, assert) {
+            assert.expect(1);
+            assert.deepEqual(qtiElementHelper.create(data.type, data.identifier, data.properties), data.expected, 'The qtiElement helper has created the expected element');
+        });
 
-    createErrorCases = [ {
+    createErrorCases = [{
         title: 'Missing type'
     }, {
         title: 'Empty type',
         type: ''
     }, {
         title: 'Wrong type',
-        type: { foo: 'bar' }
+        type: {foo: 'bar'}
     }, {
         title: 'Bad type',
         type: '12 foo bar'
@@ -125,57 +125,57 @@ define( [
         title: 'Bad identifier',
         type: 'foo',
         identifier: '12 foo bar'
-    } ];
+    }];
 
     QUnit
-        .cases.init( createErrorCases )
-        .test( 'helpers/qtiElement.create()#error', function( data, assert ) {
-            assert.expect( 1 );
-            assert.throws( function() {
-                qtiElementHelper.create( data.type, data.identifier, data.properties );
-            }, 'An error must be thrown when the type or the identifier is wrong' );
-        } );
+        .cases.init(createErrorCases)
+        .test('helpers/qtiElement.create()#error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
+                qtiElementHelper.create(data.type, data.identifier, data.properties);
+            }, 'An error must be thrown when the type or the identifier is wrong');
+        });
 
-    QUnit.test( 'helpers/qtiElement.find()', function( assert ) {
-        var expression = [ {
+    QUnit.test('helpers/qtiElement.find()', function(assert) {
+        var expression = [{
             'qti-type': 'foo',
             identifier: 'FOO'
         }, {
             'qti-type': 'bar',
             identifier: 'BAR'
-        } ];
+        }];
 
-        assert.expect( 5 );
-        assert.equal( qtiElementHelper.find( expression, 'foo' ), expression[ 0 ], 'The qtiElement helper has found the right expression' );
-        assert.equal( qtiElementHelper.find( expression, 'bar' ), expression[ 1 ], 'The qtiElement helper has found the right expression' );
-        assert.equal( qtiElementHelper.find( expression, 'baz' ), null, 'The qtiElement helper has not found any expression' );
-        assert.equal( qtiElementHelper.find( expression[ 0 ], 'foo' ), expression[ 0 ], 'The qtiElement helper has found the right expression' );
-        assert.equal( qtiElementHelper.find( expression[ 0 ], 'baz' ), null, 'The qtiElement helper has not found any expression' );
-    } );
+        assert.expect(5);
+        assert.equal(qtiElementHelper.find(expression, 'foo'), expression[0], 'The qtiElement helper has found the right expression');
+        assert.equal(qtiElementHelper.find(expression, 'bar'), expression[1], 'The qtiElement helper has found the right expression');
+        assert.equal(qtiElementHelper.find(expression, 'baz'), null, 'The qtiElement helper has not found any expression');
+        assert.equal(qtiElementHelper.find(expression[0], 'foo'), expression[0], 'The qtiElement helper has found the right expression');
+        assert.equal(qtiElementHelper.find(expression[0], 'baz'), null, 'The qtiElement helper has not found any expression');
+    });
 
-    qtiElementLookupCases = [ {
+    qtiElementLookupCases = [{
         title: 'Gets an element by its path, multiple nodes',
         tree: {
             'qti-type': 'setOutcomeValue',
             'expression': {
                 'qti-type': 'gte',
-                'expressions': [ {
+                'expressions': [{
                     'qti-type': 'divide',
-                    'expressions': [ {
+                    'expressions': [{
                         'qti-type': 'sum',
                         'expression': {
                             'qti-type': 'testVariables'
                         }
                     }, {
                         'qti-type': 'numberPresented'
-                    } ]
+                    }]
                 }, {
                     'qti-type': 'baseValue'
-                } ]
+                }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables',
-        nodes: [ 'expression', 'expressions' ],
+        nodes: ['expression', 'expressions'],
         expected: {
             'qti-type': 'testVariables'
         }
@@ -185,19 +185,19 @@ define( [
             'qti-type': 'setOutcomeValue',
             'expression': {
                 'qti-type': 'gte',
-                'expression': [ {
+                'expression': [{
                     'qti-type': 'divide',
-                    'expression': [ {
+                    'expression': [{
                         'qti-type': 'sum',
                         'expression': {
                             'qti-type': 'testVariables'
                         }
                     }, {
                         'qti-type': 'numberPresented'
-                    } ]
+                    }]
                 }, {
                     'qti-type': 'baseValue'
-                } ]
+                }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables',
@@ -211,19 +211,19 @@ define( [
             'qti-type': 'setOutcomeValue',
             'expression': {
                 'qti-type': 'gte',
-                'expression': [ {
+                'expression': [{
                     'qti-type': 'divide',
-                    'expression': [ {
+                    'expression': [{
                         'qti-type': 'sum',
                         'expression': {
                             'qti-type': 'testVariables'
                         }
                     }, {
                         'qti-type': 'numberPresented'
-                    } ]
+                    }]
                 }, {
                     'qti-type': 'baseValue'
-                } ]
+                }]
             }
         },
         path: 'setOutcomeValue.gte.divide.testVariables',
@@ -235,33 +235,33 @@ define( [
             'qti-type': 'setOutcomeValue',
             'expression': {
                 'qti-type': 'gte',
-                'expression': [ {
+                'expression': [{
                     'qti-type': 'divide',
-                    'expression': [ {
+                    'expression': [{
                         'qti-type': 'sum',
                         'expression': {
                             'qti-type': 'testVariables'
                         }
                     }, {
                         'qti-type': 'numberPresented'
-                    } ]
+                    }]
                 }, {
                     'qti-type': 'baseValue'
-                } ]
+                }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables',
         expected: null
-    } ];
+    }];
 
     QUnit
-        .cases.init( qtiElementLookupCases )
-        .test( 'helpers/qtiElement.lookupElement() ', function( data, assert ) {
-            assert.expect( 1 );
-            assert.deepEqual( qtiElementHelper.lookupElement( data.tree, data.path, data.nodes ), data.expected, 'The request element has been found' );
-        } );
+        .cases.init(qtiElementLookupCases)
+        .test('helpers/qtiElement.lookupElement() ', function(data, assert) {
+            assert.expect(1);
+            assert.deepEqual(qtiElementHelper.lookupElement(data.tree, data.path, data.nodes), data.expected, 'The request element has been found');
+        });
 
-    qtiElementPropertyCases = [ {
+    qtiElementPropertyCases = [{
         title: 'Gets a property by its path, multiple nodes',
         tree: {
             'qti-type': 'setOutcomeValue',
@@ -269,10 +269,10 @@ define( [
             'expression': {
                 'qti-type': 'gte',
                 'value': '1',
-                'expressions': [ {
+                'expressions': [{
                     'qti-type': 'divide',
                     'value': '2',
-                    'expressions': [ {
+                    'expressions': [{
                         'qti-type': 'sum',
                         'value': '3',
                         'expression': {
@@ -282,15 +282,15 @@ define( [
                     }, {
                         'qti-type': 'numberPresented',
                         'value': '5'
-                    } ]
+                    }]
                 }, {
                     'qti-type': 'baseValue',
                     'value': '6'
-                } ]
+                }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables.value',
-        nodes: [ 'expression', 'expressions' ],
+        nodes: ['expression', 'expressions'],
         expected: '4'
     }, {
         title: 'Gets a property by its path, single node',
@@ -300,10 +300,10 @@ define( [
             'expression': {
                 'qti-type': 'gte',
                 'value': '1',
-                'expression': [ {
+                'expression': [{
                     'qti-type': 'divide',
                     'value': '2',
-                    'expression': [ {
+                    'expression': [{
                         'qti-type': 'sum',
                         'value': '3',
                         'expression': {
@@ -313,11 +313,11 @@ define( [
                     }, {
                         'qti-type': 'numberPresented',
                         'value': '5'
-                    } ]
+                    }]
                 }, {
                     'qti-type': 'baseValue',
                     'value': '6'
-                } ]
+                }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables.value',
@@ -331,10 +331,10 @@ define( [
             'expression': {
                 'qti-type': 'gte',
                 'value': '1',
-                'expressions': [ {
+                'expressions': [{
                     'qti-type': 'divide',
                     'value': '2',
-                    'expressions': [ {
+                    'expressions': [{
                         'qti-type': 'sum',
                         'value': '3',
                         'expression': {
@@ -344,11 +344,11 @@ define( [
                     }, {
                         'qti-type': 'numberPresented',
                         'value': '5'
-                    } ]
+                    }]
                 }, {
                     'qti-type': 'baseValue',
                     'value': '6'
-                } ]
+                }]
             }
         },
         path: 'setOutcomeValue.gte.divide.testVariables.value',
@@ -362,10 +362,10 @@ define( [
             'expression': {
                 'qti-type': 'gte',
                 'value': '1',
-                'expressions': [ {
+                'expressions': [{
                     'qti-type': 'divide',
                     'value': '2',
-                    'expressions': [ {
+                    'expressions': [{
                         'qti-type': 'sum',
                         'value': '3',
                         'expression': {
@@ -375,21 +375,21 @@ define( [
                     }, {
                         'qti-type': 'numberPresented',
                         'value': '5'
-                    } ]
+                    }]
                 }, {
                     'qti-type': 'baseValue',
                     'value': '6'
-                } ]
+                }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables.value',
         expected: null
-    } ];
+    }];
 
     QUnit
-        .cases.init( qtiElementPropertyCases )
-        .test( 'helpers/qtiElement.lookupProperty() ', function( data, assert ) {
-            assert.expect( 1 );
-            assert.deepEqual( qtiElementHelper.lookupProperty( data.tree, data.path, data.nodes ), data.expected, 'The request property has been found' );
-        } );
-} );
+        .cases.init(qtiElementPropertyCases)
+        .test('helpers/qtiElement.lookupProperty() ', function(data, assert) {
+            assert.expect(1);
+            assert.deepEqual(qtiElementHelper.lookupProperty(data.tree, data.path, data.nodes), data.expected, 'The request property has been found');
+        });
+});

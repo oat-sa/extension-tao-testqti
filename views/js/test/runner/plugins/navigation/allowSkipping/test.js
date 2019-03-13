@@ -16,15 +16,15 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
-define( [
-    
+define([
+
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/navigation/allowSkipping',
     'taoQtiTest/runner/helpers/currentItem'
 ], function(
-   
+
     $,
     runnerFactory,
     providerMock,
@@ -35,32 +35,32 @@ define( [
 
     var pluginApi;
     var providerName = 'mock';
-    runnerFactory.registerProvider( providerName, providerMock() );
+    runnerFactory.registerProvider(providerName, providerMock());
 
     //Mock the isAnswered helper, using testRunner property
-    currentItemHelper.isAnswered = function( testRunner ) {
+    currentItemHelper.isAnswered = function(testRunner) {
         return testRunner.answered;
     };
 
     //Mock the getDeclarations helper, using testRunner property
-    currentItemHelper.getDeclarations = function( testRunner ) {
+    currentItemHelper.getDeclarations = function(testRunner) {
         return testRunner.responses;
     };
 
     /**
      * The following tests applies to all plugins
      */
-    QUnit.module( 'pluginFactory' );
+    QUnit.module('pluginFactory');
 
-    QUnit.test( 'module', function( assert ) {
-        var runner = runnerFactory( providerName );
+    QUnit.test('module', function(assert) {
+        var runner = runnerFactory(providerName);
 
-        assert.equal( typeof pluginFactory, 'function', 'The pluginFactory module exposes a function' );
-        assert.equal( typeof pluginFactory( runner ), 'object', 'The plugin factory produces an instance' );
-        assert.notStrictEqual( pluginFactory( runner ), pluginFactory( runner ), 'The plugin factory provides a different instance on each call' );
-    } );
+        assert.equal(typeof pluginFactory, 'function', 'The pluginFactory module exposes a function');
+        assert.equal(typeof pluginFactory(runner), 'object', 'The plugin factory produces an instance');
+        assert.notStrictEqual(pluginFactory(runner), pluginFactory(runner), 'The plugin factory provides a different instance on each call');
+    });
 
-    pluginApi = [ {
+    pluginApi = [{
         name: 'init',
         title: 'init'
     }, {
@@ -105,7 +105,7 @@ define( [
     }, {
         name: 'disable',
         title: 'disable'
-    } ];
+    }];
 
     QUnit
         .cases.init(pluginApi)
@@ -116,9 +116,9 @@ define( [
         });
 
 
-    QUnit.module( 'Behavior' );
+    QUnit.module('Behavior');
 
-    QUnit.cases.init( [ {
+    QUnit.cases.init([{
         title: 'when the option is not enabled',
         context: {
             itemIdentifier: 'item-1',
@@ -126,7 +126,7 @@ define( [
             allowSkipping: false
         },
         answered: false,
-        responses: [ 'foo' ]
+        responses: ['foo']
     }, {
         title: 'when the item has no interactions',
         context: {
@@ -144,7 +144,7 @@ define( [
             allowSkipping: true
         },
         answered: false,
-        responses: [ 'foo' ]
+        responses: ['foo']
     }, {
         title: 'when the item is answered',
         context: {
@@ -153,37 +153,37 @@ define( [
             allowSkipping: false
         },
         answered: true,
-        responses: [ 'foo' ]
-    } ] )
-    .test( 'Moving is allowed ', function( data, assert ) {
+        responses: ['foo']
+    }])
+    .test('Moving is allowed ', function(data, assert) {
         var ready = assert.async();
-        var runner = runnerFactory( providerName );
-        var plugin = pluginFactory( runner, runner.getAreaBroker() );
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        assert.expect( 1 );
+        assert.expect(1);
 
         plugin
             .init()
-            .then( function() {
+            .then(function() {
 
-                runner.setTestContext( data.context );
+                runner.setTestContext(data.context);
                 runner.answered = data.answered;
                 runner.responses = data.responses;
 
-                runner.on( 'move', function() {
-                    assert.ok( true, 'Move is allowed' );
+                runner.on('move', function() {
+                    assert.ok(true, 'Move is allowed');
                     ready();
                     return Promise.reject();
-                } );
-                runner.trigger( 'move' );
-            } )
-            .catch( function( err ) {
-                assert.ok( false, err.message );
+                });
+                runner.trigger('move');
+            })
+            .catch(function(err) {
+                assert.ok(false, err.message);
                 ready();
-            } );
-    } );
+            });
+    });
 
-    QUnit.cases.init( [ {
+    QUnit.cases.init([{
         title: 'when the item not answered',
         context: {
             itemIdentifier: 'item-1',
@@ -191,43 +191,43 @@ define( [
             allowSkipping: false
         },
         answered: false,
-        responses: [ 'foo' ]
-    } ] )
-    .test( 'Moving is prevented ', function( data, assert ) {
+        responses: ['foo']
+    }])
+    .test('Moving is prevented ', function(data, assert) {
         var ready = assert.async();
 
-        var runner = runnerFactory( providerName );
-        var plugin = pluginFactory( runner, runner.getAreaBroker() );
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        assert.expect( 2 );
+        assert.expect(2);
 
         plugin
             .init()
-            .then( function() {
+            .then(function() {
 
-                runner.setTestContext( data.context );
+                runner.setTestContext(data.context);
                 runner.answered = data.answered;
                 runner.responses = data.responses;
 
-                runner.on( 'move', function() {
-                    assert.ok( false, 'Move is denied' );
+                runner.on('move', function() {
+                    assert.ok(false, 'Move is denied');
                     ready();
-                } );
-                runner.off( 'alert.notallowed' )
-                    .on( 'alert.notallowed', function( message, cb ) {
-                        assert.equal( message, 'A response to every question in this item is required.', 'The user receive the correct message' );
+                });
+                runner.off('alert.notallowed')
+                    .on('alert.notallowed', function(message, cb) {
+                        assert.equal(message, 'A response to every question in this item is required.', 'The user receive the correct message');
                         cb();
-                    } );
-                runner.on( 'resumeitem', function() {
-                    assert.ok( true, 'Move has been prevented' );
+                    });
+                runner.on('resumeitem', function() {
+                    assert.ok(true, 'Move has been prevented');
                     ready();
-                } );
-                runner.trigger( 'move' );
+                });
+                runner.trigger('move');
 
-            } )
-            .catch( function( err ) {
-                assert.ok( false, err.message );
+            })
+            .catch(function(err) {
+                assert.ok(false, err.message);
                 ready();
-            } );
-    } );
-} );
+            });
+    });
+});
