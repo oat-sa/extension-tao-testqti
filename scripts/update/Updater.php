@@ -1760,5 +1760,17 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('30.7.0', '32.0.0');
+
+        if ($this->isVersion('32.0.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['highlighter'] = array(
+                'stimuliPersistentStorage' => true
+            );
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('32.1.0');
+        }
+
     }
 }
