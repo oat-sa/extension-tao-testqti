@@ -658,8 +658,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Gets the state of a particular item
      * @param RunnerServiceContext $context
-     * @param $itemRef
-     * @return array
+     * @param string $itemRef
+     * @return array|null
      * @throws \common_Exception
      */
     public function getItemState(RunnerServiceContext $context, $itemRef)

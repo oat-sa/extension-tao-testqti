@@ -1749,7 +1749,21 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('30.6.0');
         }
 
-        if ($this->isVersion('30.6.0')) {
+        $this->skip('30.6.0', '30.6.1');
+
+        if ($this->isVersion('30.6.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['dialog']['alert']['focus'] = 'ok';
+            $config['plugins']['dialog']['confirm']['focus'] = 'ok';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('30.7.0');
+        }
+
+        $this->skip('30.7.0', '32.0.0');
+
+        if ($this->isVersion('32.0.0')) {
             AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'OfflineRunner')));
 
             $offlineQtiRunnerService = new OfflineQtiRunnerService();
@@ -1760,7 +1774,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->register(OfflineQtiRunnerService::SERVICE_ID, $offlineQtiRunnerService);
             $this->getServiceManager()->register(TestDefinitionSerializerService::SERVICE_ID, $testDefinitionSerializerService);
 
-            $this->setVersion('30.7.0');
+            $this->setVersion('32.1.0');
         }
     }
 }

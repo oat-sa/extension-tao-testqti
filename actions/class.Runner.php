@@ -35,8 +35,8 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
+use oat\tao\model\routing\AnnotationReader\security;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -55,6 +55,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * taoQtiTest_actions_Runner constructor.
+     * @security("hide");
      */
     public function __construct()
     {
