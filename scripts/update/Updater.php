@@ -1735,7 +1735,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('30.5.0');
         }
-        
+
         $this->skip('30.5.0', '30.5.3');
 
         if ($this->isVersion('30.5.3')) {
@@ -1747,5 +1747,18 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('30.6.0');
         }
 
+        $this->skip('30.6.0', '30.6.1');
+
+        if ($this->isVersion('30.6.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['dialog']['alert']['focus'] = 'ok';
+            $config['plugins']['dialog']['confirm']['focus'] = 'ok';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('30.7.0');
+        }
+
+        $this->skip('30.7.0', '32.0.0');
     }
 }
