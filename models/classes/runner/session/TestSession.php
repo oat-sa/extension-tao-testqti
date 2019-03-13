@@ -224,6 +224,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      *
      * @param float $duration The client duration, or null to force server duration to be used as client duration
      * @param $timestamp
+     * @throws \oat\taoTests\models\runner\time\InvalidStorageException
+     * @throws \oat\taoTests\models\runner\time\TimeException
      */
     public function endItemTimer($duration = null, $timestamp = null)
     {
@@ -231,7 +233,13 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             $timestamp = microtime(true);
         }
         $timer = $this->getTimer();
-        $tags = $this->getItemTags($this->getCurrentRouteItem());
+        $currentItem = $this->getCurrentRouteItem();
+
+        if ($currentItem) {
+            $tags = $this->getItemTags($currentItem);
+        } else {
+            $tags = [];
+        }
 
         $timer->end($tags, $timestamp);
 
@@ -424,7 +432,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     {
         return $this->buildTimeConstraints($places, true);
     }
-    
+
     /**
      * Get the regular time constraints running for the current testPart or/and current assessmentSection
      * or/and assessmentItem, without taking care of the extra time.
@@ -474,7 +482,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     public function submitItemResults(AssessmentItemSession $itemSession, $occurrence = 0)
     {
         $itemRef = $itemSession->getAssessmentItem();
-        
+
         // Ensure that specific results from adaptive placeholders are not recorded.
         $catService = ServiceManager::getServiceManager()->get(CatService::SERVICE_ID);
         if (!$catService->isAdaptivePlaceholder($itemRef)) {
