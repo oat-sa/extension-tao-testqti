@@ -343,7 +343,7 @@ return array(
             /**
              * Determines if highlights on stimuli can persist between test sessions
              */
-            'stimuliPersistentStorage' => true
+            'stimuliPersistentStorage' => 'green'
         ]
     ],
 

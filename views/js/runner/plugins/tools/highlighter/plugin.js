@@ -74,11 +74,11 @@ define([
              */
             var itemId = testRunner.getTestContext().itemIdentifier;
 
-            /**
-             * @var {Array} itemTextStimuli
-             * Contains the list of text stimulus ids in the current item. Will be changed on 'renderitem' event
-             */
-            var itemTextStimuli = [];
+            // /**
+            //  * @var {Array} itemTextStimuli
+            //  * Contains the list of text stimulus ids in the current item. Will be changed on 'renderitem' event
+            //  */
+            // var itemTextStimuli = [];
 
             /**
              * @var {Array} highlighters - Highlighters collection
@@ -113,7 +113,6 @@ define([
              * @param {String} options.id
              */
             function addHighlighter(options) {
-                console.log('addHighlighter', options.storageType, options.id);
                 highlighters.push(highlighterFactory(options));
             }
 
@@ -226,76 +225,8 @@ define([
                 var highlighterPersistentStore = stores[1];
 
                 /**
-                 * Save the highlighter state in the store
-                 * @returns {Promise} resolves one the save is done
-                 */
-                function saveAll() {
-                    // return Promise.all([
-                    //     saveVolatileHighlights(),
-                    //     savePersistentHighlights()
-                    // ]);
-
-                    return Promise.all(
-                        _(highlighters)
-                        .map(function(instance) {
-                            var key = instance.getId();
-                            var storageType = instance.getStorageType();
-                            return saveHighlight(key, storageType);
-                        })
-                        .value()
-                    ).then(function(results) {
-                        // if every setItem() returned true, return true
-                        return _.every(results);
-                    });
-                }
-
-                /**
-                 * Save the volatile highlighters states in the store
-                 * @returns {Promise} resolves once the save is done
-                 */
-                function saveVolatileHighlights() {
-                    // Filter highlighter list based on storageType:
-                    return Promise.all(
-                        _(highlighters)
-                        .filter(function(hl) {
-                            return hl.getStorageType() === 'volatile';
-                        })
-                        .map(function(instance) {
-                            var key = instance.getId();
-                            var highlightsIndex = instance.getIndex();
-                            if (isEnabled() && hasHighlights && itemId) {
-                                console.log('Saving', highlightsIndex.length, 'volatile highlights');
-                                return highlighterVolatileStore.setItem(itemId, highlightsIndex);
-                            }
-                        })
-                        .value()
-                    ).then(function(results) {
-                        // if every setItem() returned true, return true
-                        return _.every(results);
-                    });
-                }
-
-                /**
-                 * Save the state of current item's stimulus highlighters in the persistent store
-                 * @returns {Promise} resolves once the save is done
-                 */
-                function savePersistentHighlights() {
-                    return Promise.all(
-                        _(itemTextStimuli)
-                            .map(function(stimulusHref) {
-                                return saveHighlight(stimulusHref, 'persistent');
-                            })
-                            .value()
-                    )
-                    .then(function(results) {
-                        // if every savePersistentHighlight() returned true, return true
-                        return _.every(results);
-                    });
-                }
-
-                /**
                  * Saves a highlighter's state to the appropriate store
-                 * @param {String} key - an identifier, could be the itemId or the stimulus href
+                 * @param {String} key - an identifier, could be the stimulus href
                  * @param {String} storageType - volatile or persistent
                  * @returns {Boolean} true if save was done
                  */
@@ -317,10 +248,46 @@ define([
                     }
 
                     if (isEnabled() && hasHighlights && key) {
-                        console.log('Saving', highlightsIndex.length, storageType, 'highlights for id', key);
+                        logger.debug('Saving', highlightsIndex.length, storageType, 'highlights for id', key);
                         return store.setItem(key, highlightsIndex);
                     }
                     return false;
+                }
+
+                /**
+                 * Saves the top-level highlighter's state to the appropriate store
+                 * @returns {Boolean} true if save was done
+                 */
+                function saveItemHighlight() {
+                    var highlightsIndex = highlighters[0].getIndex();
+
+                    if (isEnabled() && hasHighlights && itemId) {
+                        logger.debug('Saving', highlightsIndex.length, 'highlights for id', itemId);
+                        return highlighterVolatileStore.setItem(itemId, highlightsIndex);
+                    }
+                    return false;
+                }
+
+                /**
+                 * Saves all the highlighters states in the store
+                 * First the non-item highlighters, then the item highlighter (index 0)
+                 * @returns {Promise} resolves one the save is done
+                 */
+                function saveAll() {
+                    var nonItemHighlighters = highlighters.slice(1);
+                    return Promise.all(
+                        _(nonItemHighlighters)
+                        .map(function(instance) {
+                            var key = instance.getId();
+                            var storageType = instance.getStorageType();
+                            return saveHighlight(key, storageType);
+                        })
+                        .value()
+                    ).then(function(results) {
+                        // Now save the main item highlight
+                        // and if every setItem() returned true, return true
+                        return saveItemHighlight() && _.every(results);
+                    });
                 }
 
 
@@ -379,6 +346,7 @@ define([
                     return highlighterVolatileStore.getItem(key)
                         .then(function(index) {
                             if (index) {
+                                logger.debug('Loading', index.length, 'volatile highlights for id', key, index);
                                 hasHighlights = true;
                                 instance.restoreIndex(index);
                             }
@@ -387,7 +355,7 @@ define([
                             //save highlighter state during the item session,
                             //when the highlighting ends
                             instance.on('end.save', function() {
-                                return saveHighlight(key, 'volatile');
+                                return saveItemHighlight();
                             });
                         })
                         .then(function() {
@@ -405,7 +373,6 @@ define([
                     return itemHelper.getStimuli(testRunner, itemId)
                         .then(function(stimuli) {
                             var textStimuli;
-                            // console.warn('stimuli in this item?', stimuli);
                             if (stimuli.length > 0) {
                                 // Filter the ones containing text:
                                 textStimuli = stimuli.filter(function(stimulusHref) {
@@ -415,7 +382,7 @@ define([
                                                 return child.nodeType === child.TEXT_NODE;
                                             });
                                 });
-                                console.warn('stimuli with text:', textStimuli);
+                                logger.debug('stimuli with text:', textStimuli);
                                 return textStimuli;
                             }
                             return [];
@@ -439,48 +406,48 @@ define([
                 //update plugin state based on changes
                 testRunner
                     .on('loaditem', function() {
-                        itemId = testRunner.getTestContext().itemIdentifier;
                         togglePlugin();
                     })
                     .on('enabletools renderitem', function () {
                         self.enable();
                     })
                     .on('renderitem', function() {
-                        console.warn('renderitem', itemId);
-                        // Load volatile (item-level) highlights from store:
-                        if (isEnabled()) {
-                            hasHighlights = false;
-                            // loadVolatileHighlights();
-                            loadItemHighlight(itemId);
-                        }
+                        itemId = testRunner.getTestContext().itemIdentifier;
 
-                        // Count stimuli in this item:
-                        getTextStimuliIds().then(function(textStimuli) {
-                            itemTextStimuli = textStimuli;
-                            // NOW we can instantiate the extra highlighters:
-                            _.forEach(textStimuli, function(textStimulusHref) {
-                                // If id not already present in highlighters...
-                                if (!highlighters.find(function(hl) {
-                                    return hl.getId() === textStimulusHref;
-                                })) {
-                                    addHighlighter({
-                                        className: 'txt-user-highlight',
-                                        containerSelector: '.qti-include[data-href="' + textStimulusHref + '"]',
-                                        storageType: stimulusStorageType,
-                                        id: textStimulusHref
-                                    });
-                                }
-                                // And load their indexes (method depends on config):
-                                if (stimuliPersistentStorage) {
-                                    loadHighlight(textStimulusHref);
-                                }
+                        if (itemId && isEnabled()) {
+                            hasHighlights = false;
+
+                            // Load volatile (item-level) highlights from store:
+                            loadItemHighlight(itemId);
+
+                            // Count stimuli in this item:
+                            getTextStimuliIds().then(function(textStimuli) {
+                                // NOW we can instantiate the extra highlighters:
+                                _.forEach(textStimuli, function(textStimulusHref) {
+                                    // If id not already present in highlighters...
+                                    if (!highlighters.find(function(hl) {
+                                        return hl.getId() === textStimulusHref;
+                                    })) {
+                                        addHighlighter({
+                                            className: 'txt-user-highlight',
+                                            containerSelector: '.qti-include[data-href="' + textStimulusHref + '"]',
+                                            storageType: stimulusStorageType,
+                                            id: textStimulusHref
+                                        });
+                                    }
+                                    // And load their indexes (method depends on config):
+                                    if (stimuliPersistentStorage) {
+                                        loadHighlight(textStimulusHref);
+                                    }
+                                });
                             });
-                        });
+                        }
                     })
                     .before('skip move timeout', function() {
-                        saveAll();
-                        // Delete all highlighters apart from first:
-                        highlighters = highlighters.slice(0,1);
+                        return saveAll().then(function() {
+                            // Delete all highlighters apart from first:
+                            highlighters = highlighters.slice(0,1);
+                        });
                     })
                     .on('disabletools unloaditem', function () {
                         self.disable();

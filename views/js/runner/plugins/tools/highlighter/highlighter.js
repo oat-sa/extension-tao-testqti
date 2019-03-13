@@ -115,7 +115,6 @@ define([
                 } else {
                     this.trigger('end');
                 }
-                window[options.id] = isHighlighting;
             },
 
             /**

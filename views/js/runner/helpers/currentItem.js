@@ -233,7 +233,7 @@ define([
         },
 
         /**
-         * Gets list of shared stimuli serials in the current item
+         * Gets list of shared stimuli hrefs in the current item
          *
          * @param {Object} runner - testRunner instance
          * @param {String} itemId

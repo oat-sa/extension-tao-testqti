@@ -21,8 +21,9 @@
 define([
     'lodash',
     'helpers',
+    'taoQtiTest/test/runner/mocks/proxyMock',
     'taoQtiTest/runner/helpers/currentItem'
-], function (_, helpers, currentItemHelper) {
+], function (_, helpers, proxyMock, currentItemHelper) {
     'use strict';
 
     var messagesHelperApi = [
@@ -38,13 +39,25 @@ define([
      * Build a fake test runner with embedded item runner
      * @param {Object} responses
      * @param {Object} declarations
+     * @param {String} itemId
+     * @param {Object} itemData
      * @returns {Object}
      */
-    function runnerMock(responses, declarations) {
+    function runnerMock(responses, declarations, itemId, itemData) {
         return {
+            getProxy: function() {
+                return proxyMock({
+                    itemActions: {
+                        getItem: function () {
+                            return Promise.resolve(itemData);
+                        }
+                    }
+                });
+            },
             itemRunner: {
                 _item: {
-                    responses: declarations
+                    responses: declarations,
+                    itemIdentifier: itemId
                 },
                 getResponses: function () {
                     return responses;
@@ -211,4 +224,47 @@ define([
         assert.equal(currentItemHelper.isAnswered(respondedRunner), true, 'The item should be answered');
         assert.equal(currentItemHelper.isAnswered(notRespondedRunner), false, 'The item should not be answered');
     });
+
+
+    QUnit.cases([
+        {
+            title : 'without stimulus',
+            itemId: 'item-1',
+            itemData: {
+                data: {
+                    body: {
+                        elements: {}
+                    }
+                }
+            },
+            expectedResult: []
+        },
+        {
+            title : 'with stimulus',
+            itemId: 'item-2',
+            itemData: {
+                data: {
+                    body: {
+                        elements: {
+                            first : {
+                                serial: 'xinclude_12345',
+                                attributes: {
+                                    href: 'http://path/to/something.xml'
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            expectedResult: ['http://path/to/something.xml']
+        }
+    ]).asyncTest('helpers/currentItem.getStimuli', function(caseData, assert) {
+        var runner = runnerMock(null, null, caseData.itemId, caseData.itemData);
+
+        currentItemHelper.getStimuli(runner, caseData.itemId).then(function(result) {
+            assert.deepEqual(result, caseData.expectedResult, 'getStimuli returns correct value');
+            QUnit.start();
+        });
+    });
+
 });
