@@ -67,6 +67,9 @@ define([
          * @typedef itemStore
          */
         return {
+            setCacheSize: function setCacheSize(cacheSize) {
+                config.maxSize = cacheSize;
+            },
 
             /**
              * Get the item form the given key/id/uri
@@ -149,6 +152,7 @@ define([
              * @returns {Promise<Boolean>} resolves once removed
              */
             remove: function remove(key) {
+                console.log('remove called', key);
                 if(this.has(key)){
                     return getStore().then(function(itemStorage){
 

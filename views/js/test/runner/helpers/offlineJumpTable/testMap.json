@@ -1,0 +1,98 @@
+{
+  "jumps": [],
+  "parts": {
+    "P01": {
+      "id": "P01",
+      "sections": {
+        "S01": {
+          "id": "S01",
+          "items": {
+            "I01": {
+              "id": "I01",
+              "position": 0
+            },
+            "I02": {
+              "id": "I02",
+              "position": 1
+            }
+          }
+        },
+        "S02": {
+          "id": "S02",
+          "items": {
+            "I03": {
+              "id": "I03",
+              "position": 2
+            },
+            "I04": {
+              "id": "I04",
+              "position": 3
+            }
+          }
+        }
+      }
+    },
+    "P02": {
+      "id": "P02",
+      "sections": {
+        "S03": {
+          "id": "S03",
+          "items": {
+            "I05": {
+              "id": "I05",
+              "position": 4
+            },
+            "I06": {
+              "id": "I06",
+              "position": 5
+            }
+          }
+        },
+        "S04": {
+          "id": "S04",
+          "items": {
+            "I07": {
+              "id": "I07",
+              "position": 6
+            },
+            "I08": {
+              "id": "I08",
+              "position": 7
+            }
+          }
+        }
+      }
+    },
+    "P03": {
+      "id": "P03",
+      "sections": {
+        "S05": {
+          "id": "S05",
+          "items": {
+            "I09": {
+              "id": "I09",
+              "position": 8
+            },
+            "I10": {
+              "id": "I10",
+              "position": 9
+            }
+          }
+        },
+        "S06": {
+          "id": "S06",
+          "items": {
+            "I11": {
+              "id": "I11",
+              "position":10
+            },
+            "I12": {
+              "id": "I12",
+              "position": 11
+            }
+          }
+        }
+      }
+    }
+  }
+}
