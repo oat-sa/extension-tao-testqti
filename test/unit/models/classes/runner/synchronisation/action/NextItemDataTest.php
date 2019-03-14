@@ -83,7 +83,15 @@ class NextItemDataTest extends TestCase
 
     public function testSuccessfulResponseWithMultipleItemDefinitions()
     {
-        $itemDefinition = ['itemId1', 'itemId2', 'itemId3'];
+        $itemId1 = 'itemId1';
+        $itemId2 = 'itemId2';
+
+        $state1 = ['expectedItemState1'];
+        $state2 = null;
+        $storedState2 = new stdClass();
+
+
+        $itemDefinition = [$itemId1, $itemId2];
         $requestParameters = $this->getRequiredRequestParameters($itemDefinition);
 
         $this->setItemCacheEnabledConfigExpectation(true);
@@ -91,9 +99,8 @@ class NextItemDataTest extends TestCase
         $this->qtiRunnerService
             ->method('getItemState')
             ->willReturnMap([
-                [$this->qtiRunnerServiceContext, 'itemId1', 'expectedItemState1'],
-                [$this->qtiRunnerServiceContext, 'itemId2', 'expectedItemState2'],
-                [$this->qtiRunnerServiceContext, 'itemId3', 'expectedItemState3'],
+                [$this->qtiRunnerServiceContext, $itemId1, $state1],
+                [$this->qtiRunnerServiceContext, $itemId2, $state2],
             ]);
 
         $subject = $this->createSubjectWithParameters($requestParameters);
@@ -104,24 +111,18 @@ class NextItemDataTest extends TestCase
                 [
                     'baseUrl' => null,
                     'itemData' => null,
-                    'itemState' => 'expectedItemState1',
-                    'itemIdentifier' => 'itemId1',
+                    'itemState' => $state1,
+                    'itemIdentifier' => $itemId1,
                 ],
                 [
                     'baseUrl' => null,
                     'itemData' => null,
-                    'itemState' => 'expectedItemState2',
-                    'itemIdentifier' => 'itemId2',
+                    'itemState' => $storedState2,
+                    'itemIdentifier' => $itemId2,
                 ],
-                [
-                    'baseUrl' => null,
-                    'itemData' => null,
-                    'itemState' => 'expectedItemState3',
-                    'itemIdentifier' => 'itemId3',
-                ]
             ]
         ], $subject->process());
-    }
+   }
 
     /**
      * @param array $requestParameters

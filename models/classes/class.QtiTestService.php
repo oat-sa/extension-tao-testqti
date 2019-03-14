@@ -64,7 +64,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     const INSTANCE_TEST_MODEL_QTI = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel';
 
     const TAOQTITEST_FILENAME = 'tao-qtitest-testdefinition.xml';
-    
+
     const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
 
     const INSTANCE_FORMAL_PARAM_TEST_DEFINITION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition';
@@ -82,6 +82,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     const TEST_BASE_PATH_NAME = 'taoQtiBasePath';
     const TEST_PLACEHOLDER_BASE_URI = 'tao://qti-directory';
     const TEST_VIEWS_NAME = 'taoQtiViews';
+
+    const XML_TEST_PART = 'testPart';
+    const XML_ASSESSMENT_SECTION = 'assessmentSection';
+    const XML_ASSESSMENT_ITEM_REF = 'assessmentItemRef';
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
      */
@@ -342,23 +346,23 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 if ($qtiManifestParser->isValid() === true) {
 
                     $validManifest = true;
-                    
+
                     $tests = array();
                     foreach(Resource::getTestTypes() as $type){
                         $tests = array_merge($tests, $qtiManifestParser->getResources($type));
                     }
-                    
+
                     $testsFound = (count($tests) !== 0);
-                    
+
                     if ($testsFound !== true) {
                         $report->add(common_report_Report::createFailure(__("Package is valid but no tests were found. Make sure that it contains valid QTI tests.")));
                     } else {
                         $alreadyImportedQtiResources = [];
-                        
+
                         foreach ($tests as $qtiTestResource) {
                             $importTestReport = $this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder, $alreadyImportedQtiResources);
                             $report->add($importTestReport);
-                            
+
                             if ($data = $importTestReport->getData()) {
                                 $alreadyImportedQtiResources = array_unique(
                                     array_merge(
@@ -412,7 +416,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                     common_Logger::d("Restoring content for item '${overwrittenItemId}'...");
                     @Service::singleton()->restoreContentByRdfItem(new core_kernel_classes_Resource($overwrittenItemId), $backupName);
                 }
-                
+
                 // Delete all created classes (by registered class lookups).
                 foreach ($data->createdClasses as $createdClass) {
                     @$createdClass->delete();
@@ -479,7 +483,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $domManifest->load($folder . 'imsmanifest.xml');
 
         $metadataValues = $this->getMetadataImporter()->extract($domManifest);
-        
+
         // Note: without this fix, metadata guardians do not work.
         $this->getMetadataImporter()->setMetadataValues($metadataValues);
 
@@ -516,16 +520,16 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
             try {
                 $testDefinition->load($expectedTestFile, true);
-                
+
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-                
+
                 // -- Load all items related to test.
                 $itemError = false;
 
                 // discover test's base path.
                 $dependencies = taoQtiTest_helpers_Utils::buildAssessmentItemRefsTestMap($testDefinition, $manifestParser, $folder);
-                
+
                 // Build a DOM version of the fully resolved AssessmentTest for later usage.
                 $transitionalDoc = new DOMDocument('1.0', 'UTF-8');
                 $transitionalDoc->loadXML($testDefinition->saveToString());
@@ -543,7 +547,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
 
                                 $resourceIdentifier = $qtiDependency->getIdentifier();
-                                
+
                                 if (!array_key_exists($resourceIdentifier, $ignoreQtiResources)) {
 
                                     $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
@@ -552,7 +556,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                     foreach ($this->getMetadataImporter()->getExtractors() as $extractor) {
                                         if ($extractor instanceof MetadataTestContextAware) {
                                             $metadataValues = array_merge(
-                                                $metadataValues, 
+                                                $metadataValues,
                                                 $extractor->contextualizeWithTest(
                                                     $qtiTestResource->getIdentifier(),
                                                     $transitionalDoc,
@@ -569,9 +573,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                         $createdClasses = array();
 
                                         $itemReport = $itemImportService->importQtiItem(
-                                            $folder, 
-                                            $qtiDependency, 
-                                            $targetClass, 
+                                            $folder,
+                                            $qtiDependency,
+                                            $targetClass,
                                             $dependencies['dependencies'],
                                             $metadataValues,
                                             array(),
@@ -587,7 +591,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                         );
 
                                         $reportCtx->createdClasses = array_merge($reportCtx->createdClasses, $createdClasses);
-                                        
+
                                         $rdfItem = $itemReport->getData();
 
                                         if ($rdfItem) {
@@ -644,7 +648,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                             // 3. Give meaningful names to resources.
                             $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
                             $targetClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
-                            
+
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
                             $this->getMetadataImporter()->inject($qtiTestResource->getIdentifier(), $testResource);
@@ -762,7 +766,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
         $oldFile = $this->getQtiTestFile($testResource);
         $oldFile->delete();
-        
+
         $ds = DIRECTORY_SEPARATOR;
         $path = dirname($qtiResource->getFile()).$ds.self::TAOQTITEST_FILENAME;
         $dir = $this->getQtiTestDir($testResource);
@@ -975,7 +979,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             );
         }
         $dir = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_CONTENT));
-        
+
         if (!is_null($dir)) {
             return $this->getFileReferenceSerializer()->unserialize($dir);
         } else {
@@ -1026,9 +1030,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         return $this->searchInTestDirectory($dir);
 
     }
-    
+
     /**
-     * 
+     *
      * @param core_kernel_classes_Resource $test
      * @throws Exception
      * @return string
@@ -1086,7 +1090,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 $identifier = '_'.$identifier;
             }
             $doc->documentElement->setAttribute('identifier', $identifier);
-            
+
             $doc->documentElement->setAttribute('toolVersion', TAO_VERSION);
 
             if (!$file->write($doc->saveXML())) {
@@ -1098,10 +1102,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         } else if ($file->exists()) {
             $doc = new DOMDocument('1.0', 'UTF-8');
             $doc->loadXML($file->read());
-            
+
             // Label update only.
             $doc->documentElement->setAttribute('title', $test->getLabel());
-            
+
             if (!$file->update($doc->saveXML())) {
                 $msg = "Unable to update QTI Test file.";
                 throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
@@ -1143,7 +1147,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     /**
      * Get the default directory where the tests' contents are stored.
      * replaces getQtiTestFileSystem
-     * 
+     *
      * @return Directory
      */
     public function getDefaultDir()
@@ -1152,7 +1156,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $fsId = $ext->getConfig(self::CONFIG_QTITEST_FILESYSTEM);
         return $this->getServiceLocator()->get(FileSystemService::SERVICE_ID)->getDirectory($fsId);
     }
-    
+
     /**
      * Set the acceptable latency time (applied on qti:timeLimits->minTime, qti:timeLimits:maxTime).
      *

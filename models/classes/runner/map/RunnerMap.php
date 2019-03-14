@@ -35,6 +35,9 @@ interface RunnerMap
     const SCOPE_TEST    = 'test';
     const SCOPE_PART    = 'part';
     const SCOPE_SECTION = 'section';
+    const MAP_ATTRIBUTE_PARTS = 'parts';
+    const MAP_ATTRIBUTE_SECTIONS = 'sections';
+    const MAP_ATTRIBUTE_ITEMS = 'items';
 
     /**
      * Builds the map of an assessment test

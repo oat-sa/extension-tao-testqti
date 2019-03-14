@@ -73,7 +73,6 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
-use oat\taoDelivery\model\execution\StateServiceInterface;
 
 /**
  * Class QtiRunnerService
@@ -109,7 +108,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Get the data folder from a given item definition
      * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
-     * @return string the path
+     * @return array the path
      * @throws \common_Exception
      */
     private function loadItemData($itemRef, $path)
@@ -659,8 +658,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     /**
      * Gets the state of a particular item
      * @param RunnerServiceContext $context
-     * @param $itemRef
-     * @return array
+     * @param string $itemRef
+     * @return array|null
      * @throws \common_Exception
      */
     public function getItemState(RunnerServiceContext $context, $itemRef)
@@ -995,27 +994,26 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param string $itemRef  the item reference
      * @return array the feedbacks data
      * @throws \common_Exception
-     * @throws \common_exception_InconsistentData
      * @throws \common_exception_InvalidArgumentType
-     * @throws \tao_models_classes_FileNotFoundException
+     * @deprecated since version 30.7.0, to be removed in 31.0.0. Use getItemVariableElementsData() instead
      */
     public function getFeedbacks(RunnerServiceContext $context, $itemRef)
     {
-        $feedbacks = array();
+        return $this->getItemVariableElementsData($context, $itemRef);
+    }
 
-        if ($context instanceof QtiRunnerServiceContext) {
-            return $this->loadItemData($itemRef, QtiJsonItemCompiler::VAR_ELT_FILE_NAME);
-        } else {
-            throw new \common_exception_InvalidArgumentType(
-                'QtiRunnerService',
-                'getFeedbacks',
-                0,
-                'oat\taoQtiTest\models\runner\QtiRunnerServiceContext',
-                $context
-            );
-        }
+    /**
+     * @param RunnerServiceContext $context
+     * @param $itemRef
+     * @return array
+     * @throws \common_Exception
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function getItemVariableElementsData(RunnerServiceContext $context, $itemRef)
+    {
+        $this->assertQtiRunnerServiceContext($context);
 
-        return $feedbacks;
+        return $this->loadItemData($itemRef, QtiJsonItemCompiler::VAR_ELT_FILE_NAME);
     }
 
     /**
@@ -1795,7 +1793,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param RunnerServiceContext $context
      * @throws \common_exception_InvalidArgumentType
      */
-    protected function assertQtiRunnerServiceContext(RunnerServiceContext $context)
+    public function assertQtiRunnerServiceContext(RunnerServiceContext $context)
     {
         if (!$context instanceof QtiRunnerServiceContext) {
             throw new \common_exception_InvalidArgumentType(
@@ -2022,7 +2020,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         try{
             $metadataElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::METADATA_FILE_NAME);
         }catch(\tao_models_classes_FileNotFoundException $e){
-            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
+            \common_Logger::i('Old delivery that does not contain the compiled portable element data in the item '.$itemRef.'. Original message: ' . $e->getMessage());
+        }catch(\Exception $e) {
+            \common_Logger::w('An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage());
         }
         return $metadataElements;
     }

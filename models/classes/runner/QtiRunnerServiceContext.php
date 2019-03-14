@@ -51,7 +51,7 @@ use taoQtiTest_models_classes_QtiTestService;
  * Class QtiRunnerServiceContext
  *
  * Defines a container to store and to share runner service context of the QTI implementation
- * 
+ *
  * @package oat\taoQtiTest\models
  */
 class QtiRunnerServiceContext extends RunnerServiceContext
@@ -69,7 +69,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * The assessment test definition
-     * @var AssessmentTest 
+     * @var AssessmentTest
      */
     protected $testDefinition;
 
@@ -86,7 +86,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var array
      */
     private $testMeta;
-    
+
     /**
      * The index of compiled items.
      *
@@ -125,7 +125,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * QtiRunnerServiceContext constructor.
-     * 
+     *
      * @param string $testDefinitionUri
      * @param string $testCompilationUri
      * @param string $testExecutionUri
@@ -146,7 +146,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         /** @var SessionStateService $sessionStateService */
         $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
         $sessionStateService->resumeSession($this->getTestSession());
-        
+
         $this->retrieveItemIndex();
     }
 
@@ -222,14 +222,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * @deprecated
      */
-    protected function retrieveTestMeta() 
+    protected function retrieveTestMeta()
     {
     }
-    
+
     /**
      * Retrieves the index of compiled items.
      */
-    protected function retrieveItemIndex() 
+    protected function retrieveItemIndex()
     {
         $this->itemIndex = new QtiTestCompilerIndex();
         try {
@@ -335,9 +335,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $data = str_replace('?>', '', $data);
             $this->testMeta = eval($data);
         }
+
         return $this->testMeta;
     }
-    
+
     /**
      * Gets the URI of the assessment test
      * @return string
@@ -371,7 +372,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @return mixed
      * @throws \common_exception_Error
      */
-    public function getItemIndex($id) 
+    public function getItemIndex($id)
     {
         return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
     }
@@ -404,16 +405,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @return mixed
      * @throws \common_exception_Error
      */
-    public function getItemIndexValue($id, $name) 
+    public function getItemIndexValue($id, $name)
     {
         return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
     }
-    
+
     /**
      * Get Cat Engine Implementation
-     * 
+     *
      * Get the currently configured Cat Engine implementation.
-     * 
+     *
      * @return \oat\libCat\CatEngine
      */
     public function getCatEngine(RouteItem $routeItem = null)
@@ -421,14 +422,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $compiledDirectory = $this->getCompilationDirectory()['private'];
         $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
         $routeItem = $routeItem ? $routeItem : $this->getTestSession()->getRoute()->current();
-        
+
         $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
         $catEngine = false;
-        
+
         if (isset($adaptiveSectionMap[$sectionId])) {
             $catEngine = $this->getServiceManager()->get(CatService::SERVICE_ID)->getEngine($adaptiveSectionMap[$sectionId]['endpoint']);
         }
-        
+
         return $catEngine;
     }
 
@@ -443,7 +444,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * Get the current CAT Session Object.
-     * 
+     *
      * @param RouteItem|null $routeItem
      * @return \oat\libCat\CatSession|false
      */
@@ -455,12 +456,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $routeItem
         );
     }
-    
+
     /**
      * Persist the CAT Session Data.
-     * 
+     *
      * Persist the current CAT Session Data in storage.
-     * 
+     *
      * @param string $catSession JSON encoded CAT Session data.
      * @param RouteItem|null $routeItem
      * @return mixed
@@ -493,11 +494,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         } else {
             $items = json_decode($items);
         }
-        
+
         if (!in_array($seenCatItemId, $items)) {
             $items[] = $seenCatItemId;
         }
-        
+
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
             $sessionId,
             $this->getCatSection()->getSectionId(),
@@ -508,13 +509,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * Get Last CAT Item Output.
-     * 
+     *
      * Get the last CAT Item Result from memory.
      */
     public function getLastCatItemOutput()
     {
         $sessionId = $this->getTestSession()->getSessionId();
-        
+
         $itemOutput = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
             $sessionId,
             $this->getCatSection()->getSectionId(),
@@ -532,19 +533,19 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 $output[$itemResult->getItemRefId()] = $itemResult;
             }
         }
-        
+
         return $output;
     }
-    
+
     /**
      * Persist CAT Item Output.
-     * 
+     *
      * Persist the last CAT Item Result in memory.
      */
     public function persistLastCatItemOutput(array $lastCatItemOutput)
     {
         $sessionId = $this->getTestSession()->getSessionId();
-        
+
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
             $sessionId,
             $this->getCatSection()->getSectionId(),
@@ -552,13 +553,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             json_encode($lastCatItemOutput)
         );
     }
-    
+
     /**
      * Get Current CAT Section.
-     * 
+     *
      * Returns the current CatSection object. In case of the current Assessment Section is not adaptive, the method
      * returns the boolean false value.
-     * 
+     *
      * @return \oat\libCat\CatSection|boolean
      */
     public function getCatSection(RouteItem $routeItem = null)
@@ -569,12 +570,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $routeItem
         );
     }
-    
+
     /**
      * Is the Assessment Test Session Context Adaptive.
-     * 
+     *
      * Determines whether or not the current Assessment Test Session is in an adaptive context.
-     * 
+     *
      * @param AssessmentItemRef $currentAssessmentItemRef (optional) An AssessmentItemRef object to be considered as the current assessmentItemRef.
      * @return boolean
      */
@@ -582,18 +583,18 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         return $this->getServiceManager()->get(CatService::SERVICE_ID)->isAdaptive($this->getTestSession(), $currentAssessmentItemRef);
     }
-    
+
     /**
      * Contains Adaptive Content.
-     * 
+     *
      * Whether or not the current Assessment Test Session has some adaptive contents.
-     * 
+     *
      * @return boolean
      */
     public function containsAdaptive()
     {
         $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($this->getCompilationDirectory()['private']);
-        
+
         return !empty($adaptiveSectionMap);
     }
 
@@ -647,12 +648,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             return null;
         }
     }
-    
+
     /**
      * Get Current AssessmentItemRef object.
-     * 
+     *
      * This method returns the current AssessmentItemRef object depending on the test $context.
-     * 
+     *
      * @return \qtism\data\ExtendedAssessmentItemRef
      */
     public function getCurrentAssessmentItemRef()
@@ -666,7 +667,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             return $this->getTestSession()->getCurrentAssessmentItemRef();
         }
     }
-    
+
     public function getPreviouslySeenCatItemIds(RouteItem $routeItem = null)
     {
         return $this->getServiceManager()->get(CatService::SERVICE_ID)->getPreviouslySeenCatItemIds(
@@ -684,7 +685,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $routeItem
         );
     }
-    
+
     public function getCurrentCatItemId(RouteItem $routeItem = null)
     {
         return $this->getServiceManager()->get(CatService::SERVICE_ID)->getCurrentCatItemId(
@@ -693,7 +694,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $routeItem
         );
     }
-    
+
     public function persistCurrentCatItemId($catItemId)
     {
         $session = $this->getTestSession();
@@ -704,54 +705,54 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             'current-cat-item-id',
             $catItemId
         );
-        
+
         $event = new QtiTestChangeEvent($session, new TestSessionMemento($session));
         $this->getServiceManager()->propagate($event);
         $this->getEventManager()->trigger($event);
     }
-    
+
     public function getItemPositionInRoute($refId, &$catItemId = '')
     {
         $route = $this->getTestSession()->getRoute();
         $routeCount = $route->count();
-        
+
         $i = 0;
         $j = 0;
-        
+
         while ($i < $routeCount) {
             $routeItem = $route->getRouteItemAt($i);
-            
+
             if ($this->isAdaptive($routeItem->getAssessmentItemRef())) {
                 $shadow = $this->getShadowTest($routeItem);
-                
+
                 for ($k = 0; $k < count($shadow); $k++) {
                     if ($j == $refId) {
                         $catItemId = $shadow[$k];
                         break 2;
                     }
-                    
+
                     $j++;
                 }
             } else {
                 if ($j == $refId) {
                     break;
                 }
-                
+
                 $j++;
             }
-            
+
             $i++;
         }
-        
+
         return $i;
     }
-    
+
     /**
      * Get Real Current Position.
-     * 
+     *
      * This method returns the real position of the test taker within
      * the item flow, by considering CAT sections.
-     * 
+     *
      * @return integer A zero-based index.
      */
     public function getCurrentPosition()
@@ -760,12 +761,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $routeCount = $route->count();
         $routeItemPosition = $route->getPosition();
         $currentRouteItem = $route->getRouteItemAt($routeItemPosition);
-        
+
         $finalPosition = 0;
-        
+
         for ($i = 0; $i < $routeCount; $i++) {
             $routeItem = $route->getRouteItemAt($i);
-            
+
             if ($routeItem !== $currentRouteItem) {
                 if (!$this->isAdaptive($routeItem->getAssessmentItemRef())) {
                     $finalPosition++;
@@ -779,14 +780,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                         $this->getShadowTest($routeItem)
                     );
                 }
-                
+
                 break;
             }
         }
-        
+
         return $finalPosition;
     }
-    
+
     public function getCatAttempts($identifier, RouteItem $routeItem = null)
     {
         return $this->getServiceManager()->get(CatService::SERVICE_ID)->getCatAttempts(
@@ -796,20 +797,20 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $routeItem
         );
     }
-    
+
     public function persistCatAttempts($identifier, $attempts) {
         $sessionId = $this->getTestSession()->getSessionId();
         $sectionId = $this->getCatSection()->getSectionId();
-        
+
         $catAttempts = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->getCatValue(
             $sessionId,
             $sectionId,
             'cat-attempts'
         );
-        
+
         $catAttempts = ($catAttempts) ? $catAttempts : [];
         $catAttempts[$identifier] = $attempts;
-        
+
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->setCatValue(
             $sessionId,
             $sectionId,
@@ -990,7 +991,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * Are we in a synchronization mode
-     * @return bool 
+     * @return bool
      */
     public function isSyncingMode()
     {

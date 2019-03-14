@@ -21,6 +21,7 @@
  */
 
 use oat\taoQtiTest\models\event\TraceVariableStored;
+use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -30,11 +31,12 @@ use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
+use oat\tao\model\routing\AnnotationReader\security;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -53,6 +55,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * taoQtiTest_actions_Runner constructor.
+     * @security("hide");
      */
     public function __construct()
     {
@@ -206,8 +209,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 case $e instanceof QtiRunnerClosedException:
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
+                        /** @var QtiRunnerMessageService $messageService */
                         $messageService = $this->getServiceManager()->get(QtiRunnerMessageService::SERVICE_ID);
-                        $response['message'] = __($messageService->getStateMessage($this->serviceContext->getTestSession()));
+                        try {
+                            $response['message'] = __($messageService->getStateMessage($this->serviceContext->getTestSession()));
+                        } catch (common_exception_Error $e) {
+                            $response['message'] = null;
+                        }
                     }
                     $response['type'] = 'TestState';
                     break;
@@ -261,53 +269,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Initializes the delivery session
+     * @throws common_Exception
      */
     public function init()
     {
-        $code = 200;
-        $response = [];
+        /** @var QtiRunnerServiceContext $serviceContext */
+        $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
 
         try {
-            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
-
-            if ($this->hasRequestParameter('clientState')) {
-                $clientState = $this->getRequestParameter('clientState');
-                if ('paused' == $clientState) {
-                    $this->getRunnerService()->pause($serviceContext);
-                    $this->getRunnerService()->check($serviceContext);
-                }
-            }
-
-            $lastStoreId = false;
-            if($this->hasRequestParameter('storeId')){
-                $receivedStoreId =  $this->getRequestParameter('storeId');
-                if(preg_match('/^[a-z0-9\-]+$/i', $receivedStoreId)) {
-                    $lastStoreId = $this->getRunnerService()->switchClientStoreId($serviceContext, $receivedStoreId);
-                }
-            }
-
-            $result = $this->getRunnerService()->init($serviceContext);
-            $this->getRunnerService()->persist($serviceContext);
-
-            $response['success'] = $result;
-
-            if ($result) {
-                $response['testData'] = $this->getRunnerService()->getTestData($serviceContext);
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-                $response['lastStoreId'] = $lastStoreId;
-                $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext);
-                $response['toolStates'] = $this->getToolStates($serviceContext);
-            }
-
-        } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e, $response);
-            $code = $this->getErrorCode($e);
+            $this->returnJson($this->getInitResponse($serviceContext));
         } catch (\Exception $e) {
-            $response = $this->getErrorResponse($e, $response);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getErrorCode($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -1064,5 +1040,83 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             throw new common_exception_MissingParameter(sprintf('No such parameter "%s"', $name));
         }
         return $parameters[$name];
+    }
+
+    /**
+     * @param QtiRunnerServiceContext $serviceContext
+     * @return array
+     * @throws QtiRunnerClosedException
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     * @throws \qtism\runtime\storage\common\StorageException
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_InvalidArgumentType
+     * @throws common_ext_ExtensionException
+     */
+    protected function getInitResponse(QtiRunnerServiceContext $serviceContext)
+    {
+        if (
+            $this->hasRequestParameter('clientState')
+            && $this->getRequestParameter('clientState') === 'paused'
+        ) {
+            $this->getRunnerService()->pause($serviceContext);
+            $this->getRunnerService()->check($serviceContext);
+        }
+
+        $result = $this->getRunnerService()->init($serviceContext);
+        $this->getRunnerService()->persist($serviceContext);
+
+        if ($result) {
+            return array_merge(...[
+                $this->getInitSerializedResponse($serviceContext),
+                [ 'success' => true ],
+            ]);
+        }
+
+        return [
+            'success' => false,
+        ];
+    }
+
+    /**
+     * Checks the storeId request parameter and returns the last store id if set, false otherwise
+     *
+     * @param QtiRunnerServiceContext $serviceContext
+     * @return string|boolean
+     * @throws common_exception_InvalidArgumentType
+     */
+    private function getClientStoreId(QtiRunnerServiceContext $serviceContext)
+    {
+        if (
+            $this->hasRequestParameter('storeId')
+            && preg_match('/^[a-z0-9\-]+$/i', $this->getRequestParameter('storeId'))
+        ) {
+            return $this->getRunnerService()->switchClientStoreId(
+                $serviceContext,
+                $this->getRequestParameter('storeId')
+            );
+        }
+
+        return false;
+    }
+
+    /**
+     * @param QtiRunnerServiceContext $serviceContext
+     * @return array
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     * @throws common_Exception
+     * @throws common_exception_InvalidArgumentType
+     * @throws common_ext_ExtensionException
+     */
+    private function getInitSerializedResponse(QtiRunnerServiceContext $serviceContext)
+    {
+        return [
+            'success' => true,
+            'testData' => $this->getRunnerService()->getTestData($serviceContext),
+            'testContext' => $this->getRunnerService()->getTestContext($serviceContext),
+            'testMap' => $this->getRunnerService()->getTestMap($serviceContext),
+            'toolStates' => $this->getToolStates(),
+            'lastStoreId' => $this->getClientStoreId($serviceContext),
+        ];
     }
 }
