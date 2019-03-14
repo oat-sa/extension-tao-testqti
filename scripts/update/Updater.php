@@ -26,11 +26,13 @@ use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
+use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
@@ -1762,11 +1764,27 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('30.7.0', '32.0.0');
 
         if ($this->isVersion('32.0.0')) {
-          $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
-          $config = $extension->getConfig('testRunner');
-          $config['plugins']['keyNavigation']['contentNavigatorType'] = 'default';
-          $extension->setConfig('testRunner', $config);
-          $this->setVersion('32.1.0');
-      }
+            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'OfflineRunner')));
+
+            $offlineQtiRunnerService = new OfflineQtiRunnerService();
+            $testDefinitionSerializerService = new TestDefinitionSerializerService();
+
+            $offlineQtiRunnerService->setServiceManager($this->getServiceManager());
+            $testDefinitionSerializerService->setServiceManager($this->getServiceManager());
+            $this->getServiceManager()->register(OfflineQtiRunnerService::SERVICE_ID, $offlineQtiRunnerService);
+            $this->getServiceManager()->register(TestDefinitionSerializerService::SERVICE_ID, $testDefinitionSerializerService);
+
+            $this->setVersion('32.1.0');
+        }
+
+        $this->skip('32.1.0', '32.1.1');
+
+        if ($this->isVersion('32.1.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['keyNavigation']['contentNavigatorType'] = 'default';
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('32.2.0');
+        }
     }
 }
