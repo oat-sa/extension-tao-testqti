@@ -1,4 +1,12 @@
-define([], function () {
+define([
+    'lodash',
+    'core/promise',
+    'taoQtiTest/runner/branchRule/branchRule'
+], function (
+    _,
+    Promise,
+    branchRule,
+) {
     'use strict';
 
     /**
@@ -10,8 +18,6 @@ define([], function () {
      *     part: '...', // the identifier of the part
      *     position: 0 // the position of the jump entry, starting from 0
      * }
-     *
-     * @returns {{jumpToNextPart: (function(): offlineJumpTableFactory), getLastJump: (function(): {}), _getSections: (function(): *[]), jumpToNextItem: (function(): offlineJumpTableFactory), _getItems: (function(): *[]), addJump: (function(String, String, String): offlineJumpTableFactory), getJumpTable: (function(): Array), jumpTo: (function(Integer): offlineJumpTableFactory), jumpToPreviousSection: (function(): offlineJumpTableFactory), _getSimplifiedTestMap: (function(): Array), jumpToNextSection: (function(): offlineJumpTableFactory), clearJumpTable: (function(): offlineJumpTableFactory), _getParts: (function(): *[]), jumpToPreviousItem: (function(): offlineJumpTableFactory), jumpToPreviousPart: (function(): offlineJumpTableFactory)}}
      */
     var offlineJumpTableFactory = function offlineJumpTableFactory(itemStore) {
         var testMap = {};
@@ -22,6 +28,17 @@ define([], function () {
                 testMap = map;
 
                 return this;
+            },
+
+            init: function init() {
+                var firstItem,
+                    simplifiedTestMap = this._getSimplifiedTestMap();
+
+                if (simplifiedTestMap.length > 0 && jumpTable.length === 0) {
+                    firstItem = simplifiedTestMap[0];
+
+                    this.addJump(firstItem.part, firstItem.section, firstItem.item);
+                }
             },
 
             /**
@@ -78,22 +95,40 @@ define([], function () {
              *
              * @returns {offlineJumpTableFactory}
              */
-            jumpToNextItem: function jumpToNextItem() {
+            jumpToNextItem: function jumpToNextItem(params) {
+                var self = this;
+                var simplifiedTestMap = this._getSimplifiedTestMap();
                 var lastJumpItem = this.getLastJump().item || null;
                 var items = this._getItems();
                 var itemSliceIndex = items.indexOf(lastJumpItem);
                 var itemIdentifierToAdd = items.slice(itemSliceIndex + 1).shift();
-                var itemToAdd = this._getSimplifiedTestMap()
+                var itemToAdd = simplifiedTestMap
                     .filter(function(row) {
                         return row.item === itemIdentifierToAdd;
                     })
                     .shift();
+                var lastJumpItemData = simplifiedTestMap
+                    .filter(function(row) {
+                        return row.item === lastJumpItem;
+                    })
+                    .shift();
 
-                if (itemToAdd) {
-                    this.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
+                if (lastJumpItemData.itemHasBranchRule) {
+                    return this._getItemFromStore(lastJumpItem, function(item) {
+                        var itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params);
+
+                        if (itemIdentifierToAdd !== null) {
+                            var iii = simplifiedTestMap.filter(function(row) {
+                                return row.item === itemIdentifierToAdd;
+                            }).shift();
+                            return self.addJump(iii.part, iii.section, iii.item);
+                        } else {
+                            return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
+                        }
+                    });
+                } else {
+                    return this.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
                 }
-
-                return this;
             },
 
             /**
@@ -279,6 +314,12 @@ define([], function () {
                     });
             },
 
+            _getItemFromStore: function _getItemFromStore(key, callback) {
+                itemStore.get(key).then(function(item) {
+                    return callback(item);
+                });
+            },
+
             /**
              * Returns a simplified test map array, which will contain the item, section and part identifiers.
              * TODO: extend with branching rules
@@ -298,10 +339,13 @@ define([], function () {
 
                             simplifiedTestMap.push({
                                 item: itemIdentifier,
+                                itemHasBranchRule: !_.isEmpty(item.branchRule),
                                 itemBranchRule: item.branchRule,
                                 section: sectionIdentifier,
+                                sectionHasBranchRule: !_.isEmpty(section.branchRule),
                                 sectionBranchRule: section.branchRule,
                                 part: partIdentifier,
+                                partHasBranchRule: !_.isEmpty(part.branchRule),
                                 partBranchRule: part.branchRule,
                             });
                         });

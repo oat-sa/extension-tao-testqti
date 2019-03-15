@@ -32,6 +32,8 @@ define([
                 testMap = map;
                 offlineJumpTableHelper.setTestMap(map);
 
+                offlineJumpTableHelper.init();
+
                 return this;
             },
 
@@ -52,7 +54,7 @@ define([
 
                 switch (true) {
                     case direction === 'next' && scope === 'item':
-                        lastJump = offlineJumpTableHelper.jumpToNextItem().getLastJump();
+                        lastJump = offlineJumpTableHelper.jumpToNextItem(params).getLastJump();
                         break;
 
                     case direction === 'next' && scope === 'section':
