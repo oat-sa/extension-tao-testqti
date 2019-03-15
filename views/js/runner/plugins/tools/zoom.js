@@ -57,7 +57,7 @@ define([
      * @param {Number} level - Zoom percentage
      */
     var setZoomLevel = function($target, level) {
-        transformer.setTransformOrigin($target, '0 0');
+        transformer.setTransformOrigin($target, '50% 0');
         transformer.scale($target, level / 100);
     };
 
