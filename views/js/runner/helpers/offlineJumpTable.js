@@ -113,22 +113,22 @@ define([
                     })
                     .shift();
 
-                if (lastJumpItemData.itemHasBranchRule) {
-                    return this._getItemFromStore(lastJumpItem, function(item) {
-                        var itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params);
-
-                        if (itemIdentifierToAdd !== null) {
-                            var iii = simplifiedTestMap.filter(function(row) {
-                                return row.item === itemIdentifierToAdd;
-                            }).shift();
-                            return self.addJump(iii.part, iii.section, iii.item);
-                        } else {
-                            return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
-                        }
-                    });
-                } else {
+                // if (lastJumpItemData.itemHasBranchRule) {
+                //     return this._getItemFromStore(lastJumpItem, function(item) {
+                //         var itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params);
+                //
+                //         if (itemIdentifierToAdd !== null) {
+                //             var iii = simplifiedTestMap.filter(function(row) {
+                //                 return row.item === itemIdentifierToAdd;
+                //             }).shift();
+                //             return self.addJump(iii.part, iii.section, iii.item);
+                //         } else {
+                //             return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
+                //         }
+                //     });
+                // } else {
                     return this.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
-                }
+                // }
             },
 
             /**
