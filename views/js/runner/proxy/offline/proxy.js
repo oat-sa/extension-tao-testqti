@@ -296,6 +296,13 @@ define([
                 return this.queue.serie(function() {
                     return self.actionStore
                         .flush()
+                        .then(function(actions) {
+                            _.forEach(actions, function (action) {
+                                self.actionStore.push(action.action, action.parameters);
+                            });
+
+                            return actions;
+                        })
                         .then(self.prepareDownload)
                         .then(function(data) {
                             return download(data.filename, data.content);
