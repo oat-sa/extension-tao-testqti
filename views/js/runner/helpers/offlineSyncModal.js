@@ -47,7 +47,7 @@ define([
             width: '600px'
         };
         var $secondaryButton;
-        var secondaryButtonWait = 10; // seconds to wait until it enables
+        var secondaryButtonWait = 60; // seconds to wait until it enables
         var $countdownText;
         var countdownPolling;
 
