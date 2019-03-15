@@ -38,9 +38,10 @@ define([
         var waitingConfig = {
             message: __('You are encountering a prolonged connectivity loss.'),
             waitContent: __('Please continue waiting while we try to restore the connection. Alternatively, you may end this test by downloading it as a file which you will have to submit manually.'),
-            proceedContent: __('The connection seems to be back, please proceed'),
+            proceedContent: __('The connection seems to be back, please proceed.'),
+            proceedButtonText: __('Proceed & End Test'),
             showSecondary: true,
-            secondaryButtonText: __('Download & End Assessment'),
+            secondaryButtonText: __('Download'),
             secondaryButtonIcon: 'download',
             buttonSeparatorText: __('or'),
             width: '600px'
@@ -98,9 +99,6 @@ define([
                 $secondaryButton.prop('disabled', true);
                 $countdownText.remove();
                 $('.between-buttons-text').addClass('hidden');
-            })
-            .on('secondaryaction', function () {
-                waitingDialog.destroy();
             });
 
         return waitingDialog;

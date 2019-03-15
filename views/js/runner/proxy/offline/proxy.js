@@ -169,9 +169,6 @@ define([
                                 })
                                 .on('secondaryaction', function() {
                                     self.initiateDownload()
-                                        .then(function(){
-                                            return resolve(result);
-                                        })
                                         .catch(reject);
                                 });
                         }).catch(function (error) {
