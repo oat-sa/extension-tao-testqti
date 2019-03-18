@@ -49,7 +49,7 @@ define([
     errorProvider,
     offlineSyncModal,
     download,
-    feedback,
+    feedback
 ) {
     'use strict';
 
