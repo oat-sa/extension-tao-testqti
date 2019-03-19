@@ -48,10 +48,25 @@ define([
          *
          */
         install : function install(){
-            var testRunner = this.getTestRunner();
+            var testRunner      = this.getTestRunner();
+            var testData        = testRunner.getTestData() || {};
+            var testConfig      = testData.config || {};
 
-            //define the "highlighter" store as "volatile" (removed on browser change).
-            testRunner.getTestStore().setVolatile(this.getName());
+            /**
+             * @var {Boolean} persistentStorage
+             * Platform-level setting for persistent storage of stimulus highlights (TAO-7617)
+             * The default is false
+             */
+            try {
+                self.persistentStorage = testConfig.plugins.highlighter.persistentStorage;
+            }
+            catch (e) {
+                self.persistentStorage = false;
+            }
+            if (!self.persistentStorage) {
+                //define the "highlighter" store as "volatile" (removed on browser change).
+                testRunner.getTestStore().setVolatile(this.getName());
+            }
         },
 
         /**
@@ -69,33 +84,12 @@ define([
             var logger          = loggerFactory('highlighterPlugin');
 
             /**
-             * @var {String} itemId
-             * Contains the id of the current item. Will be changed on 'loaditem' event
-             */
-            var itemId = testRunner.getTestContext().itemIdentifier;
-
-            /**
              * @var {Array} highlighters - Highlighters collection
              * We can run multiple instances of the highlighter plugin on one page:
              * - one for item-level highlights, which persist for the Test session
              * - others for stimulus-level highlights, which should persist across multiple sessions (TAO-7617)
              */
             var highlighters = [];
-
-            /**
-             * @var {Boolean} stimuliPersistentStorage
-             * Platform-level setting for persistent storage of stimulus highlights (TAO-7617)
-             */
-            var stimuliPersistentStorage;
-            var stimulusStorageType;
-            try {
-                stimuliPersistentStorage = testConfig.plugins.highlighter.stimuliPersistentStorage;
-            }
-            catch (e) {
-                stimuliPersistentStorage = false;
-            }
-            stimulusStorageType = stimuliPersistentStorage ? 'persistent' : 'volatile';
-
 
             /**
              * Instantiates new highlighter and adds it to array
@@ -192,39 +186,26 @@ define([
             }
 
             /**
-             * Gets a volatile store for temporary state
+             * Gets the browser test store
+             * Can be in volatile or non-volatile mode, depending on config
              * @returns {Promise}
              */
-            function getVolatileStore() {
+            function getStore() {
                 return testRunner.getTestStore().getStore(self.getName());
-            }
-
-            /**
-             * Gets a second, non-volatile store for persisted state
-             * @returns {Promise}
-             */
-            function getPersistentStore() {
-                return testRunner.getTestStore().getStore(self.getName() + '-persistent');
             }
 
             /**
              * Load the stores and hook the behavior
              */
-            return Promise.all([
-                getVolatileStore(),
-                getPersistentStore()
-            ])
-            .then(function(stores) {
-                var highlighterVolatileStore = stores[0];
-                var highlighterPersistentStore = stores[1];
+            getStore()
+            .then(function(highlighterStore) {
 
                 /**
                  * Saves a highlighter's state to the appropriate store
                  * @param {String} key - an identifier, could be the stimulus href
-                 * @param {String} storageType - volatile or persistent
                  * @returns {Boolean} true if save was done
                  */
-                function saveHighlight(key, storageType) {
+                function saveHighlight(key) {
                     var instance = _(highlighters)
                         .filter(function(hl) {
                             return hl.getId() === key;
@@ -233,17 +214,9 @@ define([
 
                     var highlightsIndex = instance.getIndex();
 
-                    var store;
-                    if (storageType === 'persistent') {
-                        store = highlighterPersistentStore;
-                    }
-                    else {
-                        store = highlighterVolatileStore;
-                    }
-
                     if (isEnabled() && hasHighlights && key) {
-                        console.log('Saving', highlightsIndex.length, storageType, 'highlights for id', key);
-                        return store.setItem(key, highlightsIndex);
+                        console.log('Saving', highlightsIndex.length, 'highlights for id', key);
+                        return highlighterStore.setItem(key, highlightsIndex);
                     }
                     return false;
                 }
@@ -253,11 +226,12 @@ define([
                  * @returns {Boolean} true if save was done
                  */
                 function saveItemHighlight() {
+                    var itemId = testRunner.getTestContext().itemIdentifier;
                     var highlightsIndex = highlighters[0].getIndex();
 
                     if (isEnabled() && hasHighlights && itemId) {
-                        console.log('Saving', highlightsIndex.length, 'highlights for id', itemId);
-                        return highlighterVolatileStore.setItem(itemId, highlightsIndex);
+                        console.log('Saving', highlightsIndex.length, 'item highlights for id', itemId);
+                        return highlighterStore.setItem(itemId, highlightsIndex);
                     }
                     return false;
                 }
@@ -273,8 +247,7 @@ define([
                         _(nonItemHighlighters)
                         .map(function(instance) {
                             var key = instance.getId();
-                            var storageType = instance.getStorageType();
-                            return saveHighlight(key, storageType);
+                            return saveHighlight(key);
                         })
                         .value()
                     ).then(function(results) {
@@ -291,7 +264,6 @@ define([
                  * @returns {Promise} resolves once the load is done
                  */
                 function loadHighlight(key) {
-                    var storageType, store;
                     // Select correct highlighter by id:
                     var instance = _(highlighters)
                         .filter(function(hl) {
@@ -301,18 +273,10 @@ define([
 
                     if (!instance) return Promise.resolve(false);
 
-                    storageType = instance.getStorageType();
-
-                    if (storageType === 'persistent') {
-                        store = highlighterPersistentStore;
-                    }
-                    else {
-                        store = highlighterVolatileStore;
-                    }
-
-                    return store.getItem(key)
+                    return highlighterStore.getItem(key)
                         .then(function(index) {
                             if (index) {
+                                console.log('Loading', index.length, 'highlights for key', key, index);
                                 hasHighlights = true;
                                 instance.restoreIndex(index);
                             }
@@ -321,11 +285,8 @@ define([
                             //save highlighter state during the item session,
                             //when the highlighting ends
                             instance.on('end.save', function() {
-                                return saveHighlight(key, storageType);
+                                return saveHighlight(key);
                             });
-                        })
-                        .then(function() {
-                            return true;
                         });
                 }
 
@@ -337,10 +298,10 @@ define([
                 function loadItemHighlight(key) {
                     var instance = highlighters[0];
 
-                    return highlighterVolatileStore.getItem(key)
+                    return highlighterStore.getItem(key)
                         .then(function(index) {
                             if (index) {
-                                console.log('Loading', index.length, 'volatile highlights for id', key, index);
+                                console.log('Loading', index.length, 'item highlights for id', key, index);
                                 hasHighlights = true;
                                 instance.restoreIndex(index);
                             }
@@ -351,9 +312,6 @@ define([
                             instance.on('end.save', function() {
                                 return saveItemHighlight();
                             });
-                        })
-                        .then(function() {
-                            return true;
                         });
                 }
 
@@ -375,7 +333,6 @@ define([
                                         return child.nodeType === child.TEXT_NODE;
                                     });
                         });
-                        console.warn('stimuli with text:', textStimuli);
                         return textStimuli;
                     }
                     return [];
@@ -405,7 +362,7 @@ define([
                     })
                     .on('renderitem', function() {
                         var textStimuli;
-                        itemId = testRunner.getTestContext().itemIdentifier;
+                        var itemId = testRunner.getTestContext().itemIdentifier;
 
                         if (itemId && isEnabled()) {
                             hasHighlights = false;
@@ -424,14 +381,12 @@ define([
                                     addHighlighter({
                                         className: 'txt-user-highlight',
                                         containerSelector: '.qti-include[data-href="' + textStimulusHref + '"]',
-                                        storageType: stimulusStorageType,
+                                        storageType: 'persistent',
                                         id: textStimulusHref
                                     });
                                 }
-                                // And load their indexes (method depends on config):
-                                if (stimuliPersistentStorage) {
-                                    loadHighlight(textStimulusHref);
-                                }
+                                // And load their indexes:
+                                loadHighlight(textStimulusHref);
                             });
                         }
                     })

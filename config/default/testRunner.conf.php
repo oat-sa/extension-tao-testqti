@@ -341,9 +341,11 @@ return array(
          */
         'highlighter' => [
             /**
-             * Determines if highlights on stimuli can persist between test sessions
+             * Determines if the highlighter tool state is synced via the server
+             * If true, highlights can persist between different DeliveryExecution sessions on different browsers
+             * @type boolean
              */
-            'stimuliPersistentStorage' => true
+            'persistentStorage' => true
         ],
 
         /**
@@ -617,7 +619,9 @@ return array(
     /**
      * Specifies runner tools that should keep its states in backend storage
      */
-    'tool-state-server-storage' => [],
+    'tool-state-server-storage' => array(
+        'highlighter'
+    ),
 
     /**
      * Defines whether to always show a warning dialog before moving to next item
