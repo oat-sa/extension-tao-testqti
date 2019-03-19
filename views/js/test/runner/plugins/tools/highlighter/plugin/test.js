@@ -19,13 +19,22 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
+
     'lodash',
     'helpers',
     'ui/hider',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/highlighter/plugin'
-], function(_, helpers, hider, runnerFactory, providerMock, pluginFactory) {
+], function(
+
+    _,
+    helpers,
+    hider,
+    runnerFactory,
+    providerMock,
+    pluginFactory
+) {
     'use strict';
 
     var pluginApi;
@@ -37,43 +46,42 @@ define([
      */
     QUnit.module('pluginFactory');
 
-    QUnit.test('module', 3, function(assert) {
+    QUnit.test('module', function(assert) {
         var runner = runnerFactory(providerName);
 
-        assert.equal(typeof pluginFactory, 'function', "The pluginFactory module exposes a function");
-        assert.equal(typeof pluginFactory(runner), 'object', "The plugin factory produces an instance");
-        assert.notStrictEqual(pluginFactory(runner), pluginFactory(runner), "The plugin factory provides a different instance on each call");
+        assert.equal(typeof pluginFactory, 'function', 'The pluginFactory module exposes a function');
+        assert.equal(typeof pluginFactory(runner), 'object', 'The plugin factory produces an instance');
+        assert.notStrictEqual(pluginFactory(runner), pluginFactory(runner), 'The plugin factory provides a different instance on each call');
     });
 
-
     pluginApi = [
-        { name : 'init', title : 'init' },
-        { name : 'render', title : 'render' },
-        { name : 'finish', title : 'finish' },
-        { name : 'destroy', title : 'destroy' },
-        { name : 'trigger', title : 'trigger' },
-        { name : 'getTestRunner', title : 'getTestRunner' },
-        { name : 'getAreaBroker', title : 'getAreaBroker' },
-        { name : 'getConfig', title : 'getConfig' },
-        { name : 'setConfig', title : 'setConfig' },
-        { name : 'getState', title : 'getState' },
-        { name : 'setState', title : 'setState' },
-        { name : 'show', title : 'show' },
-        { name : 'hide', title : 'hide' },
-        { name : 'enable', title : 'enable' },
-        { name : 'disable', title : 'disable' }
+        {name: 'init', title: 'init'},
+        {name: 'render', title: 'render'},
+        {name: 'finish', title: 'finish'},
+        {name: 'destroy', title: 'destroy'},
+        {name: 'trigger', title: 'trigger'},
+        {name: 'getTestRunner', title: 'getTestRunner'},
+        {name: 'getAreaBroker', title: 'getAreaBroker'},
+        {name: 'getConfig', title: 'getConfig'},
+        {name: 'setConfig', title: 'setConfig'},
+        {name: 'getState', title: 'getState'},
+        {name: 'setState', title: 'setState'},
+        {name: 'show', title: 'show'},
+        {name: 'hide', title: 'hide'},
+        {name: 'enable', title: 'enable'},
+        {name: 'disable', title: 'disable'}
     ];
 
     QUnit
-        .cases(pluginApi)
-        .test('plugin API ', 1, function(data, assert) {
+        .cases.init(pluginApi)
+        .test('plugin API ', function(data, assert) {
             var runner = runnerFactory(providerName);
             var timer = pluginFactory(runner);
             assert.equal(typeof timer[data.name], 'function', 'The pluginFactory instances expose a "' + data.name + '" function');
         });
 
-
-    QUnit.asyncTest('pluginFactory.init', function(assert) {
+    QUnit.test('pluginFactory.init', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
@@ -81,14 +89,13 @@ define([
             .then(function() {
                 assert.equal(plugin.getState('init'), true, 'The plugin is initialised');
 
-                QUnit.start();
+                ready();
             })
             .catch(function(err) {
                 assert.ok(false, 'The init failed: ' + err);
-                QUnit.start();
+                ready();
             });
     });
-
 
     /**
      * The following tests applies to buttons-type plugins
@@ -99,12 +106,13 @@ define([
         return runner.getAreaBroker().getToolboxArea();
     }
 
-    QUnit.asyncTest('render/destroy button', function(assert) {
+    QUnit.test('render/destroy button', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(6);
+        assert.expect(6);
 
         plugin.init()
             .then(function() {
@@ -128,22 +136,22 @@ define([
 
                 assert.equal($buttonMain.length, 0, 'The trigger button has been removed');
                 assert.equal($buttonRemove.length, 0, 'The remove button has been removed');
-                QUnit.start();
+                ready();
 
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('enable/disable button', function(assert) {
+    QUnit.test('enable/disable button', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         plugin.init()
             .then(function() {
@@ -165,31 +173,31 @@ define([
                                 assert.equal($buttonMain.hasClass('disabled'), true, 'The trigger button has been disabled');
                                 assert.equal($buttonRemove.hasClass('disabled'), true, 'The remove button has been disabled');
 
-                                QUnit.start();
+                                ready();
                             })
                             .catch(function(err) {
                                 assert.ok(false, 'error in disable method: ' + err);
-                                QUnit.start();
+                                ready();
                             });
                     })
                     .catch(function(err) {
                         assert.ok(false, 'error in enable method: ' + err);
-                        QUnit.start();
+                        ready();
                     });
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('show/hide button', function(assert) {
+    QUnit.test('show/hide button', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         plugin.init()
             .then(function() {
@@ -208,34 +216,34 @@ define([
 
                         plugin.show()
                             .then(function() {
-                                assert.ok(! hider.isHidden($buttonMain), 'The trigger button is visible');
-                                assert.ok(! hider.isHidden($buttonRemove), 'The remove button is visible');
+                                assert.ok(!hider.isHidden($buttonMain), 'The trigger button is visible');
+                                assert.ok(!hider.isHidden($buttonRemove), 'The remove button is visible');
 
-                                QUnit.start();
+                                ready();
                             })
                             .catch(function(err) {
                                 assert.ok(false, 'error in disable method: ' + err);
-                                QUnit.start();
+                                ready();
                             });
                     })
                     .catch(function(err) {
                         assert.ok(false, 'error in enable method: ' + err);
-                        QUnit.start();
+                        ready();
                     });
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('runner events: loaditem / unloaditem', function(assert) {
+    QUnit.test('runner events: loaditem / unloaditem', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(6);
+        assert.expect(6);
 
         runner.setTestContext({
             options: {
@@ -255,32 +263,32 @@ define([
 
                 runner.trigger('loaditem');
 
-                assert.ok(! hider.isHidden($buttonMain), 'The trigger button is visible');
-                assert.ok(! hider.isHidden($buttonRemove), 'The remove button is visible');
+                assert.ok(!hider.isHidden($buttonMain), 'The trigger button is visible');
+                assert.ok(!hider.isHidden($buttonRemove), 'The remove button is visible');
 
                 runner.trigger('unloaditem');
 
-                assert.ok(! hider.isHidden($buttonMain), 'The trigger button is still visible');
-                assert.ok(! hider.isHidden($buttonRemove), 'The remove button is still visible');
+                assert.ok(!hider.isHidden($buttonMain), 'The trigger button is still visible');
+                assert.ok(!hider.isHidden($buttonRemove), 'The remove button is still visible');
 
                 assert.equal($buttonMain.hasClass('disabled'), true, 'The trigger button has been disabled');
                 assert.equal($buttonRemove.hasClass('disabled'), true, 'The remove button has been disabled');
 
-                QUnit.start();
+                ready();
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('runner events: renderitem', function(assert) {
+    QUnit.test('runner events: renderitem', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var areaBroker = runner.getAreaBroker();
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         plugin.init()
             .then(function() {
@@ -294,17 +302,17 @@ define([
 
                 runner.trigger('renderitem');
 
-                assert.ok(! hider.isHidden($buttonMain), 'The trigger button is visible');
-                assert.ok(! hider.isHidden($buttonRemove), 'The remove button is visible');
+                assert.ok(!hider.isHidden($buttonMain), 'The trigger button is visible');
+                assert.ok(!hider.isHidden($buttonRemove), 'The remove button is visible');
 
                 assert.equal($buttonMain.hasClass('disabled'), false, 'The trigger button is not disabled');
                 assert.equal($buttonRemove.hasClass('disabled'), false, 'The remove button is not disabled');
 
-                QUnit.start();
+                ready();
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
+                ready();
             });
     });
 

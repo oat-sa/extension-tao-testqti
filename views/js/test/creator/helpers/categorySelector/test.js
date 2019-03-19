@@ -19,9 +19,10 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
+
     'jquery',
     'taoQtiTest/controller/creator/helpers/categorySelector'
-], function ($, categorySelectorFactory) {
+], function($, categorySelectorFactory) {
     'use strict';
 
     var allPresets = [{
@@ -31,20 +32,20 @@ define([
             {
                 id: 'preset1.1',
                 label: 'preset1.1',
-                qtiCategory : 'x-tao-option-preset1.1',
-                description : 'Description of preset1.1'
+                qtiCategory: 'x-tao-option-preset1.1',
+                description: 'Description of preset1.1'
             },
             {
                 id: 'preset1.2',
                 label: 'preset1.2',
-                qtiCategory : 'x-tao-option-preset1.2',
-                description : 'Description of preset1.2'
+                qtiCategory: 'x-tao-option-preset1.2',
+                description: 'Description of preset1.2'
             },
             {
                 id: 'preset1.3',
                 label: 'preset1.3',
-                qtiCategory : 'x-tao-option-preset1.3',
-                description : 'Description of preset1.3'
+                qtiCategory: 'x-tao-option-preset1.3',
+                description: 'Description of preset1.3'
             }
         ]
     }, {
@@ -54,20 +55,20 @@ define([
             {
                 id: 'preset2.1',
                 label: 'preset2.1',
-                qtiCategory : 'x-tao-option-preset2.1',
-                description : 'Description of preset2.1'
+                qtiCategory: 'x-tao-option-preset2.1',
+                description: 'Description of preset2.1'
             },
             {
                 id: 'preset2.2',
                 label: 'preset2.2',
-                qtiCategory : 'x-tao-option-preset2.2',
-                description : 'Description of preset2.2'
+                qtiCategory: 'x-tao-option-preset2.2',
+                description: 'Description of preset2.2'
             },
             {
                 id: 'preset2.3',
                 label: 'preset2.3',
-                qtiCategory : 'x-tao-option-preset2.3',
-                description : 'Description of preset2.3'
+                qtiCategory: 'x-tao-option-preset2.3',
+                description: 'Description of preset2.3'
             }
         ]
     }];
@@ -76,20 +77,20 @@ define([
 
     QUnit.module('plugin');
 
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
 
         assert.ok(typeof categorySelectorFactory === 'function', 'The module expose a function');
     });
 
     QUnit
-        .cases([
-            { title: 'createForm' },
-            { title: 'updateFormState' }
+        .cases.init([
+            {title: 'createForm'},
+            {title: 'updateFormState'}
         ])
         .test('API', function(data, assert) {
             var categorySelector = categorySelectorFactory($('<div>'));
-            QUnit.expect(1);
+            assert.expect(1);
 
             assert.ok(typeof categorySelector[data.title] === 'function', 'module has an ' + data.title + ' method');
         });
@@ -101,7 +102,7 @@ define([
             categorySelector = categorySelectorFactory($container),
             $presets;
 
-        QUnit.expect(9);
+        assert.expect(9);
 
         categorySelector.createForm();
 
@@ -131,7 +132,7 @@ define([
                 'custom2'
             ];
 
-        QUnit.expect(7);
+        assert.expect(7);
 
         categorySelector.createForm();
         categorySelector.updateFormState(selected);
@@ -162,7 +163,7 @@ define([
             ],
             $customCategories;
 
-        QUnit.expect(19);
+        assert.expect(19);
 
         categorySelector.createForm();
         categorySelector.updateFormState(selected, indeterminate);
@@ -192,7 +193,8 @@ define([
         assert.equal($customCategories.eq(2).hasClass('partial'), true, 'custom2 is indeterminate');
     });
 
-    QUnit.asyncTest('Transmit the correct state following user selection', function(assert) {
+    QUnit.test('Transmit the correct state following user selection', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture'),
             categorySelector = categorySelectorFactory($container),
             selected = [
@@ -210,7 +212,7 @@ define([
             $customCategories,
             changeCounter = 0;
 
-        QUnit.expect(12);
+        assert.expect(12);
 
         categorySelector.createForm();
         categorySelector.updateFormState(selected, indeterminate);
@@ -231,7 +233,7 @@ define([
                     assert.deepEqual(newSelected, expectedSelected, 'x-tao-option-preset1.1 category has been removed');
                     assert.deepEqual(newIndeterminate, indeterminate, 'indeterminate have not changed');
 
-                    // add back x-tao-option-preset1.1
+                    // Add back x-tao-option-preset1.1
                     $preset = $container.find('input[value="x-tao-option-preset1.1"]');
                     $preset.click();
 
@@ -247,7 +249,7 @@ define([
                     assert.deepEqual(newSelected, expectedSelected, 'x-tao-option-preset1.1 category has been added again');
                     assert.deepEqual(newIndeterminate, indeterminate, 'indeterminate have not changed');
 
-                    // add ex-indeterminate x-tao-option-preset1.2
+                    // Add ex-indeterminate x-tao-option-preset1.2
                     $preset = $container.find('input[value="x-tao-option-preset1.2"]');
                     $preset.click();
 
@@ -268,7 +270,7 @@ define([
                     assert.deepEqual(newSelected, expectedSelected, 'x-tao-option-preset2.2 category has been added');
                     assert.deepEqual(newIndeterminate, expectedIndeterminate, 'x-tao-option-preset2.2 has been removed from indeterminate');
 
-                    // remove ex-indeterminate x-tao-option-preset1.2
+                    // Remove ex-indeterminate x-tao-option-preset1.2
                     $preset = $container.find('input[value="x-tao-option-preset1.2"]');
                     $preset.click();
 
@@ -288,7 +290,7 @@ define([
                     assert.deepEqual(newSelected, expectedSelected, 'x-tao-option-preset2.2 category has been removed');
                     assert.deepEqual(newIndeterminate, expectedIndeterminate, 'x-tao-option-preset2.2 has been removed from indeterminate');
 
-                    // remove indeterminate custom2
+                    // Remove indeterminate custom2
                     $customCategories.val('custom1,custom3');
                     $customCategories.trigger('change');
 
@@ -307,7 +309,7 @@ define([
                     assert.deepEqual(newSelected, expectedSelected, 'nothing has changed here');
                     assert.deepEqual(newIndeterminate, expectedIndeterminate, 'custom2 has been removed from indeterminate');
 
-                    // add back custom2
+                    // Add back custom2
                     $customCategories.val('custom1,custom2,custom3');
                     $customCategories.trigger('change');
 
@@ -330,7 +332,7 @@ define([
                     $customCategories.val('custom1,custom2,custom3');
                     $customCategories.trigger('change');
 
-                    QUnit.start();
+                    ready();
 
                     break;
                 }
@@ -339,10 +341,9 @@ define([
 
         $customCategories = $container.find('input[name="category-custom"]');
 
-        // remove x-tao-option-preset1.1
+        // Remove x-tao-option-preset1.1
         $preset = $container.find('input[value="x-tao-option-preset1.1"]');
         $preset.click();
-
     });
 
 });
