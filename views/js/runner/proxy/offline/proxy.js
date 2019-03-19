@@ -33,6 +33,8 @@ define([
     'taoQtiTest/runner/proxy/cache/actionStore',
     'taoQtiTest/runner/proxy/offline/errorProvider',
     'taoQtiTest/runner/helpers/offlineSyncModal',
+    'util/download',
+    'ui/feedback',
 ], function(
     _,
     __,
@@ -45,7 +47,9 @@ define([
     itemStoreFactory,
     actionStoreFactory,
     errorProvider,
-    offlineSyncModal, // TODO
+    offlineSyncModal,
+    download,
+    feedback
 ) {
     'use strict';
 
@@ -148,14 +152,45 @@ define([
                         && navigationHelper.isLast(testMap, testContext.itemIdentifier)
                     )
                 ) {
-                    // TODO: we need to display a modal which contains the sync state
-                    return this.syncData()
-                        .then(function() {
-                            console.log('sync completed');
-                        })
-                        .catch(function(err) {
-                            console.log('sync failed', err);
+                    // TODO: this changes allow to finish the test, but probably it is not a proper way
+                    result.testContext = {
+                        state: 4,
+                    }
+
+                    if (this.isOffline()) {
+                        return new Promise(function (resolve, reject) {
+                            offlineSyncModal(self)
+                                .on('proceed', function () {
+                                    self.syncData()
+                                        .then(function() {
+                                            return resolve(result);
+                                        })
+                                        .catch(reject);
+                                })
+                                .on('secondaryaction', function() {
+                                    self.initiateDownload()
+                                        .catch(reject);
+                                });
+                        }).catch(function (error) {
+                            feedback(null, {
+                                timeout: -1,
+                                popup: true
+                            }).error(error);
+
+                            return { success: false };
                         });
+                    } else {
+                        return this.syncData().then(function() {
+                            return result;
+                        }).catch(function (error) {
+                            feedback(null, {
+                                timeout: -1,
+                                popup: true
+                            }).error(error);
+
+                            return { success: false };
+                        });
+                    }
                 }
 
                 // try the navigation if the actionParams context meaningful data
@@ -239,6 +274,41 @@ define([
                         });
                 });
             };
+
+            this.prepareDownload = function prepareDownload(actions) {
+                var timestamp = Date.now();
+                var dateTime = new Date(timestamp).toISOString();
+                var testData = self.getDataHolder().get('testData');
+                var testId = testData.title;
+                var niceFilename = 'Download of ' + testId + ' at ' + dateTime + '.json';
+
+                return {
+                    filename: niceFilename,
+                    content: JSON.stringify({
+                        timestamp: timestamp,
+                        testData: testData,
+                        actionQueue: actions
+                    })
+                };
+            };
+
+            this.initiateDownload = function initiateDownload() {
+                return this.queue.serie(function() {
+                    return self.actionStore
+                        .flush()
+                        .then(function(actions) {
+                            _.forEach(actions, function (action) {
+                                self.actionStore.push(action.action, action.parameters);
+                            });
+
+                            return actions;
+                        })
+                        .then(self.prepareDownload)
+                        .then(function(data) {
+                            return download(data.filename, data.content);
+                        });
+                });
+            }
         },
 
         /**
