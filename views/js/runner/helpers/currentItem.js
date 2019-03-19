@@ -236,26 +236,21 @@ define([
          * Gets list of shared stimuli hrefs in the current item
          *
          * @param {Object} runner - testRunner instance
-         * @param {String} itemId
-         * @returns {Promise<Array>}
+         * @returns {Array}
          */
-        getStimuli: function getStimuli(runner, itemId) {
-            return runner.getProxy().getItem(itemId)
-                .then(function(fullItem) {
-                    try {
-                        return _(fullItem.itemData.data.body.elements)
-                            .values()
-                            .filter(function(element) {
-                                return element.serial.indexOf('xinclude') === 0;
-                            })
-                            .pluck('attributes')
-                            .pluck('href')
-                            .value();
-                    }
-                    catch (e) { // TypeError accessing property
-                        return [];
-                    }
-                });
+        getStimuliHrefs: function getStimuliHrefs(runner) {
+            var itemRunner = runner.itemRunner;
+            var itemBody = (itemRunner._item && itemRunner._item.bdy) || {};
+            var interactions = itemBody.elements || {};
+
+            return _(interactions)
+                .values()
+                .filter(function(element) {
+                    return element.serial.indexOf('xinclude') === 0;
+                })
+                .pluck('attributes')
+                .pluck('href')
+                .value();
         }
     };
 

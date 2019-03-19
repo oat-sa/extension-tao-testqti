@@ -74,12 +74,6 @@ define([
              */
             var itemId = testRunner.getTestContext().itemIdentifier;
 
-            // /**
-            //  * @var {Array} itemTextStimuli
-            //  * Contains the list of text stimulus ids in the current item. Will be changed on 'renderitem' event
-            //  */
-            // var itemTextStimuli = [];
-
             /**
              * @var {Array} highlighters - Highlighters collection
              * We can run multiple instances of the highlighter plugin on one page:
@@ -248,7 +242,7 @@ define([
                     }
 
                     if (isEnabled() && hasHighlights && key) {
-                        logger.debug('Saving', highlightsIndex.length, storageType, 'highlights for id', key);
+                        console.log('Saving', highlightsIndex.length, storageType, 'highlights for id', key);
                         return store.setItem(key, highlightsIndex);
                     }
                     return false;
@@ -262,7 +256,7 @@ define([
                     var highlightsIndex = highlighters[0].getIndex();
 
                     if (isEnabled() && hasHighlights && itemId) {
-                        logger.debug('Saving', highlightsIndex.length, 'highlights for id', itemId);
+                        console.log('Saving', highlightsIndex.length, 'highlights for id', itemId);
                         return highlighterVolatileStore.setItem(itemId, highlightsIndex);
                     }
                     return false;
@@ -346,7 +340,7 @@ define([
                     return highlighterVolatileStore.getItem(key)
                         .then(function(index) {
                             if (index) {
-                                logger.debug('Loading', index.length, 'volatile highlights for id', key, index);
+                                console.log('Loading', index.length, 'volatile highlights for id', key, index);
                                 hasHighlights = true;
                                 instance.restoreIndex(index);
                             }
@@ -367,26 +361,24 @@ define([
                 /**
                  * Find the list of text stimulus ids in the current item
                  * Depends on the DOM already being loaded
-                 * @returns {Promise<Array>}
+                 * @returns {Array}
                  */
-                function getTextStimuliIds() {
-                    return itemHelper.getStimuli(testRunner, itemId)
-                        .then(function(stimuli) {
-                            var textStimuli;
-                            if (stimuli.length > 0) {
-                                // Filter the ones containing text:
-                                textStimuli = stimuli.filter(function(stimulusHref) {
-                                    var domNode = $('.qti-include[data-href="' + stimulusHref + '"]').get(0);
-                                    return _(Array.from(domNode.childNodes))
-                                            .some(function(child) {
-                                                return child.nodeType === child.TEXT_NODE;
-                                            });
-                                });
-                                logger.debug('stimuli with text:', textStimuli);
-                                return textStimuli;
-                            }
-                            return [];
+                function getTextStimuliHrefs() {
+                    var stimuli = itemHelper.getStimuliHrefs(testRunner);
+                    var textStimuli;
+                    if (stimuli.length > 0) {
+                        // Filter the ones containing text:
+                        textStimuli = stimuli.filter(function(stimulusHref) {
+                            var domNode = $('.qti-include[data-href="' + stimulusHref + '"]').get(0);
+                            return _(Array.from(domNode.childNodes))
+                                    .some(function(child) {
+                                        return child.nodeType === child.TEXT_NODE;
+                                    });
                         });
+                        console.warn('stimuli with text:', textStimuli);
+                        return textStimuli;
+                    }
+                    return [];
                 }
 
                 // Attach start/end listeners to all highlighter instances:
@@ -412,6 +404,7 @@ define([
                         self.enable();
                     })
                     .on('renderitem', function() {
+                        var textStimuli;
                         itemId = testRunner.getTestContext().itemIdentifier;
 
                         if (itemId && isEnabled()) {
@@ -421,25 +414,24 @@ define([
                             loadItemHighlight(itemId);
 
                             // Count stimuli in this item:
-                            getTextStimuliIds().then(function(textStimuli) {
-                                // NOW we can instantiate the extra highlighters:
-                                _.forEach(textStimuli, function(textStimulusHref) {
-                                    // If id not already present in highlighters...
-                                    if (!highlighters.find(function(hl) {
-                                        return hl.getId() === textStimulusHref;
-                                    })) {
-                                        addHighlighter({
-                                            className: 'txt-user-highlight',
-                                            containerSelector: '.qti-include[data-href="' + textStimulusHref + '"]',
-                                            storageType: stimulusStorageType,
-                                            id: textStimulusHref
-                                        });
-                                    }
-                                    // And load their indexes (method depends on config):
-                                    if (stimuliPersistentStorage) {
-                                        loadHighlight(textStimulusHref);
-                                    }
-                                });
+                            textStimuli = getTextStimuliHrefs();
+                            // NOW we can instantiate the extra highlighters:
+                            _.forEach(textStimuli, function(textStimulusHref) {
+                                // If id not already present in highlighters...
+                                if (!highlighters.find(function(hl) {
+                                    return hl.getId() === textStimulusHref;
+                                })) {
+                                    addHighlighter({
+                                        className: 'txt-user-highlight',
+                                        containerSelector: '.qti-include[data-href="' + textStimulusHref + '"]',
+                                        storageType: stimulusStorageType,
+                                        id: textStimulusHref
+                                    });
+                                }
+                                // And load their indexes (method depends on config):
+                                if (stimuliPersistentStorage) {
+                                    loadHighlight(textStimulusHref);
+                                }
                             });
                         }
                     })
