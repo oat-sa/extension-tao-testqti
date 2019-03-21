@@ -62,11 +62,16 @@ define([
      * @param {String} [options.className]
      * @param {String} [options.containerSelector]
      * @param {Array} [options.containersBlackList]
-     * @param {String} [options.storageType]
      * @param {String} [options.id]
      * @returns {Object} the highlighter plugin
      */
     return function testHighlighterFactory(options) {
+
+        /**
+         * Is this highlighter enabled or disabled?
+         * @type {boolean}
+         */
+        var enabled = true;
 
         /**
          * Are we in highlight mode, meaning that each new selection is automatically highlighted
@@ -85,8 +90,6 @@ define([
             id: options.id
         });
 
-        var storageType = options.storageType || 'volatile';
-
         //add event to automatically highlight the recently made selection if needed
         //added touch event (as from TAO-6578)
         $(document).on('mouseup.highlighter touchend.highlighter', function() {
@@ -104,6 +107,22 @@ define([
          */
         return eventifier({
 
+            enable: function enable() {
+                enabled = true;
+            },
+
+            disable: function disable() {
+                enabled = false;
+            },
+
+            /**
+             * Is this instance currently enabled?
+             * @returns {Boolean}
+             */
+            isEnabled: function isEnabled() {
+                return enabled;
+            },
+
             /**
              * toggle highlighting mode on and off
              * @param {Boolean} bool - wanted state
@@ -115,6 +134,7 @@ define([
                 } else {
                     this.trigger('end');
                 }
+                return this;
             },
 
             /**
@@ -162,14 +182,6 @@ define([
             clearHighlights: function clearHighlights() {
                 highlightHelper.clearHighlights();
                 selection.removeAllRanges();
-            },
-
-            /**
-             * Get the instance's configured storage type
-             * @returns {String} volatile|persistent
-             */
-            getStorageType: function getStorageType() {
-                return storageType;
             },
 
             /**

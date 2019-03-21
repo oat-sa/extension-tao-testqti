@@ -27,12 +27,13 @@ define([
     'lodash',
     'i18n',
     'core/logger',
+    'core/promise',
     'taoTests/runner/plugin',
     'util/shortcut',
     'util/namespace',
     'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/runner/plugins/tools/highlighter/highlighter'
-], function ($, _, __, loggerFactory, pluginFactory, shortcut, namespaceHelper, itemHelper, highlighterFactory) {
+], function ($, _, __, loggerFactory, Promise, pluginFactory, shortcut, namespaceHelper, itemHelper, highlighterFactory) {
     'use strict';
 
     /**
@@ -54,7 +55,8 @@ define([
 
             /**
              * @var {Boolean} persistentStorage
-             * Platform-level setting for persistent storage of stimulus highlights (TAO-7617)
+             * Platform-level setting for persistent, cross-browser storage of highlights (TAO-7617)
+             * Uses the tool-state-server-storage option which must also be configured to sync this plugin
              * The default is false
              */
             try {
@@ -97,11 +99,13 @@ define([
              * @param {String} options.className - class applied to highlighted spans
              * @param {String} options.containerSelector - selector for the unique root DOM node the HL will work on
              * @param {Array}  options.containersBlackList - list of children which should not receive highlights
-             * @param {String} options.storageType - volatile or persistent
              * @param {String} options.id
+             * @returns {Object} a highlighter instance
              */
             function addHighlighter(options) {
-                highlighters.push(highlighterFactory(options));
+                var hl = highlighterFactory(options);
+                highlighters.push(hl);
+                return hl;
             }
 
             // Create the first (item-level) highlighter instance:
@@ -109,7 +113,6 @@ define([
                 className: 'txt-user-highlight',
                 containerSelector: '.qti-itemBody',
                 containersBlackList: ['.qti-include'],
-                storageType: 'volatile',
                 id: 'item-highlighter'
             });
 
@@ -132,28 +135,35 @@ define([
             this.buttonMain.on('mousedown', function(e) {
                 // using 'mousedown' instead of 'click' to avoid losing current selection
                 e.preventDefault();
-                if(isEnabled()){
+                if(isPluginEnabled()){
                     _.forEach(highlighters, function(instance) {
-                        instance.highlight();
+                        if (instance.isEnabled()) {
+                            instance.highlight();
+                        }
                     });
                 }
             });
 
             this.buttonRemove.on('click', function(e) {
                 e.preventDefault();
-                if(isEnabled()){
+                if(isPluginEnabled()){
                     _.forEach(highlighters, function(instance) {
-                        instance.clearHighlights();
+                        if (instance.isEnabled()) {
+                            instance.clearHighlights();
+                        }
                     });
+                    testRunner.trigger('clear');
                 }
             });
 
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.toggle) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
-                        if(isEnabled()){
+                        if(isPluginEnabled()){
                             _.forEach(highlighters, function(instance) {
-                                instance.highlight();
+                                if (instance.isEnabled()) {
+                                    instance.highlight();
+                                }
                             });
                         }
                     }, { avoidInput: true, prevent: true });
@@ -167,7 +177,7 @@ define([
              * Checks if the plugin is currently available
              * @returns {Boolean}
              */
-            function isEnabled() {
+            function isPluginEnabled() {
                 var context = testRunner.getTestContext() || {},
                     options = context.options || {};
                 //to be activated with the special category x-tao-option-highlighter
@@ -178,7 +188,7 @@ define([
              * Is plugin activated ? if not, then we hide the plugin
              */
             function togglePlugin() {
-                if (isEnabled()) {
+                if (isPluginEnabled()) {
                     self.show();
                 } else {
                     self.hide();
@@ -214,8 +224,8 @@ define([
 
                     var highlightsIndex = instance.getIndex();
 
-                    if (isEnabled() && hasHighlights && key) {
-                        console.log('Saving', highlightsIndex.length, 'highlights for id', key);
+                    if (isPluginEnabled() && hasHighlights && key) {
+                        logger.debug('Saving '+ highlightsIndex.length + ' highlights for id ' + key);
                         return highlighterStore.setItem(key, highlightsIndex);
                     }
                     return false;
@@ -227,10 +237,11 @@ define([
                  */
                 function saveItemHighlight() {
                     var itemId = testRunner.getTestContext().itemIdentifier;
-                    var highlightsIndex = highlighters[0].getIndex();
+                    var instance = highlighters[0];
+                    var highlightsIndex = instance.getIndex();
 
-                    if (isEnabled() && hasHighlights && itemId) {
-                        console.log('Saving', highlightsIndex.length, 'item highlights for id', itemId);
+                    if (isPluginEnabled() && hasHighlights && itemId) {
+                        logger.debug('Saving ' + highlightsIndex.length + ' item highlights for id ' + itemId);
                         return highlighterStore.setItem(itemId, highlightsIndex);
                     }
                     return false;
@@ -239,12 +250,15 @@ define([
                 /**
                  * Saves all the highlighters states in the store
                  * First the non-item highlighters, then the item highlighter (index 0)
-                 * @returns {Promise} resolves one the save is done
+                 * @returns {Promise} resolves once the save is done
                  */
                 function saveAll() {
                     var nonItemHighlighters = highlighters.slice(1);
                     return Promise.all(
                         _(nonItemHighlighters)
+                        .filter(function(instance) {
+                            return instance.isEnabled();
+                        })
                         .map(function(instance) {
                             var key = instance.getId();
                             return saveHighlight(key);
@@ -276,7 +290,7 @@ define([
                     return highlighterStore.getItem(key)
                         .then(function(index) {
                             if (index) {
-                                console.log('Loading', index.length, 'highlights for key', key, index);
+                                logger.debug('Loading ' + index.length + ' highlights for key ' + key);
                                 hasHighlights = true;
                                 instance.restoreIndex(index);
                             }
@@ -301,7 +315,7 @@ define([
                     return highlighterStore.getItem(key)
                         .then(function(index) {
                             if (index) {
-                                console.log('Loading', index.length, 'item highlights for id', key, index);
+                                logger.debug('Loading ' + index.length + ' item highlights for id ' + key);
                                 hasHighlights = true;
                                 instance.restoreIndex(index);
                             }
@@ -338,20 +352,6 @@ define([
                     return [];
                 }
 
-                // Attach start/end listeners to all highlighter instances:
-                _.forEach(highlighters, function(instance) {
-                    instance
-                        .on('start', function(){
-                            self.buttonMain.turnOn();
-                            self.trigger('start');
-                            hasHighlights = true;
-                        })
-                        .on('end', function(){
-                            self.buttonMain.turnOff();
-                            self.trigger('end');
-                        });
-                });
-
                 //update plugin state based on changes
                 testRunner
                     .on('loaditem', function() {
@@ -364,9 +364,10 @@ define([
                         var textStimuli;
                         var itemId = testRunner.getTestContext().itemIdentifier;
 
-                        if (itemId && isEnabled()) {
+                        if (itemId && isPluginEnabled()) {
                             hasHighlights = false;
 
+                            highlighters[0].enable();
                             // Load volatile (item-level) highlights from store:
                             loadItemHighlight(itemId);
 
@@ -374,35 +375,56 @@ define([
                             textStimuli = getTextStimuliHrefs();
                             // NOW we can instantiate the extra highlighters:
                             _.forEach(textStimuli, function(textStimulusHref) {
-                                // If id not already present in highlighters...
-                                if (!highlighters.find(function(hl) {
+                                var stimHighlighter = highlighters.find(function(hl) {
                                     return hl.getId() === textStimulusHref;
-                                })) {
-                                    addHighlighter({
+                                });
+                                // Instantiate, if id not already present in highlighters...
+                                if (!stimHighlighter) {
+                                    stimHighlighter = addHighlighter({
                                         className: 'txt-user-highlight',
                                         containerSelector: '.qti-include[data-href="' + textStimulusHref + '"]',
-                                        storageType: 'persistent',
                                         id: textStimulusHref
                                     });
                                 }
-                                // And load their indexes:
+                                stimHighlighter.enable();
+                                // And load its data:
                                 loadHighlight(textStimulusHref);
                             });
                         }
                     })
-                    .before('skip move timeout', function() {
-                        return saveAll().then(function() {
-                            // Delete all highlighters apart from first:
-                            highlighters = highlighters.slice(0,1);
+                    .after('renderitem', function() {
+                        // Attach start/end listeners to all highlighter instances:
+                        _.forEach(highlighters, function(instance) {
+                            if (instance.isEnabled()) {
+                                instance
+                                    .on('start', function(){
+                                        self.buttonMain.turnOn();
+                                        self.trigger('start');
+                                        hasHighlights = true;
+                                    })
+                                    .on('end', function(){
+                                        self.buttonMain.turnOff();
+                                        self.trigger('end');
+                                    });
+                            }
                         });
+                    })
+                    .after('clear.highlighter', function() {
+                        saveAll();
+                    })
+                    .before('skip move timeout', function() {
+                        return saveAll();
                     })
                     .on('disabletools unloaditem', function () {
                         self.disable();
-                        if (isEnabled()) {
+                        if (isPluginEnabled()) {
                             _.forEach(highlighters, function(instance) {
-                                instance
-                                    .off('end.save')
-                                    .toggleHighlighting(false);
+                                if (instance.isEnabled()) {
+                                    instance
+                                        .off('end.save')
+                                        .toggleHighlighting(false)
+                                        .disable();
+                                }
                             });
                         }
                     });

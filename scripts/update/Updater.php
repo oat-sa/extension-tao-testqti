@@ -1765,8 +1765,11 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['plugins']['highlighter'] = array(
-                'stimuliPersistentStorage' => true
+                'persistentStorage' => true
             );
+            $config['tool-state-server-storage'] = array_merge($config['tool-state-server-storage'], array(
+                'highlighter'
+            ));
             $extension->setConfig('testRunner', $config);
 
             $this->setVersion('32.1.0');
