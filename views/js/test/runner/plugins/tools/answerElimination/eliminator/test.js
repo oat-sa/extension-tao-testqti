@@ -19,6 +19,7 @@
  * @author Dieter Raber <dieter@taotesting.com>
  */
 define([
+
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
@@ -37,10 +38,11 @@ define([
 
     QUnit.module('Eliminator Mode');
 
-    QUnit.asyncTest('Toggle eliminator mode on/off', function(assert) {
-        var runner      = runnerFactory(providerName);
-        var areaBroker  = runner.getAreaBroker();
-        var eliminator  = eliminatorFactory(runner, areaBroker);
+    QUnit.test('Toggle eliminator mode on/off', function(assert) {
+        var ready = assert.async();
+        var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
+        var eliminator = eliminatorFactory(runner, areaBroker);
         var interaction = document.querySelector('.qti-choiceInteraction');
 
         runner.setTestContext({
@@ -57,7 +59,7 @@ define([
                 assert.ok(interaction.classList.contains('eliminable'), 'Class "eliminable" has been added');
                 runner.trigger('tool-eliminator-toggle');
                 assert.ok(!interaction.classList.contains('eliminable'), 'Class "eliminable" has been removed');
-                QUnit.start();
+                ready();
             });
     });
 

@@ -17,29 +17,27 @@
  */
 
 define([
+
     'jquery',
     'ui/component/placeable',
     'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
-], function ($, makePlaceable, magnifierPanelFactory) {
+], function($, makePlaceable, magnifierPanelFactory) {
     'use strict';
 
     QUnit.module('API');
 
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof magnifierPanelFactory, 'function', "The module exposes a function");
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof magnifierPanelFactory, 'function', 'The module exposes a function');
     });
 
-
-    QUnit.test('factory', function (assert) {
-        QUnit.expect(2);
-        assert.equal(typeof magnifierPanelFactory(), 'object', "The factory creates an object");
-        assert.notDeepEqual(magnifierPanelFactory(), magnifierPanelFactory(), "The factory creates a new object");
+    QUnit.test('factory', function(assert) {
+        assert.expect(2);
+        assert.equal(typeof magnifierPanelFactory(), 'object', 'The factory creates an object');
+        assert.notDeepEqual(magnifierPanelFactory(), magnifierPanelFactory(), 'The factory creates a new object');
     });
 
-
-    QUnit.cases([
+    QUnit.cases.init([
         {name: 'init', title: 'init'},
         {name: 'destroy', title: 'destroy'},
         {name: 'render', title: 'render'},
@@ -63,27 +61,26 @@ define([
         {name: 'zoomOut', title: 'zoomOut'},
         {name: 'update', title: 'update'}
     ])
-        .test('component API contains ', function (data, assert) {
+        .test('component API contains ', function(data, assert) {
             var component = magnifierPanelFactory();
-            QUnit.expect(1);
+            assert.expect(1);
             assert.equal(typeof component[data.name], 'function', 'The component has the method ' + data.name);
         });
 
     QUnit.test('component is placeable', function(assert) {
         var component = makePlaceable(magnifierPanelFactory());
-        QUnit.expect(1);
+        assert.expect(1);
         assert.ok(makePlaceable.isPlaceable(component), 'created component is placeable');
     });
 
-
     QUnit.module('Behavior');
 
-
-    QUnit.asyncTest('DOM', function (assert) {
+    QUnit.test('DOM', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture');
         var component = magnifierPanelFactory();
 
-        QUnit.expect(11);
+        assert.expect(11);
 
         assert.equal($container.length, 1, 'The container exists');
         assert.equal($container.children().length, 0, 'The container is empty');
@@ -91,7 +88,7 @@ define([
         assert.equal(typeof component, 'object', 'The component has been created');
 
         component
-            .on('render', function () {
+            .on('render', function() {
                 var $element = $('.magnifier', $container);
                 assert.equal($element.length, 1, 'The component has been attached to the container');
                 assert.ok($element.hasClass('rendered'), 'The component has the rendered class');
@@ -102,25 +99,24 @@ define([
                 assert.equal($('.close [data-control="closeMagnifier"]', $element).length, 1, 'The closeMagnifier controls element is there');
                 assert.deepEqual($element[0], this.getElement()[0], 'The found element match the one bound to the component');
 
-                QUnit.start();
+                ready();
             })
             .render($container);
     });
 
-
     QUnit.module('Visual');
 
-
-    QUnit.asyncTest('visual test', function (assert) {
+    QUnit.test('visual test', function(assert) {
+        var ready = assert.async();
         var $container = $('#outside');
         var $content = $('.content', $container);
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         magnifierPanelFactory()
-            .on('render', function () {
+            .on('render', function() {
                 assert.ok(true);
-                QUnit.start();
+                ready();
             })
             .render($container)
             .setTarget($content)

@@ -21,15 +21,13 @@
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define([
-    'taoQtiTest/runner/config/assetManager'
-], function(getAssetManager) {
+define(['taoQtiTest/runner/config/assetManager'], function(getAssetManager) {
     'use strict';
 
     QUnit.module('API');
 
     QUnit.test('module', function(assert) {
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(typeof getAssetManager, 'function', 'The module exposes a function');
     });
@@ -38,7 +36,7 @@ define([
 
     QUnit.test('retrieval', function(assert) {
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         assert.equal(typeof getAssetManager('foo'), 'object', 'The function returns an object');
         assert.equal(typeof getAssetManager('bar'), 'object', 'The function returns an object');
@@ -49,7 +47,7 @@ define([
     QUnit.test('asset manager', function(assert) {
         var assetManager;
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         assetManager = getAssetManager('noz');
 

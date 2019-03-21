@@ -35,9 +35,9 @@ define([
      */
     QUnit.module('pluginFactory');
 
-    QUnit.test('module', 3, function(assert) {
+    QUnit.test('module', function(assert) {
+        assert.expect(3);
         var runner = runnerFactory(providerName);
-
         assert.equal(typeof pluginFactory, 'function', "The pluginFactory module exposes a function");
         assert.equal(typeof pluginFactory(runner), 'object', "The plugin factory produces an instance");
         assert.notStrictEqual(pluginFactory(runner), pluginFactory(runner), "The plugin factory provides a different instance on each call");
@@ -92,8 +92,9 @@ define([
     }];
 
     QUnit
-        .cases(pluginApi)
-        .test('plugin API ', 1, function(data, assert) {
+        .cases.init(pluginApi)
+        .test('plugin API ', function(data, assert) {
+            assert.expect(1);
             var runner = runnerFactory(providerName);
             var timer = pluginFactory(runner);
             assert.equal(typeof timer[data.name], 'function', 'The pluginFactory instances expose a "' + data.name + '" function');
@@ -106,7 +107,7 @@ define([
     QUnit.module('Behavior');
 
     // No dialog expected
-    QUnit.cases([
+    QUnit.cases.init([
         {
             title: 'when the next part warning is set',
             testContext: {
@@ -205,7 +206,8 @@ define([
             }
         }
     ])
-    .asyncTest('No dialog is triggered ', function(caseData, assert) {
+    .test('No dialog is triggered ', function(caseData, assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
@@ -226,7 +228,7 @@ define([
             return caseData.item;
         };
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         plugin
             .init()
@@ -237,19 +239,19 @@ define([
                 runner.on('move', function() {
                     assert.ok(true, 'The move took place without interruption');
                     runner.destroy();
-                    QUnit.start();
+                    ready();
                     return Promise.reject();
                 });
                 runner.trigger('move', 'next', caseData.scope);
             })
             .catch(function(err) {
                 assert.ok(false, err.message);
-                QUnit.start();
+                ready();
             });
     });
 
     // Dialog expected
-    QUnit.cases([
+    QUnit.cases.init([
         {
             title: 'when a next warning is needed',
             event: 'next',
@@ -287,7 +289,9 @@ define([
             }
         }
     ])
-    .asyncTest('Dialog will be triggered ', function(caseData, assert) {
+    .test('Dialog will be triggered ', function(caseData, assert) {
+        var ready = assert.async();
+
         var runner = runnerFactory(providerName);
         var plugin = pluginFactory(runner, runner.getAreaBroker());
 
@@ -307,7 +311,7 @@ define([
             };
         };
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         plugin
             .init()
@@ -317,14 +321,14 @@ define([
                 runner.on('disablenav', function() {
                     assert.ok(true, 'The dialog interrupted the move');
                     runner.destroy();
-                    QUnit.start();
+                    ready();
                 });
                 runner.trigger('move', caseData.event);
 
             })
             .catch(function(err) {
                 assert.ok(false, err.message);
-                QUnit.start();
+                ready();
             });
     });
 });

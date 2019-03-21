@@ -19,53 +19,55 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
+
     'jquery',
     'lodash',
     'taoQtiTest/controller/creator/qtiTestCreator'
-], function ($, _, qtiTestCreatorFactory) {
+], function($, _, qtiTestCreatorFactory) {
     'use strict';
 
     var fixtureContainer = '#qunit-fixture';
 
     QUnit.module('Module');
 
-    QUnit.test('Module export', function (assert) {
-        QUnit.expect(1);
+    QUnit.test('Module export', function(assert) {
+        assert.expect(1);
 
         assert.ok(typeof qtiTestCreatorFactory === 'function', 'The module expose a factory function');
     });
 
     QUnit
-        .cases([
-            { title: 'setTestModel' },
-            { title: 'getAreaBroker' },
-            { title: 'getModelOverseer' },
+        .cases.init([
+            {title: 'setTestModel'},
+            {title: 'getAreaBroker'},
+            {title: 'getModelOverseer'},
 
-            // eventifier
-            { title: 'on' },
-            { title: 'before' },
-            { title: 'after' }
+            // Eventifier
+            {title: 'on'},
+            {title: 'before'},
+            {title: 'after'}
         ])
-        .test('Instance API', function (data, assert) {
+        .test('Instance API', function(data, assert) {
             var instance = qtiTestCreatorFactory($(fixtureContainer));
-            QUnit.expect(1);
+            assert.expect(1);
             assert.ok(typeof instance[data.title] === 'function', 'instance implements ' + data.title);
         });
 
     QUnit.module('Factory');
 
     QUnit
-        .cases([
-            { title: 'nothing' },
-            { title: 'empty object', $container: {} },
-            { title: 'string',       $container: 'container'}
+        .cases.init([
+            {title: 'nothing'},
+            {title: 'empty object', $container: {}},
+            {title: 'string', $container: 'container'}
         ])
-        .test('Throws TypeError if not given a valid container', function (data, assert) {
-            QUnit.expect(1);
+        .test('Throws TypeError if not given a valid container', function(data, assert) {
+            assert.expect(1);
 
-            assert.throws(function() { qtiTestCreatorFactory(data.$container); }, TypeError);
+            assert.throws(function() {
+                qtiTestCreatorFactory(data.$container);
+            }, TypeError);
         });
-
 
     QUnit.module('Modules context');
 
@@ -73,7 +75,7 @@ define([
         var testCreator = qtiTestCreatorFactory($(fixtureContainer)),
             modelOverseer;
 
-        QUnit.expect(2);
+        assert.expect(2);
 
         modelOverseer = testCreator.getModelOverseer();
         assert.ok(_.isUndefined(modelOverseer), 'modelOverseer is not created without model');
@@ -92,7 +94,7 @@ define([
             testCreator = qtiTestCreatorFactory($(fixtureContainer), config),
             modelOverseer;
 
-        QUnit.expect(2);
+        assert.expect(2);
 
         testCreator.setTestModel({});
         modelOverseer = testCreator.getModelOverseer();
@@ -105,7 +107,7 @@ define([
         var testCreator = qtiTestCreatorFactory($(fixtureContainer)),
             areaBroker;
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         areaBroker = testCreator.getAreaBroker();
         assert.ok(_.isObject(areaBroker), 'areaBroker has been created');
