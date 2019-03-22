@@ -211,37 +211,34 @@ define([
 
                 /**
                  * Saves a highlighter's state to the appropriate store
-                 * @param {String} key - an identifier, could be the stimulus href
+                 * @param {String} [itemId] - must be provided to save item-level highlights,
+                 *                            will be used as store key if no key provided
+                 * @param {String} [key] - a key (e.g. a stimulus href) under which we store non-item-level highlights
                  * @returns {Boolean} true if save was done
                  */
-                function saveHighlight(key) {
-                    var instance = _(highlighters)
-                        .filter(function(hl) {
-                            return hl.getId() === key;
-                        })
-                        .first();
+                function saveHighlight(itemId, key) {
+                    var instance;
+                    var highlightsIndex;
+                    if (!itemId) {
+                        // Select correct highlighter by id:
+                        instance = _(highlighters)
+                            .filter(function(hl) {
+                                return hl.getId() === key;
+                            })
+                            .first();
+                    }
+                    else {
+                        key = itemId;
+                        instance = highlighters[0];
+                    }
 
-                    var highlightsIndex = instance.getIndex();
+                    if (!instance) return Promise.resolve(false);
+
+                    highlightsIndex = instance.getIndex();
 
                     if (isPluginEnabled() && hasHighlights && key) {
                         logger.debug('Saving '+ highlightsIndex.length + ' highlights for id ' + key);
                         return highlighterStore.setItem(key, highlightsIndex);
-                    }
-                    return false;
-                }
-
-                /**
-                 * Saves the top-level highlighter's state to the appropriate store
-                 * @returns {Boolean} true if save was done
-                 */
-                function saveItemHighlight() {
-                    var itemId = testRunner.getTestContext().itemIdentifier;
-                    var instance = highlighters[0];
-                    var highlightsIndex = instance.getIndex();
-
-                    if (isPluginEnabled() && hasHighlights && itemId) {
-                        logger.debug('Saving ' + highlightsIndex.length + ' item highlights for id ' + itemId);
-                        return highlighterStore.setItem(itemId, highlightsIndex);
                     }
                     return false;
                 }
@@ -260,28 +257,38 @@ define([
                         })
                         .map(function(instance) {
                             var key = instance.getId();
-                            return saveHighlight(key);
+                            return saveHighlight(null, key);
                         })
                         .value()
                     ).then(function(results) {
                         // Now save the main item highlight
                         // and if every setItem() returned true, return true
-                        return saveItemHighlight() && _.every(results);
+                        var itemId = testRunner.getTestContext().itemIdentifier;
+                        return saveHighlight(itemId) && _.every(results);
                     });
                 }
 
                 /**
                  * Retrieves a highlighter's state from a store and applies it to the DOM
-                 * @param {String} key - an identifier, could be the itemId or the stimulus href
+                 * @param {String} [itemId] - must be provided to save item-level highlights,
+                 *                            will be used as store key if no key provided
+                 * @param {String} [key] - a key (e.g. a stimulus href) under which we store non-item-level highlights
                  * @returns {Promise} resolves once the load is done
                  */
-                function loadHighlight(key) {
-                    // Select correct highlighter by id:
-                    var instance = _(highlighters)
-                        .filter(function(hl) {
-                            return hl.getId() === key;
-                        })
-                        .first();
+                function loadHighlight(itemId, key) {
+                    var instance;
+                    if (!itemId) {
+                        // Select correct highlighter by id:
+                        instance = _(highlighters)
+                            .filter(function(hl) {
+                                return hl.getId() === key;
+                            })
+                            .first();
+                    }
+                    else {
+                        key = itemId;
+                        instance = highlighters[0];
+                    }
 
                     if (!instance) return Promise.resolve(false);
 
@@ -297,32 +304,7 @@ define([
                             //save highlighter state during the item session,
                             //when the highlighting ends
                             instance.on('end.save', function() {
-                                return saveHighlight(key);
-                            });
-                        });
-                }
-
-                /**
-                 * Retrieves the top-level highlighter's state from its store and applies it to the DOM
-                 * @param {String} key - the itemId
-                 * @returns {Promise} resolves once the load is done
-                 */
-                function loadItemHighlight(key) {
-                    var instance = highlighters[0];
-
-                    return highlighterStore.getItem(key)
-                        .then(function(index) {
-                            if (index) {
-                                logger.debug('Loading ' + index.length + ' item highlights for id ' + key);
-                                hasHighlights = true;
-                                instance.restoreIndex(index);
-                            }
-                        })
-                        .then(function() {
-                            //save highlighter state during the item session,
-                            //when the highlighting ends
-                            instance.on('end.save', function() {
-                                return saveItemHighlight();
+                                return saveHighlight(itemId, key);
                             });
                         });
                 }
@@ -364,7 +346,7 @@ define([
 
                             highlighters[0].enable();
                             // Load volatile (item-level) highlights from store:
-                            loadItemHighlight(itemId);
+                            loadHighlight(itemId);
 
                             // Count stimuli in this item:
                             textStimuli = getTextStimuliHrefs();
@@ -384,7 +366,7 @@ define([
                                 }
                                 stimHighlighter.enable();
                                 // And load its data:
-                                loadHighlight(textStimulusHref);
+                                loadHighlight(null, textStimulusHref);
                             });
                         }
                     })
