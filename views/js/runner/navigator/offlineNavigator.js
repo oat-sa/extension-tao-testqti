@@ -1,11 +1,15 @@
 define([
     'lodash',
+    'core/Promise',
+    'util/capitalize',
     'taoQtiTest/runner/helpers/offlineJumpTable',
     'taoQtiTest/runner/helpers/testContextBuilder',
 ], function(
     _,
+    Promise,
+    capitalize,
     OfflineJumpTableHelper,
-    TestContextBuilder,
+    TestContextBuilder
 ) {
     'use strict';
 
@@ -30,8 +34,8 @@ define([
 
             setTestMap: function setTestMap(map) {
                 testMap = map;
-                offlineJumpTableHelper.setTestMap(map);
 
+                offlineJumpTableHelper.setTestMap(map);
                 offlineJumpTableHelper.init();
 
                 return this;
@@ -39,8 +43,6 @@ define([
 
             /**
              * Performs the navigation action and returns the new test context.
-             * TODO: use params to do the navigation based on the branching rules
-             * TODO: can we avoid using switch-case?
              *
              * @param {String} direction
              * @param {String} scope
@@ -49,43 +51,24 @@ define([
              * @returns {Object} the new test context
              */
             navigate: function navigate(direction, scope, position, params) {
-                var lastJump,
-                    testContextBuilder = new TestContextBuilder(testData, testContext, testMap);
+                return new Promise(function(resolve) {
+                    var lastJump,
+                        navigationActionName = 'jumpTo' + capitalize(direction) + capitalize(scope),
+                        testContextBuilder = new TestContextBuilder(testData, testContext, testMap);
 
-                switch (true) {
-                    case direction === 'next' && scope === 'item':
-                        lastJump = offlineJumpTableHelper.jumpToNextItem(params).getLastJump();
-                        break;
+                    if (
+                        !(navigationActionName in offlineJumpTableHelper)
+                        || !(typeof(offlineJumpTableHelper[navigationActionName]) === 'function')
+                    ) {
+                        throw new Error('illegal navigation'); // TODO: proper error handling
+                    }
 
-                    case direction === 'next' && scope === 'section':
-                        lastJump = offlineJumpTableHelper.jumpToNextSection().getLastJump();
-                        break;
+                    offlineJumpTableHelper[navigationActionName](params).then(function() {
+                        lastJump = offlineJumpTableHelper.getLastJump();
 
-                    case direction === 'next' && scope === 'part':
-                        lastJump = offlineJumpTableHelper.jumpToNextPart().getLastJump();
-                        break;
-
-                    case direction === 'previous' && scope === 'item':
-                        lastJump = offlineJumpTableHelper.jumpToPreviousItem().getLastJump();
-                        break;
-
-                    case direction === 'previous' && scope === 'section':
-                        lastJump = offlineJumpTableHelper.jumpToPreviousSection().getLastJump();
-                        break;
-
-                    case direction === 'previous' && scope === 'part':
-                        lastJump = offlineJumpTableHelper.jumpToPreviousPart().getLastJump();
-                        break;
-
-                    case direction === 'jump' && scope === 'item':
-                        lastJump = offlineJumpTableHelper.jumpTo(position).getLastJump();
-                        break;
-
-                    default:
-                        throw new Error('illegal navigation'); //TODO: implement proper error handler
-                }
-
-                return testContextBuilder.buildTestContextFromJump(lastJump);
+                        resolve(testContextBuilder.buildTestContextFromJump(lastJump));
+                    });
+                });
             }
         };
     };

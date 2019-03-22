@@ -1,7 +1,7 @@
 define(function() {
     'use strict';
 
-    return function orBranchRuleFactory(branchRuleDefinition, item, navigationParams, branchRuleMapper, responseStore) {
+    return function andBranchRuleFactory(branchRuleDefinition, item, navigationParams, branchRuleMapper, responseStore) {
         return {
             validate: function validate() {
                 return Object.keys(branchRuleDefinition)
@@ -26,11 +26,11 @@ define(function() {
 
                                 return result;
                             })
-                            .some(function(expression) {
+                            .every(function(expression) {
                                 return expression;
                             });
                     })
-                    .some(function(expression) {
+                    .every(function(expression) {
                         return expression;
                     });
             },

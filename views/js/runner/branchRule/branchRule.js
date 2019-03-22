@@ -1,20 +1,15 @@
 define([
     'taoQtiTest/runner/branchRule/branchRuleMapper',
 ], function(
-    branchRuleMapper,
+    branchRuleMapper
 ) {
     'use strict';
 
-    return function branchRuleFactory(branchRuleDefinition, item, navigationParams) {
-        console.log('branchRuleDefinition', branchRuleDefinition);
-        console.log('item', item);
-        console.log('params', navigationParams);
-
+    return function branchRuleFactory(branchRuleDefinition, item, navigationParams, responseStore) {
         if (
             !('@attributes' in branchRuleDefinition)
             || !('target' in branchRuleDefinition['@attributes'])
         ) {
-            console.log('Target is not defined for branch rule');
             return null;
         }
 
@@ -23,7 +18,29 @@ define([
                 return definitionName !== '@attributes';
             })
             .map(function(definitionName) {
-                return branchRuleMapper(definitionName, branchRuleDefinition[definitionName], item, navigationParams).validate();
+                return branchRuleMapper(
+                    definitionName,
+                    branchRuleDefinition[definitionName],
+                    item,
+                    navigationParams,
+                    responseStore
+                ).validate();
+            })
+            .map(function(branchRuleResult) {
+                // if the result is an array, return the first element
+                if (Array.isArray(branchRuleResult)) {
+                    return branchRuleResult[0];
+                }
+
+                return branchRuleResult;
+            })
+            .map(function(branchRuleResult) {
+                // if the result is an array, return the first element
+                if (Array.isArray(branchRuleResult)) {
+                    return branchRuleResult[0];
+                }
+
+                return branchRuleResult;
             })
             .every(function(branchRuleResult) {
                 return branchRuleResult;

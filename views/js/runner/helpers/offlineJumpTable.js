@@ -1,11 +1,13 @@
 define([
     'lodash',
     'core/promise',
-    'taoQtiTest/runner/branchRule/branchRule'
+    'taoQtiTest/runner/branchRule/branchRule',
+    'taoQtiTest/runner/proxy/offline/responseStore',
 ], function (
     _,
     Promise,
     branchRule,
+    responseStore
 ) {
     'use strict';
 
@@ -23,6 +25,14 @@ define([
         var testMap = {};
         var jumpTable = [];
 
+        function addResponsesToResponseStore(params) {
+            Object.keys(params.itemResponse).forEach(function(itemResponseIdentifier) {
+                var response = params.itemResponse[itemResponseIdentifier];
+                var responseIdentifier = params.itemDefinition + '.' + itemResponseIdentifier;
+                responseStore.addResponse(responseIdentifier, response.base.identifier); // TODO: is it always "base"?
+            });
+        }
+
         return {
             setTestMap: function setTestMap(map) {
                 testMap = map;
@@ -34,11 +44,22 @@ define([
                 var firstItem,
                     simplifiedTestMap = this._getSimplifiedTestMap();
 
+                // if the jump table is empty, add the first item as the first jump
                 if (simplifiedTestMap.length > 0 && jumpTable.length === 0) {
                     firstItem = simplifiedTestMap[0];
 
                     this.addJump(firstItem.part, firstItem.section, firstItem.item);
                 }
+
+                simplifiedTestMap.forEach(function(row) {
+                    itemStore.get(row.item).then(function(item) {
+                        Object.keys(item.itemData.data.responses).forEach(function(responseDeclarationIdentifier) {
+                            var response = item.itemData.data.responses[responseDeclarationIdentifier];
+                            var responseIdentifier = item.itemIdentifier + '.' + response.identifier;
+                            responseStore.addCorrectResponse(responseIdentifier, response.correctResponses);
+                        });
+                    });
+                })
             },
 
             /**
@@ -58,21 +79,24 @@ define([
              * @param {String} partIdentifier
              * @param {String} sectionIdentifier
              * @param {String} itemIdentifier
-             * @returns {offlineJumpTableFactory}
              */
             addJump: function addJump(partIdentifier, sectionIdentifier, itemIdentifier) {
-                var nextPosition = 'position' in this.getLastJump()
-                    ? this.getLastJump().position + 1
-                    : 0;
+                var self = this;
 
-                jumpTable.push({
-                    item: itemIdentifier,
-                    part: partIdentifier,
-                    section: sectionIdentifier,
-                    position: nextPosition,
+                return new Promise(function(resolve) {
+                    var nextPosition = 'position' in self.getLastJump()
+                        ? self.getLastJump().position + 1
+                        : 0;
+
+                    jumpTable.push({
+                        item: itemIdentifier,
+                        part: partIdentifier,
+                        section: sectionIdentifier,
+                        position: nextPosition,
+                    });
+
+                    resolve();
                 });
-
-                return this;
             },
 
             /**
@@ -92,43 +116,49 @@ define([
 
             /**
              * Adds the next item to the end of the jump table
-             *
-             * @returns {offlineJumpTableFactory}
              */
             jumpToNextItem: function jumpToNextItem(params) {
                 var self = this;
-                var simplifiedTestMap = this._getSimplifiedTestMap();
-                var lastJumpItem = this.getLastJump().item || null;
-                var items = this._getItems();
-                var itemSliceIndex = items.indexOf(lastJumpItem);
-                var itemIdentifierToAdd = items.slice(itemSliceIndex + 1).shift();
-                var itemToAdd = simplifiedTestMap
-                    .filter(function(row) {
-                        return row.item === itemIdentifierToAdd;
-                    })
-                    .shift();
-                var lastJumpItemData = simplifiedTestMap
-                    .filter(function(row) {
-                        return row.item === lastJumpItem;
-                    })
-                    .shift();
 
-                // if (lastJumpItemData.itemHasBranchRule) {
-                //     return this._getItemFromStore(lastJumpItem, function(item) {
-                //         var itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params);
-                //
-                //         if (itemIdentifierToAdd !== null) {
-                //             var iii = simplifiedTestMap.filter(function(row) {
-                //                 return row.item === itemIdentifierToAdd;
-                //             }).shift();
-                //             return self.addJump(iii.part, iii.section, iii.item);
-                //         } else {
-                //             return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
-                //         }
-                //     });
-                // } else {
-                    return this.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
-                // }
+                addResponsesToResponseStore(params);
+
+                return new Promise(function(resolve) {
+                    var simplifiedTestMap = self._getSimplifiedTestMap();
+                    var lastJumpItem = self.getLastJump().item || null;
+                    var items = self._getItems();
+                    var itemSliceIndex = items.indexOf(lastJumpItem);
+                    var itemIdentifierToAdd = items.slice(itemSliceIndex + 1).shift();
+                    var itemToAdd = simplifiedTestMap
+                        .filter(function(row) {
+                            return row.item === itemIdentifierToAdd;
+                        })
+                        .shift();
+                    var lastJumpItemData = simplifiedTestMap
+                        .filter(function(row) {
+                            return row.item === lastJumpItem;
+                        })
+                        .shift();
+
+                    if (lastJumpItemData.itemHasBranchRule) {
+                        return itemStore.get(lastJumpItem).then(function(item) {
+                            var itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params, responseStore);
+
+                            if (itemIdentifierToAdd !== null) {
+                                itemToAdd = simplifiedTestMap
+                                    .filter(function(row) {
+                                        return row.item === itemIdentifierToAdd;
+                                    })
+                                    .shift();
+                            }
+
+                            self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                        }).catch(function(err) {
+                            console.log('error in promise', err); // TODO
+                        });
+                    } else {
+                        return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                    }
+                });
             },
 
             /**
@@ -257,8 +287,6 @@ define([
 
             /**
              * Returns the last entry of the jump table which represent the current state of the navigation.
-             *
-             * @returns {Object}
              */
             getLastJump: function getLastJump() {
                 return jumpTable.length > 0
@@ -314,15 +342,8 @@ define([
                     });
             },
 
-            _getItemFromStore: function _getItemFromStore(key, callback) {
-                itemStore.get(key).then(function(item) {
-                    return callback(item);
-                });
-            },
-
             /**
              * Returns a simplified test map array, which will contain the item, section and part identifiers.
-             * TODO: extend with branching rules
              *
              * @returns {Array}
              * @private

@@ -130,95 +130,103 @@ define([
              * @returns {Object} action result
              */
             this.offlineAction = function offlineAction(action, actionParams) {
-                var newTestContext,
-                    result = { success: true },
-                    blockingActions = ['exitTest', 'timeout'],
-                    testData = this.getDataHolder().get('testData'),
-                    testContext = this.getDataHolder().get('testContext'),
-                    testMap = this.getDataHolder().get('testMap');
+                var self = this;
 
-                if (action === 'pause') {
-                    if (actionParams.reason) {
-                        errorProvider.offlinePauseError.data = actionParams.reason;
+                return new Promise(function(resolve) {
+                    var newTestContext,
+                        result = { success: true },
+                        blockingActions = ['exitTest', 'timeout'],
+                        testData = self.getDataHolder().get('testData'),
+                        testContext = self.getDataHolder().get('testContext'),
+                        testMap = self.getDataHolder().get('testMap');
+
+                    if (action === 'pause') {
+                        if (actionParams.reason) {
+                            errorProvider.offlinePauseError.data = actionParams.reason;
+                        }
+
+                        throw errorProvider.offlinePauseError;
                     }
 
-                    throw errorProvider.offlinePauseError;
-                }
-
-                if (
-                    _.contains(blockingActions, action)
-                    || (
-                        actionParams.direction === 'next'
-                        && navigationHelper.isLast(testMap, testContext.itemIdentifier)
-                    )
-                ) {
-                    // TODO: this changes allow to finish the test, but probably it is not a proper way
-                    result.testContext = {
-                        state: 4,
-                    }
-
-                    if (this.isOffline()) {
-                        return new Promise(function (resolve, reject) {
-                            offlineSyncModal(self)
-                                .on('proceed', function () {
-                                    self.syncData()
-                                        .then(function() {
-                                            return resolve(result);
-                                        })
-                                        .catch(reject);
-                                })
-                                .on('secondaryaction', function() {
-                                    self.initiateDownload()
-                                        .catch(reject);
-                                });
-                        }).catch(function (error) {
-                            feedback(null, {
-                                timeout: -1,
-                                popup: true
-                            }).error(error);
-
-                            return { success: false };
-                        });
-                    } else {
-                        return this.syncData().then(function() {
-                            return result;
-                        }).catch(function (error) {
-                            feedback(null, {
-                                timeout: -1,
-                                popup: true
-                            }).error(error);
-
-                            return { success: false };
-                        });
-                    }
-                }
-
-                // try the navigation if the actionParams context meaningful data
-                if (actionParams.direction && actionParams.scope) {
-                    newTestContext = this.offlineNavigator
-                        .setTestData(testData)
-                        .setTestContext(testContext)
-                        .setTestMap(testMap)
-                        .navigate(
-                            actionParams.direction,
-                            actionParams.scope,
-                            actionParams.ref,
-                            actionParams
-                        );
-
-                    // we are really not able to navigate
                     if (
-                        !newTestContext
-                        || !newTestContext.itemIdentifier
-                        || !self.hasItem(newTestContext.itemIdentifier)
+                        _.contains(blockingActions, action)
+                        || (
+                            actionParams.direction === 'next'
+                            && navigationHelper.isLast(testMap, testContext.itemIdentifier)
+                        )
                     ) {
-                        throw errorProvider.offlineNavError;
+                        // TODO: this changes allow to finish the test, but probably it is not a proper way
+                        result.testContext = {
+                            state: 4,
+                        };
+
+                        if (self.isOffline()) {
+                            return new Promise(function(resolve, reject) {
+                                offlineSyncModal(self)
+                                    .on('proceed', function() {
+                                        self.syncData()
+                                            .then(function() {
+                                                return resolve(result);
+                                            })
+                                            .catch(reject);
+                                    })
+                                    .on('secondaryaction', function() {
+                                        self.initiateDownload()
+                                            .catch(reject);
+                                    });
+                            }).catch(function(error) {
+                                feedback(null, {
+                                    timeout: -1,
+                                    popup: true
+                                }).error(error);
+
+                                return { success: false };
+                            });
+                        } else {
+                            return self.syncData().then(function() {
+                                return result;
+                            }).catch(function(error) {
+                                feedback(null, {
+                                    timeout: -1,
+                                    popup: true
+                                }).error(error);
+
+                                return { success: false };
+                            });
+                        }
                     }
 
-                    result.testContext = newTestContext;
-                }
+                    // try the navigation if the actionParams context meaningful data
+                    if (actionParams.direction && actionParams.scope) {
+                        self.offlineNavigator
+                            .setTestData(testData)
+                            .setTestContext(testContext)
+                            .setTestMap(testMap)
+                            .navigate(
+                                actionParams.direction,
+                                actionParams.scope,
+                                actionParams.ref,
+                                actionParams
+                            ).then(function(res) {
+                                newTestContext = res;
 
-                return result;
+                                console.log('newTestContext', newTestContext);
+                                if (
+                                    !newTestContext
+                                    || !newTestContext.itemIdentifier
+                                    || !self.hasItem(newTestContext.itemIdentifier)
+                                ) {
+                                    throw errorProvider.offlineNavError;
+                                }
+
+                                result.testContext = newTestContext;
+
+                                resolve(result);
+                            });
+                    } else {
+                        resolve(result);
+                    }
+                });
             };
 
             /**
