@@ -135,7 +135,7 @@ define([
             this.buttonMain.on('mousedown', function(e) {
                 // using 'mousedown' instead of 'click' to avoid losing current selection
                 e.preventDefault();
-                if(isPluginEnabled()){
+                if (isPluginEnabled()) {
                     _.forEach(highlighters, function(instance) {
                         if (instance.isEnabled()) {
                             instance.highlight();
@@ -146,7 +146,7 @@ define([
 
             this.buttonRemove.on('click', function(e) {
                 e.preventDefault();
-                if(isPluginEnabled()){
+                if (isPluginEnabled()) {
                     _.forEach(highlighters, function(instance) {
                         if (instance.isEnabled()) {
                             instance.clearHighlights();
@@ -159,7 +159,7 @@ define([
             if (testConfig.allowShortcuts) {
                 if (pluginShortcuts.toggle) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
-                        if(isPluginEnabled()){
+                        if (isPluginEnabled()) {
                             _.forEach(highlighters, function(instance) {
                                 if (instance.isEnabled()) {
                                     instance.highlight();
@@ -207,8 +207,7 @@ define([
             /**
              * Load the stores and hook the behavior
              */
-            getStore()
-            .then(function(highlighterStore) {
+            return getStore().then(function(highlighterStore) {
 
                 /**
                  * Saves a highlighter's state to the appropriate store
@@ -271,7 +270,6 @@ define([
                     });
                 }
 
-
                 /**
                  * Retrieves a highlighter's state from a store and applies it to the DOM
                  * @param {String} key - an identifier, could be the itemId or the stimulus href
@@ -329,7 +327,6 @@ define([
                         });
                 }
 
-
                 /**
                  * Find the list of text stimulus ids in the current item
                  * Depends on the DOM already being loaded
@@ -354,9 +351,7 @@ define([
 
                 //update plugin state based on changes
                 testRunner
-                    .on('loaditem', function() {
-                        togglePlugin();
-                    })
+                    .on('loaditem', togglePlugin)
                     .on('enabletools renderitem', function () {
                         self.enable();
                     })
@@ -373,6 +368,7 @@ define([
 
                             // Count stimuli in this item:
                             textStimuli = getTextStimuliHrefs();
+
                             // NOW we can instantiate the extra highlighters:
                             _.forEach(textStimuli, function(textStimulusHref) {
                                 var stimHighlighter = highlighters.find(function(hl) {

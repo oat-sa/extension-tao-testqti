@@ -19,12 +19,9 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-
     'lodash',
-    'helpers',
-    'taoQtiTest/test/runner/mocks/proxyMock',
     'taoQtiTest/runner/helpers/currentItem'
-], function (_, helpers, proxyMock, currentItemHelper) {
+], function (_, currentItemHelper) {
     'use strict';
 
     var messagesHelperApi = [
@@ -41,23 +38,15 @@ define([
      * @param {Object} responses
      * @param {Object} declarations
      * @param {String} itemId
-     * @param {Object} itemData
+     * @param {Object} itemBdy
      * @returns {Object}
      */
-    function runnerMock(responses, declarations, itemId, itemData) {
+    function runnerMock(responses, declarations, itemId, itemBdy) {
         return {
-            getProxy: function() {
-                return proxyMock({
-                    itemActions: {
-                        getItem: function () {
-                            return Promise.resolve(itemData);
-                        }
-                    }
-                });
-            },
             itemRunner: {
                 _item: {
                     responses: declarations,
+                    bdy: itemBdy,
                     itemIdentifier: itemId
                 },
                 getResponses: function() {
@@ -219,45 +208,43 @@ define([
     });
 
 
-    QUnit.cases([
+    QUnit.cases.init([
         {
             title : 'without stimulus',
             itemId: 'item-1',
-            itemData: {
-                data: {
-                    body: {
-                        elements: {}
-                    }
-                }
+            itemBdy: {
+                elements: {}
             },
             expectedResult: []
         },
         {
             title : 'with stimulus',
             itemId: 'item-2',
-            itemData: {
-                data: {
-                    body: {
-                        elements: {
-                            first : {
-                                serial: 'xinclude_12345',
-                                attributes: {
-                                    href: 'http://path/to/something.xml'
-                                }
-                            }
+            itemBdy: {
+                elements: {
+                    first : {
+                        serial: 'xinclude_12345',
+                        attributes: {
+                            href: 'http://path/to/something.xml'
+                        }
+                    },
+                    second : {
+                        serial: 'anotherelement',
+                        attributes: {
+                            href: 'http://path/to/something/else.xml'
                         }
                     }
                 }
             },
             expectedResult: ['http://path/to/something.xml']
         }
-    ]).asyncTest('helpers/currentItem.getStimuli', function(caseData, assert) {
-        var runner = runnerMock(null, null, caseData.itemId, caseData.itemData);
+    ]).test('helpers/currentItem.getStimuliHrefs', function(caseData, assert) {
+        var runner = runnerMock(null, null, caseData.itemId, caseData.itemBdy);
+        var hrefs = currentItemHelper.getStimuliHrefs(runner, caseData.itemId);
 
-        currentItemHelper.getStimuli(runner, caseData.itemId).then(function(result) {
-            assert.deepEqual(result, caseData.expectedResult, 'getStimuli returns correct value');
-            QUnit.start();
-        });
+        assert.expect(1);
+
+        assert.deepEqual(hrefs, caseData.expectedResult, 'getStimuli returns correct value');
     });
 
 });

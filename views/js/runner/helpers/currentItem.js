@@ -145,11 +145,11 @@ define([
 
         /**
          * Tells if an item question has been answered or not
-         * @param response
-         * @param baseType
-         * @param cardinality
-         * @param [defaultValue]
-         * @param constraintValue
+         * @param {Object} response
+         * @param {String} baseType
+         * @param {String} cardinality
+         * @param {Object} [defaultValue]
+         * @param {Object} constraintValue
          * @returns {*}
          */
         isQuestionAnswered: function isQuestionAnswered(response, baseType, cardinality, defaultValue, constraintValue) {
@@ -199,7 +199,7 @@ define([
          * Tells is the current item has been answered or not
          * The item is considered answered when at least one response has been set to not empty {base : null}
          * @param {Object} runner - testRunner instance
-         * @param {Boolean} [partially = true] - if false all questions must have been answered
+         * @param {Boolean} [partially=true] - if false all questions must have been answered
          * @returns {Boolean}
          */
         isAnswered: function isAnswered(runner, partially) {
