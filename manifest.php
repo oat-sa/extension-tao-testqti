@@ -30,6 +30,7 @@ use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
+use oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -42,9 +43,9 @@ return array(
     'version'     => '32.4.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
-        'taoQtiItem' => '>=19.1.0',
+        'taoQtiItem' => '>=19.4.0',
         'taoTests'   => '>=8.3.0',
-        'tao'        => '>=30.0.0',
+        'tao'        => '>=30.1.0',
         'generis'    => '>=7.12.1',
         'taoDelivery' => '>=11.0.0',
         'taoItems'   => '>=6.0.0',
@@ -77,7 +78,8 @@ return array(
             SyncChannelInstaller::class,
             RegisterTestContainer::class,
             SetUpQueueTasks::class,
-            SetLinearNextItemWarningConfig::class
+            SetLinearNextItemWarningConfig::class,
+            InstallRdsToolsStateStorage::class
         )
     ),
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',

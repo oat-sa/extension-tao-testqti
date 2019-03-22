@@ -79,6 +79,7 @@ use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
 use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage;
 
 /**
  *
@@ -1780,6 +1781,12 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('32.1.0', '32.3.1');
 
         if ($this->isVersion('32.3.1')) {
+            if (!$this->getServiceManager()->has(ToolsStateStorage::SERVICE_ID)) {
+                $rdsToolsStateStorageInstaller = new InstallRdsToolsStateStorage([]);
+                $rdsToolsStateStorageInstaller->setServiceLocator($this->getServiceManager());
+                $rdsToolsStateStorageInstaller([]);
+            }
+
             $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['plugins']['highlighter'] = array(
@@ -1789,7 +1796,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'highlighter'
             ));
             $extension->setConfig('testRunner', $config);
-        
+
             $this->setVersion('32.4.0');
         }
     }
