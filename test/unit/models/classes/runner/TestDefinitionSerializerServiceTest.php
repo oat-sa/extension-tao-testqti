@@ -22,6 +22,8 @@ namespace oat\taoQtiTest\models\runner {
 }
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner {
+
+    use oat\generis\model\kernel\Factory\ResourceFactory;
     use oat\generis\test\TestCase;
     use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
     use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
@@ -37,6 +39,9 @@ namespace oat\taoQtiTest\test\unit\models\classes\runner {
 
         /** @var QtiRunnerServiceContext|\PHPUnit_Framework_MockObject_MockObject */
         private $qtiRunnerServiceContext;
+
+        /** @var ResourceFactory|\PHPUnit_Framework_MockObject_MockObject */
+        private $resourceFactoryMock;
 
         /**
          * @throws \common_exception_Error
@@ -71,8 +76,11 @@ namespace oat\taoQtiTest\test\unit\models\classes\runner {
                 ->method('getDirectoryById')
                 ->willReturn($directoryMock);
 
+            $this->resourceFactoryMock = $this->getResourceFactoryMock();
+
             $serviceLocatorMock = $this->getServiceLocatorMock([
                 \tao_models_classes_service_FileStorage::SERVICE_ID => $this->fileStorageServiceMock,
+                ResourceFactory::SERVICE_ID => $this->resourceFactoryMock,
             ]);
 
             $this->testDefinitionSerializerService->setServiceLocator($serviceLocatorMock);
@@ -114,6 +122,30 @@ namespace oat\taoQtiTest\test\unit\models\classes\runner {
                     ],
                 ],
             ], $this->testDefinitionSerializerService->getSerializedTestDefinition($this->qtiRunnerServiceContext));
+        }
+
+        /**
+         * @return ResourceFactory|\PHPUnit_Framework_MockObject_MockObject
+         */
+        private function getResourceFactoryMock()
+        {
+            $resourceFactoryMock = $this
+                ->getMockBuilder(ResourceFactory::class)
+                ->getMock();
+
+            $resourceFactoryMock
+                ->method('create')
+                ->will($this->returnCallback([$this, 'resourceFactoryCreateCallback']));
+
+            return $resourceFactoryMock;
+        }
+
+        public function resourceFactoryCreateCallback($fqcn)
+        {
+            return $this
+                ->getMockBuilder($fqcn)
+                ->disableOriginalConstructor()
+                ->getMock();
         }
     }
 }

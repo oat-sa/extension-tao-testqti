@@ -39,28 +39,28 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '32.3.1',
+    'version'     => '32.4.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoQtiItem' => '>=18.0.0',
         'taoTests'   => '>=8.3.0',
         'tao'        => '>=30.0.0',
-        'generis'    => '>=7.12.1',
+        'generis'    => '>=9.1.0',
         'taoDelivery' => '>=11.0.0',
         'taoItems'   => '>=6.0.0',
     ),
-	'models' => array(
-		'http://www.tao.lu/Ontologies/TAOTest.rdf'
-	),
-	'install' => array(
-		'rdf' => array(
-			dirname(__FILE__) . '/models/ontology/qtitest.rdf',
-		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf',
-			dirname(__FILE__) . '/models/ontology/qtiCat.rdf',
-		),
-		'php'	=> array(
-			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
-		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
+    'models' => array(
+        'http://www.tao.lu/Ontologies/TAOTest.rdf'
+    ),
+    'install' => array(
+        'rdf' => array(
+            dirname(__FILE__) . '/models/ontology/qtitest.rdf',
+            dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf',
+            dirname(__FILE__) . '/models/ontology/qtiCat.rdf',
+        ),
+        'php'	=> array(
+            dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
+            dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
             dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
             \oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins::class,
@@ -98,25 +98,25 @@ return array(
         array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
         array('grant', \oat\tao\model\user\TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
     ),
-	'constants' => array(
-		# actions directory
-		"DIR_ACTIONS"			=> $extpath."actions".DIRECTORY_SEPARATOR,
+    'constants' => array(
+        # actions directory
+        "DIR_ACTIONS"			=> $extpath."actions".DIRECTORY_SEPARATOR,
 
-		# views directory
-		"DIR_VIEWS"				=> $extpath."views".DIRECTORY_SEPARATOR,
+        # views directory
+        "DIR_VIEWS"				=> $extpath."views".DIRECTORY_SEPARATOR,
 
-		# default module name
-		'DEFAULT_MODULE_NAME'	=> 'Main',
+        # default module name
+        'DEFAULT_MODULE_NAME'	=> 'Main',
 
-		#default action name
-		'DEFAULT_ACTION_NAME'	=> 'index',
+        #default action name
+        'DEFAULT_ACTION_NAME'	=> 'index',
 
-		#BASE PATH: the root path in the file system (usually the document root)
-		'BASE_PATH'				=> $extpath,
+        #BASE PATH: the root path in the file system (usually the document root)
+        'BASE_PATH'				=> $extpath,
 
-		#BASE URL (usually the domain root)
-		'BASE_URL'				=> ROOT_URL	.'taoQtiTest/',
-	),
+        #BASE URL (usually the domain root)
+        'BASE_URL'				=> ROOT_URL	.'taoQtiTest/',
+    ),
     'extra' => array(
         'structures' => dirname(__FILE__).DIRECTORY_SEPARATOR.'actions'.DIRECTORY_SEPARATOR.'structures.xml',
     )

@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\runner;
 
 use core_kernel_classes_Literal;
 use core_kernel_classes_Property;
+use oat\generis\model\kernel\Factory\ResourceFactory;
 use oat\oatbox\service\ConfigurableService;
 use tao_models_classes_service_FileStorage;
 use taoQtiTest_models_classes_QtiTestService;
@@ -97,11 +98,19 @@ class TestDefinitionSerializerService extends ConfigurableService
     private function getTestDefinitionFilePath(QtiRunnerServiceContext $serviceContext)
     {
         $testDefinitionUri = $serviceContext->getTestDefinitionUri();
-        $testDefinitionResource = new \core_kernel_classes_Resource($testDefinitionUri);
-        /** @var core_kernel_classes_Literal $qtiTestIdentifier */
-        $qtiTestIdentifier = $testDefinitionResource->getOnePropertyValue(
-            new core_kernel_classes_Property(taoQtiTest_models_classes_QtiTestService::PROPERTY_QTI_TEST_IDENTIFIER)
+        $testDefinitionResource = $this->getResourceFactory()->create(
+            \core_kernel_classes_Resource::class,
+            $testDefinitionUri
         );
+
+        /** @var core_kernel_classes_Property $property */
+        $property = $this->getResourceFactory()->create(
+            core_kernel_classes_Property::class,
+            taoQtiTest_models_classes_QtiTestService::PROPERTY_QTI_TEST_IDENTIFIER
+        );
+
+        /** @var core_kernel_classes_Literal $qtiTestIdentifier */
+        $qtiTestIdentifier = $testDefinitionResource->getOnePropertyValue($property);
 
         return implode('', [
             $this->getPrivateDirectoryPath($serviceContext->getTestCompilationUri()),
@@ -134,5 +143,13 @@ class TestDefinitionSerializerService extends ConfigurableService
     private function getFileStorageService()
     {
         return $this->getServiceLocator()->get(\tao_models_classes_service_FileStorage::SERVICE_ID);
+    }
+
+    /**
+     * @return ResourceFactory
+     */
+    private function getResourceFactory()
+    {
+        return $this->getServiceLocator()->get(ResourceFactory::SERVICE_ID);
     }
 }
