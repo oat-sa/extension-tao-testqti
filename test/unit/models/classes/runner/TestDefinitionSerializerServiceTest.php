@@ -135,17 +135,14 @@ namespace oat\taoQtiTest\test\unit\models\classes\runner {
 
             $resourceFactoryMock
                 ->method('create')
-                ->will($this->returnCallback([$this, 'resourceFactoryCreateCallback']));
+                ->will($this->returnCallback(function ($fqcn) {
+                    return $this
+                        ->getMockBuilder($fqcn)
+                        ->disableOriginalConstructor()
+                        ->getMock();
+                }));
 
             return $resourceFactoryMock;
-        }
-
-        public function resourceFactoryCreateCallback($fqcn)
-        {
-            return $this
-                ->getMockBuilder($fqcn)
-                ->disableOriginalConstructor()
-                ->getMock();
         }
     }
 }
