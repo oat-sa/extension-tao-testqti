@@ -58,7 +58,7 @@ define([
      */
     var _setZoomLevel = function($target, level) {
         var $parent = $target.parent();
-        var newScale = level / 100;
+        var newScale = level / standard;
 
         var isOverZoom = $parent.outerWidth(true) < $target.width() * newScale;
 
