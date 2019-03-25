@@ -49,43 +49,80 @@ class SetStateStorageForTools extends AbstractAction
 
         $storageType = $params[0];
 
+        $report = null;
         switch ($storageType) {
             case 'rds':
-                $persistenceId = array_key_exists(1, $params) ? $params[1] : 'default';
-                $persistence = $this->getPersistence($persistenceId);
-                if (!$persistence) {
-                    return new Report(Report::TYPE_ERROR, 'Given persistence does not exist');
-                }
-                $this->getServiceManager()->register(
-                    ToolsStateStorage::SERVICE_ID,
-                    new RdsToolsStateStorage([ToolsStateStorage::OPTION_PERSISTENCE => $persistenceId])
-                );
+                $report = $this->registerRdsStorage($params);
                 break;
             case 'key-value':
-                if (!array_key_exists(1, $params)) {
-                    return new Report(Report::TYPE_ERROR, 'Persistence is not provided');
-                }
-                $persistenceId = $params[1];
-                $persistence = $this->getPersistence($persistenceId);
-                if (!$persistence) {
-                    return new Report(Report::TYPE_ERROR, 'Given persistence does not exist');
-                }
-                if (!$persistence instanceof \common_persistence_AdvKeyValuePersistence) {
-                    throw new \common_exception_Error('Given persistence should be of key-value type');
-                }
-                $this->getServiceManager()->register(
-                    ToolsStateStorage::SERVICE_ID,
-                    new KvToolsStateStorage([ToolsStateStorage::OPTION_PERSISTENCE => $persistenceId])
-                );
+                $report = $this->registerKeyValueStorage($params);
                 break;
             case 'no-storage':
-                $this->getServiceManager()->register(ToolsStateStorage::SERVICE_ID, new NoStorage([]));
+                $this->registerNoStorage();
                 break;
             default:
-                return new Report(Report::TYPE_ERROR, 'Allowed storage types are: rds, key-value, no-storage');
+                $report = new Report(Report::TYPE_ERROR, 'Allowed storage types are: rds, key-value, no-storage');
+        }
+
+        if ($report instanceof Report) {
+            return $report;
         }
 
         return new Report(Report::TYPE_SUCCESS, 'Tool states service registered');
+    }
+
+    /**
+     * @param array $params
+     * @return Report|null report if failed
+     * @throws \common_Exception
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
+    private function registerRdsStorage($params)
+    {
+        $persistenceId = array_key_exists(1, $params) ? $params[1] : 'default';
+        $persistence = $this->getPersistence($persistenceId);
+        if (!$persistence) {
+            return new Report(Report::TYPE_ERROR, 'Given persistence does not exist');
+        }
+        $this->getServiceManager()->register(
+            ToolsStateStorage::SERVICE_ID,
+            new RdsToolsStateStorage([ToolsStateStorage::OPTION_PERSISTENCE => $persistenceId])
+        );
+    }
+
+    /**
+     * @param array $params
+     * @return Report|null report if failed
+     * @throws \common_Exception
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
+    private function registerKeyValueStorage($params)
+    {
+        if (!array_key_exists(1, $params)) {
+            return new Report(Report::TYPE_ERROR, 'Persistence is not provided');
+        }
+        $persistenceId = $params[1];
+        $persistence = $this->getPersistence($persistenceId);
+        if (!$persistence) {
+            return new Report(Report::TYPE_ERROR, 'Given persistence does not exist');
+        }
+        if (!$persistence instanceof \common_persistence_AdvKeyValuePersistence) {
+            throw new \common_exception_Error('Given persistence should be of key-value type');
+        }
+        $this->getServiceManager()->register(
+            ToolsStateStorage::SERVICE_ID,
+            new KvToolsStateStorage([ToolsStateStorage::OPTION_PERSISTENCE => $persistenceId])
+        );
+    }
+    
+    /**
+     * @return void
+     * @throws \common_Exception
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     */
+    private function registerNoStorage()
+    {
+        $this->getServiceManager()->register(ToolsStateStorage::SERVICE_ID, new NoStorage([]));
     }
 
     /**
@@ -97,8 +134,7 @@ class SetStateStorageForTools extends AbstractAction
         try {
             /** @var \common_persistence_Manager $persistenceManager */
             $persistenceManager = $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_KEY);
-            $persistence = $persistenceManager->getPersistenceById($persistenceId);
-            return $persistence;
+            return $persistenceManager->getPersistenceById($persistenceId);
         } catch (\common_Exception $e) {
             return null;
         }
