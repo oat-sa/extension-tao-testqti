@@ -19,19 +19,21 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
-
+    'jquery',
     'lodash',
-    'helpers',
     'ui/hider',
+    'core/promise',
     'taoTests/runner/runner',
+    'taoQtiTest/runner/helpers/currentItem',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/highlighter/plugin'
 ], function(
-
+    $,
     _,
-    helpers,
     hider,
+    Promise,
     runnerFactory,
+    itemHelper,
     providerMock,
     pluginFactory
 ) {
@@ -40,6 +42,19 @@ define([
     var pluginApi;
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
+
+    function selectText(id){
+        var sel, range;
+        var el = document.getElementById(id); //get element id
+        sel = window.getSelection();
+        // window.setTimeout(function () {
+            range = document.createRange(); //range object
+            range.selectNodeContents(el); //sets Range
+            sel.removeAllRanges(); //remove all ranges from selection
+            sel.addRange(range); //add Range to a Selection.
+        // }, 1);
+    }
+
 
     /**
      * The following tests applies to all plugins
@@ -237,6 +252,9 @@ define([
             });
     });
 
+    /**
+     * The following tests applies to this plugin specfically
+     */
     QUnit.test('runner events: loaditem / unloaditem', function(assert) {
         var ready = assert.async();
         var runner = runnerFactory(providerName);
@@ -314,6 +332,111 @@ define([
                 assert.ok(false, 'Error in init method: ' + err);
                 ready();
             });
+    });
+
+    QUnit.test('actions: select item & stimulus texts, unload, reload', function(assert) {
+        var ready = assert.async();
+        var runner = runnerFactory(providerName);
+        var areaBroker = runner.getAreaBroker();
+        var plugin = pluginFactory(runner, runner.getAreaBroker());
+        var $container,
+            $buttonMain,
+            $buttonRemove;
+        var cleanItemHtml = $('#qunit-item').html();
+
+        // mock context
+        runner.getTestContext = function() {
+            return {
+                itemIdentifier: 'item-1',
+                options: {
+                    highlighter: true
+                }
+            };
+        };
+
+        // mock stimulus helper
+        itemHelper.getStimuliHrefs = function() {
+            return ['http://include1.xml', 'http://include2.xml'];
+        };
+
+        assert.expect(11);
+
+        plugin.init()
+            .then(function() {
+                $container = getButtonContainer(runner),
+                areaBroker.getToolbox().render($container);
+                $buttonMain = $container.find('[data-control="highlight-trigger"]');
+                $buttonRemove = $container.find('[data-control="highlight-clear"]');
+
+                runner.trigger('loaditem');
+                runner.trigger('renderitem');
+
+                // wait for highlighters to be loaded (async)
+                return new Promise (function(resolve) {
+                    setTimeout(resolve, 1000);
+                });
+            })
+            .then(function() {
+                // do some highlighting
+                selectText('para1');
+                $buttonMain.trigger('mousedown');
+                assert.equal($('#para1 span').length, 1, 'Para 1 was highlighted');
+
+                selectText('para2');
+                $buttonMain.trigger('mousedown');
+                assert.equal($('#para2 span').length, 1, 'Para 2 was highlighted');
+
+                selectText('stim1');
+                $buttonMain.trigger('mousedown');
+                assert.equal($('#stim1 span').length, 1, 'Stim 1 was highlighted');
+
+                selectText('stim2');
+                $buttonMain.trigger('mousedown');
+                assert.equal($('#stim2 span').length, 1, 'Stim 2 was highlighted');
+
+                assert.equal($('.qti-itemBody').find('span').length, 4, '4 highlights exist');
+
+                // unload the item, reset DOM
+                runner.trigger('unloaditem'); // saves
+                $('#qunit-item').empty();
+
+                // wait for highlighters to be saved (async)
+                return new Promise (function(resolve) {
+                    setTimeout(resolve, 1000);
+                });
+            })
+            .then(function() {
+                $('#qunit-item').html(cleanItemHtml);
+
+                // load item again
+                runner.trigger('loaditem');
+                runner.trigger('renderitem'); // loads
+
+                // wait for highlighters to be loaded (async)
+                return new Promise (function(resolve) {
+                    setTimeout(resolve, 1000);
+                });
+
+            })
+            .then(function() {
+                // test loaded highlights
+                assert.equal($('#para1 span').length, 1, 'Para 1 was highlighted');
+                assert.equal($('#para2 span').length, 1, 'Para 2 was highlighted');
+                assert.equal($('#stim1 span').length, 1, 'Stim 1 was highlighted');
+                assert.equal($('#stim2 span').length, 1, 'Stim 2 was highlighted');
+                assert.equal($('.qti-itemBody').find('span').length, 4, '4 highlights exist');
+
+                $buttonRemove.trigger('click');
+                assert.equal($('.qti-itemBody').find('span').length, 0, 'No highlights remain after clear');
+
+            })
+            .catch(function(err) {
+                assert.ok(false, 'Error in init method: ' + err);
+            })
+            .finally(function() {
+                ready();
+            });
+
     });
 
 });
