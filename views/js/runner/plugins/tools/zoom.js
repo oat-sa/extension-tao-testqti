@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016  (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016-2019  (original work) Open Assessment Technologies SA;
  *
  * @author dieter <dieter@taotesting.com>
  * @author Alexander Zagovorichev <zagovorichev@1pt.com>
@@ -56,16 +56,28 @@ define([
      * @param {jQuery} $target
      * @param {Number} level - Zoom percentage
      */
-    var setZoomLevel = function($target, level) {
-        transformer.setTransformOrigin($target, '50% 0');
-        transformer.scale($target, level / 100);
+    var _setZoomLevel = function($target, level) {
+        var $parent = $target.parent();
+        var newScale = level / standard;
+
+        var isOverZoom = $parent.outerWidth(true) < $target.width() * newScale;
+
+        if(isOverZoom){
+            transformer.setTransformOrigin($target, '0 0');
+            $parent.css('margin-left', '0');
+        } else {
+            transformer.setTransformOrigin($target, '50% 0');
+            $parent.css('margin-left', '');
+        }
+
+        transformer.scale($target, newScale);
     };
 
     /**
      * Restores the standard zoom level
      * @param {jQuery} $target
      */
-    var resetZoom = function($target) {
+    var _resetZoom = function($target) {
         transformer.reset($target);
     };
 
@@ -127,7 +139,7 @@ define([
             function zoomAction(dir) {
 
                 var inc = increment * dir;
-                var el, sx, sy, before, after, margin;
+                var el, sx, sy, before, after;
 
                 if (self.$zoomTarget) {
                     el = self.$zoomTarget[0];
@@ -140,9 +152,9 @@ define([
                     self.zoom = Math.max(threshold.lower, Math.min(threshold.upper, self.zoom + inc));
 
                     if (self.zoom === standard) {
-                        resetZoom(self.$zoomTarget);
+                        _resetZoom(self.$zoomTarget);
                     } else {
-                        setZoomLevel(self.$zoomTarget, self.zoom);
+                        _setZoomLevel(self.$zoomTarget, self.zoom);
                     }
 
                     // force a browser repaint to fix a scrollbar issue with WebKit
