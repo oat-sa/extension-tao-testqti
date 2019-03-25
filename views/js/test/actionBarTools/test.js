@@ -1,57 +1,55 @@
 define([
+
     'jquery',
     'lodash',
     'taoQtiTest/testRunner/actionBarTools'
-], function($, _, actionBarTools){
+], function($, _, actionBarTools) {
     'use strict';
 
     var containerSelector = '#tools-container';
 
     var qtiTools = {
-        tool1 : {
-            'label' : 'tool 1',
-            'hook' : 'taoQtiTest/test/samples/hooks/validHook'
+        tool1: {
+            'label': 'tool 1',
+            'hook': 'taoQtiTest/test/samples/hooks/validHook'
         },
-        tool2 : {
-            'label' : 'tool 2',
-            'hook' : 'taoQtiTest/test/samples/hooks/validHookHidden'
+        tool2: {
+            'label': 'tool 2',
+            'hook': 'taoQtiTest/test/samples/hooks/validHookHidden'
         },
-        tool3 : {
-            'label' : 'tool 3',
-            'hook' : 'taoQtiTest/test/samples/hooks/validHook'
+        tool3: {
+            'label': 'tool 3',
+            'hook': 'taoQtiTest/test/samples/hooks/validHook'
         },
-        tool4 : {
-            'label' : 'tool 4',
-            'hook' : 'taoQtiTest/test/samples/hooks/invalidHookMissingMethod'
+        tool4: {
+            'label': 'tool 4',
+            'hook': 'taoQtiTest/test/samples/hooks/invalidHookMissingMethod'
         }
     };
 
     QUnit.module('actionBarTools');
 
-
-    QUnit.test('module', 1, function(assert) {
-        assert.equal(typeof actionBarTools, 'object', "The actionBarTools module exposes an object");
+    QUnit.test('module', function(assert) {
+        assert.equal(typeof actionBarTools, 'object', 'The actionBarTools module exposes an object');
     });
 
-
     var actionBarToolsApi = [
-        { name : 'register', title : 'register' },
-        { name : 'getRegisteredTools', title : 'getRegisteredTools' },
-        { name : 'getRegistered', title : 'getRegistered' },
-        { name : 'isRegistered', title : 'isRegistered' },
-        { name : 'get', title : 'get' },
-        { name : 'list', title : 'list' },
-        { name : 'render', title : 'render' }
+        {name: 'register', title: 'register'},
+        {name: 'getRegisteredTools', title: 'getRegisteredTools'},
+        {name: 'getRegistered', title: 'getRegistered'},
+        {name: 'isRegistered', title: 'isRegistered'},
+        {name: 'get', title: 'get'},
+        {name: 'list', title: 'list'},
+        {name: 'render', title: 'render'}
     ];
 
     QUnit
-        .cases(actionBarToolsApi)
-        .test('module API ', 1, function(data, assert) {
+        .cases.init(actionBarToolsApi)
+        .test('module API ', function(data, assert) {
             assert.equal(typeof actionBarTools[data.name], 'function', 'The actionBarTools module exposes a "' + data.title + '" function');
         });
 
-
-    QUnit.test('register', 8, function(assert) {
+    QUnit.test('register', function(assert) {
         actionBarTools.register(null);
         assert.equal(typeof actionBarTools.getRegisteredTools(), 'object', 'The actionBarTools.getRegisteredTools() method  must provide a list, even if no list is provided');
         assert.equal(_.values(actionBarTools.getRegisteredTools()).length, 0, 'The actionBarTools.getRegisteredTools() method must provide an empty list of registered configs when not list is provided');
@@ -67,8 +65,8 @@ define([
         assert.ok(!actionBarTools.get('tool1'), 'No tool is rendered before the actionBarTools.render() method is called');
     });
 
-
-    QUnit.asyncTest('render', 17, function(assert) {
+    QUnit.test('render', function(assert) {
+        var ready = assert.async();
         var $container = $(containerSelector);
         var mockTestContext = {};
         var mockTestRunner = {};
@@ -77,8 +75,12 @@ define([
         actionBarTools.render($container, mockTestContext, mockTestRunner, function(tools, $ctnr, testContext, testRunner, obj) {
             assert.ok(_.isArray(tools), 'The render method must provide the list of tools');
             assert.equal(tools.length, 3, 'The render method must only provide the valid tools');
-            assert.ok(_.find(tools, function(tool){return tool.getId() === 'tool2'}), 'The render method must provide the tool2 instance');
-            assert.ok(_.find(tools, function(tool){return tool.getId() === 'tool3'}), 'The render method must provide the tool3 instance');
+            assert.ok(_.find(tools, function(tool) {
+                return tool.getId() === 'tool2';
+            }), 'The render method must provide the tool2 instance');
+            assert.ok(_.find(tools, function(tool) {
+                return tool.getId() === 'tool3';
+            }), 'The render method must provide the tool3 instance');
 
             assert.strictEqual(this, actionBarTools, 'The render method fires the callback inside the actionBarTools context');
             assert.equal($ctnr && $ctnr.length, 1, 'The render method must provide a jQuery element');
@@ -96,12 +98,13 @@ define([
             assert.ok(actionBarTools.get('tool2'), 'The tool tool2 must exist');
             assert.ok(actionBarTools.get('tool3'), 'The tool tool3 must exist');
 
-            QUnit.start();
+            ready();
         });
     });
 
+    QUnit.test('events', function(assert) {
+        var ready = assert.async(4);
 
-    QUnit.asyncTest('events', 21, function(assert) {
         var $container = $(containerSelector);
         var mockTestContext = {};
         var mockTestRunner = {};
@@ -109,12 +112,12 @@ define([
         actionBarTools.on('beforeregister', function(tools, obj) {
             assert.strictEqual(tools, qtiTools, 'The beforeregister event must provide the list of tools to register');
             assert.strictEqual(obj, actionBarTools, 'The beforeregister event must provide the actionBarTools instance');
-            QUnit.start();
+            ready();
         });
         actionBarTools.on('afterregister', function(tools, obj) {
             assert.strictEqual(tools, qtiTools, 'The afterregister event must provide the list of registered tools');
             assert.strictEqual(obj, actionBarTools, 'The afterregister event must provide the actionBarTools instance');
-            QUnit.start();
+            ready();
         });
 
         actionBarTools.on('beforerender', function($ctnr, testContext, testRunner, obj) {
@@ -123,13 +126,17 @@ define([
             assert.strictEqual(testContext, mockTestContext, 'The beforerender event must provide the testContext object');
             assert.strictEqual(testRunner, mockTestRunner, 'The beforerender event must provide the testRunner instance');
             assert.strictEqual(obj, actionBarTools, 'The beforerender event must provide the actionBarTools instance');
-            QUnit.start();
+            ready();
         });
         actionBarTools.on('afterrender', function(tools, $ctnr, testContext, testRunner, obj) {
             assert.ok(_.isArray(tools), 'The afterrender event must provide the list of tools');
             assert.equal(tools.length, 3, 'The afterrender event must only provide the valid tools');
-            assert.ok(_.find(tools, function(tool){return tool.getId() === 'tool2'}), 'The afterrender event must provide the tool2 instance');
-            assert.ok(_.find(tools, function(tool){return tool.getId() === 'tool3'}), 'The afterrender event must provide the tool3 instance');
+            assert.ok(_.find(tools, function(tool) {
+                return tool.getId() === 'tool2';
+            }), 'The afterrender event must provide the tool2 instance');
+            assert.ok(_.find(tools, function(tool) {
+                return tool.getId() === 'tool3';
+            }), 'The afterrender event must provide the tool3 instance');
 
             assert.equal($ctnr && $ctnr.length, 1, 'The afterrender event must provide a jQuery element');
             assert.ok($ctnr.is(containerSelector), 'The afterrender event must provide the container element');
@@ -141,10 +148,9 @@ define([
             assert.equal($container.find('[data-control="tool1"]').length, 1, 'The render method must renders the tool1 button');
             assert.equal($container.find('[data-control="tool3"]').length, 1, 'The render method must renders the tool3 button');
 
-            QUnit.start();
+            ready();
         });
 
-        QUnit.stop(3);
 
         actionBarTools.register(qtiTools);
         actionBarTools.render($container, mockTestContext, mockTestRunner);

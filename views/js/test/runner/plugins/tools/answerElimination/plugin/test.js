@@ -17,6 +17,7 @@
  */
 
 define([
+
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/tools/answerElimination/eliminator'
@@ -35,7 +36,7 @@ define([
     QUnit.test('module', function(assert) {
         var runner = runnerFactory(providerName);
 
-        QUnit.expect(3);
+        assert.expect(3);
 
         assert.equal(typeof pluginFactory, 'function', 'The pluginFactory module exposes a function');
         assert.equal(typeof pluginFactory(runner), 'object', 'The plugin factory produces an instance');
@@ -43,56 +44,56 @@ define([
     });
 
     pluginApi = [
-        { name : 'init',            title : 'init' },
-        { name : 'render',          title : 'render' },
-        { name : 'finish',          title : 'finish' },
-        { name : 'destroy',         title : 'destroy' },
-        { name : 'trigger',         title : 'trigger' },
-        { name : 'getTestRunner',   title : 'getTestRunner' },
-        { name : 'getAreaBroker',   title : 'getAreaBroker' },
-        { name : 'getConfig',       title : 'getConfig' },
-        { name : 'setConfig',       title : 'setConfig' },
-        { name : 'getState',        title : 'getState' },
-        { name : 'setState',        title : 'setState' },
-        { name : 'show',            title : 'show' },
-        { name : 'hide',            title : 'hide' },
-        { name : 'enable',          title : 'enable' },
-        { name : 'disable',         title : 'disable' }
+        {name: 'init', title: 'init'},
+        {name: 'render', title: 'render'},
+        {name: 'finish', title: 'finish'},
+        {name: 'destroy', title: 'destroy'},
+        {name: 'trigger', title: 'trigger'},
+        {name: 'getTestRunner', title: 'getTestRunner'},
+        {name: 'getAreaBroker', title: 'getAreaBroker'},
+        {name: 'getConfig', title: 'getConfig'},
+        {name: 'setConfig', title: 'setConfig'},
+        {name: 'getState', title: 'getState'},
+        {name: 'setState', title: 'setState'},
+        {name: 'show', title: 'show'},
+        {name: 'hide', title: 'hide'},
+        {name: 'enable', title: 'enable'},
+        {name: 'disable', title: 'disable'}
     ];
 
     QUnit.module('Plugin API');
 
     QUnit
-        .cases(pluginApi)
+        .cases.init(pluginApi)
         .test('plugin API ', function(data, assert) {
             var runner = runnerFactory(providerName);
             var plugin = pluginFactory(runner);
-            QUnit.expect(1);
+            assert.expect(1);
             assert.equal(typeof plugin[data.name], 'function', 'The pluginFactory instances expose a "' + data.name + '" function');
         });
-
 
     /**
      * Button
      */
     QUnit.module('Button');
 
-    QUnit.asyncTest('render/enable/disable/destroy', function (assert) {
-        var runner      = runnerFactory(providerName),
-            areaBroker  = runner.getAreaBroker(),
-            plugin      = pluginFactory(runner, areaBroker),
-            toolbox     = areaBroker.getToolbox(),
-            $container  = areaBroker.getToolboxArea(),
+    QUnit.test('render/enable/disable/destroy', function(assert) {
+        var ready = assert.async();
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            plugin = pluginFactory(runner, areaBroker),
+            toolbox = areaBroker.getToolbox(),
+            $container = areaBroker.getToolboxArea(),
             buttonSelector = '[data-control="eliminator"]',
             $button;
 
-        QUnit.expect(12);
+        assert.expect(12);
 
         plugin.init()
-            .then(function () {
+            .then(function() {
                 assert.equal(plugin.getState('init'), true, 'The plugin has been initialized');
 
-                // toolbox rendering
+                // Toolbox rendering
                 toolbox.render($container);
 
                 $button = $container.find(buttonSelector);
@@ -101,61 +102,62 @@ define([
                 assert.equal($button.hasClass('disabled'), true, 'The button has been rendered disabled');
 
                 // Plugin rendering
-                return plugin.render().then(function () {
+                return plugin.render().then(function() {
                     assert.equal(plugin.getState('ready'), true, 'The plugin is ready');
 
-                    // enabling
-                    return plugin.enable().then(function () {
+                    // Enabling
+                    return plugin.enable().then(function() {
                         assert.equal(plugin.getState('enabled'), true, 'The plugin is enabled');
                         assert.equal($button.hasClass('disabled'), false, 'The button is not disabled');
 
-                        // disabling
-                        return plugin.disable().then(function () {
+                        // Disabling
+                        return plugin.disable().then(function() {
                             assert.equal(plugin.getState('enabled'), false, 'The plugin is disabled');
                             assert.equal($button.hasClass('disabled'), true, 'The button is disabled');
                             assert.equal($button.hasClass('active'), false, 'The button is turned off');
 
-                            // plugin destroying
-                            return plugin.destroy().then(function () {
+                            // Plugin destroying
+                            return plugin.destroy().then(function() {
                                 $button = $container.find(buttonSelector);
 
                                 assert.equal(plugin.getState('init'), false, 'The plugin is destroyed');
                                 assert.equal($button.length, 1, 'The plugin button has not been destroyed by the plugin');
 
-                                // toolbox destroying
+                                // Toolbox destroying
                                 toolbox.destroy();
 
                                 $button = $container.find(buttonSelector);
 
                                 assert.equal($button.length, 0, 'The button has been removed');
-                                QUnit.start();
+                                ready();
                             });
                         });
                     });
                 });
             })
-            .catch(function (err) {
+            .catch(function(err) {
                 assert.ok(false, 'Unexpected failure : ' + err.message);
-                QUnit.start();
+                ready();
             });
     });
 
-    QUnit.asyncTest('show/hide', function (assert) {
-        var runner      = runnerFactory(providerName),
-            areaBroker  = runner.getAreaBroker(),
-            plugin      = pluginFactory(runner, areaBroker),
-            toolbox     = areaBroker.getToolbox(),
-            $container  = areaBroker.getToolboxArea(),
+    QUnit.test('show/hide', function(assert) {
+        var ready = assert.async();
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            plugin = pluginFactory(runner, areaBroker),
+            toolbox = areaBroker.getToolbox(),
+            $container = areaBroker.getToolboxArea(),
             buttonSelector = '[data-control="eliminator"]',
             $button;
 
-        QUnit.expect(7);
+        assert.expect(7);
 
         plugin.init()
-            .then(function () {
+            .then(function() {
                 assert.equal(plugin.getState('init'), true, 'The plugin has been initialized');
 
-                // toolbox rendering
+                // Toolbox rendering
                 toolbox.render($container);
 
                 $button = $container.find(buttonSelector);
@@ -165,32 +167,33 @@ define([
                 assert.equal($button.length, 1, 'The plugin button has been inserted in the right place');
                 assert.equal(plugin.getState('visible'), true, 'The plugin is visible');
 
-                // hiding
-                return plugin.hide().then(function () {
+                // Hiding
+                return plugin.hide().then(function() {
                     assert.equal(plugin.getState('visible'), false, 'The plugin is not visible');
                     assert.equal($button.css('display'), 'none', 'The plugin element is hidden');
 
-                    // showing
-                    return plugin.show().then(function () {
+                    // Showing
+                    return plugin.show().then(function() {
                         assert.equal(plugin.getState('visible'), true, 'The plugin is visible');
                         assert.notEqual($button.css('display'), 'none', 'The plugin element is visible');
 
-                        QUnit.start();
+                        ready();
                     });
                 });
             })
-            .catch(function (err) {
+            .catch(function(err) {
                 assert.ok(false, 'Unexpected failure : ' + err.message);
-                QUnit.start();
+                ready();
             });
     });
 
-    QUnit.asyncTest('runner events: loaditem / unloaditem', function(assert) {
-        var runner      = runnerFactory(providerName),
-            areaBroker  = runner.getAreaBroker(),
-            plugin      = pluginFactory(runner, runner.getAreaBroker()),
-            toolbox     = areaBroker.getToolbox(),
-            $container  = areaBroker.getToolboxArea(),
+    QUnit.test('runner events: loaditem / unloaditem', function(assert) {
+        var ready = assert.async();
+        var runner = runnerFactory(providerName),
+            areaBroker = runner.getAreaBroker(),
+            plugin = pluginFactory(runner, runner.getAreaBroker()),
+            toolbox = areaBroker.getToolbox(),
+            $container = areaBroker.getToolboxArea(),
             buttonSelector = '[data-control="eliminator"]',
             $button;
 
@@ -200,7 +203,7 @@ define([
             }
         });
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         plugin.init()
             .then(function() {
@@ -219,20 +222,20 @@ define([
                 assert.notEqual($button.css('display'), 'none', 'The plugin button is still visible');
                 assert.equal($button.hasClass('disabled'), true, 'The button is disabled');
 
-                QUnit.start();
+                ready();
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
             });
     });
 
-    QUnit.asyncTest('runner events: renderitem', function(assert) {
-        var runner      = runnerFactory(providerName);
-        var plugin      = pluginFactory(runner, runner.getAreaBroker()),
-            areaBroker  = runner.getAreaBroker(),
-            toolbox     = areaBroker.getToolbox(),
-            $container  = areaBroker.getToolboxArea(),
+    QUnit.test('runner events: renderitem', function(assert) {
+        var ready = assert.async();
+        var runner = runnerFactory(providerName);
+        var plugin = pluginFactory(runner, runner.getAreaBroker()),
+            areaBroker = runner.getAreaBroker(),
+            toolbox = areaBroker.getToolbox(),
+            $container = areaBroker.getToolboxArea(),
             buttonSelector = '[data-control="eliminator"]',
             $button,
             interaction = document.querySelector('.qti-choiceInteraction');
@@ -245,7 +248,7 @@ define([
             }
         });
 
-        QUnit.expect(3);
+        assert.expect(3);
 
         plugin.init()
             .then(function() {
@@ -260,11 +263,11 @@ define([
                 assert.notEqual($button.css('display'), 'none', 'The plugin button is visible');
                 assert.equal($button.hasClass('disabled'), false, 'The button is not disabled');
 
-                QUnit.start();
+                ready();
             })
             .catch(function(err) {
                 assert.ok(false, 'An error has occurred: ' + err);
-                QUnit.start();
+                ready();
             });
     });
 

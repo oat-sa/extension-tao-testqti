@@ -19,6 +19,7 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+
     'taoQtiTest/runner/navigator/navigator',
     'json!taoQtiTest/test/runner/navigator/testData.json',
     'json!taoQtiTest/test/runner/navigator/testMap.json',
@@ -26,17 +27,16 @@ define([
 ], function(testNavigator, testData, testMap, testContexts) {
     'use strict';
 
-
     QUnit.module('API');
 
     QUnit.test('module', function(assert) {
-        QUnit.expect(1);
+        assert.expect(1);
 
-        assert.equal(typeof testNavigator, 'function', "The navigator is a function");
+        assert.equal(typeof testNavigator, 'function', 'The navigator is a function');
     });
 
     QUnit.test('factory', function(assert) {
-        QUnit.expect(5);
+        assert.expect(5);
 
         assert.throws(function() {
             testNavigator();
@@ -50,12 +50,11 @@ define([
             testNavigator(testData, {});
         }, TypeError, 'factory called without all parameters');
 
-
-        assert.equal(typeof testNavigator(testData, {}, testMap), 'object', "The factory creates an object");
-        assert.notEqual(testNavigator(testData, {}, testMap), testNavigator(testData, {}, testMap), "The factory creates new objects");
+        assert.equal(typeof testNavigator(testData, {}, testMap), 'object', 'The factory creates an object');
+        assert.notEqual(testNavigator(testData, {}, testMap), testNavigator(testData, {}, testMap), 'The factory creates new objects');
     });
 
-    QUnit.cases([{
+    QUnit.cases.init([{
         title: 'navigate'
     }, {
         title: 'nextItem'
@@ -67,7 +66,7 @@ define([
         title: 'jumpItem'
     }])
     .test('Method ', function(data, assert) {
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(typeof testNavigator(testData, {}, testMap)[data.title], 'function', 'The instance exposes a "' + data.title + '" method');
     });
@@ -78,7 +77,7 @@ define([
     QUnit.test('is moving to the next item inside a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        assert.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context1, testMap).nextItem();
 
@@ -87,22 +86,22 @@ define([
         assert.equal(updatedContext.sectionId, 'assessmentSection-1', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
         assert.deepEqual(updatedContext.timeConstraints, [], 'The updated context has no time constraints');
-        assert.deepEqual(updatedContext.options,  {
-            reviewScreen:   true,
-            markReview:     true,
+        assert.deepEqual(updatedContext.options, {
+            reviewScreen: true,
+            markReview: true,
             endTestWarning: true,
-            zoom:           true,
-            allowComment:   false,
-            allowSkipping:  true,
-            exitButton:     false,
-            logoutButton:   false
+            zoom: true,
+            allowComment: false,
+            allowSkipping: true,
+            exitButton: false,
+            logoutButton: false
         }, 'The updated context contains the correct options');
     });
 
     QUnit.test('is moving to the next item over a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        assert.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context2, testMap).nextItem();
 
@@ -111,22 +110,22 @@ define([
         assert.equal(updatedContext.sectionId, 'assessmentSection-2', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
         assert.deepEqual(updatedContext.timeConstraints, [{
-            "label": "Rubric block",
-            "source": "assessmentSection-2",
-            "seconds": "60",
-            "extraTime": 0,
-            "allowLateSubmission": false,
-            "qtiClassName": "assessmentSection"
-        }], "The updated context contains the new section time constraints");
-        assert.deepEqual(updatedContext.options,  {
-            calculator:      true,
-            zoom:            true,
-            fooBarBaz:       true,
+            'label': 'Rubric block',
+            'source': 'assessmentSection-2',
+            'seconds': '60',
+            'extraTime': 0,
+            'allowLateSubmission': false,
+            'qtiClassName': 'assessmentSection'
+        }], 'The updated context contains the new section time constraints');
+        assert.deepEqual(updatedContext.options, {
+            calculator: true,
+            zoom: true,
+            fooBarBaz: true,
             awesomeCategory: true,
-            allowComment:    false,
-            allowSkipping:   true,
-            exitButton:      false,
-            logoutButton:    false
+            allowComment: false,
+            allowSkipping: true,
+            exitButton: false,
+            logoutButton: false
         }, 'The updated context contains the correct options');
 
     });
@@ -134,7 +133,7 @@ define([
     QUnit.test('is moving to the next item over a testPart', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        assert.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context3, testMap).nextItem();
 
@@ -149,7 +148,7 @@ define([
     QUnit.test('is moving to the next item over timed sections', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        assert.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context4, testMap).nextItem();
 
@@ -159,20 +158,20 @@ define([
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
         assert.equal(updatedContext.isLinear, false, 'The updated context contains the correct isLinear option');
         assert.deepEqual(updatedContext.timeConstraints, [{
-            "label": "Timed section",
-            "source": "assessmentSection-3",
-            "seconds": "90",
-            "extraTime": 0,
-            "allowLateSubmission": false,
-            "qtiClassName": "assessmentSection"
-        }], "The updated context contains the new section time constraints");
+            'label': 'Timed section',
+            'source': 'assessmentSection-3',
+            'seconds': '90',
+            'extraTime': 0,
+            'allowLateSubmission': false,
+            'qtiClassName': 'assessmentSection'
+        }], 'The updated context contains the new section time constraints');
 
     });
 
     QUnit.test('is moving to the next item to the end', function(assert) {
         var updatedContext;
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         updatedContext = testNavigator(testData, testContexts.context5, testMap).nextItem();
         assert.equal(updatedContext, false, 'There is no next item');
@@ -183,7 +182,7 @@ define([
     QUnit.test('is moving to the previous item inside a section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         updatedContext = testNavigator(testData, testContexts.context2, testMap).previousItem();
 
@@ -199,7 +198,7 @@ define([
     QUnit.test('is moving to the next section', function(assert) {
         var updatedContext;
 
-        QUnit.expect(6);
+        assert.expect(6);
 
         updatedContext = testNavigator(testData, testContexts.context4, testMap).nextSection();
 
@@ -209,13 +208,13 @@ define([
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
         assert.equal(updatedContext.isLinear, false, 'The updated context contains the correct isLinear option');
         assert.deepEqual(updatedContext.timeConstraints, [{
-            "label": "Timed section",
-            "source": "assessmentSection-3",
-            "seconds": "90",
-            "extraTime": 0,
-            "allowLateSubmission": false,
-            "qtiClassName": "assessmentSection"
-        }], "The updated context contains the new section time constraints");
+            'label': 'Timed section',
+            'source': 'assessmentSection-3',
+            'seconds': '90',
+            'extraTime': 0,
+            'allowLateSubmission': false,
+            'qtiClassName': 'assessmentSection'
+        }], 'The updated context contains the new section time constraints');
     });
 
     QUnit.module('navigator.jumpItem');
@@ -223,7 +222,7 @@ define([
     QUnit.test('is jumping to the 2nd previous item', function(assert) {
         var updatedContext;
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         updatedContext = testNavigator(testData, testContexts.context4, testMap).jumpItem(3);
 
@@ -232,13 +231,13 @@ define([
         assert.equal(updatedContext.sectionId, 'assessmentSection-2', 'The updated context contains the correct section id');
         assert.equal(updatedContext.testPartId, 'testPart-1', 'The updated context contains the correct test part id');
         assert.deepEqual(updatedContext.timeConstraints, [{
-            "label": "Rubric block",
-            "source": "assessmentSection-2",
-            "seconds": "60",
-            "extraTime": 0,
-            "allowLateSubmission": false,
-            "qtiClassName": "assessmentSection"
-        }], "The updated context contains the new section time constraints");
+            'label': 'Rubric block',
+            'source': 'assessmentSection-2',
+            'seconds': '60',
+            'extraTime': 0,
+            'allowLateSubmission': false,
+            'qtiClassName': 'assessmentSection'
+        }], 'The updated context contains the new section time constraints');
 
     });
 
@@ -247,7 +246,7 @@ define([
     QUnit.test('executes the correct movement', function(assert) {
         var aTestNaviagtor = testNavigator(testData, testContexts.context4, testMap);
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         assert.deepEqual(aTestNaviagtor.navigate('next', 'item'), aTestNaviagtor.nextItem());
         assert.deepEqual(aTestNaviagtor.navigate('previous', 'item'), aTestNaviagtor.previousItem());

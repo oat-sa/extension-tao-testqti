@@ -16,60 +16,60 @@
  * Copyright (c) 2018 (original work) Open Assessment Technologies SA ;
  */
 /**
- * Test the timer's plugin countdown component
+ * Test the time\'s plugin countdown component
  */
 define([
+
     'jquery',
     'taoQtiTest/runner/plugins/controls/timer/component/countdown'
 ], function($, countdownFactory) {
     'use strict';
 
-
     QUnit.module('API');
 
     QUnit.test('module', function(assert) {
-        QUnit.expect(3);
+        assert.expect(3);
 
-        assert.equal(typeof countdownFactory, 'function', "The countdownFactory module exposes a function");
-        assert.equal(typeof countdownFactory(), 'object', "The countdownFactory factory produces an object");
-        assert.notStrictEqual(countdownFactory(), countdownFactory(), "The countdownFactory factory provides a different object on each call");
+        assert.equal(typeof countdownFactory, 'function', 'The countdownFactory module exposes a function');
+        assert.equal(typeof countdownFactory(), 'object', 'The countdownFactory factory produces an object');
+        assert.notStrictEqual(countdownFactory(), countdownFactory(), 'The countdownFactory factory provides a different object on each call');
     });
 
-    QUnit.cases([
-        { title : 'init' },
-        { title : 'destroy' },
-        { title : 'render' },
-        { title : 'show' },
-        { title : 'hide' },
-        { title : 'enable' },
-        { title : 'disable' },
-        { title : 'is' },
-        { title : 'setState' },
-        { title : 'getContainer' },
-        { title : 'getElement' },
-        { title : 'getTemplate' },
-        { title : 'setTemplate' },
+    QUnit.cases.init([
+        {title: 'init'},
+        {title: 'destroy'},
+        {title: 'render'},
+        {title: 'show'},
+        {title: 'hide'},
+        {title: 'enable'},
+        {title: 'disable'},
+        {title: 'is'},
+        {title: 'setState'},
+        {title: 'getContainer'},
+        {title: 'getElement'},
+        {title: 'getTemplate'},
+        {title: 'setTemplate'}
     ]).test('Component API ', function(data, assert) {
         var instance = countdownFactory();
         assert.equal(typeof instance[data.title], 'function', 'The countdownFactory exposes the component method "' + data.title);
     });
 
-    QUnit.cases([
-        { title : 'on' },
-        { title : 'off' },
-        { title : 'trigger' },
-        { title : 'before' },
-        { title : 'after' },
+    QUnit.cases.init([
+        {title: 'on'},
+        {title: 'off'},
+        {title: 'trigger'},
+        {title: 'before'},
+        {title: 'after'}
     ]).test('Eventifier API ', function(data, assert) {
         var instance = countdownFactory();
         assert.equal(typeof instance[data.title], 'function', 'The countdownFactory exposes the eventifier method "' + data.title);
     });
 
-    QUnit.cases([
-        { title : 'update' },
-        { title : 'start' },
-        { title : 'stop' },
-        { title : 'complete' }
+    QUnit.cases.init([
+        {title: 'update'},
+        {title: 'start'},
+        {title: 'stop'},
+        {title: 'complete'}
     ]).test('Instance API ', function(data, assert) {
         var instance = countdownFactory();
         assert.equal(typeof instance[data.title], 'function', 'The countdownFactory exposes the method "' + data.title);
@@ -78,89 +78,91 @@ define([
 
     QUnit.module('Behavior');
 
-    QUnit.asyncTest('Lifecycle', function(assert) {
+    QUnit.test('Lifecycle', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture');
 
-        QUnit.expect(24);
+        assert.expect(24);
 
         countdownFactory($container, {
-            id : 'timer-1',
-            label : 'Timer 01',
+            id: 'timer-1',
+            label: 'Timer 01',
             remainingTime: 2000
         })
-        .on('init', function(){
-            assert.ok( !this.is('rendered'), 'The component is not rendered');
-            assert.ok( !this.is('started'), 'The component is not  started');
-            assert.ok( !this.is('running'), 'The component is not running');
-            assert.ok( !this.is('completed'), 'The component is not yet completed');
+        .on('init', function() {
+            assert.ok(!this.is('rendered'), 'The component is not rendered');
+            assert.ok(!this.is('started'), 'The component is not  started');
+            assert.ok(!this.is('running'), 'The component is not running');
+            assert.ok(!this.is('completed'), 'The component is not yet completed');
         })
-        .on('render', function(){
+        .on('render', function() {
 
             assert.ok(this.is('rendered'), 'The component is now rendered');
-            assert.ok( !this.is('started'), 'The component is not  started');
-            assert.ok( !this.is('running'), 'The component is not running');
-            assert.ok( !this.is('completed'), 'The component is not yet completed');
+            assert.ok(!this.is('started'), 'The component is not  started');
+            assert.ok(!this.is('running'), 'The component is not running');
+            assert.ok(!this.is('completed'), 'The component is not yet completed');
 
             this.start();
         })
-        .on('start.first', function(){
+        .on('start.first', function() {
             this.off('start.first');
 
             assert.ok(this.is('rendered'), 'The component is still rendered');
             assert.ok(this.is('started'), 'The component is now  started');
             assert.ok(this.is('running'), 'The component is now running');
-            assert.ok( !this.is('completed'), 'The component is not yet completed');
+            assert.ok(!this.is('completed'), 'The component is not yet completed');
 
             this.stop();
         })
-        .on('stop.first', function(){
+        .on('stop.first', function() {
             this.off('stop.first');
 
             assert.ok(this.is('rendered'), 'The component is still rendered');
             assert.ok(this.is('started'), 'The component is still  started');
-            assert.ok( !this.is('running'), 'The component is not running anymore');
-            assert.ok( !this.is('completed'), 'The component is not yet completed');
+            assert.ok(!this.is('running'), 'The component is not running anymore');
+            assert.ok(!this.is('completed'), 'The component is not yet completed');
 
-            this.on('start.second', function(){
+            this.on('start.second', function() {
                 this.off('start.second');
 
                 assert.ok(this.is('rendered'), 'The component is still rendered');
                 assert.ok(this.is('started'), 'The component is still  started');
                 assert.ok(this.is('running'), 'The component is running again');
-                assert.ok( !this.is('completed'), 'The component is not yet completed');
+                assert.ok(!this.is('completed'), 'The component is not yet completed');
 
                 this.complete();
             });
             this.start();
         })
-        .on('complete', function(){
+        .on('complete', function() {
 
             assert.ok(this.is('rendered'), 'The component is still rendered');
             assert.ok(this.is('started'), 'The component is still  started');
-            assert.ok( !this.is('running'), 'The component is not running anymore');
+            assert.ok(!this.is('running'), 'The component is not running anymore');
             assert.ok(this.is('completed'), 'The component is now completed');
 
             this.destroy();
         })
-        .on('destroy', function(){
+        .on('destroy', function() {
 
-            QUnit.start();
+            ready();
         });
     });
 
-    QUnit.asyncTest('Rendering', function(assert) {
+    QUnit.test('Rendering', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture .timer-box');
 
-        QUnit.expect(8);
+        assert.expect(8);
 
         assert.equal($('.countdown', $container).length, 0, 'No timer in the container');
 
         countdownFactory($container, {
-            id : 'timer-1',
-            label : 'Timer 01',
+            id: 'timer-1',
+            label: 'Timer 01',
             remainingTime: 12987000
         })
-        .on('render', function(){
+        .on('render', function() {
 
             var $element = this.getElement();
 
@@ -174,118 +176,120 @@ define([
             assert.equal($('.label', $element).text().trim(), 'Timer 01', 'The label is set');
             assert.equal($('.time', $element).text(), '03:36:27', 'The time is displayed');
 
-            QUnit.start();
+            ready();
         });
     });
 
-    QUnit.asyncTest('internal countdown', function(assert) {
+    QUnit.test('internal countdown', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture .timer-box');
         var $time;
-        QUnit.expect(5);
+        assert.expect(5);
 
         countdownFactory($container, {
-            id : 'timer-1',
-            label : 'Timer 01',
+            id: 'timer-1',
+            label: 'Timer 01',
             remainingTime: 3000
         })
-        .on('render', function(){
+        .on('render', function() {
 
             $time = $('.time', this.getElement());
             assert.equal($time.text(), '00:00:03', 'The time is displayed');
 
             this.start();
         })
-        .on('start', function(){
-            setTimeout(function(){
+        .on('start', function() {
+            setTimeout(function() {
                 assert.equal($time.text(), '00:00:02', 'The time is displayed');
             }, 500);
-            setTimeout(function(){
+            setTimeout(function() {
                 assert.equal($time.text(), '00:00:01', 'The time is displayed');
             }, 1500);
-            setTimeout(function(){
+            setTimeout(function() {
                 assert.equal($time.text(), '00:00:00', 'The time is displayed');
             }, 2500);
         })
-        .on('complete', function(){
+        .on('complete', function() {
             assert.equal($time.text(), '00:00:00', 'The time is displayed');
-            QUnit.start();
+            ready();
         });
     });
 
-
-    QUnit.asyncTest('external countdown', function(assert) {
+    QUnit.test('external countdown', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture .timer-box');
         var $time;
-        QUnit.expect(7);
+        assert.expect(7);
 
         countdownFactory($container, {
-            id : 'timer-2',
-            label : 'Timer 02',
+            id: 'timer-2',
+            label: 'Timer 02',
             remainingTime: 3000,
-            polling : false
+            polling: false
         })
-        .on('render', function(){
+        .on('render', function() {
 
             $time = $('.time', this.getElement());
             assert.equal($time.text(), '00:00:03', 'The time is displayed');
 
             this.start();
         })
-        .on('start', function(){
+        .on('start', function() {
             var self = this;
-            setTimeout(function(){
+            setTimeout(function() {
                 assert.equal($time.text(), '00:00:03', 'The time is displayed');
                 self.update(2000);
                 assert.equal($time.text(), '00:00:02', 'The time is displayed');
             }, 1000);
-            setTimeout(function(){
+            setTimeout(function() {
                 assert.equal($time.text(), '00:00:02', 'The time is displayed');
                 self.update(1000);
                 assert.equal($time.text(), '00:00:01', 'The time is displayed');
             }, 2000);
-            setTimeout(function(){
+            setTimeout(function() {
                 assert.equal($time.text(), '00:00:01', 'The time is displayed');
                 self.update(-10);
             }, 3000);
         })
-        .on('complete', function(){
+        .on('complete', function() {
             assert.equal($time.text(), '00:00:00', 'The time is displayed');
-            QUnit.start();
+            ready();
         });
     });
     QUnit.module('Visual test');
 
-    QUnit.asyncTest('Countdow', function(assert) {
+    QUnit.test('Countdow', function(assert) {
+        var ready = assert.async();
         var remaining = 10000;
         var container = document.querySelector('#visual .timer-box');
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         countdownFactory(container, {
-            id : 'timer-1',
-            label : 'Timer 01',
+            id: 'timer-1',
+            label: 'Timer 01',
             remainingTime: remaining,
-            warnings : [{
-                level : 'success',
-                message : 'be green',
-                threshold : 3000
+            warnings: [{
+                level: 'success',
+                message: 'be green',
+                threshold: 3000
             }, {
-                level : 'danger',
-                message : 'be orange',
-                threshold : 6000
+                level: 'danger',
+                message: 'be orange',
+                threshold: 6000
             }]
         })
-        .on('complete', function(){
+        .on('complete', function() {
             assert.ok(true);
-            QUnit.start();
+            ready();
         })
-        .on('change', function(c){
+        .on('change', function(c) {
             console.log(c);
         })
-        .on('warn', function(d){
+        .on('warn', function(d) {
             console.log(d);
         })
-        .on('render', function(){
+        .on('render', function() {
             this.start();
         });
     });
