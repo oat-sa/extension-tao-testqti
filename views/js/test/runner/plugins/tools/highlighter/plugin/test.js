@@ -47,12 +47,10 @@ define([
         var sel, range;
         var el = document.getElementById(id); //get element id
         sel = window.getSelection();
-        // window.setTimeout(function () {
-            range = document.createRange(); //range object
-            range.selectNodeContents(el); //sets Range
-            sel.removeAllRanges(); //remove all ranges from selection
-            sel.addRange(range); //add Range to a Selection.
-        // }, 1);
+        range = document.createRange(); //range object
+        range.selectNodeContents(el); //sets Range
+        sel.removeAllRanges(); //remove all ranges from selection
+        sel.addRange(range); //add Range to a Selection.
     }
 
 
