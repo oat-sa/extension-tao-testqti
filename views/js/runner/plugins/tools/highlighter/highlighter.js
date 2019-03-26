@@ -72,7 +72,7 @@ define([
      * @param {String} [options.containerSelector]
      * @param {Array} [options.containersBlackList]
      * @param {String} [options.id]
-     * @returns {Object} the highlighter plugin
+     * @returns {Object} the highlighter instance
      */
     return function testHighlighterFactory(options) {
 

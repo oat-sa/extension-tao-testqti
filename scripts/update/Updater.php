@@ -79,7 +79,6 @@ use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
 use oat\taoTests\models\runner\time\TimePoint;
-use oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage;
 
 /**
  *

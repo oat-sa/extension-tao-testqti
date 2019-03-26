@@ -17,4 +17,4 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA;
  */
 
-return new oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage();
+return new oat\taoQtiTest\models\runner\toolsStates\NoStorage();
