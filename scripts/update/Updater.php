@@ -29,6 +29,9 @@ use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
+use oat\taoQtiTest\models\runner\synchronisation\action\GetAllItems;
+use oat\taoQtiTest\models\runner\synchronisation\action\GetFirstItem;
+use oat\taoQtiTest\models\runner\synchronisation\action\Init;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
@@ -1778,5 +1781,30 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('32.1.0', '32.3.2');
+
+        if ($this->isVersion('32.3.2')) {
+
+            $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
+            $actions = $synchronisationService->getAvailableActions();
+
+            $actions['init'] = Init::class;
+            $actions['getFirstItem'] = GetFirstItem::class;
+            $actions['getAllItems'] = GetAllItems::class;
+
+            $synchronisationService->setAvailableActions($actions);
+            $this->getServiceManager()->register(SynchronisationService::SERVICE_ID, $synchronisationService);
+
+
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['bootstrap']['communication']['syncActions'][] = 'init';
+            $config['bootstrap']['communication']['syncActions'][] = 'getFirstItem';
+            $config['bootstrap']['communication']['syncActions'][] = 'getAllItems';
+            $extension->setConfig('testRunner', $config);
+
+
+            $this->setVersion('32.4.0');
+        }
+
     }
 }

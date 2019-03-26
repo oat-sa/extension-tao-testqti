@@ -20,7 +20,10 @@
 namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
+use oat\taoQtiTest\models\runner\synchronisation\action\GetAllItems;
 use oat\taoQtiTest\models\runner\synchronisation\action\ExitTest;
+use oat\taoQtiTest\models\runner\synchronisation\action\GetFirstItem;
+use oat\taoQtiTest\models\runner\synchronisation\action\Init;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\Skip;
@@ -64,7 +67,10 @@ class SetSynchronisationService extends InstallAction
             'skip'            => Skip::class,
             'storeTraceData'  => StoreTraceData::class,
             'timeout'         => Timeout::class,
-            'getNextItemData' => NextItemData::class
+            'getNextItemData' => NextItemData::class,
+            'init'            => Init::class,
+            'getFirstItem'    => GetFirstItem::class,
+            'getAllItems'     => GetAllItems::class,
         ];
 
         $service->setAvailableActions(array_merge($actions, $newActions));
