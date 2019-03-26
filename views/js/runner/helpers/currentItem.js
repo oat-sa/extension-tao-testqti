@@ -251,6 +251,29 @@ define([
                 .pluck('attributes')
                 .pluck('href')
                 .value();
+        },
+
+        /**
+         * Find the list of text stimulus ids in the current item
+         * Depends on the DOM already being loaded
+         * @param {Object} runner - testRunner instance
+         * @returns {Array}
+         */
+        getTextStimuliHrefs: function getTextStimuliHrefs(runner) {
+            var stimuli = this.getStimuliHrefs(runner);
+            var textStimuli;
+            if (stimuli.length > 0) {
+                // Filter the ones containing text:
+                textStimuli = stimuli.filter(function(stimulusHref) {
+                    var domNode = document.querySelector('.qti-include[data-href="' + stimulusHref + '"]');
+                    return _(domNode.childNodes)
+                            .some(function(child) {
+                                return child.nodeType === child.TEXT_NODE;
+                            });
+                });
+                return textStimuli;
+            }
+            return [];
         }
     };
 

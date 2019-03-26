@@ -32,8 +32,8 @@ define([
     'util/shortcut',
     'util/namespace',
     'taoQtiTest/runner/helpers/currentItem',
-    'taoQtiTest/runner/plugins/tools/highlighter/highlighter'
-], function ($, _, __, loggerFactory, Promise, pluginFactory, shortcut, namespaceHelper, itemHelper, highlighterFactory) {
+    'taoQtiTest/runner/plugins/tools/highlighter/collection'
+], function ($, _, __, loggerFactory, Promise, pluginFactory, shortcut, namespaceHelper, itemHelper, highlighterCollection) {
     'use strict';
 
     /**
@@ -86,30 +86,13 @@ define([
             var logger          = loggerFactory('highlighterPlugin');
 
             /**
-             * @var {Array} highlighters - Highlighters collection
-             * We can run multiple instances of the highlighter plugin on one page:
-             * - one for item-level highlights, which persist for the Test session
-             * - others for stimulus-level highlights, which should persist across multiple sessions (TAO-7617)
+             * @var {Object} collection - Highlighters collection
+             * See taoQtiTest/views/js/runner/plugins/tools/highlighter/collection.js
              */
-            var highlighters = [];
-
-            /**
-             * Instantiates new highlighter and adds it to array
-             * @param {Object} options
-             * @param {String} options.className - class applied to highlighted spans
-             * @param {String} options.containerSelector - selector for the unique root DOM node the HL will work on
-             * @param {Array}  options.containersBlackList - list of children which should not receive highlights
-             * @param {String} options.id
-             * @returns {Object} a highlighter instance
-             */
-            function addHighlighter(options) {
-                var hl = highlighterFactory(options);
-                highlighters.push(hl);
-                return hl;
-            }
+            var collection = highlighterCollection();
 
             // Create the first (item-level) highlighter instance:
-            addHighlighter({
+            collection.addHighlighter({
                 className: 'txt-user-highlight',
                 containerSelector: '.qti-itemBody',
                 containersBlackList: ['.qti-include'],
@@ -136,7 +119,7 @@ define([
                 // using 'mousedown' instead of 'click' to avoid losing current selection
                 e.preventDefault();
                 if (isPluginEnabled()) {
-                    _.forEach(highlighters, function(instance) {
+                    _.forEach(collection.getAllHighlighters(), function(instance) {
                         if (instance.isEnabled()) {
                             instance.highlight();
                         }
@@ -147,7 +130,7 @@ define([
             this.buttonRemove.on('click', function(e) {
                 e.preventDefault();
                 if (isPluginEnabled()) {
-                    _.forEach(highlighters, function(instance) {
+                    _.forEach(collection.getAllHighlighters(), function(instance) {
                         if (instance.isEnabled()) {
                             instance.clearHighlights();
                         }
@@ -160,7 +143,7 @@ define([
                 if (pluginShortcuts.toggle) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
                         if (isPluginEnabled()) {
-                            _.forEach(highlighters, function(instance) {
+                            _.forEach(collection.getAllHighlighters(), function(instance) {
                                 if (instance.isEnabled()) {
                                     instance.highlight();
                                 }
@@ -220,16 +203,11 @@ define([
                     var instance;
                     var highlightsIndex;
                     if (!itemId) {
-                        // Select correct highlighter by id:
-                        instance = _(highlighters)
-                            .filter(function(hl) {
-                                return hl.getId() === key;
-                            })
-                            .first();
+                        instance = collection.getHighlighterById(key);
                     }
                     else {
                         key = itemId;
-                        instance = highlighters[0];
+                        instance = collection.getItemHighlighter();
                     }
 
                     if (!instance) return Promise.resolve(false);
@@ -249,7 +227,7 @@ define([
                  * @returns {Promise} resolves once the save is done
                  */
                 function saveAll() {
-                    var nonItemHighlighters = highlighters.slice(1);
+                    var nonItemHighlighters = collection.getNonItemHighlighters();
                     return Promise.all(
                         _(nonItemHighlighters)
                         .filter(function(instance) {
@@ -278,16 +256,11 @@ define([
                 function loadHighlight(itemId, key) {
                     var instance;
                     if (!itemId) {
-                        // Select correct highlighter by id:
-                        instance = _(highlighters)
-                            .filter(function(hl) {
-                                return hl.getId() === key;
-                            })
-                            .first();
+                        instance = collection.getHighlighterById(key);
                     }
                     else {
                         key = itemId;
-                        instance = highlighters[0];
+                        instance = collection.getItemHighlighter();
                     }
 
                     if (!instance) return Promise.resolve(false);
@@ -309,28 +282,6 @@ define([
                         });
                 }
 
-                /**
-                 * Find the list of text stimulus ids in the current item
-                 * Depends on the DOM already being loaded
-                 * @returns {Array}
-                 */
-                function getTextStimuliHrefs() {
-                    var stimuli = itemHelper.getStimuliHrefs(testRunner);
-                    var textStimuli;
-                    if (stimuli.length > 0) {
-                        // Filter the ones containing text:
-                        textStimuli = stimuli.filter(function(stimulusHref) {
-                            var domNode = $('.qti-include[data-href="' + stimulusHref + '"]').get(0);
-                            return _(Array.from(domNode.childNodes))
-                                    .some(function(child) {
-                                        return child.nodeType === child.TEXT_NODE;
-                                    });
-                        });
-                        return textStimuli;
-                    }
-                    return [];
-                }
-
                 //update plugin state based on changes
                 testRunner
                     .on('loaditem', togglePlugin)
@@ -344,21 +295,19 @@ define([
                         if (itemId && isPluginEnabled()) {
                             hasHighlights = false;
 
-                            highlighters[0].enable();
-                            // Load volatile (item-level) highlights from store:
+                            collection.getItemHighlighter().enable();
+                            // Load item-level highlights from store:
                             loadHighlight(itemId);
 
                             // Count stimuli in this item:
-                            textStimuli = getTextStimuliHrefs();
+                            textStimuli = itemHelper.getTextStimuliHrefs(testRunner);
 
                             // NOW we can instantiate the extra highlighters:
                             _.forEach(textStimuli, function(textStimulusHref) {
-                                var stimHighlighter = highlighters.find(function(hl) {
-                                    return hl.getId() === textStimulusHref;
-                                });
+                                var stimHighlighter = collection.getHighlighterById(textStimulusHref);
                                 // Instantiate, if id not already present in highlighters...
                                 if (!stimHighlighter) {
-                                    stimHighlighter = addHighlighter({
+                                    stimHighlighter = collection.addHighlighter({
                                         className: 'txt-user-highlight',
                                         containerSelector: '.qti-include[data-href="' + textStimulusHref + '"]',
                                         id: textStimulusHref
@@ -372,7 +321,7 @@ define([
                     })
                     .after('renderitem', function() {
                         // Attach start/end listeners to all highlighter instances:
-                        _.forEach(highlighters, function(instance) {
+                        _.forEach(collection.getAllHighlighters(), function(instance) {
                             if (instance.isEnabled()) {
                                 instance
                                     .on('start', function(){
@@ -388,7 +337,7 @@ define([
                         });
                     })
                     .after('clear.highlighter', function() {
-                        saveAll();
+                        collection.saveAll();
                     })
                     .before('skip move timeout', function() {
                         return saveAll();
@@ -396,7 +345,7 @@ define([
                     .on('disabletools unloaditem', function () {
                         self.disable();
                         if (isPluginEnabled()) {
-                            _.forEach(highlighters, function(instance) {
+                            _.forEach(collection.getAllHighlighters(), function(instance) {
                                 if (instance.isEnabled()) {
                                     instance
                                         .off('end.save')

@@ -52,7 +52,6 @@ define([
         for (i = 0; i < selection.rangeCount; i++) {
             allRanges.push(selection.getRangeAt(i));
         }
-        //console.warn('getAllRanges()', allRanges);
         return allRanges;
     }
 
@@ -86,8 +85,7 @@ define([
         var highlightHelper = highlighterFactory({
             className: options.className || 'txt-user-highlight',
             containerSelector: options.containerSelector || '.qti-itemBody',
-            containersBlackList: options.containersBlackList || [],
-            id: options.id
+            containersBlackList: options.containersBlackList || []
         });
 
         //add event to automatically highlight the recently made selection if needed
