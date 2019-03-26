@@ -1,8 +1,28 @@
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
+ */
+/**
+ * @author Péter Halász <peter@taotesting.com>
+ */
 define([
     'lodash',
     'core/promise',
     'taoQtiTest/runner/branchRule/branchRule',
-    'taoQtiTest/runner/proxy/offline/responseStore',
+    'taoQtiTest/runner/proxy/offline/responseStore'
 ], function (
     _,
     Promise,
@@ -25,11 +45,27 @@ define([
         var testMap = {};
         var jumpTable = [];
 
+        /**
+         * Put all the responses from the navigation parameters into the responseStore
+         *
+         * @param {Object} params
+         */
         function addResponsesToResponseStore(params) {
             Object.keys(params.itemResponse).forEach(function(itemResponseIdentifier) {
-                var response = params.itemResponse[itemResponseIdentifier];
-                var responseIdentifier = params.itemDefinition + '.' + itemResponseIdentifier;
-                responseStore.addResponse(responseIdentifier, response.base.identifier); // TODO: is it always "base"?
+                var response = params.itemResponse[itemResponseIdentifier],
+                    responseIdentifier = params.itemDefinition + '.' + itemResponseIdentifier;
+
+                Object.keys(response).forEach(function(responseType) {
+                    var responseId = response[responseType].identifier;
+
+                    if (Array.isArray(responseId)) {
+                        responseId.forEach(function(id) {
+                            responseStore.addResponse(responseIdentifier, id);
+                        });
+                    } else {
+                        responseStore.addResponse(responseIdentifier, responseId);
+                    }
+                });
             });
         }
 
@@ -51,6 +87,7 @@ define([
                     this.addJump(firstItem.part, firstItem.section, firstItem.item);
                 }
 
+                // Put all correct responses to the responseStore
                 simplifiedTestMap.forEach(function(row) {
                     itemStore.get(row.item).then(function(item) {
                         Object.keys(item.itemData.data.responses).forEach(function(responseDeclarationIdentifier) {
@@ -59,7 +96,7 @@ define([
                             responseStore.addCorrectResponse(responseIdentifier, response.correctResponses);
                         });
                     });
-                })
+                });
             },
 
             /**
@@ -92,7 +129,7 @@ define([
                         item: itemIdentifier,
                         part: partIdentifier,
                         section: sectionIdentifier,
-                        position: nextPosition,
+                        position: nextPosition
                     });
 
                     resolve();
@@ -133,15 +170,16 @@ define([
                             return row.item === itemIdentifierToAdd;
                         })
                         .shift();
+
                     var lastJumpItemData = simplifiedTestMap
                         .filter(function(row) {
                             return row.item === lastJumpItem;
                         })
                         .shift();
 
-                    if (lastJumpItemData.itemHasBranchRule) {
+                    if (lastJumpItemData && lastJumpItemData.itemHasBranchRule) {
                         return itemStore.get(lastJumpItem).then(function(item) {
-                            var itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params, responseStore);
+                            itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params, responseStore);
 
                             if (itemIdentifierToAdd !== null) {
                                 itemToAdd = simplifiedTestMap
@@ -152,11 +190,11 @@ define([
                             }
 
                             self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
-                        }).catch(function(err) {
-                            console.log('error in promise', err); // TODO
                         });
                     } else {
-                        return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                        return itemToAdd
+                            ? self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve)
+                            : resolve();
                     }
                 });
             },
@@ -305,8 +343,8 @@ define([
                     .map(function(row) {
                         return row.item;
                     })
-                    .filter(function(value, index, self) {
-                        return self.indexOf(value) === index;
+                    .filter(function(value, index, thisArg) {
+                        return thisArg.indexOf(value) === index;
                     });
             },
 
@@ -321,8 +359,8 @@ define([
                     .map(function(row) {
                         return row.section;
                     })
-                    .filter(function(value, index, self) {
-                        return self.indexOf(value) === index;
+                    .filter(function(value, index, thisArg) {
+                        return thisArg.indexOf(value) === index;
                     });
             },
 
@@ -337,8 +375,8 @@ define([
                     .map(function(row) {
                         return row.part;
                     })
-                    .filter(function(value, index, self) {
-                        return self.indexOf(value) === index;
+                    .filter(function(value, index, thisArg) {
+                        return thisArg.indexOf(value) === index;
                     });
             },
 
@@ -367,14 +405,14 @@ define([
                                 sectionBranchRule: section.branchRule,
                                 part: partIdentifier,
                                 partHasBranchRule: !_.isEmpty(part.branchRule),
-                                partBranchRule: part.branchRule,
+                                partBranchRule: part.branchRule
                             });
                         });
                     });
                 });
 
                 return simplifiedTestMap;
-            },
+            }
         };
     };
 

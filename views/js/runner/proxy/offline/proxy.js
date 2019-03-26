@@ -13,11 +13,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 Open Assessment Technologies SA
+ * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 /**
- * Proxy Provider for the offline mode
- *
  * @author Péter Halász <peter@taotesting.com>
  */
 define([
@@ -34,7 +32,7 @@ define([
     'taoQtiTest/runner/proxy/offline/errorProvider',
     'taoQtiTest/runner/helpers/offlineSyncModal',
     'util/download',
-    'ui/feedback',
+    'ui/feedback'
 ], function(
     _,
     __,
@@ -130,8 +128,6 @@ define([
              * @returns {Object} action result
              */
             this.offlineAction = function offlineAction(action, actionParams) {
-                var self = this;
-
                 return new Promise(function(resolve) {
                     var newTestContext,
                         result = { success: true },
@@ -157,7 +153,7 @@ define([
                     ) {
                         // TODO: this changes allow to finish the test, but probably it is not a proper way
                         result.testContext = {
-                            state: 4,
+                            state: 4
                         };
 
                         if (self.isOffline()) {
@@ -210,7 +206,6 @@ define([
                             ).then(function(res) {
                                 newTestContext = res;
 
-                                console.log('newTestContext', newTestContext);
                                 if (
                                     !newTestContext
                                     || !newTestContext.itemIdentifier
@@ -239,16 +234,16 @@ define([
             this.scheduleAction = function scheduleAction(action, actionParams) {
                 actionParams = _.assign(actionParams, {
                     actionId: action + '_' + (new Date()).getTime(),
-                    offline: true,
+                    offline: true
                 });
 
                 return self.actionStore.push(
                     action,
                     self.prepareParams(_.defaults(actionParams || {}, self.requestConfig))
-                ).then(function () {
+                ).then(function() {
                     return {
                         action: action,
-                        params: actionParams,
+                        params: actionParams
                     };
                 });
             };
@@ -333,6 +328,9 @@ define([
         init: function init(config, params) {
             var self = this;
 
+            // run the init
+            var InitCallPromise = qtiServiceProxy.init.call(this, config, params);
+
             if (!this.getDataHolder()) {
                 throw new Error('Unable to retrieve test runners data holder');
             }
@@ -342,9 +340,6 @@ define([
 
             // set up the action store for the current service call
             this.actionStore = actionStoreFactory(config.serviceCallId);
-
-            // run the init
-            var InitCallPromise = qtiServiceProxy.init.call(this, config, params);
 
             return InitCallPromise.then(function(response) {
                 var promises = [];
@@ -380,12 +375,11 @@ define([
         /**
          * Gets an item definition by its identifier, also gets its current state
          *
-         * @param {String} itemIdentifier - The identifier of the item to get
-         * @param {Object} [params] - additional parameters
+         * @param {String} itemIdentifier
          * @returns {Promise} - Returns a promise. The item data will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        getItem: function getItem(itemIdentifier, params) {
+        getItem: function getItem(itemIdentifier) {
             return this.itemStore.get(itemIdentifier);
         },
 
@@ -414,12 +408,11 @@ define([
          * Sends the test variables
          *
          * @param {Object} variables
-         * @param {Boolean} deferred whether action can be scheduled (put into queue) to be sent in a bunch of actions later.
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          * @fires sendVariables
          */
-        sendVariables: function sendVariables(variables, deferred) {
+        sendVariables: function sendVariables(variables) {
             var self = this,
                 action = 'storeTraceData',
                 actionParams = { traceData: JSON.stringify(variables) };
@@ -436,11 +429,10 @@ define([
          *
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
-         * @param {Boolean} deferred whether action can be scheduled (put into queue) to be sent in a bunch of actions later.
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        callTestAction: function callTestAction(action, params, deferred) {
+        callTestAction: function callTestAction(action, params) {
             var self = this;
 
             return self
@@ -456,11 +448,10 @@ define([
          * @param {String} itemIdentifier - The identifier of the item for which call the action
          * @param {String} action - The name of the action to call
          * @param {Object} [params] - Some optional parameters to join to the call
-         * @param {Boolean} deferred whether action can be scheduled (put into queue) to be sent in a bunch of actions later.
          * @returns {Promise} - Returns a promise. The result of the request will be provided on resolve.
          *                      Any error will be provided if rejected.
          */
-        callItemAction: function callItemAction(itemIdentifier, action, params, deferred) {
+        callItemAction: function callItemAction(itemIdentifier, action, params) {
             var self = this,
                 updateStatePromise = Promise.resolve();
 

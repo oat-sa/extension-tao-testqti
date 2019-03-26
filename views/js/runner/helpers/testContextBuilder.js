@@ -1,13 +1,35 @@
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
+ */
+/**
+ * @author Péter Halász <peter@taotesting.com>
+ */
 define([
     'lodash',
     'taoQtiTest/runner/helpers/map',
+    'taoQtiTest/runner/helpers/navigation'
 ], function(
     _,
     mapHelper,
+    navigationHelper
 ) {
     'use strict';
 
-    var testContextBuilderFactory = function testContextBuilderFactory(testData, testContext, testMap) {
+    return function testContextBuilderFactory(testData, testContext, testMap) {
         return {
             /**
              * Returns the updated test context from an item in the given position.
@@ -16,10 +38,10 @@ define([
              * @returns {Object}
              */
             buildTestContextFromPosition: function buildTestContextFromPosition(position) {
-                var updatedMap = mapHelper.updateItemStats(testMap, position);
-                var item = mapHelper.getItemAt(updatedMap, position);
-                var section = mapHelper.getItemSection(updatedMap, position);
-                var part = mapHelper.getItemPart(updatedMap, position);
+                var updatedMap = mapHelper.updateItemStats(testMap, position),
+                    item = mapHelper.getItemAt(updatedMap, position),
+                    section = mapHelper.getItemSection(updatedMap, position),
+                    part = mapHelper.getItemPart(updatedMap, position);
 
                 if (!item) {
                     return false;
@@ -39,9 +61,9 @@ define([
              * @returns {Object}
              */
             buildTestContextFromJump: function buildTestContextFromJump(jump) {
-                var part = testMap.parts[jump.part];
-                var section = part.sections[jump.section];
-                var item = section.items[jump.item];
+                var part = testMap.parts[jump.part],
+                    section = part.sections[jump.section],
+                    item = section.items[jump.item];
 
                 return this._getTestContext(item, section, part, jump.position);
             },
@@ -68,23 +90,23 @@ define([
              * @private
              */
             _getTestContext: function _getTestContext(item, section, part, position) {
-                var isLeavingSection = section.id !== testContext.sectionId;
-                var isLeavingPart = part.id !== testContext.testPartId;
-                var newTestContext = _.defaults({
-                    itemIdentifier: item.id,
-                    itemPosition: position,
-                    itemAnswered: item.answered || part.isLinear,
-                    numberPresented: testMap.stats.viewed,
-                    numberCompleted: testMap.stats.answered,
-                    hasFeedbacks: false,
-                    remainingAttempts: item.remainingAttempts > -1 ? item.remainingAttempts - 1 : -1,
-                    sectionId: section.id,
-                    sectionTitle: section.label,
-                    testPartId: part.id,
-                    isLinear: part.isLinear,
-                    isLast: false, // TODO: implement logic
-                    canMoveBackward: true, // TODO: implement logic
-                }, testContext);
+                var isLeavingSection = section.id !== testContext.sectionId,
+                    isLeavingPart = part.id !== testContext.testPartId,
+                    newTestContext = _.defaults({
+                        itemIdentifier: item.id,
+                        itemPosition: position,
+                        itemAnswered: item.answered || part.isLinear,
+                        numberPresented: testMap.stats.viewed,
+                        numberCompleted: testMap.stats.answered,
+                        hasFeedbacks: false,
+                        remainingAttempts: item.remainingAttempts > -1 ? item.remainingAttempts - 1 : -1,
+                        sectionId: section.id,
+                        sectionTitle: section.label,
+                        testPartId: part.id,
+                        isLinear: part.isLinear,
+                        isLast: navigationHelper.isLast(testMap, item.id),
+                        canMoveBackward: !part.isLinear && !navigationHelper.isFirst(testMap, item.id)
+                    }, testContext);
 
                 if (isLeavingSection) {
                     newTestContext.numberRubrics = 0;
@@ -130,10 +152,12 @@ define([
                 }
 
                 return _.reduce(categories, function(acc, category) {
+                    var categoryName;
+
                     if (_.isString(category) && !_.isEmpty(category))  {
-                        //transfrom the category name in an option name :
-                        //x-tao-option-review-screen to reviewScreen
-                        var categoryName = category
+                        // transfrom the category name in an option name :
+                        // x-tao-option-review-screen to reviewScreen
+                        categoryName = category
                             .replace('x-tao-option-', '')
                             .split(/[\-_]+/g)
                             .map(function capitalize(name, index) {
@@ -155,9 +179,7 @@ define([
 
                     return acc;
                 }, {});
-            },
+            }
         };
     };
-
-    return testContextBuilderFactory;
 });

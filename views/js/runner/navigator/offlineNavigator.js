@@ -1,9 +1,29 @@
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
+ */
+/**
+ * @author Péter Halász <peter@taotesting.com>
+ */
 define([
     'lodash',
     'core/Promise',
     'util/capitalize',
     'taoQtiTest/runner/helpers/offlineJumpTable',
-    'taoQtiTest/runner/helpers/testContextBuilder',
+    'taoQtiTest/runner/helpers/testContextBuilder'
 ], function(
     _,
     Promise,
@@ -13,7 +33,7 @@ define([
 ) {
     'use strict';
 
-    var offlineNavigatorFactory = function offlineNavigatorFactory(itemStore) {
+    return function offlineNavigatorFactory(itemStore) {
         var testData,
             testContext,
             testMap,
@@ -60,7 +80,7 @@ define([
                         !(navigationActionName in offlineJumpTableHelper)
                         || !(typeof(offlineJumpTableHelper[navigationActionName]) === 'function')
                     ) {
-                        throw new Error('illegal navigation'); // TODO: proper error handling
+                        throw new Error('Invalid navigation action');
                     }
 
                     offlineJumpTableHelper[navigationActionName](params).then(function() {
@@ -72,6 +92,4 @@ define([
             }
         };
     };
-
-    return offlineNavigatorFactory;
 });

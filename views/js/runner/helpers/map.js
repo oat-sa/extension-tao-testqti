@@ -625,6 +625,6 @@ define([
             });
 
             return map;
-        },
+        }
     };
 });
