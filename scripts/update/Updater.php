@@ -1778,26 +1778,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('32.1.0');
         }
 
-        $this->skip('32.1.0', '32.3.1');
-
-        if ($this->isVersion('32.3.1')) {
-            if (!$this->getServiceManager()->has(ToolsStateStorage::SERVICE_ID)) {
-                $rdsToolsStateStorageInstaller = new InstallRdsToolsStateStorage([]);
-                $rdsToolsStateStorageInstaller->setServiceLocator($this->getServiceManager());
-                $rdsToolsStateStorageInstaller([]);
-            }
-
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
-            $config = $extension->getConfig('testRunner');
-            $config['plugins']['highlighter'] = array(
-                'persistentStorage' => true
-            );
-            $config['tool-state-server-storage'] = array_merge($config['tool-state-server-storage'], array(
-                'highlighter'
-            ));
-            $extension->setConfig('testRunner', $config);
-
-            $this->setVersion('32.4.0');
-        }
+        $this->skip('32.1.0', '32.4.0');
     }
 }

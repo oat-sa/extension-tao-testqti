@@ -337,18 +337,6 @@ return array(
         ],
 
         /**
-         * A student tool that provides a text highlighter
-         */
-        'highlighter' => [
-            /**
-             * Determines if the highlighter tool state is synced via the server
-             * If true, highlights can persist between different DeliveryExecution sessions on different browsers
-             * @type boolean
-             */
-            'persistentStorage' => true
-        ],
-
-        /**
          * The plugin responsible of the runner's dialogs (alert and confirm)
          */
         'dialog' => [
@@ -619,9 +607,7 @@ return array(
     /**
      * Specifies runner tools that should keep its states in backend storage
      */
-    'tool-state-server-storage' => array(
-        'highlighter'
-    ),
+    'tool-state-server-storage' => [],
 
     /**
      * Defines whether to always show a warning dialog before moving to next item

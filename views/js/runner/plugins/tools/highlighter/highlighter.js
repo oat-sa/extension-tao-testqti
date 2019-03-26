@@ -56,6 +56,16 @@ define([
     }
 
     /**
+     * Discards the global text selection from the browser (window.selection)
+     */
+    function discardSelection() {
+        // delay discarding, to allow time for multiple highlighters logic
+        setTimeout(function() {
+            selection.removeAllRanges();
+        }, 250);
+    }
+
+    /**
      * The highlighter Factory
      * @param {Object} options
      * @param {String} [options.className]
@@ -93,10 +103,7 @@ define([
         $(document).on('mouseup.highlighter touchend.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
-                // delay discarding the global selection, to allow time for multiple highlighters to complete their work
-                setTimeout(function() {
-                    selection.removeAllRanges();
-                }, 250);
+                discardSelection();
             }
         });
 
@@ -144,10 +151,7 @@ define([
                         this.toggleHighlighting(true);
                         highlightHelper.highlightRanges(getAllRanges());
                         this.toggleHighlighting(false);
-                        // delay discarding the global selection, to allow time for multiple highlighters logic
-                        setTimeout(function() {
-                            selection.removeAllRanges();
-                        }, 250);
+                        discardSelection();
                     } else {
                         this.toggleHighlighting(true);
                     }

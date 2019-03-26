@@ -49,26 +49,11 @@ define([
          *
          */
         install : function install(){
-            var testRunner      = this.getTestRunner();
-            var testData        = testRunner.getTestData() || {};
-            var testConfig      = testData.config || {};
 
-            /**
-             * @var {Boolean} persistentStorage
-             * Platform-level setting for persistent, cross-browser storage of highlights (TAO-7617)
-             * Uses the tool-state-server-storage option which must also be configured to sync this plugin
-             * The default is false
-             */
-            try {
-                self.persistentStorage = testConfig.plugins.highlighter.persistentStorage;
-            }
-            catch (e) {
-                self.persistentStorage = false;
-            }
-            if (!self.persistentStorage) {
-                //define the "highlighter" store as "volatile" (removed on browser change).
-                testRunner.getTestStore().setVolatile(this.getName());
-            }
+            var testRunner = this.getTestRunner();
+
+            //define the "highlighter" store as "volatile" (removed on browser change).
+            testRunner.getTestStore().setVolatile(this.getName());
         },
 
         /**
