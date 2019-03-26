@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015-2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2015-2019 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\scripts\update;
@@ -1778,6 +1778,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('32.1.0');
         }
 
-        $this->skip('32.1.0', '32.4.0');
+        $this->skip('32.1.0', '32.3.2');
     }
 }
