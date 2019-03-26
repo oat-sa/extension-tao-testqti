@@ -210,6 +210,12 @@ define([
 
     QUnit.cases.init([
         {
+            title : 'undefined item',
+            itemId: 'item-0',
+            itemBdy: null,
+            expectedResult: []
+        },
+        {
             title : 'without stimulus',
             itemId: 'item-1',
             itemBdy: {

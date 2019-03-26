@@ -426,12 +426,11 @@ define([
 
                 $buttonRemove.trigger('click');
                 assert.equal($('.qti-itemBody').find('span').length, 0, 'No highlights remain after clear');
+                ready();
 
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-            })
-            .finally(function() {
                 ready();
             });
 
