@@ -71,13 +71,13 @@ define([
             var logger          = loggerFactory('highlighterPlugin');
 
             /**
-             * @var {Object} collection - Highlighters collection
+             * @var {Object} highlighters - Highlighters collection
              * See taoQtiTest/views/js/runner/plugins/tools/highlighter/collection.js
              */
-            var collection = highlighterCollection();
+            var highlighters = highlighterCollection();
 
             // Create the first (item-level) highlighter instance:
-            collection.addHighlighter({
+            highlighters.addHighlighter({
                 className: 'txt-user-highlight',
                 containerSelector: '.qti-itemBody',
                 containersBlackList: ['.qti-include'],
@@ -104,7 +104,7 @@ define([
                 // using 'mousedown' instead of 'click' to avoid losing current selection
                 e.preventDefault();
                 if (isPluginEnabled()) {
-                    _.forEach(collection.getAllHighlighters(), function(instance) {
+                    _.forEach(highlighters.getAllHighlighters(), function(instance) {
                         if (instance.isEnabled()) {
                             instance.highlight();
                         }
@@ -115,7 +115,7 @@ define([
             this.buttonRemove.on('click', function(e) {
                 e.preventDefault();
                 if (isPluginEnabled()) {
-                    _.forEach(collection.getAllHighlighters(), function(instance) {
+                    _.forEach(highlighters.getAllHighlighters(), function(instance) {
                         if (instance.isEnabled()) {
                             instance.clearHighlights();
                         }
@@ -128,7 +128,7 @@ define([
                 if (pluginShortcuts.toggle) {
                     shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.toggle, this.getName(), true), function () {
                         if (isPluginEnabled()) {
-                            _.forEach(collection.getAllHighlighters(), function(instance) {
+                            _.forEach(highlighters.getAllHighlighters(), function(instance) {
                                 if (instance.isEnabled()) {
                                     instance.highlight();
                                 }
@@ -188,11 +188,11 @@ define([
                     var instance;
                     var highlightsIndex;
                     if (!itemId) {
-                        instance = collection.getHighlighterById(key);
+                        instance = highlighters.getHighlighterById(key);
                     }
                     else {
                         key = itemId;
-                        instance = collection.getItemHighlighter();
+                        instance = highlighters.getItemHighlighter();
                     }
 
                     if (!instance) return Promise.resolve(false);
@@ -212,7 +212,7 @@ define([
                  * @returns {Promise} resolves once the save is done
                  */
                 function saveAll() {
-                    var nonItemHighlighters = collection.getNonItemHighlighters();
+                    var nonItemHighlighters = highlighters.getNonItemHighlighters();
                     return Promise.all(
                         _(nonItemHighlighters)
                         .filter(function(instance) {
@@ -241,11 +241,11 @@ define([
                 function loadHighlight(itemId, key) {
                     var instance;
                     if (!itemId) {
-                        instance = collection.getHighlighterById(key);
+                        instance = highlighters.getHighlighterById(key);
                     }
                     else {
                         key = itemId;
-                        instance = collection.getItemHighlighter();
+                        instance = highlighters.getItemHighlighter();
                     }
 
                     if (!instance) return Promise.resolve(false);
@@ -280,7 +280,7 @@ define([
                         if (itemId && isPluginEnabled()) {
                             hasHighlights = false;
 
-                            collection.getItemHighlighter().enable();
+                            highlighters.getItemHighlighter().enable();
                             // Load item-level highlights from store:
                             loadHighlight(itemId);
 
@@ -289,10 +289,10 @@ define([
 
                             // NOW we can instantiate the extra highlighters:
                             _.forEach(textStimuli, function(textStimulusHref) {
-                                var stimHighlighter = collection.getHighlighterById(textStimulusHref);
+                                var stimHighlighter = highlighters.getHighlighterById(textStimulusHref);
                                 // Instantiate, if id not already present in highlighters...
                                 if (!stimHighlighter) {
-                                    stimHighlighter = collection.addHighlighter({
+                                    stimHighlighter = highlighters.addHighlighter({
                                         className: 'txt-user-highlight',
                                         containerSelector: '.qti-include[data-href="' + textStimulusHref + '"]',
                                         id: textStimulusHref
@@ -306,7 +306,7 @@ define([
                     })
                     .after('renderitem', function() {
                         // Attach start/end listeners to all highlighter instances:
-                        _.forEach(collection.getAllHighlighters(), function(instance) {
+                        _.forEach(highlighters.getAllHighlighters(), function(instance) {
                             if (instance.isEnabled()) {
                                 instance
                                     .on('start', function(){
@@ -322,7 +322,7 @@ define([
                         });
                     })
                     .after('clear.highlighter', function() {
-                        collection.saveAll();
+                        saveAll();
                     })
                     .before('skip move timeout', function() {
                         return saveAll();
@@ -330,7 +330,7 @@ define([
                     .on('disabletools unloaditem', function () {
                         self.disable();
                         if (isPluginEnabled()) {
-                            _.forEach(collection.getAllHighlighters(), function(instance) {
+                            _.forEach(highlighters.getAllHighlighters(), function(instance) {
                                 if (instance.isEnabled()) {
                                     instance
                                         .off('end.save')

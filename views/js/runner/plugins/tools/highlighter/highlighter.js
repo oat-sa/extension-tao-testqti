@@ -112,10 +112,16 @@ define([
          */
         return eventifier({
 
+            /**
+             * Enable this instance
+             */
             enable: function enable() {
                 enabled = true;
             },
 
+            /**
+             * Disable this instance
+             */
             disable: function disable() {
                 enabled = false;
             },
