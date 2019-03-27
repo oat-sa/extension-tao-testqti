@@ -80,14 +80,14 @@ class SetStateStorageForTools extends AbstractAction
     private function registerRdsStorage($params)
     {
         $persistenceId = array_key_exists(1, $params) ? $params[1] : 'default';
-        $persistence = $this->getPersistence($persistenceId);
-        if (!$persistence) {
+        if (!$this->getPersistence($persistenceId)) {
             return new Report(Report::TYPE_ERROR, 'Given persistence does not exist');
         }
         $this->getServiceManager()->register(
             ToolsStateStorage::SERVICE_ID,
             new RdsToolsStateStorage([ToolsStateStorage::OPTION_PERSISTENCE => $persistenceId])
         );
+        return null;
     }
 
     /**
@@ -113,6 +113,7 @@ class SetStateStorageForTools extends AbstractAction
             ToolsStateStorage::SERVICE_ID,
             new KvToolsStateStorage([ToolsStateStorage::OPTION_PERSISTENCE => $persistenceId])
         );
+        return null;
     }
     
     /**
