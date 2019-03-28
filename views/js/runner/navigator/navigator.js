@@ -30,12 +30,12 @@ define([
     'lodash',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
-    'taoQtiTest/runner/helpers/testContextBuilder',
+    'taoQtiTest/runner/helpers/testContextBuilder'
 ], function(
     _,
     mapHelper,
     navigationHelper,
-    TestContextBuilder,
+    testContextBuilder
 ){
     'use strict';
 
@@ -48,14 +48,11 @@ define([
      * @throws {TypeError} if the given parameters aren't objects
      */
     var navigatorFactory = function navigatorFactory(testData, testContext, testMap) {
-        var testContextBuilder = new TestContextBuilder(testData, testContext, testMap);
-
         if(!_.all([testData, testContext, testMap], _.isPlainObject)){
             throw new TypeError('The navigator must be built with a testData, a testContext and a testMap');
         }
 
         return {
-
             /**
              * Selects and execute the navigation method based on the direction/scope.
              *
@@ -79,7 +76,12 @@ define([
              * @returns {Object} the new test context
              */
             nextItem : function nextItem(){
-                return  testContextBuilder.buildTestContextFromPosition(testContext.itemPosition + 1);
+                return testContextBuilder.buildTestContextFromPosition(
+                    testData,
+                    testContext,
+                    testMap,
+                    testContext.itemPosition + 1
+                );
             },
 
             /**
@@ -87,7 +89,12 @@ define([
              * @returns {Object} the new test context
              */
             previousItem : function previsousItem(){
-                return testContextBuilder.buildTestContextFromPosition(testContext.itemPosition - 1);
+                return testContextBuilder.buildTestContextFromPosition(
+                    testData,
+                    testContext,
+                    testMap,
+                    testContext.itemPosition - 1
+                );
             },
 
             /**
@@ -98,7 +105,12 @@ define([
                 var sectionStats = mapHelper.getSectionStats(testMap, testContext.sectionId);
                 var section      = mapHelper.getSection(testMap, testContext.sectionId);
 
-                return testContextBuilder.buildTestContextFromPosition(section.position + sectionStats.total);
+                return testContextBuilder.buildTestContextFromPosition(
+                    testData,
+                    testContext,
+                    testMap,
+                    section.position + sectionStats.total
+                );
             },
 
             /**
@@ -107,7 +119,12 @@ define([
              * @returns {Object} the new test context
              */
             jumpItem : function jumpItem(position){
-                return testContextBuilder.buildTestContextFromPosition(position);
+                return testContextBuilder.buildTestContextFromPosition(
+                    testData,
+                    testContext,
+                    testMap,
+                    position
+                );
             }
         };
     };

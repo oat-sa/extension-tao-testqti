@@ -29,7 +29,7 @@ define([
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
     'taoQtiTest/runner/proxy/cache/actionStore',
-    'taoQtiTest/runner/proxy/offline/errorProvider',
+    'taoQtiTest/runner/helpers/offlineErrorHelper',
     'taoQtiTest/runner/helpers/offlineSyncModal',
     'util/download'
 ], function(
@@ -43,7 +43,7 @@ define([
     qtiServiceProxy,
     itemStoreFactory,
     actionStoreFactory,
-    errorProvider,
+    offlineErrorHelper,
     offlineSyncModal,
     download
 ) {
@@ -119,7 +119,7 @@ define([
             };
 
             /**
-             * Offline ? We try to navigate offline, or just say 'ok'
+             * Offline navigation
              *
              * @param {String} action - the action name (ie. move, skip, timeout)
              * @param {Object} actionParams - the parameters sent along the action
@@ -133,20 +133,26 @@ define([
                         dataHolder = self.getDataHolder(),
                         testData = dataHolder.get('testData'),
                         testContext = dataHolder.get('testContext'),
-                        testMap = dataHolder.get('testMap');
+                        testMap = dataHolder.get('testMap'),
+                        offlinePauseErrorData = offlineErrorHelper.getOfflinePauseError();
 
                     if (action === 'pause') {
                         if (actionParams.reason) {
-                            errorProvider.offlinePauseError.data = actionParams.reason;
+                            offlinePauseErrorData.data = _.merge(offlinePauseErrorData.data, {
+                                reason: actionParams.reason
+                            });
                         }
 
-                        throw errorProvider.offlinePauseError;
+                        _.assign(new Error(offlinePauseErrorData.message), offlinePauseErrorData.data);
                     }
 
                     if (
                         _.contains(blockingActions, action)
                         || (
-                            actionParams.direction === 'next'
+                            (
+                                actionParams.direction === 'next'
+                                || action === 'skip'
+                            )
                             && navigationHelper.isLast(testMap, testContext.itemIdentifier)
                         )
                     ) {
@@ -184,12 +190,17 @@ define([
                         }
                     }
 
+                    if (action === 'skip') {
+                        actionParams.direction = action;
+                    }
+
                     // try the navigation if the actionParams context meaningful data
                     if (actionParams.direction && actionParams.scope) {
                         self.offlineNavigator
                             .setTestData(testData)
                             .setTestContext(testContext)
                             .setTestMap(testMap)
+                            .init()
                             .navigate(
                                 actionParams.direction,
                                 actionParams.scope,
@@ -203,7 +214,10 @@ define([
                                     || !newTestContext.itemIdentifier
                                     || !self.hasItem(newTestContext.itemIdentifier)
                                 ) {
-                                    throw errorProvider.offlineNavError;
+                                    _.assign(
+                                        new Error(offlineErrorHelper.getOfflineNavError().message),
+                                        offlineErrorHelper.getOfflineNavError().data
+                                    );
                                 }
 
                                 result.testContext = newTestContext;
@@ -303,7 +317,7 @@ define([
                             return download(data.filename, data.content);
                         });
                 });
-            }
+            };
         },
 
         /**
@@ -447,6 +461,8 @@ define([
             var self = this,
                 updateStatePromise = Promise.resolve();
 
+            console.log('itemAction', itemIdentifier, action, params);
+
             //update the item state
             if (params.itemState) {
                 updateStatePromise = this.itemStore.update(itemIdentifier, 'itemState', params.itemState);
@@ -460,15 +476,19 @@ define([
                 params.start = true;
             }
 
-            return updateStatePromise.then(function() {
-                params = _.assign({ itemDefinition: itemIdentifier }, params);
+            return updateStatePromise
+                .then(function() {
+                    params = _.assign({ itemDefinition: itemIdentifier }, params);
 
-                return self
-                    .scheduleAction(action, params)
-                    .then(function() {
-                        return self.offlineAction(action, params);
-                    });
-            });
+                    return self
+                        .scheduleAction(action, params)
+                        .then(function() {
+                            return self.offlineAction(action, params);
+                        });
+                })
+                .catch(function(err) {
+                    console.log('update failed', err);
+                });
         }
     }, qtiServiceProxy);
 });

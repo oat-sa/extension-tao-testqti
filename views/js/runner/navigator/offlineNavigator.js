@@ -29,7 +29,7 @@ define([
     Promise,
     capitalize,
     OfflineJumpTableHelper,
-    TestContextBuilder
+    testContextBuilder
 ) {
     'use strict';
 
@@ -55,7 +55,11 @@ define([
             setTestMap: function setTestMap(map) {
                 testMap = map;
 
-                offlineJumpTableHelper.setTestMap(map);
+                return this;
+            },
+
+            init: function init() {
+                offlineJumpTableHelper.setTestMap(testMap);
                 offlineJumpTableHelper.init();
 
                 return this;
@@ -73,8 +77,7 @@ define([
             navigate: function navigate(direction, scope, position, params) {
                 return new Promise(function(resolve) {
                     var lastJump,
-                        navigationActionName = 'jumpTo' + capitalize(direction) + capitalize(scope),
-                        testContextBuilder = new TestContextBuilder(testData, testContext, testMap);
+                        navigationActionName = 'jumpTo' + capitalize(direction) + capitalize(scope);
 
                     if (
                         !(navigationActionName in offlineJumpTableHelper)
@@ -86,7 +89,12 @@ define([
                     offlineJumpTableHelper[navigationActionName](params).then(function() {
                         lastJump = offlineJumpTableHelper.getLastJump();
 
-                        resolve(testContextBuilder.buildTestContextFromJump(lastJump));
+                        resolve(testContextBuilder.buildTestContextFromJump(
+                            testData,
+                            testContext,
+                            testMap,
+                            lastJump
+                        ));
                     });
                 });
             }

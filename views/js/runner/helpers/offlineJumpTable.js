@@ -20,12 +20,16 @@
  */
 define([
     'lodash',
+    'i18n',
     'core/promise',
+    'ui/feedback',
     'taoQtiTest/runner/branchRule/branchRule',
     'taoQtiTest/runner/proxy/offline/responseStore'
 ], function (
     _,
+    __,
     Promise,
+    feedback,
     branchRule,
     responseStore
 ) {
@@ -51,22 +55,102 @@ define([
          * @param {Object} params
          */
         function addResponsesToResponseStore(params) {
-            Object.keys(params.itemResponse).forEach(function(itemResponseIdentifier) {
-                var response = params.itemResponse[itemResponseIdentifier],
-                    responseIdentifier = params.itemDefinition + '.' + itemResponseIdentifier;
+            if (params.itemResponse) {
+                Object.keys(params.itemResponse).forEach(function(itemResponseIdentifier) {
+                    var response = params.itemResponse[itemResponseIdentifier],
+                        responseIdentifier = params.itemDefinition + '.' + itemResponseIdentifier;
 
-                Object.keys(response).forEach(function(responseType) {
-                    var responseId = response[responseType].identifier;
+                    Object.keys(response).forEach(function(responseType) {
+                        var responseId = response[responseType].identifier;
 
-                    if (Array.isArray(responseId)) {
-                        responseId.forEach(function(id) {
-                            responseStore.addResponse(responseIdentifier, id);
+                        if (Array.isArray(responseId)) {
+                            responseId.forEach(function(id) {
+                                responseStore.addResponse(responseIdentifier, id);
+                            });
+                        } else {
+                            responseStore.addResponse(responseIdentifier, responseId);
+                        }
+                    });
+                });
+            }
+        }
+
+        /**
+         * Returns all the item identifiers in order.
+         *
+         * @param {Object} map
+         * @returns {Array}
+         */
+        function getItems(map) {
+            return getSimplifiedTestMap(map)
+                .map(function(row) {
+                    return row.item;
+                })
+                .filter(function(value, index, thisArg) {
+                    return thisArg.indexOf(value) === index;
+                });
+        }
+
+        /**
+         * Returns all the section identifiers in order.
+         *
+         * @param {Object} map
+         * @returns {Array}
+         */
+        function getSections(map) {
+            return getSimplifiedTestMap(map)
+                .map(function(row) {
+                    return row.section;
+                })
+                .filter(function(value, index, thisArg) {
+                    return thisArg.indexOf(value) === index;
+                });
+        }
+
+        /**
+         * Returns all the part identifiers in order.
+         *
+         * @param {Object} map
+         * @returns {Array}
+         */
+        function getParts(map) {
+            return getSimplifiedTestMap(map)
+                .map(function(row) {
+                    return row.part;
+                })
+                .filter(function(value, index, thisArg) {
+                    return thisArg.indexOf(value) === index;
+                });
+        }
+
+        /**
+         * Returns a simplified test map array, which will contain the item, section and part identifiers.
+         *
+         * @param {Object} map
+         * @returns {Array}
+         */
+        function getSimplifiedTestMap(map) {
+            var simplifiedTestMap = [];
+
+            _.forEach(map.parts, function(part, partIdentifier) {
+                _.forEach(part.sections, function(section, sectionIdentifier) {
+                    _.forEach(section.items, function(item, itemIdentifier) {
+                        simplifiedTestMap.push({
+                            item: itemIdentifier,
+                            itemHasBranchRule: !_.isEmpty(item.branchRule),
+                            itemBranchRule: item.branchRule,
+                            section: sectionIdentifier,
+                            sectionHasBranchRule: !_.isEmpty(section.branchRule),
+                            sectionBranchRule: section.branchRule,
+                            part: partIdentifier,
+                            partHasBranchRule: !_.isEmpty(part.branchRule),
+                            partBranchRule: part.branchRule
                         });
-                    } else {
-                        responseStore.addResponse(responseIdentifier, responseId);
-                    }
+                    });
                 });
             });
+
+            return simplifiedTestMap;
         }
 
         return {
@@ -78,7 +162,7 @@ define([
 
             init: function init() {
                 var firstItem,
-                    simplifiedTestMap = this._getSimplifiedTestMap();
+                    simplifiedTestMap = getSimplifiedTestMap(testMap);
 
                 // if the jump table is empty, add the first item as the first jump
                 if (simplifiedTestMap.length > 0 && jumpTable.length === 0) {
@@ -89,13 +173,19 @@ define([
 
                 // Put all correct responses to the responseStore
                 simplifiedTestMap.forEach(function(row) {
-                    itemStore.get(row.item).then(function(item) {
-                        Object.keys(item.itemData.data.responses).forEach(function(responseDeclarationIdentifier) {
-                            var response = item.itemData.data.responses[responseDeclarationIdentifier];
-                            var responseIdentifier = item.itemIdentifier + '.' + response.identifier;
-                            responseStore.addCorrectResponse(responseIdentifier, response.correctResponses);
+                    itemStore.get(row.item)
+                        .then(function(item) {
+                            if (item) {
+                                Object.keys(item.itemData.data.responses).forEach(function(responseDeclarationIdentifier) {
+                                    var response = item.itemData.data.responses[responseDeclarationIdentifier];
+                                    var responseIdentifier = item.itemIdentifier + '.' + response.identifier;
+                                    responseStore.addCorrectResponse(responseIdentifier, response.correctResponses);
+                                });
+                            }
+                        })
+                        .catch(function() {
+                            feedback().error(__('Failed to load correct responses of the item'));
                         });
-                    });
                 });
             },
 
@@ -152,6 +242,32 @@ define([
             },
 
             /**
+             * Jumps to the next item without taking the branching rules into account
+             *
+             * @returns {Promise}
+             */
+            jumpToSkipItem: function jumpToSkipItem() {
+                var self = this;
+
+                return new Promise(function(resolve) {
+                    var simplifiedTestMap = getSimplifiedTestMap(testMap);
+                    var lastJumpItem = self.getLastJump().item || null;
+                    var items = getItems(testMap);
+                    var itemSliceIndex = items.indexOf(lastJumpItem);
+                    var itemIdentifierToAdd = items.slice(itemSliceIndex + 1).shift();
+                    var itemToAdd = simplifiedTestMap
+                        .filter(function (row) {
+                            return row.item === itemIdentifierToAdd;
+                        })
+                        .shift();
+
+                    return itemToAdd
+                        ? self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve)
+                        : resolve();
+                });
+            },
+
+            /**
              * Adds the next item to the end of the jump table
              */
             jumpToNextItem: function jumpToNextItem(params) {
@@ -160,9 +276,9 @@ define([
                 addResponsesToResponseStore(params);
 
                 return new Promise(function(resolve) {
-                    var simplifiedTestMap = self._getSimplifiedTestMap();
+                    var simplifiedTestMap = getSimplifiedTestMap(testMap);
                     var lastJumpItem = self.getLastJump().item || null;
-                    var items = self._getItems();
+                    var items = getItems(testMap);
                     var itemSliceIndex = items.indexOf(lastJumpItem);
                     var itemIdentifierToAdd = items.slice(itemSliceIndex + 1).shift();
                     var itemToAdd = simplifiedTestMap
@@ -178,19 +294,23 @@ define([
                         .shift();
 
                     if (lastJumpItemData && lastJumpItemData.itemHasBranchRule) {
-                        return itemStore.get(lastJumpItem).then(function(item) {
-                            itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params, responseStore);
+                        return itemStore.get(lastJumpItem)
+                            .then(function(item) {
+                                itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params, responseStore);
 
-                            if (itemIdentifierToAdd !== null) {
-                                itemToAdd = simplifiedTestMap
-                                    .filter(function(row) {
-                                        return row.item === itemIdentifierToAdd;
-                                    })
-                                    .shift();
-                            }
+                                if (itemIdentifierToAdd !== null) {
+                                    itemToAdd = simplifiedTestMap
+                                        .filter(function(row) {
+                                            return row.item === itemIdentifierToAdd;
+                                        })
+                                        .shift();
+                                }
 
-                            self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
-                        });
+                                self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                            })
+                            .catch(function() {
+                                feedback().error(__('Failed to load the item'));
+                            });
                     } else {
                         return itemToAdd
                             ? self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve)
@@ -206,10 +326,10 @@ define([
              */
             jumpToNextSection: function jumpToNextSection() {
                 var lastJumpSection = this.getLastJump().section || null;
-                var sections = this._getSections();
+                var sections = getSections(testMap);
                 var sectionSliceIndex = sections.indexOf(lastJumpSection);
                 var sectionIdentifierToAdd = sections.slice(sectionSliceIndex + 1).shift();
-                var itemToAdd = this._getSimplifiedTestMap()
+                var itemToAdd = getSimplifiedTestMap(testMap)
                     .filter(function(row) {
                         return row.section === sectionIdentifierToAdd;
                     })
@@ -229,10 +349,10 @@ define([
              */
             jumpToNextPart: function jumpToNextPart() {
                 var lastJumpPart = this.getLastJump().part || null;
-                var parts = this._getParts();
+                var parts = getParts(testMap);
                 var partSliceIndex = parts.indexOf(lastJumpPart);
                 var partIdentifierToAdd = parts.slice(partSliceIndex + 1).shift();
-                var itemToAdd = this._getSimplifiedTestMap()
+                var itemToAdd = getSimplifiedTestMap(testMap)
                     .filter(function(row) {
                         return row.part === partIdentifierToAdd;
                     })
@@ -264,7 +384,7 @@ define([
              */
             jumpToPreviousSection: function jumpToPreviousSection() {
                 var lastJumpSection = this.getLastJump().section || null;
-                var sections = this._getSections();
+                var sections = getSections(testMap);
                 var sectionSliceIndex = sections.indexOf(lastJumpSection) >= 1 ? sections.indexOf(lastJumpSection) - 1 : 0;
                 var sectionsToBeDeleted = sections.slice(sectionSliceIndex);
                 var sectionToAdd = sections[sectionSliceIndex];
@@ -274,7 +394,7 @@ define([
                     return !sectionsToBeDeleted.includes(jump.section);
                 });
 
-                itemToAdd = this._getSimplifiedTestMap()
+                itemToAdd = getSimplifiedTestMap(testMap)
                     .filter(function(row) {
                         return row.section === sectionToAdd;
                     })
@@ -293,7 +413,7 @@ define([
              */
             jumpToPreviousPart: function jumpToPreviousPart() {
                 var lastJumpPart = this.getLastJump().part || null;
-                var parts = this._getParts();
+                var parts = getParts(testMap);
                 var partSliceIndex = parts.indexOf(lastJumpPart) >= 1 ? parts.indexOf(lastJumpPart) - 1 : 0;
                 var partsToBeDeleted = parts.slice(partSliceIndex);
                 var partToAdd = parts[partSliceIndex];
@@ -303,7 +423,7 @@ define([
                     return !partsToBeDeleted.includes(jump.part);
                 });
 
-                itemToAdd = this._getSimplifiedTestMap()
+                itemToAdd = getSimplifiedTestMap(testMap)
                     .filter(function(row) {
                         return row.part === partToAdd;
                     })
@@ -330,88 +450,6 @@ define([
                 return jumpTable.length > 0
                     ? jumpTable[jumpTable.length - 1]
                     : {};
-            },
-
-            /**
-             * Returns all the item identifiers in order.
-             *
-             * @returns {Array}
-             * @private
-             */
-            _getItems: function _getItems() {
-                return this._getSimplifiedTestMap()
-                    .map(function(row) {
-                        return row.item;
-                    })
-                    .filter(function(value, index, thisArg) {
-                        return thisArg.indexOf(value) === index;
-                    });
-            },
-
-            /**
-             * Returns all the section identifiers in order.
-             *
-             * @returns {Array}
-             * @private
-             */
-            _getSections: function _getSections() {
-                return this._getSimplifiedTestMap()
-                    .map(function(row) {
-                        return row.section;
-                    })
-                    .filter(function(value, index, thisArg) {
-                        return thisArg.indexOf(value) === index;
-                    });
-            },
-
-            /**
-             * Returns all the part identifiers in order.
-             *
-             * @returns {Array}
-             * @private
-             */
-            _getParts: function _getParts() {
-                return this._getSimplifiedTestMap()
-                    .map(function(row) {
-                        return row.part;
-                    })
-                    .filter(function(value, index, thisArg) {
-                        return thisArg.indexOf(value) === index;
-                    });
-            },
-
-            /**
-             * Returns a simplified test map array, which will contain the item, section and part identifiers.
-             *
-             * @returns {Array}
-             * @private
-             */
-            _getSimplifiedTestMap: function _getSimplifiedTestMap() {
-                var simplifiedTestMap = [];
-
-                Object.keys(testMap.parts).forEach(function(partIdentifier) {
-                    var part = testMap.parts[partIdentifier];
-                    Object.keys(part.sections).forEach(function(sectionIdentifier) {
-                        var section = part.sections[sectionIdentifier];
-                        Object.keys(section.items).forEach(function(itemIdentifier) {
-                            var item = section.items[itemIdentifier];
-
-                            simplifiedTestMap.push({
-                                item: itemIdentifier,
-                                itemHasBranchRule: !_.isEmpty(item.branchRule),
-                                itemBranchRule: item.branchRule,
-                                section: sectionIdentifier,
-                                sectionHasBranchRule: !_.isEmpty(section.branchRule),
-                                sectionBranchRule: section.branchRule,
-                                part: partIdentifier,
-                                partHasBranchRule: !_.isEmpty(part.branchRule),
-                                partBranchRule: part.branchRule
-                            });
-                        });
-                    });
-                });
-
-                return simplifiedTestMap;
             }
         };
     };
