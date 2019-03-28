@@ -60,14 +60,14 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
     {
         /** @var \common_ext_Extension $taoQtiTestExtension */
         $taoQtiTestExtension = $this->getExtensionsManagerService()->getExtensionById('taoQtiTest');
-        $config = array_merge_recursive($taoQtiTestExtension->getConfig('testRunner'), [
+        $config = array_merge($taoQtiTestExtension->getConfig('testRunner'), [
             'allow-browse-next-item' => true,
             'bootstrap' => [
                 'serviceExtension' => 'taoQtiTest',
                 'serviceController' => 'OfflineRunner',
                 'communication' => [
                     'enabled' => true,
-                    'type' => 'poll',
+                    'type' => 'request',
                     'extension' => 'taoQtiTest',
                     'controller' => 'OfflineRunner',
                     'action' => 'messages',
@@ -77,6 +77,7 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
                         'storeTraceData',
                         'timeout',
                         'exitTest',
+                        'getNextItemData',
                     ],
                 ],
             ],
