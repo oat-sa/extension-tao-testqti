@@ -22,31 +22,30 @@ define([
     'taoQtiTest/runner/branchRule/types/match',
     'taoQtiTest/runner/branchRule/types/or',
     'taoQtiTest/runner/branchRule/types/and',
-    'taoQtiTest/runner/branchRule/types/not',
+    'taoQtiTest/runner/branchRule/types/not'
 ], function(
     matchBranchRule,
     orBranchRule,
     andBranchRule,
-    notBranchRule,
+    notBranchRule
 ) {
     'use strict';
 
+    var branchRuleMap = {
+        match: matchBranchRule,
+        or: orBranchRule,
+        and: andBranchRule,
+        not: notBranchRule
+    };
+
+    /**
+     * Returns the proper branching rule based on the given name
+     */
     return function branchRuleMapperFactory(branchRuleName, branchRuleDefinition, item, navigationParams, responseStore) {
-        switch (branchRuleName) {
-            case 'match':
-                return matchBranchRule(branchRuleDefinition, item, navigationParams, branchRuleMapperFactory, responseStore);
-
-            case 'or':
-                return orBranchRule(branchRuleDefinition, item, navigationParams, branchRuleMapperFactory, responseStore);
-
-            case 'and':
-                return andBranchRule(branchRuleDefinition, item, navigationParams, branchRuleMapperFactory, responseStore);
-
-            case 'not':
-                return notBranchRule(branchRuleDefinition, item, navigationParams, branchRuleMapperFactory, responseStore);
-
-            default:
-                throw new Error('Invalid branch rule name: ' + branchRuleName);
+        if (!(branchRuleName in branchRuleMap)) {
+            throw new Error('Invalid branch rule name: ' + branchRuleName);
         }
+
+        return branchRuleMap[branchRuleName](branchRuleDefinition, item, navigationParams, branchRuleMapperFactory, responseStore);
     };
 });

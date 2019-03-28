@@ -18,17 +18,31 @@
 /**
  * @author Péter Halász <peter@taotesting.com>
  */
-define(function() {
+define([
+    'lodash'
+], function(
+    _
+) {
     'use strict';
 
+    /**
+     * MATCH branching rule
+     */
     return function matchBranchRuleFactory(branchRuleDefinition, item, navigationParams, branchRuleMapper, responseStore) {
         var variableIdentifier = branchRuleDefinition.variable['@attributes'].identifier;
         var correctIdentifier = branchRuleDefinition.correct['@attributes'].identifier;
 
         return {
+            /**
+             * Evaluates that the value of given variable is matching or not of the value of the given correct response
+             * @returns {boolean}
+             */
             validate: function validate() {
-                return responseStore.getCorrectResponse(correctIdentifier).includes(responseStore.getResponse(variableIdentifier));
-            },
-        }
+                return _.contains(
+                    responseStore.getCorrectResponse(correctIdentifier),
+                    responseStore.getResponse(variableIdentifier)
+                );
+            }
+        };
     };
 });

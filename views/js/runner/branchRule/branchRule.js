@@ -19,52 +19,41 @@
  * @author Péter Halász <peter@taotesting.com>
  */
 define([
-    'taoQtiTest/runner/branchRule/branchRuleMapper',
+    'lodash',
+    'taoQtiTest/runner/branchRule/helpers/branchRuleHelper',
+    'taoQtiTest/runner/branchRule/branchRuleMapper'
 ], function(
+    _,
+    branchRuleHelper,
     branchRuleMapper
 ) {
     'use strict';
 
+    /**
+     * Evaluates all the branch rules and returns the `@attributes.target` if the evaluation returns true, null otherwise
+     */
     return function branchRuleFactory(branchRuleDefinition, item, navigationParams, responseStore) {
+        var result,
+            branchRuleResults;
+
         if (
-            !('@attributes' in branchRuleDefinition)
-            || !('target' in branchRuleDefinition['@attributes'])
+            typeof branchRuleDefinition['@attributes'] === 'undefined'
+            || typeof branchRuleDefinition['@attributes']['target'] === 'undefined'
         ) {
             return null;
         }
 
-        var result =  Object.keys(branchRuleDefinition)
-            .filter(function(definitionName) {
-                return definitionName !== '@attributes';
-            })
-            .map(function(definitionName) {
-                return branchRuleMapper(
-                    definitionName,
-                    branchRuleDefinition[definitionName],
-                    item,
-                    navigationParams,
-                    responseStore
-                ).validate();
-            })
-            .map(function(branchRuleResult) {
-                // if the result is an array, return the first element
-                if (Array.isArray(branchRuleResult)) {
-                    return branchRuleResult[0];
-                }
+        branchRuleResults = branchRuleHelper.evaluateSubBranchRules(
+            branchRuleDefinition,
+            item,
+            navigationParams,
+            branchRuleMapper,
+            responseStore
+        );
 
-                return branchRuleResult;
-            })
-            .map(function(branchRuleResult) {
-                // if the first element is still an array, return the first element of it // TODO
-                if (Array.isArray(branchRuleResult)) {
-                    return branchRuleResult[0];
-                }
-
-                return branchRuleResult;
-            })
-            .every(function(branchRuleResult) {
-                return branchRuleResult;
-            });
+        result = branchRuleResults.every(function(branchRuleResult) {
+            return branchRuleResult;
+        });
 
         if (result) {
             return branchRuleDefinition['@attributes']['target'];

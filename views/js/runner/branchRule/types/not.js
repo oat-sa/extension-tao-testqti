@@ -18,28 +18,41 @@
 /**
  * @author Péter Halász <peter@taotesting.com>
  */
-define(function() {
+define([
+    'lodash'
+], function(
+    _
+) {
     'use strict';
 
+    /**
+     * NOT branching rule
+     */
     return function notBranchRuleFactory(branchRuleDefinition, item, navigationParams, branchRuleMapper, responseStore) {
+        // If the NOT branching rule has only one child, cast it as an array
         if (!Array.isArray(branchRuleDefinition)) {
             branchRuleDefinition = [branchRuleDefinition];
         }
+
         return {
+            /**
+             * Evaluates a NOT expression on the given expressions and returns an array of results
+             * @returns {boolean[]}
+             */
             validate: function validate() {
                 return branchRuleDefinition.map(function(expression) {
-                    return Object.keys(expression)
-                        .map(function(branchRuleName) {
-                            return !branchRuleMapper(
-                                branchRuleName,
-                                expression[branchRuleName],
-                                item,
-                                navigationParams,
-                                responseStore
-                            ).validate();
-                        });
+                    var subBranchRuleName = _.head(_.keys(expression)),
+                        subBranchRuleDefinition = expression[subBranchRuleName];
+
+                    return !branchRuleMapper(
+                        subBranchRuleName,
+                        subBranchRuleDefinition,
+                        item,
+                        navigationParams,
+                        responseStore
+                    ).validate();
                 });
-            },
-        }
+            }
+        };
     };
 });
