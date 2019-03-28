@@ -1294,16 +1294,16 @@ msgid "Yes"
 msgstr "Ja"
 
 msgid "You answered all %s question(s)"
-msgstr "Je hebt alle %s vra(a)g(en) beantwoord"
+msgstr "U heeft alle %s vra(a)g(en) beantwoord"
 
 msgid "You answered all %s question(s) in this section"
-msgstr "Je hebt alle %s vra(a)g(en) in deze sectie beantwoord"
+msgstr "U heeft alle %s vra(a)g(en) in deze sectie beantwoord"
 
 msgid "You answered all %s question(s) in this test"
-msgstr "Je hebt alle %s vra(a)g(en) in deze toets beantwoord"
+msgstr "U heeft alle %s vra(a)g(en) in deze toets beantwoord"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr "Je hebt slechts %s van de %s vra(a)g(en) in deze sectie beantwoord"
+msgstr "U heeft slechts %s van de %s vra(a)g(en) in deze sectie beantwoord"
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
 msgstr "U staat op het punt naar het volgende item te gaan.Klik OK om door te gaan naar het volgende item"
