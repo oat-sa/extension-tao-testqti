@@ -31,8 +31,7 @@ define([
     'taoQtiTest/runner/proxy/cache/actionStore',
     'taoQtiTest/runner/proxy/offline/errorProvider',
     'taoQtiTest/runner/helpers/offlineSyncModal',
-    'util/download',
-    'ui/feedback'
+    'util/download'
 ], function(
     _,
     __,
@@ -46,8 +45,7 @@ define([
     actionStoreFactory,
     errorProvider,
     offlineSyncModal,
-    download,
-    feedback
+    download
 ) {
     'use strict';
 
@@ -69,7 +67,7 @@ define([
             // we keep items here
             this.itemStore = itemStoreFactory({
                 preload : true,
-                testId  : config.serviceCallId,
+                testId  : config.serviceCallId
             });
 
             this.offlineNavigator = offlineNavigatorFactory(this.itemStore);
@@ -132,9 +130,10 @@ define([
                     var newTestContext,
                         result = { success: true },
                         blockingActions = ['exitTest', 'timeout'],
-                        testData = self.getDataHolder().get('testData'),
-                        testContext = self.getDataHolder().get('testContext'),
-                        testMap = self.getDataHolder().get('testMap');
+                        dataHolder = self.getDataHolder(),
+                        testData = dataHolder.get('testData'),
+                        testContext = dataHolder.get('testContext'),
+                        testMap = dataHolder.get('testMap');
 
                     if (action === 'pause') {
                         if (actionParams.reason) {
@@ -151,43 +150,36 @@ define([
                             && navigationHelper.isLast(testMap, testContext.itemIdentifier)
                         )
                     ) {
-                        // TODO: this changes allow to finish the test, but probably it is not a proper way
                         result.testContext = {
-                            state: 4
+                            state: testData.states.closed
                         };
 
                         if (self.isOffline()) {
-                            return new Promise(function(resolve, reject) {
+                            return new Promise(function() {
                                 offlineSyncModal(self)
                                     .on('proceed', function() {
                                         self.syncData()
                                             .then(function() {
                                                 return resolve(result);
                                             })
-                                            .catch(reject);
+                                            .catch(function() {
+                                                return resolve({ success: false });
+                                            });
                                     })
                                     .on('secondaryaction', function() {
                                         self.initiateDownload()
-                                            .catch(reject);
+                                            .catch(function() {
+                                                return resolve({ success: false });
+                                            });
                                     });
-                            }).catch(function(error) {
-                                feedback(null, {
-                                    timeout: -1,
-                                    popup: true
-                                }).error(error);
-
-                                return { success: false };
+                            }).catch(function() {
+                                return resolve({ success: false });
                             });
                         } else {
                             return self.syncData().then(function() {
-                                return result;
-                            }).catch(function(error) {
-                                feedback(null, {
-                                    timeout: -1,
-                                    popup: true
-                                }).error(error);
-
-                                return { success: false };
+                                return resolve(result);
+                            }).catch(function() {
+                                return resolve({ success: false });
                             });
                         }
                     }
