@@ -19,11 +19,13 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
+use common_Exception;
+use common_exception_Error;
+use common_exception_InconsistentData;
+use Exception;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
 /**
- * Class Pause
- *
  * Pause the test
  *
  * @package oat\taoQtiTest\models\runner\synchronisation\action
@@ -34,6 +36,9 @@ class Pause extends TestRunnerAction
      * Process the pause action.
      *
      * @return array
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_InconsistentData
      */
     public function process()
     {
@@ -53,9 +58,7 @@ class Pause extends TestRunnerAction
             $response = [
                 'success' => $result
             ];
-
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $response = $this->getErrorResponse($e);
         }
 

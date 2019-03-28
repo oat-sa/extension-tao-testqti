@@ -17,6 +17,7 @@
  */
 
 define([
+
     'jquery',
     'ui/component/placeable',
     'taoQtiTest/runner/plugins/tools/areaMasking/mask'
@@ -26,52 +27,52 @@ define([
     QUnit.module('API');
 
     QUnit.test('module', function(assert) {
-        QUnit.expect(1);
-        assert.equal(typeof maskComponentFactory, 'function', "The module exposes a function");
+        assert.expect(1);
+        assert.equal(typeof maskComponentFactory, 'function', 'The module exposes a function');
     });
 
     QUnit.test('factory', function(assert) {
-        QUnit.expect(2);
-        assert.equal(typeof maskComponentFactory(), 'object', "The factory creates an object");
-        assert.notDeepEqual(maskComponentFactory(), maskComponentFactory(), "The factory creates a new object");
+        assert.expect(2);
+        assert.equal(typeof maskComponentFactory(), 'object', 'The factory creates an object');
+        assert.notDeepEqual(maskComponentFactory(), maskComponentFactory(), 'The factory creates a new object');
     });
 
-    QUnit.cases([
-        {name : 'init',         title : 'init'},
-        {name : 'destroy',      title : 'destroy'},
-        {name : 'render',       title : 'render'},
-        {name : 'show',         title : 'show'},
-        {name : 'hide',         title : 'hide'},
-        {name : 'enable',       title : 'enable'},
-        {name : 'disable',      title : 'disable'},
-        {name : 'is',           title : 'is'},
-        {name : 'setState',     title : 'setState'},
-        {name : 'getContainer', title : 'getContainer'},
-        {name : 'getElement',   title : 'getElement'},
-        {name : 'getTemplate',  title : 'getTemplate'},
-        {name : 'setTemplate',  title : 'setTemplate'},
-        {name : 'resizeTo',     title : 'resizeTo'}
+    QUnit.cases.init([
+        {name: 'init', title: 'init'},
+        {name: 'destroy', title: 'destroy'},
+        {name: 'render', title: 'render'},
+        {name: 'show', title: 'show'},
+        {name: 'hide', title: 'hide'},
+        {name: 'enable', title: 'enable'},
+        {name: 'disable', title: 'disable'},
+        {name: 'is', title: 'is'},
+        {name: 'setState', title: 'setState'},
+        {name: 'getContainer', title: 'getContainer'},
+        {name: 'getElement', title: 'getElement'},
+        {name: 'getTemplate', title: 'getTemplate'},
+        {name: 'setTemplate', title: 'setTemplate'},
+        {name: 'resizeTo', title: 'resizeTo'}
     ])
     .test('component API contains ', function(data, assert) {
         var component = maskComponentFactory();
-        QUnit.expect(1);
+        assert.expect(1);
         assert.equal(typeof component[data.name], 'function', 'The component has the method ' + data.name);
     });
 
     QUnit.test('component is placeable', function(assert) {
         var component = makePlaceable(maskComponentFactory());
-        QUnit.expect(1);
+        assert.expect(1);
         assert.ok(makePlaceable.isPlaceable(component), 'created component is placeable');
     });
 
-
     QUnit.module('Behavior');
 
-    QUnit.asyncTest('DOM', function(assert) {
+    QUnit.test('DOM', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture');
         var component = maskComponentFactory();
 
-        QUnit.expect(9);
+        assert.expect(9);
 
         assert.equal($container.length, 1, 'The container exists');
         assert.equal($container.children().length, 0, 'The container is empty');
@@ -88,26 +89,26 @@ define([
                 assert.equal($('.controls .close', $element).length, 1, 'The close controls element is there');
                 assert.deepEqual($element[0], this.getElement()[0], 'The found element match the one bound to the component');
 
-                QUnit.start();
+                ready();
             })
             .init({})
             .render($container);
     });
 
-
-    QUnit.asyncTest('preview', function(assert) {
+    QUnit.test('preview', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture');
         var component = maskComponentFactory();
 
-        QUnit.expect(12);
+        assert.expect(12);
 
         assert.equal($container.length, 1, 'The container exists');
         assert.equal(typeof component, 'object', 'The component has been created');
 
         component
             .on('render', function() {
-                var $element    = this.getElement();
-                var $inner      = $('.inner', $element);
+                var $element = this.getElement();
+                var $inner = $('.inner', $element);
                 var $previewBtn = $('.view', $element);
 
                 assert.equal($previewBtn.length, 1, 'The preview button exists');
@@ -118,26 +119,26 @@ define([
 
                 $previewBtn.trigger('click');
             })
-            .on('preview', function(){
-                var self     = this;
+            .on('preview', function() {
+                var self = this;
                 var $element = this.getElement();
-                var $inner   = $('.inner', $element);
+                var $inner = $('.inner', $element);
 
                 assert.ok(this.is('previewing'), 'We are previewing');
                 assert.ok($element.hasClass('previewing'), 'We are previewing');
 
-                //takes into account the CSS transition
-                setTimeout(function(){
+                //Takes into account the CSS transition
+                setTimeout(function() {
                     assert.ok(parseFloat($inner.css('opacity')) < 1, 'The inner element is transparent');
                 }, 650);
 
-                setTimeout(function(){
+                setTimeout(function() {
                     assert.ok(!self.is('previewing'), 'We are not previewing anymore');
                 }, 1050);
 
-                setTimeout(function(){
+                setTimeout(function() {
                     assert.equal($inner.css('opacity'), 1, 'The inner element is opaque again');
-                    QUnit.start();
+                    ready();
                 }, 1650);
             })
             .init({
@@ -146,47 +147,48 @@ define([
             .render($container);
     });
 
-    QUnit.asyncTest('close', function(assert) {
+    QUnit.test('close', function(assert) {
+        var ready = assert.async();
         var $container = $('#qunit-fixture');
         var component = maskComponentFactory();
 
-        QUnit.expect(3);
+        assert.expect(3);
 
         assert.equal($container.length, 1, 'The container exists');
         assert.equal(typeof component, 'object', 'The component has been created');
 
         component
             .on('render', function() {
-                var $element  = this.getElement();
+                var $element = this.getElement();
                 var $closeBtn = $('.close', $element);
 
                 assert.equal($closeBtn.length, 1, 'The preview button exists');
 
                 $closeBtn.trigger('click');
             })
-            .on('destroy', function(){
-                QUnit.start();
+            .on('destroy', function() {
+                ready();
             })
             .init({})
             .render($container);
     });
 
-
     QUnit.module('Visual');
 
-    QUnit.asyncTest('visual test', function(assert) {
+    QUnit.test('visual test', function(assert) {
+        var ready = assert.async();
         var $container = $('#outside');
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         maskComponentFactory()
-            .on('render', function(){
+            .on('render', function() {
                 assert.ok(true);
-                QUnit.start();
+                ready();
             })
             .init({
-                x : 0,
-                y : 0,
+                x: 0,
+                y: 0,
                 width: 300,
                 height: 200
             })

@@ -19,6 +19,7 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+
     'lodash',
     'async',
     'helpers',
@@ -28,93 +29,100 @@ define([
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/content/dialog/dialog'
-], function(_, async, helpers, Promise, dialogAlert, dialogConfirm, runnerFactory, providerMock, dialogFactory) {
+], function(
+
+    _,
+    async,
+    helpers,
+    Promise,
+    dialogAlert,
+    dialogConfirm,
+    runnerFactory,
+    providerMock,
+    dialogFactory
+) {
     'use strict';
 
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
 
-
     QUnit.module('dialogFactory');
-
 
     QUnit.test('module', function(assert) {
         var runner = runnerFactory(providerName);
 
-        QUnit.expect(3);
+        assert.expect(3);
 
-        assert.equal(typeof dialogFactory, 'function', "The dialogFactory module exposes a function");
-        assert.equal(typeof dialogFactory(runner), 'object', "The dialogFactory factory produces an instance");
-        assert.notStrictEqual(dialogFactory(runner), dialogFactory(runner), "The dialogFactory factory provides a different instance on each call");
+        assert.equal(typeof dialogFactory, 'function', 'The dialogFactory module exposes a function');
+        assert.equal(typeof dialogFactory(runner), 'object', 'The dialogFactory factory produces an instance');
+        assert.notStrictEqual(dialogFactory(runner), dialogFactory(runner), 'The dialogFactory factory provides a different instance on each call');
     });
 
-
     var pluginApi = [
-        { name : 'init', title : 'init' },
-        { name : 'render', title : 'render' },
-        { name : 'finish', title : 'finish' },
-        { name : 'destroy', title : 'destroy' },
-        { name : 'trigger', title : 'trigger' },
-        { name : 'getTestRunner', title : 'getTestRunner' },
-        { name : 'getAreaBroker', title : 'getAreaBroker' },
-        { name : 'getConfig', title : 'getConfig' },
-        { name : 'setConfig', title : 'setConfig' },
-        { name : 'getState', title : 'getState' },
-        { name : 'setState', title : 'setState' },
-        { name : 'show', title : 'show' },
-        { name : 'hide', title : 'hide' },
-        { name : 'enable', title : 'enable' },
-        { name : 'disable', title : 'disable' }
+        {name: 'init', title: 'init'},
+        {name: 'render', title: 'render'},
+        {name: 'finish', title: 'finish'},
+        {name: 'destroy', title: 'destroy'},
+        {name: 'trigger', title: 'trigger'},
+        {name: 'getTestRunner', title: 'getTestRunner'},
+        {name: 'getAreaBroker', title: 'getAreaBroker'},
+        {name: 'getConfig', title: 'getConfig'},
+        {name: 'setConfig', title: 'setConfig'},
+        {name: 'getState', title: 'getState'},
+        {name: 'setState', title: 'setState'},
+        {name: 'show', title: 'show'},
+        {name: 'hide', title: 'hide'},
+        {name: 'enable', title: 'enable'},
+        {name: 'disable', title: 'disable'}
     ];
 
     QUnit
-        .cases(pluginApi)
+        .cases.init(pluginApi)
         .test('plugin API ', function(data, assert) {
             var runner = runnerFactory(providerName);
             var timer = dialogFactory(runner);
 
-            QUnit.expect(1);
+            assert.expect(1);
 
             assert.equal(typeof timer[data.name], 'function', 'The dialogFactory instances expose a "' + data.name + '" function');
         });
 
-
-    QUnit.asyncTest('dialog.init', function(assert) {
+    QUnit.test('dialog.init', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         dialog.init()
             .then(function() {
                 assert.equal(dialog.getState('init'), true, 'The plugin is initialized');
 
-                QUnit.start();
+                ready();
             })
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
     QUnit.module('dialog alert', {
-        setup: function () {
+        beforeEach: function(assert) {
             dialogAlert.removeAllListeners();
         },
-        teardown: function () {
+        afterEach: function(assert) {
             dialogAlert.removeAllListeners();
         }
     });
 
-
-    QUnit.asyncTest('simple alert', function(assert) {
+    QUnit.test('simple alert', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'Hello';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogAlert.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
@@ -126,7 +134,7 @@ define([
 
         dialogAlert.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -140,17 +148,17 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('namespace alert', function(assert) {
+    QUnit.test('namespace alert', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'timeout!';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogAlert.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
@@ -162,7 +170,7 @@ define([
 
         dialogAlert.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -176,28 +184,26 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
-
-
 
     QUnit.module('dialog confirm', {
-        setup: function () {
+        beforeEach: function(assert) {
             dialogConfirm.removeAllListeners();
         },
-        teardown: function () {
+        afterEach: function(assert) {
             dialogConfirm.removeAllListeners();
         }
     });
 
-
-    QUnit.asyncTest('simple confirm accepted', function(assert) {
+    QUnit.test('simple confirm accepted', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'Hello?';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogConfirm.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
@@ -207,7 +213,7 @@ define([
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -223,17 +229,17 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('namespace confirm accepted', function(assert) {
+    QUnit.test('namespace confirm accepted', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'exit?';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogConfirm.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
@@ -243,7 +249,7 @@ define([
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -259,17 +265,17 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('simple confirm rejected', function(assert) {
+    QUnit.test('simple confirm rejected', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'Hello?';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogConfirm.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
@@ -281,7 +287,7 @@ define([
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -297,17 +303,17 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('namespace confirm rejected', function(assert) {
+    QUnit.test('namespace confirm rejected', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'exit?';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogConfirm.on('create', function(message, dlg) {
             assert.ok(true, 'A dialog has been created');
@@ -319,7 +325,7 @@ define([
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -335,29 +341,28 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
-
 
     QUnit.module('close dialogs', {
-        setup: function () {
+        beforeEach: function(assert) {
             dialogAlert.removeAllListeners();
             dialogConfirm.removeAllListeners();
         },
-        teardown: function () {
+        afterEach: function(assert) {
             dialogAlert.removeAllListeners();
             dialogConfirm.removeAllListeners();
         }
     });
 
-
-    QUnit.asyncTest('simple alert', function(assert) {
+    QUnit.test('simple alert', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'Hello';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogAlert.on('create', function(message) {
             assert.ok(true, 'A dialog has been created');
@@ -371,7 +376,7 @@ define([
 
         dialogAlert.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -385,17 +390,17 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('simple confirm accept', function(assert) {
+    QUnit.test('simple confirm accept', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'Hello';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogConfirm.on('create', function(message) {
             assert.ok(true, 'A dialog has been created');
@@ -409,7 +414,7 @@ define([
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -425,17 +430,17 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('simple confirm reject', function(assert) {
+    QUnit.test('simple confirm reject', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'Hello';
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         dialogConfirm.on('create', function(message) {
             assert.ok(true, 'A dialog has been created');
@@ -449,7 +454,7 @@ define([
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -465,22 +470,22 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('alert and confirm', function(assert) {
+    QUnit.test('alert and confirm', function(assert) {
+        var ready1 = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedAlertMessage = 'Hello';
         var expectedConfirmMessage = 'exit?';
         var stack = [];
 
-        QUnit.expect(9);
-        QUnit.stop();
+        assert.expect(9);
+        var ready = assert.async();
 
-        stack.push(new Promise(function (resolve) {
+        stack.push(new Promise(function(resolve) {
             dialogAlert.on('create', function(message) {
                 assert.ok(true, 'A alert dialog has been created');
                 assert.equal(message, expectedAlertMessage, 'The expected alert message has been displayed');
@@ -488,7 +493,7 @@ define([
             });
         }));
 
-        stack.push(new Promise(function (resolve) {
+        stack.push(new Promise(function(resolve) {
             dialogConfirm.on('create', function(message) {
                 assert.ok(true, 'A confirm dialog has been created');
                 assert.equal(message, expectedConfirmMessage, 'The expected confirm message has been displayed');
@@ -502,12 +507,12 @@ define([
 
         dialogAlert.on('close', function() {
             assert.ok(true, 'The alert dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The confirm dialog has been closed');
-            QUnit.start();
+            ready1();
         });
 
         dialog.init()
@@ -527,18 +532,82 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
+    QUnit.cases.init([{
+        title: 'Default',
+        focus: 'ok'
+    }, {
+        title: 'OK button',
+        config: 'ok',
+        focus: 'ok'
+    }, {
+        title: 'Cancel button',
+        config: 'cancel',
+        focus: 'cancel'
+    }]).test('focus on button', function(data, assert) {
+        var ready = assert.async();
+        var runner = runnerFactory(providerName);
+        var dialog = dialogFactory(runner, runner.getAreaBroker());
+        var expectedConfirmMessage = 'exit?';
 
-    QUnit.asyncTest('namespace alert', function(assert) {
+        assert.expect(6);
+
+        if (data.config) {
+            runner.setTestData({
+                config: {
+                    plugins: {
+                        dialog: {
+                            confirm: {
+                                focus: data.config
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        dialogConfirm
+            .on('create', function(message) {
+                assert.ok(true, 'A confirm dialog has been created');
+                assert.equal(message, expectedConfirmMessage, 'The expected confirm message has been displayed');
+            })
+            .on('focus', function(btn) {
+                assert.equal(btn, data.focus, "The button '" + data.focus + "' should be focused");
+                runner.trigger('closedialog');
+            })
+            .on('close', function() {
+                assert.ok(true, 'The confirm dialog has been closed');
+                ready();
+            });
+
+        dialog.init()
+            .then(function() {
+                assert.equal(dialog.getState('init'), true, 'The plugin is initialized');
+
+                runner.trigger('confirm', expectedConfirmMessage, function() {
+                    assert.ok(false, 'The confirm message should not be accepted');
+                }, function() {
+                    assert.ok(true, 'The confirm message has been rejected');
+                });
+            })
+            .catch(function(err) {
+                console.log(err);
+                assert.ok(false, 'The init method must not fail');
+                ready();
+            });
+    });
+
+    QUnit.test('namespace alert', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'Hello';
         var count = 0;
 
-        QUnit.expect(7);
+        assert.expect(7);
 
         dialogAlert.on('create', function(message) {
             assert.ok(true, 'A dialog has been created');
@@ -553,7 +622,7 @@ define([
 
         dialogAlert.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -571,18 +640,18 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('namespace confirm accept', function(assert) {
+    QUnit.test('namespace confirm accept', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'exit?';
         var count = 0;
 
-        QUnit.expect(7);
+        assert.expect(7);
 
         dialogConfirm.on('create', function(message) {
             assert.ok(true, 'A dialog has been created');
@@ -597,7 +666,7 @@ define([
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -619,18 +688,18 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('namespace confirm reject', function(assert) {
+    QUnit.test('namespace confirm reject', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'exit?';
         var count = 0;
 
-        QUnit.expect(7);
+        assert.expect(7);
 
         dialogConfirm.on('create', function(message) {
             assert.ok(true, 'A dialog has been created');
@@ -645,7 +714,7 @@ define([
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -667,12 +736,12 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('same namespace alert and confirm', function(assert) {
+    QUnit.test('same namespace alert and confirm', function(assert) {
+        var ready1 = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedAlertMessage = 'Hello';
@@ -681,10 +750,10 @@ define([
         var countAlert = 0;
         var countConfirm = 0;
 
-        QUnit.expect(13);
-        QUnit.stop();
+        assert.expect(13);
+        var ready = assert.async();
 
-        stack.push(new Promise(function (resolve) {
+        stack.push(new Promise(function(resolve) {
             dialogAlert.on('create', function(message) {
                 assert.ok(true, 'A alert dialog has been created');
                 assert.equal(message, expectedAlertMessage, 'The expected alert message has been displayed');
@@ -695,7 +764,7 @@ define([
             });
         }));
 
-        stack.push(new Promise(function (resolve) {
+        stack.push(new Promise(function(resolve) {
             dialogConfirm.on('create', function(message) {
                 assert.ok(true, 'A confirm dialog has been created');
                 assert.equal(message, expectedConfirmMessage, 'The expected confirm message has been displayed');
@@ -712,12 +781,12 @@ define([
 
         dialogAlert.on('close', function() {
             assert.ok(true, 'The alert dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The confirm dialog has been closed');
-            QUnit.start();
+            ready1();
         });
 
         dialog.init()
@@ -747,12 +816,12 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('different namespace alert and confirm', function(assert) {
+    QUnit.test('different namespace alert and confirm', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedAlertMessage = 'Hello';
@@ -761,9 +830,9 @@ define([
         var countAlert = 0;
         var countConfirm = 0;
 
-        QUnit.expect(11);
+        assert.expect(11);
 
-        stack.push(new Promise(function (resolve) {
+        stack.push(new Promise(function(resolve) {
             dialogAlert.on('create', function(message) {
                 assert.ok(true, 'A alert dialog has been created');
                 assert.equal(message, expectedAlertMessage, 'The expected alert message has been displayed');
@@ -774,7 +843,7 @@ define([
             });
         }));
 
-        stack.push(new Promise(function (resolve) {
+        stack.push(new Promise(function(resolve) {
             dialogConfirm.on('create', function(message) {
                 assert.ok(true, 'A confirm dialog has been created');
                 assert.equal(message, expectedConfirmMessage, 'The expected confirm message has been displayed');
@@ -791,12 +860,12 @@ define([
 
         dialogAlert.on('close', function() {
             assert.ok(true, 'The alert dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialogConfirm.on('close', function() {
             assert.ok(true, 'The confirm dialog has been closed');
-            QUnit.start();
+            ready();
         });
 
         dialog.init()
@@ -826,12 +895,12 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 
-
-    QUnit.asyncTest('multiple dialogs', function(assert) {
+    QUnit.test('multiple dialogs', function(assert) {
+        var ready = assert.async();
         var runner = runnerFactory(providerName);
         var dialog = dialogFactory(runner, runner.getAreaBroker());
         var expectedMessage = 'MyMessage';
@@ -843,8 +912,7 @@ define([
         var countAlert = 0;
         var countConfirm = 0;
 
-        QUnit.expect(2 + expectedAlertCount*6 +expectedConfirmCount*6);
-
+        assert.expect(2 + expectedAlertCount * 6 + expectedConfirmCount * 6);
 
         startPromises.push(new Promise(function(resolve) {
             dialogConfirm.on('create', function(message) {
@@ -870,7 +938,6 @@ define([
             });
         }));
 
-
         endPromises.push(new Promise(function(resolve) {
             dialogConfirm.on('close', function() {
                 assert.ok(true, 'The confirm dialog has been closed');
@@ -893,7 +960,6 @@ define([
             });
         }));
 
-
         Promise.all(startPromises).then(function() {
             var count = stack.length;
             async.timesSeries(count, function(n, next) {
@@ -904,7 +970,7 @@ define([
                     next();
                 }, 250);
             }, function() {
-                QUnit.start();
+                ready();
             });
 
             return Promise.all(endPromises).then(function() {
@@ -913,9 +979,8 @@ define([
         }).catch(function(err) {
             console.log(err);
             assert.ok(false, 'The dialog create step should not fail');
-            QUnit.start();
+            ready();
         });
-
 
         dialog.init()
             .then(function() {
@@ -938,7 +1003,7 @@ define([
             .catch(function(err) {
                 console.log(err);
                 assert.ok(false, 'The init method must not fail');
-                QUnit.start();
+                ready();
             });
     });
 });

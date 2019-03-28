@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015-2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2015-2019 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\scripts\update;
@@ -26,11 +26,13 @@ use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
+use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
@@ -1712,6 +1714,69 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('29.8.0');
         }
 
-        $this->skip('29.8.0', '29.8.1');
+        $this->skip('29.8.0', '30.4.0');
+
+        if ($this->isVersion('30.4.0')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'linearNextItemWarning',
+                'name' => 'Linear next item warning',
+                'module' => 'taoQtiTest/runner/plugins/navigation/next/linearNextItemWarning',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Displays a dialog before next item in linear test parts',
+                'category' => 'navigation',
+                'active' => false,
+                'tags' => [ ]
+            ]));
+
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['force-enable-linear-next-item-warning'] = false;
+            $config['enable-linear-next-item-warning-checkbox'] = true;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('30.5.0');
+        }
+
+        $this->skip('30.5.0', '30.5.3');
+
+        if ($this->isVersion('30.5.3')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['calculator']['degree'] = true;
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('30.6.0');
+        }
+
+        $this->skip('30.6.0', '30.6.1');
+
+        if ($this->isVersion('30.6.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['dialog']['alert']['focus'] = 'ok';
+            $config['plugins']['dialog']['confirm']['focus'] = 'ok';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('30.7.0');
+        }
+
+        $this->skip('30.7.0', '32.0.0');
+
+        if ($this->isVersion('32.0.0')) {
+            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'OfflineRunner')));
+
+            $offlineQtiRunnerService = new OfflineQtiRunnerService();
+            $testDefinitionSerializerService = new TestDefinitionSerializerService();
+
+            $offlineQtiRunnerService->setServiceManager($this->getServiceManager());
+            $testDefinitionSerializerService->setServiceManager($this->getServiceManager());
+            $this->getServiceManager()->register(OfflineQtiRunnerService::SERVICE_ID, $offlineQtiRunnerService);
+            $this->getServiceManager()->register(TestDefinitionSerializerService::SERVICE_ID, $testDefinitionSerializerService);
+
+            $this->setVersion('32.1.0');
+        }
+
+        $this->skip('32.1.0', '32.3.3');
     }
 }

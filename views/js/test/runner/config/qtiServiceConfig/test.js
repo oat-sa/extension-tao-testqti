@@ -19,6 +19,7 @@
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
+
     'lodash',
     'util/url',
     'taoQtiTest/runner/config/qtiServiceConfig'
@@ -27,7 +28,6 @@ define([
 
     QUnit.module('qtiServiceConfig');
 
-
     QUnit.test('module', function(assert) {
         var config = {
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
@@ -35,24 +35,23 @@ define([
             serviceCallId: 'http://tao.dev/mockServiceCallId#123'
         };
 
-        QUnit.expect(3);
-        assert.equal(typeof qtiServiceConfig, 'function', "The qtiServiceConfig module exposes a function");
-        assert.equal(typeof qtiServiceConfig(config), 'object', "The qtiServiceConfig factory produces an instance");
-        assert.notStrictEqual(qtiServiceConfig(config), qtiServiceConfig(config), "The qtiServiceConfig factory provides a different instance on each call");
+        assert.expect(3);
+        assert.equal(typeof qtiServiceConfig, 'function', 'The qtiServiceConfig module exposes a function');
+        assert.equal(typeof qtiServiceConfig(config), 'object', 'The qtiServiceConfig factory produces an instance');
+        assert.notStrictEqual(qtiServiceConfig(config), qtiServiceConfig(config), 'The qtiServiceConfig factory provides a different instance on each call');
     });
 
-
     QUnit
-        .cases([
-            { title : 'getTestDefinition' },
-            { title : 'getTestCompilation' },
-            { title : 'getServiceCallId' },
-            { title : 'getServiceController' },
-            { title : 'getServiceExtension' },
-            { title : 'getTestActionUrl' },
-            { title : 'getItemActionUrl' },
-            { title : 'getTimeout' },
-            { title : 'getCommunicationConfig' }
+        .cases.init([
+            {title: 'getTestDefinition'},
+            {title: 'getTestCompilation'},
+            {title: 'getServiceCallId'},
+            {title: 'getServiceController'},
+            {title: 'getServiceExtension'},
+            {title: 'getTestActionUrl'},
+            {title: 'getItemActionUrl'},
+            {title: 'getTimeout'},
+            {title: 'getCommunicationConfig'}
         ])
         .test('proxy API ', function(data, assert) {
             var config = {
@@ -62,13 +61,12 @@ define([
             };
             var instance = qtiServiceConfig(config);
 
-            QUnit.expect(1);
+            assert.expect(1);
             assert.equal(typeof instance[data.title], 'function', 'The qtiServiceConfig instances expose a "' + data.title + '" function');
         });
 
-
     QUnit.test('qtiServiceConfig factory', function(assert) {
-        QUnit.expect(4);
+        assert.expect(4);
 
         qtiServiceConfig({
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
@@ -99,7 +97,6 @@ define([
         }, 'The qtiServiceConfig() factory must throw an exception is the required config entry serviceCallId is missing');
     });
 
-
     QUnit.test('qtiServiceConfig.getTestDefinition', function(assert) {
         var expectedTestDefinition = 'http://tao.dev/mockTestDefinition#123';
         var config = {
@@ -109,11 +106,10 @@ define([
         };
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(instance.getTestDefinition(), expectedTestDefinition, 'The qtiServiceConfig.getTestDefinition() method has returned the expected value');
     });
-
 
     QUnit.test('qtiServiceConfig.getTestCompilation', function(assert) {
         var expectedTestCompilation = 'http://tao.dev/mockTestCompilation#123';
@@ -124,11 +120,10 @@ define([
         };
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(instance.getTestCompilation(), expectedTestCompilation, 'The qtiServiceConfig.getTestCompilation() method has returned the expected value');
     });
-
 
     QUnit.test('qtiServiceConfig.getServiceCallId', function(assert) {
         var expectedServiceCallId = 'http://tao.dev/mockServiceCallId#123';
@@ -139,11 +134,10 @@ define([
         };
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(instance.getServiceCallId(), expectedServiceCallId, 'The qtiServiceConfig.getServiceCallId() method has returned the expected value');
     });
-
 
     QUnit.test('qtiServiceConfig.getServiceController', function(assert) {
         var expectedServiceController = 'MockRunner';
@@ -154,18 +148,17 @@ define([
         };
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(3);
+        assert.expect(3);
 
         assert.notEqual(instance.getServiceController(), expectedServiceController, 'The qtiServiceConfig.getServiceController() method must return the default value');
         assert.ok(!!instance.getServiceController(), 'The qtiServiceConfig.getServiceController() method must not return a null value');
 
         config.bootstrap = {
-            serviceController : expectedServiceController
+            serviceController: expectedServiceController
         };
         instance = qtiServiceConfig(config);
         assert.equal(instance.getServiceController(), expectedServiceController, 'The qtiServiceConfig.getServiceController() method has returned the expected value');
     });
-
 
     QUnit.test('qtiServiceConfig.getServiceExtension', function(assert) {
         var expectedServiceExtension = 'MockExtension';
@@ -176,18 +169,17 @@ define([
         };
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(3);
+        assert.expect(3);
 
         assert.notEqual(instance.getServiceExtension(), expectedServiceExtension, 'The qtiServiceConfig.getServiceExtension() method must return the default value');
         assert.ok(!!instance.getServiceExtension(), 'The qtiServiceConfig.getServiceExtension() method must not return a null value');
 
         config.bootstrap = {
-            serviceExtension : expectedServiceExtension
+            serviceExtension: expectedServiceExtension
         };
         instance = qtiServiceConfig(config);
         assert.equal(instance.getServiceExtension(), expectedServiceExtension, 'The qtiServiceConfig.getServiceExtension() method has returned the expected value');
     });
-
 
     QUnit.test('qtiServiceConfig.getTestActionUrl', function(assert) {
         var config = {
@@ -201,17 +193,16 @@ define([
         };
         var actionName = 'MockAction';
         var expectedUrl = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
-            testDefinition : config.testDefinition,
-            testCompilation : config.testCompilation,
-            serviceCallId : config.serviceCallId
+            testDefinition: config.testDefinition,
+            testCompilation: config.testCompilation,
+            serviceCallId: config.serviceCallId
         });
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(instance.getTestActionUrl(actionName), expectedUrl, 'The qtiServiceConfig.getTestActionUrl() method has returned the expected value');
     });
-
 
     QUnit.test('qtiServiceConfig.getItemActionUrl', function(assert) {
         var itemUri = 'http://tao.dev/mockItem#123';
@@ -226,18 +217,17 @@ define([
         };
         var actionName = 'MockAction';
         var expectedUrl = urlUtil.route(actionName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
-            testDefinition : config.testDefinition,
-            testCompilation : config.testCompilation,
-            testServiceCallId : config.serviceCallId,
-            itemDefinition : itemUri
+            testDefinition: config.testDefinition,
+            testCompilation: config.testCompilation,
+            testServiceCallId: config.serviceCallId,
+            itemDefinition: itemUri
         });
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(instance.getItemActionUrl(itemUri, actionName), expectedUrl, 'The qtiServiceConfig.getItemActionUrl() method has returned the expected value');
     });
-
 
     QUnit.test('qtiServiceConfig.getTelemetryUrl', function(assert) {
         var itemUri = 'http://tao.dev/mockItem#123';
@@ -252,20 +242,19 @@ define([
         };
         var signalName = 'MockSignal';
         var expectedUrl = urlUtil.route(signalName, config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
-            testDefinition : config.testDefinition,
-            testCompilation : config.testCompilation,
-            testServiceCallId : config.serviceCallId,
-            itemDefinition : itemUri
+            testDefinition: config.testDefinition,
+            testCompilation: config.testCompilation,
+            testServiceCallId: config.serviceCallId,
+            itemDefinition: itemUri
         });
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(instance.getTelemetryUrl(itemUri, signalName), expectedUrl, 'The qtiServiceConfig.getTelemetryUrl() method has returned the expected value');
     });
 
-
-    QUnit.test('qtiServiceConfig.getTimeout', function (assert) {
+    QUnit.test('qtiServiceConfig.getTimeout', function(assert) {
         var config = {
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
             testCompilation: 'http://tao.dev/mockTestCompilation#123',
@@ -273,7 +262,7 @@ define([
         };
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(2);
+        assert.expect(2);
 
         assert.equal(typeof instance.getTimeout(), 'undefined', 'The qtiServiceConfig.getTimeout() method must return an undefined value if no timeout has been set');
 
@@ -282,8 +271,7 @@ define([
         assert.equal(instance.getTimeout(), 10000, 'The qtiServiceConfig.getTimeout() method has returned the expected value');
     });
 
-
-    QUnit.test('qtiServiceConfig.getCommunicationConfig', function (assert) {
+    QUnit.test('qtiServiceConfig.getCommunicationConfig', function(assert) {
         var config = {
             testDefinition: 'http://tao.dev/mockTestDefinition#123',
             testCompilation: 'http://tao.dev/mockTestCompilation#123',
@@ -299,9 +287,9 @@ define([
             type: undef,
             params: {
                 service: urlUtil.route('message', config.bootstrap.serviceController, config.bootstrap.serviceExtension, {
-                    testDefinition : config.testDefinition,
-                    testCompilation : config.testCompilation,
-                    serviceCallId : config.serviceCallId
+                    testDefinition: config.testDefinition,
+                    testCompilation: config.testCompilation,
+                    serviceCallId: config.serviceCallId
                 }),
                 timeout: undef
             },
@@ -309,7 +297,7 @@ define([
         };
         var instance = qtiServiceConfig(config);
 
-        QUnit.expect(3);
+        assert.expect(3);
 
         assert.deepEqual(instance.getCommunicationConfig(), expected, 'The qtiServiceConfig.getCommunicationConfig() method has returned the default values');
 
@@ -338,7 +326,6 @@ define([
         };
         instance = qtiServiceConfig(config);
         assert.deepEqual(instance.getCommunicationConfig(), expected, 'The qtiServiceConfig.getCommunicationConfig() method has returned the expected values');
-
 
         config.bootstrap.communication.params.timeout = 5;
         expected.params.timeout = 5000;

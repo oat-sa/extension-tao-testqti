@@ -19,6 +19,7 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+
     'jquery',
     'lodash',
     'taoQtiTest/testRunner/actionBar/button'
@@ -147,67 +148,63 @@ define([
         }
     }];
 
-
     QUnit.module('button');
 
-
-    QUnit.test('module', 7, function(assert) {
-        assert.equal(typeof button, 'function', "The button module exposes a function");
-        assert.equal(typeof button(), 'object', "The button factory produces an object");
-        assert.notStrictEqual(button(), button(), "The button factory provides a different object on each call");
-        assert.strictEqual(button().init, button().init, "The button factory provides a different object on each call, but the same methods");
+    QUnit.test('module', function(assert) {
+        assert.equal(typeof button, 'function', 'The button module exposes a function');
+        assert.equal(typeof button(), 'object', 'The button factory produces an object');
+        assert.notStrictEqual(button(), button(), 'The button factory provides a different object on each call');
+        assert.strictEqual(button().init, button().init, 'The button factory provides a different object on each call, but the same methods');
 
         var customInit = function() {};
         var customFn = function() {};
         var btn = button({
-            init : customInit,
-            myCustomFn : customFn
+            init: customInit,
+            myCustomFn: customFn
         });
-        assert.notStrictEqual(btn.init, button().init, "The button factory enable to overwrite methods and properties");
-        assert.strictEqual(btn.init, customInit, "The button factory enable to overwrite methods and properties");
-        assert.strictEqual(btn.myCustomFn, customFn, "The button factory enable to set custom methods and properties");
+        assert.notStrictEqual(btn.init, button().init, 'The button factory enable to overwrite methods and properties');
+        assert.strictEqual(btn.init, customInit, 'The button factory enable to overwrite methods and properties');
+        assert.strictEqual(btn.myCustomFn, customFn, 'The button factory enable to set custom methods and properties');
     });
 
-
     var buttonApi = [
-        { name : 'init', title : 'init' },
-        { name : 'clear', title : 'clear' },
-        { name : 'render', title : 'render' },
-        { name : 'bindTo', title : 'bindTo' },
-        { name : 'bindEvents', title : 'bindEvents' },
-        { name : 'unbindEvents', title : 'unbindEvents' },
-        { name : 'is', title : 'is' },
-        { name : 'getId', title : 'getId' },
-        { name : 'getLabel', title : 'getLabel' },
-        { name : 'isVisible', title : 'isVisible' },
-        { name : 'hasMenu', title : 'hasMenu' },
-        { name : 'isMenuOpen', title : 'isMenuOpen' },
-        { name : 'closeMenu', title : 'closeMenu' },
-        { name : 'openMenu', title : 'openMenu' },
-        { name : 'toggleMenu', title : 'toggleMenu' },
-        { name : 'setActive', title : 'setActive' },
-        { name : 'trigger', title : 'trigger' },
-        { name : 'on', title : 'on' },
-        { name : 'off', title : 'off' },
-        { name : 'setup', title : 'setup' },
-        { name : 'action', title : 'action' },
-        { name : 'menuAction', title : 'menuAction' },
-        { name : 'enable', title : 'enable' },
-        { name : 'disable', title : 'disable' },
-        { name : 'show', title : 'show' },
-        { name : 'hide', title : 'hide' }
+        {name: 'init', title: 'init'},
+        {name: 'clear', title: 'clear'},
+        {name: 'render', title: 'render'},
+        {name: 'bindTo', title: 'bindTo'},
+        {name: 'bindEvents', title: 'bindEvents'},
+        {name: 'unbindEvents', title: 'unbindEvents'},
+        {name: 'is', title: 'is'},
+        {name: 'getId', title: 'getId'},
+        {name: 'getLabel', title: 'getLabel'},
+        {name: 'isVisible', title: 'isVisible'},
+        {name: 'hasMenu', title: 'hasMenu'},
+        {name: 'isMenuOpen', title: 'isMenuOpen'},
+        {name: 'closeMenu', title: 'closeMenu'},
+        {name: 'openMenu', title: 'openMenu'},
+        {name: 'toggleMenu', title: 'toggleMenu'},
+        {name: 'setActive', title: 'setActive'},
+        {name: 'trigger', title: 'trigger'},
+        {name: 'on', title: 'on'},
+        {name: 'off', title: 'off'},
+        {name: 'setup', title: 'setup'},
+        {name: 'action', title: 'action'},
+        {name: 'menuAction', title: 'menuAction'},
+        {name: 'enable', title: 'enable'},
+        {name: 'disable', title: 'disable'},
+        {name: 'show', title: 'show'},
+        {name: 'hide', title: 'hide'}
     ];
 
     QUnit
-        .cases(buttonApi)
+        .cases.init(buttonApi)
         .test('instance API ', function(data, assert) {
             var instance = button();
             assert.equal(typeof instance[data.name], 'function', 'The button instance exposes a "' + data.title + '" function');
         });
 
-
     QUnit
-        .cases(buttons)
+        .cases.init(buttons)
         .test('install', function(data, assert) {
             var instance = button();
             var $button;
@@ -316,10 +313,11 @@ define([
             }
 
             instance.clear();
-    });
+        });
 
-
-    QUnit.asyncTest('events [button]', function(assert) {
+    QUnit.test('events [button]', function(assert) {
+        var ready1 = assert.async();
+        var ready = assert.async();
         var instance = button();
         var data = buttons[0];
         var $container = $('#button-1');
@@ -337,7 +335,7 @@ define([
             assert.ok(!!$btn.jquery, 'The action method provide a button element as a jQuery selection');
             assert.ok($btn.is('.action-button'), 'The action method provide the right button element');
             assert.equal($btn.data('control'), data.id, 'The action method provide the right button element');
-            QUnit.start();
+            ready();
         };
 
         instance.on('action', function(e, id, $btn, btn) {
@@ -348,15 +346,18 @@ define([
             assert.ok($btn.is('.action-button'), 'The action event provide the right button element');
             assert.equal($btn.data('control'), data.id, 'The action event provide the right button element');
             assert.strictEqual(btn, instance, 'The action event provide the right button instance');
-            QUnit.start();
+            ready1();
         });
 
-        QUnit.expect(13);
-        QUnit.stop();
+        assert.expect(13);
         $button.click();
     });
 
-    QUnit.asyncTest('events [menu]', function(assert) {
+    QUnit.test('events [menu]', function(assert) {
+        var ready3 = assert.async();
+        var ready2 = assert.async(3);
+        var ready1 = assert.async();
+        var ready = assert.async(3);
         var instance = button();
         var data = buttons[3];
         var expectedMenuOpenState = false;
@@ -366,8 +367,7 @@ define([
         var $menu;
         var $menuItem;
 
-        QUnit.expect(66);
-        QUnit.stop(7);
+        assert.expect(66);
 
         instance.init(data.id, data.config, data.testContext, data.testRunner);
 
@@ -384,7 +384,7 @@ define([
             assert.ok(!!$btn.jquery, 'The action method provide a button element as a jQuery selection');
             assert.ok($btn.is('.action-button'), 'The action method provide the right button element');
             assert.equal($btn.data('control'), data.id, 'The action method provide the right button element');
-            QUnit.start();
+            ready();
         };
 
         instance.menuAction = function(id, $item) {
@@ -395,7 +395,7 @@ define([
             assert.ok($item.is('.menu-item'), 'The menuAction method provide the right button element');
             assert.equal($item.data('control'), expectedMenuConfig.id, 'The menuAction method provide the right button element');
 
-            QUnit.start();
+            ready1();
         };
 
         instance.on('action', function(e, id, $btn, btn) {
@@ -412,7 +412,7 @@ define([
             assert.equal($menu.hasClass('hidden'), !expectedMenuOpenState, 'The menu state must be ' + (expectedMenuOpenState ? 'open' : 'closed'));
             assert.equal($button.hasClass('active'), expectedMenuOpenState, 'The button state must be ' + (expectedMenuOpenState ? 'active' : 'inactive'));
 
-            QUnit.start();
+            ready2();
         });
 
         instance.on('menuaction', function(e, id, $item, btn) {
@@ -428,7 +428,7 @@ define([
             assert.equal($menu.hasClass('hidden'), !expectedMenuOpenState, 'The menu state must be ' + (expectedMenuOpenState ? 'open' : 'closed'));
             assert.equal($button.hasClass('active'), expectedMenuOpenState, 'The button state must be ' + (expectedMenuOpenState ? 'active' : 'inactive'));
 
-            QUnit.start();
+            ready3();
         });
 
         assert.equal(instance.isMenuOpen(), expectedMenuOpenState, 'The menu must be closed');
@@ -442,8 +442,10 @@ define([
         assert.equal(instance.getActiveMenu(), expectedMenuConfig.id, 'The selected menu must the right one');
     });
 
+    QUnit.test('events [group]', function(assert) {
+        var ready1 = assert.async();
+        var ready = assert.async();
 
-    QUnit.asyncTest('events [group]', function(assert) {
         var instance = button();
         var data = buttons[6];
         var expectedButtonConfig = data.config.items[1];
@@ -462,7 +464,7 @@ define([
             assert.ok(!!$btn.jquery, 'The action method provide a button element as a jQuery selection');
             assert.ok($btn.is('.action-button'), 'The action method provide the right button element');
             assert.equal($btn.data('control'), expectedButtonConfig.id, 'The action method provide the right button element');
-            QUnit.start();
+            ready();
         };
 
         instance.on('action', function(e, id, $btn, btn) {
@@ -473,14 +475,12 @@ define([
             assert.ok($btn.is('.action-button'), 'The action event provide the right button element');
             assert.equal($btn.data('control'), expectedButtonConfig.id, 'The action event provide the right button element');
             assert.strictEqual(btn, instance, 'The action event provide the right button instance');
-            QUnit.start();
+            ready1();
         });
 
-        QUnit.expect(13);
-        QUnit.stop();
+        assert.expect(13);
         $button.children().eq(1).click();
     });
-
 
     QUnit.test('menu selection', function(assert) {
         var instance = button();
@@ -491,7 +491,6 @@ define([
         var $button;
         var $menu;
         var $menuItem;
-
 
         instance.init(data.id, data.config, data.testContext, data.testRunner);
 
@@ -514,7 +513,6 @@ define([
 
         assert.strictEqual(instance.getActiveMenu(), null, 'The menu selection must cleared');
     });
-
 
     QUnit.test('group selection', function(assert) {
         var instance = button();
@@ -548,8 +546,9 @@ define([
 
     });
 
-
-    QUnit.asyncTest('enable/disable', function(assert) {
+    QUnit.test('enable/disable', function(assert) {
+        var ready1 = assert.async(2);
+        var ready = assert.async(2);
         var instance = button();
         var data = buttons[0];
         var $container = $('#button-6');
@@ -563,7 +562,7 @@ define([
         $container.append($button);
 
         instance.action = function(id, $btn) {
-            callCount ++;
+            callCount++;
 
             assert.equal(true, actionEnabled, 'The action method has been called');
             assert.equal(id, data.id, 'The action method provide the right button id');
@@ -571,11 +570,11 @@ define([
             assert.ok(!!$btn.jquery, 'The action method provide a button element as a jQuery selection');
             assert.ok($btn.is('.action-button'), 'The action method provide the right button element');
             assert.equal($btn.data('control'), data.id, 'The action method provide the right button element');
-            QUnit.start();
+            ready();
         };
 
         instance.on('action', function(e, id, $btn, btn) {
-            callCount ++;
+            callCount++;
 
             assert.equal(true, actionEnabled, 'The action event has been triggered');
             assert.equal(id, data.id, 'The action event provide the right button id');
@@ -584,11 +583,10 @@ define([
             assert.ok($btn.is('.action-button'), 'The action event provide the right button element');
             assert.equal($btn.data('control'), data.id, 'The action event provide the right button element');
             assert.strictEqual(btn, instance, 'The action event provide the right button instance');
-            QUnit.start();
+            ready1();
         });
 
-        QUnit.expect(32);
-        QUnit.stop(3);
+        assert.expect(32);
 
         assert.ok(!$button.hasClass('disabled'), 'This button is enabled');
 
@@ -615,7 +613,8 @@ define([
         assert.equal(callCount, 4, 'Action can be called when button is enabled');
     });
 
-    QUnit.asyncTest('show/hide', 4, function(assert) {
+    QUnit.test('show/hide', function(assert) {
+        var ready = assert.async();
         var instance = button();
         var data = buttons[0];
         var $container = $('#button-7');
@@ -631,18 +630,17 @@ define([
 
         instance.hide();
 
-        _.defer(function(){
+        _.defer(function() {
             assert.equal($button.css('display'), 'none', 'the button is hidden');
 
             instance.show();
 
-            _.defer(function(){
+            _.defer(function() {
                 assert.notEqual($button.css('display'), 'none', 'the button is back');
 
-                QUnit.start();
+                ready();
             });
         });
     });
-
 
 });

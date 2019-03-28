@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint91\n"
-"PO-Revision-Date: 2019-01-04T13:33:46\n"
+"Project-Id-Version: TAO 3.3.0-sprint98\n"
+"PO-Revision-Date: 2019-03-15T10:06:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -160,8 +160,20 @@ msgstr "Antwoord bedekker"
 msgid "Answered"
 msgstr "Beantwoord"
 
+msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
+msgstr ""
+
 msgid "Are you sure you want to end the test?"
 msgstr "Weet u zeker dat u de toets wilt afsluiten?"
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back."
+msgstr ""
 
 msgid "Area Masking"
 msgstr "Gebied bedekker"
@@ -426,6 +438,12 @@ msgstr "Gemarkeerd"
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Forceer dat het item wordt beschouwd als informatie en niet wordt meegenomen bij de tellingen voor (niet) beantwoord of gemarkeerde items."
 
+msgid "Go to next item"
+msgstr ""
+
+msgid "Go to the next item?"
+msgstr ""
+
 msgid "Gray on green (low contrast option)"
 msgstr ""
 
@@ -537,11 +555,11 @@ msgstr "Item referentie eigenschappen"
 msgid "Item Session Control"
 msgstr "Item sessie controle"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Items"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Items kunnen optioneel worden toegewezen aan een of meer categorieën. "
@@ -597,11 +615,11 @@ msgstr "Beheer rubriek blokken"
 msgid "Manage test properties"
 msgstr "beheer toets eigenschappen"
 
-msgid "Manage Tests"
-msgstr "Beheer toetsen"
-
 msgid "Manage tests"
 msgstr "Beheer examens"
+
+msgid "Manage Tests"
+msgstr "Beheer toetsen"
 
 msgid "Mark for review"
 msgstr "Markeer voor herziening"
@@ -723,11 +741,11 @@ msgstr "Niet alle examens konden worden geëxporteerd"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Niet door elkaar gehaald, de posities blijven vast"
 
-msgid "OK"
-msgstr "OK"
-
 msgid "Ok"
 msgstr "Ok"
+
+msgid "OK"
+msgstr "OK"
 
 msgid "OK & End test"
 msgstr "OK & beëindig test"

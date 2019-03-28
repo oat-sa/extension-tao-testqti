@@ -19,11 +19,12 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
+use common_exception_Unauthorized;
+use common_Logger;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
+use stdClass;
 
 /**
- * Class NextItemData
- *
  * @package oat\taoQtiTest\models\runner\synchronisation\action
  */
 class NextItemData extends TestRunnerAction
@@ -41,7 +42,7 @@ class NextItemData extends TestRunnerAction
     {
         $this->validate();
 
-        $itemIdentifier = ($this->hasRequestParameter('itemDefinition'))
+        $itemIdentifier = $this->hasRequestParameter('itemDefinition')
             ? $this->getRequestParameter('itemDefinition')
             : null;
 
@@ -51,8 +52,8 @@ class NextItemData extends TestRunnerAction
 
         try {
             if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
-                \common_Logger::w("Attempt to disclose the next items without the configuration");
-                throw new \common_exception_Unauthorized();
+                common_Logger::w('Attempt to disclose the next items without the configuration');
+                throw new common_exception_Unauthorized();
             }
 
             $response = [];
@@ -64,7 +65,6 @@ class NextItemData extends TestRunnerAction
             if (isset($response['items'])) {
                 $response['success'] = true;
             }
-
         } catch (\Exception $e) {
             $response = $this->getErrorResponse($e);
         }
@@ -76,24 +76,24 @@ class NextItemData extends TestRunnerAction
      * Create the item definition response for a given item
      * @param string $itemIdentifier the item id
      * @return array the item data
-     * @throws
+     * @throws \common_Exception
      */
     protected function getItemData($itemIdentifier)
     {
         $serviceContext = $this->getServiceContext();
-        $itemRef        = $this->getRunnerService()->getItemHref($serviceContext, $itemIdentifier);
-        $itemData       = $this->getRunnerService()->getItemData($serviceContext, $itemRef);
-        $baseUrl        = $this->getRunnerService()->getItemPublicUrl($serviceContext, $itemRef);
+        $itemRef = $this->getRunnerService()->getItemHref($serviceContext, $itemIdentifier);
+        $itemData = $this->getRunnerService()->getItemData($serviceContext, $itemRef);
+        $baseUrl = $this->getRunnerService()->getItemPublicUrl($serviceContext, $itemRef);
 
         $itemState = $this->getRunnerService()->getItemState($serviceContext, $itemIdentifier);
-        if ( is_null($itemState) || !count($itemState)) {
-            $itemState = new \stdClass();
+        if ($itemState === null || !count($itemState)) {
+            $itemState = new stdClass();
         }
 
         return [
-            'baseUrl'        => $baseUrl,
-            'itemData'       => $itemData,
-            'itemState'      => $itemState,
+            'baseUrl' => $baseUrl,
+            'itemData' => $itemData,
+            'itemState' => $itemState,
             'itemIdentifier' => $itemIdentifier,
         ];
     }
@@ -107,5 +107,4 @@ class NextItemData extends TestRunnerAction
     {
         return array_merge(parent::getRequiredFields(), ['itemDefinition']);
     }
-
 }

@@ -19,6 +19,7 @@
  */
 
 define([
+
     'jquery',
     'lodash',
     'module',
@@ -30,55 +31,59 @@ define([
     'taoQtiItem/qtiItem/core/Loader',
     'taoQtiItem/qtiCommonRenderer/renderers/Renderer',
     'taoQtiItem/qtiItem/helper/modalFeedback'
-], function ($,
-             _,
-             taoModule,
-             testRunnerFactory,
-             providerMock,
-             modalFeedback,
-             qtiItemRunner,
-             itemData,
-             QtiLoader,
-             QtiRenderer,
-             modalFeedbackHelper) {
+], function(
+
+    $,
+    _,
+    taoModule,
+    testRunnerFactory,
+    providerMock,
+    modalFeedback,
+    qtiItemRunner,
+    itemData,
+    QtiLoader,
+    QtiRenderer,
+    modalFeedbackHelper
+) {
 
     'use strict';
 
     var runner;
     var containerId = 'item-container';
 
-    module('Item init', {
-        teardown: function () {
+    QUnit.module('Item init', {
+        afterEach: function(assert) {
             if (runner) {
                 runner.clear();
             }
         }
     });
 
-    QUnit.asyncTest('Item data loading', function (assert) {
-        QUnit.expect(2);
+    QUnit.test('Item data loading', function(assert) {
+        var ready = assert.async();
+        assert.expect(2);
 
         runner = qtiItemRunner('qti', itemData)
-            .on('init', function () {
+            .on('init', function() {
 
                 assert.ok(typeof this._item === 'object', 'The item data is loaded and mapped to an object');
                 assert.ok(typeof this._item.bdy === 'object', 'The item contains a body object');
 
-                QUnit.start();
+                ready();
             }).init();
     });
 
-
-    module('Item render', {
-        teardown: function () {
+    QUnit.module('Item render', {
+        afterEach: function(assert) {
             if (runner) {
                 runner.clear();
             }
         }
     });
 
-    QUnit.asyncTest('Item rendering', function (assert) {
-        QUnit.expect(3);
+    QUnit.test('Item rendering', function(assert) {
+        var ready = assert.async();
+        assert.expect(3);
 
         var container = document.getElementById(containerId);
 
@@ -86,21 +91,21 @@ define([
         assert.equal(container.children.length, 0, 'the container has no children');
 
         runner = qtiItemRunner('qti', itemData)
-            .on('render', function () {
+            .on('render', function() {
 
                 assert.equal(container.children.length, 1, 'the container has children');
 
-                QUnit.start();
+                ready();
             })
             .init()
             .render(container);
     });
 
-    module('API', {
-        setup: function setup() {
+    QUnit.module('API', {
+        beforeEach: function setup(assert) {
             runner = qtiItemRunner('qti', itemData).init();
         },
-        teardown: function () {
+        afterEach: function(assert) {
             if (runner) {
                 runner.clear();
             }
@@ -126,8 +131,8 @@ define([
     ];
 
     QUnit
-        .cases(pluginApi)
-        .test('plugin API ', 1, function (data, assert) {
+        .cases.init(pluginApi)
+        .test('plugin API ', function(data, assert) {
             var feedback = modalFeedback(runner);
             assert.equal(typeof feedback[data.name], 'function', 'The modalDialogFeedback instances expose a "' + data.name + '" function');
         });
@@ -136,8 +141,8 @@ define([
     var testRunner;
     testRunnerFactory.registerProvider(providerName, providerMock());
 
-    module('modalFeedback', {
-        teardown: function setup() {
+    QUnit.module('modalFeedback', {
+        afterEach: function setup(assert) {
             if (runner) {
                 runner.clear();
             }
@@ -176,7 +181,7 @@ define([
             itemSession: {
                 FEEDBACK_2: {base: {identifier: 'feedbackModal_2'}},
                 FEEDBACK_4: {base: {identifier: 'feedbackModal_4'}},
-                FEEDBACK_5: {base: {identifier: 'feedbackModal_5'}}//feedbackModal_5 has the same content as the feedbackModal_4 so it won't be displayed
+                FEEDBACK_5: {base: {identifier: 'feedbackModal_5'}}//FeedbackModal_5 has the same content as the feedbackModal_4 so it won\'t be displayed
             },
             feedbacks: {
                 choice: [
@@ -204,9 +209,9 @@ define([
                 FEEDBACK_1: {base: {identifier: 'feedbackModal_1'}},
                 FEEDBACK_3: {base: {identifier: 'feedbackModal_3'}},
                 FEEDBACK_6: {base: {identifier: 'feedbackModal_6'}},
-                FEEDBACK_7: {base: {identifier: 'feedbackModal_7'}},//feedback #6 and #7 have the same title and text but even with different style, only the first one shall be displayed
+                FEEDBACK_7: {base: {identifier: 'feedbackModal_7'}}, //Feedback #6 and #7 have the same title and text but even with different style, only the first one shall be displayed
                 FEEDBACK_8: {base: {identifier: 'feedbackModal_8'}},
-                FEEDBACK_9: {base: {identifier: 'feedbackModal_9'}}//feedback #9 and #7 have the same title, text and style. The are related to inline iteractions that are both in the same block so contaier, so only the first one #7 will be displayed
+                FEEDBACK_9: {base: {identifier: 'feedbackModal_9'}}//Feedback #9 and #7 have the same title, text and style. The are related to inline iteractions that are both in the same block so contaier, so only the first one #7 will be displayed
             },
             feedbacks: {
                 choice: [
@@ -242,14 +247,15 @@ define([
         }
     ];
 
-    QUnit.cases(testCases)
-        .asyncTest('render feedbacks as alertMessage', function (testCase, assert) {
+    QUnit.cases.init(testCases)
+        .test('render feedbacks as alertMessage', function(testCase, assert) {
+            var ready = assert.async();
             var renderer;
 
             renderer = new QtiRenderer({baseUrl: './'});
-            new QtiLoader().loadItemData(itemData, function (_item) {
+            new QtiLoader().loadItemData(itemData, function(_item) {
                 var self = this;
-                renderer.load(function () {
+                renderer.load(function() {
 
                     var result, $result, mFeedback;
                     var $choiceInteraction, $orderInteraction, $textEntryInteraction, $inlineChoiceInteraction, $inlineInteractionContainer;
@@ -259,7 +265,7 @@ define([
                     item.setRenderer(this);
 
                     testRunner = testRunnerFactory(providerName);
-                    testRunner.itemRunner = {_item : item};
+                    testRunner.itemRunner = {_item: item};
 
                     result = item.render({});
 
@@ -283,11 +289,11 @@ define([
                     assert.equal($inlineInteractionContainer.length, 1, 'Inline interaction container found');
                     assert.equal($('.qti-modalFeedback', $result).length, 0, 'no modal feedback yet');
 
-                    //render in dom
+                    //Render in dom
                     $('#' + containerId).append($result);
 
                     testRunner
-                        .on('plugin-render.QtiModalFeedback', function (feedback) {
+                        .on('plugin-render.QtiModalFeedback', function(feedback) {
 
                             var feedbacks;
                             var $modalsBlock = $('#modalFeedbacks', $result);
@@ -296,7 +302,7 @@ define([
                             assert.equal($('.qti-modalFeedback', $modalsBlock).length, countFeedbacks, 'modal feedbacks in the special dom element');
 
                             feedbacks = testCase.feedbacks.choice.concat(testCase.feedbacks.order, testCase.feedbacks.inline);
-                            _.each(feedbacks, function (fb) {
+                            _.each(feedbacks, function(fb) {
 
                                 var $feedback = $result.find('[data-identifier=' + fb.identifier + ']');
                                 assert.equal($feedback.length, 1, 'found feedback dom element for ' + fb.identifier);
@@ -306,7 +312,7 @@ define([
                                         assert.ok($feedback.hasClass(fb.style), 'style class correctly set');
                                     } else {
 
-                                        if ($feedback[0].hasAttribute("class")) {
+                                        if ($feedback[0].hasAttribute('class')) {
                                             assert.equal($feedback.attr('class').trim(), 'modal qti-modalFeedback', 'the unique css class must be qti-modalFeedback');
                                         } else {
                                             assert.ok(false, 'the feedback must have class attribute');
@@ -331,9 +337,9 @@ define([
                     mFeedback.init();
                     mFeedback.render();
                     renderingQueue = modalFeedbackHelper.getFeedbacks(item, testCase.itemSession);
-                    testRunner.trigger('modalFeedbacks', renderingQueue, function () {
+                    testRunner.trigger('modalFeedbacks', renderingQueue, function() {
                         assert.ok(true, 'testRunner was resumed');
-                        QUnit.start();
+                        ready();
                     }, false);
 
                 }, self.getLoadedClasses());

@@ -86,7 +86,7 @@ define([
             this.saveTimers = function saveTimers(timeStore, timers){
                 return Promise.all(
                     _.map(timers, function(timer){
-                        return timeStore.setItem('consumed_' + timer.id, timer.total - timer.remainingTime);
+                        return timeStore.setItem('consumed_' + timer.id, timer.originalTime + timer.extraTime.total - timer.remainingTime);
                     })
                 );
             };
