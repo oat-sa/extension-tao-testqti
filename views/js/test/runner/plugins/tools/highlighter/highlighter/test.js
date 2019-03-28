@@ -34,7 +34,7 @@ define([
     QUnit.module('highlight mode');
 
     QUnit.test('Toggle highlight mode on/off', function(assert) {
-        var highlighter = highlighterFactory();
+        var highlighter = highlighterFactory({});
         var selection = window.getSelection();
         var range = document.createRange();
         var container = document.getElementsByClassName('qti-itemBody')[0];
@@ -93,7 +93,7 @@ define([
     QUnit.module('one shot highlight');
 
     QUnit.test('Highlight current selection, if any', function(assert) {
-        var highlighter = highlighterFactory();
+        var highlighter = highlighterFactory({});
         var selection = window.getSelection();
         var range = document.createRange();
         var container = document.getElementsByClassName('qti-itemBody')[0];
@@ -116,7 +116,7 @@ define([
     });
 
     QUnit.test('Do not perform highlight if selection is collapsed', function(assert) {
-        var highlighter = highlighterFactory();
+        var highlighter = highlighterFactory({});
         var selection = window.getSelection();
         var range = document.createRange();
         var container = document.getElementsByClassName('qti-itemBody')[0];
