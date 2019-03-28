@@ -56,9 +56,31 @@ define([
     }
 
     /**
-     * The highlighter Factory
+     * Discards the global text selection from the browser (window.selection)
      */
-    return function testHighlighterFactory() {
+    function discardSelection() {
+        // delay discarding, to allow time for multiple highlighters logic
+        setTimeout(function() {
+            selection.removeAllRanges();
+        }, 250);
+    }
+
+    /**
+     * The highlighter Factory
+     * @param {Object} options
+     * @param {String} [options.className]
+     * @param {String} [options.containerSelector]
+     * @param {Array} [options.containersBlackList]
+     * @param {String} [options.id]
+     * @returns {Object} the highlighter instance
+     */
+    return function testHighlighterFactory(options) {
+
+        /**
+         * Is this highlighter enabled or disabled?
+         * @type {boolean}
+         */
+        var enabled = true;
 
         /**
          * Are we in highlight mode, meaning that each new selection is automatically highlighted
@@ -71,8 +93,9 @@ define([
          * The helper that does the highlight magic
          */
         var highlightHelper = highlighterFactory({
-            className: 'txt-user-highlight',
-            containerSelector: '.qti-itemBody'
+            className: options.className || 'txt-user-highlight',
+            containerSelector: options.containerSelector || '.qti-itemBody',
+            containersBlackList: options.containersBlackList || []
         });
 
         //add event to automatically highlight the recently made selection if needed
@@ -80,7 +103,7 @@ define([
         $(document).on('mouseup.highlighter touchend.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
-                selection.removeAllRanges();
+                discardSelection();
             }
         });
 
@@ -88,6 +111,28 @@ define([
          * The highlighter instance
          */
         return eventifier({
+
+            /**
+             * Enable this instance
+             */
+            enable: function enable() {
+                enabled = true;
+            },
+
+            /**
+             * Disable this instance
+             */
+            disable: function disable() {
+                enabled = false;
+            },
+
+            /**
+             * Is this instance currently enabled?
+             * @returns {Boolean}
+             */
+            isEnabled: function isEnabled() {
+                return enabled;
+            },
 
             /**
              * toggle highlighting mode on and off
@@ -100,6 +145,7 @@ define([
                 } else {
                     this.trigger('end');
                 }
+                return this;
             },
 
             /**
@@ -111,7 +157,7 @@ define([
                         this.toggleHighlighting(true);
                         highlightHelper.highlightRanges(getAllRanges());
                         this.toggleHighlighting(false);
-                        selection.removeAllRanges();
+                        discardSelection();
                     } else {
                         this.toggleHighlighting(true);
                     }
@@ -144,6 +190,14 @@ define([
             clearHighlights: function clearHighlights() {
                 highlightHelper.clearHighlights();
                 selection.removeAllRanges();
+            },
+
+            /**
+             * Getter for the instance's id
+             * @returns {String}
+             */
+            getId: function getId() {
+                return options.id;
             }
         });
     };
