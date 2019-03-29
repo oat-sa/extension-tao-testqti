@@ -1,6 +1,6 @@
 define([
     'lodash',
-    'taoQtiTest/runner/helpers/offlineJumpTable',
+    'taoQtiTest/runner/services/offlineJumpTable',
     'taoQtiTest/test/runner/helpers/offlineJumpTable/mocks/itemStoreMock',
     'json!taoQtiTest/test/runner/helpers/offlineJumpTable/testMap.json',
 ], function(

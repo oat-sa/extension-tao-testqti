@@ -22,7 +22,7 @@ define([
     'lodash',
     'core/Promise',
     'util/capitalize',
-    'taoQtiTest/runner/helpers/offlineJumpTable',
+    'taoQtiTest/runner/services/offlineJumpTable',
     'taoQtiTest/runner/helpers/testContextBuilder'
 ], function(
     _,
