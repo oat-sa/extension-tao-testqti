@@ -19,9 +19,10 @@
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
+
     'lodash',
     'taoQtiTest/controller/creator/helpers/processingRule'
-], function (_, processingRule) {
+], function(_, processingRule) {
     'use strict';
 
     var createCases, createErrorCases;
@@ -63,23 +64,19 @@ define([
         {title: 'outcomeElse'}
     ];
 
-
     QUnit.module('helpers/processingRule');
 
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof processingRule, 'object', "The processingRule helper module exposes an object");
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof processingRule, 'object', 'The processingRule helper module exposes an object');
     });
 
-
     QUnit
-        .cases(processingRuleApi)
-        .test('helpers/processingRule API ', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(processingRuleApi)
+        .test('helpers/processingRule API ', function(data, assert) {
+            assert.expect(1);
             assert.equal(typeof processingRule[data.title], 'function', 'The processingRule helper exposes a "' + data.title + '" function');
         });
-
 
     createCases = [{
         title: 'only the type',
@@ -158,12 +155,11 @@ define([
     }];
 
     QUnit
-        .cases(createCases)
-        .test('helpers/processingRule.create()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(createCases)
+        .test('helpers/processingRule.create()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.create(data.type, data.identifier, data.expression), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     createErrorCases = [{
         title: 'Missing type',
@@ -195,14 +191,13 @@ define([
     }];
 
     QUnit
-        .cases(createErrorCases)
-        .test('helpers/processingRule.create() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(createErrorCases)
+        .test('helpers/processingRule.create() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.create(data.type, data.identifier, data.expression);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     setExpressionCases = [{
         title: 'Set expression',
@@ -321,13 +316,12 @@ define([
     }];
 
     QUnit
-        .cases(setExpressionCases)
-        .test('helpers/processingRule.setExpression()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(setExpressionCases)
+        .test('helpers/processingRule.setExpression()', function(data, assert) {
+            assert.expect(1);
             processingRule.setExpression(data.processingRule, data.expression);
             assert.deepEqual(data.processingRule, data.expected, 'The processingRule helper has correctly updated the processing rule');
         });
-
 
     setExpressionErrorCases = [{
         title: 'Invalid expression',
@@ -344,14 +338,13 @@ define([
     }];
 
     QUnit
-        .cases(setExpressionErrorCases)
-        .test('helpers/processingRule.setExpression() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(setExpressionErrorCases)
+        .test('helpers/processingRule.setExpression() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.setExpression(data.processingRule, data.expression);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     addExpressionCases = [{
         title: 'Set expression',
@@ -482,13 +475,12 @@ define([
     }];
 
     QUnit
-        .cases(addExpressionCases)
-        .test('helpers/processingRule.addExpression()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(addExpressionCases)
+        .test('helpers/processingRule.addExpression()', function(data, assert) {
+            assert.expect(1);
             processingRule.addExpression(data.processingRule, data.expression);
             assert.deepEqual(data.processingRule, data.expected, 'The processingRule helper has correctly updated the processing rule');
         });
-
 
     addExpressionErrorCases = [{
         title: 'Invalid expression',
@@ -505,14 +497,13 @@ define([
     }];
 
     QUnit
-        .cases(addExpressionErrorCases)
-        .test('helpers/processingRule.setExpression() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(addExpressionErrorCases)
+        .test('helpers/processingRule.setExpression() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.addExpression(data.processingRule, data.expression);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     setOutcomeValueCases = [{
         title: 'Identifier only',
@@ -554,12 +545,11 @@ define([
     }];
 
     QUnit
-        .cases(setOutcomeValueCases)
-        .test('helpers/processingRule.setOutcomeValue()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(setOutcomeValueCases)
+        .test('helpers/processingRule.setOutcomeValue()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.setOutcomeValue(data.identifier, data.expression), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     setOutcomeValueErrorCases = [{
         title: 'Missing identifier'
@@ -576,14 +566,13 @@ define([
     }];
 
     QUnit
-        .cases(setOutcomeValueErrorCases)
-        .test('helpers/processingRule.setOutcomeValue() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(setOutcomeValueErrorCases)
+        .test('helpers/processingRule.setOutcomeValue() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.setOutcomeValue(data.identifier, data.expression);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     gteCases = [{
         title: 'left and right',
@@ -609,12 +598,11 @@ define([
     }];
 
     QUnit
-        .cases(gteCases)
-        .test('helpers/processingRule.gte()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(gteCases)
+        .test('helpers/processingRule.gte()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.gte(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     lteCases = [{
         title: 'left and right',
@@ -640,12 +628,11 @@ define([
     }];
 
     QUnit
-        .cases(lteCases)
-        .test('helpers/processingRule.lte()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(lteCases)
+        .test('helpers/processingRule.lte()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.lte(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     divideCases = [{
         title: 'left and right',
@@ -671,12 +658,11 @@ define([
     }];
 
     QUnit
-        .cases(divideCases)
-        .test('helpers/processingRule.divide()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(divideCases)
+        .test('helpers/processingRule.divide()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.divide(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     sumCases = [{
         title: 'single term',
@@ -715,12 +701,11 @@ define([
     }];
 
     QUnit
-        .cases(sumCases)
-        .test('helpers/processingRule.sum()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(sumCases)
+        .test('helpers/processingRule.sum()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.sum(data.terms), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     testVariablesCases = [{
         title: 'only identifier',
@@ -828,12 +813,11 @@ define([
     }];
 
     QUnit
-        .cases(testVariablesCases)
-        .test('helpers/processingRule.testVariables()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(testVariablesCases)
+        .test('helpers/processingRule.testVariables()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.testVariables(data.identifier, data.type, data.weight, data.includeCategories, data.excludeCategories), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     testVariablesErrorCases = [{
         title: 'Missing identifier'
@@ -854,14 +838,13 @@ define([
     }];
 
     QUnit
-        .cases(testVariablesErrorCases)
-        .test('helpers/processingRule.testVariables() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(testVariablesErrorCases)
+        .test('helpers/processingRule.testVariables() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.testVariables(data.identifier, data.type, data.weight, data.includeCategories, data.excludeCategories);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     outcomeMaximumCases = [{
         title: 'only identifier',
@@ -937,12 +920,11 @@ define([
     }];
 
     QUnit
-        .cases(outcomeMaximumCases)
-        .test('helpers/processingRule.outcomeMaximum()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(outcomeMaximumCases)
+        .test('helpers/processingRule.outcomeMaximum()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.outcomeMaximum(data.identifier, data.weight, data.includeCategories, data.excludeCategories), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     outcomeMaximumErrorCases = [{
         title: 'Missing identifier'
@@ -963,14 +945,13 @@ define([
     }];
 
     QUnit
-        .cases(outcomeMaximumErrorCases)
-        .test('helpers/processingRule.outcomeMaximum() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(outcomeMaximumErrorCases)
+        .test('helpers/processingRule.outcomeMaximum() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.outcomeMaximum(data.identifier, data.weight, data.includeCategories, data.excludeCategories);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     numberPresentedCases = [{
         title: 'no categories',
@@ -1019,12 +1000,11 @@ define([
     }];
 
     QUnit
-        .cases(numberPresentedCases)
-        .test('helpers/processingRule.numberPresented()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(numberPresentedCases)
+        .test('helpers/processingRule.numberPresented()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.numberPresented(data.includeCategories, data.excludeCategories), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     baseValueCases = [{
         title: 'no input',
@@ -1071,12 +1051,11 @@ define([
     }];
 
     QUnit
-        .cases(baseValueCases)
-        .test('helpers/processingRule.baseValue()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(baseValueCases)
+        .test('helpers/processingRule.baseValue()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.baseValue(data.value, data.type), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     variableCases = [{
         title: 'identifier',
@@ -1098,12 +1077,11 @@ define([
     }];
 
     QUnit
-        .cases(variableCases)
-        .test('helpers/processingRule.variable()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(variableCases)
+        .test('helpers/processingRule.variable()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.variable(data.identifier, data.weight), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     variableErrorCases = [{
         title: 'Missing identifier'
@@ -1124,14 +1102,13 @@ define([
     }];
 
     QUnit
-        .cases(variableErrorCases)
-        .test('helpers/processingRule.variables() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(variableErrorCases)
+        .test('helpers/processingRule.variables() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.variable(data.identifier, data.weight);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     matchCases = [{
         title: 'left and right',
@@ -1176,12 +1153,11 @@ define([
     }];
 
     QUnit
-        .cases(matchCases)
-        .test('helpers/processingRule.match()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(matchCases)
+        .test('helpers/processingRule.match()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.match(data.left, data.right), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     isNullCases = [{
         title: 'with parameter',
@@ -1201,12 +1177,11 @@ define([
     }];
 
     QUnit
-        .cases(isNullCases)
-        .test('helpers/processingRule.isNull()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(isNullCases)
+        .test('helpers/processingRule.isNull()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.isNull(data.expression), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     isNullErrorCases = [{
         title: 'without parameter',
@@ -1221,14 +1196,13 @@ define([
     }];
 
     QUnit
-        .cases(isNullErrorCases)
-        .test('helpers/processingRule.isNull() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(isNullErrorCases)
+        .test('helpers/processingRule.isNull() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.isNull(data.expression);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     outcomeConditionCases = [{
         title: 'If but no Else',
@@ -1263,12 +1237,11 @@ define([
     }];
 
     QUnit
-        .cases(outcomeConditionCases)
-        .test('helpers/processingRule.outcomeCondition()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(outcomeConditionCases)
+        .test('helpers/processingRule.outcomeCondition()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.outcomeCondition(data.outcomeIf, data.outcomeElse), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     outcomeConditionErrorCases = [{
         title: 'No If nor Else'
@@ -1297,14 +1270,13 @@ define([
     }];
 
     QUnit
-        .cases(outcomeConditionErrorCases)
-        .test('helpers/processingRule.outcomeCondition() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(outcomeConditionErrorCases)
+        .test('helpers/processingRule.outcomeCondition() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.outcomeCondition(data.outcomeIf, data.outcomeElse);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     outcomeIfCases = [{
         title: 'An Expression, but empty Instruction',
@@ -1360,12 +1332,11 @@ define([
     }];
 
     QUnit
-        .cases(outcomeIfCases)
-        .test('helpers/processingRule.outcomeIf()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(outcomeIfCases)
+        .test('helpers/processingRule.outcomeIf()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.outcomeIf(data.expression, data.instruction), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     outcomeIfErrorCases = [{
         title: 'No Expression nor Instruction'
@@ -1392,14 +1363,13 @@ define([
     }];
 
     QUnit
-        .cases(outcomeIfErrorCases)
-        .test('helpers/processingRule.outcomeIf() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(outcomeIfErrorCases)
+        .test('helpers/processingRule.outcomeIf() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.outcomeIf(data.expression, data.instruction);
             }, 'The processingRule throws error when the input is wrong');
         });
-
 
     outcomeElseCases = [{
         title: 'An empty Instruction',
@@ -1437,12 +1407,11 @@ define([
     }];
 
     QUnit
-        .cases(outcomeElseCases)
-        .test('helpers/processingRule.outcomeElse()', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(outcomeElseCases)
+        .test('helpers/processingRule.outcomeElse()', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(processingRule.outcomeElse(data.instruction), data.expected, 'The processingRule helper has created the expected processing rule');
         });
-
 
     outcomeElseErrorCases = [{
         title: 'No Instruction'
@@ -1459,10 +1428,10 @@ define([
     }];
 
     QUnit
-        .cases(outcomeElseErrorCases)
-        .test('helpers/processingRule.outcomeElse() #error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(outcomeElseErrorCases)
+        .test('helpers/processingRule.outcomeElse() #error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 processingRule.outcomeElse(data.instruction);
             }, 'The processingRule throws error when the input is wrong');
         });

@@ -19,10 +19,10 @@
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
+
     'lodash',
     'taoQtiTest/controller/creator/helpers/qtiElement'
-], function (_,
-             qtiElementHelper) {
+], function(_, qtiElementHelper) {
     'use strict';
 
     var createCases, createErrorCases;
@@ -35,23 +35,19 @@ define([
         {title: 'lookupProperty'}
     ];
 
-
     QUnit.module('helpers/qtiElement');
 
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof qtiElementHelper, 'object', "The qtiElement helper module exposes an object");
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof qtiElementHelper, 'object', 'The qtiElement helper module exposes an object');
     });
 
-
     QUnit
-        .cases(qtiElementHelperApi)
-        .test('helpers/qtiElement API ', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(qtiElementHelperApi)
+        .test('helpers/qtiElement API ', function(data, assert) {
+            assert.expect(1);
             assert.equal(typeof qtiElementHelper[data.title], 'function', 'The qtiElement helper exposes a "' + data.title + '" function');
         });
-
 
     createCases = [{
         title: 'simple',
@@ -108,12 +104,11 @@ define([
     }];
 
     QUnit
-        .cases(createCases)
-        .test('helpers/qtiElement.create() ', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(createCases)
+        .test('helpers/qtiElement.create() ', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(qtiElementHelper.create(data.type, data.identifier, data.properties), data.expected, 'The qtiElement helper has created the expected element');
         });
-
 
     createErrorCases = [{
         title: 'Missing type'
@@ -133,16 +128,15 @@ define([
     }];
 
     QUnit
-        .cases(createErrorCases)
-        .test('helpers/qtiElement.create()#error', function (data, assert) {
-            QUnit.expect(1);
-            assert.throws(function () {
+        .cases.init(createErrorCases)
+        .test('helpers/qtiElement.create()#error', function(data, assert) {
+            assert.expect(1);
+            assert.throws(function() {
                 qtiElementHelper.create(data.type, data.identifier, data.properties);
             }, 'An error must be thrown when the type or the identifier is wrong');
         });
 
-
-    QUnit.test('helpers/qtiElement.find()', function (assert) {
+    QUnit.test('helpers/qtiElement.find()', function(assert) {
         var expression = [{
             'qti-type': 'foo',
             identifier: 'FOO'
@@ -151,7 +145,7 @@ define([
             identifier: 'BAR'
         }];
 
-        QUnit.expect(5);
+        assert.expect(5);
         assert.equal(qtiElementHelper.find(expression, 'foo'), expression[0], 'The qtiElement helper has found the right expression');
         assert.equal(qtiElementHelper.find(expression, 'bar'), expression[1], 'The qtiElement helper has found the right expression');
         assert.equal(qtiElementHelper.find(expression, 'baz'), null, 'The qtiElement helper has not found any expression');
@@ -159,77 +153,76 @@ define([
         assert.equal(qtiElementHelper.find(expression[0], 'baz'), null, 'The qtiElement helper has not found any expression');
     });
 
-
     qtiElementLookupCases = [{
         title: 'Gets an element by its path, multiple nodes',
         tree: {
-            "qti-type": "setOutcomeValue",
-            "expression": {
-                "qti-type": "gte",
-                "expressions": [{
-                    "qti-type": "divide",
-                    "expressions": [{
-                        "qti-type": "sum",
-                        "expression": {
-                            "qti-type": "testVariables"
+            'qti-type': 'setOutcomeValue',
+            'expression': {
+                'qti-type': 'gte',
+                'expressions': [{
+                    'qti-type': 'divide',
+                    'expressions': [{
+                        'qti-type': 'sum',
+                        'expression': {
+                            'qti-type': 'testVariables'
                         }
                     }, {
-                        "qti-type": "numberPresented"
+                        'qti-type': 'numberPresented'
                     }]
                 }, {
-                    "qti-type": "baseValue"
+                    'qti-type': 'baseValue'
                 }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables',
         nodes: ['expression', 'expressions'],
         expected: {
-            "qti-type": "testVariables"
+            'qti-type': 'testVariables'
         }
     }, {
         title: 'Gets an element by its path, single node',
         tree: {
-            "qti-type": "setOutcomeValue",
-            "expression": {
-                "qti-type": "gte",
-                "expression": [{
-                    "qti-type": "divide",
-                    "expression": [{
-                        "qti-type": "sum",
-                        "expression": {
-                            "qti-type": "testVariables"
+            'qti-type': 'setOutcomeValue',
+            'expression': {
+                'qti-type': 'gte',
+                'expression': [{
+                    'qti-type': 'divide',
+                    'expression': [{
+                        'qti-type': 'sum',
+                        'expression': {
+                            'qti-type': 'testVariables'
                         }
                     }, {
-                        "qti-type": "numberPresented"
+                        'qti-type': 'numberPresented'
                     }]
                 }, {
-                    "qti-type": "baseValue"
+                    'qti-type': 'baseValue'
                 }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables',
         nodes: 'expression',
         expected: {
-            "qti-type": "testVariables"
+            'qti-type': 'testVariables'
         }
     }, {
         title: 'Gets an unknown element by its path',
         tree: {
-            "qti-type": "setOutcomeValue",
-            "expression": {
-                "qti-type": "gte",
-                "expression": [{
-                    "qti-type": "divide",
-                    "expression": [{
-                        "qti-type": "sum",
-                        "expression": {
-                            "qti-type": "testVariables"
+            'qti-type': 'setOutcomeValue',
+            'expression': {
+                'qti-type': 'gte',
+                'expression': [{
+                    'qti-type': 'divide',
+                    'expression': [{
+                        'qti-type': 'sum',
+                        'expression': {
+                            'qti-type': 'testVariables'
                         }
                     }, {
-                        "qti-type": "numberPresented"
+                        'qti-type': 'numberPresented'
                     }]
                 }, {
-                    "qti-type": "baseValue"
+                    'qti-type': 'baseValue'
                 }]
             }
         },
@@ -239,21 +232,21 @@ define([
     }, {
         title: 'Gets an element by its path, missing node list',
         tree: {
-            "qti-type": "setOutcomeValue",
-            "expression": {
-                "qti-type": "gte",
-                "expression": [{
-                    "qti-type": "divide",
-                    "expression": [{
-                        "qti-type": "sum",
-                        "expression": {
-                            "qti-type": "testVariables"
+            'qti-type': 'setOutcomeValue',
+            'expression': {
+                'qti-type': 'gte',
+                'expression': [{
+                    'qti-type': 'divide',
+                    'expression': [{
+                        'qti-type': 'sum',
+                        'expression': {
+                            'qti-type': 'testVariables'
                         }
                     }, {
-                        "qti-type": "numberPresented"
+                        'qti-type': 'numberPresented'
                     }]
                 }, {
-                    "qti-type": "baseValue"
+                    'qti-type': 'baseValue'
                 }]
             }
         },
@@ -262,100 +255,99 @@ define([
     }];
 
     QUnit
-        .cases(qtiElementLookupCases)
-        .test('helpers/qtiElement.lookupElement() ', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(qtiElementLookupCases)
+        .test('helpers/qtiElement.lookupElement() ', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(qtiElementHelper.lookupElement(data.tree, data.path, data.nodes), data.expected, 'The request element has been found');
         });
-
 
     qtiElementPropertyCases = [{
         title: 'Gets a property by its path, multiple nodes',
         tree: {
-            "qti-type": "setOutcomeValue",
-            "value": "0",
-            "expression": {
-                "qti-type": "gte",
-                "value": "1",
-                "expressions": [{
-                    "qti-type": "divide",
-                    "value": "2",
-                    "expressions": [{
-                        "qti-type": "sum",
-                        "value": "3",
-                        "expression": {
-                            "qti-type": "testVariables",
-                            "value": "4"
+            'qti-type': 'setOutcomeValue',
+            'value': '0',
+            'expression': {
+                'qti-type': 'gte',
+                'value': '1',
+                'expressions': [{
+                    'qti-type': 'divide',
+                    'value': '2',
+                    'expressions': [{
+                        'qti-type': 'sum',
+                        'value': '3',
+                        'expression': {
+                            'qti-type': 'testVariables',
+                            'value': '4'
                         }
                     }, {
-                        "qti-type": "numberPresented",
-                        "value": "5"
+                        'qti-type': 'numberPresented',
+                        'value': '5'
                     }]
                 }, {
-                    "qti-type": "baseValue",
-                    "value": "6"
+                    'qti-type': 'baseValue',
+                    'value': '6'
                 }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables.value',
         nodes: ['expression', 'expressions'],
-        expected: "4"
+        expected: '4'
     }, {
         title: 'Gets a property by its path, single node',
         tree: {
-            "qti-type": "setOutcomeValue",
-            "value": "0",
-            "expression": {
-                "qti-type": "gte",
-                "value": "1",
-                "expression": [{
-                    "qti-type": "divide",
-                    "value": "2",
-                    "expression": [{
-                        "qti-type": "sum",
-                        "value": "3",
-                        "expression": {
-                            "qti-type": "testVariables",
-                            "value": "4"
+            'qti-type': 'setOutcomeValue',
+            'value': '0',
+            'expression': {
+                'qti-type': 'gte',
+                'value': '1',
+                'expression': [{
+                    'qti-type': 'divide',
+                    'value': '2',
+                    'expression': [{
+                        'qti-type': 'sum',
+                        'value': '3',
+                        'expression': {
+                            'qti-type': 'testVariables',
+                            'value': '4'
                         }
                     }, {
-                        "qti-type": "numberPresented",
-                        "value": "5"
+                        'qti-type': 'numberPresented',
+                        'value': '5'
                     }]
                 }, {
-                    "qti-type": "baseValue",
-                    "value": "6"
+                    'qti-type': 'baseValue',
+                    'value': '6'
                 }]
             }
         },
         path: 'setOutcomeValue.gte.divide.sum.testVariables.value',
         nodes: 'expression',
-        expected: "4"
+        expected: '4'
     }, {
         title: 'Gets a property element by its path',
         tree: {
-            "qti-type": "setOutcomeValue",
-            "value": "0",
-            "expression": {
-                "qti-type": "gte",
-                "value": "1",
-                "expressions": [{
-                    "qti-type": "divide",
-                    "value": "2",
-                    "expressions": [{
-                        "qti-type": "sum",
-                        "value": "3",
-                        "expression": {
-                            "qti-type": "testVariables",
-                            "value": "4"
+            'qti-type': 'setOutcomeValue',
+            'value': '0',
+            'expression': {
+                'qti-type': 'gte',
+                'value': '1',
+                'expressions': [{
+                    'qti-type': 'divide',
+                    'value': '2',
+                    'expressions': [{
+                        'qti-type': 'sum',
+                        'value': '3',
+                        'expression': {
+                            'qti-type': 'testVariables',
+                            'value': '4'
                         }
                     }, {
-                        "qti-type": "numberPresented",
-                        "value": "5"
+                        'qti-type': 'numberPresented',
+                        'value': '5'
                     }]
                 }, {
-                    "qti-type": "baseValue",
-                    "value": "6"
+                    'qti-type': 'baseValue',
+                    'value': '6'
                 }]
             }
         },
@@ -365,28 +357,28 @@ define([
     }, {
         title: 'Gets a property by its path, missing node list',
         tree: {
-            "qti-type": "setOutcomeValue",
-            "value": "0",
-            "expression": {
-                "qti-type": "gte",
-                "value": "1",
-                "expressions": [{
-                    "qti-type": "divide",
-                    "value": "2",
-                    "expressions": [{
-                        "qti-type": "sum",
-                        "value": "3",
-                        "expression": {
-                            "qti-type": "testVariables",
-                            "value": "4"
+            'qti-type': 'setOutcomeValue',
+            'value': '0',
+            'expression': {
+                'qti-type': 'gte',
+                'value': '1',
+                'expressions': [{
+                    'qti-type': 'divide',
+                    'value': '2',
+                    'expressions': [{
+                        'qti-type': 'sum',
+                        'value': '3',
+                        'expression': {
+                            'qti-type': 'testVariables',
+                            'value': '4'
                         }
                     }, {
-                        "qti-type": "numberPresented",
-                        "value": "5"
+                        'qti-type': 'numberPresented',
+                        'value': '5'
                     }]
                 }, {
-                    "qti-type": "baseValue",
-                    "value": "6"
+                    'qti-type': 'baseValue',
+                    'value': '6'
                 }]
             }
         },
@@ -395,9 +387,9 @@ define([
     }];
 
     QUnit
-        .cases(qtiElementPropertyCases)
-        .test('helpers/qtiElement.lookupProperty() ', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(qtiElementPropertyCases)
+        .test('helpers/qtiElement.lookupProperty() ', function(data, assert) {
+            assert.expect(1);
             assert.deepEqual(qtiElementHelper.lookupProperty(data.tree, data.path, data.nodes), data.expected, 'The request property has been found');
         });
 });

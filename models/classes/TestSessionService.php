@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\models;
 
+use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -41,7 +42,13 @@ use taoQtiTest_helpers_TestSessionStorage;
  */
 class TestSessionService extends ConfigurableService implements DeliveryExecutionDelete
 {
+    use OntologyAwareTrait;
+
     const SERVICE_ID = 'taoQtiTest/TestSessionService';
+
+    const SESSION_PROPERTY_SESSION = 'session';
+    const SESSION_PROPERTY_STORAGE = 'storage';
+    const SESSION_PROPERTY_COMPILATION = 'compilation';
 
     /** 
      * Cache to store session instances
@@ -52,10 +59,11 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     /**
      * Loads a test session into the memory cache
      * @param DeliveryExecution $deliveryExecution
+     * @param boolean $withCache
      * @throws \common_exception_NotFound
      * @throws \common_ext_ExtensionException
      */
-    protected function loadSession(DeliveryExecution $deliveryExecution)
+    protected function loadSession(DeliveryExecution $deliveryExecution, $withCache = true)
     {
         $session = null;
         $sessionId = $deliveryExecution->getIdentifier();
@@ -64,12 +72,17 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
             $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
             $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
         } catch (\common_exception_NoContent $e) {
-            self::$cache[$sessionId] = [
-                'session' => null,
-                'storage' => null,
-                'compilation' => null
+            if (!$withCache && !isset(self::$cache[$sessionId])) {
+                self::$cache = [];
+            }
+            $sessionData = [
+                self::SESSION_PROPERTY_SESSION => null,
+                self::SESSION_PROPERTY_STORAGE => null,
+                self::SESSION_PROPERTY_COMPILATION => null
             ];
+            self::$cache[$sessionId] = $sessionData;
             return;
+
         }
 
         /** @var DeliveryServerService $deliveryServerService */
@@ -102,10 +115,14 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
             'public' => $fileStorage->getDirectoryById($directoryIds[1])
         );
 
+        if (!$withCache && !isset(self::$cache[$sessionId])) {
+            self::$cache = [];
+        }
+
         self::$cache[$sessionId] = [
-            'session' => $session,
-            'storage' => $qtiStorage,
-            'compilation' => $directories
+            self::SESSION_PROPERTY_SESSION => $session,
+            self::SESSION_PROPERTY_STORAGE => $qtiStorage,
+            self::SESSION_PROPERTY_COMPILATION => $directories
         ];
     }
 
@@ -116,25 +133,26 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      */
     protected function hasTestSession($sessionId)
     {
-        return (isset(self::$cache[$sessionId]) && isset(self::$cache[$sessionId]['session']));
+        return (isset(self::$cache[$sessionId]) && isset(self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]));
     }
 
     /**
      * Gets the test session for a particular deliveryExecution
      *
      * @param DeliveryExecution $deliveryExecution
+     * @param boolean $withCache
      * @return \qtism\runtime\tests\AssessmentTestSession
      * @throws \common_exception_Error
      * @throws \common_exception_MissingParameter
      */
-    public function getTestSession(DeliveryExecution $deliveryExecution)
+    public function getTestSession(DeliveryExecution $deliveryExecution, $withCache = true)
     {
         $sessionId = $deliveryExecution->getIdentifier();
         if (!$this->hasTestSession($sessionId)) {
-            $this->loadSession($deliveryExecution);
+            $this->loadSession($deliveryExecution, $withCache);
         }
 
-        return self::$cache[$sessionId]['session'];
+        return self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION];
     }
     
     /**
@@ -148,9 +166,9 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     {
         $sessionId = $session->getSessionId();
         self::$cache[$sessionId] = [
-            'session' => $session,
-            'storage' => $storage,
-            'compilation' => $compilationDirectories
+            self::SESSION_PROPERTY_SESSION => $session,
+            self::SESSION_PROPERTY_STORAGE => $storage,
+            self::SESSION_PROPERTY_COMPILATION => $compilationDirectories
         ];
     }
     
@@ -177,19 +195,23 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     /**
      * Gets the test session storage for a particular deliveryExecution
      *
-     * @param DeliveryExecution $deliveryExecution
-     * @return \taoQtiTest_helpers_TestSessionStorage
-     * @throws \common_exception_Error
-     * @throws \common_exception_MissingParameter
+     * @param DeliveryExecutionInterface $deliveryExecution
+     * @param boolean $withCache
+     * @return taoQtiTest_helpers_TestSessionStorage|null
+     * @throws QtiTestExtractionFailedException
+     * @throws \common_Exception
+     * @throws \common_exception_NotFound
+     * @throws \common_ext_ExtensionException
+     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
      */
-    public function getTestSessionStorage(DeliveryExecutionInterface $deliveryExecution)
+    public function getTestSessionStorage(DeliveryExecutionInterface $deliveryExecution, $withCache = true)
     {
         $sessionId = $deliveryExecution->getIdentifier();
         if (!$this->hasTestSession($sessionId)) {
-            $this->loadSession($deliveryExecution);
+            $this->loadSession($deliveryExecution, $withCache);
         }
 
-        return self::$cache[$sessionId]['storage'];
+        return self::$cache[$sessionId][self::SESSION_PROPERTY_STORAGE];
     }
 
     /**
@@ -222,7 +244,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         $sessionId = $session->getSessionId();
         if ($this->hasTestSession($sessionId)) {
             /** @var AbstractQtiBinaryStorage $storage */
-            $storage = self::$cache[$sessionId]['storage'];
+            $storage = self::$cache[$sessionId][self::SESSION_PROPERTY_STORAGE];
             $storage->persist($session);
         }
     }
@@ -238,7 +260,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
             $sessionId = $request->getSession()->getSessionId();
         }
         try{
-            $storage = $this->getTestSessionStorage($request->getDeliveryExecution());
+            $storage = $this->getTestSessionStorage($request->getDeliveryExecution(), false);
             if ($storage instanceof taoQtiTest_helpers_TestSessionStorage) {
                 return $storage->delete($sessionId);
             }
