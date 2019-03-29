@@ -36,14 +36,16 @@ define([
     'use strict';
 
     /**
+     * Jump table entry definition.
+     *
+     * @typedef Jump
+     * @property {string} item      - the identifier of the item
+     * @property {string} section   - the identifier of the section
+     * @property {string} part      - the identifier of the part
+     * @property {integer} position - the position of the jump entry, starting from 0
+     */
+    /**
      * Helper class for the offline version of the jump table which helps the navigation of the test taker.
-     * The jump table will store all the elements in the following format:
-     * {
-     *     item: '...', // the identifier of the item
-     *     section: '...', // the identifier of the section
-     *     part: '...', // the identifier of the part
-     *     position: 0 // the position of the jump entry, starting from 0
-     * }
      */
     var offlineJumpTableFactory = function offlineJumpTableFactory(itemStore) {
         var testMap = {};
@@ -108,22 +110,6 @@ define([
         }
 
         /**
-         * Returns all the part identifiers in order.
-         *
-         * @param {Object} map
-         * @returns {Array}
-         */
-        function getParts(map) {
-            return getSimplifiedTestMap(map)
-                .map(function(row) {
-                    return row.part;
-                })
-                .filter(function(value, index, thisArg) {
-                    return thisArg.indexOf(value) === index;
-                });
-        }
-
-        /**
          * Returns a simplified test map array, which will contain the item, section and part identifiers.
          *
          * @param {Object} map
@@ -154,12 +140,22 @@ define([
         }
 
         return {
+            /**
+             * Setter for test map
+             *
+             * @param {Object} map
+             * @returns {offlineJumpTableFactory}
+             */
             setTestMap: function setTestMap(map) {
                 testMap = map;
 
                 return this;
             },
 
+            /**
+             * Initialization method for the offline jump table, which is responsible to add the first item as the first
+             * jump and collect the correct responses for the branching rules.
+             */
             init: function init() {
                 var firstItem,
                     simplifiedTestMap = getSimplifiedTestMap(testMap);
@@ -269,6 +265,9 @@ define([
 
             /**
              * Adds the next item to the end of the jump table
+             *
+             * @param {Object} params
+             * @returns {Promise}
              */
             jumpToNextItem: function jumpToNextItem(params) {
                 var self = this;
@@ -322,122 +321,48 @@ define([
             /**
              * Adds the first item of the next section to the end of the jump table
              *
-             * @returns {offlineJumpTableFactory}
+             * @param {Object} params
+             * @returns {Promise}
              */
-            jumpToNextSection: function jumpToNextSection() {
-                var lastJumpSection = this.getLastJump().section || null;
-                var sections = getSections(testMap);
-                var sectionSliceIndex = sections.indexOf(lastJumpSection);
-                var sectionIdentifierToAdd = sections.slice(sectionSliceIndex + 1).shift();
-                var itemToAdd = getSimplifiedTestMap(testMap)
-                    .filter(function(row) {
-                        return row.section === sectionIdentifierToAdd;
-                    })
-                    .shift();
+            jumpToNextSection: function jumpToNextSection(params) {
+                var self = this;
 
-                if (itemToAdd) {
-                    this.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
-                }
+                return new Promise(function(resolve) {
+                    var simplifiedTestMap = getSimplifiedTestMap(testMap);
+                    var lastJumpSection = self.getLastJump().section || null;
+                    var sections = getSections(testMap);
+                    var sectionSliceIndex = sections.indexOf(lastJumpSection);
+                    var sectionIdentifierToAdd = sections.slice(sectionSliceIndex + 1).shift();
+                    var itemToAdd = simplifiedTestMap
+                        .filter(function(row) {
+                            return row.section === sectionIdentifierToAdd;
+                        })
+                        .shift();
 
-                return this;
-            },
-
-            /**
-             * Adds the first item of the next part to the end of the jump table
-             *
-             * @returns {offlineJumpTableFactory}
-             */
-            jumpToNextPart: function jumpToNextPart() {
-                var lastJumpPart = this.getLastJump().part || null;
-                var parts = getParts(testMap);
-                var partSliceIndex = parts.indexOf(lastJumpPart);
-                var partIdentifierToAdd = parts.slice(partSliceIndex + 1).shift();
-                var itemToAdd = getSimplifiedTestMap(testMap)
-                    .filter(function(row) {
-                        return row.part === partIdentifierToAdd;
-                    })
-                    .shift();
-
-                if (itemToAdd) {
-                    this.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
-                }
-
-                return this;
+                    return itemToAdd
+                        ? self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve)
+                        : resolve();
+                });
             },
 
             /**
              * Jumps to the previous item by deleting the last entry of the jump table.
              *
-             * @returns {offlineJumpTableFactory}
+             * @param {Object} params
+             * @returns {Promise}
              */
-            jumpToPreviousItem: function jumpToPreviousItem() {
-                jumpTable.pop();
+            jumpToPreviousItem: function jumpToPreviousItem(params) {
+                return new Promise(function(resolve) {
+                    jumpTable.pop();
 
-                return this;
-            },
-
-            /**
-             * Jumps to the first item of the previous section and deletes every other entry from the jump table
-             * which comes after this item.
-             *
-             * @returns {offlineJumpTableFactory}
-             */
-            jumpToPreviousSection: function jumpToPreviousSection() {
-                var lastJumpSection = this.getLastJump().section || null;
-                var sections = getSections(testMap);
-                var sectionSliceIndex = sections.indexOf(lastJumpSection) >= 1 ? sections.indexOf(lastJumpSection) - 1 : 0;
-                var sectionsToBeDeleted = sections.slice(sectionSliceIndex);
-                var sectionToAdd = sections[sectionSliceIndex];
-                var itemToAdd;
-
-                jumpTable = jumpTable.filter(function(jump) {
-                    return !sectionsToBeDeleted.includes(jump.section);
+                    resolve();
                 });
-
-                itemToAdd = getSimplifiedTestMap(testMap)
-                    .filter(function(row) {
-                        return row.section === sectionToAdd;
-                    })
-                    .shift();
-
-                this.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
-
-                return this;
-            },
-
-            /**
-             * Jumps to the first item of the previous part and deletes every other entry from the jump table
-             * which comes after this item.
-             *
-             * @returns {offlineJumpTableFactory}
-             */
-            jumpToPreviousPart: function jumpToPreviousPart() {
-                var lastJumpPart = this.getLastJump().part || null;
-                var parts = getParts(testMap);
-                var partSliceIndex = parts.indexOf(lastJumpPart) >= 1 ? parts.indexOf(lastJumpPart) - 1 : 0;
-                var partsToBeDeleted = parts.slice(partSliceIndex);
-                var partToAdd = parts[partSliceIndex];
-                var itemToAdd;
-
-                jumpTable = jumpTable.filter(function(jump) {
-                    return !partsToBeDeleted.includes(jump.part);
-                });
-
-                itemToAdd = getSimplifiedTestMap(testMap)
-                    .filter(function(row) {
-                        return row.part === partToAdd;
-                    })
-                    .shift();
-
-                this.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item);
-
-                return this;
             },
 
             /**
              * Returns the jump table.
              *
-             * @returns {Array}
+             * @returns {Jump[]}
              */
             getJumpTable: function getJumpTable() {
                 return jumpTable;
@@ -445,6 +370,8 @@ define([
 
             /**
              * Returns the last entry of the jump table which represent the current state of the navigation.
+             *
+             * @returns {Jump}
              */
             getLastJump: function getLastJump() {
                 return jumpTable.length > 0
