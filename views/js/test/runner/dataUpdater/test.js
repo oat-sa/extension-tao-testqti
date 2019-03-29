@@ -19,27 +19,34 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+
     'core/collections',
     'taoQtiTest/runner/provider/dataUpdater',
     'json!taoQtiTest/test/runner/dataUpdater/testData.json',
     'json!taoQtiTest/test/runner/dataUpdater/testMap.json',
     'json!taoQtiTest/test/runner/dataUpdater/testContext.json'
-], function(collections, dataUpdaterFactory, testData, testMap, testContext) {
-    'use strict';
+], function(
 
+    collections,
+    dataUpdaterFactory,
+    testData,
+    testMap,
+    testContext
+) {
+    'use strict';
 
     QUnit.module('API');
 
     QUnit.test('module', function(assert) {
-        QUnit.expect(1);
+        assert.expect(1);
 
-        assert.equal(typeof dataUpdaterFactory, 'function', "The module exposes a function");
+        assert.equal(typeof dataUpdaterFactory, 'function', 'The module exposes a function');
     });
 
     QUnit.test('factory', function(assert) {
         var holderMock = new collections.Map();
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         assert.throws(function() {
             dataUpdaterFactory();
@@ -49,20 +56,20 @@ define([
             dataUpdaterFactory({});
         }, TypeError, 'factory called without a wrong parameter');
 
-        assert.equal(typeof dataUpdaterFactory(holderMock), 'object', "The factory creates an object");
-        assert.notEqual(dataUpdaterFactory(holderMock), dataUpdaterFactory(holderMock), "The factory creates new objects");
+        assert.equal(typeof dataUpdaterFactory(holderMock), 'object', 'The factory creates an object');
+        assert.notEqual(dataUpdaterFactory(holderMock), dataUpdaterFactory(holderMock), 'The factory creates new objects');
     });
 
-    QUnit.cases([
-        { title: 'update' },
-        { title: 'buildTestMap' },
-        { title: 'updateStats' },
-        { title: 'updatePluginsConfig' }
+    QUnit.cases.init([
+        {title: 'update'},
+        {title: 'buildTestMap'},
+        {title: 'updateStats'},
+        {title: 'updatePluginsConfig'}
     ])
     .test('Method ', function(data, assert) {
         var holderMock = new collections.Map();
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(typeof dataUpdaterFactory(holderMock)[data.title], 'function', 'The instance exposes a "' + data.title + '" method');
     });
@@ -73,19 +80,19 @@ define([
     QUnit.test('update from a single object', function(assert) {
         var holderMock = new collections.Map();
         var dataSet = {
-            testData : {
-                foo : 'testData'
+            testData: {
+                foo: 'testData'
             },
-            testContext : {
-                foo : 'testContext'
+            testContext: {
+                foo: 'testContext'
             },
-            testBar : {
-                foo : 'testBar'
+            testBar: {
+                foo: 'testBar'
             }
         };
         var dataUpdater = dataUpdaterFactory(holderMock);
 
-        QUnit.expect(8);
+        assert.expect(8);
 
         assert.equal(holderMock.get('testData'), null);
         assert.equal(holderMock.get('testContext'), null);
@@ -100,37 +107,36 @@ define([
         assert.equal(holderMock.get('testBar'), null);
     });
 
-
     QUnit.test('update from a multiple objects', function(assert) {
         var holderMock = new collections.Map();
         var dataSet = [{
-            testData : {
-                foo : 'testDoo'
+            testData: {
+                foo: 'testDoo'
             },
-            testContext : {
-                foo : 'testCoo'
+            testContext: {
+                foo: 'testCoo'
             },
-            testBar : {
-                foo : 'testBar'
+            testBar: {
+                foo: 'testBar'
             }
         }, {
-            testData : {
-                foo : 'testData',
-                last : true
+            testData: {
+                foo: 'testData',
+                last: true
             },
-            testContext : {
-                foo : 'testContext',
-                last : true
+            testContext: {
+                foo: 'testContext',
+                last: true
 
             },
-            testBar : {
-                foo : 'testBar',
-                last : true
+            testBar: {
+                foo: 'testBar',
+                last: true
             }
         }];
         var dataUpdater = dataUpdaterFactory(holderMock);
 
-        QUnit.expect(8);
+        assert.expect(8);
 
         assert.equal(holderMock.get('testData'), null);
         assert.equal(holderMock.get('testContext'), null);
@@ -149,14 +155,14 @@ define([
 
         var dataUpdater;
         var dataSet = {
-            testContext : testContext,
-            testMap : testMap
+            testContext: testContext,
+            testMap: testMap
         };
 
         var holderMock = new collections.Map();
         holderMock.set('testData', testData);
 
-        QUnit.expect(9);
+        assert.expect(9);
 
         dataUpdater = dataUpdaterFactory(holderMock);
 
@@ -175,31 +181,31 @@ define([
         assert.equal(holderMock.get('testMap').stats.total, 10, 'The stats reflects the jump table');
     });
 
-    QUnit.test('update plugins config', function(assert){
+    QUnit.test('update plugins config', function(assert) {
         var plugins = {
-            'foo' : {
-                setConfig : function setConfig(config){
+            'foo': {
+                setConfig: function setConfig(config) {
                     assert.equal(config.feature1, true);
                     assert.equal(config.feature2, false);
                 },
-                getName : function getName(){
+                getName: function getName() {
                     return 'foo';
                 }
             },
-            'bar' : {
-                setConfig : function setConfig(config){
+            'bar': {
+                setConfig: function setConfig(config) {
                     assert.deepEqual(config.feature1, ['A', 'B']);
                     assert.equal(config.feature2, 12 * 10);
                 },
-                getName : function getName(){
+                getName: function getName() {
                     return 'bar';
                 }
             },
-            'noz' : {
-                setConfig : function setConfig(config){
+            'noz': {
+                setConfig: function setConfig(config) {
                     assert.ok(false, 'This plugin should not be configured');
                 },
-                getName : function getName(){
+                getName: function getName() {
                     return 'noz';
                 }
             }
@@ -210,21 +216,21 @@ define([
         var holderMock = new collections.Map();
 
         holderMock.set('testData', {
-            config : {
-                plugins : {
-                    foo : {
-                       feature1: true,
-                       feature2 : false
+            config: {
+                plugins: {
+                    foo: {
+                        feature1: true,
+                        feature2: false
                     },
-                    bar : {
+                    bar: {
                         feature1: ['A', 'B'],
-                        feature2 : 12 * 10
-                    },
+                        feature2: 12 * 10
+                    }
                 }
             }
         });
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         dataUpdater = dataUpdaterFactory(holderMock);
 

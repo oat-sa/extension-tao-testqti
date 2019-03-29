@@ -31,7 +31,7 @@ use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
  * Class InstallRdsToolsStateStorage
  * @package oat\taoQtiTest\scripts\install
  */
-class InstallRdsToolsStateStorage extends AbstractAction
+class CreateTableForToolsStateStorage extends AbstractAction
 {
     /**
      * @param array $params
@@ -49,6 +49,10 @@ class InstallRdsToolsStateStorage extends AbstractAction
         $schemaManager = $persistence->getDriver()->getSchemaManager();
         $schema = $schemaManager->createSchema();
         $fromSchema = clone $schema;
+
+        if ($schema->hasTable(RdsToolsStateStorage::TABLE_NAME)) {
+            return new Report(Report::TYPE_INFO, 'Tool states service registered');
+        }
 
         $revisionTable = $schema->createTable(RdsToolsStateStorage::TABLE_NAME);
         $revisionTable->addOption('engine', 'MyISAM');
@@ -68,11 +72,6 @@ class InstallRdsToolsStateStorage extends AbstractAction
             $persistence->exec($query);
         }
 
-        $this->getServiceManager()->register(
-            ToolsStateStorage::SERVICE_ID,
-            new RdsToolsStateStorage([])
-        );
-
-        return new Report(Report::TYPE_SUCCESS, 'Tool states service registered');
+        return new Report(Report::TYPE_SUCCESS, 'RDS schema for RdsToolsStateStorage is now installed');
     }
 }

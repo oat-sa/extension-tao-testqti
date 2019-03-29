@@ -19,6 +19,7 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+
     'jquery',
     'lodash',
     'taoQtiTest/testRunner/actionBar/comment'
@@ -32,51 +33,47 @@ define([
         hook: 'taoQtiTest/testRunner/actionBar/comment'
     };
 
-
     QUnit.module('comment');
 
-
     QUnit.test('module', function(assert) {
-        assert.equal(typeof comment, 'object', "The comment module exposes an object");
+        assert.equal(typeof comment, 'object', 'The comment module exposes an object');
     });
 
-
     var commentApi = [
-        { name : 'init', title : 'init' },
-        { name : 'clear', title : 'clear' },
-        { name : 'render', title : 'render' },
-        { name : 'bindTo', title : 'bindTo' },
-        { name : 'bindEvents', title : 'bindEvents' },
-        { name : 'unbindEvents', title : 'unbindEvents' },
-        { name : 'isVisible', title : 'isVisible' },
-        { name : 'hasMenu', title : 'hasMenu' },
-        { name : 'isMenuOpen', title : 'isMenuOpen' },
-        { name : 'closeMenu', title : 'closeMenu' },
-        { name : 'openMenu', title : 'openMenu' },
-        { name : 'toggleMenu', title : 'toggleMenu' },
-        { name : 'setActive', title : 'setActive' },
-        { name : 'trigger', title : 'trigger' },
-        { name : 'on', title : 'on' },
-        { name : 'off', title : 'off' },
-        { name : 'setup', title : 'setup' },
-        { name : 'action', title : 'action' },
-        { name : 'menuAction', title : 'menuAction' },
-        { name : 'closeForm', title : 'closeForm' },
-        { name : 'submitForm', title : 'submitForm' }
+        {name: 'init', title: 'init'},
+        {name: 'clear', title: 'clear'},
+        {name: 'render', title: 'render'},
+        {name: 'bindTo', title: 'bindTo'},
+        {name: 'bindEvents', title: 'bindEvents'},
+        {name: 'unbindEvents', title: 'unbindEvents'},
+        {name: 'isVisible', title: 'isVisible'},
+        {name: 'hasMenu', title: 'hasMenu'},
+        {name: 'isMenuOpen', title: 'isMenuOpen'},
+        {name: 'closeMenu', title: 'closeMenu'},
+        {name: 'openMenu', title: 'openMenu'},
+        {name: 'toggleMenu', title: 'toggleMenu'},
+        {name: 'setActive', title: 'setActive'},
+        {name: 'trigger', title: 'trigger'},
+        {name: 'on', title: 'on'},
+        {name: 'off', title: 'off'},
+        {name: 'setup', title: 'setup'},
+        {name: 'action', title: 'action'},
+        {name: 'menuAction', title: 'menuAction'},
+        {name: 'closeForm', title: 'closeForm'},
+        {name: 'submitForm', title: 'submitForm'}
     ];
 
     QUnit
-        .cases(commentApi)
+        .cases.init(commentApi)
         .test('API ', function(data, assert) {
             assert.equal(typeof comment[data.name], 'function', 'The comment module exposes a "' + data.title + '" function');
         });
-
 
     QUnit.test('button enabled/disabled', function(assert) {
         var testContextMock = {
             allowComment: false
         };
-        
+
         testContextMock.allowComment = true;
         comment.init('comment', configMock, testContextMock, {});
         assert.ok(comment.isVisible(), 'The comment button is visible when comment form is enabled');
@@ -85,7 +82,6 @@ define([
         comment.init('comment', configMock, testContextMock, {});
         assert.ok(!comment.isVisible(), 'The comment button is not visible when the comment form is disabled');
     });
-
 
     QUnit.test('button install/uninstall', function(assert) {
         var testRunnerMock = {};
@@ -144,7 +140,6 @@ define([
 
         comment.clear();
     });
-
 
     QUnit.test('button click', function(assert) {
         var testRunnerMock = {};

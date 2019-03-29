@@ -20,9 +20,8 @@
  */
 define([
     'lodash',
-    'helpers',
     'taoQtiTest/runner/helpers/currentItem'
-], function (_, helpers, currentItemHelper) {
+], function (_, currentItemHelper) {
     'use strict';
 
     var messagesHelperApi = [
@@ -38,104 +37,103 @@ define([
      * Build a fake test runner with embedded item runner
      * @param {Object} responses
      * @param {Object} declarations
+     * @param {String} itemId
+     * @param {Object} itemBdy
      * @returns {Object}
      */
-    function runnerMock(responses, declarations) {
+    function runnerMock(responses, declarations, itemId, itemBdy) {
         return {
             itemRunner: {
                 _item: {
-                    responses: declarations
+                    responses: declarations,
+                    bdy: itemBdy,
+                    itemIdentifier: itemId
                 },
-                getResponses: function () {
+                getResponses: function() {
                     return responses;
                 }
             }
         };
     }
 
-
     QUnit.module('helpers/currentItem');
 
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
 
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-
-        assert.equal(typeof currentItemHelper, 'object', "The currentItem helper module exposes an object");
+        assert.equal(typeof currentItemHelper, 'object', 'The currentItem helper module exposes an object');
     });
 
-
     QUnit
-        .cases(messagesHelperApi)
-        .test('helpers/currentItem API ', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(messagesHelperApi)
+        .test('helpers/currentItem API ', function(data, assert) {
+            assert.expect(1);
 
             assert.equal(typeof currentItemHelper[data.title], 'function', 'The currentItem helper expose a "' + data.title + '" function');
         });
 
 
-    QUnit.test('helpers/currentItem.getDeclarations', function (assert) {
+    QUnit.test('helpers/currentItem.getDeclarations', function(assert) {
         var declarations = {
-            "responsedeclaration1": {
-                "identifier": "RESPONSE1",
-                "serial": "responsedeclaration1",
-                "qtiClass": "responseDeclaration",
-                "attributes": {
-                    "identifier": "RESPONSE1", "cardinality": "single", "baseType": "string"
+            'responsedeclaration1': {
+                'identifier': 'RESPONSE1',
+                'serial': 'responsedeclaration1',
+                'qtiClass': 'responseDeclaration',
+                'attributes': {
+                    'identifier': 'RESPONSE1', 'cardinality': 'single', 'baseType': 'string'
                 },
-                "defaultValue": []
+                'defaultValue': []
             },
-            "responsedeclaration2": {
-                "identifier": "RESPONSE2",
-                "serial": "responsedeclaration2",
-                "qtiClass": "responseDeclaration",
-                "attributes": {
-                    "identifier": "RESPONSE2", "cardinality": "single", "baseType": "string"
+            'responsedeclaration2': {
+                'identifier': 'RESPONSE2',
+                'serial': 'responsedeclaration2',
+                'qtiClass': 'responseDeclaration',
+                'attributes': {
+                    'identifier': 'RESPONSE2', 'cardinality': 'single', 'baseType': 'string'
                 },
-                "defaultValue": []
+                'defaultValue': []
             }
         };
         var runner = runnerMock({}, declarations);
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.equal(currentItemHelper.getDeclarations(runner), declarations, 'The helper has returned the right list of responses declarations');
 
     });
 
-
-    QUnit.test('helpers/currentItem.getResponseDeclaration', function (assert) {
+    QUnit.test('helpers/currentItem.getResponseDeclaration', function(assert) {
         var declarations = {
-            "responsedeclaration1": {
-                "identifier": "RESPONSE1",
-                "serial": "responsedeclaration1",
-                "qtiClass": "responseDeclaration",
-                "attributes": {
-                    "identifier": "RESPONSE1", "cardinality": "single", "baseType": "string"
+            'responsedeclaration1': {
+                'identifier': 'RESPONSE1',
+                'serial': 'responsedeclaration1',
+                'qtiClass': 'responseDeclaration',
+                'attributes': {
+                    'identifier': 'RESPONSE1', 'cardinality': 'single', 'baseType': 'string'
                 },
-                "defaultValue": []
+                'defaultValue': []
             },
-            "responsedeclaration2": {
-                "identifier": "RESPONSE2",
-                "serial": "responsedeclaration2",
-                "qtiClass": "responseDeclaration",
-                "attributes": {
-                    "identifier": "RESPONSE2", "cardinality": "single", "baseType": "string"
+            'responsedeclaration2': {
+                'identifier': 'RESPONSE2',
+                'serial': 'responsedeclaration2',
+                'qtiClass': 'responseDeclaration',
+                'attributes': {
+                    'identifier': 'RESPONSE2', 'cardinality': 'single', 'baseType': 'string'
                 },
-                "defaultValue": []
+                'defaultValue': []
             }
         };
         var runner = runnerMock({}, declarations);
 
-        QUnit.expect(2);
+        assert.expect(2);
 
-        assert.equal(currentItemHelper.getResponseDeclaration(runner, "RESPONSE1"), declarations.responsedeclaration1, 'The helper has returned the first declaration');
-        assert.equal(currentItemHelper.getResponseDeclaration(runner, "RESPONSE2"), declarations.responsedeclaration2, 'The helper has returned the second declaration');
+        assert.equal(currentItemHelper.getResponseDeclaration(runner, 'RESPONSE1'), declarations.responsedeclaration1, 'The helper has returned the first declaration');
+        assert.equal(currentItemHelper.getResponseDeclaration(runner, 'RESPONSE2'), declarations.responsedeclaration2, 'The helper has returned the second declaration');
 
     });
 
-
-    QUnit.test('helpers/currentItem.toResponse', function (assert) {
-        QUnit.expect(5);
+    QUnit.test('helpers/currentItem.toResponse', function(assert) {
+        assert.expect(5);
 
         assert.deepEqual(currentItemHelper.toResponse(null, 'string', 'single'), {base: null}, 'The helper has built the right response');
         assert.deepEqual(currentItemHelper.toResponse('foo', 'string', 'single'), {base: {string: 'foo'}}, 'The helper has built the right response');
@@ -144,9 +142,8 @@ define([
         assert.deepEqual(currentItemHelper.toResponse(null, 'string', 'multiple'), {list: {string: []}}, 'The helper has built the right response');
     });
 
-
-    QUnit.test('helpers/currentItem.isQtiValueNull', function (assert) {
-        QUnit.expect(5);
+    QUnit.test('helpers/currentItem.isQtiValueNull', function(assert) {
+        assert.expect(5);
 
         assert.equal(currentItemHelper.isQtiValueNull(null, 'string', 'single'), true, 'The response should be null');
         assert.equal(currentItemHelper.isQtiValueNull({base: {string: null}}, 'string', 'single'), true, 'The response should be null');
@@ -155,50 +152,48 @@ define([
         assert.equal(currentItemHelper.isQtiValueNull({list: {string: []}}, 'string', 'multiple'), true, 'The response should be null');
     });
 
+    QUnit.test('helpers/currentItem.isQuestionAnswered', function(assert) {
+        assert.expect(11);
 
-    QUnit.test('helpers/currentItem.isQuestionAnswered', function (assert) {
-        QUnit.expect(11);
-
-        // null
+        // Null
         assert.equal(currentItemHelper.isQuestionAnswered(null, 'string', 'single'), false, 'The question should not be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({base: null}, 'string', 'single'), false, 'The question should not be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({base: {string: null}}, 'string', 'single'), false, 'The question should not be answered');
 
-        // default
+        // Default
         assert.equal(currentItemHelper.isQuestionAnswered({base: {string: 'foo'}}, 'string', 'single', 'foo'), false, 'The question should not be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({list: {string: ['foo']}}, 'string', 'multiple', ['foo']), false, 'The question should not be answered');
 
-        // null and not default
+        // Null and not default
         assert.equal(currentItemHelper.isQuestionAnswered(null, 'string', 'single', 'foo'), false, 'The question should not be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({base: null}, 'string', 'single', 'foo'), false, 'The question should not be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({base: {string: null}}, 'string', 'single', 'foo'), false, 'The question should not be answered');
 
-        // not null or default
+        // Not null or default
         assert.equal(currentItemHelper.isQuestionAnswered({base: {string: 'foo'}}, 'string', 'single'), true, 'The question should be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({list: {string: ['foo']}}, 'string', 'multiple'), true, 'The question should be answered');
         assert.equal(currentItemHelper.isQuestionAnswered({list: {string: []}}, 'string', 'multiple'), false, 'The question should not be answered');
     });
 
-
-    QUnit.test('helpers/currentItem.isAnswered', function (assert) {
+    QUnit.test('helpers/currentItem.isAnswered', function(assert) {
         var declarations = {
-            "responsedeclaration1": {
-                "identifier": "RESPONSE1",
-                "serial": "responsedeclaration1",
-                "qtiClass": "responseDeclaration",
-                "attributes": {
-                    "identifier": "RESPONSE1", "cardinality": "single", "baseType": "string"
+            'responsedeclaration1': {
+                'identifier': 'RESPONSE1',
+                'serial': 'responsedeclaration1',
+                'qtiClass': 'responseDeclaration',
+                'attributes': {
+                    'identifier': 'RESPONSE1', 'cardinality': 'single', 'baseType': 'string'
                 },
-                "defaultValue": []
+                'defaultValue': []
             },
-            "responsedeclaration2": {
-                "identifier": "RESPONSE2",
-                "serial": "responsedeclaration2",
-                "qtiClass": "responseDeclaration",
-                "attributes": {
-                    "identifier": "RESPONSE2", "cardinality": "single", "baseType": "string"
+            'responsedeclaration2': {
+                'identifier': 'RESPONSE2',
+                'serial': 'responsedeclaration2',
+                'qtiClass': 'responseDeclaration',
+                'attributes': {
+                    'identifier': 'RESPONSE2', 'cardinality': 'single', 'baseType': 'string'
                 },
-                "defaultValue": []
+                'defaultValue': []
             }
         };
         var responded = {RESPONSE1: {base: null}, RESPONSE2: {base: {string: 'foo'}}};
@@ -206,9 +201,56 @@ define([
         var respondedRunner = runnerMock(responded, declarations);
         var notRespondedRunner = runnerMock(notResponded, declarations);
 
-        QUnit.expect(2);
+        assert.expect(2);
 
         assert.equal(currentItemHelper.isAnswered(respondedRunner), true, 'The item should be answered');
         assert.equal(currentItemHelper.isAnswered(notRespondedRunner), false, 'The item should not be answered');
     });
+
+
+    QUnit.cases.init([
+        {
+            title : 'undefined item',
+            itemId: 'item-0',
+            itemBdy: null,
+            expectedResult: []
+        },
+        {
+            title : 'without stimulus',
+            itemId: 'item-1',
+            itemBdy: {
+                elements: {}
+            },
+            expectedResult: []
+        },
+        {
+            title : 'with stimulus',
+            itemId: 'item-2',
+            itemBdy: {
+                elements: {
+                    first : {
+                        serial: 'xinclude_12345',
+                        attributes: {
+                            href: 'http://path/to/something.xml'
+                        }
+                    },
+                    second : {
+                        serial: 'anotherelement',
+                        attributes: {
+                            href: 'http://path/to/something/else.xml'
+                        }
+                    }
+                }
+            },
+            expectedResult: ['http://path/to/something.xml']
+        }
+    ]).test('helpers/currentItem.getStimuliHrefs', function(caseData, assert) {
+        var runner = runnerMock(null, null, caseData.itemId, caseData.itemBdy);
+        var hrefs = currentItemHelper.getStimuliHrefs(runner, caseData.itemId);
+
+        assert.expect(1);
+
+        assert.deepEqual(hrefs, caseData.expectedResult, 'getStimuli returns correct value');
+    });
+
 });

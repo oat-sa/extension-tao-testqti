@@ -22,102 +22,110 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+
     'core/promise',
     'taoQtiTest/runner/proxy/cache/itemPreloader',
     'taoQtiTest/runner/config/assetManager',
     'json!taoQtiTest/test/runner/proxy/cache/itemPreloader/item1/item.json',
     'json!taoQtiTest/test/runner/proxy/cache/itemPreloader/item2/item.json'
-], function(Promise, itemPreloaderFactory, getAssetManager, itemData, itemData2) {
+], function(
+
+    Promise,
+    itemPreloaderFactory,
+    getAssetManager,
+    itemData,
+    itemData2
+) {
     'use strict';
 
     var options = {
-        testId : 'test-foo'
+        testId: 'test-foo'
     };
 
     QUnit.module('API');
 
+    QUnit.test('module', function(assert) {
+        assert.expect(3);
 
-    QUnit.test('module', function (assert){
-        QUnit.expect(3);
-
-        assert.equal(typeof itemPreloaderFactory, 'function', "The module exposes a function");
-        assert.equal(typeof itemPreloaderFactory(options), 'object', "The module is a factory");
-        assert.notDeepEqual(itemPreloaderFactory(options), itemPreloaderFactory(options), "The factory creates new instances");
+        assert.equal(typeof itemPreloaderFactory, 'function', 'The module exposes a function');
+        assert.equal(typeof itemPreloaderFactory(options), 'object', 'The module is a factory');
+        assert.notDeepEqual(itemPreloaderFactory(options), itemPreloaderFactory(options), 'The factory creates new instances');
     });
 
-    QUnit.test('api', function (assert){
+    QUnit.test('api', function(assert) {
         var itemPreloader;
 
-        QUnit.expect(3);
+        assert.expect(3);
 
-        assert.throws(function(){
+        assert.throws(function() {
             itemPreloaderFactory();
         }, TypeError, 'The testId option is mandatory');
 
         itemPreloader = itemPreloaderFactory(options);
 
-        assert.equal(typeof itemPreloader.preload, 'function', "The module exposes the method preload");
-        assert.equal(typeof itemPreloader.unload, 'function', "The  module exposes the method unload");
+        assert.equal(typeof itemPreloader.preload, 'function', 'The module exposes the method preload');
+        assert.equal(typeof itemPreloader.unload, 'function', 'The  module exposes the method unload');
     });
-
 
     QUnit.module('behavior');
 
-    QUnit.cases([{
-        title : 'nothing'
+    QUnit.cases.init([{
+        title: 'nothing'
     }, {
-        title : 'empty object',
-        item  : {},
-        itemIdentifier : 'item-1'
+        title: 'empty object',
+        item: {},
+        itemIdentifier: 'item-1'
     }, {
-        title : 'missing baseUrl',
-        item  : {
-            itemIdentifier : 'item-1',
-            itemData : {}
+        title: 'missing baseUrl',
+        item: {
+            itemIdentifier: 'item-1',
+            itemData: {}
         }
     }, {
-        title : 'missing itemData',
-        item  : {
-            itemIdentifier : 'item-1',
-            baseUrl : '/taoQtiTest/views'
+        title: 'missing itemData',
+        item: {
+            itemIdentifier: 'item-1',
+            baseUrl: '/taoQtiTest/views'
         }
     }, {
-        title : 'empty itemIdentifier',
-        item  : {
-            itemIdentifier : '',
-            baseUrl : '/taoQtiTest/views',
-            itemData : {}
+        title: 'empty itemIdentifier',
+        item: {
+            itemIdentifier: '',
+            baseUrl: '/taoQtiTest/views',
+            itemData: {}
         }
-    }]).asyncTest('preload bad data ', function(data, assert){
+    }]).test('preload bad data ', function(data, assert) {
+        var ready = assert.async();
         var p;
-        QUnit.expect(2);
+        assert.expect(2);
 
         p = itemPreloaderFactory(options).preload(data.item);
 
         assert.ok(p instanceof Promise);
-        p.then(function(result){
+        p.then(function(result) {
             assert.ok(!result, 'No preload, no result');
-            QUnit.start();
+            ready();
         })
-        .catch(function(err){
+        .catch(function(err) {
             assert.ok(false, err);
-            QUnit.start();
+            ready();
         });
     });
 
-    QUnit.asyncTest('preload and unload an item', function(assert){
+    QUnit.test('preload and unload an item', function(assert) {
+        var ready = assert.async();
         var itemPreloader;
         var p;
         var styleSheet;
         var assetManager = getAssetManager(options.testId);
 
-        QUnit.expect(11);
+        assert.expect(11);
 
-        //hack the Image element to assert the load
-        window.Image = function(){
+        //Hack the Image element to assert the load
+        window.Image = function() {
             assert.ok(true, 'A new image is created');
         };
-        Object.defineProperty(window.Image.prototype, 'src',  {
+        Object.defineProperty(window.Image.prototype, 'src', {
             set: function src(url) {
                 assert.equal(url, '/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/28-days.jpg');
             }
@@ -126,13 +134,13 @@ define([
         styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/tao-user-styles.css"]');
 
         assert.equal(styleSheet, null, 'The item stylesheet is not loaded');
-        assert.ok( ! /^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
+        assert.ok(!/^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
 
         itemPreloader = itemPreloaderFactory(options);
         p = itemPreloader.preload(itemData);
         assert.ok(p instanceof Promise);
 
-        p.then(function(result){
+        p.then(function(result) {
             assert.ok(result, 'Preloaded');
 
             styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/tao-user-styles.css"]');
@@ -141,10 +149,10 @@ define([
             assetManager.setData('itemIdentifier', itemData.itemIdentifier);
             assert.ok(/^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample resolves through a blob');
         })
-        .then(function(){
+        .then(function() {
             return itemPreloader.unload(itemData);
         })
-        .then(function(result){
+        .then(function(result) {
             assert.ok(result, 'Unloaded');
 
             styleSheet = document.querySelector('head link[href="/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/tao-user-styles.css"]');
@@ -152,34 +160,35 @@ define([
             assert.equal(styleSheet, null, 'The item stylesheet is now removed');
 
             assetManager.setData('itemIdentifier', itemData.itemIdentifier);
-            assert.ok( ! /^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
+            assert.ok(!/^blob/.test(assetManager.resolve('sample.mp3')), 'The mp3 sample does not resolve as a blob');
 
-            QUnit.start();
+            ready();
         })
-        .catch(function(err){
+        .catch(function(err) {
             assert.ok(false, err);
-            QUnit.start();
+            ready();
         });
     });
 
-
-    QUnit.asyncTest('preload multiple items with an identic source URL asset', function(assert){
+    QUnit.test('preload multiple items with an identic source URL asset', function(assert) {
+        var ready = assert.async();
         var itemPreloader;
         var p;
         var styleSheet;
         var assetManager = getAssetManager(options.testId);
         var secondItem = false;
 
-        QUnit.expect(5);
+        assert.expect(5);
 
-        //hack the Image element to assert the load
-        window.Image = function(){
-            //called twice
+        //Hack the Image element to assert the load
+        window.Image = function() {
+
+            //Called twice
             assert.ok(true, 'A new image is created');
         };
-        Object.defineProperty(window.Image.prototype, 'src',  {
+        Object.defineProperty(window.Image.prototype, 'src', {
             set: function src(url) {
-                if(secondItem){
+                if (secondItem) {
                     assert.equal(url, '/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item2/28-days.jpg');
                 } else {
                     assert.equal(url, '/taoQtiTest/views/js/test/runner/proxy/cache/itemPreloader/item1/28-days.jpg');
@@ -190,24 +199,24 @@ define([
         itemPreloader = itemPreloaderFactory(options);
 
         itemPreloader.preload(itemData)
-        .then(function(result){
+        .then(function(result) {
             assert.ok(result, 'Preloaded');
 
             secondItem = true;
             return itemPreloader.preload(itemData2);
         })
-        .then(function(){
+        .then(function() {
             return itemPreloader.unload(itemData);
         })
-        .then(function(){
+        .then(function() {
             return itemPreloader.unload(itemData2);
         })
-        .then(function(result){
-            QUnit.start();
+        .then(function(result) {
+            ready();
         })
-        .catch(function(err){
+        .catch(function(err) {
             assert.ok(false, err);
-            QUnit.start();
+            ready();
         });
     });
 

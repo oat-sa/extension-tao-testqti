@@ -16,75 +16,74 @@
  * Copyright (c) 2018 (original work) Open Assessment Technologies SA ;
  */
 /**
- * Test the timer's plugin strategyHandler
+ * Test the time\'s plugin strategyHandler
  */
 define([
+
     'core/eventifier',
     'taoQtiTest/runner/plugins/controls/timer/strategy/strategyHandler'
 ], function(eventifier, strategyHandler) {
     'use strict';
 
     var testRunnerMock = eventifier({
-        getTestContext : function getTestContext(){ }
+        getTestContext: function getTestContext() { }
     });
 
-
-    var strategyFoo = function strategyFoo(testRunner, timer){
-        if(timer.type === 'foo'){
+    var strategyFoo = function strategyFoo(testRunner, timer) {
+        if (timer.type === 'foo') {
             return {
-                name : 'foo',
-                setUp : function setUp(){
+                name: 'foo',
+                setUp: function setUp() {
                     testRunner.trigger('setup', timer.id);
                 },
-                start : function start(){
+                start: function start() {
                     testRunner.trigger('start', timer.id);
                 },
-                stop : function stop(){
+                stop: function stop() {
                     testRunner.trigger('stop', timer.id);
                 },
-                complete : function complete(){
+                complete: function complete() {
                     testRunner.trigger('complete', timer.id);
                 },
-                tearDown : function tearDown(){
+                tearDown: function tearDown() {
                     testRunner.trigger('tearDown', timer.id);
                 }
             };
         }
         return false;
     };
-    var strategyBar = function strategyBar(testRunner, timer){
-        if(timer.type === 'bar'){
+    var strategyBar = function strategyBar(testRunner, timer) {
+        if (timer.type === 'bar') {
             return {
-                name : 'bar',
-                setUp : function setUp(){
+                name: 'bar',
+                setUp: function setUp() {
                     testRunner.trigger('setup', timer.id);
                 },
-                tearDown : function tearDown(){
+                tearDown: function tearDown() {
                     testRunner.trigger('tearDown', timer.id);
                 }
             };
         }
         return false;
     };
-
 
     QUnit.module('API');
 
     QUnit.test('module', function(assert) {
-        QUnit.expect(3);
+        assert.expect(3);
 
-        assert.equal(typeof strategyHandler, 'function', "The strategyHandler module exposes a function");
-        assert.equal(typeof strategyHandler(testRunnerMock), 'object', "The strategyHandler factory produces an object");
-        assert.notStrictEqual(strategyHandler(testRunnerMock), strategyHandler(testRunnerMock), "The strategyHandler factory provides a different object on each call");
+        assert.equal(typeof strategyHandler, 'function', 'The strategyHandler module exposes a function');
+        assert.equal(typeof strategyHandler(testRunnerMock), 'object', 'The strategyHandler factory produces an object');
+        assert.notStrictEqual(strategyHandler(testRunnerMock), strategyHandler(testRunnerMock), 'The strategyHandler factory provides a different object on each call');
     });
 
-    QUnit.cases([
-        { title : 'setUp' },
-        { title : 'getActives' },
-        { title : 'start' },
-        { title : 'stop' },
-        { title : 'complete' },
-        { title : 'tearDown' }
+    QUnit.cases.init([
+        {title: 'setUp'},
+        {title: 'getActives'},
+        {title: 'start'},
+        {title: 'stop'},
+        {title: 'complete'},
+        {title: 'tearDown'}
     ]).test('Instance API ', function(data, assert) {
         var instance = strategyHandler(testRunnerMock);
         assert.equal(typeof instance[data.title], 'function', 'The strategyHandler exposes the method "' + data.title);
@@ -92,169 +91,171 @@ define([
 
 
     QUnit.test('factory', function(assert) {
-        QUnit.expect(4);
+        assert.expect(4);
 
-        assert.throws(function(){
+        assert.throws(function() {
             strategyHandler();
         }, TypeError, 'No test runner given throws');
-        assert.throws(function(){
+        assert.throws(function() {
             strategyHandler({ });
         }, TypeError, 'No valid test runner given throws');
-        assert.throws(function(){
+        assert.throws(function() {
             strategyHandler({
-                on : function(){},
-                trigger : function() {}
+                on: function() {},
+                trigger: function() {}
             });
         }, TypeError, 'No valid test runner given throws');
-        assert.equal(typeof strategyHandler(testRunnerMock), 'object', "The strategyHandler factory produces an object");
+        assert.equal(typeof strategyHandler(testRunnerMock), 'object', 'The strategyHandler factory produces an object');
     });
-
 
     QUnit.module('Behavior');
 
-    QUnit.asyncTest('activate one strategy for on timer', function(assert) {
+    QUnit.test('activate one strategy for on timer', function(assert) {
+        var ready = assert.async();
 
         var handler = strategyHandler(testRunnerMock, [strategyFoo, strategyBar]);
 
         var timer = {
             id: 'timer1',
-            type : 'foo'
+            type: 'foo'
         };
 
-        QUnit.expect(4);
+        assert.expect(4);
 
         assert.deepEqual(handler.getActives(timer), [], 'No active strategy yet');
         handler.setUp(timer)
-            .then(function(){
+            .then(function() {
                 assert.equal(handler.getActives(timer).length, 1, 'A strategy has been activated');
-                assert.equal(handler.getActives(timer) [0].name , 'foo', 'The foo strategy has been activated');
+                assert.equal(handler.getActives(timer) [0].name, 'foo', 'The foo strategy has been activated');
             })
-            .then(function(){
+            .then(function() {
                 return handler.tearDown(timer);
             })
-            .then(function(){
+            .then(function() {
                 assert.deepEqual(handler.getActives(timer), [], 'The foo strategy is not active anymore');
             })
-            .then(function(){
-                QUnit.start();
+            .then(function() {
+                ready();
             })
-            .catch(function(err){
+            .catch(function(err) {
                 assert.ok(false, err.message);
-                QUnit.start();
+                ready();
             });
     });
 
-    QUnit.asyncTest('active strategy multiple timers', function(assert) {
+    QUnit.test('active strategy multiple timers', function(assert) {
+        var ready = assert.async();
 
         var handler = strategyHandler(testRunnerMock, [strategyFoo, strategyBar]);
 
         var timer = {
             id: 'timer1',
-            type : 'foo'
+            type: 'foo'
         };
         var witnessTimer = {
             id: 'timerX',
-            type : 'xxx'
+            type: 'xxx'
         };
 
-        QUnit.expect(7);
+        assert.expect(7);
 
         assert.deepEqual(handler.getActives(timer), [], 'No active strategy yet');
         assert.deepEqual(handler.getActives(witnessTimer), [], 'No active strategy yet');
 
         handler.setUp(timer)
-            .then(function(){
+            .then(function() {
                 assert.equal(handler.getActives(timer).length, 1, 'A strategy has been activated');
-                assert.equal(handler.getActives(timer) [0].name , 'foo', 'The foo strategy has been activated');
+                assert.equal(handler.getActives(timer) [0].name, 'foo', 'The foo strategy has been activated');
 
                 return handler.setUp(witnessTimer);
             })
-            .then(function(){
+            .then(function() {
                 assert.equal(handler.getActives(witnessTimer).length, 0, 'No strategy activated');
 
                 return handler.tearDown(timer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.tearDown(witnessTimer);
             })
-            .then(function(){
+            .then(function() {
                 assert.equal(handler.getActives(timer).length, 0, 'Strategy removed');
                 assert.equal(handler.getActives(witnessTimer).length, 0, 'No strategy activated');
 
-                QUnit.start();
+                ready();
             })
-            .catch(function(err){
+            .catch(function(err) {
                 assert.ok(false, err.message);
-                QUnit.start();
+                ready();
             });
     });
 
-    QUnit.asyncTest('call active strategy entry points', function(assert) {
+    QUnit.test('call active strategy entry points', function(assert) {
+        var ready = assert.async();
 
         var handler = strategyHandler(testRunnerMock, [strategyFoo, strategyBar]);
 
         var timer = {
             id: 'timer1',
-            type : 'foo'
+            type: 'foo'
         };
         var witnessTimer = {
             id: 'timerX',
-            type : 'xxx'
+            type: 'xxx'
         };
 
-        QUnit.expect(5);
+        assert.expect(5);
 
         testRunnerMock
-            .on('setup', function(id){
+            .on('setup', function(id) {
                 assert.equal(id, timer.id, 'The setup entrypoint is called wit the correct timer');
             })
-            .on('start', function(id){
+            .on('start', function(id) {
                 assert.equal(id, timer.id, 'The start entrypoint is called wit the correct timer');
             })
-            .on('stop', function(id){
+            .on('stop', function(id) {
                 assert.equal(id, timer.id, 'The stop entrypoint is called wit the correct timer');
             })
-            .on('complete', function(id){
+            .on('complete', function(id) {
                 assert.equal(id, timer.id, 'The complete entrypoint is called wit the correct timer');
             })
-            .on('tearDown', function(id){
+            .on('tearDown', function(id) {
                 assert.equal(id, timer.id, 'The tearDown entrypoint is called wit the correct timer');
             });
 
         handler.setUp(timer)
-            .then(function(){
+            .then(function() {
                 return handler.setUp(witnessTimer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.start(timer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.start(witnessTimer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.stop(witnessTimer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.stop(timer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.complete(witnessTimer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.complete(timer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.tearDown(timer);
             })
-            .then(function(){
+            .then(function() {
                 return handler.tearDown(witnessTimer);
             })
-            .then(function(){
-                QUnit.start();
+            .then(function() {
+                ready();
             })
-            .catch(function(err){
+            .catch(function(err) {
                 assert.ok(false, err.message);
-                QUnit.start();
+                ready();
             });
     });
 });
