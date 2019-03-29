@@ -75,27 +75,31 @@ define([
              * @returns {Object} the new test context
              */
             navigate: function navigate(direction, scope, position, params) {
-                return new Promise(function(resolve) {
+                return new Promise(function(resolve, reject) {
                     var lastJump,
                         navigationActionName = 'jumpTo' + capitalize(direction) + capitalize(scope);
 
                     if (
-                        !(navigationActionName in offlineJumpTableHelper)
-                        || !(typeof(offlineJumpTableHelper[navigationActionName]) === 'function')
+                        offlineJumpTableHelper[navigationActionName] === 'undefined'
+                        || typeof(offlineJumpTableHelper[navigationActionName]) !== 'function'
                     ) {
                         throw new Error('Invalid navigation action');
                     }
 
-                    offlineJumpTableHelper[navigationActionName](params).then(function() {
-                        lastJump = offlineJumpTableHelper.getLastJump();
+                    offlineJumpTableHelper[navigationActionName](params)
+                        .then(function() {
+                            lastJump = offlineJumpTableHelper.getLastJump();
 
-                        resolve(testContextBuilder.buildTestContextFromJump(
-                            testData,
-                            testContext,
-                            testMap,
-                            lastJump
-                        ));
-                    });
+                            resolve(testContextBuilder.buildTestContextFromJump(
+                                testData,
+                                testContext,
+                                testMap,
+                                lastJump
+                            ));
+                        })
+                        .catch(function(err) {
+                            reject(err);
+                        });
                 });
             }
         };

@@ -22,6 +22,7 @@ define([
     'lodash',
     'i18n',
     'core/promise',
+    'ui/feedback',
     'taoQtiTest/runner/navigator/offlineNavigator',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
@@ -36,6 +37,7 @@ define([
     _,
     __,
     Promise,
+    feedback,
     offlineNavigatorFactory,
     mapHelper,
     navigationHelper,
@@ -126,7 +128,7 @@ define([
              * @returns {Object} action result
              */
             this.offlineAction = function offlineAction(action, actionParams) {
-                return new Promise(function(resolve) {
+                return new Promise(function(resolve, reject) {
                     var newTestContext,
                         result = { success: true },
                         blockingActions = ['exitTest', 'timeout'],
@@ -223,6 +225,8 @@ define([
                                 result.testContext = newTestContext;
 
                                 resolve(result);
+                            }).catch(function(err) {
+                                reject(err);
                             });
                     } else {
                         resolve(result);
@@ -427,7 +431,10 @@ define([
                 .scheduleAction(action, actionParams)
                 .then(function() {
                     return self.offlineAction(action, actionParams);
-                });
+                })
+                .catch(function(err) {
+                    feedback().error(err.message);
+                });;
         },
 
         /**
@@ -445,6 +452,9 @@ define([
                 .scheduleAction(action, params)
                 .then(function() {
                     return self.offlineAction(action, params);
+                })
+                .catch(function(err) {
+                    feedback().error(err.message);
                 });
         },
 
@@ -460,8 +470,6 @@ define([
         callItemAction: function callItemAction(itemIdentifier, action, params) {
             var self = this,
                 updateStatePromise = Promise.resolve();
-
-            console.log('itemAction', itemIdentifier, action, params);
 
             //update the item state
             if (params.itemState) {
@@ -484,10 +492,13 @@ define([
                         .scheduleAction(action, params)
                         .then(function() {
                             return self.offlineAction(action, params);
+                        })
+                        .catch(function(err) {
+                            feedback().error(err.message);
                         });
                 })
                 .catch(function(err) {
-                    console.log('update failed', err);
+                    feedback().error(err.message);
                 });
         }
     }, qtiServiceProxy);
