@@ -61,6 +61,11 @@ define([
             init: function init() {
                 offlineJumpTableHelper.setTestMap(testMap);
                 offlineJumpTableHelper.init();
+                return this;
+            },
+
+            clearJumpTable: function clearJumpTable() {
+                offlineJumpTableHelper.clearJumpTable();
 
                 return this;
             },

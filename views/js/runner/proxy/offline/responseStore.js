@@ -27,14 +27,30 @@ define(function() {
     };
 
     return {
+        /**
+         * Returns the correct responses
+         *
+         * @returns {Object}
+         */
         getCorrectResponses: function getCorrectResponses() {
             return storage.correctResponses;
         },
 
+        /**
+         * Returns the given responses
+         *
+         * @returns {Object}
+         */
         getResponses: function getResponses() {
             return storage.responses;
         },
 
+        /**
+         * Returns the requested correct response
+         *
+         * @param {string} identifier
+         * @returns {Array}
+         */
         getCorrectResponse: function getCorrectResponse(identifier) {
             if (identifier in storage.correctResponses) {
                 return storage.correctResponses[identifier];
@@ -43,16 +59,39 @@ define(function() {
             return [];
         },
 
+        /**
+         * Returns the requested given response
+         *
+         * @param {string} identifier
+         * @returns {string}
+         */
         getResponse: function getResponse(identifier) {
             return storage.responses[identifier];
         },
 
+        /**
+         * Adds a correct response to the response store
+         *
+         * @param {string} identifier
+         * @param {Array} data
+         */
         addCorrectResponse: function addCorrectResponse(identifier, data) {
             storage.correctResponses[identifier] = data;
         },
 
+        /**
+         * Adds a given response to the response store
+         *
+         * @param {string} identifier
+         * @param {string} data
+         */
         addResponse: function addResponse(identifier, data) {
             storage.responses[identifier] = data;
+        },
+
+        clearStorage: function clearStorage() {
+            storage.responses = {};
+            storage.correctResponses = {};
         }
     };
 });

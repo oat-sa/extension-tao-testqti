@@ -160,6 +160,7 @@ define([
                 var firstItem,
                     simplifiedTestMap = getSimplifiedTestMap(testMap);
 
+
                 // if the jump table is empty, add the first item as the first jump
                 if (simplifiedTestMap.length > 0 && jumpTable.length === 0) {
                     firstItem = simplifiedTestMap[0];
@@ -252,7 +253,7 @@ define([
                     var itemSliceIndex = items.indexOf(lastJumpItem);
                     var itemIdentifierToAdd = items.slice(itemSliceIndex + 1).shift();
                     var itemToAdd = simplifiedTestMap
-                        .filter(function (row) {
+                        .filter(function(row) {
                             return row.item === itemIdentifierToAdd;
                         })
                         .shift();
@@ -321,7 +322,7 @@ define([
             /**
              * Adds the first item of the next section to the end of the jump table
              *
-             * @param {Object} params
+             * @param {Object} [params]]
              * @returns {Promise}
              */
             jumpToNextSection: function jumpToNextSection(params) {
@@ -348,7 +349,7 @@ define([
             /**
              * Jumps to the previous item by deleting the last entry of the jump table.
              *
-             * @param {Object} params
+             * @param {Object} [params]
              * @returns {Promise}
              */
             jumpToPreviousItem: function jumpToPreviousItem(params) {

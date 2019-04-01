@@ -1,27 +1,36 @@
 define([
-    'taoQtiTest/runner/branchRule/branchRuleMapper',
+    'taoQtiTest/runner/branchRule/branchRuleMapper'
 ], function(
     branchRuleMapper
 ) {
+    'use strict';
+
+    var mockBranchRuleDefinition = {
+        variable: { '@attributes': { identifier: 'test' } },
+        correct:  { '@attributes': { identifier: 'test' } }
+    };
 
     QUnit
-        .cases([
-            { branchRule: 'match', expectedResult: 'match' },
-            { branchRule: 'and', expectedResult: 'and' },
-            { branchRule: 'or', expectedResult: 'or' },
-            { branchRule: 'not', expectedResult: 'not' },
+        .cases
+        .init([
+            { branchRuleName: 'match' },
+            { branchRuleName: 'or' },
+            { branchRuleName: 'and' },
+            { branchRuleName: 'not' }
         ])
-        .test('it returns the proper branch rule', function(params, assert) {
-            QUnit.expect(1);
-            assert.equal(branchRuleMapper(params.branchRule), params.expectedResult);
+        .test('it returns the proper branch rule component', function(data, assert) {
+            assert.expect(2);
+            assert.equal(typeof branchRuleMapper(data.branchRuleName, mockBranchRuleDefinition), 'object');
+            assert.equal(typeof branchRuleMapper(data.branchRuleName, mockBranchRuleDefinition)['validate'], 'function');
         });
 
-    QUnit.test('it returns error in case of non-existing branch rule', function(assert) {
-        QUnit.expect(1);
+    QUnit.test('it throws error when it get called with a non-existing branch rule', function(assert) {
+        assert.expect(1);
         assert.throws(
             function() {
-                branchRuleMapper('test');
-            }
+                branchRuleMapper('foobar');
+            },
+            new Error('Invalid branch rule name: foobar')
         );
     });
 });

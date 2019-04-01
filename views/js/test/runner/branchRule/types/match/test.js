@@ -1,10 +1,12 @@
 define([
     'taoQtiTest/runner/branchRule/types/match',
-    'taoQtiTest/runner/proxy/offline/responseStore',
+    'taoQtiTest/runner/proxy/offline/responseStore'
 ], function(
     matchBranchRuleFactory,
     responseStore
 ) {
+    'use strict';
+
     responseStore.addResponse('R1', 'test');
     responseStore.addCorrectResponse('R1', ['test', 'foo', 'bar']);
 
@@ -12,67 +14,57 @@ define([
     responseStore.addCorrectResponse('R2', ['a', 'b', 'c']);
 
     QUnit.test('it returns true if the matching is correct', function(assert) {
-        QUnit.expect(1);
-
-        var branchRuleDefintion = {
+        var branchRuleDefinition = {
             'variable': { '@attributes': { 'identifier': 'R1' } },
-            'match':    { '@attributes': { 'identifier': 'R1' } },
+            'correct':  { '@attributes': { 'identifier': 'R1' } }
         };
+        var matchBranchRule = matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore);
 
-        var matchBranchRule = matchBranchRuleFactory(branchRuleDefintion, null, null, null, responseStore);
-
+        assert.expect(1);
         assert.equal(true, matchBranchRule.validate());
     });
 
     QUnit.test('it returns true if the matching is correct (different answer)', function(assert) {
-        QUnit.expect(1);
-
-        var branchRuleDefintion = {
+        var branchRuleDefinition = {
             'variable': { '@attributes': { 'identifier': 'R2' } },
-            'match':    { '@attributes': { 'identifier': 'R1' } },
+            'correct':  { '@attributes': { 'identifier': 'R1' } }
         };
+        var matchBranchRule = matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore);
 
-        var matchBranchRule = matchBranchRuleFactory(branchRuleDefintion, null, null, null, responseStore);
-
+        assert.expect(1);
         assert.equal(true, matchBranchRule.validate());
     });
 
     QUnit.test('it returns false if the responses are not exist', function(assert) {
-        QUnit.expect(1);
-
-        var branchRuleDefintion = {
+        var branchRuleDefinition = {
             'variable': { '@attributes': { 'identifier': 'test' } },
-            'match':    { '@attributes': { 'identifier': 'test' } },
+            'correct':  { '@attributes': { 'identifier': 'test' } }
         };
+        var matchBranchRule = matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore);
 
-        var matchBranchRule = matchBranchRuleFactory(branchRuleDefintion, null, null, null, responseStore);
-
+        assert.expect(1);
         assert.equal(false, matchBranchRule.validate());
     });
 
     QUnit.test('it returns false if the response is incorrect', function(assert) {
-        QUnit.expect(1);
-
-        var branchRuleDefintion = {
+        var branchRuleDefinition = {
             'variable': { '@attributes': { 'identifier': 'R2' } },
-            'match':    { '@attributes': { 'identifier': 'R2' } },
+            'correct':  { '@attributes': { 'identifier': 'R2' } }
         };
+        var matchBranchRule = matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore);
 
-        var matchBranchRule = matchBranchRuleFactory(branchRuleDefintion, null, null, null, responseStore);
-
+        assert.expect(1);
         assert.equal(false, matchBranchRule.validate());
     });
 
     QUnit.test('it returns false if the responses are not matching', function(assert) {
-        QUnit.expect(1);
-
-        var branchRuleDefintion = {
+        var branchRuleDefinition = {
             'variable': { '@attributes': { 'identifier': 'R1' } },
-            'match':    { '@attributes': { 'identifier': 'R2' } },
+            'correct':  { '@attributes': { 'identifier': 'R2' } }
         };
+        var matchBranchRule = matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore);
 
-        var matchBranchRule = matchBranchRuleFactory(branchRuleDefintion, null, null, null, responseStore);
-
+        assert.expect(1);
         assert.equal(false, matchBranchRule.validate());
     });
 });

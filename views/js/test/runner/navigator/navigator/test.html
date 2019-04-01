@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>Test Runner - Navigator</title>
-        <base href="../../../../../../tao/views/" />
+        <base href="../../../../../../../tao/views/" />
         <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
         <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
         <script type="text/javascript" src="js/lib/require.js"></script>
@@ -19,7 +19,7 @@
             require(['/tao/ClientConfig/config'], function(){
 
                 //load the test
-                require(['taoQtiTest/test/runner/navigator/test'], function(){
+                require(['taoQtiTest/test/runner/navigator/navigator/test'], function(){
 
                     //Tests loaded, run tests
                     QUnit.start();
