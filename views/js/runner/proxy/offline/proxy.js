@@ -354,6 +354,10 @@ define([
             return InitCallPromise.then(function(response) {
                 var promises = [];
 
+                if (!response.items) {
+                    response.items = {};
+                }
+
                 self.itemStore.setCacheSize(Object.keys(response.items).length);
 
                 Object.keys(response.items).forEach(function(itemIdentifier) {
@@ -434,7 +438,7 @@ define([
                 })
                 .catch(function(err) {
                     feedback().error(err.message);
-                });;
+                });
         },
 
         /**
