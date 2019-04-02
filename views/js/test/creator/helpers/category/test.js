@@ -19,12 +19,11 @@
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
+
     'lodash',
     'taoQtiTest/controller/creator/helpers/category',
     'json!taoQtiTest/test/creator/samples/categories.json'
-], function (_,
-             categoryHelper,
-             testModelSample) {
+], function(_, categoryHelper, testModelSample) {
     'use strict';
 
     var categoryHelperApi = [
@@ -33,25 +32,21 @@ define([
         {title: 'listOptions'}
     ];
 
-
     QUnit.module('helpers/category');
 
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof categoryHelper, 'object', "The category helper module exposes an object");
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof categoryHelper, 'object', 'The category helper module exposes an object');
     });
 
-
     QUnit
-        .cases(categoryHelperApi)
-        .test('helpers/category API ', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(categoryHelperApi)
+        .test('helpers/category API ', function(data, assert) {
+            assert.expect(1);
             assert.equal(typeof categoryHelper[data.title], 'function', 'The category helper exposes a "' + data.title + '" function');
         });
 
-
-    QUnit.test('helpers/category.eachCategories()', function (assert) {
+    QUnit.test('helpers/category.eachCategories()', function(assert) {
         var path = [{
             category: 'history',
             item: 'item-1'
@@ -88,36 +83,34 @@ define([
         categoryHelper.eachCategories(testModelSample, function(category, itemRef) {
             assert.equal(category, path[pointer].category, 'The category helper loop over the right category');
             assert.equal(itemRef.identifier, path[pointer].item, 'The category helper loop over the right item ref');
-            pointer ++;
+            pointer++;
         });
 
-        QUnit.expect(1 + path.length * 2);
+        assert.expect(1 + path.length * 2);
 
         assert.equal(pointer, path.length, 'The category helper returns the right categories');
     });
 
-
-    QUnit.test('helpers/category.listCategories()', function (assert) {
+    QUnit.test('helpers/category.listCategories()', function(assert) {
         var expectedCategories = ['history', 'math'];
         var categories = categoryHelper.listCategories(testModelSample);
 
         categories.sort();
         expectedCategories.sort();
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.deepEqual(categories, expectedCategories, 'The category helper returns the right categories');
     });
 
-
-    QUnit.test('helpers/category.listOptions()', function (assert) {
+    QUnit.test('helpers/category.listOptions()', function(assert) {
         var expectedOptions = ['x-tao-option-calculator', 'x-tao-option-reviewScreen'];
         var options = categoryHelper.listOptions(testModelSample);
 
         options.sort();
         expectedOptions.sort();
 
-        QUnit.expect(1);
+        assert.expect(1);
 
         assert.deepEqual(options, expectedOptions, 'The category helper returns the right options');
     });

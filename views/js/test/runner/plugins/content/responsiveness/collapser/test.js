@@ -19,13 +19,22 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
+
     'lodash',
     'jquery',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/test/runner/mocks/areaBrokerMock',
     'taoQtiTest/runner/plugins/content/responsiveness/collapser'
-], function (_, $, runnerFactory, providerMock, areaBrokerMock, pluginFactory) {
+], function(
+
+    _,
+    $,
+    runnerFactory,
+    providerMock,
+    areaBrokerMock,
+    pluginFactory
+) {
     'use strict';
 
     var fixtureId = '#qunit-fixture';
@@ -38,31 +47,29 @@ define([
         NAV_PADDING = 20,
 
         ALL_EXPANDED =
-            7 * ICON_WIDTH +  // 5 toolbox buttons + 2 nav buttons
-            6 * TEXT_WIDTH +  // 1 toolbox button is always collapsed, see test.html
+            7 * ICON_WIDTH + // 5 toolbox buttons + 2 nav buttons
+            6 * TEXT_WIDTH + // 1 toolbox button is always collapsed, see test.html
             7 * BTN_MARGIN +
             NAV_PADDING +
-            20;               //scrollbar width
-
+            20; //Scrollbar width
 
     var providerName = 'mock';
     runnerFactory.registerProvider(providerName, providerMock());
 
     QUnit.module('Module');
 
-    QUnit.test('Module export', function (assert) {
-        QUnit.expect(1);
+    QUnit.test('Module export', function(assert) {
+        assert.expect(1);
 
         assert.ok(typeof pluginFactory === 'function', 'The module expose a function');
     });
 
     QUnit.module('Collapser');
 
+    //******************   With preconfigured order   ******************//
 
-
-    //******************   with preconfigured order   ******************//
-
-    QUnit.asyncTest('collapse/expand with preconfigured order', function(assert) {
+    QUnit.test('collapse/expand with preconfigured order', function(assert) {
+        var ready = assert.async();
         var $container = $(fixtureId),
             areaBroker,
             runner,
@@ -81,20 +88,18 @@ define([
             collapsedBtns,
             resizeCount = 0;
 
-        QUnit.expect(49);
+        assert.expect(49);
 
         areaBroker = areaBrokerMock({
             $brokerContainer: $container,
             mapping: {
                 actionsBar: $container.find('.bottom-action-bar .control-box'),
-                toolbox:    $container.find('.tools-box'),
+                toolbox: $container.find('.tools-box'),
                 navigation: $container.find('.navi-box')
             }
         });
 
-
-
-        runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
+        runnerFactory.registerProvider(providerName, providerMock({areaBroker: areaBroker}));
         runner = runnerFactory(providerName);
         plugin = pluginFactory(runner, areaBroker);
 
@@ -118,7 +123,7 @@ define([
                     collapsedBtns = 0;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     $actionsBar.width(ALL_EXPANDED - 1);
                     runner.trigger('collapseTools');
@@ -128,7 +133,7 @@ define([
                     collapsedBtns = 1;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
 
@@ -141,7 +146,7 @@ define([
                     collapsedBtns = 3;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been collapsed');
@@ -157,7 +162,7 @@ define([
                     collapsedBtns = 4;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been collapsed');
@@ -174,7 +179,7 @@ define([
                     collapsedBtns = 6;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been collapsed');
@@ -193,7 +198,7 @@ define([
                     collapsedBtns = 4;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 remain collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 remain collapsed');
@@ -212,7 +217,7 @@ define([
                     collapsedBtns = 3;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 remain collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 remain collapsed');
@@ -231,7 +236,7 @@ define([
                     collapsedBtns = 1;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 remain collapsed');
                     assert.ok(! $container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been expanded');
@@ -249,7 +254,7 @@ define([
                     collapsedBtns = 0;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok(! $container.find(collapseOrder[0]).hasClass(noLabelCls), 'button1 has been expanded');
                     assert.ok(! $container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been expanded');
@@ -258,7 +263,7 @@ define([
                     assert.ok(! $container.find(collapseOrder[2]).hasClass(noLabelCls), 'button5 has been expanded');
                     assert.ok(! $container.find(collapseOrder[3]).hasClass(noLabelCls), 'prev & next have been expanded');
 
-                    QUnit.start();
+                    ready();
                     break;
                 }
             }
@@ -266,22 +271,21 @@ define([
 
         plugin.init()
             .then(function() {
-                $actionsBar  = areaBroker.getArea('actionsBar');
+                $actionsBar = areaBroker.getArea('actionsBar');
 
                 $actionsBar.width(ALL_EXPANDED);
                 runner.trigger('loaditem');
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
+                ready();
             });
     });
 
+    //******************   Without preconfigured order   ******************//
 
-
-    //******************   without preconfigured order   ******************//
-
-    QUnit.asyncTest('collapse/expand without preconfigured order', function(assert) {
+    QUnit.test('collapse/expand without preconfigured order', function(assert) {
+        var ready = assert.async();
         var $container = $(fixtureId),
             areaBroker,
             runner,
@@ -295,23 +299,20 @@ define([
             collapsedBtns,
             resizeCount = 0;
 
-        QUnit.expect(57);
+        assert.expect(57);
 
         areaBroker = areaBrokerMock({
             $brokerContainer: $container,
             mapping: {
                 actionsBar: $container.find('.bottom-action-bar .control-box'),
-                toolbox:    $container.find('.tools-box'),
+                toolbox: $container.find('.tools-box'),
                 navigation: $container.find('.navi-box')
             }
         });
 
-
-
-        runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
+        runnerFactory.registerProvider(providerName, providerMock({areaBroker: areaBroker}));
         runner = runnerFactory(providerName);
         plugin = pluginFactory(runner, areaBroker);
-
 
         runner.setTestData({
             config: {
@@ -334,7 +335,7 @@ define([
                     collapsedBtns = 0;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     $actionsBar.width(ALL_EXPANDED - 1);
                     runner.trigger('collapseTools');
@@ -344,7 +345,7 @@ define([
                     collapsedBtns = 2;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
                     assert.ok($container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been collapsed');
 
@@ -357,7 +358,7 @@ define([
                     collapsedBtns = 3;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been collapsed');
@@ -374,7 +375,7 @@ define([
                     collapsedBtns = 4;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been collapsed');
@@ -392,7 +393,7 @@ define([
                     collapsedBtns = 6;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 has been collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been collapsed');
@@ -412,7 +413,7 @@ define([
                     collapsedBtns = 4;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 remains collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 remains collapsed');
@@ -432,7 +433,7 @@ define([
                     collapsedBtns = 3;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 remains collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 remains collapsed');
@@ -449,11 +450,12 @@ define([
                     break;
                 }
                 case 8: {
-                    //two because the first two buttons are in a group
+
+                    //Two because the first two buttons are in a group
                     collapsedBtns = 2;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok($container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 remains collapsed');
                     assert.ok($container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 remains collapsed');
@@ -473,7 +475,7 @@ define([
                     collapsedBtns = 0;
 
                     $collapsed = $container.find('.' + noLabelCls);
-                    assert.equal($collapsed.length,  collapsedBtns, collapsedBtns + ' buttons are collapsed');
+                    assert.equal($collapsed.length, collapsedBtns, collapsedBtns + ' buttons are collapsed');
 
                     assert.ok(! $container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 has been expanded');
                     assert.ok(! $container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been expanded');
@@ -483,7 +485,7 @@ define([
                     assert.ok(! $container.find('[data-control="navi-prev"]').hasClass(noLabelCls), 'navi-prev button has been expanded');
                     assert.ok(! $container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button has been expanded');
 
-                    QUnit.start();
+                    ready();
                     break;
                 }
             }
@@ -491,27 +493,27 @@ define([
 
         plugin.init()
             .then(function() {
-                $actionsBar  = areaBroker.getArea('actionsBar');
+                $actionsBar = areaBroker.getArea('actionsBar');
 
                 $actionsBar.width(ALL_EXPANDED);
                 runner.trigger('loaditem');
             })
             .catch(function(err) {
                 assert.ok(false, 'Error in init method: ' + err);
-                QUnit.start();
+                ready();
             });
     });
 
-
-    //******************   do not collapse in order   ******************//
+    //******************   Do not collapse in order   ******************//
 
     QUnit
-        .cases([
-            { title: 'Tools and Nav',   collapseTools: true,    collapseNavigation: true },
-            { title: 'Tools',           collapseTools: true,    collapseNavigation: false },
-            { title: 'Nav',             collapseTools: false,   collapseNavigation: true }
+        .cases.init([
+            {title: 'Tools and Nav', collapseTools: true, collapseNavigation: true},
+            {title: 'Tools', collapseTools: true, collapseNavigation: false},
+            {title: 'Nav', collapseTools: false, collapseNavigation: true}
         ])
-        .asyncTest('collapse/expand all at once', function(data, assert) {
+        .test('collapse/expand all at once', function(data, assert) {
+            var ready = assert.async();
             var $container = $(fixtureId),
                 areaBroker,
                 runner,
@@ -522,18 +524,18 @@ define([
                 $toolbox,
                 resizeCount = 0;
 
-            QUnit.expect(16);
+            assert.expect(16);
 
             areaBroker = areaBrokerMock({
                 $brokerContainer: $container,
                 mapping: {
                     actionsBar: $container.find('.bottom-action-bar .control-box'),
-                    toolbox:    $container.find('.tools-box'),
+                    toolbox: $container.find('.tools-box'),
                     navigation: $container.find('.navi-box')
                 }
             });
 
-            runnerFactory.registerProvider(providerName, providerMock({ areaBroker: areaBroker }));
+            runnerFactory.registerProvider(providerName, providerMock({areaBroker: areaBroker}));
             runner = runnerFactory(providerName);
             plugin = pluginFactory(runner, areaBroker);
 
@@ -552,23 +554,24 @@ define([
                 resizeCount++;
 
                 switch (resizeCount) {
-                    // original state
+
+                    // Original state
                     case 1: {
-                        assert.ok(! $nav.hasClass(noLabelCls), 'nav is expanded');
-                        assert.ok(! $toolbox.hasClass(noLabelCls), 'toolbox is expanded');
+                        assert.ok(!$nav.hasClass(noLabelCls), 'nav is expanded');
+                        assert.ok(!$toolbox.hasClass(noLabelCls), 'toolbox is expanded');
 
                         $actionsBar.width(ALL_EXPANDED - 1);
                         runner.trigger('collapseTools');
                         break;
                     }
                     case 2: {
-                        // collapse all in the applicable containers (tools|navi)
+
+                        // Collapse all in the applicable containers (tools|navi)
 
                         if(data.collapseNavigation) {
                             assert.ok($container.find('[data-control="navi-prev"]').hasClass(noLabelCls), 'navi-prev button has been collapsed');
                             assert.ok($container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button has been collapsed');
-                        }
-                        else {
+                        } else {
                             assert.ok(! $container.find('[data-control="navi-prev"]').hasClass(noLabelCls), 'navi-prev button remains expanded');
                             assert.ok(! $container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button remains expanded');
                         }
@@ -579,8 +582,7 @@ define([
                             assert.ok(! $container.find('[data-control="three"]').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
                             assert.ok($container.find('[data-control="four"]').hasClass(noLabelCls), 'button4 has been collapsed');
                             assert.ok($container.find('[data-control="five"]').hasClass(noLabelCls), 'button5 has been collapsed');
-                        }
-                        else {
+                        } else {
                             assert.ok(! $container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 remains expanded');
                             assert.ok(! $container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 remains expanded');
                             assert.ok(! $container.find('[data-control="three"]').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
@@ -593,17 +595,18 @@ define([
                         break;
                     }
                     case 3: {
-                        // expand all
-                        assert.ok(! $container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 has been expanded');
-                        assert.ok(! $container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been expanded');
-                        assert.ok(! $container.find('[data-control="three"]').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
-                        assert.ok(! $container.find('[data-control="four"]').hasClass(noLabelCls), 'button4 has been expanded');
-                        assert.ok(! $container.find('[data-control="five"]').hasClass(noLabelCls), 'button5 has been expanded');
 
-                        assert.ok(! $container.find('[data-control="navi-prev"]').hasClass(noLabelCls), 'navi-prev button has been expanded');
-                        assert.ok(! $container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button has been expanded');
+                        // Expand all
+                        assert.ok(!$container.find('[data-control="prefixed-one"]').hasClass(noLabelCls), 'button1 has been expanded');
+                        assert.ok(!$container.find('[data-control="prefixed-two"]').hasClass(noLabelCls), 'button2 has been expanded');
+                        assert.ok(!$container.find('[data-control="three"]').hasClass(noLabelCls), 'button3 has NOT been collapsed (always collapsed, see markup in test.html)');
+                        assert.ok(!$container.find('[data-control="four"]').hasClass(noLabelCls), 'button4 has been expanded');
+                        assert.ok(!$container.find('[data-control="five"]').hasClass(noLabelCls), 'button5 has been expanded');
 
-                        QUnit.start();
+                        assert.ok(!$container.find('[data-control="navi-prev"]').hasClass(noLabelCls), 'navi-prev button has been expanded');
+                        assert.ok(!$container.find('[data-control="navi-next"]').hasClass(noLabelCls), 'navi-next button has been expanded');
+
+                        ready();
                         break;
                     }
                 }
@@ -611,16 +614,16 @@ define([
 
             plugin.init()
                 .then(function() {
-                    $actionsBar  = areaBroker.getArea('actionsBar');
-                    $nav         = areaBroker.getArea('navigation');
-                    $toolbox     = areaBroker.getArea('toolbox');
+                    $actionsBar = areaBroker.getArea('actionsBar');
+                    $nav = areaBroker.getArea('navigation');
+                    $toolbox = areaBroker.getArea('toolbox');
 
                     $actionsBar.width(ALL_EXPANDED);
                     runner.trigger('loaditem');
                 })
                 .catch(function(err) {
                     assert.ok(false, 'Error in init method: ' + err);
-                    QUnit.start();
+                    ready();
                 });
         });
 

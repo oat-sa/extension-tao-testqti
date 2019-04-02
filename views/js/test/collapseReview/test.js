@@ -19,6 +19,7 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
+
     'jquery',
     'lodash',
     'taoQtiTest/testRunner/actionBar/collapseReview'
@@ -32,50 +33,47 @@ define([
         hook: 'taoQtiTest/testRunner/actionBar/collapseReview'
     };
 
-
     QUnit.module('collapseReview');
 
-
     QUnit.test('module', function(assert) {
-        assert.equal(typeof collapseReview, 'object', "The collapseReview module exposes an object");
+        assert.equal(typeof collapseReview, 'object', 'The collapseReview module exposes an object');
     });
 
     var collapseReviewApi = [
-        { name : 'init', title : 'init' },
-        { name : 'clear', title : 'clear' },
-        { name : 'render', title : 'render' },
-        { name : 'bindTo', title : 'bindTo' },
-        { name : 'bindEvents', title : 'bindEvents' },
-        { name : 'unbindEvents', title : 'unbindEvents' },
-        { name : 'isVisible', title : 'isVisible' },
-        { name : 'hasMenu', title : 'hasMenu' },
-        { name : 'isMenuOpen', title : 'isMenuOpen' },
-        { name : 'closeMenu', title : 'closeMenu' },
-        { name : 'openMenu', title : 'openMenu' },
-        { name : 'toggleMenu', title : 'toggleMenu' },
-        { name : 'setActive', title : 'setActive' },
-        { name : 'trigger', title : 'trigger' },
-        { name : 'on', title : 'on' },
-        { name : 'off', title : 'off' },
-        { name : 'setup', title : 'setup' },
-        { name : 'action', title : 'action' },
-        { name : 'menuAction', title : 'menuAction' }
+        {name: 'init', title: 'init'},
+        {name: 'clear', title: 'clear'},
+        {name: 'render', title: 'render'},
+        {name: 'bindTo', title: 'bindTo'},
+        {name: 'bindEvents', title: 'bindEvents'},
+        {name: 'unbindEvents', title: 'unbindEvents'},
+        {name: 'isVisible', title: 'isVisible'},
+        {name: 'hasMenu', title: 'hasMenu'},
+        {name: 'isMenuOpen', title: 'isMenuOpen'},
+        {name: 'closeMenu', title: 'closeMenu'},
+        {name: 'openMenu', title: 'openMenu'},
+        {name: 'toggleMenu', title: 'toggleMenu'},
+        {name: 'setActive', title: 'setActive'},
+        {name: 'trigger', title: 'trigger'},
+        {name: 'on', title: 'on'},
+        {name: 'off', title: 'off'},
+        {name: 'setup', title: 'setup'},
+        {name: 'action', title: 'action'},
+        {name: 'menuAction', title: 'menuAction'}
     ];
 
     QUnit
-        .cases(collapseReviewApi)
+        .cases.init(collapseReviewApi)
         .test('API ', function(data, assert) {
             assert.equal(typeof collapseReview[data.name], 'function', 'The collapseReview module exposes a "' + data.title + '" function');
         });
-
 
     QUnit.test('button enabled/disabled', function(assert) {
         var testContextMock = {
             reviewScreen: false,
             considerProgress: true,
-            categories : []
+            categories: []
         };
-        
+
         testContextMock.reviewScreen = true;
         collapseReview.init('collapseReview', configMock, testContextMock, {});
         assert.ok(!collapseReview.isVisible(), 'The collapseReview button is not visible when the test taker screen is enabled and when the special category is not set');
@@ -83,10 +81,10 @@ define([
         testContextMock.reviewScreen = false;
         collapseReview.init('collapseReview', configMock, testContextMock, {});
         assert.ok(!collapseReview.isVisible(), 'The collapseReview button is not visible when the test taker screen is disabled and when the special category is not set');
-        
-        //add special category to enable markForReview
+
+        //Add special category to enable markForReview
         testContextMock.categories.push('x-tao-option-reviewScreen');
-        
+
         testContextMock.reviewScreen = true;
         collapseReview.init('collapseReview', configMock, testContextMock, {});
         assert.ok(collapseReview.isVisible(), 'The collapseReview button is visible when the test taker screen is enabled and when the special category is set');
@@ -96,18 +94,18 @@ define([
         assert.ok(!collapseReview.isVisible(), 'The collapseReview button is not visible when the test taker screen is disabled and when the special category is set');
     });
 
-
-    QUnit.asyncTest('button install/uninstall', function(assert) {
+    QUnit.test('button install/uninstall', function(assert) {
+        var ready = assert.async();
         var callExpected = true;
         var callExecuted = false;
         var i = 0;
         var testRunnerMock = {
             testReview: {
                 toggle: function() {
-                    if (callExpected && ++i ==2) {
+                    if (callExpected && ++i == 2) {
                         assert.ok(true, 'The button must trigger two calls to toggle');
                         callExecuted = true;
-                        QUnit.start();
+                        ready();
                     }
                 }
             }
@@ -116,7 +114,7 @@ define([
         var testContextMock = {
             reviewScreen: true,
             considerProgress: true,
-            categories : ['x-tao-option-reviewScreen']
+            categories: ['x-tao-option-reviewScreen']
         };
 
         var $container = $('#mark-for-review-1');
@@ -131,20 +129,18 @@ define([
         collapseReview.clear();
 
         _.delay(function() {
-            if(!callExecuted){
+            if (!callExecuted) {
                 assert.ok(true, 'The button is uninstalled and did not trigger a call to collapseReview');
-                QUnit.start();
+                ready();
             }
         }, 600);
         $btn.click();
-
     });
-
 
     QUnit.test('button active/idle', function(assert) {
         var testRunnerMock = {
             testReview: {
-                toggle: function () {
+                toggle: function() {
                 },
                 hidden: true
             }
@@ -153,7 +149,7 @@ define([
         var testContextMock = {
             reviewScreen: true,
             considerProgress: true,
-            categories : ['x-tao-option-reviewScreen']
+            categories: ['x-tao-option-reviewScreen']
         };
 
         var $container = $('#mark-for-review-2');
@@ -175,20 +171,20 @@ define([
         assert.ok($btn.hasClass('active'), 'The collapseReview button is activate when the component is visible');
     });
 
-
-    QUnit.asyncTest('button click', function(assert) {
+    QUnit.test('button click', function(assert) {
+        var ready = assert.async(4);
         var expectedHidden = true;
         var i = 1;
         var testRunnerMock = {
             testReview: {
-                toggle: function () {
-                    if(i === 1){
+                toggle: function() {
+                    if (i === 1) {
                         assert.ok(true, 'first call to toggle after init');
-                    }else if(i > 1){
+                    }else if (i > 1) {
                         testRunnerMock.testReview.hidden = !testRunnerMock.testReview.hidden;
                         assert.equal(testRunnerMock.testReview.hidden, expectedHidden, 'The collapseReview button state must reflect the display state of the component');
                         assert.equal($btn.hasClass('active'), testRunnerMock.testReview.hidden, 'The collapseReview button is idle when the component is hidden, or active when the component is visible');
-                        QUnit.start();
+                        ready();
                     }
                     i++;
                 },
@@ -212,15 +208,12 @@ define([
 
         $btn.click();
 
-        QUnit.stop();
         expectedHidden = false;
         $btn.click();
 
-        QUnit.stop();
         expectedHidden = true;
         $btn.click();
 
-        QUnit.stop();
         expectedHidden = false;
         $btn.click();
     });
