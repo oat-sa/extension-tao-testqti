@@ -362,7 +362,20 @@ return array(
                  */
                 'focus' => 'ok'
             ]
-        ]
+        ],
+
+        /**
+         * The plugin responsible of the keyboard navigation
+         */
+        'keyNavigation' => [
+            /**
+             * The type of content navigation. For now only two modes are supported:
+             * - `default`: the regular navigation mode
+             * - `linear`: a linear navigation mode, where the user can navigation linearly between choices using the tab key
+             * @type string
+             */
+            'contentNavigatorType' => 'default'
+        ],
     ],
 
     /**
