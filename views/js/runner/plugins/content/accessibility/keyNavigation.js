@@ -456,7 +456,7 @@ define([
                     initAllContentButtonsNavigation(testRunner),
                     initToolbarNavigation(testRunner),
                     initNavigatorNavigation(testRunner),
-                    initHeaderNavigation(testRunner),
+                    initHeaderNavigation(testRunner)
                 );
             break;
 
@@ -466,7 +466,7 @@ define([
                     initDefaultContentNavigation(testRunner),
                     initToolbarNavigation(testRunner),
                     initNavigatorNavigation(testRunner),
-                    initHeaderNavigation(testRunner),
+                    initHeaderNavigation(testRunner)
                 );
             break;
         }
