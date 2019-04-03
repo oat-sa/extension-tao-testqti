@@ -16,6 +16,8 @@
 *
 * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
 */
+
+use function GuzzleHttp\Psr7\stream_for;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
 use oat\generis\model\data\event\ResourceUpdated;
@@ -76,7 +78,8 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
             $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 
             $this->setContentHeader('application/json', 'UTF-8');
-            echo $qtiTestService->getJsonTest($test);
+
+            $this->response = $this->getPsrResponse()->withBody(stream_for($qtiTestService->getJsonTest($test)));
         }
 
         /**
@@ -123,7 +126,8 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
                 }
             }
             $this->setContentHeader('application/json', 'UTF-8');
-            echo json_encode(array('saved' => $saved));
+
+            $this->response = $this->getPsrResponse()->withBody(stream_for(json_encode(array('saved' => $saved))));
         }
 
 
@@ -145,7 +149,8 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule {
                 }
             }
             $this->setContentHeader('application/json', 'UTF-8');
-            echo json_encode($response);
+
+            $this->response = $this->getPsrResponse()->withBody(stream_for(json_encode($response)));
         }
 
 
