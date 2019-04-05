@@ -95,15 +95,23 @@ define([
         var highlightHelper = highlighterFactory({
             className: options.className || 'txt-user-highlight',
             containerSelector: options.containerSelector || '.qti-itemBody',
-            containersBlackList: options.containersBlackList || []
+            containersBlackList: options.containersBlackList || [],
+            clearOnClick: true,
+        });
+
+        //add event to automatically highlight the recently made selection if needed
+        $(document).on('mouseup.highlighter', function() {
+            if (isHighlighting && !selection.isCollapsed) {
+                highlightHelper.highlightRanges(getAllRanges());
+                discardSelection();
+            }
         });
 
         //add event to automatically highlight the recently made selection if needed
         //added touch event (as from TAO-6578)
-        $(document).on('mouseup.highlighter touchend.highlighter', function() {
+        $(document).on('touchend.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
-                discardSelection();
             }
         });
 
@@ -142,8 +150,10 @@ define([
                 isHighlighting = bool;
                 if (isHighlighting) {
                     this.trigger('start');
+                    $(".qti-itemBody").toggleClass('highlighter-cursor', true);
                 } else {
                     this.trigger('end');
+                    $(".qti-itemBody").toggleClass('highlighter-cursor', false);
                 }
                 return this;
             },
