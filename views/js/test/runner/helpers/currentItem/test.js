@@ -19,11 +19,9 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 define([
-
     'lodash',
-    'helpers',
     'taoQtiTest/runner/helpers/currentItem'
-], function(_, helpers, currentItemHelper) {
+], function (_, currentItemHelper) {
     'use strict';
 
     var messagesHelperApi = [
@@ -39,13 +37,17 @@ define([
      * Build a fake test runner with embedded item runner
      * @param {Object} responses
      * @param {Object} declarations
+     * @param {String} itemId
+     * @param {Object} itemBdy
      * @returns {Object}
      */
-    function runnerMock(responses, declarations) {
+    function runnerMock(responses, declarations, itemId, itemBdy) {
         return {
             itemRunner: {
                 _item: {
-                    responses: declarations
+                    responses: declarations,
+                    bdy: itemBdy,
+                    itemIdentifier: itemId
                 },
                 getResponses: function() {
                     return responses;
@@ -204,4 +206,51 @@ define([
         assert.equal(currentItemHelper.isAnswered(respondedRunner), true, 'The item should be answered');
         assert.equal(currentItemHelper.isAnswered(notRespondedRunner), false, 'The item should not be answered');
     });
+
+
+    QUnit.cases.init([
+        {
+            title : 'undefined item',
+            itemId: 'item-0',
+            itemBdy: null,
+            expectedResult: []
+        },
+        {
+            title : 'without stimulus',
+            itemId: 'item-1',
+            itemBdy: {
+                elements: {}
+            },
+            expectedResult: []
+        },
+        {
+            title : 'with stimulus',
+            itemId: 'item-2',
+            itemBdy: {
+                elements: {
+                    first : {
+                        attributes: {
+                            href: 'http://path/to/something.xml'
+                        },
+                        qtiClass: 'include'
+                    },
+                    second : {
+                        attributes: {
+                            href: 'http://path/to/something/else.xml'
+                        },
+                        qtiClass: 'choiceInteraction'
+                    }
+                }
+            },
+            expectedResult: ['http://path/to/something.xml']
+        }
+    ]).test('helpers/currentItem.getStimuliHrefs', function(caseData, assert) {
+        var runner = runnerMock(null, null, caseData.itemId, caseData.itemBdy);
+        var hrefs = currentItemHelper.getStimuliHrefs(runner, caseData.itemId);
+
+        assert.expect(1);
+
+        assert.deepEqual(hrefs, caseData.expectedResult, 'getStimuli returns correct value');
+    });
+
 });

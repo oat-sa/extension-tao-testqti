@@ -144,11 +144,11 @@ define([
 
         /**
          * Tells if an item question has been answered or not
-         * @param response
-         * @param baseType
-         * @param cardinality
-         * @param [defaultValue]
-         * @param constraintValue
+         * @param {Object} response
+         * @param {String} baseType
+         * @param {String} cardinality
+         * @param {Object} [defaultValue]
+         * @param {Object} constraintValue
          * @returns {*}
          */
         isQuestionAnswered: function isQuestionAnswered(response, baseType, cardinality, defaultValue, constraintValue) {
@@ -183,9 +183,10 @@ define([
             _.forEach(interactions, function(interaction) {
                 var attributes = interaction.attributes || {};
                 var qtiClass = interaction.__proto__.qtiClass;
+                var constraintProperty;
 
                 if (interactionMinConstraintProperties.hasOwnProperty(qtiClass)) {
-                    var constraintProperty = interactionMinConstraintProperties[qtiClass];
+                    constraintProperty = interactionMinConstraintProperties[qtiClass];
                     constraintValues[attributes.responseIdentifier] = attributes[constraintProperty];
                 }
             });
@@ -197,7 +198,7 @@ define([
          * Tells is the current item has been answered or not
          * The item is considered answered when at least one response has been set to not empty {base : null}
          * @param {Object} runner - testRunner instance
-         * @param {Boolean} [partially = true] - if false all questions must have been answered
+         * @param {Boolean} [partially=true] - if false all questions must have been answered
          * @returns {Boolean}
          */
         isAnswered: function isAnswered(runner, partially) {
@@ -228,6 +229,50 @@ define([
                 return count > 0 && empty === 0;
             }
             return count > 0 && empty < count;
+        },
+
+        /**
+         * Gets list of shared stimuli hrefs in the current item
+         *
+         * @param {Object} runner - testRunner instance
+         * @returns {Array}
+         */
+        getStimuliHrefs: function getStimuliHrefs(runner) {
+            var itemRunner = runner.itemRunner;
+            var itemBody = (itemRunner._item && itemRunner._item.bdy) || {};
+            var interactions = itemBody.elements || {};
+
+            return _(interactions)
+                .values()
+                .filter(function(element) {
+                    return element.qtiClass === 'include';
+                })
+                .pluck('attributes')
+                .pluck('href')
+                .value();
+        },
+
+        /**
+         * Find the list of text stimulus ids in the current item
+         * Depends on the DOM already being loaded
+         * @param {Object} runner - testRunner instance
+         * @returns {Array}
+         */
+        getTextStimuliHrefs: function getTextStimuliHrefs(runner) {
+            var stimuli = this.getStimuliHrefs(runner);
+            var textStimuli;
+            if (stimuli.length > 0) {
+                // Filter the ones containing text:
+                textStimuli = stimuli.filter(function(stimulusHref) {
+                    var domNode = document.querySelector('.qti-include[data-href="' + stimulusHref + '"]');
+                    return _(domNode.childNodes)
+                            .some(function(child) {
+                                return child.nodeType === child.TEXT_NODE;
+                            });
+                });
+                return textStimuli;
+            }
+            return [];
         }
     };
 
