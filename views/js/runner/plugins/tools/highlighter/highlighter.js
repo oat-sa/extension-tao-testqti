@@ -115,6 +115,19 @@ define([
             }
         });
 
+        // iOS devices clears selection after click on button,
+        // so we store prev selection for this devices to be able
+        // to use it after click on highlight button
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+            var prevSelection;
+
+            $(document).on('selectionchange', function() {
+                if (!isHighlighting) {
+                    prevSelection = _.clone(getAllRanges(), true);
+                }
+            });
+        }
+
         /**
          * The highlighter instance
          */
@@ -166,6 +179,11 @@ define([
                     if (!selection.isCollapsed) {
                         this.toggleHighlighting(true);
                         highlightHelper.highlightRanges(getAllRanges());
+                        this.toggleHighlighting(false);
+                        discardSelection();
+                    } else if (prevSelection[0] && !prevSelection[0].collapsed){
+                        this.toggleHighlighting(true);
+                        highlightHelper.highlightRanges(prevSelection);
                         this.toggleHighlighting(false);
                         discardSelection();
                     } else {
