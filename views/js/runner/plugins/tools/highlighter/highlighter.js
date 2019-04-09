@@ -33,6 +33,7 @@ define([
     highlighterFactory
 ) {
     'use strict';
+    var prevSelection;
     var selection;
 
     if (!window.getSelection) throw new Error('Browser does not support getSelection()');
@@ -119,8 +120,6 @@ define([
         // so we store prev selection for this devices to be able
         // to use it after click on highlight button
         if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-            var prevSelection;
-
             $(document).on('selectionchange', function() {
                 if (!isHighlighting) {
                     prevSelection = _.clone(getAllRanges(), true);
