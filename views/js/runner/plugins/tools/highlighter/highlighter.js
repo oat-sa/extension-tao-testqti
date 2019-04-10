@@ -33,6 +33,7 @@ define([
     highlighterFactory
 ) {
     'use strict';
+    var prevSelection;
     var selection;
 
     if (!window.getSelection) throw new Error('Browser does not support getSelection()');
@@ -95,17 +96,36 @@ define([
         var highlightHelper = highlighterFactory({
             className: options.className || 'txt-user-highlight',
             containerSelector: options.containerSelector || '.qti-itemBody',
-            containersBlackList: options.containersBlackList || []
+            containersBlackList: options.containersBlackList || [],
+            clearOnClick: true,
         });
 
         //add event to automatically highlight the recently made selection if needed
-        //added touch event (as from TAO-6578)
-        $(document).on('mouseup.highlighter touchend.highlighter', function() {
+        $(document).on('mouseup.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
                 discardSelection();
             }
         });
+
+        //add event to automatically highlight the recently made selection if needed
+        //added touch event (as from TAO-6578)
+        $(document).on('touchend.highlighter', function() {
+            if (isHighlighting && !selection.isCollapsed) {
+                highlightHelper.highlightRanges(getAllRanges());
+            }
+        });
+
+        // iOS devices clears selection after click on button,
+        // so we store prev selection for this devices to be able
+        // to use it after click on highlight button
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+            $(document).on('selectionchange', function() {
+                if (!isHighlighting) {
+                    prevSelection = _.clone(getAllRanges(), true);
+                }
+            });
+        }
 
         /**
          * The highlighter instance
@@ -142,8 +162,10 @@ define([
                 isHighlighting = bool;
                 if (isHighlighting) {
                     this.trigger('start');
+                    $(".qti-itemBody").toggleClass('highlighter-cursor', true);
                 } else {
                     this.trigger('end');
+                    $(".qti-itemBody").toggleClass('highlighter-cursor', false);
                 }
                 return this;
             },
@@ -156,6 +178,11 @@ define([
                     if (!selection.isCollapsed) {
                         this.toggleHighlighting(true);
                         highlightHelper.highlightRanges(getAllRanges());
+                        this.toggleHighlighting(false);
+                        discardSelection();
+                    } else if (prevSelection[0] && !prevSelection[0].collapsed){
+                        this.toggleHighlighting(true);
+                        highlightHelper.highlightRanges(prevSelection);
                         this.toggleHighlighting(false);
                         discardSelection();
                     } else {
