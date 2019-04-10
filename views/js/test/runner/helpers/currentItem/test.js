@@ -229,16 +229,16 @@ define([
             itemBdy: {
                 elements: {
                     first : {
-                        serial: 'xinclude_12345',
                         attributes: {
                             href: 'http://path/to/something.xml'
-                        }
+                        },
+                        qtiClass: 'include'
                     },
                     second : {
-                        serial: 'anotherelement',
                         attributes: {
                             href: 'http://path/to/something/else.xml'
-                        }
+                        },
+                        qtiClass: 'choiceInteraction'
                     }
                 }
             },

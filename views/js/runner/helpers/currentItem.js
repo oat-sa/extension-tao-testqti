@@ -245,7 +245,7 @@ define([
             return _(interactions)
                 .values()
                 .filter(function(element) {
-                    return element.serial.indexOf('xinclude') === 0;
+                    return element.qtiClass === 'include';
                 })
                 .pluck('attributes')
                 .pluck('href')
