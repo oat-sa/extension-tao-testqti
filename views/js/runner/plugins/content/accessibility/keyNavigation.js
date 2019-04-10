@@ -544,7 +544,7 @@ define([
             var testRunner = this.getTestRunner();
             var testData = testRunner.getTestData() || {};
             var testConfig = testData.config || {};
-            var plaginConfig = _.defaults((testConfig.plugins || {})[self.getName()] || {}, defaultPluginConfig);
+            var pluginConfig = _.defaults((testConfig.plugins || {})[self.getName()] || {}, defaultPluginConfig);
 
             //start disabled
             this.disable();
@@ -554,7 +554,7 @@ define([
              */
             testRunner
                 .after('renderitem', function () {
-                    self.groupNavigator = initTestRunnerNavigation(testRunner, plaginConfig);
+                    self.groupNavigator = initTestRunnerNavigation(testRunner, pluginConfig);
 
                     shortcut.add('tab shift+tab', function(e){
                         if (!allowedToNavigateFrom(e.target)) {
@@ -573,7 +573,7 @@ define([
                  * can be: 'default' || 'linear'
                  */
                 .on('setcontenttabtype', function(type) {
-                    plaginConfig.contentNavigatorType = type;
+                    pluginConfig.contentNavigatorType = type;
                 });
         },
 
