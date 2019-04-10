@@ -120,6 +120,8 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
             $report->setMessage(__('Resource(s) successfully exported.'));
         }
 
+        $report->setData(['path' => $path]);
+
         return $report;
     }
 
