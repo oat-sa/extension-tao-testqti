@@ -253,6 +253,18 @@ return array(
             'restoreStateOnMove' => true
         ],
 
+
+        /**
+         * Validate responses before moving to the next item.
+         */
+        'validateResponses' => [
+            /**
+             * Avoid conflict with the `limitBackButton` plugin by skipping the validation on
+             * backwards move
+             */
+            'validateOnPreviousMove' => true
+        ],
+
         /**
          * The plugin responsible of the runner's overlay mask
          */

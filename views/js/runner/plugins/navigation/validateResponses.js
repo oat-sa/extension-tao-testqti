@@ -56,10 +56,17 @@ define([
          * @returns {this}
          */
         init: function init() {
-            this.getTestRunner().before('move', function () {
+
+            var pluginConfig = this.getConfig();
+
+            this.getTestRunner().before('move', function (e, direction) {
                 var self = this;
                 var testContext = this.getTestContext();
                 var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
+
+                if (!pluginConfig.validateOnPreviousMove && direction === 'previous') {
+                    return Promise.resolve();
+                }
 
                 if ( isInteracting && testContext.enableValidateResponses &&  testContext.validateResponses) {
                     return new Promise(function (resolve, reject) {
