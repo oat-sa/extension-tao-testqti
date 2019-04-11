@@ -33,6 +33,11 @@ define([
 ) {
     'use strict';
 
+    /**
+     * @param {itemStore} itemStore
+     * @param {responseStore} responseStore
+     * @returns {Object}
+     */
     return function offlineNavigatorFactory(itemStore, responseStore) {
         var testData,
             testContext,
@@ -40,30 +45,54 @@ define([
             offlineJumpTableHelper = offlineJumpTableFactory(itemStore, responseStore);
 
         return {
+            /**
+             * @param {Object} data
+             * @returns {this}
+             */
             setTestData: function setTestData(data) {
                 testData = data;
 
                 return this;
             },
 
+            /**
+             * @param {Object} context
+             * @returns {this}
+             */
             setTestContext: function setTestContext(context) {
                 testContext = context;
 
                 return this;
             },
 
+            /**
+             * @param {Object} map
+             * @returns {this}
+             */
             setTestMap: function setTestMap(map) {
                 testMap = map;
 
                 return this;
             },
 
+            /**
+             * Initialization method for the offline navigator component
+             * It get called before every navigation action
+             *
+             * @returns {this}
+             */
             init: function init() {
                 offlineJumpTableHelper.setTestMap(testMap);
                 offlineJumpTableHelper.init();
                 return this;
             },
 
+            /**
+             * Helper function to clear the jump table
+             * It's used only in tests
+             *
+             * @returns {this}
+             */
             clearJumpTable: function clearJumpTable() {
                 offlineJumpTableHelper.clearJumpTable();
 

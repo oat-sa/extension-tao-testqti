@@ -38,6 +38,18 @@ define([
 
     return {
         /**
+         * Builds a new Error object from the given context and returns it
+         * @param {Object} errorData
+         * @param {Object} [context]
+         * @returns {Object}
+         */
+        buildErrorFromContext: function buildErrorFromContext(errorData, context) {
+            var err = _.assign(new Error(errorData.message), errorData.data);
+
+            return _.assign(err, context || {});
+        },
+
+        /**
          * Returns an object which contains the required data to compose an OfflineNavigationError.
          * This error get triggered in case when the test taker is unable to navigate offline.
          *

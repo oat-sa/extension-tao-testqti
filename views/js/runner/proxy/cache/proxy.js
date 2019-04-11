@@ -158,17 +158,12 @@ define([
                 var testData    = this.getDataHolder().get('testData');
                 var testContext = this.getDataHolder().get('testContext');
                 var testMap     = this.getDataHolder().get('testMap');
-                var offlinePauseErrorData = offlineErrorHelper.getOfflinePauseError();
 
 
                 if (action === 'pause') {
-                    if (actionParams.reason){
-                        offlinePauseErrorData.data = _.merge(offlinePauseErrorData.data, {
-                            reason: actionParams.reason
-                        });
-                    }
-
-                    throw _.assign(new Error(offlinePauseErrorData.message), offlinePauseErrorData.data);
+                    throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflinePauseError(), {
+                        reason: actionParams.reason
+                    });
                 }
 
                 //we just block those actions and the end of the test
@@ -179,10 +174,7 @@ define([
                         && navigationHelper.isLast(testMap, testContext.itemIdentifier)
                     )
                 ) {
-                    throw _.assign(
-                        new Error(offlineErrorHelper.getOfflineExitError().message),
-                        offlineErrorHelper.getOfflineExitError().data
-                    );
+                    throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflineExitError());
                 }
 
                 // try the navigation if the actionParams context meaningful data
@@ -196,10 +188,7 @@ define([
 
                     //we are really not able to navigate
                     if(!newTestContext || !newTestContext.itemIdentifier || !self.hasItem(newTestContext.itemIdentifier)){
-                        throw _.assign(
-                            new Error(offlineErrorHelper.getOfflineNavError().message),
-                            offlineErrorHelper.getOfflineNavError().data
-                        );
+                        throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflineNavError());
                     }
 
                     result.testContext = newTestContext;

@@ -137,17 +137,12 @@ define([
                         dataHolder = self.getDataHolder(),
                         testData = dataHolder.get('testData'),
                         testContext = dataHolder.get('testContext'),
-                        testMap = dataHolder.get('testMap'),
-                        offlinePauseErrorData = offlineErrorHelper.getOfflinePauseError();
+                        testMap = dataHolder.get('testMap');
 
                     if (action === 'pause') {
-                        if (actionParams.reason) {
-                            offlinePauseErrorData.data = _.merge(offlinePauseErrorData.data, {
-                                reason: actionParams.reason
-                            });
-                        }
-
-                        throw _.assign(new Error(offlinePauseErrorData.message), offlinePauseErrorData.data);
+                        throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflinePauseError(), {
+                            reason: actionParams.reason
+                        });
                     }
 
                     if (
@@ -218,10 +213,7 @@ define([
                                     || !newTestContext.itemIdentifier
                                     || !self.hasItem(newTestContext.itemIdentifier)
                                 ) {
-                                    throw _.assign(
-                                        new Error(offlineErrorHelper.getOfflineNavError().message),
-                                        offlineErrorHelper.getOfflineNavError().data
-                                    );
+                                    throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflineNavError());
                                 }
 
                                 result.testContext = newTestContext;
