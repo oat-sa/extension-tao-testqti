@@ -1,0 +1,179 @@
+{
+  "title": "NFER Math",
+  "identifier": "NFER_MATH_3",
+  "className": "assessmentTest",
+  "toolName": "",
+  "exclusivelyLinear": true,
+  "hasTimeLimits": false,
+  "states": {
+    "initial": 0,
+    "interacting": 1,
+    "modalFeedback": 2,
+    "suspended": 3,
+    "closed": 4
+  },
+  "itemStates": {
+    "initial": 0,
+    "interacting": 1,
+    "modalFeedback": 2,
+    "suspended": 3,
+    "closed": 4,
+    "solution": 5,
+    "review": 6,
+    "notSelected": 255
+  },
+  "config": {
+    "timerWarning": {
+      "assessmentItemRef": null,
+      "assessmentSection": null,
+      "testPart": null,
+      "assessmentTest": null
+    },
+    "catEngineWarning": null,
+    "progressIndicator": {
+      "type": "percentage",
+      "renderer": "percentage",
+      "scope": "test",
+      "forced": false,
+      "showLabel": true,
+      "showTotal": true,
+      "categories": []
+    },
+    "review": {
+      "enabled": true,
+      "scope": "test",
+      "useTitle": true,
+      "forceTitle": false,
+      "forceInformationalTitle": false,
+      "showLegend": true,
+      "defaultOpen": true,
+      "itemTitle": "Item %d",
+      "informationalItemTitle": "Instructions",
+      "preventsUnseen": true,
+      "canCollapse": false,
+      "displaySubsectionTitle": true,
+      "allowSkipahead": false
+    },
+    "exitButton": false,
+    "nextSection": false,
+    "plugins": {
+      "answer-masking": {
+        "restoreStateOnToggle": true,
+        "restoreStateOnMove": true
+      },
+      "overlay": {
+        "full": false
+      },
+      "collapser": {
+        "collapseTools": true,
+        "collapseNavigation": false,
+        "collapseInOrder": false,
+        "hover": false,
+        "collapseOrder": []
+      },
+      "magnifier": {
+        "zoomMin": 2,
+        "zoomMax": 8,
+        "zoomStep": 0.5
+      },
+      "calculator": {
+        "template": "",
+        "degree": true
+      },
+      "dialog": {
+        "alert": {
+          "focus": "ok"
+        },
+        "confirm": {
+          "focus": "ok"
+        }
+      },
+      "itemThemeSwitcher": {
+        "activeNamespace": "taoNferDefault"
+      }
+    },
+    "security": {
+      "csrfToken": true
+    },
+    "timer": {
+      "target": "server",
+      "resetAfterResume": false,
+      "keepUpToTimeout": false,
+      "restoreTimerFromClient": false
+    },
+    "enableAllowSkipping": true,
+    "enableValidateResponses": true,
+    "checkInformational": true,
+    "enableUnansweredItemsWarning": true,
+    "allowShortcuts": true,
+    "shortcuts": {
+      "calculator": {
+        "toggle": "C"
+      },
+      "zoom": {
+        "in": "I",
+        "out": "O"
+      },
+      "comment": {
+        "toggle": "A"
+      },
+      "itemThemeSwitcher": {
+        "toggle": "T"
+      },
+      "review": {
+        "toggle": "R",
+        "flag": "M"
+      },
+      "keyNavigation": {
+        "previous": "Shift+Tab",
+        "next": "Tab"
+      },
+      "next": {
+        "trigger": "J"
+      },
+      "previous": {
+        "trigger": "K"
+      },
+      "dialog": {
+        "accept": "Enter",
+        "reject": [
+          "Esc",
+          "X"
+        ]
+      },
+      "magnifier": {
+        "toggle": "L",
+        "in": "Shift+I",
+        "out": "Shift+O",
+        "close": "esc"
+      },
+      "highlighter": {
+        "toggle": "U"
+      },
+      "area-masking": {
+        "toggle": "Y"
+      },
+      "line-reader": {
+        "toggle": "G"
+      },
+      "answer-masking": {
+        "toggle": "D"
+      },
+      "reblTheme": {
+        "exit": "X",
+        "pause": "P"
+      },
+      "eliminator": {
+        "toggle": "N"
+      }
+    },
+    "itemCaching": {
+      "enabled": true,
+      "amount": 3
+    },
+    "guidedNavigation": false,
+    "toolStateServerStorage": [],
+    "forceEnableLinearNextItemWarning": false,
+    "enableLinearNextItemWarningCheckbox": true
+  }
+}
