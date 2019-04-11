@@ -1,3 +1,23 @@
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
+ */
+/**
+ * @author Péter Halász <peter@taotesting.com>
+ */
 define([
     'i18n'
 ], function(
@@ -5,12 +25,23 @@ define([
 ) {
     'use strict';
 
+    /**
+     * @typedef {Object} OfflineErrorObject
+     * @property {string} message
+     * @property {Object} data
+     * @property {boolean} data.success
+     * @property {string} data.source
+     * @property {string} data.purpose
+     * @property {string} data.type
+     * @property {number} data.code
+     */
+
     return {
         /**
          * Returns an object which contains the required data to compose an OfflineNavigationError.
          * This error get triggered in case when the test taker is unable to navigate offline.
          *
-         * @returns {{data: {code: number, purpose: string, success: boolean, source: string, type: string}, message: string}}
+         * @returns {OfflineErrorObject}
          */
         getOfflineNavError: function getOfflineNavError() {
             return {
@@ -29,7 +60,7 @@ define([
          * Returns an object which contains the required data to compose an OfflineExitError.
          * This error get triggered in case when the test taker is unable to exit the test offline.
          *
-         * @returns {{data: {code: number, purpose: string, success: boolean, source: string, type: string}, message: string}}
+         * @returns {OfflineErrorObject}
          */
         getOfflineExitError: function getOfflineExitError() {
             return {
@@ -48,7 +79,7 @@ define([
          * Returns an object which contains the required data to compose an OfflinePauseError.
          * This error get triggered in case when the test get paused in offline mode.
          *
-         * @returns {{data: {code: number, purpose: string, success: boolean, source: string, type: string}, message: string}}
+         * @returns {OfflineErrorObject}
          */
         getOfflinePauseError: function getOfflinePauseError() {
             return {

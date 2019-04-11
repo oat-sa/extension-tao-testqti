@@ -125,12 +125,7 @@ class TestDefinitionSerializerService extends ConfigurableService
             taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX,
         ]);
 
-        $indexFile = fopen($indexFilePath, 'rb');
-        $qtiTestDefinitionFilePath = fgets($indexFile);
-
-        fclose($indexFile);
-
-        return $qtiTestDefinitionFilePath;
+        return file_get_contents($indexFilePath);
     }
 
 

@@ -19,32 +19,40 @@
  * @author Péter Halász <peter@taotesting.com>
  */
 define([
+    'core/promise',
     'taoQtiTest/runner/branchRule/helpers/branchRuleHelper'
 ], function(
+    Promise,
     branchRuleHelper
 ) {
     'use strict';
 
     /**
      * OR branching rule
+     *
+     * @param {Object} branchRuleDefinition       the definition object of the branch rule, which contains additional branching rules, and also the target
+     * @param {Object} item                       item object from the itemStore
+     * @param {Object} navigationParams           object of navigation parameters which got passed to the navigation action
+     * @param {branchRuleMapper} branchRuleMapper
+     * @param {responseStore} responseStore
      */
     return function orBranchRuleFactory(branchRuleDefinition, item, navigationParams, branchRuleMapper, responseStore) {
         return {
             /**
              * Evaluates an OR expression on all the given expressions and returns the result
-             * @returns {boolean}
+             * @returns {Promise<boolean>}
              */
             validate: function validate() {
-                var subBranchRuleResults = branchRuleHelper.evaluateSubBranchRules(
+                return branchRuleHelper.evaluateSubBranchRules(
                     branchRuleDefinition,
                     item,
                     navigationParams,
                     branchRuleMapper,
                     responseStore
-                );
-
-                return subBranchRuleResults.some(function(value) {
-                    return value;
+                ).then(function(subBranchRuleResults) {
+                    return subBranchRuleResults.some(function(value) {
+                        return value;
+                    });
                 });
             }
         };

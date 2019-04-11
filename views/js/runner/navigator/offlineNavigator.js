@@ -28,16 +28,16 @@ define([
     _,
     Promise,
     capitalize,
-    OfflineJumpTableHelper,
+    offlineJumpTableFactory,
     testContextBuilder
 ) {
     'use strict';
 
-    return function offlineNavigatorFactory(itemStore) {
+    return function offlineNavigatorFactory(itemStore, responseStore) {
         var testData,
             testContext,
             testMap,
-            offlineJumpTableHelper = new OfflineJumpTableHelper(itemStore);
+            offlineJumpTableHelper = offlineJumpTableFactory(itemStore, responseStore);
 
         return {
             setTestData: function setTestData(data) {
@@ -85,7 +85,7 @@ define([
                         navigationActionName = 'jumpTo' + capitalize(direction) + capitalize(scope);
 
                     if (
-                        offlineJumpTableHelper[navigationActionName] === 'undefined'
+                        typeof offlineJumpTableHelper[navigationActionName] === 'undefined'
                         || typeof(offlineJumpTableHelper[navigationActionName]) !== 'function'
                     ) {
                         throw new Error('Invalid navigation action');

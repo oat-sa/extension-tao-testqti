@@ -108,7 +108,7 @@ define([
                 numberPresented: testMap.stats.viewed,
                 numberCompleted: testMap.stats.answered,
                 hasFeedbacks: false,
-                remainingAttempts: item.remainingAttempts > -1 ? item.remainingAttempts - 1 : -1,
+                remainingAttempts: Math.max(-1, item.remainingAttempts - 1),
                 sectionId: section.id,
                 sectionTitle: section.label,
                 testPartId: part.id,

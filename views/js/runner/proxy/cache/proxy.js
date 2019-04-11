@@ -168,14 +168,19 @@ define([
                         });
                     }
 
-                    _.assign(new Error(offlinePauseErrorData.message), offlinePauseErrorData.data);
+                    throw _.assign(new Error(offlinePauseErrorData.message), offlinePauseErrorData.data);
                 }
 
                 //we just block those actions and the end of the test
-                if( _.contains(blockingActions, action) ||
-                    ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
-                    _.assign(new Error(
-                        offlineErrorHelper.getOfflineExitError().message),
+                if (
+                    _.contains(blockingActions, action)
+                    || (
+                        actionParams.direction === 'next'
+                        && navigationHelper.isLast(testMap, testContext.itemIdentifier)
+                    )
+                ) {
+                    throw _.assign(
+                        new Error(offlineErrorHelper.getOfflineExitError().message),
                         offlineErrorHelper.getOfflineExitError().data
                     );
                 }
@@ -191,7 +196,7 @@ define([
 
                     //we are really not able to navigate
                     if(!newTestContext || !newTestContext.itemIdentifier || !self.hasItem(newTestContext.itemIdentifier)){
-                        _.assign(
+                        throw _.assign(
                             new Error(offlineErrorHelper.getOfflineNavError().message),
                             offlineErrorHelper.getOfflineNavError().data
                         );

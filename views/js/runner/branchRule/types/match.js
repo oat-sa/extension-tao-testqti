@@ -19,14 +19,22 @@
  * @author Péter Halász <peter@taotesting.com>
  */
 define([
-    'lodash'
+    'lodash',
+    'core/promise'
 ], function(
-    _
+    _,
+    Promise
 ) {
     'use strict';
 
     /**
      * MATCH branching rule
+     *
+     * @param {Object} branchRuleDefinition       the definition object of the branch rule, which contains additional branching rules, and also the target
+     * @param {Object} item                       item object from the itemStore
+     * @param {Object} navigationParams           object of navigation parameters which got passed to the navigation action
+     * @param {branchRuleMapper} branchRuleMapper
+     * @param {responseStore} responseStore
      */
     return function matchBranchRuleFactory(branchRuleDefinition, item, navigationParams, branchRuleMapper, responseStore) {
         var variableIdentifier = branchRuleDefinition.variable['@attributes'].identifier;
@@ -38,10 +46,12 @@ define([
              * @returns {boolean}
              */
             validate: function validate() {
-                return _.contains(
+                return Promise.all([
                     responseStore.getCorrectResponse(correctIdentifier),
                     responseStore.getResponse(variableIdentifier)
-                );
+                ]).then(function(result) {
+                    return _.contains(result[0], result[1]);
+                });
             }
         };
     };

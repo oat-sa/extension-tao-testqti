@@ -22,7 +22,6 @@ define([
     'lodash',
     'i18n',
     'core/promise',
-    'ui/feedback',
     'taoQtiTest/runner/navigator/offlineNavigator',
     'taoQtiTest/runner/helpers/map',
     'taoQtiTest/runner/helpers/navigation',
@@ -32,12 +31,12 @@ define([
     'taoQtiTest/runner/proxy/cache/actionStore',
     'taoQtiTest/runner/helpers/offlineErrorHelper',
     'taoQtiTest/runner/helpers/offlineSyncModal',
+    'taoQtiTest/runner/services/responseStore',
     'util/download'
 ], function(
     _,
     __,
     Promise,
-    feedback,
     offlineNavigatorFactory,
     mapHelper,
     navigationHelper,
@@ -47,6 +46,7 @@ define([
     actionStoreFactory,
     offlineErrorHelper,
     offlineSyncModal,
+    responseStoreFactory,
     download
 ) {
     'use strict';
@@ -72,7 +72,9 @@ define([
                 testId  : config.serviceCallId
             });
 
-            this.offlineNavigator = offlineNavigatorFactory(this.itemStore);
+            this.responseStore = responseStoreFactory();
+
+            this.offlineNavigator = offlineNavigatorFactory(this.itemStore, this.responseStore);
 
             // where we keep actions
             this.actionStore = null;
@@ -145,7 +147,7 @@ define([
                             });
                         }
 
-                        _.assign(new Error(offlinePauseErrorData.message), offlinePauseErrorData.data);
+                        throw _.assign(new Error(offlinePauseErrorData.message), offlinePauseErrorData.data);
                     }
 
                     if (
@@ -216,7 +218,7 @@ define([
                                     || !newTestContext.itemIdentifier
                                     || !self.hasItem(newTestContext.itemIdentifier)
                                 ) {
-                                    _.assign(
+                                    throw _.assign(
                                         new Error(offlineErrorHelper.getOfflineNavError().message),
                                         offlineErrorHelper.getOfflineNavError().data
                                     );
@@ -358,10 +360,10 @@ define([
                     response.items = {};
                 }
 
-                self.itemStore.setCacheSize(Object.keys(response.items).length);
+                self.itemStore.setCacheSize(_.size(response.items));
 
-                Object.keys(response.items).forEach(function(itemIdentifier) {
-                    promises.push(self.itemStore.set(itemIdentifier, response.items[itemIdentifier]));
+                _.forEach(response.items, function(item, itemIdentifier) {
+                    promises.push(self.itemStore.set(itemIdentifier, item));
                 });
 
                 return Promise
@@ -381,9 +383,11 @@ define([
          *                      Any error will be provided if rejected.
          */
         destroy: function destroy() {
-            this.itemStore.clear();
+            var self = this;
 
-            return qtiServiceProxy.destroy.call(this);
+            return this.itemStore.clear().then(function() {
+                return qtiServiceProxy.destroy.call(self);
+            });
         },
 
         /**
@@ -437,7 +441,7 @@ define([
                     return self.offlineAction(action, actionParams);
                 })
                 .catch(function(err) {
-                    feedback().error(err.message);
+                    return Promise.reject(err);
                 });
         },
 
@@ -458,7 +462,7 @@ define([
                     return self.offlineAction(action, params);
                 })
                 .catch(function(err) {
-                    feedback().error(err.message);
+                    return Promise.reject(err);
                 });
         },
 
@@ -498,11 +502,11 @@ define([
                             return self.offlineAction(action, params);
                         })
                         .catch(function(err) {
-                            feedback().error(err.message);
+                            return Promise.reject(err);
                         });
                 })
                 .catch(function(err) {
-                    feedback().error(err.message);
+                    return Promise.reject(err);
                 });
         }
     }, qtiServiceProxy);

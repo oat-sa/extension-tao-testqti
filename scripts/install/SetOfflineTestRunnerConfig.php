@@ -25,6 +25,8 @@ namespace oat\taoQtiTest\scripts\install;
 use oat\oatbox\AbstractRegistry;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\ClientLibConfigRegistry;
+use oat\tao\model\modules\DynamicModule;
+use oat\taoTests\models\runner\plugins\PluginRegistry;
 
 class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
 {
@@ -39,6 +41,7 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
      * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
      * @throws \common_ext_ExtensionException
      * @throws \common_exception_Error
+     * @throws \common_exception_InconsistentData
      */
     public function __invoke($params)
     {
@@ -95,16 +98,23 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
         ]);
     }
 
+    /**
+     * @throws \common_exception_InconsistentData
+     */
     private function disableUnsupportedTestRunnerPlugins()
     {
-        /** @var \common_ext_Extension $taoTestsExtension */
-        $taoTestsExtension = $this->getExtensionsManagerService()->getExtensionById('taoTests');
+        /** @var PluginRegistry $pluginRegistry */
+        $pluginRegistry = PluginRegistry::getRegistry();
 
-        $config = array_filter($taoTestsExtension->getConfig('test_runner_plugin_registry'), function($plugin) {
-            return !in_array($plugin['module'], $this->unsupportedPlugins, false);
-        });
+        foreach ($this->unsupportedPlugins as $unsupportedPluginId) {
+            if ($pluginRegistry->isRegistered($unsupportedPluginId)) {
+                /** @var array $plugin */
+                $plugin = $pluginRegistry->get($unsupportedPluginId);
+                $plugin['active'] = false;
 
-        $taoTestsExtension->setConfig('test_runner_plugin_registry', $config);
+                $pluginRegistry->register(DynamicModule::fromArray($plugin));
+            }
+        }
     }
 
     /**

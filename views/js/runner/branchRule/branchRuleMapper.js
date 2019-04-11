@@ -40,6 +40,12 @@ define([
 
     /**
      * Returns the proper branching rule based on the given name
+     *
+     * @param {string} branchRuleName
+     * @param {Object} branchRuleDefinition the definition object of the branch rule, which contains additional branching rules also
+     * @param {Object} item                 item object from the itemStore
+     * @param {Object} navigationParams     object of navigation parameters which got passed to the navigation action
+     * @param {responseStore} responseStore
      */
     return function branchRuleMapperFactory(branchRuleName, branchRuleDefinition, item, navigationParams, responseStore) {
         if (!(branchRuleName in branchRuleMap)) {

@@ -25,8 +25,18 @@ define([
     'lodash',
     'i18n',
     'core/polling',
-    'ui/waitingDialog/waitingDialog'
-], function ($, _, __, polling, waitingDialogFactory) {
+    'ui/hider',
+    'ui/waitingDialog/waitingDialog',
+    'tpl!taoQtiTest/runner/helpers/templates/offlineSyncModalCountdown'
+], function (
+    $,
+    _,
+    __,
+    polling,
+    hider,
+    waitingDialogFactory,
+    offlineSyncModalCountdownTpl
+) {
     'use strict';
 
     /**
@@ -49,13 +59,16 @@ define([
         var $secondaryButton;
         var secondaryButtonWait = 60; // seconds to wait until it enables
         var $countdownText;
+        var $countdown = $(offlineSyncModalCountdownTpl());
         var countdownPolling;
 
 
         //creates the waiting modal dialog
         var waitingDialog = waitingDialogFactory(waitingConfig)
             .on('render', function () {
-                $secondaryButton = $('button[data-control="secondary"]');
+                $secondaryButton = $('div.preview-modal-feedback.modal').find('button[data-control="secondary"]');
+
+                $countdown.insertAfter($secondaryButton);
 
                 proxy
                     .off('reconnect.waiting')
@@ -79,15 +92,14 @@ define([
                 // Set up secondary button time delay:
                 // it can only be clicked after 60 seconds have passed
                 $secondaryButton.prop('disabled', true);
-                $countdownText = $("<p>").addClass('button-subtext').insertAfter($secondaryButton);
                 countdownPolling = polling({
                     action: function () {
                         delaySec--;
-                        $countdownText.html(__('The download will be available in <strong>%d</strong> seconds', delaySec));
+                        $countdown.html(__('The download will be available in <strong>%d</strong> seconds', delaySec));
                         if (delaySec < 1) {
                             this.stop();
                             $secondaryButton.removeProp('disabled');
-                            $countdownText.remove();
+                            $countdown.html('');
                         }
                     },
                     interval: 1000,
@@ -98,7 +110,7 @@ define([
                 countdownPolling.stop();
                 $secondaryButton.prop('disabled', true);
                 $countdownText.remove();
-                $('.between-buttons-text').addClass('hidden');
+                hider.hide('.between-buttons-text');
             });
 
         return waitingDialog;

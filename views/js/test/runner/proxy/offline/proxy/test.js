@@ -26,6 +26,7 @@ define([
     'lodash',
     'util/url',
     'core/communicator',
+    'core/collections',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/offline/proxy',
     'lib/jquery.mockjax/jquery.mockjax'
@@ -34,6 +35,7 @@ define([
     _,
     urlUtil,
     communicatorFactory,
+    collections,
     proxyFactory,
     qtiServiceProxy
 ) {
@@ -150,7 +152,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -222,7 +224,7 @@ define([
 
         proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-        proxy.install(new Map());
+        proxy.install(new collections.Map());
 
         proxy.init().then(function() {
 
@@ -319,7 +321,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -435,7 +437,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -550,7 +552,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -676,7 +678,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -816,7 +818,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -936,7 +938,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -1055,7 +1057,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -1187,7 +1189,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.getTokenHandler().setToken(caseData.token);
 
@@ -1316,7 +1318,7 @@ define([
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-            proxy.install(new Map());
+            proxy.install(new collections.Map());
 
             proxy.telemetry(caseData.uri, caseData.signal, caseData.params)
                 .then(function() {
@@ -1434,7 +1436,7 @@ define([
 
         proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-        proxy.install(new Map());
+        proxy.install(new collections.Map());
 
         proxy.getCommunicator()
             .then(function() {
@@ -1501,7 +1503,7 @@ define([
 
         proxy = proxyFactory('qtiServiceProxy', initConfig);
 
-        proxy.install(new Map());
+        proxy.install(new collections.Map());
 
         proxy.getCommunicator()
             .then(function() {

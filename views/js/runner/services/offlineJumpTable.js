@@ -22,16 +22,14 @@ define([
     'lodash',
     'i18n',
     'core/promise',
-    'ui/feedback',
     'taoQtiTest/runner/branchRule/branchRule',
-    'taoQtiTest/runner/proxy/offline/responseStore'
+    'taoQtiTest/runner/helpers/map'
 ], function (
     _,
     __,
     Promise,
-    feedback,
     branchRule,
-    responseStore
+    mapHelper
 ) {
     'use strict';
 
@@ -47,7 +45,7 @@ define([
     /**
      * Helper class for the offline version of the jump table which helps the navigation of the test taker.
      */
-    var offlineJumpTableFactory = function offlineJumpTableFactory(itemStore) {
+    var offlineJumpTableFactory = function offlineJumpTableFactory(itemStore, responseStore) {
         var testMap = {};
         var jumpTable = [];
 
@@ -58,12 +56,11 @@ define([
          */
         function addResponsesToResponseStore(params) {
             if (params.itemResponse) {
-                Object.keys(params.itemResponse).forEach(function(itemResponseIdentifier) {
-                    var response = params.itemResponse[itemResponseIdentifier],
-                        responseIdentifier = params.itemDefinition + '.' + itemResponseIdentifier;
+                _.forEach(params.itemResponse, function(response, itemResponseIdentifier) {
+                    var responseIdentifier = params.itemDefinition + '.' + itemResponseIdentifier;
 
-                    Object.keys(response).forEach(function(responseType) {
-                        var responseId = response[responseType].identifier;
+                    _.forEach(response, function(responseEntry) {
+                        var responseId = responseEntry.identifier;
 
                         if (Array.isArray(responseId)) {
                             responseId.forEach(function(id) {
@@ -84,13 +81,9 @@ define([
          * @returns {Array}
          */
         function getItems(map) {
-            return getSimplifiedTestMap(map)
-                .map(function(row) {
-                    return row.item;
-                })
-                .filter(function(value, index, thisArg) {
-                    return thisArg.indexOf(value) === index;
-                });
+            return _.uniq(_.map(getSimplifiedTestMap(map), function(row) {
+                return row.item;
+            }));
         }
 
         /**
@@ -100,13 +93,9 @@ define([
          * @returns {Array}
          */
         function getSections(map) {
-            return getSimplifiedTestMap(map)
-                .map(function(row) {
-                    return row.section;
-                })
-                .filter(function(value, index, thisArg) {
-                    return thisArg.indexOf(value) === index;
-                });
+            return _.uniq(_.map(getSimplifiedTestMap(map), function(row) {
+                return row.section;
+            }));
         }
 
         /**
@@ -118,21 +107,17 @@ define([
         function getSimplifiedTestMap(map) {
             var simplifiedTestMap = [];
 
-            _.forEach(map.parts, function(part, partIdentifier) {
-                _.forEach(part.sections, function(section, sectionIdentifier) {
-                    _.forEach(section.items, function(item, itemIdentifier) {
-                        simplifiedTestMap.push({
-                            item: itemIdentifier,
-                            itemHasBranchRule: !_.isEmpty(item.branchRule),
-                            itemBranchRule: item.branchRule,
-                            section: sectionIdentifier,
-                            sectionHasBranchRule: !_.isEmpty(section.branchRule),
-                            sectionBranchRule: section.branchRule,
-                            part: partIdentifier,
-                            partHasBranchRule: !_.isEmpty(part.branchRule),
-                            partBranchRule: part.branchRule
-                        });
-                    });
+            mapHelper.each(map, function(item, section, part) {
+                simplifiedTestMap.push({
+                    item: item.id,
+                    itemHasBranchRule: !_.isEmpty(item.branchRule),
+                    itemBranchRule: item.branchRule,
+                    section: section.id,
+                    sectionHasBranchRule: !_.isEmpty(section.branchRule),
+                    sectionBranchRule: section.branchRule,
+                    part: part.id,
+                    partHasBranchRule: !_.isEmpty(part.branchRule),
+                    partBranchRule: part.branchRule
                 });
             });
 
@@ -173,15 +158,15 @@ define([
                     itemStore.get(row.item)
                         .then(function(item) {
                             if (item) {
-                                Object.keys(item.itemData.data.responses).forEach(function(responseDeclarationIdentifier) {
-                                    var response = item.itemData.data.responses[responseDeclarationIdentifier];
+                                _.forEach(item.itemData.data.responses, function(response) {
                                     var responseIdentifier = item.itemIdentifier + '.' + response.identifier;
+
                                     responseStore.addCorrectResponse(responseIdentifier, response.correctResponses);
                                 });
                             }
                         })
-                        .catch(function() {
-                            feedback().error(__('Failed to load correct responses of the item'));
+                        .catch(function(err) {
+                            return Promise.reject(err);
                         });
                 });
             },
@@ -208,9 +193,8 @@ define([
                 var self = this;
 
                 return new Promise(function(resolve) {
-                    var nextPosition = 'position' in self.getLastJump()
-                        ? self.getLastJump().position + 1
-                        : 0;
+                    var lastJump = self.getLastJump();
+                    var nextPosition = typeof lastJump.position !== 'undefined' ? lastJump.position + 1 : 0;
 
                     jumpTable.push({
                         item: itemIdentifier,
@@ -258,9 +242,11 @@ define([
                         })
                         .shift();
 
-                    return itemToAdd
-                        ? self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve)
-                        : resolve();
+                    if (itemToAdd) {
+                        return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                    } else {
+                        return resolve();
+                    }
                 });
             },
 
@@ -296,25 +282,31 @@ define([
                     if (lastJumpItemData && lastJumpItemData.itemHasBranchRule) {
                         return itemStore.get(lastJumpItem)
                             .then(function(item) {
-                                itemIdentifierToAdd = branchRule(lastJumpItemData.itemBranchRule, item, params, responseStore);
+                                branchRule(lastJumpItemData.itemBranchRule, item, params, responseStore)
+                                     .then(function(itemIdentifierToAddd) {
+                                         if (itemIdentifierToAddd !== null) {
+                                             itemToAdd = simplifiedTestMap
+                                                 .filter(function(row) {
+                                                     return row.item === itemIdentifierToAddd;
+                                                 })
+                                                 .shift();
+                                         }
 
-                                if (itemIdentifierToAdd !== null) {
-                                    itemToAdd = simplifiedTestMap
-                                        .filter(function(row) {
-                                            return row.item === itemIdentifierToAdd;
-                                        })
-                                        .shift();
-                                }
-
-                                self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                                         self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                                     })
+                                     .catch(function(err) {
+                                         return Promise.reject(err);
+                                     });
                             })
-                            .catch(function() {
-                                feedback().error(__('Failed to load the item'));
+                            .catch(function(err) {
+                                return Promise.reject(err);
                             });
                     } else {
-                        return itemToAdd
-                            ? self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve)
-                            : resolve();
+                        if (itemToAdd) {
+                            return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                        } else {
+                            return resolve();
+                        }
                     }
                 });
             },
@@ -340,9 +332,11 @@ define([
                         })
                         .shift();
 
-                    return itemToAdd
-                        ? self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve)
-                        : resolve();
+                    if (itemToAdd) {
+                        return self.addJump(itemToAdd.part, itemToAdd.section, itemToAdd.item).then(resolve);
+                    } else {
+                        return resolve();
+                    }
                 });
             },
 

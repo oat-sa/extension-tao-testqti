@@ -1,6 +1,27 @@
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
+ */
+/**
+ * @author Péter Halász <peter@taotesting.com>
+ */
 define([
     'taoQtiTest/runner/navigator/offlineNavigator',
     'taoQtiTest/runner/proxy/cache/itemStore',
+    'taoQtiTest/runner/services/responseStore',
     'taoQtiTest/runner/helpers/map',
     'json!taoQtiTest/test/runner/services/offlineJumpTable/resources/items.json',
     'json!taoQtiTest/test/runner/navigator/offlineNavigator/resources/testMap.json',
@@ -9,6 +30,7 @@ define([
 ], function(
     offlineNavigatorFactory,
     itemStoreFactory,
+    responseStoreFactory,
     mapHelper,
     itemsJson,
     testMapJson,
@@ -18,7 +40,8 @@ define([
     'use strict';
 
     var offlineNavigator,
-        itemStore;
+        itemStore,
+        responseStore;
 
     QUnit.module('offlineNavigator', {
         before: function(assert) {
@@ -27,8 +50,10 @@ define([
             itemStore = itemStoreFactory();
             itemStore.setCacheSize(Object.keys(itemsJson.items).length);
 
+            responseStore = responseStoreFactory();
+
             addItemsToItemStore().then(function() {
-                offlineNavigator = offlineNavigatorFactory(itemStore);
+                offlineNavigator = offlineNavigatorFactory(itemStore, responseStore);
 
                 done();
             });
@@ -112,6 +137,31 @@ define([
             done();
         });
     });
+
+    QUnit
+        .cases
+        .init([
+            { direction: 'next', scope: 'foo' },
+            { direction: 'previous', scope: 'foo' },
+            { direction: 'skip', scope: 'foo' },
+            { direction: 'foo', scope: 'item' },
+            { direction: 'foo', scope: 'section' }
+        ])
+        .test('it returns error in case of invalid navigation', function(data, assert) {
+            var done = assert.async();
+
+            offlineNavigator.navigate(data.direction, data.scope, null, { itemResponse: {} })
+                .then(function() {
+                    assert.ok();
+                })
+                .catch(function(err) {
+                    assert.equal(err.message, 'Invalid navigation action');
+                })
+                .finally(function() {
+                    done();
+                });
+
+        });
 
     function addItemsToItemStore() {
         var promises = [];

@@ -19,14 +19,22 @@
  * @author Péter Halász <peter@taotesting.com>
  */
 define([
-    'lodash'
+    'lodash',
+    'core/promise'
 ], function(
-    _
+    _,
+    Promise
 ) {
     'use strict';
 
     /**
      * NOT branching rule
+     *
+     * @param {Object} branchRuleDefinition       the definition object of the branch rule, which contains additional branching rules, and also the target
+     * @param {Object} item                       item object from the itemStore
+     * @param {Object} navigationParams           object of navigation parameters which got passed to the navigation action
+     * @param {branchRuleMapper} branchRuleMapper
+     * @param {responseStore} responseStore
      */
     return function notBranchRuleFactory(branchRuleDefinition, item, navigationParams, branchRuleMapper, responseStore) {
         // If the NOT branching rule has only one child, cast it as an array
@@ -37,20 +45,26 @@ define([
         return {
             /**
              * Evaluates a NOT expression on the given expressions and returns an array of results
-             * @returns {boolean[]}
+             * @returns {Promise<boolean[]>}
              */
             validate: function validate() {
-                return branchRuleDefinition.map(function(expression) {
+                var promises = branchRuleDefinition.map(function(expression) {
                     var subBranchRuleName = _.head(_.keys(expression)),
                         subBranchRuleDefinition = expression[subBranchRuleName];
 
-                    return !branchRuleMapper(
+                    return branchRuleMapper(
                         subBranchRuleName,
                         subBranchRuleDefinition,
                         item,
                         navigationParams,
                         responseStore
                     ).validate();
+                });
+
+                return Promise.all(promises).then(function(results) {
+                    return _.map(results, function(result) {
+                        return !result;
+                    });
                 });
             }
         };

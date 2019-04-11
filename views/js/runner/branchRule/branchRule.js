@@ -20,10 +20,12 @@
  */
 define([
     'lodash',
+    'core/promise',
     'taoQtiTest/runner/branchRule/helpers/branchRuleHelper',
     'taoQtiTest/runner/branchRule/branchRuleMapper'
 ], function(
     _,
+    Promise,
     branchRuleHelper,
     branchRuleMapper
 ) {
@@ -31,34 +33,41 @@ define([
 
     /**
      * Evaluates all the branch rules and returns the `@attributes.target` if the evaluation returns true, null otherwise
+     *
+     * @param {Object} branchRuleDefinition the definition object of the branch rule, which contains additional branching rules, and also the target
+     * @param {Object} item                 item object from the itemStore
+     * @param {Object} navigationParams     object of navigation parameters which got passed to the navigation action
+     * @param {responseStore} responseStore
+     * @returns {Promise<string|null>}
      */
     return function branchRuleFactory(branchRuleDefinition, item, navigationParams, responseStore) {
-        var result,
-            branchRuleResults;
+        return new Promise(function(resolve) {
+            var result;
 
-        if (
-            typeof branchRuleDefinition['@attributes'] === 'undefined'
-            || typeof branchRuleDefinition['@attributes']['target'] === 'undefined'
-        ) {
-            return null;
-        }
+            if (
+                typeof branchRuleDefinition['@attributes'] === 'undefined'
+                || typeof branchRuleDefinition['@attributes']['target'] === 'undefined'
+            ) {
+                return resolve(null);
+            }
 
-        branchRuleResults = branchRuleHelper.evaluateSubBranchRules(
-            branchRuleDefinition,
-            item,
-            navigationParams,
-            branchRuleMapper,
-            responseStore
-        );
+            branchRuleHelper.evaluateSubBranchRules(
+                branchRuleDefinition,
+                item,
+                navigationParams,
+                branchRuleMapper,
+                responseStore
+            ).then(function(branchRuleResults) {
+                result = branchRuleResults.every(function(branchRuleResult) {
+                    return branchRuleResult;
+                });
 
-        result = branchRuleResults.every(function(branchRuleResult) {
-            return branchRuleResult;
+                if (result) {
+                    return resolve(branchRuleDefinition['@attributes']['target']);
+                }
+
+                resolve(null);
+            });
         });
-
-        if (result) {
-            return branchRuleDefinition['@attributes']['target'];
-        }
-
-        return null;
     };
 });
