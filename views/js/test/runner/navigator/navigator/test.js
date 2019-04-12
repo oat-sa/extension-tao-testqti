@@ -21,9 +21,9 @@
 define([
 
     'taoQtiTest/runner/navigator/navigator',
-    'json!taoQtiTest/test/runner/navigator/testData.json',
-    'json!taoQtiTest/test/runner/navigator/testMap.json',
-    'json!taoQtiTest/test/runner/navigator/testContexts.json'
+    'json!taoQtiTest/test/runner/navigator/navigator/testData.json',
+    'json!taoQtiTest/test/runner/navigator/navigator/testMap.json',
+    'json!taoQtiTest/test/runner/navigator/navigator/testContexts.json'
 ], function(testNavigator, testData, testMap, testContexts) {
     'use strict';
 
