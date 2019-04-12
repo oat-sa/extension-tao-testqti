@@ -67,6 +67,14 @@ define([
          * @typedef itemStore
          */
         return {
+            /**
+             * Setter to override the cache size
+             *
+             * @param {number} cacheSize
+             */
+            setCacheSize: function setCacheSize(cacheSize) {
+                config.maxSize = cacheSize;
+            },
 
             /**
              * Get the item form the given key/id/uri
