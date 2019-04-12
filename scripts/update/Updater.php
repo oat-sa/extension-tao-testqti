@@ -1786,6 +1786,13 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
             $this->setVersion('32.8.0');
         }
-        $this->skip('32.8.0', '32.11.0');
+
+        if ($this->isVersion('32.8.0')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['validateResponses']['validateOnPreviousMove'] = true;
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('32.10.0');
+        }
     }
 }
