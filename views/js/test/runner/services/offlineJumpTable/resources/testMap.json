@@ -1,0 +1,709 @@
+{
+  "scope": "test",
+  "parts": {
+    "P01": {
+      "id": "P01",
+      "label": "P01",
+      "position": 0,
+      "isLinear": true,
+      "sections": {
+        "S01": {
+          "id": "S01",
+          "label": "Test Section",
+          "isCatAdaptive": false,
+          "position": 0,
+          "items": {
+            "Q01": {
+              "id": "Q01",
+              "label": "Task 1\/11",
+              "position": 0,
+              "occurrence": 0,
+              "remainingAttempts": 0,
+              "answered": true,
+              "flagged": false,
+              "viewed": true,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q02": {
+              "id": "Q02",
+              "label": "Task 2\/11",
+              "position": 1,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q03-1": {
+              "id": "Q03-1",
+              "label": "Task 3\/11",
+              "position": 2,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q04-1"
+                },
+                "or": {
+                  "not": [
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_01"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_02"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_02"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_03"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_03"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "Q03-2": {
+              "id": "Q03-2",
+              "label": "Task 3\/11, Part 2",
+              "position": 3,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q04-1": {
+              "id": "Q04-1",
+              "label": "Task 4\/11",
+              "position": 4,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q05-1"
+                },
+                "not": {
+                  "match": {
+                    "correct": {
+                      "@attributes": {
+                        "identifier": "Q04-1.NFER_01_04_01_01"
+                      }
+                    },
+                    "variable": {
+                      "@attributes": {
+                        "identifier": "Q04-1.NFER_01_04_01_01"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Q04-2": {
+              "id": "Q04-2",
+              "label": "Task 4\/11, Part 2",
+              "position": 5,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q05-1"
+                },
+                "not": {
+                  "match": {
+                    "correct": {
+                      "@attributes": {
+                        "identifier": "Q04-2.NFER_01_04_02_01"
+                      }
+                    },
+                    "variable": {
+                      "@attributes": {
+                        "identifier": "Q04-2.NFER_01_04_02_01"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Q04-3": {
+              "id": "Q04-3",
+              "label": "Task 4\/11, Part 3",
+              "position": 6,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q05-1": {
+              "id": "Q05-1",
+              "label": "Task 5\/11",
+              "position": 7,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q10"
+                },
+                "and": {
+                  "not": [
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q01.NFER_01_01_01_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q01.NFER_01_01_01_01"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q01.NFER_01_01_01_02"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q01.NFER_01_01_01_02"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q02.NFER_01_02_01_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q02.NFER_01_02_01_01"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q02.NFER_01_02_01_02"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q02.NFER_01_02_01_02"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q02.NFER_01_02_01_03"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q02.NFER_01_02_01_03"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q02.NFER_01_02_01_04"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q02.NFER_01_02_01_04"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_01"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_02"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_02"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_03"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q03-1.NFER_01_03_01_03"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q04-1.NFER_01_04_01_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q04-1.NFER_01_04_01_01"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "Q05-2": {
+              "id": "Q05-2",
+              "label": "Task 5\/11, Part 2",
+              "position": 8,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q10"
+                },
+                "and": {
+                  "not": [
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q05-1.NFER_01_05_01_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q05-1.NFER_01_05_01_01"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q05-2.NFER_01_05_02_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q05-2.NFER_01_05_02_01"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "Q05-3": {
+              "id": "Q05-3",
+              "label": "Task 5\/11, Part 3",
+              "position": 9,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q06-1": {
+              "id": "Q06-1",
+              "label": "Task 6\/11",
+              "position": 10,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q07-1"
+                },
+                "not": {
+                  "match": {
+                    "correct": {
+                      "@attributes": {
+                        "identifier": "Q06-1.NFER_01_06_01_01"
+                      }
+                    },
+                    "variable": {
+                      "@attributes": {
+                        "identifier": "Q06-1.NFER_01_06_01_01"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Q06-2": {
+              "id": "Q06-2",
+              "label": "Task 6\/11, Part 2",
+              "position": 11,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q07-1": {
+              "id": "Q07-1",
+              "label": "Task 7\/11",
+              "position": 12,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q10"
+                },
+                "and": {
+                  "not": [
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q07-1.NFER_01_07_01_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q07-1.NFER_01_07_01_01"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q07-1.NFER_01_07_01_02"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q07-1.NFER_01_07_01_02"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "Q07-2": {
+              "id": "Q07-2",
+              "label": "Task 7\/11, Part 2",
+              "position": 13,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q08-1": {
+              "id": "Q08-1",
+              "label": "Task 8\/11",
+              "position": 14,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q10"
+                },
+                "or": {
+                  "not": [
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q08-1.NFER_01_08_01_01"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q08-1.NFER_01_08_01_01"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "match": {
+                        "correct": {
+                          "@attributes": {
+                            "identifier": "Q08-1.NFER_01_08_01_02"
+                          }
+                        },
+                        "variable": {
+                          "@attributes": {
+                            "identifier": "Q08-1.NFER_01_08_01_02"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "Q08-2": {
+              "id": "Q08-2",
+              "label": "Task 8\/11, Part 2",
+              "position": 15,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q09": {
+              "id": "Q09",
+              "label": "Task 9\/11",
+              "position": 16,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q10": {
+              "id": "Q10",
+              "label": "Task 10\/11",
+              "position": 17,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q11-1": {
+              "id": "Q11-1",
+              "label": "Task 11\/11",
+              "position": 18,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {
+                "@attributes": {
+                  "target": "Q12"
+                },
+                "not": {
+                  "match": {
+                    "correct": {
+                      "@attributes": {
+                        "identifier": "Q11-1.NFER_01_11_01_01"
+                      }
+                    },
+                    "variable": {
+                      "@attributes": {
+                        "identifier": "Q11-1.NFER_01_11_01_01"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Q11-2": {
+              "id": "Q11-2",
+              "label": "Task 11\/11, Part 2",
+              "position": 19,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            },
+            "Q12": {
+              "id": "Q12",
+              "label": "End of test",
+              "position": 20,
+              "occurrence": 0,
+              "remainingAttempts": 1,
+              "answered": false,
+              "flagged": false,
+              "viewed": false,
+              "categories": [],
+              "informational": false,
+              "branchRule": {}
+            }
+          },
+          "stats": {
+            "questions": 21,
+            "answered": 1,
+            "flagged": 0,
+            "viewed": 1,
+            "total": 21,
+            "questionsViewed": 1
+          },
+          "branchRule": {}
+        },
+        "S02": {
+          "id": "S02",
+          "label": "Second Test Section",
+          "items": {
+            "Q13": {
+              "id": "Q13",
+              "position": 21,
+              "branchRule": {}
+            }
+          }
+        }
+      },
+      "stats": {
+        "questions": 21,
+        "answered": 1,
+        "flagged": 0,
+        "viewed": 1,
+        "total": 21,
+        "questionsViewed": 1
+      },
+      "branchRule": {}
+    }
+  },
+  "stats": {
+    "questions": 21,
+    "answered": 1,
+    "flagged": 0,
+    "viewed": 1,
+    "total": 21,
+    "questionsViewed": 1
+  }
+}

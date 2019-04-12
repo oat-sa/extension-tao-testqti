@@ -33,7 +33,7 @@ define([
     highlighterFactory
 ) {
     'use strict';
-    var prevSelection;
+    var prevSelection = [];
     var selection;
 
     if (!window.getSelection) throw new Error('Browser does not support getSelection()');

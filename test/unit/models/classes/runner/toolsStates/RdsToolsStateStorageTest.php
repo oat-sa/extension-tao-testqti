@@ -20,9 +20,8 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\toolsStates;
 
-use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
-use oat\taoQtiTest\scripts\install\InstallRdsToolsStateStorage;
+use oat\taoQtiTest\scripts\install\CreateTableForToolsStateStorage;
 use Prophecy\Argument;
 
 class RdsToolsStateStorageTest extends ToolsStateStorageTestCase
@@ -51,23 +50,15 @@ class RdsToolsStateStorageTest extends ToolsStateStorageTestCase
         $databaseMock = $this->getSqlMock('tools_states');
         $persistence = $databaseMock->getPersistenceById('tools_states');
 
-        $persistanceManagerProphecy = $this->prophesize(\common_persistence_Manager::class);
-        $persistanceManagerProphecy->getPersistenceById(Argument::any())->willReturn($persistence);
+        $persistenceManagerProphecy = $this->prophesize(\common_persistence_Manager::class);
+        $persistenceManagerProphecy->getPersistenceById(Argument::any())->willReturn($persistence);
         $serviceManagerMock = $this->getServiceLocatorMock([
-            \common_persistence_Manager::SERVICE_ID => $persistanceManagerProphecy,
+            \common_persistence_Manager::SERVICE_ID => $persistenceManagerProphecy,
         ]);
 
-        $fakeManager = $this->getMockBuilder(ServiceManager::class)->setMethods(['register'])->disableOriginalConstructor()->getMock();
-        /** @var InstallRdsToolsStateStorage $installRdsToolsStateStorage */
-        $installRdsToolsStateStorage = $this->getMockBuilder(InstallRdsToolsStateStorage::class)->setMethods(['getServiceManager'])->getMock();
-        $installRdsToolsStateStorage->expects($this->any())
-            ->method('getServiceManager')
-            ->willReturn(
-                $fakeManager
-            );
-
-        $installRdsToolsStateStorage->setServiceLocator($serviceManagerMock);
-        $installRdsToolsStateStorage([]);
+        $tableCreator = new CreateTableForToolsStateStorage();
+        $tableCreator->setServiceLocator($serviceManagerMock);
+        $tableCreator([]);
 
         $this->storage = new RdsToolsStateStorage();
         $this->storage->setOption(RdsToolsStateStorage::OPTION_PERSISTENCE, $persistence);

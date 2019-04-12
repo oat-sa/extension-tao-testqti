@@ -1786,7 +1786,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $extension->setConfig('testRunner', $config);
             $this->setVersion('32.8.0');
         }
-
         $this->skip('32.8.0', '32.11.0');
     }
 }
