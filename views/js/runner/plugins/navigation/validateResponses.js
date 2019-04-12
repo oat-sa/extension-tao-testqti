@@ -39,6 +39,9 @@ define([
 ], function(_, __, pluginFactory, currentItemHelper) {
     'use strict';
 
+
+    var pluginName = 'validateResponses';
+
     /**
      * Plugin
      * @returns {Object}
@@ -49,7 +52,7 @@ define([
          * Plugin name
          * @type {String}
          */
-        name: 'validateResponses',
+        name: pluginName,
 
         /**
          * Initialize plugin (called during runner's initialization)
@@ -57,16 +60,19 @@ define([
          */
         init: function init() {
 
-            var pluginConfig = this.getConfig();
-
             this.getTestRunner().before('move', function (e, direction) {
                 var self = this;
                 var testContext = this.getTestContext();
                 var isInteracting = !this.getItemState(testContext.itemIdentifier, 'disabled');
 
+                var testData = this.getTestData() || {};
+                var testConfig = testData.config || {};
+                var pluginConfig = _.defaults((testConfig.plugins || {})[pluginName] || {});
+
                 if (!pluginConfig.validateOnPreviousMove && direction === 'previous') {
                     return Promise.resolve();
                 }
+
 
                 if ( isInteracting && testContext.enableValidateResponses &&  testContext.validateResponses) {
                     return new Promise(function (resolve, reject) {
