@@ -20,18 +20,12 @@
  */
 define([
     'taoQtiTest/runner/branchRule/types/match',
-    'taoQtiTest/runner/proxy/offline/responseStore'
+    'taoQtiTest/runner/services/responseStore'
 ], function(
     matchBranchRuleFactory,
-    responseStore
+    responseStoreFactory
 ) {
     'use strict';
-
-    responseStore.addResponse('R1', 'test');
-    responseStore.addCorrectResponse('R1', ['test', 'foo', 'bar']);
-
-    responseStore.addResponse('R2', 'foo');
-    responseStore.addCorrectResponse('R2', ['a', 'b', 'c']);
 
     QUnit.test('it returns true if the matching is correct', function(assert) {
         var done = assert.async();
@@ -39,6 +33,13 @@ define([
             'variable': { '@attributes': { 'identifier': 'R1' } },
             'correct':  { '@attributes': { 'identifier': 'R1' } }
         };
+
+        var responseStore = responseStoreFactory();
+        responseStore.addResponse('R1', 'test');
+        responseStore.addCorrectResponse('R1', ['test', 'foo', 'bar']);
+
+        responseStore.addResponse('R2', 'foo');
+        responseStore.addCorrectResponse('R2', ['a', 'b', 'c']);
 
         matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore)
             .validate()
@@ -57,6 +58,13 @@ define([
             'correct':  { '@attributes': { 'identifier': 'R1' } }
         };
 
+        var responseStore = responseStoreFactory();
+        responseStore.addResponse('R1', 'test');
+        responseStore.addCorrectResponse('R1', ['test', 'foo', 'bar']);
+
+        responseStore.addResponse('R2', 'foo');
+        responseStore.addCorrectResponse('R2', ['a', 'b', 'c']);
+
         matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore)
             .validate()
             .then(function(result) {
@@ -74,6 +82,13 @@ define([
             'correct':  { '@attributes': { 'identifier': 'test' } }
         };
 
+        var responseStore = responseStoreFactory();
+        responseStore.addResponse('R1', 'test');
+        responseStore.addCorrectResponse('R1', ['test', 'foo', 'bar']);
+
+        responseStore.addResponse('R2', 'foo');
+        responseStore.addCorrectResponse('R2', ['a', 'b', 'c']);
+
         matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore)
             .validate()
             .then(function(result) {
@@ -89,6 +104,13 @@ define([
             'variable': { '@attributes': { 'identifier': 'R2' } },
             'correct':  { '@attributes': { 'identifier': 'R2' } }
         };
+
+        var responseStore = responseStoreFactory();
+        responseStore.addResponse('R1', 'test');
+        responseStore.addCorrectResponse('R1', ['test', 'foo', 'bar']);
+
+        responseStore.addResponse('R2', 'foo');
+        responseStore.addCorrectResponse('R2', ['a', 'b', 'c']);
 
         matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore)
             .validate()
@@ -106,6 +128,13 @@ define([
             'variable': { '@attributes': { 'identifier': 'R1' } },
             'correct':  { '@attributes': { 'identifier': 'R2' } }
         };
+
+        var responseStore = responseStoreFactory();
+        responseStore.addResponse('R1', 'test');
+        responseStore.addCorrectResponse('R1', ['test', 'foo', 'bar']);
+
+        responseStore.addResponse('R2', 'foo');
+        responseStore.addCorrectResponse('R2', ['a', 'b', 'c']);
 
         matchBranchRuleFactory(branchRuleDefinition, null, null, null, responseStore)
             .validate()
