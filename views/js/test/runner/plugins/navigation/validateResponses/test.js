@@ -19,6 +19,7 @@
 define([
 
     'jquery',
+    'lodash',
     'taoTests/runner/runner',
     'taoQtiTest/test/runner/mocks/providerMock',
     'taoQtiTest/runner/plugins/navigation/validateResponses',
@@ -26,6 +27,7 @@ define([
 ], function(
 
     $,
+    _,
     runnerFactory,
     providerMock,
     pluginFactory,
@@ -199,4 +201,54 @@ define([
                 ready();
             });
     });
+
+
+
+    QUnit.cases.init([{
+        title: 'when the item not answered, but the `validateOnPreviousMove` flag is set to `false`',
+        context: {
+            itemIdentifier: 'item-1',
+            enableValidateResponses: true,
+            validateResponses: true
+        },
+        testData: {
+            config: {
+                plugins: {
+                    validateResponses: {
+                        validateOnPreviousMove: false
+                    }
+                }
+            }
+        },
+        answered: false,
+        responses: ['foo']
+    }])
+        .test('Moving backwards is also allowed ', function(data, assert) {
+            var ready = assert.async();
+            var runner = runnerFactory(providerName);
+            var plugin = pluginFactory(runner, runner.getAreaBroker());
+
+            assert.expect(1);
+
+            plugin
+                .init()
+                .then(function() {
+
+                    runner.setTestData(_.assign(runner.getTestData(), data.testData));
+                    runner.setTestContext(data.context);
+                    runner.answered = data.answered;
+                    runner.responses = data.responses;
+
+                    runner.on('move', function() {
+                        console.log('inside on move');
+                        assert.ok(true, 'Moving is allowed');
+                        ready();
+                    });
+                    runner.previous();
+                })
+                .catch(function(err) {
+                    assert.ok(false, err.message);
+                    ready();
+                });
+        });
 });
