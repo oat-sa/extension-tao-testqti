@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint98\n"
-"PO-Revision-Date: 2019-03-15T10:06:22\n"
+"Project-Id-Version: TAO 3.3.0-sprint100\n"
+"PO-Revision-Date: 2019-04-12T12:03:41\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -29,13 +29,13 @@ msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr "Een externe bron waarnaar verwezen wordt in de QTI test '%s' kon niet worden gevonden."
 
 msgid "A response to every question in this item is required."
-msgstr ""
+msgstr "Een antwoord op iedere vraag in dit item is verplicht"
 
 msgid "A response to this item is required."
 msgstr "Een antwoord op dit item is verplicht."
 
 msgid "A valid response to this item is required."
-msgstr ""
+msgstr "Een geldig antwoord op dit item is verplicht."
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Een zichtbare sectie is er een die herkenbaar is voor de kandidaat."
@@ -263,7 +263,7 @@ msgid "Completed items"
 msgstr "Voltooide items"
 
 msgid "Connected to server"
-msgstr ""
+msgstr "Verbonden met server"
 
 msgid "Contrast"
 msgstr "Contrast"
@@ -332,6 +332,9 @@ msgid "Do not flag the current item for later review"
 msgstr "Markeer het huidige item niet voor latere herziening"
 
 msgid "Do not show alert on timeout"
+msgstr ""
+
+msgid "Download"
 msgstr ""
 
 msgid "Eliminate choices"
@@ -615,11 +618,11 @@ msgstr "Beheer rubriek blokken"
 msgid "Manage test properties"
 msgstr "beheer toets eigenschappen"
 
-msgid "Manage tests"
-msgstr "Beheer examens"
-
 msgid "Manage Tests"
 msgstr "Beheer toetsen"
+
+msgid "Manage tests"
+msgstr "Beheer examens"
 
 msgid "Mark for review"
 msgstr "Markeer voor herziening"
@@ -741,11 +744,11 @@ msgstr "Niet alle examens konden worden geëxporteerd"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Niet door elkaar gehaald, de posities blijven vast"
 
-msgid "Ok"
-msgstr "Ok"
-
 msgid "OK"
 msgstr "OK"
+
+msgid "Ok"
+msgstr "Ok"
 
 msgid "OK & End test"
 msgstr "OK & beëindig test"
@@ -764,6 +767,9 @@ msgstr "Toon alleen de onbeantwoorde items"
 
 msgid "Open Calculator"
 msgstr "Open rekenmachine"
+
+msgid "or"
+msgstr ""
 
 msgid "Ordering"
 msgstr "Sorteervolgorde"
@@ -792,6 +798,9 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
+msgid "Please continue waiting while we try to restore the connection. Alternatively, you may end this test by downloading it as a file which you will have to submit manually."
+msgstr ""
+
 msgid "Please wait while we try to restore the connection."
 msgstr ""
 
@@ -800,6 +809,9 @@ msgstr "Toon het bedekte gebied in voorvertoning"
 
 msgid "Previous"
 msgstr "Vorige"
+
+msgid "Proceed & End Test"
+msgstr ""
 
 msgid "Proctor"
 msgstr "Proctor"
@@ -882,10 +894,10 @@ msgstr "Puntenteller"
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -985,7 +997,7 @@ msgid "Skip and go to the end of the test"
 msgstr "Sla over en ga naar het einde van examen"
 
 msgid "Skip and go to the next item"
-msgstr ""
+msgstr "Sla over en ga naar het volgende item"
 
 msgid "Skip to the end of the test"
 msgstr "Ga naar het eind van de toets"
@@ -1083,8 +1095,14 @@ msgstr ""
 msgid "The connection seems to be back, please proceed"
 msgstr ""
 
+msgid "The connection seems to be back, please proceed."
+msgstr ""
+
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "De afhankelijkheid met het IMS QTI AssessmentItemRef \"%s\" in het IMS Manifest kon niet worden opgelost"
+
+msgid "The download will be available in <strong>%d</strong> seconds"
+msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr ""
@@ -1264,7 +1282,7 @@ msgid "Warning – You have %s remaining to complete this test part."
 msgstr "Waarschuwing – U heeft nog %s over om dit examen gedeelte af te maken."
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr ""
+msgstr "Waarschuwing – U heeft nog %s over om dit examen af te maken."
 
 msgid "We are unable to connect the server to submit your results."
 msgstr ""
@@ -1312,16 +1330,16 @@ msgid "Yes"
 msgstr "Ja"
 
 msgid "You answered all %s question(s)"
-msgstr ""
+msgstr "U heeft alle %s vra(a)g(en) beantwoord"
 
 msgid "You answered all %s question(s) in this section"
-msgstr ""
+msgstr "U heeft alle %s vra(a)g(en) in deze sectie beantwoord"
 
 msgid "You answered all %s question(s) in this test"
-msgstr ""
+msgstr "U heeft alle %s vra(a)g(en) in deze toets beantwoord"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr ""
+msgstr "U heeft slechts %s van de %s vra(a)g(en) in deze sectie beantwoord"
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
 msgstr "U staat op het punt naar het volgende item te gaan.Klik OK om door te gaan naar het volgende item"
@@ -1332,6 +1350,9 @@ msgstr "U staat op het punt naar het vorige item te gaan.Klik OK om door te gaan
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "U staat op het punt om het examen te verzenden. Na het verzenden bent u niet meer in staat het examen te openen. Klik op OK om de test te verzenden."
 
+msgid "You are encountering a prolonged connectivity loss."
+msgstr ""
+
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
 
@@ -1339,7 +1360,7 @@ msgid "You have %s item(s) marked for review."
 msgstr "U heeft %s item(s) gemarkeerd voor herziening."
 
 msgid "You have %s unanswered question(s)"
-msgstr ""
+msgstr "U heeft %s onbeantwoorde vragen"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
 msgstr "U heeft %s onbeantwoorde vra(a)g(en) en %s items gemarkeerd voor herziening."

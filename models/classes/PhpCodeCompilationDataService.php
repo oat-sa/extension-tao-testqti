@@ -42,18 +42,16 @@ class PhpCodeCompilationDataService extends CompilationDataService
         $cacheFile = "${dir}/${cacheKey}.php";
 
         if ($this->useCompactCacheFile() && !is_file($cacheFile)) {
-            $data = $compilationDirectory->read($path);
-            file_put_contents($cacheFile, $data);
+            file_put_contents($cacheFile, $compilationDirectory->read($path));
         }
 
-        if (!$this->useCompactCacheFile()) {
-            $data = $compilationDirectory->read($path);
-            file_put_contents($cacheFile, $data);
-        }
-        
         try {
             $doc = new PhpDocument();
-            $doc->load($cacheFile);
+            if ($this->useCompactCacheFile()) {
+                $doc->load($cacheFile);
+            } else {
+                $doc->loadFromString($compilationDirectory->read($path));
+            }
         } catch (PhpStorageException $e) {
             $msg = "PHP Compilation Data in directory '" . $compilationDirectory->getId() . "' at path '" . $path . "' could not be executed properly.";
             throw new \common_Exception($msg);

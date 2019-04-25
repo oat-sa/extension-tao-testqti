@@ -41,6 +41,16 @@ define([
     var ignoredClass = 'no-key-navigation';
 
     /**
+     * If we have now config from backend side - we set this default dataset
+     *
+     * @typedef {object}
+     * @properties {string} contentNavigatorType - ('default' | 'linear') - type of content navigation
+     */
+    var defaultPluginConfig = {
+      contentNavigatorType: 'default',
+    };
+
+    /**
      * Init the navigation in the toolbar
      *
      * @param {Object} testRunner
@@ -249,8 +259,7 @@ define([
      * @param {Object} testRunner
      * @returns {Array} of keyNavigator ids
      */
-    function initContentNavigation(testRunner){
-
+    function initDefaultContentNavigation(testRunner){
         var itemNavigators = [];
         var $content = testRunner.getAreaBroker().getContentArea();
 
@@ -273,6 +282,54 @@ define([
         });
 
         return itemNavigators;
+    }
+
+    /**
+     * Init the navigation in the item content
+     * Navigable item content are interaction choices only
+     * It's works with templates for default key
+     *
+     * @param {Object} testRunner
+     * @returns {Array} of keyNavigator ids
+     */
+    function initAllContentButtonsNavigation(testRunner){
+        var navigableElements = [];
+        var $content = testRunner.getAreaBroker().getContentArea();
+        var $qtiIteractionsNodeList = $content.find('.key-navigation-focusable,.qti-interaction').filter(function(){
+            //filter out interaction as it will be managed separately
+            return (!$(this).parents('.qti-interaction').length);
+        });
+        var $qtiChoiceNodesList = $qtiIteractionsNodeList.find('.qti-choice');
+
+        //the item focusable body elements are considered scrollable
+        $content.find('.key-navigation-focusable').addClass('key-navigation-scrollable');
+
+        $qtiChoiceNodesList.each(function(){
+            var $itemElement = $(this);
+            var keyNavigatorItem = keyNavigator({
+                elements : navigableDomElement.createFromDoms($itemElement),
+                group : $itemElement,
+                propagateTab : false
+            });
+
+            keyNavigatorItem.on('activate', function(cursor){
+                var $elt = cursor.navigable.getElement();
+                //jQuery <= 1.9.0 the checkbox values are set
+                //after the click event if triggerred with jQuery
+                if($elt.is(':checkbox')){
+                    $elt.each(function(){
+                        this.click();
+                    });
+                } else {
+                    $elt.click();
+                }
+
+            });
+
+            navigableElements.push(keyNavigatorItem);
+        });
+
+        return navigableElements;
     }
 
     /**
@@ -307,11 +364,13 @@ define([
         interactionNavigables = navigableDomElement.createFromDoms($inputs);
 
         if (interactionNavigables.length) {
-            interactionNavigators.push(keyNavigator({
+            var keyNavigatorItem = keyNavigator({
                 elements : interactionNavigables,
                 group : $interaction,
                 loop : false
-            }).on('right down', function(elem){
+            });
+
+            keyNavigatorItem.on('right down', function(elem){
                 if (!allowedToNavigateFrom(elem)) {
                     return false;
                 } else {
@@ -340,7 +399,9 @@ define([
                 cursor.navigable.getElement().closest('.qti-choice').addClass('key-navigation-highlight');
             }).on('blur', function(cursor){
                 cursor.navigable.getElement().closest('.qti-choice').removeClass('key-navigation-highlight');
-            }));
+            });
+
+            interactionNavigators.push(keyNavigatorItem);
         }
 
         return interactionNavigators;
@@ -379,8 +440,8 @@ define([
      * @param testRunner
      * @returns {*}
      */
-    function initTestRunnerNavigation(testRunner){
-
+    function initTestRunnerNavigation(testRunner, config){
+        var keyNavigatorItem;
         var navigators;
 
         //blur current focused element, to reinitialize keyboard navigation
@@ -388,34 +449,67 @@ define([
             document.activeElement.blur();
         }
 
-        navigators = _.union(
-            initRubricNavigation(testRunner),
-            initContentNavigation(testRunner),
-            initToolbarNavigation(testRunner),
-            initNavigatorNavigation(testRunner),
-            initHeaderNavigation(testRunner)
-        );
+        switch (config.contentNavigatorType) {
+            case 'linear' :
+                navigators = _.union(
+                    initRubricNavigation(testRunner),
+                    initAllContentButtonsNavigation(testRunner),
+                    initToolbarNavigation(testRunner),
+                    initNavigatorNavigation(testRunner),
+                    initHeaderNavigation(testRunner)
+                );
+            break;
+
+            default:
+                navigators = _.union(
+                    initRubricNavigation(testRunner),
+                    initDefaultContentNavigation(testRunner),
+                    initToolbarNavigation(testRunner),
+                    initNavigatorNavigation(testRunner),
+                    initHeaderNavigation(testRunner)
+                );
+            break;
+        }
+
 
         navigators = navigableGroupElement.createFromNavigators(navigators);
 
-        return keyNavigator({
+        keyNavigatorItem = keyNavigator({
             id : 'test-runner',
             replace : true,
             loop : true,
             elements : navigators
-        }).on('tab', function(elem){
-            if (!allowedToNavigateFrom(elem)) {
-                return false;
-            } else {
+        });
+
+        keyNavigatorItem.on('tab', function(elem){
+            if (allowedToNavigateFrom(elem)) {
                 this.next();
             }
         }).on('shift+tab', function(elem){
-            if (!allowedToNavigateFrom(elem)) {
-                return false;
-            } else {
+            if (allowedToNavigateFrom(elem)) {
                 this.previous();
             }
         });
+
+        if ( config.contentNavigatorType === 'linear' ) {
+            keyNavigatorItem.on('right', function(elem){
+
+                var isCurrentElementFirst = $(elem).is(':first-child');
+
+                if ( isCurrentElementFirst && allowedToNavigateFrom(elem) ) {
+                    this.next();
+                }
+
+            }).on('left', function(elem){
+                var isCurrentElementLast = $(elem).is(':last-child');
+
+                if ( isCurrentElementLast && allowedToNavigateFrom(elem) ) {
+                    this.previous();
+                }
+            });
+        }
+
+        return keyNavigatorItem;
     }
 
     /**
@@ -448,14 +542,19 @@ define([
         init: function init() {
             var self = this;
             var testRunner = this.getTestRunner();
+            var testData = testRunner.getTestData() || {};
+            var testConfig = testData.config || {};
+            var pluginConfig = _.defaults((testConfig.plugins || {})[self.getName()] || {}, defaultPluginConfig);
 
             //start disabled
             this.disable();
 
-            //update plugin state based on changes
+            /**
+             *  Update plugin state based on changes
+             */
             testRunner
                 .after('renderitem', function () {
-                    self.groupNavigator = initTestRunnerNavigation(testRunner);
+                    self.groupNavigator = initTestRunnerNavigation(testRunner, pluginConfig);
 
                     shortcut.add('tab shift+tab', function(e){
                         if (!allowedToNavigateFrom(e.target)) {
@@ -465,11 +564,16 @@ define([
                             self.groupNavigator.focus();
                         }
                     });
-
-                    self.enable();
                 })
                 .on('unloaditem', function () {
                     self.disable();
+                })
+                /**
+                 * @param {string} type - type of content tab navigation,
+                 * can be: 'default' || 'linear'
+                 */
+                .on('setcontenttabtype', function(type) {
+                    pluginConfig.contentNavigatorType = type;
                 });
         },
 

@@ -64,9 +64,10 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
     /**
      * @param core_kernel_classes_Class   $class
      * @param tao_helpers_form_Form|array $form
+     * @param string|null $userId owner of the resource
      * @return common_report_Report
      */
-    public function import($class, $form)
+    public function import($class, $form, $userId = null)
     {
         try {
             $uploadedFile = $this->fetchUploadedFile($form);

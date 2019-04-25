@@ -31,8 +31,21 @@ define([
     'taoQtiTest/runner/provider/dataUpdater',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
     'taoQtiTest/runner/proxy/cache/itemStore',
-    'taoQtiTest/runner/proxy/cache/actionStore'
-], function(_, __, Promise, testNavigatorFactory, mapHelper, navigationHelper, dataUpdater, qtiServiceProxy, itemStoreFactory, actionStoreFactory) {
+    'taoQtiTest/runner/proxy/cache/actionStore',
+    'taoQtiTest/runner/helpers/offlineErrorHelper'
+], function(
+    _,
+    __,
+    Promise,
+    testNavigatorFactory,
+    mapHelper,
+    navigationHelper,
+    dataUpdater,
+    qtiServiceProxy,
+    itemStoreFactory,
+    actionStoreFactory,
+    offlineErrorHelper
+) {
     'use strict';
 
     /**
@@ -48,52 +61,6 @@ define([
      * @type {Number}
      */
     var loadNextDelay = 450;
-
-    /**
-     * When we are unable to navigate offline
-     * @type {Error}
-     */
-    var offlineNavError = _.assign(
-        new Error(__('We are unable to connect to the server to retrieve the next item.')),
-        {
-            success : false,
-            source: 'navigator',
-            purpose: 'proxy',
-            type: 'nav',
-            code : 404
-        }
-    );
-
-    /**
-     * When we are unable to exit the test offline
-     * @type {Error}
-     */
-    var offlineExitError = _.assign(
-        new Error(__('We are unable to connect the server to submit your results.')),
-        {
-            success : false,
-            source: 'navigator',
-            purpose: 'proxy',
-            type: 'finish',
-            code : 404
-        }
-    );
-
-    /**
-     * When we are unable to navigate offline
-     * @type {Error}
-     */
-    var offlinePauseError = _.assign(
-        new Error(__('The test has been paused, we are unable to connect to the server.')),
-        {
-            success : false,
-            source: 'navigator',
-            purpose: 'proxy',
-            type: 'pause',
-            code : 404
-        }
-    );
-
 
     /**
      * Overrides the qtiServiceProxy with the precaching behavior
@@ -193,31 +160,35 @@ define([
                 var testMap     = this.getDataHolder().get('testMap');
 
 
-                if( action === 'pause' ) {
-                    if(actionParams.reason){
-                        offlinePauseError.data = actionParams.reason;
-                    }
-                    throw offlinePauseError;
+                if (action === 'pause') {
+                    throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflinePauseError(), {
+                        reason: actionParams.reason
+                    });
                 }
 
                 //we just block those actions and the end of the test
-                if( _.contains(blockingActions, action) ||
-                    ( actionParams.direction === 'next' && navigationHelper.isLast(testMap, testContext.itemIdentifier)) ){
-                    throw offlineExitError;
+                if (
+                    _.contains(blockingActions, action)
+                    || (
+                        actionParams.direction === 'next'
+                        && navigationHelper.isLast(testMap, testContext.itemIdentifier)
+                    )
+                ) {
+                    throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflineExitError());
                 }
 
                 // try the navigation if the actionParams context meaningful data
                 if( actionParams.direction && actionParams.scope){
                     testNavigator = testNavigatorFactory(testData, testContext, testMap);
                     newTestContext = testNavigator.navigate(
-                            actionParams.direction,
-                            actionParams.scope,
-                            actionParams.ref
-                        );
+                        actionParams.direction,
+                        actionParams.scope,
+                        actionParams.ref
+                    );
 
                     //we are really not able to navigate
                     if(!newTestContext || !newTestContext.itemIdentifier || !self.hasItem(newTestContext.itemIdentifier)){
-                        throw offlineNavError;
+                        throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflineNavError());
                     }
 
                     result.testContext = newTestContext;

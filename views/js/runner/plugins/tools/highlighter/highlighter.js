@@ -33,6 +33,7 @@ define([
     highlighterFactory
 ) {
     'use strict';
+    var prevSelection = [];
     var selection;
 
     if (!window.getSelection) throw new Error('Browser does not support getSelection()');
@@ -56,9 +57,31 @@ define([
     }
 
     /**
-     * The highlighter Factory
+     * Discards the global text selection from the browser (window.selection)
      */
-    return function testHighlighterFactory() {
+    function discardSelection() {
+        // delay discarding, to allow time for multiple highlighters logic
+        setTimeout(function() {
+            selection.removeAllRanges();
+        }, 250);
+    }
+
+    /**
+     * The highlighter Factory
+     * @param {Object} options
+     * @param {String} [options.className]
+     * @param {String} [options.containerSelector]
+     * @param {Array} [options.containersBlackList]
+     * @param {String} [options.id]
+     * @returns {Object} the highlighter instance
+     */
+    return function testHighlighterFactory(options) {
+
+        /**
+         * Is this highlighter enabled or disabled?
+         * @type {boolean}
+         */
+        var enabled = true;
 
         /**
          * Are we in highlight mode, meaning that each new selection is automatically highlighted
@@ -71,23 +94,65 @@ define([
          * The helper that does the highlight magic
          */
         var highlightHelper = highlighterFactory({
-            className: 'txt-user-highlight',
-            containerSelector: '.qti-itemBody'
+            className: options.className || 'txt-user-highlight',
+            containerSelector: options.containerSelector || '.qti-itemBody',
+            containersBlackList: options.containersBlackList || [],
+            clearOnClick: true,
+        });
+
+        //add event to automatically highlight the recently made selection if needed
+        $(document).on('mouseup.highlighter', function() {
+            if (isHighlighting && !selection.isCollapsed) {
+                highlightHelper.highlightRanges(getAllRanges());
+                discardSelection();
+            }
         });
 
         //add event to automatically highlight the recently made selection if needed
         //added touch event (as from TAO-6578)
-        $(document).on('mouseup.highlighter touchend.highlighter', function() {
+        $(document).on('touchend.highlighter', function() {
             if (isHighlighting && !selection.isCollapsed) {
                 highlightHelper.highlightRanges(getAllRanges());
-                selection.removeAllRanges();
             }
         });
+
+        // iOS devices clears selection after click on button,
+        // so we store prev selection for this devices to be able
+        // to use it after click on highlight button
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+            $(document).on('selectionchange', function() {
+                if (!isHighlighting) {
+                    prevSelection = _.clone(getAllRanges(), true);
+                }
+            });
+        }
 
         /**
          * The highlighter instance
          */
         return eventifier({
+
+            /**
+             * Enable this instance
+             */
+            enable: function enable() {
+                enabled = true;
+            },
+
+            /**
+             * Disable this instance
+             */
+            disable: function disable() {
+                enabled = false;
+            },
+
+            /**
+             * Is this instance currently enabled?
+             * @returns {Boolean}
+             */
+            isEnabled: function isEnabled() {
+                return enabled;
+            },
 
             /**
              * toggle highlighting mode on and off
@@ -97,9 +162,12 @@ define([
                 isHighlighting = bool;
                 if (isHighlighting) {
                     this.trigger('start');
+                    $(".qti-itemBody").toggleClass('highlighter-cursor', true);
                 } else {
                     this.trigger('end');
+                    $(".qti-itemBody").toggleClass('highlighter-cursor', false);
                 }
+                return this;
             },
 
             /**
@@ -111,7 +179,12 @@ define([
                         this.toggleHighlighting(true);
                         highlightHelper.highlightRanges(getAllRanges());
                         this.toggleHighlighting(false);
-                        selection.removeAllRanges();
+                        discardSelection();
+                    } else if (prevSelection[0] && !prevSelection[0].collapsed){
+                        this.toggleHighlighting(true);
+                        highlightHelper.highlightRanges(prevSelection);
+                        this.toggleHighlighting(false);
+                        discardSelection();
                     } else {
                         this.toggleHighlighting(true);
                     }
@@ -144,6 +217,14 @@ define([
             clearHighlights: function clearHighlights() {
                 highlightHelper.clearHighlights();
                 selection.removeAllRanges();
+            },
+
+            /**
+             * Getter for the instance's id
+             * @returns {String}
+             */
+            getId: function getId() {
+                return options.id;
             }
         });
     };

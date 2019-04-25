@@ -60,13 +60,6 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
     protected $assessmentUri;
 
     /**
-     * Item data extracted from assessment
-     *
-     * @var array
-     */
-    protected $assessmentItemData = [];
-
-    /**
      * @param string $uri
      * @return string
      * @throws \common_exception_Error
@@ -101,33 +94,33 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
      */
     protected function getAssessmentData()
     {
-        if (empty($this->assessmentItemData)) {
-            $xml = \taoQtiTest_models_classes_QtiTestService::singleton()->getDoc($this->getResource($this->assessmentUri));
-            $testPartCollection = $xml->getDocumentComponent()->getComponentsByClassName(self::TEST_PART);
+        $xml = \taoQtiTest_models_classes_QtiTestService::singleton()->getDoc($this->getResource($this->assessmentUri));
+        $testPartCollection = $xml->getDocumentComponent()->getComponentsByClassName(self::TEST_PART);
 
-            /** @var TestPart $testPart */
-            foreach ($testPartCollection as $testPart) {
-                $sectionCollection = $testPart->getAssessmentSections();
-                /** @var AssessmentSection $section */
-                foreach ($sectionCollection as $section) {
-                    $itemCollection = $section->getComponentsByClassName(self::TEST_ITEM);
-                    $order = 1;
-                    /** @var AssessmentItemRef $item */
-                    foreach ($itemCollection as $item) {
-                        $this->assessmentItemData[$item->getIdentifier()] = [
-                            self::ITEM_URI     => $item->getHref(),
-                            self::TEST_PART    => $testPart->getIdentifier(),
-                            self::TEST_SECTION => $section->getIdentifier(),
-                            self::ITEM_SHUFFLE => is_null($section->getOrdering()) ? 0 : (int)$section->getOrdering()->getShuffle(),
-                            self::ITEM_ORDER   => $order,
-                        ];
-                        $order++;
-                    }
+        $assessmentItemData = [];
+
+        /** @var TestPart $testPart */
+        foreach ($testPartCollection as $testPart) {
+            $sectionCollection = $testPart->getAssessmentSections();
+            /** @var AssessmentSection $section */
+            foreach ($sectionCollection as $section) {
+                $itemCollection = $section->getComponentsByClassName(self::TEST_ITEM);
+                $order = 1;
+                /** @var AssessmentItemRef $item */
+                foreach ($itemCollection as $item) {
+                    $assessmentItemData[$item->getIdentifier()] = [
+                        self::ITEM_URI     => $item->getHref(),
+                        self::TEST_PART    => $testPart->getIdentifier(),
+                        self::TEST_SECTION => $section->getIdentifier(),
+                        self::ITEM_SHUFFLE => is_null($section->getOrdering()) ? 0 : (int)$section->getOrdering()->getShuffle(),
+                        self::ITEM_ORDER   => $order,
+                    ];
+                    $order++;
                 }
             }
         }
 
-        return $this->assessmentItemData;
+        return $assessmentItemData;
     }
 
     /**
@@ -149,9 +142,9 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
     {
         if (!$this->itemExporter) {
             $this->itemExporter = $this->getServiceLocator()->get(SimpleExporter::SERVICE_ID);
-            if ($this->hasOption(self::OPTION_FILE_NAME)) {
-                $this->itemExporter->setOption(ItemExporter::OPTION_FILE_LOCATION, $this->getOption(self::OPTION_FILE_NAME));
-            }
+        }
+        if ($this->hasOption(self::OPTION_FILE_NAME)) {
+            $this->itemExporter->setOption(ItemExporter::OPTION_FILE_LOCATION, $this->getOption(self::OPTION_FILE_NAME));
         }
 
         return $this->itemExporter;
