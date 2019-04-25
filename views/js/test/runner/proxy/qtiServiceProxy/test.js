@@ -22,6 +22,7 @@ define([
     'jquery',
     'lodash',
     'util/url',
+    'core/promise',
     'core/communicator',
     'taoTests/runner/proxy',
     'taoQtiTest/runner/proxy/qtiServiceProxy',
@@ -30,6 +31,7 @@ define([
     $,
     _,
     urlUtil,
+    Promise,
     communicatorFactory,
     proxyFactory,
     qtiServiceProxy
@@ -84,26 +86,27 @@ define([
     QUnit
         .cases.init([{
             title: 'success',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
             success: true
         }, {
             title: 'failing data',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
             success: false
         }, {
             title: 'failing request',
-            token: '1234',
-            response: 'error',
+            sendToken: '1234',
+            receiveToken: '4567',
+            response: "error",
             ajaxSuccess: false,
             success: false
         }])
@@ -125,9 +128,9 @@ define([
                 serviceCallId: initConfig.serviceCallId
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 6 : 7);
+            assert.expect(7);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
@@ -135,16 +138,18 @@ define([
                 url: '/*',
                 status: caseData.ajaxSuccess ? 200 : 500,
                 responseText: caseData.response,
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 response: function(settings) {
                     assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.on('init', function(promise, config) {
                 assert.ok(true, 'The proxy has fired the "init" event');
@@ -152,32 +157,35 @@ define([
                 assert.equal(config, initConfig, 'The proxy has provided the config object through the "init" event');
             });
 
-            result = proxy.init();
-
-            assert.equal(typeof result, 'object', 'The proxy.init method has returned a promise');
-
-            result
-                .then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
+            tokenHandler.clearStore()
+                .then(function() {
+                    return tokenHandler.setToken(caseData.sendToken);
                 })
-                .catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                .then(function() {
+                    result = proxy.init();
 
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
-                    }
+                    assert.equal(typeof result, 'object', 'The proxy.init method has returned a promise');
 
-                    ready();
+                    result
+                        .then(function(data) {
+                            if (caseData.success) {
+                                assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                            } else {
+                                assert.ok(false, 'The proxy must throw an error!');
+                            }
+                        })
+                        .catch(function(err) {
+                            assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                        })
+                        .finally(function() {
+                            if (caseData.sendToken) {
+                                tokenHandler.getToken().then(function(storedToken) {
+                                    assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
+
+                                    ready();
+                                });
+                            }
+                        });
                 });
         });
 
@@ -193,7 +201,7 @@ define([
             }
         };
 
-        var proxy, result;
+        var proxy, tokenHandler, result;
 
         assert.expect(5);
 
@@ -201,6 +209,9 @@ define([
 
         $.mockjax([{
             url: '/init*',
+            headers: {
+                'X-CSRF-Token': '4567'
+            },
             responseText: {
                 success: true
             }
@@ -213,15 +224,23 @@ define([
         }]);
 
         proxy = proxyFactory('qtiServiceProxy', initConfig);
+        tokenHandler = proxy.getTokenHandler();
 
         proxy.install();
 
-        proxy.init().then(function() {
+        proxy.on('destroy', function(promise) {
+            assert.ok(true, 'The proxyFactory has fired the "destroy" event');
+            assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "destroy" event');
+        });
 
-            proxy.on('destroy', function(promise) {
-                assert.ok(true, 'The proxyFactory has fired the "destroy" event');
-                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "destroy" event');
-            });
+        tokenHandler.clearStore()
+        .then(function() {
+            return tokenHandler.setToken('1234');
+        })
+        .then(function() {
+            return proxy.init();
+        })
+        .then(function() {
 
             result = proxy.destroy();
 
@@ -254,27 +273,28 @@ define([
     QUnit
         .cases.init([{
             title: 'success',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
                 testData: {},
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
             success: true
         }, {
             title: 'failing data',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
             success: false
         }, {
             title: 'failing request',
-            token: '1234',
-            response: 'error',
+            sendToken: '1234',
+            receiveToken: '4567',
+            response: "error",
             ajaxSuccess: false,
             success: false
         }])
@@ -296,24 +316,26 @@ define([
                 serviceCallId: initConfig.serviceCallId
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 6 : 7);
+            assert.expect(7);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 responseText: {
                     success: true
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.getTestData()
                 .then(function() {
@@ -323,12 +345,21 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-
+            tokenHandler.clearStore()
+            .then(function() {
+                return tokenHandler.setToken(caseData.sendToken);
+            })
+            .then(function() {
+                return proxy.init();
+            })
+            .then(function() {
                 $.mockjax({
                     url: '/*',
                     status: caseData.ajaxSuccess ? 200 : 500,
                     responseText: caseData.response,
+                    headers: {
+                        'X-CSRF-Token': caseData.receiveToken
+                    },
                     response: function(settings) {
                         assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
                     }
@@ -349,20 +380,18 @@ define([
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                }).catch(function(err) {
+                })
+                .catch(function(err) {
                     assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                })
+                .finally(function() {
+                    if (caseData.sendToken) {
+                        tokenHandler.getToken().then(function(storedToken) {
+                            assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
 
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
+                            ready();
+                        });
                     }
-
-                    ready();
                 });
             });
         });
@@ -370,27 +399,28 @@ define([
     QUnit
         .cases.init([{
             title: 'success',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
                 testContext: {},
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
             success: true
         }, {
             title: 'failing data',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
             success: false
         }, {
             title: 'failing request',
-            token: '1234',
-            response: 'error',
+            sendToken: '1234',
+            receiveToken: '4567',
+            response: "error",
             ajaxSuccess: false,
             success: false
         }])
@@ -412,24 +442,26 @@ define([
                 serviceCallId: initConfig.serviceCallId
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 6 : 7);
+            assert.expect(7);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 responseText: {
                     success: true
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.getTestContext()
                 .then(function() {
@@ -439,73 +471,83 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-                $.mockjax({
-                    url: '/*',
-                    status: caseData.ajaxSuccess ? 200 : 500,
-                    responseText: caseData.response,
-                    response: function(settings) {
-                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
-                    }
-                });
-
-                proxy.on('getTestContext', function(promise) {
-                    assert.ok(true, 'The proxy has fired the "getTestContext" event');
-                    assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "getTestContext" event');
-                });
-
-                result = proxy.getTestContext();
-
-                assert.equal(typeof result, 'object', 'The proxy.getTestContext method has returned a promise');
-
-                result.then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                }).catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
-
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                });
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
+
+            proxy.on('getTestContext', function(promise) {
+                assert.ok(true, 'The proxy has fired the "getTestContext" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "getTestContext" event');
+            });
+
+            tokenHandler.clearStore()
+                .then(function() {
+                    return tokenHandler.setToken(caseData.sendToken);
+                })
+                .then(function() {
+                    return proxy.init();
+                })
+                .then(function() {
+                    result = proxy.getTestContext();
+
+                    assert.equal(typeof result, 'object', 'The proxy.getTestContext method has returned a promise');
+
+                    result.then(function(data) {
+                        if (caseData.success) {
+                            assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                        } else {
+                            assert.ok(false, 'The proxy must throw an error!');
+                        }
+                    })
+                    .catch(function(err) {
+                        assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                    })
+                    .finally(function() {
+                        if (caseData.sendToken) {
+                            tokenHandler.getToken().then(function(storedToken) {
+                                assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
+
+                                ready();
+                            });
+                        }
+                    });
+                });
+
         });
 
     QUnit
         .cases.init([{
             title: 'success',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
                 testMap: {},
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
             success: true
         }, {
             title: 'failing data',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
             success: false
         }, {
             title: 'failing request',
-            token: '1234',
-            response: 'error',
+            sendToken: '1234',
+            receiveToken: '4567',
+            response: "error",
             ajaxSuccess: false,
             success: false
         }])
@@ -527,24 +569,26 @@ define([
                 serviceCallId: initConfig.serviceCallId
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 6 : 7);
+            assert.expect(7);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 responseText: {
                     success: true
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.getTestMap()
                 .then(function() {
@@ -554,79 +598,88 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-                $.mockjax({
-                    url: '/*',
-                    status: caseData.ajaxSuccess ? 200 : 500,
-                    responseText: caseData.response,
-                    response: function(settings) {
-                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
-                    }
-                });
-
-                proxy.on('getTestMap', function(promise) {
-                    assert.ok(true, 'The proxy has fired the "getTestMap" event');
-                    assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "getTestMap" event');
-                });
-
-                result = proxy.getTestMap();
-
-                assert.equal(typeof result, 'object', 'The proxy.getTestMap method has returned a promise');
-
-                result.then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                }).catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
-
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                });
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
+
+            proxy.on('getTestMap', function(promise) {
+                assert.ok(true, 'The proxy has fired the "getTestMap" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "getTestMap" event');
+            });
+
+            tokenHandler.clearStore()
+                .then(function() {
+                    return tokenHandler.setToken(caseData.sendToken);
+                })
+                .then(function() {
+                    return proxy.init();
+                })
+                .then(function() {
+                    result = proxy.getTestMap();
+
+                    assert.equal(typeof result, 'object', 'The proxy.getTestMap method has returned a promise');
+
+                    result.then(function(data) {
+                        if (caseData.success) {
+                            assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                        } else {
+                            assert.ok(false, 'The proxy must throw an error!');
+                        }
+                    })
+                    .catch(function(err) {
+                        assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                    })
+                    .finally(function() {
+                        if (caseData.sendToken) {
+                            tokenHandler.getToken().then(function(storedToken) {
+                                assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
+
+                                ready();
+                            });
+                        }
+                    });
+                });
         });
 
     QUnit
         .cases.init([{
             title: 'success',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             variables: {
                 var1: '1',
                 var2: '10'
             },
             response: {
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
             success: true
         }, {
             title: 'failing data',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             variables: {
                 var1: '1',
                 var2: '10'
             },
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
             success: false
         }, {
             title: 'failing request',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             variables: {
                 var1: '1',
                 var2: '10'
@@ -653,24 +706,27 @@ define([
                 serviceCallId: initConfig.serviceCallId
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 7 : 8);
+            assert.expect(8);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 responseText: {
                     success: true
                 }
             });
 
+
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.sendVariables(caseData.variables)
                 .then(function() {
@@ -680,22 +736,32 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-                $.mockjax({
-                    url: '/*',
-                    status: caseData.ajaxSuccess ? 200 : 500,
-                    responseText: caseData.response,
-                    response: function(settings) {
-                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
-                    }
-                });
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
+            });
 
-                proxy.on('sendVariables', function(promise, variables) {
-                    assert.ok(true, 'The proxy has fired the "sendVariables" event');
-                    assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "sendVariables" event');
-                    assert.deepEqual(variables, caseData.variables, 'The proxy has provided the variables through the "sendVariables" event');
-                });
+            proxy.on('sendVariables', function(promise, variables) {
+                assert.ok(true, 'The proxy has fired the "sendVariables" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "sendVariables" event');
+                assert.deepEqual(variables, caseData.variables, 'The proxy has provided the variables through the "sendVariables" event');
+            });
 
+            tokenHandler.clearStore()
+            .then(function() {
+                return tokenHandler.setToken(caseData.sendToken);
+            })
+            .then(function() {
+                return proxy.init();
+            })
+            .then(function() {
                 result = proxy.sendVariables(caseData.variables);
 
                 assert.equal(typeof result, 'object', 'The proxy.sendVariables method has returned a promise');
@@ -706,20 +772,18 @@ define([
                     } else {
                         assert.ok(false, 'The proxy must throw an error!');
                     }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                }).catch(function(err) {
+                })
+                .catch(function(err) {
                     assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                })
+                .finally(function() {
+                    if (caseData.sendToken) {
+                        tokenHandler.getToken().then(function(storedToken) {
+                            assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
 
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
+                            ready();
+                        });
                     }
-
-                    ready();
                 });
             });
         });
@@ -727,33 +791,34 @@ define([
     QUnit
         .cases.init([{
             title: 'success',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             action: 'move',
             params: {
                 type: 'forward'
             },
             response: {
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
             success: true
         }, {
             title: 'failing data',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             action: 'move',
             params: {
                 type: 'forward'
             },
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
             success: false
         }, {
             title: 'failing request',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             action: 'move',
             params: {
                 type: 'forward'
@@ -780,24 +845,26 @@ define([
                 serviceCallId: initConfig.serviceCallId
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 8 : 9);
+            assert.expect(9);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 responseText: {
                     success: true
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.callTestAction(caseData.action, caseData.params)
                 .then(function() {
@@ -807,56 +874,65 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-                $.mockjax({
-                    url: '/*',
-                    status: caseData.ajaxSuccess ? 200 : 500,
-                    responseText: caseData.response,
-                    response: function(settings) {
-                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
-                    }
-                });
-
-                proxy.on('callTestAction', function(promise, action, params) {
-                    assert.ok(true, 'The proxy has fired the "callTestAction" event');
-                    assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "callTestAction" event');
-                    assert.equal(action, caseData.action, 'The proxy has provided the action through the "callTestAction" event');
-                    assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "callTestAction" event');
-                });
-
-                result = proxy.callTestAction(caseData.action, caseData.params);
-
-                assert.equal(typeof result, 'object', 'The proxy.callTestAction method has returned a promise');
-
-                result.then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                }).catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
-
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                });
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
+
+            proxy.on('callTestAction', function(promise, action, params) {
+                assert.ok(true, 'The proxy has fired the "callTestAction" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "callTestAction" event');
+                assert.equal(action, caseData.action, 'The proxy has provided the action through the "callTestAction" event');
+                assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "callTestAction" event');
+            });
+
+            tokenHandler.clearStore()
+                .then(function() {
+                    return tokenHandler.setToken(caseData.sendToken);
+                })
+                .then(function() {
+                    return proxy.init();
+                })
+                .then(function() {
+                    result = proxy.callTestAction(caseData.action, caseData.params);
+
+                    assert.equal(typeof result, 'object', 'The proxy.callTestAction method has returned a promise');
+
+                    result.then(function(data) {
+                        if (caseData.success) {
+                            assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                        } else {
+                            assert.ok(false, 'The proxy must throw an error!');
+                        }
+                    })
+                    .catch(function(err) {
+                        assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                    })
+                    .finally(function() {
+                        if (caseData.sendToken) {
+                            tokenHandler.getToken().then(function(storedToken) {
+                                assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
+
+                                ready();
+                            });
+                        }
+                    });
+                });
         });
 
     QUnit
         .cases.init([{
             title: 'success',
             uri: 'http://tao.dev/mockItemDefinition#123',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
                 itemData: {
                     interactions: [{}]
@@ -864,7 +940,6 @@ define([
                 itemState: {
                     response: [{}]
                 },
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
@@ -872,9 +947,9 @@ define([
         }, {
             title: 'failing data',
             uri: 'http://tao.dev/mockItemDefinition#123',
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
@@ -882,8 +957,9 @@ define([
         }, {
             title: 'failing request',
             uri: 'http://tao.dev/mockItemDefinition#123',
-            token: '1234',
-            response: 'error',
+            sendToken: '1234',
+            receiveToken: '4567',
+            response: "error",
             ajaxSuccess: false,
             success: false
         }])
@@ -906,24 +982,26 @@ define([
                 itemDefinition: caseData.uri
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 7 : 8);
+            assert.expect(8);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 responseText: {
                     success: true
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.getItem(caseData.uri)
                 .then(function() {
@@ -933,48 +1011,55 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-                $.mockjax({
-                    url: '/*',
-                    status: caseData.ajaxSuccess ? 200 : 500,
-                    responseText: caseData.response,
-                    response: function(settings) {
-                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
-                    }
-                });
-
-                proxy.on('getItem', function(promise, uri) {
-                    assert.ok(true, 'The proxy has fired the "getItem" event');
-                    assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "getItem" event');
-                    assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "getItem" event');
-                });
-
-                result = proxy.getItem(caseData.uri);
-
-                assert.equal(typeof result, 'object', 'The proxy.getItem method has returned a promise');
-
-                result.then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                }).catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
-
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                });
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
+
+            proxy.on('getItem', function(promise, uri) {
+                assert.ok(true, 'The proxy has fired the "getItem" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "getItem" event');
+                assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "getItem" event');
+            });
+
+            tokenHandler.clearStore()
+                .then(function() {
+                    return tokenHandler.setToken(caseData.sendToken);
+                })
+                .then(function() {
+                    return proxy.init();
+                })
+                .then(function() {
+                    result = proxy.getItem(caseData.uri);
+
+                    assert.equal(typeof result, 'object', 'The proxy.getItem method has returned a promise');
+
+                    result.then(function(data) {
+                        if (caseData.success) {
+                            assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                        } else {
+                            assert.ok(false, 'The proxy must throw an error!');
+                        }
+                    }).catch(function(err) {
+                        assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                    })
+                    .finally(function() {
+                        if (caseData.sendToken) {
+                            tokenHandler.getToken().then(function(storedToken) {
+                                assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
+
+                                ready();
+                            });
+                        }
+                    });
+                });
         });
 
     QUnit
@@ -983,9 +1068,9 @@ define([
             uri: 'http://tao.dev/mockItemDefinition#123',
             itemState: {response: [{}]},
             itemResponse: {response: [{}]},
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
@@ -995,9 +1080,9 @@ define([
             uri: 'http://tao.dev/mockItemDefinition#123',
             itemState: {response: [{}]},
             itemResponse: {response: [{}]},
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
@@ -1007,8 +1092,9 @@ define([
             uri: 'http://tao.dev/mockItemDefinition#123',
             itemState: {response: [{}]},
             itemResponse: {response: [{}]},
-            token: '1234',
-            response: 'error',
+            sendToken: '1234',
+            receiveToken: '4567',
+            response: "error",
             ajaxSuccess: false,
             success: false
         }])
@@ -1031,24 +1117,26 @@ define([
                 itemDefinition: caseData.uri
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 9 : 10);
+            assert.expect(10);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 responseText: {
                     success: true
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.submitItem(caseData.uri, caseData.itemState, caseData.itemResponse)
                 .then(function() {
@@ -1058,50 +1146,57 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-                $.mockjax({
-                    url: '/*',
-                    status: caseData.ajaxSuccess ? 200 : 500,
-                    responseText: caseData.response,
-                    response: function(settings) {
-                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
-                    }
-                });
-
-                proxy.on('submitItem', function(promise, uri, state, response) {
-                    assert.ok(true, 'The proxy has fired the "submitItem" event');
-                    assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "submitItem" event');
-                    assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "submitItem" event');
-                    assert.deepEqual(state, caseData.itemState, 'The proxy has provided the state through the "submitItem" event');
-                    assert.deepEqual(response, caseData.itemResponse, 'The proxy has provided the response through the "submitItem" event');
-                });
-
-                result = proxy.submitItem(caseData.uri, caseData.itemState, caseData.itemResponse);
-
-                assert.equal(typeof result, 'object', 'The proxy.submitItem method has returned a promise');
-
-                result.then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                }).catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
-
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                });
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
+
+            proxy.on('submitItem', function(promise, uri, state, response) {
+                assert.ok(true, 'The proxy has fired the "submitItem" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "submitItem" event');
+                assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "submitItem" event');
+                assert.deepEqual(state, caseData.itemState, 'The proxy has provided the state through the "submitItem" event');
+                assert.deepEqual(response, caseData.itemResponse, 'The proxy has provided the response through the "submitItem" event');
+            });
+
+            tokenHandler.clearStore()
+                .then(function() {
+                    return tokenHandler.setToken(caseData.sendToken);
+                })
+                .then(function() {
+                    return proxy.init();
+                })
+                .then(function() {
+                    result = proxy.submitItem(caseData.uri, caseData.itemState, caseData.itemResponse);
+
+                    assert.equal(typeof result, 'object', 'The proxy.submitItem method has returned a promise');
+
+                    result.then(function(data) {
+                        if (caseData.success) {
+                            assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                        } else {
+                            assert.ok(false, 'The proxy must throw an error!');
+                        }
+                    }).catch(function(err) {
+                        assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                    })
+                    .finally(function() {
+                        if (caseData.sendToken) {
+                            tokenHandler.getToken().then(function(storedToken) {
+                                assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
+
+                                ready();
+                            });
+                        }
+                    });
+                });
         });
 
     QUnit
@@ -1112,9 +1207,9 @@ define([
             params: {
                 text: 'lorem ipsum'
             },
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: true
             },
             ajaxSuccess: true,
@@ -1126,9 +1221,9 @@ define([
             params: {
                 text: 'lorem ipsum'
             },
-            token: '1234',
+            sendToken: '1234',
+            receiveToken: '4567',
             response: {
-                token: '4567',
                 success: false
             },
             ajaxSuccess: true,
@@ -1140,8 +1235,9 @@ define([
             params: {
                 text: 'lorem ipsum'
             },
-            token: '1234',
-            response: 'error',
+            sendToken: '1234',
+            receiveToken: '4567',
+            response: "error",
             ajaxSuccess: false,
             success: false
         }])
@@ -1164,24 +1260,26 @@ define([
                 itemDefinition: caseData.uri
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect('object' !== typeof caseData.response ? 9 : 10);
+            assert.expect(10);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
                 responseText: {
                     success: true
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
-
-            proxy.getTokenHandler().setToken(caseData.token);
 
             proxy.callItemAction(caseData.uri, caseData.action, caseData.params)
                 .then(function() {
@@ -1191,50 +1289,57 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-                $.mockjax({
-                    url: '/*',
-                    status: caseData.ajaxSuccess ? 200 : 500,
-                    responseText: caseData.response,
-                    response: function(settings) {
-                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
-                    }
-                });
-
-                proxy.on('callItemAction', function(promise, uri, action, params) {
-                    assert.ok(true, 'The proxy has fired the "callItemAction" event');
-                    assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "callItemAction" event');
-                    assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "callItemAction" event');
-                    assert.equal(action, caseData.action, 'The proxy has provided the action through the "callItemAction" event');
-                    assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "callItemAction" event');
-                });
-
-                result = proxy.callItemAction(caseData.uri, caseData.action, caseData.params);
-
-                assert.equal(typeof result, 'object', 'The proxy.callItemAction method has returned a promise');
-
-                result.then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
-
-                    if (data.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), data.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                }).catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
-
-                    if (err.token) {
-                        assert.equal(proxy.getTokenHandler().getToken(), err.token, 'The proxy must update the security token');
-                    }
-
-                    ready();
-                });
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                headers: {
+                    'X-CSRF-Token': caseData.receiveToken
+                },
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
+
+            proxy.on('callItemAction', function(promise, uri, action, params) {
+                assert.ok(true, 'The proxy has fired the "callItemAction" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "callItemAction" event');
+                assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "callItemAction" event');
+                assert.equal(action, caseData.action, 'The proxy has provided the action through the "callItemAction" event');
+                assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "callItemAction" event');
+            });
+
+            tokenHandler.clearStore()
+                .then(function() {
+                    return tokenHandler.setToken(caseData.sendToken);
+                })
+                .then(function() {
+                    return proxy.init();
+                })
+                .then(function() {
+                    result = proxy.callItemAction(caseData.uri, caseData.action, caseData.params);
+
+                    assert.equal(typeof result, 'object', 'The proxy.callItemAction method has returned a promise');
+
+                    result.then(function(data) {
+                        if (caseData.success) {
+                            assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                        } else {
+                            assert.ok(false, 'The proxy must throw an error!');
+                        }
+                    }).catch(function(err) {
+                        assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                    })
+                    .finally(function() {
+                        if (caseData.sendToken) {
+                            tokenHandler.getToken().then(function(storedToken) {
+                                assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
+
+                                ready();
+                            });
+                        }
+                    });
+                });
         });
 
     QUnit
@@ -1245,7 +1350,7 @@ define([
             params: {
                 text: 'lorem ipsum'
             },
-            token: '1234',
+            sendToken: '1234',
             response: {
                 success: true
             },
@@ -1258,7 +1363,7 @@ define([
             params: {
                 text: 'lorem ipsum'
             },
-            token: '1234',
+            sendToken: '1234',
             response: {
                 success: false
             },
@@ -1271,8 +1376,8 @@ define([
             params: {
                 text: 'lorem ipsum'
             },
-            token: '1234',
-            response: 'error',
+            sendToken: '1234',
+            response: "error",
             ajaxSuccess: false,
             success: false
         }])
@@ -1295,20 +1400,24 @@ define([
                 itemDefinition: caseData.uri
             });
 
-            var proxy, result;
+            var proxy, tokenHandler, result;
 
-            assert.expect(11);
+            assert.expect(10);
 
             proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
 
             $.mockjax({
                 url: '/init*',
+                headers: {
+                    'X-CSRF-Token': '4567-post-init'
+                },
                 responseText: {
                     success: true
                 }
             });
 
             proxy = proxyFactory('qtiServiceProxy', initConfig);
+            tokenHandler = proxy.getTokenHandler();
 
             proxy.install();
 
@@ -1320,50 +1429,52 @@ define([
                     assert.ok(true, 'The proxy must be initialized');
                 });
 
-            proxy.init().then(function() {
-                proxy.getTokenHandler().setToken(caseData.token);
-
-                $.mockjax({
-                    url: '/*',
-                    status: caseData.ajaxSuccess ? 200 : 500,
-                    responseText: caseData.response,
-                    response: function(settings) {
-                        assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
-                    }
-                });
-
-                proxy.on('telemetry', function(promise, uri, signal, params) {
-                    assert.ok(true, 'The proxy has fired the "telemetry" event');
-                    assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "telemetry" event');
-                    assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "telemetry" event');
-                    assert.equal(signal, caseData.signal, 'The proxy has provided the signal through the "telemetry" event');
-                    assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "telemetry" event');
-                });
-
-                result = proxy.telemetry(caseData.uri, caseData.signal, caseData.params);
-
-                assert.equal(typeof result, 'object', 'The proxy.telemetry method has returned a promise');
-
-                result.then(function(data) {
-                    if (caseData.success) {
-                        assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
-                    } else {
-                        assert.ok(false, 'The proxy must throw an error!');
-                    }
-
-                    assert.equal(typeof data.token, 'undefined', 'No token must be received');
-                    assert.equal(proxy.getTokenHandler().getToken(), caseData.token, 'The proxy must not update the security token');
-
-                    ready();
-                }).catch(function(err) {
-                    assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
-
-                    assert.equal(typeof err.token, 'undefined', 'No token must be received');
-                    assert.equal(proxy.getTokenHandler().getToken(), caseData.token, 'The proxy must not update the security token');
-
-                    ready();
-                });
+            $.mockjax({
+                url: '/*',
+                status: caseData.ajaxSuccess ? 200 : 500,
+                responseText: caseData.response,
+                response: function(settings) {
+                    assert.equal(settings.url, expectedUrl, 'The proxy has called the right service');
+                }
             });
+
+            proxy.on('telemetry', function(promise, uri, signal, params) {
+                assert.ok(true, 'The proxy has fired the "telemetry" event');
+                assert.equal(typeof promise, 'object', 'The proxy has provided the promise through the "telemetry" event');
+                assert.equal(uri, caseData.uri, 'The proxy has provided the URI through the "telemetry" event');
+                assert.equal(signal, caseData.signal, 'The proxy has provided the signal through the "telemetry" event');
+                assert.deepEqual(params, caseData.params, 'The proxy has provided the params through the "telemetry" event');
+            });
+
+            tokenHandler.clearStore()
+                .then(function() {
+                    return tokenHandler.setToken(caseData.sendToken);
+                })
+                .then(function() {
+                    return proxy.init();
+                })
+                .then(function() {
+                    result = proxy.telemetry(caseData.uri, caseData.signal, caseData.params);
+
+                    assert.equal(typeof result, 'object', 'The proxy.telemetry method has returned a promise');
+
+                    result.then(function(data) {
+                        if (caseData.success) {
+                            assert.deepEqual(data, caseData.response, 'The proxy has returned the expected data');
+                        } else {
+                            assert.ok(false, 'The proxy must throw an error!');
+                        }
+                    }).catch(function(err) {
+                        assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
+                    })
+                    .finally(function() {
+                        tokenHandler.getToken().then(function(storedToken) {
+                            assert.equal(storedToken, '4567-post-init', 'The proxy must not update the security token');
+
+                            ready();
+                        });
+                    });
+                });
         });
 
     QUnit.test('qtiServiceProxy.getCommunicator #enabled', function(assert) {

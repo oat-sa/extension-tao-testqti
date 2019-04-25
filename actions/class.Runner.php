@@ -73,7 +73,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @param int [$httpStatus]
      * @param bool [$token]
      */
-    protected function returnJson($data, $httpStatus = 200, $token = true)
+    protected function returnJson($data, $httpStatus = 200)
     {
         try {
             // auto append platform messages, if any
@@ -242,6 +242,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         /** @var QtiRunnerServiceContext $serviceContext */
         $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+
+        $this->checkSecurityToken();
 
         try {
             $this->returnJson($this->getInitResponse($serviceContext));
