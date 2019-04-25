@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -39,12 +39,12 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '32.3.1',
+    'version'     => '33.0.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
-        'taoQtiItem' => '>=18.0.0',
+        'taoQtiItem' => '>=19.5.0',
         'taoTests'   => '>=8.3.0',
-        'tao'        => '>=30.0.0',
+        'tao'        => '>=34.0.0',
         'generis'    => '>=7.12.1',
         'taoDelivery' => '>=11.0.0',
         'taoItems'   => '>=6.0.0',
