@@ -51,8 +51,8 @@ define([
      * @type {Object}
      */
     var defaultCalcConfig = {
-        height : 360,
-        width : 240,
+        height : 380,
+        width : 280,
         top : 50,
         left : 10,
         stackingScope: 'test-runner'
@@ -63,8 +63,8 @@ define([
      * @type {Object}
      */
     var bodmasCalcConfig = _.defaults({
-        height : 360,
-        width : 240
+        height : 380,
+        width : 280
     }, defaultCalcConfig);
 
     /**
@@ -72,8 +72,8 @@ define([
      * @type {Object}
      */
     var scientificCalcConfig = _.defaults({
-        width: 450,
-        height: 400,
+        width: 490,
+        height: 420,
         calculator: {
             maths: {
                 degree: true
