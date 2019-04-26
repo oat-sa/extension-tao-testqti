@@ -55,7 +55,8 @@ define([
         width : 280,
         top : 50,
         left : 10,
-        stackingScope: 'test-runner'
+        stackingScope: 'test-runner',
+        proportionalResize: true,
     };
 
     /**
