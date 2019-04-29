@@ -115,7 +115,7 @@ define([
             var runnerOptions = _.defaults({}, options, defaults);
             var exitReason;
             var $container = $('.runner');
-            var logger     = loggerFactory('controller/runner', { runnerOptions : runnerOptions });
+            var logger     = loggerFactory('controller/runner');
             var preventFeedback = false;
             var errorFeedback = null;
 
