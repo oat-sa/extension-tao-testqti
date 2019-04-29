@@ -1,0 +1,1361 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TAO 3.3.0-sprint96\n"
+"PO-Revision-Date: 2019-04-25T01:10:55\n"
+"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
+"MIME-Version: 1.0\n"
+"Language: ca-ES-valencia\n"
+"sourceLanguage: en-US\n"
+"targetLanguage: ca-ES-valencia\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ../../\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: .\n"
+
+msgid "%s - item %p/%c"
+msgstr "%s - element %p/%c"
+
+msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
+msgstr "Un element QTI implicat en la prova '%s' de QTI no s'ha pogut compilar."
+
+msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
+msgstr "Una prova QTI ha de contindre com a mínim un element QTI per a compilar-lo; no se n'ha trobat cap."
+
+msgid "A qti testpackage"
+msgstr "Un paquet de proves QTI"
+
+msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
+msgstr "Un recurs remot referenciat en la prova '%s' de QTI no s'ha pogut recuperar."
+
+msgid "A response to every question in this item is required."
+msgstr ""
+
+msgid "A response to this item is required."
+msgstr "Es requereix una resposta a aquest element."
+
+msgid "A valid response to this item is required."
+msgstr ""
+
+msgid "A visible section is one that is identifiable by the candidate."
+msgstr "Una secció visible és una secció que puga identificar el participant."
+
+msgid "Activated"
+msgstr "Activat"
+
+msgid "add a new weight"
+msgstr "afig un pes nou"
+
+msgid "Add a zip file containing QTI/APIP tests and items"
+msgstr "Afig un fitxer ZIP que conté proves i elements QTI/APIP"
+
+msgid "Add selected item(s) here."
+msgstr "Afig ací els elements seleccionats"
+
+msgid "Add the source file"
+msgstr "Afig el fitxer origen"
+
+msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
+msgstr "Després que completeu la secció no hi podreu tornar per a modificar-la. Esteu segur que voleu finalitzar la secció? "
+
+msgid "All"
+msgstr "Tot"
+
+msgid "Allow Comment"
+msgstr "Permet comentaris"
+
+msgid "Allow Review"
+msgstr "Permet la revisió"
+
+msgid "Allow Section Skipping"
+msgstr "Permet ometre seccions"
+
+msgid "Allow Skipping"
+msgstr "Permet ometre"
+
+msgid "Allow skipping of the current section."
+msgstr "Permet ometre la secció actual"
+
+msgid "Allow the candidate to review his answers."
+msgstr "Permet que el participant revise les respostes"
+
+msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
+msgstr "Permet que el participant elimine / ratlle les respostes en les interaccions d'opció"
+
+msgid "Allow the test-taker to highlight parts of the item text."
+msgstr "Permet que el participant ressalte parts del text d'element"
+
+msgid "Allow the test-taker to mask and unmask answers in choice interactions."
+msgstr "Permet que el participant amague i mostre les respostes en les interaccions d'opció"
+
+msgid "Allow the test-taker to mask parts of the item with a movable mask."
+msgstr "Permet que el participant amague parts de l'element amb una màscara mòbil"
+
+msgid "Allow the test-taker to use a basic calculator."
+msgstr "Permet que el participant utilitze una calculadora bàsica"
+
+msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
+msgstr ""
+
+msgid "Allow the test-taker to use a movable magnifier tool."
+msgstr "Permet que el participant utilitze una lupa mòbil"
+
+msgid "Allow the test-taker to use a scientific calculator."
+msgstr ""
+
+msgid "Allow the test-taker to visually isolate a line of text."
+msgstr "Permet que el participant aïlle visualment una línia de text"
+
+msgid "Allows Test-taker to zoom in and out the item content."
+msgstr ""
+
+msgid "Also compute the score per categories"
+msgstr "Calcula també la puntuació per categories"
+
+msgid "An error occured while retrieving items"
+msgstr ""
+
+msgid "An error occurred during results submission. Please retry."
+msgstr "S'ha produït un error durant l'enviament dels resultats. Torneu-ho a provar."
+
+msgid "An error occurred during the test initialization!"
+msgstr ""
+
+msgid "An error occurred during the test, please content your administrator."
+msgstr ""
+
+msgid "An error occurred!"
+msgstr "S'ha produït un error."
+
+msgid "An error occurs, please contact your administrator"
+msgstr "S'ha produït un error, poseu-vos en contacte amb l'administrador"
+
+msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
+msgstr "Una secció invisible amb un pare que està subjecte a barreja pot especificar si els fills, que apareixeran al participant com si foren part del pare, es barregen o no com un bloc o es barregen amb els altres fills de la secció pare."
+
+msgid "An item involved in the test cannot be read or is not QTI compliant."
+msgstr "Un element implicat en la prova no es pot llegir o no és conforme amb QTI."
+
+msgid "An item involved in the test cannot be written."
+msgstr "Un element implicat en la prova no es pot escriure."
+
+msgid "An unknown error occured while compiled QTI Test '%s'."
+msgstr "S'ha produït un error desconegut durant la compilació de la prova '%s' de QTI."
+
+msgid "An unknown error occured while compiling QTI test '%s'."
+msgstr "S'ha produït un error desconegut durant la compilació de la prova '%s' de QTI."
+
+msgid "and flagged %s of them"
+msgstr ""
+
+msgid "and you flagged %s item(s) that you can review now"
+msgstr ""
+
+msgid "Answer Eliminator"
+msgstr "Eliminador de respostes"
+
+msgid "Answer Masking"
+msgstr "Ocultació de respostes"
+
+msgid "Answered"
+msgstr "Contestat"
+
+msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
+msgstr ""
+
+msgid "Are you sure you want to end the test?"
+msgstr "Esteu segur que voleu finalitzar la prova?"
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
+msgstr ""
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back."
+msgstr ""
+
+msgid "Area Masking"
+msgstr "Ocultació d'àrees"
+
+msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
+msgstr "Associar un programa a una secció us permet validar aquesta secció d'acord amb el programa especificat."
+
+msgid "Associate Blueprint"
+msgstr "Associa un programa"
+
+msgid "At least one mandatory parameter was required but found missing in your request"
+msgstr "Com a mínim es requeria un paràmetre obligatori però no s'ha trobat en la vostra sol·licitud"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Auxiliary file not found at location \"%s\"."
+msgstr "No s'ha trobat el fitxer auxiliar en la ubicació \"%s\"."
+
+msgid "Black on cream"
+msgstr ""
+
+msgid "Black on light blue"
+msgstr ""
+
+msgid "Black on magenta"
+msgstr ""
+
+msgid "Black on white"
+msgstr ""
+
+msgid "Calculator"
+msgstr "Calculadora"
+
+msgid "Calculator BODMAS"
+msgstr ""
+
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgid "Candidate"
+msgstr "Participant"
+
+msgid "Cardinality"
+msgstr "Cardinalitat"
+
+msgid "Categories"
+msgstr "Categories"
+
+msgid "Category score"
+msgstr "Puntuació de la categoria"
+
+msgid "Change the current color preset"
+msgstr "Canvia el color predeterminat actual"
+
+msgid "Class"
+msgstr "Classe"
+
+msgid "Class successfully created."
+msgstr ""
+
+msgid "Clear all active highlights"
+msgstr "Elimina tots els ressaltats actius"
+
+msgid "Clear Highlights"
+msgstr "Elimina els ressaltats"
+
+msgid "Click to speak"
+msgstr ""
+
+msgid "Close Magnifier"
+msgstr "Tanca la lupa"
+
+msgid "Close the mask"
+msgstr "Tanca l'ocultació"
+
+msgid "Close this Section"
+msgstr ""
+
+msgid "Collapse the review panel"
+msgstr "Redueix el tauler de revisió"
+
+msgid "Comment"
+msgstr "Comentari"
+
+msgid "Completed items"
+msgstr "Elements completats"
+
+msgid "Connected to server"
+msgstr ""
+
+msgid "Contrast"
+msgstr "Contrast"
+
+msgid "Controls the contribution of an individual item score to the overall test score."
+msgstr "Controla la contribució de la puntuació d'un element individual a la puntuació general de la prova."
+
+msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
+msgstr "Controla el nombre màxim d'intents permesos. 0 significa il·limitat."
+
+msgid "Covers parts of the item"
+msgstr "Cobreix parts d'un element"
+
+msgid "Custom"
+msgstr "Personalitza"
+
+msgid "custom categories"
+msgstr "categories personalitzades"
+
+msgid "Custom outcome processing. No changes will be made to the existing rules."
+msgstr "Personalitza el processament del resultat. No es realitzaran canvis en les regles existents."
+
+msgid "Cut score"
+msgstr "Puntuació de tall"
+
+msgid "Cut score (pass ratio)"
+msgstr ""
+
+msgid "Disable validation"
+msgstr "Inhabilita la validació"
+
+msgid "Disconnected from server"
+msgstr ""
+
+msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
+msgstr "Mostra un avís abans que el participant finalitze una part de la prova i encara queden elements per contestar o marcats per a revisar-los."
+
+msgid "Display a warning before the test-taker ends the test part."
+msgstr "Mostra un avís abans que el participant finalitze la part del test."
+
+msgid "Display a warning before the test-taker ends the test."
+msgstr "Mostra un avís abans que el participant finalitze el test."
+
+msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
+msgstr "Mostra un avís abans que el participant ometa la secció. Requereix l'opció d'ometre la secció."
+
+msgid "Display End Test Warning"
+msgstr "Mostra un avís de 'Finalitza la prova'"
+
+msgid "Display Next Part Warning"
+msgstr "Mostra un avís de 'Part següent'"
+
+msgid "Display Next Section Warning"
+msgstr "Mostra un avís de 'Secció següent'"
+
+msgid "Display Unanswered Warning"
+msgstr "Mostra un avís de 'Per respondre'"
+
+msgid "Displayed label"
+msgstr "Mostra l'etiqueta"
+
+msgid "Displays a customisable magnifier"
+msgstr "Mostra una lupa personalitzable"
+
+msgid "Do not flag the current item for later review"
+msgstr "No marques l'element actual per a una revisió posterior"
+
+msgid "Do not show alert on timeout"
+msgstr ""
+
+msgid "Eliminate choices"
+msgstr "Elimina opcions"
+
+msgid "Enable Mark for Review"
+msgstr "Elimina 'Marca per a revisió'"
+
+msgid "Enable mark for review of items. Requires the Review Screen option."
+msgstr "Habilita el marcatge per a revisió dels elements. Requereix l'opció de 'Pantalla de revisió'."
+
+msgid "Enable Review Screen"
+msgstr "Habilita la 'Pantalla de revisió'"
+
+msgid "Enable selection"
+msgstr "Habilita la selecció"
+
+msgid "Enable Skipping Ahead"
+msgstr ""
+
+msgid "Enable the item review screen / navigator."
+msgstr "Habilita la pantalla de revisió / el navegador d'elements"
+
+msgid "Enables skipping to items within this section. Requires the review screen option."
+msgstr ""
+
+msgid "End test"
+msgstr "Finalitza la prova"
+
+msgid "End Test"
+msgstr "Finalitza la prova"
+
+msgid "Enter a blueprint"
+msgstr "Introdueix un programa"
+
+msgid "Enter a custom category"
+msgstr "Introdueix una categoria personalitzada"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Error during file import"
+msgstr "S'ha produït un error durant la importació."
+
+msgid "Error found in the IMS QTI Test:\n"
+"%s"
+msgstr "S'ha trobat un error en la prova IMS QTI:\n"
+"%s"
+
+msgid "Expand the review panel"
+msgstr "Amplia el tauler de revisió"
+
+msgid "Export"
+msgstr "Exporta"
+
+msgid "Export failed for the test \"%s"
+msgstr "Ha fallat l'exportació de la prova \"%s"
+
+msgid "Export metadata"
+msgstr "Exporta les metadades"
+
+msgid "Export QTI 2.1 Test Package"
+msgstr "Exporta el paquet de proves QTI 2.1"
+
+msgid "Export QTI 2.2 Test Package"
+msgstr "Exporta el paquet de proves QTI 2.2"
+
+msgid "Export successful for the test \"%s"
+msgstr "S'ha exportat correctament la prova \"%s"
+
+msgid "Feedback block"
+msgstr "Bloc de retroacció"
+
+msgid "File name"
+msgstr "Nom del fitxer"
+
+msgid "File not found"
+msgstr "No s'ha trobat el fitxer."
+
+msgid "File not found!"
+msgstr "No s'ha trobat el fitxer."
+
+msgid "Filter"
+msgstr "Filtre"
+
+msgid "finished"
+msgstr "finalitzada"
+
+msgid "Fixed"
+msgstr "Fix"
+
+msgid "Fixed position in a shuffled the selection."
+msgstr "Posició fixa en una barreja de la selecció"
+
+msgid "Flag for Review"
+msgstr "Marca per a revisió"
+
+msgid "Flag the current item for later review"
+msgstr "Marca l'element actual per a una revisió posterior"
+
+msgid "Flagged"
+msgstr "Marcat"
+
+msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr "Imposa que l'element es considere com a informatiu i no es tinga en compte en els comptadors de marcats / (no) contestat"
+
+msgid "Go to next item"
+msgstr ""
+
+msgid "Go to the next item?"
+msgstr ""
+
+msgid "Gray on green (low contrast option)"
+msgstr ""
+
+msgid "Hide Review"
+msgstr "Amaga la revisió"
+
+msgid "Hide the review screen"
+msgstr "Amaga la pantalla de revisió"
+
+msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
+msgstr "Amaga l'avís que es mostra automàticament quan un participant ix d'una secció amb control de temps"
+
+msgid "Hide Timed Section Warning"
+msgstr "Amaga l'avís de 'Secció amb control de temps'"
+
+msgid "Hide timers"
+msgstr "Amaga els temporitzadors"
+
+msgid "Highlight"
+msgstr "Ressalta"
+
+msgid "Highlight Text"
+msgstr "Ressalta el text"
+
+msgid "Highlighter"
+msgstr "Marcador fluorescent"
+
+msgid "Html title"
+msgstr "Títol de l'HTML"
+
+msgid "Identifier"
+msgstr "Identificador"
+
+msgid "If required it must appear (at least once) in the selection."
+msgstr "Si es requereix, ha d'aparéixer (almenys una vegada) en la selecció."
+
+msgid "If required, it must appears at least once in the selection."
+msgstr "Si es requereix, ha d'aparéixer almenys una vegada en la selecció."
+
+msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
+msgstr "Si s'estableix, fa que els elements fill s'ordenen aleatòriament, en cas contrari s'utilitza l'ordre en què els elements fill s'han ordenat."
+
+msgid "If the candidate can skip the item, without submitting a response (default is true)."
+msgstr ""
+
+msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
+msgstr "Si s'estableix l'opció categoria, la puntuació també es processarà per categories, i cada resultat tindrà lloc en el resultat PASS_xxx, on xxx és el nom de la categoria."
+
+msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+msgstr "Si s'estableix l'opció categoria, la puntuació també es processarà per categories, i cada resultat tindrà lloc en el resultat SCORE_xxx, on xxx és el nom de la categoria."
+
+msgid "Import"
+msgstr "Importa"
+
+msgid "Import a QTI/APIP Content Package"
+msgstr "Importa un paquet de contingut QTI/APIP"
+
+msgid "Import QTI TEST into \"%s"
+msgstr ""
+
+msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgstr "L'element IMS QTI referenciat com a \"%s\" en el fitxer de manifest IMS no s'ha pogut importar."
+
+msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
+msgstr "L'element IMS QTI referenciat com a \"%s\" en el fitxer de manifest IMS s'ha importat correctament."
+
+msgid "IMS QTI Test Package successfully imported."
+msgstr "El paquet de proves IMS QTI s'ha importat correctament."
+
+msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
+msgstr "La prova IMS QTI referenciada com a \"%s\" en el fitxer de manifest IMS s'ha importat correctament."
+
+msgid "In this part of the test navigation is not allowed."
+msgstr "En aquesta part de la prova no es permet la navegació."
+
+msgid "Inconsistency at line %1d:"
+msgstr "Hi ha una inconsistència en la línia %1d:"
+
+msgid "Individual"
+msgstr "Individual"
+
+msgid "Informational Item Usage"
+msgstr "Ús de l'element informatiu"
+
+msgid "Internal server error!"
+msgstr ""
+
+msgid "is already used in the test."
+msgstr "ja s'utilitza en la prova."
+
+msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
+msgstr "no és un identificador vàlid (alfanumèric, ratlla baixa, guió i punts) "
+
+msgid "is not a valid identifier (everything except spaces)"
+msgstr "no és un identificador vàlid (qualsevol excepte espais)"
+
+msgid "Item \"%s\" is completed."
+msgstr "L'element \"%s\" està complet."
+
+msgid "Item %d"
+msgstr "Element %d"
+
+msgid "Item %d of %d"
+msgstr "Element %d de %d"
+
+msgid "Item Reference Properties"
+msgstr "Propietats de referència de l'element"
+
+msgid "Item Session Control"
+msgstr "Control de sessió de l'element"
+
+msgid "Items"
+msgstr "Elements"
+
+msgid "items"
+msgstr ""
+
+msgid "Items can optionally be assigned to one or more categories."
+msgstr "Els elements es poden assignar opcionalment a una o més categories."
+
+msgid "Items Compilation"
+msgstr "Compilació d'elements"
+
+msgid "Items marked for later review"
+msgstr "Elements marcats per a una revisió posterior"
+
+msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
+msgstr ""
+
+msgid "Keep Together"
+msgstr "Mantín junt"
+
+msgid "Late submission allowed"
+msgstr "L'enviament fora de termini està permés. "
+
+msgid "Leave a comment"
+msgstr "Deixa un comentari"
+
+msgid "Light yellow on royal blue"
+msgstr ""
+
+msgid "Line Reader"
+msgstr "Lector de línia"
+
+msgid "Linear"
+msgstr "Lineal"
+
+msgid "Link durations to activate the guided navigation"
+msgstr ""
+
+msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
+msgstr ""
+
+msgid "Magnifier"
+msgstr "Lupa"
+
+msgid "Magnify less"
+msgstr "Amplia menys"
+
+msgid "Magnify more"
+msgstr "Amplia més"
+
+msgid "Magnifying Glass"
+msgstr "Lupa"
+
+msgid "Manage Rubric Blocks"
+msgstr "Gestiona blocs de rúbrica"
+
+msgid "Manage test properties"
+msgstr "Gestiona les propietats de la prova"
+
+msgid "Manage tests"
+msgstr "Gestiona les proves"
+
+msgid "Manage Tests"
+msgstr "Gestiona les proves"
+
+msgid "Mark for review"
+msgstr "Marca per a revisió"
+
+msgid "Masking"
+msgstr "Ocultació"
+
+msgid "Match value"
+msgstr "Valor de coincidència"
+
+msgid "Max Attempts"
+msgstr "Nre. màxim d'intents"
+
+msgid "Maximum Duration"
+msgstr "Duració màxima"
+
+msgid "Maximum duration : the items times out when the duration reaches 0."
+msgstr ""
+
+msgid "Maximum duration for the all test."
+msgstr "Duració màxima per a tota la prova"
+
+msgid "Maximum duration for this item."
+msgstr "Duració màxima per a aquest element"
+
+msgid "Maximum duration for this section."
+msgstr "Duració màxima per a aquesta secció"
+
+msgid "Maximum duration for this test part."
+msgstr "Duració màxima per a aquesta part de la prova"
+
+msgid "Metadata export is not available for test \"%s."
+msgstr ""
+
+msgid "Minimum Duration"
+msgstr "Duració mínima"
+
+msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
+msgstr ""
+
+msgid "Minimum duration for the test."
+msgstr "Duració mínima per a tota la prova"
+
+msgid "Minimum duration for this item."
+msgstr "Duració mínima per a aquest element"
+
+msgid "Minimum duration for this section."
+msgstr "Duració mínima per a aquesta secció"
+
+msgid "Minimum duration for this test part."
+msgstr "Duració mínima per a aquesta part de la prova"
+
+msgid "Missed test package file"
+msgstr "Falta el fitxer del paquet de proves"
+
+msgid "Missing required option %s"
+msgstr "Falta l'opció requerida %s"
+
+msgid "Move Down"
+msgstr "Mou avall"
+
+msgid "Move Up"
+msgstr "Mou amunt"
+
+msgid "Moving to the next item without time limit reached message."
+msgstr ""
+
+msgid "Navigation"
+msgstr "Navegació"
+
+msgid "Navigation Warnings"
+msgstr "Avisos de navegació"
+
+msgid "network"
+msgstr ""
+
+msgid "New Rubric Block"
+msgstr "Bloc de rúbrica nou"
+
+msgid "New test part"
+msgstr "Nova part de prova"
+
+msgid "Next"
+msgstr "Següent"
+
+msgid "Next Section"
+msgstr "Secció següent"
+
+msgid "No"
+msgstr "No"
+
+msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
+msgstr ""
+
+msgid "No file found at location \"%s\"."
+msgstr "No s'ha trobat cap fitxer en la ubicació \"%s\"."
+
+msgid "No more attempts allowed for item \"%s\"."
+msgstr "No es permeten més intents per a l'element \"%s\"."
+
+msgid "no outcome declaration found"
+msgstr ""
+
+msgid "No outcome processing. Erase the existing rules, if any."
+msgstr "No hi ha processament de resultats. Elimineu les regles existents, si n'hi ha."
+
+msgid "No reference to any IMS QTI Item found."
+msgstr "No s'ha trobat cap referència a cap element IMS QTI."
+
+msgid "Non Linear"
+msgstr "No lineal"
+
+msgid "None"
+msgstr "Cap"
+
+msgid "Not all test could be exported"
+msgstr "No s'han pogut exportar totes les proves."
+
+msgid "Not shuffled, the position remains fixed."
+msgstr "No barrejada, la posició roman fixa."
+
+msgid "Ok"
+msgstr "D'acord"
+
+msgid "OK"
+msgstr "D'acord"
+
+msgid "OK & End test"
+msgstr "D'acord i finalitza la prova"
+
+msgid "Once you close this section, you cannot return to it or change your answers."
+msgstr ""
+
+msgid "One or more dependent IMS QTI Items could not be imported."
+msgstr "Un o més elements IMS QTI dependents no s'han pogut importar."
+
+msgid "Only display the items marked for review"
+msgstr "Mostra només els elements marcats per a revisió"
+
+msgid "Only display the unanswered items"
+msgstr "Mostra només els elements no contestats"
+
+msgid "Open Calculator"
+msgstr "Obri la calculadora"
+
+msgid "Ordering"
+msgstr "Ordenació"
+
+msgid "Outcome"
+msgstr "Resultat"
+
+msgid "Outcome declarations"
+msgstr "Declaracions dels resultats"
+
+msgid "Outcome processing"
+msgstr "Processament de la resposta"
+
+msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
+msgstr "El paquet és vàlid però no s'ha trobat cap prova. Assegureu-vos que conté proves QTI vàlides."
+
+msgid "Part %d"
+msgstr "Part %d"
+
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
+msgstr ""
+
+msgid "Please confirm you want to leave the test."
+msgstr ""
+
+msgid "Please wait while we try to restore the connection."
+msgstr ""
+
+msgid "Preview the covered area"
+msgstr "Previsualitza l'àrea coberta"
+
+msgid "Previous"
+msgstr "Anterior"
+
+msgid "Proctor"
+msgstr "Supervisor"
+
+msgid "Properties"
+msgstr "Propietats"
+
+msgid "QTI 2.1 Test Driver"
+msgstr "Controlador de prova QTI 2.1"
+
+msgid "QTI Item Runner"
+msgstr "Programa executable d'element QTI"
+
+msgid "QTI Test \"%s\" publishing failed."
+msgstr "La publicació de la prova QTI \"%s\" ha fallat."
+
+msgid "QTI Test \"%s\" successfully published."
+msgstr "La prova QTI \"%s\" s'ha publicat correctament."
+
+msgid "QTI Test Package 2.1"
+msgstr "Paquet de proves QTI 2.1"
+
+msgid "QTI Test Package 2.2"
+msgstr "Paquet de proves QTI 2.2"
+
+msgid "QTI/APIP Test Content Package"
+msgstr "Paquet de contingut de proves QTI/APIP"
+
+msgid "Reference"
+msgstr "Referència"
+
+msgid "Regenerate"
+msgstr "Regenera"
+
+msgid "Remove Item Reference"
+msgstr "Suprimeix la referència d'element"
+
+msgid "Remove Rubric Block"
+msgstr "Suprimeix el bloc de rúbrica"
+
+msgid "Remove Section"
+msgstr "Suprimeix la secció"
+
+msgid "Required"
+msgstr "Necessari"
+
+msgid "Required field"
+msgstr "Camp necessari"
+
+msgid "Reset filters"
+msgstr "Reinicialitza els filtres"
+
+msgid "Resource(s) successfully exported."
+msgstr ""
+
+msgid "Review"
+msgstr "Revisió"
+
+msgid "Review my Answers"
+msgstr ""
+
+msgid "Rubric Block"
+msgstr "Bloc de rúbrica"
+
+msgid "Rubric Block Properties"
+msgstr "Propietats de bloc de rúbrica"
+
+msgid "Rubric Blocks"
+msgstr "Blocs de rúbrica"
+
+msgid "Save"
+msgstr "Guarda"
+
+msgid "Scientific Calculator"
+msgstr ""
+
+msgid "Scorer"
+msgstr "Marcador"
+
+msgid "Scoring"
+msgstr "Puntuació"
+
+msgid "Scratch pad"
+msgstr ""
+
+msgid "Scratch Pad"
+msgstr ""
+
+msgid "Scratchpad"
+msgstr ""
+
+msgid "Section %d"
+msgstr ""
+
+msgid "Section %d of %d"
+msgstr ""
+
+msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr "La categoria nivell de secció habilita la configuració de categories dels seus elements de composició tots a la vegada. Una categoria en gris significa que tots els elements tenen aquesta categoria. Una categoria en blanc significa que només uns pocs elements tenen aquesta categoria."
+
+msgid "Section Properties"
+msgstr "Propietats de la secció"
+
+msgid "Select"
+msgstr "Selecciona"
+
+msgid "Select a blueprint"
+msgstr "Seleccioneu un programa"
+
+msgid "Select Items"
+msgstr "Seleccioneu elements"
+
+msgid "Select the way the responses of your test should be processed"
+msgstr "Seleccioneu la manera en què les respostes de la prova s'han de processar"
+
+msgid "Selection"
+msgstr "Selecció"
+
+msgid "Send"
+msgstr "Envia"
+
+msgid "Set outcome identifier the feedback block is related to"
+msgstr "Estableix l'identificador de resultat amb el qual es relaciona el bloc de retroacció"
+
+msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
+msgstr ""
+
+msgid "Set the rubric block as a feedback block"
+msgstr "Estableix el bloc de rúbrica com a bloc de retroacció"
+
+msgid "Set the value of the outcome that will activate the feedback block"
+msgstr "Estableix el valor del resultat que activarà el bloc de retroacció"
+
+msgid "Set the weight identifier used to process the score"
+msgstr "Estableix l'identificador de pes que s'utilitza per a processar la puntuació"
+
+msgid "Set the XHTML-QTI class of the rubric block."
+msgstr "Estableix la classe XHTML-QTI del bloc de rúbrica"
+
+msgid "Set the XHTML-QTI identifier of the rubric block."
+msgstr "Estableix l'identificador XHTML-QTI del bloc de rúbrica"
+
+msgid "Settings"
+msgstr ""
+
+msgid "Show Feedback"
+msgstr "Mostra la retroacció"
+
+msgid "Show Review"
+msgstr "Mostra la revisió"
+
+msgid "Show Solution"
+msgstr "Mostra la solució"
+
+msgid "Show the review screen"
+msgstr "Mostra la pantalla de revisió"
+
+msgid "Show the solution once the answer is submitted."
+msgstr "Mostra la solució una vegada s'haja enviat la resposta"
+
+msgid "Show timers"
+msgstr "Mostra els temporitzadors"
+
+msgid "Show/Hide the review screen"
+msgstr "Mostra/amaga la pantalla de revisió"
+
+msgid "Shuffle"
+msgstr "Aleatori"
+
+msgid "Simultaneous"
+msgstr "Simultània"
+
+msgid "Skip"
+msgstr "Omet"
+
+msgid "Skip &amp; End Test"
+msgstr "Omet i finalitza la prova"
+
+msgid "Skip and end test"
+msgstr "Omet i finalitza la prova"
+
+msgid "Skip and go to the end of the test"
+msgstr "Omet i vés al final de la prova"
+
+msgid "Skip and go to the next item"
+msgstr ""
+
+msgid "Skip to the end of the test"
+msgstr "Salta al final de la prova"
+
+msgid "Skip to the next item"
+msgstr "Salta a l'element següent"
+
+msgid "Skip to the next section"
+msgstr "Salta a la secció següent"
+
+msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
+msgstr "Alguns blocs de rúbrica s'ha actualitzat per a reflectir els canvis en la llista de resultats"
+
+msgid "Speech speed"
+msgstr ""
+
+msgid "Start Test-part"
+msgstr "Inicia una part de la prova"
+
+msgid "Stop"
+msgstr ""
+
+msgid "Submission"
+msgstr "Enviament"
+
+msgid "Submit and go to the end of the test"
+msgstr "Envia i vés al final de la prova"
+
+msgid "Submit and go to the next item"
+msgstr "Envia i vés a l'element següent"
+
+msgid "Submit and go to the previous item"
+msgstr "Envia i vés a l'element anterior"
+
+msgid "technical"
+msgstr ""
+
+msgid "Test"
+msgstr "Prova"
+
+msgid "Test constructor"
+msgstr "Constructor de la prova"
+
+msgid "Test metadata successfully exported."
+msgstr ""
+
+msgid "Test Navigation"
+msgstr "Navegació de la prova"
+
+msgid "Test Saved"
+msgstr "Prova guardada"
+
+msgid "Test status"
+msgstr "Estat de la prova"
+
+msgid "Test-Taker Tools"
+msgstr "Eines de participants"
+
+msgid "Tests"
+msgstr "Proves"
+
+msgid "Text content"
+msgstr "Contingut de text"
+
+msgid "Text to Speech"
+msgstr ""
+
+msgid "The 'imsmanifest.xml' file found in the archive is not valid."
+msgstr "El fitxer 'imsmanifest.xml' trobat en l'arxiu no és vàlid."
+
+msgid "The assessment has been created but is not already running."
+msgstr "L'avaluació s'ha creat però encara no està en execució."
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr "L'avaluació ha estat interrompuda per un supervisor autoritzat. Si voleu reprendre la vostra avaluació, torneu a executar-la i, si cal, poseu-vos en contacte amb el supervisor."
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr "L'avaluació s'ha interromput. Per a reprendre la vostra avaluació, torneu a executar-la."
+
+msgid "The assessment has been terminated."
+msgstr "L'avaluació s'ha acabat."
+
+msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgstr "L'avaluació s'ha acabat. Ja no podeu interactuar-hi."
+
+msgid "The assessment is still running."
+msgstr "L'avaluació encara està en execució."
+
+msgid "The candidate is not allowed to submit invalid responses."
+msgstr ""
+
+msgid "The connection seems to be back, please proceed"
+msgstr ""
+
+msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
+msgstr "La dependència de la IMS QTI AssessmentItemRef \"%s\" en el fitxer de manifest IMS no s'ha pogut resoldre."
+
+msgid "The following identifiers are not unique accross the test : %s"
+msgstr ""
+
+msgid "The identifier of the item reference."
+msgstr "L'identificador de la referència de l'element"
+
+msgid "The identifier of the section."
+msgstr "L'identificador de la secció"
+
+msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
+msgstr "L'element IMS QTI referenciat com a \"%s\" en el fitxer de manifest IMS ja està emmagatzemat en el banc d'elements."
+
+msgid "The IMS QTI Test Package could not be imported."
+msgstr "El paquet de proves IMS QTI no s'ha pogut importar."
+
+msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgstr "La prova IMS QTI referenciada com a \"%s\" en el fitxer de manifest IMS no s'ha pogut importar."
+
+msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
+msgstr "El mode de navegació determina els camins generals que el participant pot prendre. Un mode lineal restringeix el participant a intentar cada element un per un. No lineal suprimeix aquesta restricció. "
+
+msgid "The number of child elements to be selected."
+msgstr "El nombre d'elements fill que s'han de seleccionar."
+
+msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
+msgstr "El resultat \"%s\" no existeix, però ha estat referenciat per un bloc de retroacció."
+
+msgid "The outcomes have been regenerated!"
+msgstr "Els resultats s'han regenerat."
+
+msgid "The principle identifier of the test."
+msgstr "L'identificador de principi de la prova"
+
+msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
+msgstr "L'arxiu proporcionat no és vàlid. Assegureu-vos que no està malmés i que conté un fitxer 'imsmanifest.xml'"
+
+msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
+msgstr "La prova QTI '%s' que s'ha de compilar ha de contindre com a mínim 1 element QTI. No se n'ha trobat cap."
+
+msgid "The QTI test could not be retrieved correctly."
+msgstr "La prova QTI no s'ha pogut recuperar correctament."
+
+msgid "The QTI Test XML or one of its dependencies is malformed or empty."
+msgstr "La prova QTI XML o una de les seues dependències està mal formada o és buida."
+
+msgid "The QTI-XML test could not be written correctly."
+msgstr "La prova QTI-XML no s'ha pogut escriure correctament."
+
+msgid "The reference."
+msgstr "La referència"
+
+msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
+msgstr "Els recursos relacionats amb la prova IMS QTI referenciada com a \"%s\" en el fitxer de manifest IMS s'han revertit."
+
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
+msgstr ""
+
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
+msgstr "La puntuació es processarà per a la prova completa. Es calcularà una suma de tots els resultats de PUNTUACIÓ, el resultat tindrà lloc en el resultat total SCORE_TOTAL."
+
+msgid "The section title."
+msgstr "El títol de la secció"
+
+msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
+msgstr "El mode d'enviament determina quan s'envien les respostes del participant per al processament de les respostes. Una 'part de la prova' en mode individual requereix que el participant envie les respostes element per element. En mode simultani les respostes del participant s'envien totes juntes al final de la 'part de la prova'. "
+
+msgid "The test has been closed/suspended!"
+msgstr "La prova s'ha tancat/suspés."
+
+msgid "The test has been paused, we are unable to connect to the server."
+msgstr ""
+
+msgid "The test has not been saved."
+msgstr "La prova no s'ha guardat."
+
+msgid "The test part identifier."
+msgstr "L'identificador de 'part de la prova'"
+
+msgid "The test title."
+msgstr "El títol de la prova"
+
+msgid "There is not outcomes!"
+msgstr "No hi ha resultats."
+
+msgid "This constraint affects the visibility of feedback after the end of the last attempt."
+msgstr "Aquesta restricció afecta la visibilitat de la retroacció després del final de l'últim intent."
+
+msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
+msgstr "Aquesta restricció controla si es permet o no que el participant proporcione un comentari sobre l'element durant la sessió. Els comentaris no formen part de les respostes avaluades."
+
+msgid "This test has been suspended"
+msgstr "Aquesta prova s'ha suspés."
+
+msgid "This test has been terminated"
+msgstr "Aquesta prova s'ha acabat."
+
+msgid "Time limit reached for item \"%s\"."
+msgstr "S'ha arribat al límit de temps per a l'element \"%s\"."
+
+msgid "Time limit reached, this part of the test has ended."
+msgstr "S'ha arribat al límit de temps, aquesta part de la prova s'ha acabat."
+
+msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
+msgstr ""
+
+msgid "Time Limits"
+msgstr "Límits de temps"
+
+msgid "Time Remaining"
+msgstr ""
+
+msgid "Title"
+msgstr "Títol"
+
+msgid "Total score"
+msgstr "Puntuació total"
+
+msgid "Tutor"
+msgstr "Tutor"
+
+msgid "Type"
+msgstr "Tipus"
+
+msgid "Unanswered"
+msgstr "No contestat"
+
+msgid "Unanswered items"
+msgstr "Elements no contestats"
+
+msgid "Unflag for Review"
+msgstr "Desmarca per a revisió"
+
+msgid "Unknown error."
+msgstr "Hi ha un error desconegut."
+
+msgid "Unlink to use separated durations"
+msgstr ""
+
+msgid "Upload a QTI 2.1 Test Package File"
+msgstr "Puja un fitxer de paquet de proves QTI 2.1"
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
+msgstr "Utilitzeu la tecla Ctrl/Meta o Llaç per a selecció múltiple"
+
+msgid "Validate Responses"
+msgstr "Respostes validades"
+
+msgid "Value"
+msgstr "Valor"
+
+msgid "Viewed"
+msgstr "Vist"
+
+msgid "Viewed items"
+msgstr "Elements vistos"
+
+msgid "Views"
+msgstr "Vistes"
+
+msgid "Visible"
+msgstr "Visible"
+
+msgid "Volume"
+msgstr ""
+
+msgid "Warning – You have %s remaining to complete the test."
+msgstr "Avís: Us queden %s per a completar la prova."
+
+msgid "Warning – You have %s remaining to complete this item."
+msgstr "Avís: Us queden %s per a completar aquest element."
+
+msgid "Warning – You have %s remaining to complete this section."
+msgstr "Avís: Us queden %s per a completar aquesta secció."
+
+msgid "Warning – You have %s remaining to complete this test part."
+msgstr "Avís: Us queden %s per a completar aquesta 'part de la prova'."
+
+msgid "Warning – You have %s remaining to complete this test."
+msgstr ""
+
+msgid "We are unable to connect the server to submit your results."
+msgstr ""
+
+msgid "We are unable to connect to the server to retrieve the next item."
+msgstr ""
+
+msgid "Weight"
+msgstr "Pes"
+
+msgid "Weights"
+msgstr "Pesos"
+
+msgid "When selecting child elements each element is normally eligible for selection once only."
+msgstr "Quan se seleccionen elements fill, cada element normalment és elegible per a la selecció només una vegada."
+
+msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
+msgstr "Si la resposta d'un participant que ha superat la duració màxima de l'element encara s'ha d'acceptar."
+
+msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
+msgstr "Si la resposta d'un participant que ha superat la duració màxima de la secció encara s'ha d'acceptar."
+
+msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
+msgstr "Si la resposta d'un participant que ha superat la duració màxima de la 'part de la prova' encara s'ha d'acceptar."
+
+msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
+msgstr "Si la resposta d'un participant que ha superat la duració màxima encara s'ha d'acceptar."
+
+msgid "White on black"
+msgstr ""
+
+msgid "Who can view the rubric block during the delivery."
+msgstr "Qui pot visualitzar el bloc de rúbrica durant el lliurament"
+
+msgid "With Replacement"
+msgstr "Amb reemplaçament"
+
+msgid "Wrong file mime type"
+msgstr "El tipus MIME del fitxer és incorrecte."
+
+msgid "XML error at line %1$d column %2$d \"%3$s\"."
+msgstr "Hi ha un error en l'XML, línia %1$d columna %2$d \"%3$s\"."
+
+msgid "Yes"
+msgstr "Sí"
+
+msgid "You answered all %s question(s)"
+msgstr ""
+
+msgid "You answered all %s question(s) in this section"
+msgstr ""
+
+msgid "You answered all %s question(s) in this test"
+msgstr ""
+
+msgid "You answered only %s of the %s question(s) in this section"
+msgstr ""
+
+msgid "You are about to go to the next item. Click OK to continue and go to the next item."
+msgstr "Esteu a punt de passar a l'element següent. Feu clic a D'acord per a continuar i anar a l'element següent."
+
+msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
+msgstr "Esteu a punt de passar a l'element anterior. Feu clic a D'acord per a continuar i anar a l'element anterior."
+
+msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgstr "Esteu a punt d'enviar la prova. Ja no tindreu accés a la prova una vegada l'envieu. Feu clic a D'acord per a continuar i enviar la prova."
+
+msgid "You are encountering a prolonged connectivity loss. "
+msgstr ""
+
+msgid "You have %s item(s) marked for review."
+msgstr "Teniu %s elements marcats per a revisió."
+
+msgid "You have %s unanswered question(s)"
+msgstr ""
+
+msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
+msgstr "Teniu %s preguntes no contestades i %s elements marcats per a revisió."
+
+msgid "You have %s unanswered question(s)."
+msgstr "Teniu %s preguntes no contestades."
+
+msgid "Your comment…"
+msgstr "El vostre comentari "
+
+msgid "Zoom"
+msgstr ""
+
+msgid "Zoom in"
+msgstr "Amplia"
+
+msgid "Zoom out"
+msgstr "Redueix"
+

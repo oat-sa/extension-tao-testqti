@@ -1,0 +1,52 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TAO 3.3.0-sprint96\n"
+"PO-Revision-Date: 2019-04-25T01:10:55\n"
+"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
+"MIME-Version: 1.0\n"
+"Language: ca-ES-valencia\n"
+"sourceLanguage: en-US\n"
+"targetLanguage: ca-ES-valencia\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "QTI 2.1 Test Driver"
+msgstr "Controlador de prova QTI 2.1"
+
+# http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
+msgstr "Controlador i eina de configuració/autoria que implementa la interfície de la prova per a controlar proves conformes amb QTI 2.1"
+
+# http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "QTI Test Definition"
+msgstr "Definició de prova QTI"
+
+# http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "QTI Test Definition Uri"
+msgstr "URI de definició de prova QTI"
+
+# http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "QTI Test Compilation"
+msgstr "Compilació de prova QTI"
+
+# http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "QTI Test Compilation Uri"
+msgstr "URI de compilació de prova QTI"
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "QTI test runner"
+msgstr "Programa executable d'element QTI"
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "runs a QTI 2.1 test"
+msgstr "executa una prova QTI 2.1"
+

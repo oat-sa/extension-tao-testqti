@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint95\n"
-"PO-Revision-Date: 2019-02-15T13:16:06\n"
+"Project-Id-Version: TAO 3.3.0-sprint96\n"
+"PO-Revision-Date: 2019-04-25T01:05:26\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -47,7 +47,7 @@ msgid "add a new weight"
 msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr "ZIP-Datei mit QTI/APIP Tests und Elementen hinzufügen"
+msgstr ""
 
 msgid "Add selected item(s) here."
 msgstr "Hier ausgewählte(s) Element(e) hinzufügen."
@@ -388,7 +388,7 @@ msgid "Export"
 msgstr "Exportieren"
 
 msgid "Export failed for the test \"%s"
-msgstr "Fehler beim Exportieren in Test: %s"
+msgstr ""
 
 msgid "Export metadata"
 msgstr ""
