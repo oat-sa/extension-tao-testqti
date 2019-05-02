@@ -20,7 +20,7 @@
  */
 define([
     'lodash',
-    'core/Promise',
+    'core/promise',
     'util/capitalize',
     'taoQtiTest/runner/services/offlineJumpTable',
     'taoQtiTest/runner/helpers/testContextBuilder'
