@@ -21,7 +21,6 @@
  */
 
 use oat\taoQtiTest\models\event\TraceVariableStored;
-use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
@@ -31,9 +30,7 @@ use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\StorageManager;
-use oat\tao\model\security\xsrf\TokenService;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
 use oat\tao\model\routing\AnnotationReader\security;
@@ -72,34 +69,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
-     * Get the token service
-     * @return TokenService
-     */
-    protected function getTokenService()
-    {
-        return $this->getServiceManager()->get(TokenService::SERVICE_ID);
-    }
-
-    /**
      * @param $data
      * @param int [$httpStatus]
      * @param bool [$token]
      */
-    protected function returnJson($data, $httpStatus = 200, $token = true)
+    protected function returnJson($data, $httpStatus = 200)
     {
-        // auto append the CSRF token to the result
-        if ($token) {
-            if (is_array($data)) {
-                if ($data['success'] || $httpStatus != 403) {
-                    $data['token'] = $this->getTokenService()->createToken();
-                }
-            } else if (is_object($data)) {
-                if ($data->success || $httpStatus != 403) {
-                    $data->token = $this->getTokenService()->createToken();
-                }
-            }
-        }
-
         try {
             // auto append platform messages, if any
             if ($this->serviceContext && !isset($data['messages'])) {
@@ -152,24 +127,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Checks the security token.
-     * @throws \common_exception_Unauthorized
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_Unauthorized
+     * @throws common_ext_ExtensionException
      */
     protected function checkSecurityToken()
     {
         $config = $this->getRunnerService()->getTestConfig()->getConfigValue('security');
-        if (isset($config['csrfToken']) && $config['csrfToken'] == true) {
-
-            $csrfToken = $this->getRequestParameter('X-Auth-Token');
-            if ($this->getTokenService()->checkToken($csrfToken)) {
-                $this->getTokenService()->revokeToken($csrfToken);
-            } else {
-                $userIdentifier = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
-                $msg = "XSRF attempt for user '${userIdentifier}'! The token ${csrfToken} is no longer valid! " .
-                    "or the previous request failed silently without creating a token. " .
-                    "Session Id: " . $this->getSessionId();
-                \common_Logger::e($msg);
-                throw new \common_exception_Unauthorized($msg);
-            }
+        if (isset($config['csrfToken']) && $config['csrfToken'] === true) {
+            $this->validateCsrf();
         }
     }
 
@@ -275,6 +242,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         /** @var QtiRunnerServiceContext $serviceContext */
         $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+
+        $this->checkSecurityToken();
 
         try {
             $this->returnJson($this->getInitResponse($serviceContext));
