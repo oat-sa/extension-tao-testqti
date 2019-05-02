@@ -23,9 +23,10 @@
  */
 define([
     'lodash',
-    'ui/movableComponent',
-    'tpl!taoQtiTest/runner/plugins/tools/areaMasking/mask'
-], function (_, movableComponent, areaMaskingTpl) {
+    'ui/component',
+    'tpl!taoQtiTest/runner/plugins/tools/areaMasking/mask',
+    'ui/dynamicComponent',
+], function (_, component, areaMaskingTpl, dynamicComponent) {
     'use strict';
 
     var defaultConfig = {
@@ -33,55 +34,86 @@ define([
         stackingScope: 'test-runner'
     };
 
+    var dynamicComponentDefaultConfig = {
+        draggable: true,
+        resizable: true,
+        preserveAspectRatio: false,
+        width: 250,
+        minWidth: 160,
+        maxWidth: 1000,
+        minHeight: 60,
+        height: 100,
+        stackingScope: 'test-runner',
+        top: 50,
+        left: 10,
+    };
+
     /**
      * Creates a new masking component
+     *
+     * @param {Object} config - to overrides the default
+     * @param {Object} dynamicComponentConfig - to overrides the default
+     * @param {jQuery|HTMLElement|String} [dynamicComponentConfig.renderTo] - An optional container in which renders the component
+     * @param {jQuery|HTMLElement|String} [dynamicComponentConfig.draggableContainer] - the DOMElement the draggable component will be constraint in
      * @returns {maskComponent} the component (uninitialized)
      */
-    function maskingComponentFactory () {
+    function maskingComponentFactory(config, dynamicComponentConfig) {
+        var dynamicComponentConfig = _.defaults(dynamicComponentConfig || {}, dynamicComponentDefaultConfig);
 
         /**
          * @typedef {Object} maskComponent
          */
-        var maskComponent = movableComponent({
+        var maskComponent = component({
             /**
              * Preview the content under the masked area
              * @returns {maskComponent} chains
              *
              * @fires maskComponent#preview
              */
-            preview : function preview(){
-                var self   = this;
-                var delay  = this.config.previewDelay || 1000;
-                if( this.is('rendered') && !this.is('disabled') && !this.is('previewing') ){
+            preview: function preview() {
+                var self = this;
+                var delay = this.config.previewDelay || 1000;
+                if (this.is('rendered') && !this.is('disabled') && !this.is('previewing')) {
                     this.setState('previewing', true)
                         .trigger('preview');
-                    _.delay(function(){
+                    _.delay(function () {
                         self.setState('previewing', false);
                     }, delay);
                 }
                 return this;
             }
         }, defaultConfig);
-
-
-        maskComponent
-            .setTemplate(areaMaskingTpl)
-            .on('render', function(){
-                var self     = this;
+        console.log(dynamicComponentConfig);
+        return dynamicComponent({}, dynamicComponentConfig)
+            .on('rendercontent', function ($content) {
+                var dynamicComponentContext = this;
                 var $element = this.getElement();
 
-                $element
-                    .on('click touchstart', '.view', function(e){
-                        e.preventDefault();
-                        self.preview();
-                    })
-                    .on('click touchstart', '.close', function(e){
-                        e.preventDefault();
-                        self.destroy();
-                    });
-            });
+                $element.addClass('mask-container');
 
-        return maskComponent;
+                maskComponent
+                    .setTemplate(areaMaskingTpl)
+                    .on('render', function () {
+                        var self = this;
+
+                        $element
+                            .on('click touchstart', '.view', function (e) {
+                                e.preventDefault();
+
+                                self.preview();
+                            })
+                            .on('click touchend', '.close', function (e) {
+                                e.preventDefault();
+
+                                self.destroy();
+                            });
+                    })
+                    .after('destroy', function () {
+                        dynamicComponentContext.destroy();
+                    })
+                    .init(config || {})
+                    .render($content);
+            });
     }
 
     return maskingComponentFactory;

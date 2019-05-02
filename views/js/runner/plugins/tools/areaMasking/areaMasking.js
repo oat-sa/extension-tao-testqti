@@ -75,7 +75,7 @@ define([
             var pluginShortcuts = (testConfig.shortcuts || {})[pluginName] || {};
 
             function addMask() {
-                maskComponent()
+                maskComponent({}, { renderTo: $container, draggableContainer: $container })
                     .on('render', function(){
                         self.masks.push(this);
                         self.button.turnOn();
@@ -100,11 +100,7 @@ define([
                          */
                         self.trigger('maskclose');
                     })
-                    .init({
-                        x : self.masks.length * 10,
-                        y : self.masks.length * 10
-                    })
-                    .render($container);
+                    .init({});
             }
 
             //keep a ref to all masks
