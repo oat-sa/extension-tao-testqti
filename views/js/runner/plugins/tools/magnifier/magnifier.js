@@ -83,11 +83,17 @@ define([
                 if (!magnifierPanel) {
                     $container = testRunner.getAreaBroker().getContainer();
 
-                    magnifierPanel = magnifierPanelFactory({
-                        levelMin: pluginConfig.zoomMin,
-                        levelMax: pluginConfig.zoomMax,
-                        levelStep: pluginConfig.zoomStep
-                    })
+                    magnifierPanel = magnifierPanelFactory(
+                        {
+                            levelMin: pluginConfig.zoomMin,
+                            levelMax: pluginConfig.zoomMax,
+                            levelStep: pluginConfig.zoomStep,
+                        },
+                        {
+                            renderTo: $container.parent(),
+                            draggableContainer: $container.parent(),
+                        }
+                    )
                         .on('show', function () {
                             /**
                              * @event plugin-magnifier-show.magnifier
@@ -110,8 +116,7 @@ define([
                         .on('close', function () {
                             hideMagnifier();
                         })
-                        .setTarget($container)
-                        .render($container.parent());
+                        .setTarget($container);
 
                     /**
                      * @event plugin-magnifier-create.magnifier
