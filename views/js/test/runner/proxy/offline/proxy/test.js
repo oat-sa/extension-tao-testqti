@@ -181,7 +181,7 @@ define([
                         .catch(function(err) {
                             assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
                         })
-                        .finally(function() {
+                        .then(function() {
                             if (caseData.sendToken) {
                                 tokenHandler.getToken().then(function(storedToken) {
                                     assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
@@ -388,7 +388,7 @@ define([
                 .catch(function(err) {
                     assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
                 })
-                .finally(function() {
+                .then(function() {
                     if (caseData.sendToken) {
                         tokenHandler.getToken().then(function(storedToken) {
                             assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
@@ -514,7 +514,7 @@ define([
                     .catch(function(err) {
                         assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
                     })
-                    .finally(function() {
+                    .then(function() {
                         if (caseData.sendToken) {
                             tokenHandler.getToken().then(function(storedToken) {
                                 assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
@@ -640,7 +640,7 @@ define([
                     .catch(function(err) {
                         assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
                     })
-                    .finally(function() {
+                    .then(function() {
                         if (caseData.sendToken) {
                             tokenHandler.getToken().then(function(storedToken) {
                                 assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
@@ -1158,7 +1158,7 @@ define([
                 }).catch(function(err) {
                     assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
                 })
-                .finally(function() {
+                .then(function() {
                     if (caseData.sendToken) {
                         tokenHandler.getToken().then(function(storedToken) {
                             assert.equal(storedToken, caseData.receiveToken, 'The proxy must update the security token');
@@ -1425,7 +1425,7 @@ define([
                     }).catch(function(err) {
                         assert.ok(!caseData.success, 'The proxy has thrown an error! #' + err);
                     })
-                    .finally(function() {
+                    .then(function() {
                         tokenHandler.getToken().then(function(storedToken) {
                             assert.equal(storedToken, '4567-post-init', 'The proxy must not update the security token');
 
