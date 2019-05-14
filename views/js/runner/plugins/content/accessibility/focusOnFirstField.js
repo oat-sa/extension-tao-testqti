@@ -51,8 +51,9 @@ define([
             var self = this;
 
             /**
-             * When an Item loaded - if we set focus on any input then ipad set focus to keyboard, so windows lose focus
-             * and we get error message for the test in the fullscreen mode
+             * When an Item is loaded - if we set the focus on any input then the ipad sets the focus on the
+             * keyboard, so the windows lose focus
+             * and we get an error message for the test in fullscreen mode
              */
             if (!isIOSDevice()) {
                 this.getTestRunner()
