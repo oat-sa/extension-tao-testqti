@@ -29,6 +29,15 @@ define([
     'use strict';
 
     /**
+     * Check if client uses the iOS device.
+     *
+     * @returns {*|boolean}
+     */
+    function isIOSDevice() {
+        return /(iPhone|iPad)/i.test(navigator.userAgent)
+    }
+
+    /**
      * Returns the configured plugin
      */
     return pluginFactory({
@@ -41,23 +50,30 @@ define([
         init: function init() {
             var self = this;
 
-            this.getTestRunner()
-                .after('renderitem', function() {
-                    var $input = self.getAreaBroker().getContentArea().find('.qti-itemBody')
-                        .find('input, textarea, select')
-                        .not(':input[type=button], :input[type=submit], :input[type=reset]')
-                        .first();
-                    var $cke = $input.closest('.qti-interaction').find('.cke');
+            /**
+             * When an Item is loaded - if we set the focus on any input then the ipad sets the focus on the
+             * keyboard, so the windows lose focus
+             * and we get an error message for the test in fullscreen mode
+             */
+            if (!isIOSDevice()) {
+                this.getTestRunner()
+                    .after('renderitem', function() {
+                        var $input = self.getAreaBroker().getContentArea().find('.qti-itemBody')
+                            .find('input, textarea, select')
+                            .not(':input[type=button], :input[type=submit], :input[type=reset]')
+                            .first();
+                        var $cke = $input.closest('.qti-interaction').find('.cke');
 
-                    if($cke.length) {
-                        _.delay(function() {
-                            ckEditor.instances[$cke.attr('id').replace(/^cke_/, '')].focus();
-                        }, 100);
-                    }
-                    else {
-                        $input.focus();
-                    }
-                });
+                        if($cke.length) {
+                            _.delay(function() {
+                                ckEditor.instances[$cke.attr('id').replace(/^cke_/, '')].focus();
+                            }, 100);
+                        }
+                        else {
+                            $input.focus();
+                        }
+                    });
+            }
         }
     });
 });
