@@ -388,6 +388,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
         try {
+            $this->checkSecurityToken();
 
             if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
                 \common_Logger::w("Attempt to disclose the next items without the configuration");
@@ -962,6 +963,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
+            //$this->checkSecurityToken(); // should be on, but disabled as temporary fix for TAO-8315
+
             $input = \taoQtiCommon_helpers_Utils::readJsonPayload();
             if (!$input) {
                 $input = [];
