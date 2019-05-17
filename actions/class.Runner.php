@@ -388,6 +388,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
         try {
+            $this->checkSecurityToken();
 
             if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
                 \common_Logger::w("Attempt to disclose the next items without the configuration");
@@ -956,12 +957,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function messages()
     {
-        // close the PHP session to prevent session overwriting and loss of security token for secured queries
-        session_write_close();
-
         $code = 200;
 
         try {
+            $this->checkSecurityToken();
+
+            // close the PHP session to prevent session overwriting and loss of security token for secured queries
+            session_write_close();
+
             $input = \taoQtiCommon_helpers_Utils::readJsonPayload();
             if (!$input) {
                 $input = [];
