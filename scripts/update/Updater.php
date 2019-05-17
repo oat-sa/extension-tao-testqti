@@ -1798,5 +1798,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('32.11.0', '33.1.0');
+
     }
 }
