@@ -172,6 +172,24 @@ define([
             };
 
             /**
+             * Handles warnings
+             * @param {String} [displayMessage] - an alternate message to display
+             */
+            var onWarning = function onWarning(err, displayMessage) {
+                displayMessage = displayMessage || err.message;
+
+                if(!_.isString(displayMessage)){
+                    displayMessage = JSON.stringify(displayMessage);
+                }
+
+                logger.error({ displayMessage : displayMessage }, err);
+
+                if (!preventFeedback) {
+                    errorFeedback = feedback().warning(displayMessage, {timeout: -1});
+                }
+            };
+
+            /**
              * Load the plugins dynamically
              * @param {Object[]} plugins - the collection of plugins to load
              * @returns {Promise} resolves with the list of loaded plugins
@@ -237,6 +255,7 @@ define([
                     //instantiate the QtiTestRunner
                     runner('qti', plugins, config)
                         .on('error', onError)
+                        .on('warning', onWarning)
                         .on('ready', function () {
                             _.defer(function () {
                                 $container.removeClass('hidden');
