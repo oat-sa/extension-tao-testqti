@@ -57,8 +57,7 @@ define([
      * @param {jQuery|HTMLElement|String} [dynamicComponentConfig.draggableContainer] - the DOMElement the draggable component will be constraint in
      * @returns {maskComponent} the component (uninitialized)
      */
-    function maskingComponentFactory(config, dynamicComponentConfig) {
-        var dynamicComponentConfig = _.defaults(dynamicComponentConfig || {}, dynamicComponentDefaultConfig);
+    function maskingComponentFactory() {
         var dynamicComponentInstance;
 
         /**
@@ -87,7 +86,7 @@ define([
             }
         }, defaultConfig);
 
-        dynamicComponentInstance = dynamicComponent({}, dynamicComponentConfig)
+        dynamicComponentInstance = dynamicComponent({}, dynamicComponentDefaultConfig)
             .on('rendercontent', function ($content) {
                 var dynamicComponentContext = this;
                 var $element = this.getElement();
@@ -114,7 +113,7 @@ define([
                     .after('destroy', function () {
                         dynamicComponentContext.destroy();
                     })
-                    .init(config || {})
+                    .init()
                     .render($content);
             });
 
