@@ -51,7 +51,6 @@ define([
         {name: 'getElement', title: 'getElement'},
         {name: 'getTemplate', title: 'getTemplate'},
         {name: 'setTemplate', title: 'setTemplate'},
-        {name: 'resizeTo', title: 'resizeTo'}
     ])
     .test('component API contains ', function(data, assert) {
         var component = maskComponentFactory();
@@ -81,7 +80,7 @@ define([
 
         component
             .on('render', function() {
-                var $element = $('.mask', $container);
+                var $element = $('.mask-container', $container);
                 assert.equal($element.length, 1, 'The component has been attached to the container');
                 assert.ok($element.hasClass('rendered'), 'The component has the rendered class');
                 assert.equal($('.controls', $element).length, 1, 'The controls element is there');
@@ -98,7 +97,7 @@ define([
     QUnit.test('preview', function(assert) {
         var ready = assert.async();
         var $container = $('#qunit-fixture');
-        var component = maskComponentFactory();
+        var component = maskComponentFactory({ previewDelay: 1000 });
 
         assert.expect(12);
 
@@ -121,7 +120,8 @@ define([
             })
             .on('preview', function() {
                 var self = this;
-                var $element = this.getElement();
+                var $container = this.getElement();
+                var $element = $('.mask', $container);
                 var $inner = $('.inner', $element);
 
                 assert.ok(this.is('previewing'), 'We are previewing');
@@ -141,9 +141,7 @@ define([
                     ready();
                 }, 1650);
             })
-            .init({
-                previewDelay: 1000
-            })
+            .init({})
             .render($container);
     });
 
@@ -186,12 +184,6 @@ define([
                 assert.ok(true);
                 ready();
             })
-            .init({
-                x: 0,
-                y: 0,
-                width: 300,
-                height: 200
-            })
-            .render($container);
+            .init({ renderTo: $container, draggableContainer: $container });
     });
 });

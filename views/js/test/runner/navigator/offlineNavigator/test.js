@@ -157,7 +157,7 @@ define([
                 .catch(function(err) {
                     assert.equal(err.message, 'Invalid navigation action');
                 })
-                .finally(function() {
+                .then(function() {
                     done();
                 });
 
