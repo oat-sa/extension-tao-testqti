@@ -100,11 +100,7 @@ define([
                          */
                         self.trigger('maskclose');
                     })
-                    .init({
-                        x : self.masks.length * 10,
-                        y : self.masks.length * 10
-                    })
-                    .render($container);
+                    .init({ renderTo: $container, draggableContainer: $container });
             }
 
             //keep a ref to all masks
