@@ -226,7 +226,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
         $sessionMemento = $this->getSessionMemento();
         parent::endTestSession();
         
-        common_Logger::i('Ending test session.');
+        common_Logger::i('Ending test session: ' . $this->getSessionId());
         try {
             // Compute the LtiOutcome variable for LTI support.
             $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT, new QtiFloat(0.0)));
