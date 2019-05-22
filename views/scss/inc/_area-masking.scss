@@ -52,18 +52,7 @@
                 box-sizing: content-box;
                 padding-bottom: 30px;
             }
-            &.previewing {
-                .inner {
-                    opacity: .15;
-                    @include transition(opacity, 600ms, ease);
-                }
 
-                .controls {
-                    background-color: transparent;
-                    border-bottom: none;
-                    border-left: none;
-                }
-            }
             .controls {
                 background: $uiClickableDefaultBg;
                 position: absolute;
@@ -115,6 +104,23 @@
                 .inner{
                     opacity: .55;
                 }
+                .controls {
+                    background-color: transparent;
+                    border-bottom: none;
+                    border-left: none;
+                }
+            }
+        }
+    }
+
+    &.previewing {
+        .dynamic-component-content{
+            .mask{
+                .inner {
+                    opacity: .15;
+                    @include transition(opacity, 600ms, ease);
+                }
+
                 .controls {
                     background-color: transparent;
                     border-bottom: none;
