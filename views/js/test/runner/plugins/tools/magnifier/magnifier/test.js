@@ -20,8 +20,9 @@ define([
 
     'jquery',
     'ui/component/placeable',
-    'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
-], function($, makePlaceable, magnifierPanelFactory) {
+    'taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel',
+    'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
+], function($, makePlaceable, magnifierPanelFactory, magnifierPanelTpl) {
     'use strict';
 
     QUnit.module('API');
@@ -77,7 +78,7 @@ define([
     QUnit.test('DOM', function(assert) {
         var ready = assert.async();
         var $container = $('#qunit-fixture');
-        var component = magnifierPanelFactory({}, {renderTo: $container, draggableContainer: $container });
+        var component = magnifierPanelFactory();
 
         assert.expect(8);
 
@@ -85,7 +86,8 @@ define([
 
         assert.equal(typeof component, 'object', 'The component has been created');
 
-        component
+        component.init( {renderTo: $container, draggableContainer: $container })
+            .setTemplate(magnifierPanelTpl)
             .on('render', function() {
                 var $element = $($('.magnifier', $container)[0]);
                 assert.ok($element.hasClass('rendered'), 'The component has the rendered class');

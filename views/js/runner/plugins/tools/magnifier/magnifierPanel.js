@@ -105,9 +105,6 @@ define([
      * @param {Number} [config.levelStep] - The level increment applied when using the controls + and -
      * @param {Number} [config.baseSize] - The base size used to assign the width and the height according to the zoom level
      * @param {Number} [config.maxRatio] - The ratio for the maximum size regarding the size of the window
-     * @param {Object} dynamicComponentConfig - to overrides the default
-     * @param {jQuery|HTMLElement|String} [dynamicComponentConfig.renderTo] - An optional container in which renders the component
-     * @param {jQuery|HTMLElement|String} [dynamicComponentConfig.draggableContainer] - the DOMElement the draggable component will be constraint in
      * @returns {magnifierPanel} the component (initialized)
      */
     function magnifierPanelFactory(config) {
@@ -117,8 +114,6 @@ define([
         var zoomLevelStep = parseFloat(initConfig.levelStep);
         var zoomLevel = adjustZoomLevel(initConfig.level);
         var maxRatio = parseFloat(initConfig.maxRatio);
-        var baseSize = parseInt(initConfig.baseSize, 10);
-        var zoomSize = baseSize * zoomLevel;
         var $initTarget = null;
         var controls = null;
         var observer = null;
@@ -126,7 +121,7 @@ define([
         var scrolling = [];
         var dynamicComponentInstance;
 
-        var dynamicComponentConfig = _.defaults(config.component || {}, dynamicComponentDefaultConfig);
+        var dynamicComponentConfig = _.defaults(config ? config.component || {} : {}, dynamicComponentDefaultConfig);
 
         /**
          * @typedef {Object} magnifierPanel
