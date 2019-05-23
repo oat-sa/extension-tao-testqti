@@ -97,7 +97,7 @@ define([
     QUnit.test('preview', function(assert) {
         var ready = assert.async();
         var $container = $('#qunit-fixture');
-        var component = maskComponentFactory({ previewDelay: 1000 });
+        var component = maskComponentFactory().init({ previewDelay: 1000, renderTo: $container, draggableContainer: $container  });
 
         assert.expect(12);
 
@@ -113,7 +113,7 @@ define([
                 assert.equal($previewBtn.length, 1, 'The preview button exists');
                 assert.equal($inner.length, 1, 'The inner element exists');
                 assert.ok(!this.is('previewing'), 'We are not previewing');
-                assert.ok(!$element.hasClass('previewing'), 'We are not previewing');
+                assert.ok(!$container.hasClass('previewing'), 'We are not previewing');
                 assert.equal($inner.css('opacity'), 1, 'The inner element is opaque');
 
                 $previewBtn.trigger('click');
@@ -125,7 +125,7 @@ define([
                 var $inner = $('.inner', $element);
 
                 assert.ok(this.is('previewing'), 'We are previewing');
-                assert.ok($element.hasClass('previewing'), 'We are previewing');
+                assert.ok($container.hasClass('previewing'), 'We are previewing');
 
                 //Takes into account the CSS transition
                 setTimeout(function() {
@@ -141,7 +141,6 @@ define([
                     ready();
                 }, 1650);
             })
-            .init({})
             .render($container);
     });
 
