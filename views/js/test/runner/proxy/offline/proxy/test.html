@@ -18,6 +18,15 @@
         //load the config
         require(['/tao/ClientConfig/config'], function(){
 
+            // mock Client Config data:
+            requirejs.config({
+                "config": {
+                    "core/tokenHandler" : {
+                        tokens: ['token1', 'token2', 'token3', 'token4', 'token5']
+                    },
+                }
+            });
+
             //load the test
             require(['taoQtiTest/test/runner/proxy/offline/proxy/test'], function(){
 
@@ -30,5 +39,6 @@
 <body>
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
+<div id="feedback-box"></div>
 </body>
 </html>
