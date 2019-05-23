@@ -110,7 +110,7 @@ define([
      * @param {jQuery|HTMLElement|String} [dynamicComponentConfig.draggableContainer] - the DOMElement the draggable component will be constraint in
      * @returns {magnifierPanel} the component (initialized)
      */
-    function magnifierPanelFactory(config, dynamicComponentConfig) {
+    function magnifierPanelFactory(config) {
         var initConfig = _.defaults(config || {}, defaultConfig);
         var zoomLevelMin = parseFloat(initConfig.levelMin);
         var zoomLevelMax = parseFloat(initConfig.levelMax);
@@ -126,7 +126,7 @@ define([
         var scrolling = [];
         var dynamicComponentInstance;
 
-        var dynamicComponentConfig = _.defaults(dynamicComponentConfig || {}, dynamicComponentDefaultConfig);
+        var dynamicComponentConfig = _.defaults(config.component || {}, dynamicComponentDefaultConfig);
 
         /**
          * @typedef {Object} magnifierPanel

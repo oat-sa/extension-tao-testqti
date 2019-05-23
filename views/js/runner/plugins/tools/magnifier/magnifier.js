@@ -88,10 +88,10 @@ define([
                             levelMin: pluginConfig.zoomMin,
                             levelMax: pluginConfig.zoomMax,
                             levelStep: pluginConfig.zoomStep,
-                        },
-                        {
-                            renderTo: $container.parent(),
-                            draggableContainer: $container.parent(),
+                            component:{
+                                renderTo: $container.parent(),
+                                draggableContainer: $container.parent(),
+                            }
                         }
                     )
                         .on('show', function () {
