@@ -23,65 +23,80 @@
  */
 define([
     'lodash',
-    'ui/movableComponent',
-    'tpl!taoQtiTest/runner/plugins/tools/areaMasking/mask'
-], function (_, movableComponent, areaMaskingTpl) {
+    'ui/component',
+    'tpl!taoQtiTest/runner/plugins/tools/areaMasking/mask',
+    'ui/dynamicComponent',
+], function (_, component, areaMaskingTpl, dynamicComponent) {
     'use strict';
 
     var defaultConfig = {
+        draggable: true,
+        resizable: true,
+        preserveAspectRatio: false,
+        width: 250,
+        minWidth: 160,
+        maxWidth: 1000,
+        minHeight: 60,
+        height: 100,
+        stackingScope: 'test-runner',
+        top: 50,
+        left: 10,
         previewDelay: 3000,
-        stackingScope: 'test-runner'
     };
 
     /**
      * Creates a new masking component
      * @returns {maskComponent} the component (uninitialized)
      */
-    function maskingComponentFactory () {
+    function maskingComponentFactory() {
+        var dynamicComponentInstance;
 
         /**
-         * @typedef {Object} maskComponent
+         * @typedef {Object} dynamicComponent
          */
-        var maskComponent = movableComponent({
+        dynamicComponentInstance = dynamicComponent({
             /**
              * Preview the content under the masked area
              * @returns {maskComponent} chains
              *
              * @fires maskComponent#preview
              */
-            preview : function preview(){
-                var self   = this;
-                var delay  = this.config.previewDelay || 1000;
-                if( this.is('rendered') && !this.is('disabled') && !this.is('previewing') ){
-                    this.setState('previewing', true)
-                        .trigger('preview');
-                    _.delay(function(){
+            preview: function preview() {
+                var self = this;
+                var delay = this.config.previewDelay || 1000;
+                if (this.is('rendered') && !this.is('disabled') && !this.is('previewing')) {
+                    this.setState('previewing', true);
+                    this.trigger('preview');
+                    _.delay(function () {
                         self.setState('previewing', false);
                     }, delay);
                 }
                 return this;
             }
-        }, defaultConfig);
+        },
+        defaultConfig)
+        .on('rendercontent', function ($content) {
+            var self = this;
+            var $element = this.getElement();
+            $content.append(areaMaskingTpl({}));
 
+            $element.addClass('mask-container');
 
-        maskComponent
-            .setTemplate(areaMaskingTpl)
-            .on('render', function(){
-                var self     = this;
-                var $element = this.getElement();
+            $element
+                .on('click touchstart', '.view', function (e) {
+                    e.preventDefault();
 
-                $element
-                    .on('click touchstart', '.view', function(e){
-                        e.preventDefault();
-                        self.preview();
-                    })
-                    .on('click touchstart', '.close', function(e){
-                        e.preventDefault();
-                        self.destroy();
-                    });
-            });
+                    self.preview();
+                })
+                .on('click touchend', '.close', function (e) {
+                    e.preventDefault();
 
-        return maskComponent;
+                    self.destroy();
+                });
+        })
+        .init();
+
+        return dynamicComponentInstance;
     }
 
     return maskingComponentFactory;

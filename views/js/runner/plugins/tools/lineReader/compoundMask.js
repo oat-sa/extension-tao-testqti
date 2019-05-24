@@ -140,7 +140,7 @@ define([
 
                     $element
                         .addClass('line-reader-mask ' + maskConfig.id)
-                        .on('mousedown', function() {
+                        .on('mousedown touchstart', function() {
                             bringAllToFront();
                         });
 
@@ -255,11 +255,11 @@ define([
 
                     $element
                         .addClass('line-reader-overlay ' + overlayConfig.id)
-                        .on(pointerEventsPrefix + 'down', function() {
+                        .on(pointerEventsPrefix + 'down' + ' touchstart', function() {
                             bringAllToFront();
                             self.transformOverlay();
                         })
-                        .on(pointerEventsPrefix + 'up', function() {
+                        .on(pointerEventsPrefix + 'up' + ' touchend', function() {
                             self.restoreOverlay();
                         });
 
@@ -338,7 +338,7 @@ define([
 
                     $element.addClass('line-reader-inner-drag');
                     $element.append($dragIcon);
-                    $element.on('mousedown', function(e) {
+                    $element.on('mousedown touchstart', function(e) {
                         e.stopPropagation();
                         bringAllToFront();
                     });
@@ -389,7 +389,7 @@ define([
                     $element.append($closeIcon);
                     $element.addClass('line-reader-closer');
 
-                    $element.on('mousedown', function() {
+                    $element.on('mousedown touchstart', function() {
                         bringAllToFront();
                     });
 
