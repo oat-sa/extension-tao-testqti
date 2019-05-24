@@ -109,7 +109,7 @@ define([
         var $content = $('.content', $container);
         assert.expect(0);
 
-        magnifierPanelFactory({}, {renderTo: $container, draggableContainer: $container })
+        magnifierPanelFactory({component: {renderTo: $container, draggableContainer: $container }})
             .setTarget($content)
             .show();
     });
