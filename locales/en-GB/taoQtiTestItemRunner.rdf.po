@@ -4,34 +4,29 @@ msgstr ""
 "PO-Revision-Date: 2019-05-24T10:31:18\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: fi-FI\n"
+"Language: en-GB\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: fi-FI\n"
+"targetLanguage: en-GB\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Parent Service Call ID"
-msgstr "QTI Test Parent Service Call ID"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Parent Service Call ID"
-msgstr "QTI Test Parent Service Call ID"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Item Runner"
-msgstr "QTI Test Item Runner"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
 msgstr ""
-
-# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
-msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
-msgid "QTI Test Item Runner"
-msgstr "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
 
