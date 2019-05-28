@@ -145,6 +145,16 @@ define([
                         });
                     }
 
+                    if (!navigationHelper.isLast(testMap, testContext.itemIdentifier)) {
+                        self.syncData()
+                            .then(function() {
+                                return resolve(result);
+                            })
+                            .catch(function() {
+                                return resolve({ success: false });
+                            });
+                    }
+
                     if (
                         _.contains(blockingActions, action)
                         || (
