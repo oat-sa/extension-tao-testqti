@@ -115,7 +115,10 @@ define([
             var runnerOptions = _.defaults({}, options, defaults);
             var exitReason;
             var $container = $('.runner');
-            var logger     = loggerFactory('controller/runner', { serviceCallId : runnerOptions.serviceCallId });
+            var logger = loggerFactory('controller/runner', {
+                serviceCallId : runnerOptions.serviceCallId,
+                plugins : Object.keys(runnerOptions.plugins)
+            });
             var preventFeedback = false;
             var errorFeedback = null;
 
@@ -152,6 +155,36 @@ define([
              * @param {String} [displayMessage] - an alternate message to display
              */
             var onError = function onError(err, displayMessage) {
+                onFeedback(err, displayMessage, "error");
+            };
+
+            /**
+             * Handles warnings
+             * @param {String} [displayMessage] - an alternate message to display
+             */
+            var onWarning = function onWarning(err, displayMessage) {
+                onFeedback(err, displayMessage, "warning");
+            };
+
+            /**
+             * Handles errors & warnings
+             * @param {String} [displayMessage] - an alternate message to display
+             * @param {String} [type] - "error" or "warning"
+             */
+            var onFeedback = function onFeedback(err, displayMessage, type) {
+                var typeMap = {
+                    warning: {
+                        logger: "warn",
+                        feedback: "warning"
+                    },
+                    error: {
+                        logger: "error",
+                        feedback: "error"
+                    }
+                };
+                var loggerByType = logger[typeMap[type].logger];
+                var feedbackByType = feedback()[typeMap[type].feedback];
+
                 displayMessage = displayMessage || err.message;
 
                 if(!_.isString(displayMessage)){
@@ -159,15 +192,14 @@ define([
                 }
                 loadingBar.stop();
 
+                loggerByType({ displayMessage : displayMessage }, err);
 
-                logger.error({ displayMessage : displayMessage }, err);
-
-                if(err.code === 403 || err.code === 500) {
+                if(type === "error" && (err.code === 403 || err.code === 500)) {
                     displayMessage = __('An error occurred during the test, please content your administrator.') + " " + displayMessage;
                     return exit(displayMessage, 'error');
                 }
                 if (!preventFeedback) {
-                    errorFeedback = feedback().error(displayMessage, {timeout: -1});
+                    errorFeedback = feedbackByType(displayMessage, {timeout: -1});
                 }
             };
 
@@ -237,6 +269,7 @@ define([
                     //instantiate the QtiTestRunner
                     runner('qti', plugins, config)
                         .on('error', onError)
+                        .on('warning', onWarning)
                         .on('ready', function () {
                             _.defer(function () {
                                 $container.removeClass('hidden');

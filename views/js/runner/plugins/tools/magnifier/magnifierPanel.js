@@ -21,9 +21,10 @@
 define([
     'jquery',
     'lodash',
-    'ui/movableComponent',
-    'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel'
-], function ($, _, movableComponent, magnifierPanelTpl) {
+    'ui/component',
+    'tpl!taoQtiTest/runner/plugins/tools/magnifier/magnifierPanel',
+    'ui/dynamicComponent',
+], function ($, _, component, magnifierPanelTpl, dynamicComponent) {
     'use strict';
 
     /**
@@ -79,12 +80,20 @@ define([
         levelMax: defaultLevelMax,
         levelStep: .5,
         baseSize: defaultBaseSize,
+        maxRatio: .5,
+    };
+
+    var dynamicComponentDefaultConfig = {
+        draggable: true,
+        resizable: true,
+        preserveAspectRatio: false,
         width: defaultBaseSize * defaultLevel,
         height: defaultBaseSize * defaultLevel / screenRatio,
         minWidth: defaultBaseSize * defaultLevelMin,
         minHeight: defaultBaseSize * defaultLevelMin / screenRatio,
-        maxRatio: .5,
-        stackingScope: 'test-runner'
+        stackingScope: 'test-runner',
+        top: 50,
+        left: 10,
     };
 
     /**
@@ -105,18 +114,19 @@ define([
         var zoomLevelStep = parseFloat(initConfig.levelStep);
         var zoomLevel = adjustZoomLevel(initConfig.level);
         var maxRatio = parseFloat(initConfig.maxRatio);
-        var baseSize = parseInt(initConfig.baseSize, 10);
-        var zoomSize = baseSize * zoomLevel;
         var $initTarget = null;
         var controls = null;
         var observer = null;
         var targetWidth, targetHeight, dx, dy;
         var scrolling = [];
+        var dynamicComponentInstance;
+
+        var dynamicComponentConfig = _.defaults(config ? config.component || {} : {}, dynamicComponentDefaultConfig);
 
         /**
          * @typedef {Object} magnifierPanel
          */
-        var magnifierPanel = movableComponent({
+        var magnifierPanel = component({
             /**
              * Gets the current zoom level
              * @returns {Number}
@@ -242,8 +252,8 @@ define([
              */
             translate: function translate(x, y) {
                 return {
-                    top: translateMagnifier(y, targetHeight, this.config.height),
-                    left: translateMagnifier(x, targetWidth, this.config.width)
+                    top: translateMagnifier(y, targetHeight, dynamicComponentInstance.config.height),
+                    left: translateMagnifier(x, targetWidth, dynamicComponentInstance.config.width)
                 };
             },
 
@@ -399,9 +409,14 @@ define([
          * Updates the max size according to the window's size
          */
         function updateMaxSize() {
+            if (!dynamicComponentInstance)
+            {
+                return;
+            }
+
             var $window = $(window);
-            magnifierPanel.config.maxWidth = $window.width() * maxRatio;
-            magnifierPanel.config.maxHeight = $window.height() * maxRatio;
+            dynamicComponentInstance.config.maxWidth = $window.width() * maxRatio;
+            dynamicComponentInstance.config.maxHeight = $window.height() * maxRatio;
         }
 
         /**
@@ -424,7 +439,7 @@ define([
         function updateZoom() {
             var position;
             if (controls && controls.$target) {
-                position = magnifierPanel.getPosition();
+                position = dynamicComponentInstance.position;
 
                 position.x += dx + controls.$target.scrollLeft();
                 position.y += dy + controls.$target.scrollTop();
@@ -550,91 +565,96 @@ define([
             return $node;
         }
 
-        initConfig.width = zoomSize;
-        initConfig.height = zoomSize / screenRatio;
-        initConfig.minWidth = baseSize * zoomLevelMin;
-        initConfig.minHeight = baseSize * zoomLevelMin / screenRatio;
+        dynamicComponentInstance = dynamicComponent({})
+            .on('rendercontent', function ($content) {
+                var dynamicComponentContext = this;
+                var $element = this.getElement();
 
-        magnifierPanel
-            .setTemplate(magnifierPanelTpl)
-            .on('render', function () {
-                var self = this;
-                var $component = this.getElement();
+                $element.addClass('magnifier-container');
 
-                this.setState('hidden', true);
+                magnifierPanel
+                    .setTemplate(magnifierPanelTpl)
+                    .on('render', function () {
+                        var self = this;
+                        var $component = this.getElement();
 
-                // compute the padding of the magnifier content
-                dx = ($component.outerWidth() - $component.width()) / 2;
-                dy = ($component.outerHeight() - $component.height()) / 2;
+                        this.setState('hidden', true);
 
-                controls = {
-                    $target: $initTarget,
-                    $inner: $('.inner', $component),
-                    $zoomLevel: $('.level', $component),
-                    $overlay: $('.overlay', $component)
-                };
-                $initTarget = null;
+                        // compute the padding of the magnifier content
+                        dx = ($component.outerWidth() - $component.width()) / 2;
+                        dy = ($component.outerHeight() - $component.height()) / 2;
 
-                // click on zoom-in or zoom-out controls
-                $component.on('click touchstart', '.zoom', function (event) {
-                    var $button = $(event.target).closest('.control');
-                    var action = $button.data('control');
+                        controls = {
+                            $target: $initTarget,
+                            $inner: $('.inner', $component),
+                            $zoomLevel: $('.level', $component),
+                            $overlay: $('.overlay', $component)
+                        };
+                        $initTarget = null;
 
-                    event.preventDefault();
-                    if (action && self[action]) {
-                        self[action]();
-                    }
-                });
+                        // click on zoom-out control
+                        $component.on('click touchstart', '.control[data-control="zoomOut"]', function (event) {
+                            event.preventDefault();
 
-                // click on close controls
-                $component.on('click touchstart', '.closeMagnifier', function (event) {
-                    event.preventDefault();
-                    self.hide();
-                    self.trigger('close');
-                });
+                            self.zoomOut();
+                        });
 
-                // interact through the magnifier glass with the zoomed content
-                $component.on('click touchstart', '.overlay', function (event) {
-                    if (!self.is('noclick')) {
-                        findSourceNode(
-                            getElementFromPoint(event.pageX, event.pageY),
-                            controls.$inner,
-                            controls.$target
-                        ).click().focus();
-                    } else {
-                        // was a 'dragend' click, just ignore
-                        self.setState('noclick', false);
-                    }
-                });
+                        // click on zoom-in control
+                        $component.on('click touchstart', '.control[data-control="zoomIn"]', function (event) {
+                            event.preventDefault();
 
-                createObserver();
-                updateMaxSize();
-                applyZoomLevel();
+                            self.zoomIn();
+                        });
+
+                        // click on close controls
+                        $component.on('click touchstart', '.closeMagnifier', function (event) {
+                            event.preventDefault();
+                            self.hide();
+                            self.trigger('close');
+                        });
+
+                        // interact through the magnifier glass with the zoomed content
+                        $component.on('click touchstart', '.overlay', function (event) {
+                            findSourceNode(
+                                getElementFromPoint(event.pageX, event.pageY),
+                                controls.$inner,
+                                controls.$target
+                            ).click().focus();
+                        });
+
+                        createObserver();
+                        updateMaxSize();
+                        applyZoomLevel();
+                    })
+                    .on('show', function () {
+                        updateMagnifier();
+                        startObserver();
+
+                        dynamicComponentContext.show();
+                    })
+                    .on('hide', function () {
+                        stopObserver();
+
+                        dynamicComponentContext.hide();
+                    })
+                    .on('destroy', function () {
+                        stopObserver();
+                        $initTarget = null;
+                        controls = null;
+                        observer = null;
+
+                        dynamicComponentContext.destroy();
+                    })
+                    .init(initConfig)
+                    .render($content);
             })
-            .on('dragstart resizestart', function () {
-                // prevent the 'dragend' click to be understood as an actual click
-                this.setState('noclick', true);
-            })
-            .on('move resize', function () {
+            .on('down move resize', function () {
                 updateZoom();
-            })
-            .on('show', function () {
-                updateMagnifier();
-                startObserver();
-            })
-            .on('hide', function () {
-                stopObserver();
             })
             .on('resize', function () {
                 updateMaxSize();
             })
-            .on('destroy', function () {
-                stopObserver();
-                $initTarget = null;
-                controls = null;
-                observer = null;
-            })
-            .init(initConfig);
+            .init(dynamicComponentConfig);
 
         return magnifierPanel;
     }
