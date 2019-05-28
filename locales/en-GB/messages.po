@@ -1,12 +1,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.3.0-sprint102\n"
-"PO-Revision-Date: 2019-05-24T10:31:19\n"
+"PO-Revision-Date: 2019-05-24T10:31:18\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: hu-HU\n"
+"Language: en-GB\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: hu-HU\n"
+"targetLanguage: en-GB\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
@@ -23,7 +23,7 @@ msgid "A QTI Test must contain at least one QTI Item to be compiled. None found.
 msgstr ""
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "A QTI test package"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr ""
@@ -113,7 +113,7 @@ msgid "Also compute the score per categories"
 msgstr ""
 
 msgid "An error occured while retrieving items"
-msgstr ""
+msgstr "An error occurred while retrieving items"
 
 msgid "An error occurred during results submission. Please retry."
 msgstr ""
@@ -140,10 +140,10 @@ msgid "An item involved in the test cannot be written."
 msgstr ""
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr ""
+msgstr "An unknown error occurred while compiled QTI Test '%s'."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr ""
+msgstr "An unknown error occurred while compiling QTI test '%s'."
 
 msgid "and flagged %s of them"
 msgstr ""
@@ -227,7 +227,7 @@ msgid "Category score"
 msgstr ""
 
 msgid "Change the current color preset"
-msgstr ""
+msgstr "Change the current colour preset"
 
 msgid "Class"
 msgstr ""
@@ -447,7 +447,7 @@ msgid "Go to the next item?"
 msgstr ""
 
 msgid "Gray on green (low contrast option)"
-msgstr ""
+msgstr "Grey on green (low contrast option)"
 
 msgid "Hide Review"
 msgstr ""
@@ -537,7 +537,7 @@ msgid "is already used in the test."
 msgstr ""
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr ""
+msgstr "is not a valid identifier (alphanumeric, underscore, dash and dots)"
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr ""
@@ -909,7 +909,7 @@ msgid "Section %d of %d"
 msgstr ""
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr ""
+msgstr "Section level category enables configuring the categories of its composing items all at once. A category in grey means that all items have that category. A category in white means that only a few items have that category."
 
 msgid "Section Properties"
 msgstr ""
@@ -1104,7 +1104,7 @@ msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr ""
+msgstr "The following identifiers are not unique across the test : %s"
 
 msgid "The identifier of the item reference."
 msgstr ""
@@ -1206,7 +1206,7 @@ msgid "Time limit reached, this part of the test has ended."
 msgstr ""
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr ""
+msgstr "Time limit reached; this part of the test has ended. However, you are allowed to finish the current item."
 
 msgid "Time Limits"
 msgstr ""

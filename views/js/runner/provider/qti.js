@@ -645,6 +645,9 @@ define([
 
                         resolve();
                     })
+                    .on('warning', function(err){
+                        self.trigger('warning', err);
+                    })
                     .init();
             });
         },
