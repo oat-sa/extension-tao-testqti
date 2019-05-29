@@ -131,74 +131,36 @@ define([
              */
             this.offlineAction = function offlineAction(action, actionParams) {
                 return new Promise(function(resolve, reject) {
-                    var newTestContext,
-                        result = { success: true },
-                        blockingActions = ['exitTest', 'timeout'],
-                        dataHolder = self.getDataHolder(),
-                        testData = dataHolder.get('testData'),
-                        testContext = dataHolder.get('testContext'),
-                        testMap = dataHolder.get('testMap');
+                    var result = { success: true };
+                    var blockingActions = ['exitTest', 'timeout'];
+                    var dataHolder = self.getDataHolder();
+                    var testContext = dataHolder.get('testContext');
+                    var testMap = dataHolder.get('testMap');
+                    var testData = dataHolder.get('testData');
 
-                    if (action === 'pause') {
-                        throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflinePauseError(), {
-                            reason: actionParams.reason
-                        });
-                    }
+                    var isLast = navigationHelper.isLast(testMap, testContext.itemIdentifier);
+                    var isOffline = self.isOffline();
+                    var isBlocked = _.contains(blockingActions, action);
+                    var isProperActions = actionParams.direction === 'next' || action === 'skip';
+                    var isDirectionDefined = !!actionParams.direction;
+                    var isMeaningfullScope = !!actionParams.scope;
 
-                    if (
-                        _.contains(blockingActions, action)
-                        || (
-                            (
-                                actionParams.direction === 'next'
-                                || action === 'skip'
-                            )
-                            && navigationHelper.isLast(testMap, testContext.itemIdentifier)
-                        )
-                    ) {
-                        result.testContext = {
-                            state: testData.states.closed
-                        };
+                    /***
+                     * performs navigation trough items of given test parameters according to action parameters
+                     * doesent need active internet connection
+                     * @param navigator - navigator helper used with this proxy
+                     * @param {Object} options - options to manage the navigation
+                     * @param {Object} options.testData - current test testData dataset
+                     * @param {Object} options.testContext - current test testContext dataset
+                     * @param {Object} results - navigtion result output object
+                     */
+                    var navigate = function (navigator, options, results) {
+                        var newTestContext;
 
-                        if (self.isOffline()) {
-                            return new Promise(function() {
-                                offlineSyncModal(self)
-                                    .on('proceed', function() {
-                                        self.syncData()
-                                            .then(function() {
-                                                return resolve(result);
-                                            })
-                                            .catch(function() {
-                                                return resolve({ success: false });
-                                            });
-                                    })
-                                    .on('secondaryaction', function() {
-                                        self.initiateDownload()
-                                            .catch(function() {
-                                                return resolve({ success: false });
-                                            });
-                                    });
-                            }).catch(function() {
-                                return resolve({ success: false });
-                            });
-                        } else {
-                            return self.syncData().then(function() {
-                                return resolve(result);
-                            }).catch(function() {
-                                return resolve({ success: false });
-                            });
-                        }
-                    }
-
-                    if (action === 'skip') {
-                        actionParams.direction = action;
-                    }
-
-                    // try the navigation if the actionParams context meaningful data
-                    if (actionParams.direction && actionParams.scope) {
-                        self.offlineNavigator
-                            .setTestData(testData)
-                            .setTestContext(testContext)
-                            .setTestMap(testMap)
+                        navigator
+                            .setTestData(options.testData)
+                            .setTestContext(options.testContext)
+                            .setTestMap(options.testMap)
                             .init()
                             .navigate(
                                 actionParams.direction,
@@ -216,13 +178,76 @@ define([
                                     throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflineNavError());
                                 }
 
-                                result.testContext = newTestContext;
+                                results.testContext = newTestContext;
+                                resolve(results);
 
-                                resolve(result);
                             }).catch(function(err) {
                                 reject(err);
                             });
-                    } else {
+                    };
+
+                    if (action === 'pause') {
+                        throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflinePauseError(), {
+                            reason: actionParams.reason
+                        });
+                    }
+
+                    if(isBlocked || (isProperActions && isLast)){
+                        // the last item of the test
+                        result.testContext = {
+                            state: testData.states.closed
+                        };
+                        if(isOffline){
+                            return new Promise(function() {
+                                offlineSyncModal(self)
+                                        .on('proceed', function() {
+                                            self.syncData()
+                                                .then(function() {
+                                                    return resolve(result);
+                                                })
+                                                .catch(function() {
+                                                    return resolve({ success: false });
+                                                });
+                                        })
+                                        .on('secondaryaction', function() {
+                                            self.initiateDownload()
+                                                .catch(function() {
+                                                    return resolve({ success: false });
+                                                });
+                                        });
+                            }).catch(function() {
+                                return resolve({ success: false });
+                            });
+                        } else{
+                            return self.syncData().then(function() {
+                                return resolve(result);
+                            }).catch(function() {
+                                return resolve({ success: false });
+                            });
+                        }
+                    }else if (isDirectionDefined && isMeaningfullScope){
+                        //navigation actions
+                        if(isOffline){
+                            navigate(self.offlineNavigator,
+                                {
+                                    testContext:testContext,
+                                    testMap:testMap,
+                                    testData:testData
+                                }, result);
+                        }else{
+                            return self.syncData().then(function() {
+                                navigate(self.offlineNavigator,
+                                    {
+                                        testContext:testContext,
+                                        testMap:testMap,
+                                        testData:testData
+                                    }, result);
+                            }).catch(function() {
+                                return resolve({ success: false });
+                            });
+                        }
+                    }else{
+                        //common behaviour
                         resolve(result);
                     }
                 });
