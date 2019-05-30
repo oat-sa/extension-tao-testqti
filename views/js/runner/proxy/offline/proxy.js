@@ -138,7 +138,7 @@ define([
                     var testMap = dataHolder.get('testMap');
                     var testData = dataHolder.get('testData');
 
-                    var isLast = navigationHelper.isLast(testMap, testContext.itemIdentifier);
+                    var isLast = testContext && testMap ? navigationHelper.isLast(testMap, testContext.itemIdentifier) : false;
                     var isOffline = self.isOffline();
                     var isBlocked = _.contains(blockingActions, action);
                     var isProperActions = actionParams.direction === 'next' || action === 'skip';
