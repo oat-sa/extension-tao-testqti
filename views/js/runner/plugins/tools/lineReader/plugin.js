@@ -29,7 +29,7 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/plugins/tools/lineReader/compoundMask'
+    'taoQtiTest/runner/plugins/tools/lineReader/compoundMaskOld'
 ], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, compoundMaskFactory) {
     'use strict';
 
