@@ -315,7 +315,7 @@ define([
                 runner.trigger('renderitem');
 
                 assert.equal($masks.length, 8, '8 masks have been rendered');
-                assert.equal($overlays.length, 8, '8 overlays have been rendered');
+                assert.equal($overlays.length, 1, '1 overlay has been rendered');
 
                 assert.ok($masks.hasClass('hidden'), 'masks are hidden by default');
                 assert.ok($overlays.hasClass('hidden'), 'overlays are hidden by default');
@@ -356,7 +356,7 @@ define([
                 $button = areaBroker.getToolboxArea().find('[data-control="line-reader"]');
 
                 assert.equal($masks.length, 8, '8 masks have been rendered');
-                assert.equal($overlays.length, 8, '8 overlays have been rendered');
+                assert.equal($overlays.length, 1, '1 overlay has been rendered');
 
                 assert.ok($masks.hasClass('hidden'), 'masks are hidden by default');
                 assert.ok($overlays.hasClass('hidden'), 'overlays are hidden by default');
