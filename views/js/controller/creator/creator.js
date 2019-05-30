@@ -37,7 +37,7 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/categorySelector',
-    'core/validator/validators'
+    'ui/validator/validators'
 ], function(
     module,
     $,

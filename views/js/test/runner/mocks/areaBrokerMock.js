@@ -21,7 +21,7 @@
 define([
     'jquery',
     'lodash',
-    'tao/test/core/areaBroker/mock/areaBrokerMock',
+    'tao/test/ui/areaBroker/mock/areaBrokerMock',
     'taoQtiTest/runner/ui/toolbox/toolbox'
 ], function ($, _, areaBrokerMockFactory, toolboxFactory) {
     'use strict';
