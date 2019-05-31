@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -58,8 +58,7 @@ define([
     scoringHelper,
     categorySelector,
     validators
-    ){
-
+){
     'use strict';
 
     /**
@@ -67,7 +66,7 @@ define([
      * and orchestrates data retrieval and view/components loading.
      * @exports creator/controller
      */
-    var Controller = {
+    const Controller = {
 
         routes : {},
 
@@ -78,14 +77,17 @@ define([
           * @param {Object} options.labels - the list of item's labels to give to the ItemView
           * @param {Object} options.routes - action's urls
           * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
-          * @param {Boolean} [options.guidedNavigation  = false]- feature flag for the guided navigation
+          * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
           */
-        start : function(options){
-            var self = this;
-            var $container = $('#test-creator');
-            var $saver = $('#saver');
-            var binder, binderOptions, modelOverseer;
+        start(options){
+            const self = this;
+            const $container = $('#test-creator');
+            const $saver = $('#saver');
+
             var creatorContext;
+            var binder;
+            var binderOptions;
+            var modelOverseer;
 
             self.identifiers = [];
 
@@ -98,7 +100,7 @@ define([
             categorySelector.setPresets(options.categoriesPresets);
 
             //back button
-            $('#authoringBack').on('click', function(e){
+            $('#authoringBack').on('click', e => {
                 e.preventDefault();
                 if (creatorContext) {
                     creatorContext.trigger('creatorclose');
@@ -110,7 +112,7 @@ define([
             itemView($('.test-creator-items .item-selection', $container));
 
             // forwards some binder events to the model overseer
-            $container.on('change.binder delete.binder', function (e, model) {
+            $container.on('change.binder delete.binder',  (e, model) => {
                 if (e.namespace === 'binder' && model && modelOverseer) {
                     modelOverseer.trigger(e.type, model);
                 }
@@ -119,18 +121,14 @@ define([
             //Data Binding options
             binderOptions = _.merge(options.routes, {
                 filters : {
-                    'isItemRef' : function(value){
-                        return qtiTestHelper.filterQtiType(value, 'assessmentItemRef');
-                    },
-                    'isSection' : function(value){
-                        return qtiTestHelper.filterQtiType(value, 'assessmentSection');
-                    }
+                    isItemRef : value => qtiTestHelper.filterQtiType(value, 'assessmentItemRef'),
+                    isSection : value => qtiTestHelper.filterQtiType(value, 'assessmentSection')
                 },
                 encoders : {
                     'dom2qti' : Dom2QtiEncoder
                 },
                 templates : templates,
-                beforeSave : function(model){
+                beforeSave(model){
                     //ensure the qti-type is present
                     qtiTestHelper.addMissingQtiType(model);
 
@@ -142,7 +140,7 @@ define([
                         qtiTestHelper.validateModel(model);
                     } catch(err) {
                         $saver.attr('disabled', false).removeClass('disabled');
-                        feedback().error(__('The test has not been saved.') + ' ' + err);
+                        feedback().error(__('The test has not been saved.') + ` ${err}`);
                         return false;
                     }
                     return true;
@@ -152,7 +150,7 @@ define([
             //set up the databinder
             binder = DataBindController
                 .takeControl($container, binderOptions)
-                .get(function(model){
+                .get( model => {
 
                     creatorContext = qtiTestCreatorFactory($container, {
                         uri : options.uri,
@@ -182,9 +180,7 @@ define([
 
                     $(window)
                         .off('resize.qti-test-creator')
-                        .on('resize.qti-test-creator', function(){
-                            itemrefView.resize();
-                        });
+                        .on('resize.qti-test-creator', () => itemrefView.resize() );
                 });
 
             //the save button triggers binder's save action.
