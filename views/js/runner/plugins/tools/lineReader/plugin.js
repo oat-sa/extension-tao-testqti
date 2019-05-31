@@ -29,7 +29,7 @@ define([
     'ui/hider',
     'util/shortcut',
     'util/namespace',
-    'taoQtiTest/runner/plugins/tools/lineReader/compoundMaskOld'
+    'taoQtiTest/runner/plugins/tools/lineReader/compoundMask'
 ], function ($, _, __, pluginFactory, hider, shortcut, namespaceHelper, compoundMaskFactory) {
     'use strict';
 
@@ -50,7 +50,7 @@ define([
      * @type {Object}
      */
     var maskOptions = {
-        dragMinWidth: 7,
+        dragMinWidth: 17,
         dragMinHeight: 7,
         resizeHandleSize: 7,
         innerDragHeight: 20
