@@ -79,7 +79,7 @@ define([
             allParts = mask.getParts(),
             $innerDrag;
 
-        assert.expect(36);
+        assert.expect(22);
 
         mask.init();
         mask.render($container);
@@ -101,119 +101,39 @@ define([
 
         assert.deepEqual(allParts.n.mask.getSize(), {width: 350, height: 50}, 'north mask has the right dimensions');
         assert.deepEqual(allParts.n.mask.getPosition(), {x: 100, y: 50}, 'north mask has the right position');
-        assert.deepEqual(allParts.n.overlay.getSize(), {width: 350, height: 50 - 14}, 'north overlay has the right dimensions');
-        assert.deepEqual(allParts.n.overlay.getPosition(), {x: 100, y: 50 + 7}, 'north overlay has the right position');
+        assert.deepEqual(allParts.n.overlay.getSize(), {width: 500, height: 50}, 'north overlay has the right dimensions');
+        assert.deepEqual(allParts.n.overlay.getPosition(), {x: 50, y: 50}, 'north overlay has the right position');
 
         assert.deepEqual(allParts.ne.mask.getSize(), {width: 100, height: 50}, 'north-east mask has the right dimensions');
         assert.deepEqual(allParts.ne.mask.getPosition(), {x: 450, y: 50}, 'north-east mask has the right position');
-        assert.deepEqual(allParts.ne.overlay.getSize(), {width: 100 - 7, height: 50 - 14}, 'north-east overlay has the right dimensions');
-        assert.deepEqual(allParts.ne.overlay.getPosition(), {x: 450, y: 50 + 7}, 'north-east overlay has the right position');
 
         assert.deepEqual(allParts.e.mask.getSize(), {width: 100, height: 50}, 'east mask has the right dimensions');
         assert.deepEqual(allParts.e.mask.getPosition(), {x: 450, y: 100}, 'east mask has the right position');
-        assert.deepEqual(allParts.e.overlay.getSize(), {width: 100 - 14, height: 50 + 14}, 'east overlay has the right dimensions');
-        assert.deepEqual(allParts.e.overlay.getPosition(), {x: 450 + 7, y: 100 - 7}, 'east overlay has the right position');
 
         assert.deepEqual(allParts.se.mask.getSize(), {width: 100, height: 200}, 'south-east mask has the right dimensions');
         assert.deepEqual(allParts.se.mask.getPosition(), {x: 450, y: 150}, 'south-east mask has the right position');
-        assert.deepEqual(allParts.se.overlay.getSize(), {width: 100 - 7, height: 200 - 14}, 'south-east overlay has the right dimensions');
-        assert.deepEqual(allParts.se.overlay.getPosition(), {x: 450, y: 150 + 7}, 'south-east overlay has the right position');
 
         assert.deepEqual(allParts.s.mask.getSize(), {width: 350, height: 200}, 'south mask has the right dimensions');
         assert.deepEqual(allParts.s.mask.getPosition(), {x: 100, y: 150}, 'south mask has the right position');
-        assert.deepEqual(allParts.s.overlay.getSize(), {width: 350, height: 200 - 14}, 'south overlay has the right dimensions');
-        assert.deepEqual(allParts.s.overlay.getPosition(), {x: 100, y: 150 + 7}, 'south overlay has the right position');
 
         assert.deepEqual(allParts.sw.mask.getSize(), {width: 50, height: 200}, 'south-west mask has the right dimensions');
         assert.deepEqual(allParts.sw.mask.getPosition(), {x: 50, y: 150}, 'south-west mask has the right position');
-        assert.deepEqual(allParts.sw.overlay.getSize(), {width: 50 - 7, height: 200 - 14}, 'south-west overlay has the right dimensions');
-        assert.deepEqual(allParts.sw.overlay.getPosition(), {x: 50 + 7, y: 150 + 7}, 'south-west overlay has the right position');
 
         assert.deepEqual(allParts.w.mask.getSize(), {width: 50, height: 50}, 'west mask has the right dimensions');
         assert.deepEqual(allParts.w.mask.getPosition(), {x: 50, y: 100}, 'west mask has the right position');
-        assert.deepEqual(allParts.w.overlay.getSize(), {width: 50 - 14, height: 50 + 14}, 'west overlay has the right dimensions');
-        assert.deepEqual(allParts.w.overlay.getPosition(), {x: 50 + 7, y: 100 - 7}, 'west overlay has the right position');
 
         assert.deepEqual(allParts.nw.mask.getSize(), {width: 50, height: 50}, 'north-west mask has the right dimensions');
         assert.deepEqual(allParts.nw.mask.getPosition(), {x: 50, y: 50}, 'north-west mask has the right position');
-        assert.deepEqual(allParts.nw.overlay.getSize(), {width: 50 - 7, height: 50 - 14}, 'north-west overlay has the right dimensions');
-        assert.deepEqual(allParts.nw.overlay.getPosition(), {x: 50 + 7, y: 50 + 7}, 'north-west overlay has the right position');
 
         $innerDrag = $container.find('.line-reader-inner-drag');
-        assert.equal($innerDrag.position().left, 100, 'inner drag has the correct x position');
+        assert.equal($innerDrag.position().left, 110, 'inner drag has the correct x position');
         assert.equal($innerDrag.position().top, 157, 'inner drag has the correct y position');
     });
 
     QUnit
         .cases.init([
 
-            // North
-            {title: 'north / shrink 20 from top',
-                maskId: 'n', width: 350, height: 50 - 20, fromTop: true,
-                dimensions: {outerHeight: 300 - 20, topHeight: 30}, position: {outerY: 50 + 20}},
-
-            {title: 'north / shrink 40 from top, capped to 30',
-                maskId: 'n', width: 350, height: 50 - 40, fromTop: true,
-                dimensions: {outerHeight: 300 - 30, topHeight: 20}, position: {outerY: 50 + 30}},
-
-            {title: 'north / expand 20 from top',
-                maskId: 'n', width: 350, height: 50 + 20, fromTop: true,
-                dimensions: {outerHeight: 300 + 20, topHeight: 50 + 20}, position: {outerY: 50 - 20}},
-
-            {title: 'north / shrink 20 from bottom',
-                maskId: 'n', width: 350, height: 50 - 20, fromTop: false,
-                dimensions: {innerHeight: 50 + 20, topHeight: 50 - 20}, position: {innerY: 100 - 20}},
-
-            {title: 'north / shrink 40 from bottom, capped to 30',
-                maskId: 'n', width: 350, height: 50 - 40, fromTop: false,
-                dimensions: {innerHeight: 50 + 30, topHeight: 50 - 30}, position: {innerY: 100 - 30}},
-
-            {title: 'north / expand 20 from bottom',
-                maskId: 'n', width: 350, height: 50 + 20, fromTop: false,
-                dimensions: {innerHeight: 50 - 20, topHeight: 50 + 20}, position: {innerY: 100 + 20}},
-
-            {title: 'north / expand 50 from bottom, capped to 30',
-                maskId: 'n', width: 350, height: 50 + 50, fromTop: false,
-                dimensions: {innerHeight: 50 - 30, topHeight: 50 + 30}, position: {innerY: 100 + 30}},
-
-            // North-east
-            {title: 'north-east / shrink 20 from top',
-                maskId: 'ne', width: 100, height: 50 - 20, fromTop: true,
-                dimensions: {outerHeight: 300 - 20, topHeight: 30}, position: {outerY: 50 + 20}},
-
-            {title: 'north-east / shrink 40 from top, capped to 30',
-                maskId: 'ne', width: 100, height: 50 - 40, fromTop: true,
-                dimensions: {outerHeight: 300 - 30, topHeight: 20}, position: {outerY: 50 + 30}},
-
-            {title: 'north-east / expand 20 from top',
-                maskId: 'ne', width: 100, height: 50 + 20, fromTop: true,
-                dimensions: {outerHeight: 300 + 20, topHeight: 50 + 20}, position: {outerY: 50 - 20}},
-
-            {title: 'north-east / shrink 20 from right',
-                maskId: 'ne', width: 100 - 20, height: 50,
-                dimensions: {outerWidth: 500 - 20, rightWidth: 100 - 20}},
-
-            {title: 'north-east / shrink 90 from right, capped to 80',
-                maskId: 'ne', width: 100 - 90, height: 50,
-                dimensions: {outerWidth: 500 - 80, rightWidth: 100 - 80}},
-
-            {title: 'north-east / expand 20 from right',
-                maskId: 'ne', width: 100 + 20, height: 50,
-                dimensions: {outerWidth: 500 + 20, rightWidth: 100 + 20}},
-
             // East
-            {title: 'east / shrink 20 from right',
-                maskId: 'e', width: 100 - 20, height: 50,
-                dimensions: {outerWidth: 500 - 20, rightWidth: 100 - 20}},
-
-            {title: 'east / shrink 90 from right, capped to 80',
-                maskId: 'e', width: 100 - 90, height: 50,
-                dimensions: {outerWidth: 500 - 80, rightWidth: 100 - 80}},
-
-            {title: 'east / expand 20 from right',
-                maskId: 'e', width: 100 + 20, height: 50,
-                dimensions: {outerWidth: 500 + 20, rightWidth: 100 + 20}},
-
             {title: 'east / shrink 20 from left',
                 maskId: 'e', width: 100 - 20, height: 50, fromLeft: true,
                 dimensions: {innerWidth: 350 + 20, rightWidth: 100 - 20}},
@@ -256,18 +176,6 @@ define([
                 dimensions: {outerHeight: 300 + 20, bottomHeight: 200 + 20}},
 
             // South
-            {title: 'south / shrink 20 from bottom',
-                maskId: 's', width: 350, height: 200 - 20,
-                dimensions: {outerHeight: 300 - 20, bottomHeight: 200 - 20}},
-
-            {title: 'south / shrink 190 from bottom, capped to 160',
-                maskId: 's', width: 350, height: 200 - 190,
-                dimensions: {outerHeight: 300 - 160, bottomHeight: 200 - 160}},
-
-            {title: 'south / expand 20 from bottom',
-                maskId: 's', width: 350, height: 200 + 20,
-                dimensions: {outerHeight: 300 + 20, bottomHeight: 200 + 20}},
-
             {title: 'south / shrink 20 from top',
                 maskId: 's', width: 350, height: 200 - 20, fromTop: true,
                 dimensions: {innerHeight: 50 + 20, bottomHeight: 200 - 20}},
@@ -283,85 +191,6 @@ define([
             {title: 'south / expand 40 from top, capped to 30',
                 maskId: 's', width: 350, height: 200 + 40, fromTop: true,
                 dimensions: {innerHeight: 50 - 30, bottomHeight: 200 + 30}},
-
-            // South-west
-            {title: 'south-west / shrink 20 from bottom',
-                maskId: 'sw', width: 50, height: 200 - 20,
-                dimensions: {outerHeight: 300 - 20, bottomHeight: 200 - 20}},
-
-            {title: 'south-west / shrink 190 from bottom, capped to 160',
-                maskId: 'sw', width: 50, height: 200 - 190,
-                dimensions: {outerHeight: 300 - 160, bottomHeight: 200 - 160}},
-
-            {title: 'south-west / expand 20 from bottom',
-                maskId: 'sw', width: 50, height: 200 + 20,
-                dimensions: {outerHeight: 300 + 20, bottomHeight: 200 + 20}},
-
-            {title: 'south-west / shrink 20 from left',
-                maskId: 'sw', width: 50 - 20, height: 200, fromLeft: true,
-                dimensions: {outerWidth: 500 - 20, leftWidth: 50 - 20}, position: {outerX: 50 + 20}},
-
-            {title: 'south-west / shrink 40 from left, capped to 30',
-                maskId: 'sw', width: 50 - 40, height: 200, fromLeft: true,
-                dimensions: {outerWidth: 500 - 30, leftWidth: 50 - 30}, position: {outerX: 50 + 30}},
-
-            {title: 'south-west / expand 20 from left',
-                maskId: 'sw', width: 50 + 20, height: 200, fromLeft: true,
-                dimensions: {outerWidth: 500 + 20, leftWidth: 50 + 20}, position: {outerX: 50 - 20}},
-
-            // West
-            {title: 'west / shrink 20 from left',
-                maskId: 'w', width: 50 - 20, height: 50, fromLeft: true,
-                dimensions: {outerWidth: 500 - 20, leftWidth: 50 - 20}, position: {outerX: 50 + 20}},
-
-            {title: 'west / shrink 40 from left, capped to 30',
-                maskId: 'w', width: 50 - 40, height: 50, fromLeft: true,
-                dimensions: {outerWidth: 500 - 30, leftWidth: 50 - 30}, position: {outerX: 50 + 30}},
-
-            {title: 'west / expand 20 from left',
-                maskId: 'w', width: 50 + 20, height: 50, fromLeft: true,
-                dimensions: {outerWidth: 500 + 20, leftWidth: 50 + 20}, position: {outerX: 50 - 20}},
-
-            {title: 'west / shrink 20 from right',
-                maskId: 'w', width: 50 - 20, height: 50,
-                dimensions: {innerWidth: 350 + 20, leftWidth: 50 - 20}, position: {innerX: 100 - 20}},
-
-            {title: 'west / shrink 40 from right, capped to 30',
-                maskId: 'w', width: 50 - 40, height: 50,
-                dimensions: {innerWidth: 350 + 30, leftWidth: 50 - 30}, position: {innerX: 100 - 30}},
-
-            {title: 'west / expand 20 from right',
-                maskId: 'w', width: 50 + 20, height: 50,
-                dimensions: {innerWidth: 350 - 20, leftWidth: 50 + 20}, position: {innerX: 100 + 20}},
-
-            {title: 'west / expand 340 from right, capped to 330',
-                maskId: 'w', width: 50 + 340, height: 50,
-                dimensions: {innerWidth: 350 - 330, leftWidth: 50 + 330}, position: {innerX: 100 + 330}},
-
-            // North-west
-            {title: 'north-west / shrink 20 from left',
-                maskId: 'nw', width: 50 - 20, height: 50, fromLeft: true,
-                dimensions: {outerWidth: 500 - 20, leftWidth: 50 - 20}, position: {outerX: 50 + 20}},
-
-            {title: 'north-west / shrink 40 from left, capped to 30',
-                maskId: 'nw', width: 50 - 40, height: 50, fromLeft: true,
-                dimensions: {outerWidth: 500 - 30, leftWidth: 50 - 30}, position: {outerX: 50 + 30}},
-
-            {title: 'north-west / expand 20 from left',
-                maskId: 'nw', width: 50 + 20, height: 50, fromLeft: true,
-                dimensions: {outerWidth: 500 + 20, leftWidth: 50 + 20}, position: {outerX: 50 - 20}},
-
-            {title: 'north-west / shrink 20 from top',
-                maskId: 'nw', width: 50, height: 50 - 20, fromTop: true,
-                dimensions: {outerHeight: 300 - 20, topHeight: 30}, position: {outerY: 50 + 20}},
-
-            {title: 'north-west / shrink 40 from top, capped to 30',
-                maskId: 'nw', width: 50, height: 50 - 40, fromTop: true,
-                dimensions: {outerHeight: 300 - 30, topHeight: 20}, position: {outerY: 50 + 30}},
-
-            {title: 'north-west / expand 20 from top',
-                maskId: 'nw', width: 50, height: 50 + 20, fromTop: true,
-                dimensions: {outerHeight: 300 + 20, topHeight: 50 + 20}, position: {outerY: 50 - 20}}
         ])
         .test('Resize', function(data, assert) {
             var $container = $('#qunit-fixture'),
@@ -414,8 +243,8 @@ define([
             {
                 title: 'topHeight too short',
                 positionIn: {innerY: 10},
-                positionOut: {innerY: 20},
-                dimensionsOut: {topHeight: 20, outerHeight: 210, bottomHeight: 200 - (50 + 10)}
+                positionOut: {innerY: 50},
+                dimensionsOut: {topHeight: 50, outerHeight: 240, bottomHeight: 200 - (50 + 10)}
             }, {
                 title: 'innerHeight too short',
                 dimensionsIn: {innerHeight: 10},
