@@ -137,12 +137,11 @@ define([
                     var testContext = dataHolder.get('testContext');
                     var testMap = dataHolder.get('testMap');
                     var testData = dataHolder.get('testData');
-
                     var isLast = testContext && testMap ? navigationHelper.isLast(testMap, testContext.itemIdentifier) : false;
                     var isOffline = self.isOffline();
                     var isBlocked = _.contains(blockingActions, action);
                     var isProperActions = actionParams.direction === 'next' || action === 'skip';
-                    var isDirectionDefined = !!actionParams.direction;
+                    var isDirectionDefined;
                     var isMeaningfullScope = !!actionParams.scope;
 
                     /***
@@ -191,6 +190,11 @@ define([
                             reason: actionParams.reason
                         });
                     }
+                    if (action === 'skip') {
+                        actionParams.direction = action;
+                    }
+
+                    isDirectionDefined = !!actionParams.direction;
 
                     if(isBlocked || (isProperActions && isLast)){
                         // the last item of the test
