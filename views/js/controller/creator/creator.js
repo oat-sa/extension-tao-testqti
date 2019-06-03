@@ -80,16 +80,15 @@ define([
           * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
           */
         start(options){
-            const self = this;
             const $container = $('#test-creator');
             const $saver = $('#saver');
 
-            var creatorContext;
-            var binder;
-            var binderOptions;
-            var modelOverseer;
+            let creatorContext;
+            let binder;
+            let binderOptions;
+            let modelOverseer;
 
-            self.identifiers = [];
+            this.identifiers = [];
 
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
