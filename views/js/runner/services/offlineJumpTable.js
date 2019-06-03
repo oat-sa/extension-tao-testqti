@@ -60,7 +60,7 @@ define([
                     var responseIdentifier = params.itemDefinition + '.' + itemResponseIdentifier;
 
                     _.forEach(response, function(responseEntry) {
-                        var responseId = responseEntry.identifier;
+                        var responseId = responseEntry ?  responseEntry.identifier : undefined;
 
                         if (Array.isArray(responseId)) {
                             responseId.forEach(function(id) {

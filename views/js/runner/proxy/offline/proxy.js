@@ -140,7 +140,7 @@ define([
                     var isLast = testContext && testMap ? navigationHelper.isLast(testMap, testContext.itemIdentifier) : false;
                     var isOffline = self.isOffline();
                     var isBlocked = _.contains(blockingActions, action);
-                    var isProperActions = actionParams.direction === 'next' || action === 'skip';
+                    var isNavigationAction = actionParams.direction === 'next' || action === 'skip';
                     var isDirectionDefined;
                     var isMeaningfullScope = !!actionParams.scope;
 
@@ -196,7 +196,7 @@ define([
 
                     isDirectionDefined = !!actionParams.direction;
 
-                    if(isBlocked || (isProperActions && isLast)){
+                    if(isBlocked || (isNavigationAction && isLast)){
                         // the last item of the test
                         result.testContext = {
                             state: testData.states.closed
