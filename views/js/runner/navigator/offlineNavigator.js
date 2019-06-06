@@ -83,7 +83,7 @@ define([
              */
             init: function init() {
                 offlineJumpTableHelper.setTestMap(testMap);
-                offlineJumpTableHelper.init();
+                offlineJumpTableHelper.init(testContext);
                 return this;
             },
 
