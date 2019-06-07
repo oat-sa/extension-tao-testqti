@@ -120,11 +120,19 @@ define([
 
                     styleResizableEdges: function styleResizableEdges() {
                         var $element = this.getElement();
-                        _.forOwn(this.config.edges, function (isResizable, edgeId) {
+                        _.forOwn(this.config.edgesBorders, function (isResizable, edgeId) {
                             if (isResizable) {
                                 $element.addClass('border-' + edgeId);
                             }
                         });
+                    },
+                    addResizeControll: function addResizeControll() {
+                        var $element = this.getElement();
+                        var $resizeControll = $('<div>', {
+                            'class': 'resize-control',
+                        });
+
+                        $element.append($resizeControll);
                     }
                 };
 
@@ -137,6 +145,10 @@ define([
                     var $element = this.getElement();
 
                     this.styleResizableEdges();
+
+                    if (this.config.resizeControll) {
+                        this.addResizeControll();
+                    }
 
                     $element
                         .addClass('line-reader-mask ' + maskConfig.id)
@@ -152,6 +164,7 @@ define([
                     closer.hide();
                     invokeOnOverlays('hide');
                     invokeOnMasks('setState', ['resizing', true]);
+                    this.setState('resizer', true);
                 })
                 .on('beforeresize', maskConfig.beforeResize || _.noop)
                 .on('resize', maskConfig.onResize || _.noop)
@@ -164,6 +177,7 @@ define([
                     invokeOnOverlays('show');
                     innerDrag.show();
                     closer.show();
+                    this.setState('resizer', false);
                 })
                 .init();
         }
@@ -250,7 +264,10 @@ define([
                         $element = this.getElement(),
                         // captures touch and mouse
                         // also fixes issue with IE not capturing 'mousedown' etc
-                        pointerEventsPrefix = window.PointerEvent ? 'pointer' : 'mouse';
+                        pointerEventsPrefix = window.PointerEvent ? 'pointer' : 'mouse',
+                        $moveIcon = $('<div>', {
+                            'class': 'icon icon-mobile-menu'
+                        });;
 
 
                     $element
@@ -261,10 +278,8 @@ define([
                         })
                         .on(pointerEventsPrefix + 'up' + ' touchend', function() {
                             self.restoreOverlay();
-                        });
-
-                    // uncomment this to see what's going on with overlays:
-                    // $element.css({ opacity: 0.5, 'background-color': 'yellow', border: '1px solid brown '});
+                        })
+                        .prepend($moveIcon);
                 })
                 .on('dragstart', function() {
                     innerDrag.hide();
@@ -317,10 +332,10 @@ define([
 
                     rect = {
                         x: fixedXY.left + constrains.minWidth,
-                        y: fixedXY.top + (constrains.minHeight + dimensions.innerHeight + options.resizeHandleSize),
+                        y: fixedXY.top + (constrains.minTopHeight + dimensions.innerHeight + options.resizeHandleSize),
                         width: dimensions.outerWidth - (constrains.minWidth * 2 ),
                         height: dimensions.outerHeight -
-                            (dimensions.innerHeight + constrains.minHeight + constrains.minBottomHeight - options.innerDragHeight)
+                            (dimensions.innerHeight + constrains.minTopHeight + constrains.minBottomHeight - options.innerDragHeight)
                     };
 
                     // uncomment to see what's going on:
@@ -337,6 +352,7 @@ define([
                         });
 
                     $element.addClass('line-reader-inner-drag');
+                    $element.css({ background: 'none' });
                     $element.append($dragIcon);
                     $element.on('mousedown touchstart', function(e) {
                         e.stopPropagation();
@@ -345,7 +361,6 @@ define([
                 })
                 .on('dragstart', function() {
                     closer.hide();
-                    invokeOnOverlays('hide');
                     invokeOnMasks('setState', ['resizing', true]);
                 })
                 .on('dragmove', function(xOffsetRelative, yOffsetRelative) {
@@ -361,7 +376,6 @@ define([
                     applyTransformsToMasks();
                 })
                 .on('dragend', function() {
-                    invokeOnOverlays('show');
                     innerDrag.bringToFront();
                     closer.show();
                     invokeOnMasks('setState', ['resizing', false]);
@@ -458,16 +472,18 @@ define([
 
         function applyTransformsToOverlays() {
             _.forOwn(allParts, function(part) {
-                part.mask.placeOverlay(part.overlay);
+                if (part.overlay) {
+                    part.mask.placeOverlay(part.overlay);
+                }
             });
         }
 
         function applyTransformsToInnerDrag() {
             if (innerDrag) {
                 innerDrag
-                    .setSize(dimensions.innerWidth, options.innerDragHeight)
+                    .setSize(dimensions.innerWidth - 20, options.innerDragHeight)
                     .moveTo(
-                        position.innerX,
+                        position.innerX + 10,
                         position.innerY + dimensions.innerHeight + options.resizeHandleSize
                     );
             }
@@ -481,8 +497,8 @@ define([
                         constrains.minHeight - options.resizeHandleSize
                     )
                     .moveTo(
-                        position.outerX + dimensions.outerWidth - constrains.minWidth + 3, // manual adjustment so it looks better
-                        position.outerY + options.resizeHandleSize
+                        position.outerX + dimensions.outerWidth - constrains.minWidth - 5, // manual adjustment so it looks better
+                        position.outerY + options.resizeHandleSize - 4
                     );
             }
         }
@@ -492,9 +508,9 @@ define([
          * If not, correct them
          */
         function correctTransforms() {
-            if (dimensions.topHeight < constrains.minHeight) {
-                dimensions.topHeight = constrains.minHeight;
-                position.innerY = position.outerY + constrains.minHeight;
+            if (dimensions.topHeight < constrains.minTopHeight) {
+                dimensions.topHeight = constrains.minTopHeight;
+                position.innerY = position.outerY + constrains.minTopHeight;
             }
             if (dimensions.innerHeight < constrains.minHeight) {
                 dimensions.innerHeight = constrains.minHeight;
@@ -598,7 +614,10 @@ define([
             // North
             createPart({
                 id: 'n',
-                edges: { top: true, right: false, bottom: true, left: false },
+                edges: { top: false, right: false, bottom: false, left: false },
+                edgesBorders: { top: true, right: false, bottom: true, left: false },
+                addOverlay: true,
+                minHeight: constrains.minTopHeight,
 
                 // move and dimension the mask
                 place: function place() {
@@ -616,11 +635,11 @@ define([
                     var pos = this.getPosition(),
                         size = this.getSize();
                     overlay.moveTo(
-                        pos.x,
-                        pos.y + options.resizeHandleSize
+                        position.outerX,
+                        pos.y
                     ).setSize(
-                        size.width,
-                        size.height - (options.resizeHandleSize * 2)
+                        dimensions.outerWidth,
+                        size.height
                     );
                 },
 
@@ -642,7 +661,9 @@ define([
             // North-east
             createPart({
                 id: 'ne',
-                edges: { top: true, right: true, bottom: false, left: false },
+                edges: { top: false, right: false, bottom: false, left: false },
+                edgesBorders: { top: true, right: true, bottom: false, left: false },
+                minHeight: constrains.minTopHeight,
 
                 place: function place() {
                     this.moveTo(
@@ -673,10 +694,49 @@ define([
                 }
             });
 
+            // South east
+            createPart({
+                id: 'se',
+                edges: { top: false, right: '.resize-control', bottom: '.resize-control', left: false },
+                edgesBorders: { top: false, right: true, bottom: true, left: false },
+                minHeight: constrains.minBottomHeight,
+                resizeControll: true,
+
+                place: function place() {
+                    this.moveTo(
+                        position.innerX + dimensions.innerWidth,
+                        position.innerY + dimensions.innerHeight
+                    ).setSize(
+                        dimensions.rightWidth,
+                        dimensions.bottomHeight
+                    );
+                },
+
+                placeOverlay: function placeOverlay(overlay) {
+                    var pos = this.getPosition(),
+                        size = this.getSize();
+                    overlay.moveTo(
+                        pos.x,
+                        pos.y + options.resizeHandleSize
+                    ).setSize(
+                        size.width - options.resizeHandleSize,
+                        size.height - (options.resizeHandleSize * 2)
+                    );
+                },
+
+                onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
+                    setRightWidth(width, x, fromLeft);
+                    setBottomHeight(height, y, fromTop);
+                    applyTransformsToMasks();
+                }
+            });
+
             // East
             createPart({
                 id: 'e',
-                edges: { top: false, right: true, bottom: false, left: true },
+                edges: { top: false, right: false, bottom: false, left: '.resize-control', },
+                edgesBorders: { top: false, right: true, bottom: false, left: true },
+                resizeControll: true,
 
                 place: function place() {
                     this.moveTo(
@@ -712,46 +772,13 @@ define([
                 }
             });
 
-            // South east
-            createPart({
-                id: 'se',
-                edges: { top: false, right: true, bottom: true, left: false },
-                minHeight: constrains.minBottomHeight,
-
-                place: function place() {
-                    this.moveTo(
-                        position.innerX + dimensions.innerWidth,
-                        position.innerY + dimensions.innerHeight
-                    ).setSize(
-                        dimensions.rightWidth,
-                        dimensions.bottomHeight
-                    );
-                },
-
-                placeOverlay: function placeOverlay(overlay) {
-                    var pos = this.getPosition(),
-                        size = this.getSize();
-                    overlay.moveTo(
-                        pos.x,
-                        pos.y + options.resizeHandleSize
-                    ).setSize(
-                        size.width - options.resizeHandleSize,
-                        size.height - (options.resizeHandleSize * 2)
-                    );
-                },
-
-                onResize: function onResize(width, height, fromLeft, fromTop, x, y) {
-                    setRightWidth(width, x, fromLeft);
-                    setBottomHeight(height, y, fromTop);
-                    applyTransformsToMasks();
-                }
-            });
-
             // South
             createPart({
                 id: 's',
-                edges: { top: true, right: false, bottom: true, left: false },
+                edges: { top: '.resize-control', right: false, bottom: false, left: false },
+                edgesBorders: { top: true, right: false, bottom: true, left: false },
                 minHeight: constrains.minBottomHeight,
+                resizeControll: true,
 
                 place: function place() {
                     this.moveTo(
@@ -790,7 +817,8 @@ define([
             // South-west
             createPart({
                 id: 'sw',
-                edges: { top: false, right: false, bottom: true, left: true },
+                edges: { top: false, right: false, bottom: false, left: false },
+                edgesBorders: { top: false, right: false, bottom: true, left: true },
                 minHeight: constrains.minBottomHeight,
 
                 place: function place() {
@@ -825,7 +853,8 @@ define([
             // West
             createPart({
                 id: 'w',
-                edges: { top: false, right: true, bottom: false, left: true },
+                edges: { top: false, right: false, bottom: false, left: false },
+                edgesBorders: { top: false, right: true, bottom: false, left: true },
 
                 place: function place() {
                     this.moveTo(
@@ -864,7 +893,9 @@ define([
             // North-west
             createPart({
                 id: 'nw',
-                edges: { top: true, right: false, bottom: false, left: true },
+                edges: { top: false, right: false, bottom: false, left: false },
+                edgesBorders: { top: true, right: false, bottom: false, left: true },
+                minHeight: constrains.minTopHeight,
 
                 place: function place() {
                     this.moveTo(
@@ -899,7 +930,7 @@ define([
         function createPart(partConfig) {
             allParts[partConfig.id] = {
                 mask: createMask(_.assign({}, constrains, partConfig)),
-                overlay: createOverlay(partConfig)
+                overlay: partConfig.addOverlay ? createOverlay(partConfig) : null
             };
         }
 
@@ -927,7 +958,8 @@ define([
         constrains = {
             minWidth:           (options.resizeHandleSize * 2) + options.dragMinWidth,
             minHeight:          (options.resizeHandleSize * 2) + options.dragMinHeight,
-            minBottomHeight:    (options.resizeHandleSize * 2) + options.innerDragHeight
+            minBottomHeight:    (options.resizeHandleSize * 2) + options.innerDragHeight,
+            minTopHeight: (options.resizeHandleSize * 2) + 30 // make sure that top will fit header size
         };
 
         compoundMask = {

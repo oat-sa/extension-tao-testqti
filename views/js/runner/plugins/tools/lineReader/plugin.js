@@ -50,7 +50,7 @@ define([
      * @type {Object}
      */
     var maskOptions = {
-        dragMinWidth: 7,
+        dragMinWidth: 17,
         dragMinHeight: 7,
         resizeHandleSize: 7,
         innerDragHeight: 20
