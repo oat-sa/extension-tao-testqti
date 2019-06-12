@@ -105,9 +105,6 @@ define([
                     if (error.data && self.isConnectivityError(error.data)) {
                         self.setOffline('request');
                     }
-                    if (error instanceof Error) { //in case status 200 OK ans response.success:false we don't have Error
-                        feedback().error(error);
-                    }
                     return Promise.reject(error);
                 });
             };
