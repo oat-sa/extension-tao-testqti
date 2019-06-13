@@ -124,7 +124,7 @@ define([
             assert.ok(!!modal.getDom().length, 'The dialogConfirm instance gets a DOM element');
             assert.equal(modal.getDom().parent().length, 1, 'The dialogConfirm box is rendered by default');
 
-            assert.equal(modal.getDom().find('button').length, 2, "The dialogConfirm box displays 2 buttons");
+            assert.equal(modal.getDom().find('.modal-body button').length, 2, "The dialogConfirm box displays 2 buttons");
             assert.equal(modal.getDom().find('button[data-control="ok"]').length, 1, "The dialogConfirm box displays a 'ok' button");
             assert.equal(modal.getDom().find('button[data-control="cancel"]').length, 1, "The dialogConfirm box displays a 'cancel' button");
 
