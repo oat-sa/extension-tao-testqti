@@ -105,7 +105,6 @@ define([
                     if (error.data && self.isConnectivityError(error.data)) {
                         self.setOffline('request');
                     }
-                    feedback().error(error);
                     return Promise.reject(error);
                 });
             };
