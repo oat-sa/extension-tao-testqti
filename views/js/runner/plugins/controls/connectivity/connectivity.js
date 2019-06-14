@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2019 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -119,7 +119,7 @@ define([
 
                         //creates the waiting modal dialog
                         dialog = waitingDialog({
-                            message : __('You are encountering a prolonged connectivity loss. ') + message,
+                            message : __('You are encountering a prolonged connectivity loss. '),
                             waitContent : __('Please wait while we try to restore the connection.'),
                             proceedContent : __('The connection seems to be back, please proceed')
                         })
