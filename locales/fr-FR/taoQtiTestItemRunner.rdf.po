@@ -33,4 +33,4 @@ msgstr "Imbriquer et exécuter un item dans un test QTI. Ce service lance les AP
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Item Runner"
-msgstr "QTI Test Item Runner"
+msgstr "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
