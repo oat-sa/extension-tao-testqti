@@ -101,8 +101,7 @@ define([
              * @param {String} [messsage] - additional message for the dialog
              * @returns {Promise} resolves once the wait is over and the user click on 'proceed'
              */
-            this.displayWaitingDialog = function displayWaitingDialog(message){
-
+            this.displayWaitingDialog = function displayWaitingDialog(message = ''){
                 var dialog;
                 return new Promise(function(resolve) {
                     if(!waiting){
@@ -119,7 +118,7 @@ define([
 
                         //creates the waiting modal dialog
                         dialog = waitingDialog({
-                            message : __('You are encountering a prolonged connectivity loss. '),
+                            message : __('You are encountering a prolonged connectivity loss. ') + message,
                             waitContent : __('Please wait while we try to restore the connection.'),
                             proceedContent : __('The connection seems to be back, please proceed')
                         })
@@ -195,7 +194,7 @@ define([
                 }
 
                 if (proxy.isOffline()) {
-                    self.displayWaitingDialog(err.message)
+                    self.displayWaitingDialog()
                         .then(function(){
                             if(err.type === 'nav'){
                                 testRunner.loadItem(testRunner.getTestContext().itemIdentifier);
