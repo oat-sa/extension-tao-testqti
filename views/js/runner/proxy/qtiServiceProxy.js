@@ -102,7 +102,7 @@ define([
                     }
                 })
                 .catch(function(error) {
-                    if (error.data && self.isConnectivityError(error.data)) {
+                    if (self.isConnectivityError(error)) {
                         self.setOffline('request');
                     }
                     return Promise.reject(error);
