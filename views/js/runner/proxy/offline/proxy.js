@@ -132,7 +132,7 @@ define([
             this.offlineAction = function offlineAction(action, actionParams) {
                 return new Promise(function(resolve, reject) {
                     var result = { success: true };
-                    var blockingActions = ['exitTest', 'timeout'];
+                    var blockingActions = ['exitTest', 'timeout', 'pause'];
                     var dataHolder = self.getDataHolder();
                     var testContext = dataHolder.get('testContext');
                     var testMap = dataHolder.get('testMap');
@@ -185,10 +185,12 @@ define([
                             });
                     };
 
-                    if (action === 'pause') {
-                        throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflinePauseError(), {
-                            reason: actionParams.reason
-                        });
+                    if (isOffline) {
+                        if (action === 'pause') {
+                            throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflinePauseError(), {
+                                reason: actionParams.reason
+                            });
+                        }
                     }
                     if (action === 'skip') {
                         actionParams.direction = action;
