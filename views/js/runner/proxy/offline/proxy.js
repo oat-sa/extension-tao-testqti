@@ -323,7 +323,8 @@ define([
                     content: JSON.stringify({
                         timestamp: timestamp,
                         testData: testData,
-                        actionQueue: actions
+                        actionQueue: actions,
+                        testConfig: self.requestConfig,
                     })
                 };
             };
