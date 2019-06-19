@@ -108,6 +108,7 @@
     }
 
     #qti-content {
+        -webkit-overflow-scrolling: touch;
         max-width: map-get($widths, item-max-width) * 1px;
         width: 100%;
         margin: auto;
