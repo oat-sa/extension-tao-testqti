@@ -185,13 +185,6 @@ define([
                             });
                     };
 
-                    if (isOffline) {
-                        if (action === 'pause') {
-                            throw offlineErrorHelper.buildErrorFromContext(offlineErrorHelper.getOfflinePauseError(), {
-                                reason: actionParams.reason
-                            });
-                        }
-                    }
                     if (action === 'skip') {
                         actionParams.direction = action;
                     }
