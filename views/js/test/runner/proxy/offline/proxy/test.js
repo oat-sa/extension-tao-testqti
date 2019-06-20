@@ -1590,4 +1590,66 @@ define([
         });
     });
 
+    QUnit.test('offlineProxy.prepareDownload', function(assert) {
+        var ready = assert.async();
+        var initConfig = {
+            testDefinition: 'http://tao.dev/mockTestDefinition#123',
+            testCompilation: 'http://tao.dev/mockTestCompilation#123',
+            serviceCallId: 'http://tao.dev/mockServiceCallId#123',
+            bootstrap: {
+                serviceController: 'MockRunner',
+                serviceExtension: 'MockExtension',
+                communication: {
+                    enabled: false,
+                    type: 'mock',
+                    extension: 'MockRunner',
+                    controller: 'MockCommunicator',
+                    action: 'messages',
+                    service: null,
+                    params: {
+                        interval: 30,
+                        timeout: 30
+                    }
+                }
+            }
+        };
+        var testData = { title: 'testTitle' };
+        var actions = 'testActions';
+
+        var proxy;
+
+        assert.expect(3);
+
+        proxyFactory.registerProvider('qtiServiceProxy', qtiServiceProxy);
+
+        $.mockjax({
+            url: '/init*',
+            responseText: {
+                success: true
+            }
+        });
+
+        proxy = proxyFactory('qtiServiceProxy', initConfig);
+
+        proxy.install(new collections.Map([['testData', testData]]));
+
+        proxy.init().then(function() {
+            var downloadDataContent = JSON.parse(proxy.prepareDownload(actions).content);
+
+            assert.deepEqual(downloadDataContent.testData, testData, 'Should include test data in download data');
+            assert.deepEqual(downloadDataContent.actionQueue, actions, 'Should include actions in download data');
+            assert.deepEqual(
+                downloadDataContent.testConfig,
+                {
+                    serviceCallId: initConfig.serviceCallId,
+                    testCompilation: initConfig.testCompilation,
+                    testDefinition: initConfig.testDefinition
+                },
+                'Should include request config in download data'
+            );
+
+            ready();
+        });
+    });
+
 });
