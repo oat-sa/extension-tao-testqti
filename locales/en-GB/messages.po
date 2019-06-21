@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint104\n"
-"PO-Revision-Date: 2019-06-07T09:28:59\n"
+"Project-Id-Version: TAO 3.3.0-sprint105\n"
+"PO-Revision-Date: 2019-06-21T09:20:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: en-GB\n"
@@ -445,9 +445,6 @@ msgstr ""
 
 msgid "Go to the next item?"
 msgstr ""
-
-msgid "Gray on Green"
-msgstr "Grey on Green"
 
 msgid "Gray on green (low contrast option)"
 msgstr "Grey on green (low contrast option)"
