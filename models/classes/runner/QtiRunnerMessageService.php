@@ -38,11 +38,6 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
 {
     const SERVICE_ID = 'taoQtiTest/QtiRunnerMessageService';
 
-    const PAUSED_STATE_MESSAGE = 'The assessment has been suspended. To resume your assessment, please relaunch it.';
-    const TERMINATED_STATE_MESSAGE = 'The assessment has been terminated. You cannot interact with it anymore.';
-    const INITIAL_STATE_MESSAGE = 'The assessment has been created but is not already running.';
-    const RUNNING_STATE_MESSAGE = 'The assessment is still running.';
-
     /**
      * Gets a message related to the state of the assessment test session
      * @param mixed $testSession
@@ -83,7 +78,7 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
      */
     protected function getPausedStateMessage(AssessmentTestSession $testSession)
     {
-        return static::PAUSED_STATE_MESSAGE;
+        return __('The assessment has been suspended. To resume your assessment, please relaunch it.');
     }
 
     /**
@@ -93,7 +88,7 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
      */
     protected function getTerminatedStateMessage(AssessmentTestSession $testSession)
     {
-        return static::TERMINATED_STATE_MESSAGE;
+        return __('The assessment has been terminated. You cannot interact with it anymore.');
     }
 
     /**
@@ -103,7 +98,7 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
      */
     protected function getInitialStateMessage(AssessmentTestSession $testSession)
     {
-        return static::INITIAL_STATE_MESSAGE;
+        return __('The assessment has been created but is not already running.');
     }
 
     /**
@@ -113,6 +108,6 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
      */
     protected function getRunningStateMessages(AssessmentTestSession $testSession)
     {
-        return static::RUNNING_STATE_MESSAGE;
+        return __('The assessment is still running.');
     }
 }
