@@ -19,7 +19,9 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\tao\model\ClientLibConfigRegistry;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\taskQueue\TaskLogInterface;
@@ -1797,6 +1799,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('32.11.0');
         }
 
-        $this->skip('32.11.0', '33.7.4');
+        $this->skip('32.11.0', '33.8.0');
+
     }
 }
