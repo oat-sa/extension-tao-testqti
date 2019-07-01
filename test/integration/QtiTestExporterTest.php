@@ -189,13 +189,13 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
 
         $this->assertInstanceOf(common_report_Report::class, $report);
         $file = $report->getData();
-        
-        $this->assertInternalType('string', $file);
-        $this->assertFileExists($file);
-        $this->assertStringStartsWith($this->outputDir, $file);
 
-        $this->assertContains('qti_unit_test', $file);
-        unlink($file);
+        $this->assertArrayHasKey('path', $file);
+        $this->assertFileExists($file['path']);
+        $this->assertStringStartsWith($this->outputDir, $file['path']);
+
+        $this->assertContains('qti_unit_test', $file['path']);
+        unlink($file['path']);
     }
 
     /**

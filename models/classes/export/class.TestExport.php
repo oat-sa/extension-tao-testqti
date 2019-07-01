@@ -115,8 +115,6 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 
         if (!$report->containsError() && $subjectUri) {
             $this->getEventManager()->trigger(new QtiTestExportEvent(new core_kernel_classes_Resource($subjectUri)));
-
-            $report->setData($path);
             $report->setMessage(__('Resource(s) successfully exported.'));
         }
 

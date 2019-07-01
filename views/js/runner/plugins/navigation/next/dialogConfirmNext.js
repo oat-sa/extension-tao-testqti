@@ -23,7 +23,7 @@ define([
     'lodash',
     'i18n',
     'ui/dialog',
-    'tpl!ui/dialog/tpl/checkbox'
+    'tpl!taoQtiTest/runner/plugins/navigation/next/tpl/checkbox'
 ], function ($, _, __, dialog, checkboxTpl) {
     'use strict';
 

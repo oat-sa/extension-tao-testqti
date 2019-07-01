@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2019 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -101,8 +101,7 @@ define([
              * @param {String} [messsage] - additional message for the dialog
              * @returns {Promise} resolves once the wait is over and the user click on 'proceed'
              */
-            this.displayWaitingDialog = function displayWaitingDialog(message){
-
+            this.displayWaitingDialog = function displayWaitingDialog(message = ''){
                 var dialog;
                 return new Promise(function(resolve) {
                     if(!waiting){
@@ -195,7 +194,7 @@ define([
                 }
 
                 if (proxy.isOffline()) {
-                    self.displayWaitingDialog(err.message)
+                    self.displayWaitingDialog()
                         .then(function(){
                             if(err.type === 'nav'){
                                 testRunner.loadItem(testRunner.getTestContext().itemIdentifier);
