@@ -28,18 +28,11 @@ define([
     'context',
     'module',
     'core/router',
-    'core/promise',
-    'core/communicator',
-    'core/communicator/poll',
-    'core/communicator/request',
     'core/logger',
-    'core/pluginLoader',
-    'core/providerLoader',
     'layout/loading-bar',
     'ui/feedback',
     'util/url',
-    'taoTests/runner/runner',
-    'taoQtiTest/runner/provider/qti',
+    'taoTests/runner/providerLoader',
     'taoQtiTest/runner/proxy/loader',
     'css!taoQtiTestCss/new-test-runner'
 ], function (
@@ -49,18 +42,11 @@ define([
     context,
     module,
     router,
-    Promise,
-    communicator,
-    pollProvider,
-    requestProvider,
     loggerFactory,
-    pluginLoaderFactory,
-    providerLoaderFactory,
     loadingBar,
     feedback,
     urlUtil,
-    runner,
-    qtiProvider,
+    providerLoader,
     proxyLoader
 ) {
     'use strict';
@@ -69,30 +55,30 @@ define([
      * List of options required by the controller
      * @type {String[]}
      */
-    var requiredOptions = [
+    const requiredOptions = [
         'testDefinition',
         'testCompilation',
         'serviceCallId',
         'bootstrap',
-        'exitUrl',
-        'plugins',
         'providers'
     ];
 
-    /**
-     * Some defaults options
-     * @type {Object}
-     */
-    var defaults = {
-        provider: 'qti'
-    };
+    function getProxyConfiguration(){i
+        const proxyConfig = requirejs.config();
+        debugger;
+        return {
+            'id' : 'qtiServiceProxy',
+            'module' : 'taoQtiTest/runner/proxy/qtiServiceProxy',
+            'category' : 'proxy'
+        };
+    }
 
     /**
      * TODO provider registration should be loaded dynamically
      */
-    runner.registerProvider('qti', qtiProvider);
-    communicator.registerProvider('poll', pollProvider);
-    communicator.registerProvider('request', requestProvider);
+    //runner.registerProvider('qti', qtiProvider);
+    //communicator.registerProvider('poll', pollProvider);
+    //communicator.registerProvider('request', requestProvider);
 
     /**
      * The runner controller
@@ -107,24 +93,24 @@ define([
          * @param {String}   options.testCompilation - the test compilation id
          * @param {String}   options.serviceCallId - the service call id
          * @param {Object}   options.bootstrap - contains the extension and the controller to call
-         * @param {String}   options.exitUrl - the full URL where to return at the final end of the test
          * @param {Object[]} options.plugins - the collection of plugins to load
          * @param {Object[]} options.providers - the collection of providers to load
          */
-        start: function start(options) {
-            var runnerOptions = _.defaults({}, options, defaults);
-            var exitReason;
-            var $container = $('.runner');
-            var logger     = loggerFactory('controller/runner', { runnerOptions : runnerOptions });
-            var preventFeedback = false;
-            var errorFeedback = null;
+        start(runnerOptions = {}) {
+
+
+            const $container = $('.runner');
+            const logger     = loggerFactory('controller/runner', { runnerOptions : runnerOptions });
+            let exitReason;
+            let preventFeedback = false;
+            let errorFeedback = null;
 
             /**
              * Does the option exists ?
              * @param {String} name - the option key
              * @returns {Boolean}
              */
-            var hasOption = function hasOption(name){
+            const hasOption = function hasOption(name){
                 return typeof runnerOptions[name] !== 'undefined';
             };
 
@@ -133,9 +119,9 @@ define([
              * @param {String} [reason] - to add a warning once left
              * @param {String} [level] - error level
              */
-            var exit = function exit(reason, level){
-                var url = runnerOptions.exitUrl;
-                var params = {};
+            const exit = function exit(reason, level){
+                let url = runnerOptions.exitUrl;
+                const params = {};
                 if (reason) {
                     if (!level) {
                         level = 'warning';
@@ -151,15 +137,16 @@ define([
              * @param {Error} err - the thrown error
              * @param {String} [displayMessage] - an alternate message to display
              */
-            var onError = function onError(err, displayMessage) {
+            const onError = function onError(err, displayMessage) {
                 onFeedback(err, displayMessage, "error");
             };
 
             /**
              * Handles warnings
+             * @param {Error} err
              * @param {String} [displayMessage] - an alternate message to display
              */
-            var onWarning = function onWarning(err, displayMessage) {
+            const onWarning = function onWarning(err, displayMessage) {
                 onFeedback(err, displayMessage, "warning");
             };
 
@@ -168,8 +155,8 @@ define([
              * @param {String} [displayMessage] - an alternate message to display
              * @param {String} [type] - "error" or "warning"
              */
-            var onFeedback = function onFeedback(err, displayMessage, type) {
-                var typeMap = {
+            const onFeedback = function onFeedback(err, displayMessage, type) {
+                const typeMap = {
                     warning: {
                         logger: "warn",
                         feedback: "warning"
@@ -179,8 +166,8 @@ define([
                         feedback: "error"
                     }
                 };
-                var loggerByType = logger[typeMap[type].logger];
-                var feedbackByType = feedback()[typeMap[type].feedback];
+                const loggerByType = logger[typeMap[type].logger];
+                const feedbackByType = feedback()[typeMap[type].feedback];
 
                 displayMessage = displayMessage || err.message;
 
@@ -192,7 +179,7 @@ define([
                 loggerByType({ displayMessage : displayMessage }, err);
 
                 if(type === "error" && (err.code === 403 || err.code === 500)) {
-                    displayMessage = __('An error occurred during the test, please content your administrator.') + " " + displayMessage;
+                    displayMessage = `${__('An error occurred during the test, please content your administrator.')} ${displayMessage}`;
                     return exit(displayMessage, 'error');
                 }
                 if (!preventFeedback) {
@@ -200,39 +187,16 @@ define([
                 }
             };
 
-            /**
-             * Load the plugins dynamically
-             * @param {Object[]} plugins - the collection of plugins to load
-             * @returns {Promise} resolves with the list of loaded plugins
-             */
-            var loadPlugins = function loadPlugins(plugins){
-
-                return pluginLoaderFactory()
-                    .addList(plugins)
-                    .load(context.bundle);
-            };
-
-            /**
-             * Load the providers dynamically
-             * @param {Object[]} providers - the collection of providers to load
-             * @returns {Promise} resolves with the list of loaded providers
-             */
-            var loadProviders = function loadProviders(providers){
-
-                return providerLoaderFactory()
-                    .addList(_.filter(providers, {category: 'runner'}))
-                    .load(context.bundle);
-            };
 
             /**
              * Load the configured proxy provider
              * @returns {Promise} resolves with the name of the proxy provider
              */
-            var loadProxy = function loadProxy(){
+            const loadProxy = function loadProxy(){
                 return proxyLoader();
             };
 
-            var moduleConfig = module.config();
+            const moduleConfig = module.config();
 
             loadingBar.start();
 
@@ -240,28 +204,33 @@ define([
             if( ! _.every(requiredOptions, hasOption)) {
                 return onError(new TypeError(__('Missing required option %s', name)));
             }
+            if (!runnerOptions.providers.plugins.length) {
+                return onError(new TypeError(__('There are no plugins configured.')));
+            }
 
             // dispatch any extra registered routes
             if (moduleConfig && _.isArray(moduleConfig.extraRoutes) && moduleConfig.extraRoutes.length) {
                 router.dispatch(moduleConfig.extraRoutes);
             }
 
+            runnerOptions.providers.proxy = getProxyConfiguration();
+
             //load the plugins and the proxy provider
-            Promise
-                .all([
-                    loadPlugins(runnerOptions.plugins),
-                    loadProxy()
-                ])
+            providerLoader(runnerOptions)
                 .then(function (results) {
+                    debugger;
 
-                    var plugins = results[0];
-                    var proxyProviderName = results[1];
+                    const plugins = results[0];
+                    const proxyProviderName = results[1];
 
-                    var config = _.omit(runnerOptions, ['plugins', 'providers']);
-                    config.proxyProvider = proxyProviderName;
-                    config.renderTo      = $container;
+                    const testRunnerConfig = _.omit(runnerOptions, ['providers']);
+                    testRunnerConfig.proxyProvider = proxyProviderName;
+                    testRunnerConfig.renderTo      = $container;
 
-                    logger.debug({ config: config, plugins: plugins}, 'Start test runner');
+                    logger.debug({
+                        config: testRunnerConfig,
+                        plugins: runnerOptions.providers.plugins
+                    }, 'Start test runner');
 
                     //instantiate the QtiTestRunner
                     runner('qti', plugins, config)
@@ -283,18 +252,20 @@ define([
                             // at the end, we are redirected to the exit URL
                             exit(exitReason);
                         })
+                        //FIXME remove this event : trigger and listener
                         .on('disablefeedbackalerts', function() {
                             if (errorFeedback) {
                                 errorFeedback.close();
                             }
                             preventFeedback = true;
                         })
+                        //FIXME remove this event : trigger and listener
                         .on('enablefeedbackalerts', function() {
                             preventFeedback = false;
                         })
                         .init();
                 })
-                .catch(function(err){
+                .catch(err => {
                     onError(err, __('An error occurred during the test initialization!'));
                 });
         }
