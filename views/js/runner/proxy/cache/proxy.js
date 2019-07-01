@@ -68,6 +68,8 @@ define([
      */
     return _.defaults({
 
+        name : 'precaching',
+
         /**
          * Installs the proxy
          */
