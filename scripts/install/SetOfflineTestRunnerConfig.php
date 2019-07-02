@@ -24,9 +24,10 @@ namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\AbstractRegistry;
 use oat\oatbox\service\ConfigurableService;
-use oat\tao\model\ClientLibConfigRegistry;
-use oat\tao\model\modules\DynamicModule;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
+use oat\taoTests\models\runner\providers\ProviderRegistry;
+use oat\taoTests\models\runner\providers\TestProvider;
+use oat\tao\model\modules\DynamicModule;
 
 class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
 {
@@ -46,7 +47,12 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
     public function __invoke($params)
     {
         $this->updateTestRunnerConfig();
-        $this->registerOfflineProxy();
+        if (!$this->registerOfflineProxy()) {
+            return new \common_report_Report(
+                \common_report_Report::TYPE_ERROR,
+                "Unable to register the proxy."
+            );
+        }
         $this->disableUnsupportedTestRunnerPlugins();
 
         return new \common_report_Report(
@@ -92,10 +98,15 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
 
     private function registerOfflineProxy()
     {
-        $this->getRegistry()->register('taoQtiTest/runner/proxy/loader', [
-            'providerName' => 'offlineProxy',
-            'module'       => 'taoQtiTest/runner/proxy/offline/proxy'
-        ]);
+        $providerRegistry = $this->getProviderRegistry();
+        $providerRegistry->removeByCategory('proxy');
+        $providerRegistry->register(TestProvider::fromArray([
+            'id'       => 'offlineProxy',
+            'module'   => 'taoQtiTest/runner/proxy/offline/proxy',
+            'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
+            'category' => 'proxy'
+        ]));
+        return $providerRegistry->isRegistered('taoQtiTest/runner/proxy/offline/proxy');
     }
 
     /**
@@ -118,11 +129,11 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
     }
 
     /**
-     * @return ClientLibConfigRegistry|AbstractRegistry
+     * @return ProviderRegistry|AbstractRegistry
      */
-    private function getRegistry()
+    private function getProviderRegistry()
     {
-        return ClientLibConfigRegistry::getRegistry();
+        return ProviderRegistry::getRegistry();
     }
 
     /**

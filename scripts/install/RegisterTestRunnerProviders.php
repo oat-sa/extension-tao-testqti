@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2017-2019 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\scripts\install;
@@ -34,17 +34,45 @@ class RegisterTestRunnerProviders extends InstallAction
 {
 
     public static $providers = [
-        'runner' => [
-            [
-                'id' => 'qti',
-                'name' => 'QTI runner',
-                'module' => 'taoQtiTest/runner/provider/qti',
-                'bundle' => 'taoQtiTest/loader/qtiTestRunner.min',
-                'description' => 'QTI implementation of the test runner',
-                'category' => 'runner',
-                'active' => true,
-                'tags' => [ 'core', 'qti', 'runner' ]
-            ]
+    //runner
+        [
+            'id'          => 'qti',
+            'name'        => 'QTI runner',
+            'module'      => 'taoQtiTest/runner/provider/qti',
+            'bundle'      => 'taoQtiTest/loader/qtiTestRunner.min',
+            'description' => 'QTI implementation of the test runner',
+            'category'    => 'runner',
+            'active'      => true,
+            'tags'        => [ 'core', 'qti', 'runner' ]
+        ],
+
+    //communicator
+        [
+            'id'       => 'request',
+            'name'     => 'request communicator',
+            'module'   => 'core/communicator/request',
+            'bundle'   => 'loader/vendor.min',
+            'category' => 'communicator',
+            'active'   => true,
+            'tags'     => [ ]
+        ], [
+            'id'       => 'poll',
+            'name'     => 'poll communicator',
+            'module'   => "core/communicator/poll",
+            'bundle'   => 'loader/vendor.min',
+            'category' => 'communicator',
+            'active'   => true,
+            'tags'     => [ ]
+        ],
+
+        //proxy
+        [
+            'id' => 'qtiServiceProxy',
+            'module' => 'taoQtiTest/runner/proxy/qtiServiceProxy',
+            'bundle' => 'taoQtiTest/loader/qtiTestRunner.min',
+            'category' => 'proxy',
+            'active'   => true,
+            'tags'     => [ ]
         ]
     ];
 
@@ -53,11 +81,9 @@ class RegisterTestRunnerProviders extends InstallAction
         $registry = ProviderRegistry::getRegistry();
         $count = 0;
 
-        foreach(self::$providers as $categoryProviders) {
-            foreach($categoryProviders as $providerData){
-                if( $registry->register(TestProvider::fromArray($providerData)) ) {
-                    $count++;
-                }
+        foreach(self::$providers as $provider) {
+            if( $registry->register(TestProvider::fromArray($provider)) ) {
+                $count++;
             }
         }
 
