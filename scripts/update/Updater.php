@@ -1797,11 +1797,12 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('32.11.0');
         }
 
-        $this->skip('32.11.0', '33.7.5');
+        $this->skip('32.11.0', '33.8.0');
 
-        if ($this->isVersion('33.7.5')) {
+        if ($this->isVersion('33.8.0')) {
             OntologyUpdater::syncModels();
-            $this->setVersion('33.8.0');
+            $this->setVersion('33.9.0');
         }
+
     }
 }
