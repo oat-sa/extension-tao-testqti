@@ -20,6 +20,7 @@
 namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\tao\model\ClientLibConfigRegistry;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\taskQueue\TaskLogInterface;
@@ -1798,51 +1799,59 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('32.11.0', '33.8.0');
-        
+
         if ($this->isVersion('33.8.0')) {
 
             $providerRegistry = ProviderRegistry::getRegistry();
-            $providerRegistry->register([
-                'id'       => 'request',
-                'name'     => 'request communicator',
-                'module'   => 'core/communicator/request',
-                'bundle'   => 'loader/vendor.min',
-                'category' => 'communicator',
-                'active'   => true,
-                'tags'     => [ ]
-            ]);
-            $providerRegistry->register([
-                'id'       => 'poll',
-                'name'     => 'poll communicator',
-                'module'   => "core/communicator/poll",
-                'bundle'   => 'loader/vendor.min',
-                'category' => 'communicator',
-                'active'   => true,
-                'tags'     => [ ]
-            ]);
+            $providerRegistry->register(
+                TestProvider::fromArray([
+                    'id'       => 'request',
+                    'name'     => 'request communicator',
+                    'module'   => 'core/communicator/request',
+                    'bundle'   => 'loader/vendor.min',
+                    'category' => 'communicator',
+                    'active'   => true,
+                    'tags'     => [ ]
+                ])
+            );
+            $providerRegistry->register(
+                TestProvider::fromArray([
+                    'id'       => 'poll',
+                    'name'     => 'poll communicator',
+                    'module'   => "core/communicator/poll",
+                    'bundle'   => 'loader/vendor.min',
+                    'category' => 'communicator',
+                    'active'   => true,
+                    'tags'     => [ ]
+                ])
+            );
 
             //if the proxy was different 
             $clientLibRegistry = ClientLibConfigRegistry::getRegistry();
             if ($clientLibRegistry->isRegistered('taoQtiTest/runner/proxy/loader')) {
                 $registeredProxy = $clientLibRegistry->get('taoQtiTest/runner/proxy/loader');
-                $providerRegistry->register([
-                    'id'       => $registeredProxy['providerName'],
-                    'module'   => $registeredProxy['module'],
-                    'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
-                    'category' => 'proxy',
-                    'active'   => true,
-                    'tags'     => [ ]
-                ]);
+                $providerRegistry->register(
+                    TestProvider::fromArray([
+                        'id'       => $registeredProxy['providerName'],
+                        'module'   => $registeredProxy['module'],
+                        'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
+                        'category' => 'proxy',
+                        'active'   => true,
+                        'tags'     => [ ]
+                    ])
+                );
 
             } else {
-                $providerRegistry->register([
-                    'id'       => 'qtiServiceProxy',
-                    'module'   => 'taoQtiTest/runner/proxy/qtiServiceProxy',
-                    'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
-                    'category' => 'proxy',
-                    'active'   => true,
-                    'tags'     => [ ]
-                ]);
+                $providerRegistry->register(
+                    TestProvider::fromArray([
+                        'id'       => 'qtiServiceProxy',
+                        'module'   => 'taoQtiTest/runner/proxy/qtiServiceProxy',
+                        'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
+                        'category' => 'proxy',
+                        'active'   => true,
+                        'tags'     => [ ]
+                    ])
+                );
             }
 
             $this->setVersion('33.9.0');
