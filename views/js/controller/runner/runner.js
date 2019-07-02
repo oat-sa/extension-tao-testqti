@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2019 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -72,21 +72,20 @@ define([
         /**
          * Controller entry point
          *
-         * @param {Object}   options - the testRunner options
-         * @param {String}   options.testDefinition - the test definition id
-         * @param {String}   options.testCompilation - the test compilation id
-         * @param {String}   options.serviceCallId - the service call id
-         * @param {Object}   options.bootstrap - contains the extension and the controller to call
-         * @param {String}   options.exitUrl - the full URL where to return at the final end of the test
-         * @param {Object[]} options.plugins - the collection of plugins to load
-         * @param {Object[]} options.providers - the collection of providers to load
+         * @param {Object} config - the testRunner config
+         * @param {String} config.testDefinition - the test definition id
+         * @param {String} config.testCompilation - the test compilation id
+         * @param {String} config.serviceCallId - the service call id
+         * @param {Object} config.bootstrap - contains the extension and the controller to call
+         * @param {Object} config.options - the full URL where to return at the final end of the test
+         * @param {Object[]} config.providers - the collection of providers to load
          */
-        start(options) {
+        start(config) {
             let exitReason;
             const $container = $('.runner');
             const logger = loggerFactory('controller/runner', {
-                serviceCallId : options.serviceCallId,
-                plugins : Object.keys(options.providers.plugins)
+                serviceCallId : config.serviceCallId,
+                plugins : Object.keys(config.providers.plugins)
             });
             let preventFeedback = false;
             let errorFeedback = null;
@@ -97,7 +96,7 @@ define([
              * @returns {Boolean}
              */
             const hasOption = function hasOption(name){
-                return typeof options[name] !== 'undefined';
+                return typeof config[name] !== 'undefined';
             };
 
             /**
@@ -106,7 +105,7 @@ define([
              * @param {String} [level] - error level
              */
             const exit = function exit(reason, level){
-                let url = options.options.exitUrl;
+                let url = config.options.exitUrl;
                 const params = {};
                 if (reason) {
                     if (!level) {
@@ -138,6 +137,7 @@ define([
 
             /**
              * Handles errors & warnings
+             * @param {Error} err - the thrown error
              * @param {String} [displayMessage] - an alternate message to display
              * @param {String} [type] - "error" or "warning"
              */
@@ -177,9 +177,9 @@ define([
 
             loadingBar.start();
 
-            // verify required options
-            if( ! _.every(requiredOptions, hasOption)) {
-                return onError(new TypeError(__('Missing required option %s', name)));
+            // verify required config
+            if ( ! requiredOptions.every(hasOption) ) {
+                return onError(new TypeError(__('Missing required configuration option %s', name)));
             }
 
             // dispatch any extra registered routes
@@ -188,13 +188,13 @@ define([
             }
 
             //for the qti provider to be selected here
-            options.provider = Object.assign( options.provider || {}, { runner: 'qti' });
+            config.provider = Object.assign( config.provider || {}, { runner: 'qti' });
 
             //load the plugins and the proxy provider
-            providerLoader(options.providers, context.bundle)
+            providerLoader(config.providers, context.bundle)
                 .then(function (results) {
 
-                    const testRunnerConfig = _.omit(options, ['providers']);
+                    const testRunnerConfig = _.omit(config, ['providers']);
                     testRunnerConfig.renderTo = $container;
 
                     if (results.proxy && typeof results.proxy.getAvailableProviders === 'function') {
@@ -204,7 +204,7 @@ define([
 
                     logger.debug({
                         config: testRunnerConfig,
-                        providers : options.providers
+                        providers : config.providers
                     }, 'Start test runner');
 
                     //instantiate the QtiTestRunner
