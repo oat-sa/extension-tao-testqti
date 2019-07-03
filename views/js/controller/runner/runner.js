@@ -208,7 +208,7 @@ define([
                     }, 'Start test runner');
 
                     //instantiate the QtiTestRunner
-                    runner('qti', results.plugins, testRunnerConfig)
+                    runner(config.provider.runner, results.plugins, testRunnerConfig)
                         .on('error', onError)
                         .on('warning', onWarning)
                         .on('ready', function () {
