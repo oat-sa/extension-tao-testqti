@@ -83,21 +83,14 @@ define([
         start(config) {
             let exitReason;
             const $container = $('.runner');
+
             const logger = loggerFactory('controller/runner', {
                 serviceCallId : config.serviceCallId,
-                plugins : Object.keys(config.providers.plugins)
+                plugins : config && config.providers && Object.keys(config.providers.plugins)
             });
+
             let preventFeedback = false;
             let errorFeedback = null;
-
-            /**
-             * Does the option exists ?
-             * @param {String} name - the option key
-             * @returns {Boolean}
-             */
-            const hasOption = function hasOption(name){
-                return typeof config[name] !== 'undefined';
-            };
 
             /**
              * Exit the test runner using the configured exitUrl
@@ -178,7 +171,7 @@ define([
             loadingBar.start();
 
             // verify required config
-            if ( ! requiredOptions.every(hasOption) ) {
+            if ( ! requiredOptions.every( option => typeof config[option] !== 'undefined') ) {
                 return onError(new TypeError(__('Missing required configuration option %s', name)));
             }
 
