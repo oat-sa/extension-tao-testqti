@@ -1813,7 +1813,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                     'id'       => 'request',
                     'name'     => 'request communicator',
                     'module'   => 'core/communicator/request',
-                    'bundle'   => 'loader/vendor.min',
+                    'bundle'   => 'loader/tao.min',
                     'category' => 'communicator',
                     'active'   => true,
                     'tags'     => [ ]
@@ -1824,7 +1824,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                     'id'       => 'poll',
                     'name'     => 'poll communicator',
                     'module'   => "core/communicator/poll",
-                    'bundle'   => 'loader/vendor.min',
+                    'bundle'   => 'loader/tao.min',
                     'category' => 'communicator',
                     'active'   => true,
                     'tags'     => [ ]

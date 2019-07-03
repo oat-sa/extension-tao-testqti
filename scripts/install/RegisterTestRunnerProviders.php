@@ -51,7 +51,7 @@ class RegisterTestRunnerProviders extends InstallAction
             'id'       => 'request',
             'name'     => 'request communicator',
             'module'   => 'core/communicator/request',
-            'bundle'   => 'loader/vendor.min',
+            'bundle'   => 'loader/tao.min',
             'category' => 'communicator',
             'active'   => true,
             'tags'     => [ ]
@@ -59,7 +59,7 @@ class RegisterTestRunnerProviders extends InstallAction
             'id'       => 'poll',
             'name'     => 'poll communicator',
             'module'   => "core/communicator/poll",
-            'bundle'   => 'loader/vendor.min',
+            'bundle'   => 'loader/tao.min',
             'category' => 'communicator',
             'active'   => true,
             'tags'     => [ ]
