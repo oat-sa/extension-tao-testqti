@@ -1801,6 +1801,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('32.11.0', '33.8.0');
 
         if ($this->isVersion('33.8.0')) {
+            OntologyUpdater::syncModels();
+            $this->setVersion('33.9.0');
+        }
+
+	if ($this->isVersion('33.9.0')) {
 
             $providerRegistry = ProviderRegistry::getRegistry();
             $providerRegistry->register(
@@ -1854,7 +1859,8 @@ class Updater extends \common_ext_ExtensionUpdater {
                 );
             }
 
-            $this->setVersion('33.9.0');
+            $this->setVersion('33.10.0');
         }
+
     }
 }
