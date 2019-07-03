@@ -103,7 +103,7 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
         $providerRegistry->register(TestProvider::fromArray([
             'id'       => 'offlineProxy',
             'module'   => 'taoQtiTest/runner/proxy/offline/proxy',
-            'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
+            'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
             'category' => 'proxy'
         ]));
         return $providerRegistry->isRegistered('taoQtiTest/runner/proxy/offline/proxy');

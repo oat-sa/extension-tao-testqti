@@ -69,7 +69,7 @@ class SetPreCachingConfig extends \common_ext_action_InstallAction
         $providerRegistry->register(TestProvider::fromArray([
             'id'       => 'preCachingProxy',
             'module'   => 'taoQtiTest/runner/proxy/cache/proxy',
-            'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
+            'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
             'category' => 'proxy'
         ]));
         return $providerRegistry->isRegistered('taoQtiTest/runner/proxy/cache/proxy');

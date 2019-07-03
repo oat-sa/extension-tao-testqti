@@ -1839,7 +1839,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                     TestProvider::fromArray([
                         'id'       => $registeredProxy['providerName'],
                         'module'   => $registeredProxy['module'],
-                        'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
+                        'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
                         'category' => 'proxy',
                         'active'   => true,
                         'tags'     => [ ]
@@ -1851,7 +1851,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                     TestProvider::fromArray([
                         'id'       => 'qtiServiceProxy',
                         'module'   => 'taoQtiTest/runner/proxy/qtiServiceProxy',
-                        'bundle'   => 'taoQtiTest/loader/qtiTestRunner.min',
+                        'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
                         'category' => 'proxy',
                         'active'   => true,
                         'tags'     => [ ]

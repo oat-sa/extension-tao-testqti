@@ -39,7 +39,7 @@ class RegisterTestRunnerProviders extends InstallAction
             'id'          => 'qti',
             'name'        => 'QTI runner',
             'module'      => 'taoQtiTest/runner/provider/qti',
-            'bundle'      => 'taoQtiTest/loader/qtiTestRunner.min',
+            'bundle'      => 'taoQtiTest/loader/taoQtiTestRunner.min',
             'description' => 'QTI implementation of the test runner',
             'category'    => 'runner',
             'active'      => true,
@@ -69,7 +69,7 @@ class RegisterTestRunnerProviders extends InstallAction
         [
             'id' => 'qtiServiceProxy',
             'module' => 'taoQtiTest/runner/proxy/qtiServiceProxy',
-            'bundle' => 'taoQtiTest/loader/qtiTestRunner.min',
+            'bundle' => 'taoQtiTest/loader/taoQtiTestRunner.min',
             'category' => 'proxy',
             'active'   => true,
             'tags'     => [ ]
