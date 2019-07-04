@@ -1,0 +1,19 @@
+@import 'inc/bootstrap';
+@import 'inc/colors';
+// TODO these 3 files are duplicated from tao-core and it should be removed later
+@import "inc/loading-bar";
+@import "inc/action-bars";
+@import 'inc/section-container';
+
+@import 'inc/navigator';
+@import 'inc/document-viewer';
+@import 'inc/answer-masking';
+@import 'inc/area-masking';
+@import 'inc/connectivity';
+@import 'inc/line-reader';
+@import 'inc/magnifier';
+@import 'inc/progressbar';
+
+@import 'inc/test-delivery-override';
+@import 'inc/test-layout';
+@import 'inc/test-action-bars';

@@ -1,0 +1,442 @@
+@import "inc/bootstrap";
+
+$collapsedWidth: 8rem;
+$lineHeight: 3rem;
+$borderWidth: 1px;
+$borderColor: $textHighlight;
+
+.qti-navigator {
+    @include disableSelect();
+    @include flex-container();
+    @include vendor-prefix(flex-direction, column, property);
+    padding: 0;
+    cursor: default;
+    min-width: calc(18rem - 8px);
+    height: 100%;
+    position: relative;
+
+    span {
+        display: inline-block;
+    }
+
+    // behavior for collapsible panels
+    .collapsed {
+        .collapsible-panel {
+            display: none!important;
+        }
+
+        .qti-navigator-label {
+            .icon-up {
+                display: none;
+            }
+
+            .icon-down {
+                display: inline-block;
+            }
+        }
+    }
+    .collapsible, .qti-navigator-item {
+        & > .qti-navigator-label {
+            cursor: pointer;
+        }
+    }
+
+    // hide test parts headers when the scope is section only
+    &.scope-test-section {
+        .qti-navigator-part > .qti-navigator-label {
+            display: none!important;
+        }
+    }
+
+    // all labels
+    .qti-navigator-label {
+        @include flex-container();
+        min-width: calc(100% - 12px);
+        padding: 0 6px;
+        line-height: $lineHeight;
+
+        .icon-up, .icon-down {
+            line-height: $lineHeight;
+            margin-left: auto;
+        }
+
+        .icon-down {
+            display: none;
+        }
+
+        .qti-navigator-number {
+            display: none;
+        }
+    }
+
+    // all icons
+    .qti-navigator-icon, .icon {
+        position: relative;
+        top: 1px;
+        display: inline-block;
+        width: 2rem;
+        line-height: #{$lineHeight - .2rem};
+    }
+
+    // unseen items cannot be marked for review, disable the pointer cursor on them
+    .unseen {
+        .qti-navigator-icon {
+            cursor: default;
+        }
+    }
+    &.prevents-unseen:not(.skipahead-enabled) {
+        .unseen {
+            .qti-navigator-icon, .qti-navigator-label {
+                cursor: not-allowed!important;
+            }
+        }
+    }
+
+    // additional icon types
+    .icon-answered:before {
+        @include icon-radio-checked();
+    }
+    .icon-viewed:before {
+        @include icon-preview();
+    }
+    .icon-flagged:before {
+        @include icon-anchor();
+    }
+    .icon-unanswered:before,
+    .icon-unseen:before {
+        @include icon-radio();
+    }
+
+    // style of counter displayed after labels
+    .qti-navigator-counter {
+        text-align: right;
+        margin-left: auto;
+        @include font-size(12);
+    }
+
+    // all actions
+    .qti-navigator-actions {
+        text-align: center;
+    }
+
+    // the info panel
+    .qti-navigator-info.collapsed {
+        height: calc(#{$lineHeight} + #{$borderWidth});
+    }
+    .qti-navigator-info {
+        height: calc(5 * (#{$lineHeight} + #{$borderWidth}));
+        overflow: hidden;
+
+        & > .qti-navigator-label {
+            min-width: calc(100% - 16px);
+            padding: 0 8px;
+        }
+
+        ul {
+            padding: 0 4px;
+
+            .qti-navigator-label {
+                span {
+                    &.qti-navigator-text {
+                        padding: 0 6px;
+                        min-width: 10rem;
+                    }
+                    &.qti-navigator-icon {
+                        min-width: 1.5rem;
+                    }
+                    &.qti-navigator-counter {
+                        min-width: 5rem;
+                    }
+                }
+            }
+        }
+    }
+
+    // the filter bar and its buttons
+    .qti-navigator-filters {
+        margin-top: 1rem;
+        text-align: center;
+        width: 15rem;
+        height: calc(#{$lineHeight} + (2 * #{$borderWidth}));
+
+        ul {
+            @include flex-container();
+        }
+
+        li {
+            display: block;
+            .qti-navigator-tab {
+                @include simple-border();
+                border-left: none;
+                line-height: $lineHeight;
+                min-width: 5rem;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+        }
+    }
+
+    // the panel listing the items
+    .qti-navigator-tree {
+        @include vendor-prefix(flex, 1, property);
+        overflow-y: auto;
+    }
+
+    // the panel displayed when the navigation is not allowed
+    .qti-navigator-linear,
+    .qti-navigator-linear-part {
+        padding: 8px;
+
+        .icon {
+            display: none;
+        }
+
+        .qti-navigator-label {
+            @include font-size(14);
+        }
+
+        .qti-navigator-title {
+            @include font-size(14);
+            margin: 8px 0;
+        }
+
+        .qti-navigator-message {
+            @include font-size(14);
+        }
+    }
+
+    // parts, sections and items
+    .qti-navigator-part {
+        & > .qti-navigator-label {
+            padding: 0 8px;
+        }
+        &:not(:first-child) {
+            margin-top: 1px;
+        }
+    }
+    .qti-navigator-section {
+        & > .qti-navigator-label {
+            padding: 0 8px;
+        }
+    }
+    .qti-navigator-item {
+        margin: 1px 0;
+        padding-left: 10px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+        &.disabled {
+            & > .qti-navigator-label {
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    // the handle displayed when the review panel is fully collapsible
+    .qti-navigator-collapsible {
+        cursor: pointer;
+        text-align: center;
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        padding-top: 50%;
+
+        .icon {
+            @include font-size(20);
+            width: 1rem!important;
+            height: 2rem!important;
+        }
+
+        .qti-navigator-expand {
+            display: none;
+        }
+    }
+    &.collapsible {
+        padding-right: calc(1rem + 10px)!important;
+
+        .qti-navigator-collapsible {
+            display: block;
+        }
+    }
+
+    // when the review panel is collapsed
+    &.collapsed {
+        width: calc(#{$collapsedWidth} + 1rem + 10px);
+        min-width: $collapsedWidth;
+
+        ul {
+            padding: 0!important;
+        }
+
+        .qti-navigator-text,
+        .qti-navigator-info > .qti-navigator-label,
+        .qti-navigator-part > .qti-navigator-label,
+        .qti-navigator-section > .qti-navigator-label,
+        .qti-navigator-message {
+            display: none !important;
+        }
+
+        .qti-navigator-label {
+            padding: 0 2px!important;
+            width: calc(#{$collapsedWidth} - 4px);
+            min-width: calc(#{$collapsedWidth} - 4px);
+        }
+
+        .qti-navigator-icon, .icon {
+            width: auto;
+        }
+
+        .qti-navigator-counter {
+            margin-left: 0;
+            min-width: 4rem!important;
+        }
+
+        .qti-navigator-collapsible {
+            .qti-navigator-collapse {
+                display: none;
+            }
+            .qti-navigator-expand {
+                display: block;
+            }
+        }
+
+        .qti-navigator-info {
+            height: calc(4 * (#{$lineHeight} + #{$borderWidth}));
+
+            &.collapsed .collapsible-panel {
+                display: block !important;
+            }
+        }
+
+        .qti-navigator-filters {
+            width: calc(#{$collapsedWidth} - 16px);
+        }
+
+        .qti-navigator-filter {
+            span {
+                display: none;
+            }
+            &.active {
+                span {
+                    display: block;
+                    border: 0 none;
+                    width: calc(#{$collapsedWidth} - 16px);
+                }
+            }
+        }
+
+        .qti-navigator-item,
+        .qti-navigator-linear,
+        .qti-navigator-linear-part {
+            padding-left: 2px;
+            text-align: center;
+        }
+
+        .qti-navigator-item {
+            overflow: hidden;
+            .qti-navigator-icon {
+                padding-left: 6px;
+                width: 2rem;
+            }
+            .qti-navigator-number {
+                display: inline-block;
+                margin-left: 6px;
+                margin-right: $collapsedWidth;
+            }
+        }
+
+        .qti-navigator-linear,
+        .qti-navigator-linear-part {
+            padding: 0 0 8px 0;
+
+            .icon {
+                display: block;
+            }
+        }
+
+        .qti-navigator-actions button {
+            padding: 0 9px 0 5px;
+        }
+    }
+
+    // appearances
+    .qti-navigator-info {
+        & > .qti-navigator-label {
+            background-color: $uiHeaderBg;
+            color: $textColor;
+            border-top: $borderWidth solid $uiHeaderBg;
+        }
+
+        li {
+            border-bottom: $borderWidth solid $borderColor;
+        }
+    }
+    .qti-navigator-filter {
+        .qti-navigator-tab {
+            background-color: $uiGeneralContentBg;
+
+            &:hover {
+                background-color: $uiClickableHoverBg;
+                color: $textHighlight;
+            }
+        }
+        &.active {
+            .qti-navigator-tab {
+                background-color: $uiClickableActiveBg;
+                color: $textHighlight;
+            }
+        }
+    }
+    .qti-navigator-linear,
+    .qti-navigator-linear-part {
+        background: white();
+    }
+    .qti-navigator-part {
+        & > .qti-navigator-label {
+            background-color: mix($textHighlight, $websiteBorder, 70%);
+            &:hover {
+                background-color: mix($textHighlight, $websiteBorder, 50%);
+            }
+        }
+        &.active {
+            & > .qti-navigator-label {
+                background-color: mix($textHighlight, $websiteBorder, 45%);
+            }
+        }
+    }
+    .qti-navigator-section {
+        & > .qti-navigator-label {
+            border-bottom: $borderWidth solid $borderColor;
+            &:hover {
+                background-color: mix($textHighlight, $grey, 75%);
+            }
+        }
+        &.active {
+            & > .qti-navigator-label {
+                background-color: mix($textHighlight, $grey, 60%);
+            }
+        }
+    }
+    .qti-navigator-item {
+        background: white();
+        &.active {
+            background: lighten($lightBlueGrey, 5);
+        }
+        &:hover {
+            background: lighten($lightBlueGrey, 3);
+        }
+        &.disabled {
+            background-color: mix($textHighlight, $grey, 65%) !important;
+        }
+    }
+    .qti-navigator-collapsible {
+        background-color: mix($textHighlight, $uiClickableActiveBg, 65%);
+        color: $textColor;
+        .icon {
+            color: $textHighlight;
+        }
+    }
+}

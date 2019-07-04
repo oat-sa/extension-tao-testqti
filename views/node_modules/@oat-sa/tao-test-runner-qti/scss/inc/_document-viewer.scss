@@ -1,0 +1,69 @@
+@import "inc/bootstrap";
+
+$panelMarginHor: 10px;
+$panelMarginVer: 10px;
+
+.document-viewer-plugin {
+    position: relative;
+
+    .viewer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 10000;
+        width: 100%;
+        opacity : .5;
+        background-color: $uiOverlay;
+    }
+
+    .viewer-panel {
+        position: fixed;
+        top: $panelMarginVer;
+        left: $panelMarginHor;
+        bottom: $panelMarginVer;
+        right: $panelMarginHor;
+        z-index: 100000;
+        color: $textColor;
+        background: $canvas;
+        @include font-size(14);
+        @include simple-border();
+    }
+
+    .viewer-header {
+        position: relative;
+        width: 100%;
+        height: 30px;
+        padding: 5px 0;
+        z-index: 1;
+
+        .viewer-title {
+            @include font-size(15);
+            padding: 0;
+            margin: 0 0 0 1.6rem;
+        }
+
+        .icon {
+            float: right;
+            @include font-size(20);
+            color: whiten($info, .1);
+            margin: 1px 6px;
+            top: 3px;
+
+            &:hover {
+                cursor: pointer;
+                opacity: .75;
+            }
+        }
+    }
+
+    .viewer-content {
+        padding: 0 20px;
+        margin-top: 4px;
+        position: relative;
+        height: calc(100% - 40px);
+        overflow: auto;
+    }
+}
+

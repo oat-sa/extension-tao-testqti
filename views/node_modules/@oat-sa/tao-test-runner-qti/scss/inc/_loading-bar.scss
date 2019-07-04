@@ -1,0 +1,68 @@
+/**
+ * TODO This file is a duplication of the file in tao-core. It should be removed later!
+*/
+
+@import 'inc/bootstrap';
+
+$loadingBarBorder: whiten($darkBar, .4);
+
+@mixin loading-gradient($color-1, $color-2) {
+    @include vendor-prefix(background, linear-gradient(to right,  $color-2 0%, $color-1 20%, $color-1 80%, $color-2 100%), value);
+}
+
+@include keyframes(loadingbar) {
+    0% { left: -10% }
+    50% { left: 90% }
+    100% { left: -10% }
+}
+
+.loading-bar {
+    height: 6px;
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    display:none;
+    z-index: 10000;
+    cursor: progress;
+
+    &.fixed {
+        position: fixed;
+        width: 100%;
+
+        &:before {
+            top: 0 !important;
+        }
+    }
+    &.loading {
+        display: block;
+        overflow: hidden;
+        top: 58px;
+        &:before {
+            position: absolute;
+            content: '';
+            height: 6px;
+            width: 20%;
+            display: block;
+            transform: translateZ(0);
+            @include loading-gradient($activeInteraction, transparent);
+            @include animation(loadingbar 5s linear infinite);
+        }
+        &.loadingbar-covered {
+            top: 0px;
+            overflow-y: visible;
+            &:before {
+                top: 86px;
+            }
+        }
+    }
+}
+
+.no-version-warning {
+    .loading-bar {
+        &.loadingbar-covered {
+            &:before {
+                top: 58px;
+            }
+        }
+    }
+}

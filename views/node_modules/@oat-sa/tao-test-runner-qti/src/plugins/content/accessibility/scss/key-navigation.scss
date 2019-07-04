@@ -1,0 +1,105 @@
+@import "inc/bootstrap";
+
+.test-runner-scope {
+    .content-wrapper {
+        p.key-navigation-group, div.key-navigation-group {
+            padding: 5px !important;
+        }
+        .key-navigation-group:not(.qti-extendedTextInteraction):not(.qti-textEntryInteraction) {
+            border-width: 1px !important;
+            border-style: solid;
+            border-color: transparent; //do not mark it as important to allow color overriding
+            &.focusin {
+                border-color: $info !important;
+                outline: none;
+            }
+            &.qti-interaction {
+                .qti-choice.key-navigation-highlight {
+                    background: whiten($info, .9) !important;
+                }
+            }
+        }
+        span.key-navigation-group{
+            border: none !important;
+            &.focusin{
+                outline: solid $info 1px !important;
+                outline-offset: 1px;
+            }
+        }
+    }
+
+    .test-sidebar {
+        .key-navigation-group {
+            &.focusin {
+                background: whiten($info, .9);
+            }
+            .qti-navigator-filters {
+                .key-navigation-highlight {
+                    .qti-navigator-tab {
+                        border-width:2px;
+                    }
+                    &:focus {
+                        outline: none;
+                        .qti-navigator-tab {
+                            border-top-color: $textColor !important;
+                            border-left-color: $textColor !important;
+                            border-right-color: $textColor !important;
+                        }
+                    }
+
+                }
+            }
+            li.qti-navigator-item.key-navigation-highlight {
+                padding-left: 8px;
+                border-left: solid 2px $textColor;
+                .key-navigation-highlight:focus {
+                    outline: none;
+                }
+            }
+        }
+
+    }
+
+    .bottom-action-bar.content-action-bar {
+        &.key-navigation-group {
+            &.focusin {
+                @include box-shadow(0, 0, 6px, 2px, whiten($info, .2));
+            }
+            .key-navigation-highlight {
+                &:focus {
+                    margin-bottom: 0;
+                    border-bottom-color: whiten($info, .9) !important;
+                    outline: none;
+                    &.active {
+                        border-bottom-color: transparent !important;
+                        background: whiten($info, .9) !important;
+                    }
+                    &:not(.active):not(:active) {
+                        .li-inner{
+                            color : whiten($info, .9);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+header{
+    .settings-menu{
+        .key-navigation-group{
+            padding-right: 5px;
+            &.focusin{
+                background-color: rgba($info, .5);
+                padding-bottom: 10px;
+            }
+        }
+        .key-navigation-highlight{
+            &:focus{
+                height:54px;
+                color: white !important;
+                border-bottom: solid 2px white !important;
+            }
+        }
+    }
+}
