@@ -1864,7 +1864,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         if ($this->isVersion('33.10.0')) {
             $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
-            $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist/';
+            $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
             $clientLibRegistry = ClientLibRegistry::getRegistry();
             $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
             $this->setVersion('34.0.0');
