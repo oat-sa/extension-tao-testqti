@@ -78,7 +78,7 @@ return array(
             RegisterTestContainer::class,
             SetUpQueueTasks::class,
             SetLinearNextItemWarningConfig::class,
-            RegisterFrontendPaths::class
+            \oat\taoQtiTest\scripts\install\RegisterFrontendPaths::class
         )
     ),
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
