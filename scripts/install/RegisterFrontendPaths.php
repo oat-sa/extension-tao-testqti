@@ -35,12 +35,10 @@ class RegisterFrontendPaths extends InstallAction
     public function __invoke($params)
     {
         $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
-        $taoTestRunnerDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner/dist/';
         $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist/';
         $clientLibRegistry = ClientLibRegistry::getRegistry();
-        $clientLibRegistry->register('taoTests/runner', $taoTestRunnerDir);
         $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
 
-        return \common_report_Report::createSuccess('Tao Item and QTI Item runner module path is set up.');
+        return \common_report_Report::createSuccess('Tao QTI Item runner module path is set up.');
     }
 }
