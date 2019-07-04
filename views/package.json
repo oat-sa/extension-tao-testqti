@@ -4,6 +4,7 @@
   "description": "",
   "license": "GPL-2.0",
   "dependencies": {
+    "@oat-sa/tao-test-runner": "^0.1.0",
     "@oat-sa/tao-test-runner-qti": "^0.1.0"
   }
 }

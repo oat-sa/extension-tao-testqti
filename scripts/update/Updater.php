@@ -80,6 +80,8 @@ use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
 use oat\taoTests\models\runner\time\TimePoint;
+use oat\tao\model\ClientLibRegistry;
+use oat\tao\model\asset\AssetService;
 
 /**
  *
@@ -1859,6 +1861,16 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $this->setVersion('33.10.0');
         }
+
+        if ($this->isVersion('33.10.0')) {
+            $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
+            $taoTestRunnerDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner/dist/';
+            $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist/';
+            $clientLibRegistry = ClientLibRegistry::getRegistry();
+            $clientLibRegistry->register('taoTests/runner', $taoTestRunnerDir);
+            $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
+            $this->setVersion('34.0.0');
+    }
 
     }
 }
