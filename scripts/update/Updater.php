@@ -1829,7 +1829,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 ])
             );
 
-            //if the proxy was different 
+            //if the proxy was different
             $clientLibRegistry = ClientLibConfigRegistry::getRegistry();
             if ($clientLibRegistry->isRegistered('taoQtiTest/runner/proxy/loader')) {
                 $registeredProxy = $clientLibRegistry->get('taoQtiTest/runner/proxy/loader');
@@ -1860,5 +1860,6 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('33.10.0');
         }
 
+        $this->skip('33.10.0', '33.10.1');
     }
 }

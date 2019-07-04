@@ -1,5 +1,4 @@
-.magnifier-container {
-
+.magnifier-container.dynamic-component-container {
     background-color: transparent;
 
     .dynamic-component-title-bar {
@@ -97,6 +96,11 @@
                 background-color: $uiClickableDefaultBg;
                 border: 0 solid $websiteBorder;
                 min-height: 29px;
+                top: 0;
+                right: 0;
+                border-bottom-width: 1px;
+                border-left-width: 1px;
+                @include border-radius-bottom-left(5);
                 z-index: 4;
 
                 a {
@@ -109,14 +113,6 @@
                         color: $pluginLinkHover;
                     }
                 }
-
-                &.close {
-                    top: 0;
-                    right: 0;
-                    border-bottom-width: 1px;
-                    border-left-width: 1px;
-                    @include border-radius-bottom-left(5);
-                }
             }
 
             .inner {
@@ -127,7 +123,7 @@
         &.moving {
             .magnifier {
                 .controls {
-                    border-left: none;
+                    border: none;
                     border-bottom-left-radius: 0;
                 }
             }

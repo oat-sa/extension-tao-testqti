@@ -1,5 +1,4 @@
-
-.mask-container {
+.mask-container.dynamic-component-container {
     background-color: transparent;
 
     .dynamic-component-title-bar {
@@ -19,7 +18,6 @@
         .closer {
             display: none;
         }
-
     }
 
     .dynamic-component-resize-container {
@@ -68,9 +66,9 @@
                 z-index: 2;
 
                 a {
-                    text-decoration: none;
+                    color: $textColor;
                     margin-right: 5px;
-                    vertical-align: middle;
+                    text-decoration: none;
                     &:hover {
                         color: $pluginLinkHover;
                     }
