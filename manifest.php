@@ -77,7 +77,8 @@ return array(
             SyncChannelInstaller::class,
             RegisterTestContainer::class,
             SetUpQueueTasks::class,
-            SetLinearNextItemWarningConfig::class
+            SetLinearNextItemWarningConfig::class,
+            RegisterFrontendPaths::class
         )
     ),
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
