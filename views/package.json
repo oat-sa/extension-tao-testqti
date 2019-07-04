@@ -1,0 +1,9 @@
+{
+  "name": "@oat-sa/tao-testqti",
+  "version": "0.1.0",
+  "description": "",
+  "license": "GPL-2.0",
+  "dependencies": {
+    "@oat-sa/tao-test-runner-qti": "^0.1.0"
+  }
+}
