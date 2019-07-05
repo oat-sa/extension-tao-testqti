@@ -39,6 +39,8 @@ define([
      */
     var qtiServiceProxy = {
 
+        name : 'qtiServiceProxy',
+
         /**
          * Installs the proxy
          */

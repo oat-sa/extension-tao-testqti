@@ -57,6 +57,8 @@ define([
      */
     return _.defaults({
 
+        name : 'offline',
+
         /**
          * Installs the proxy
          */

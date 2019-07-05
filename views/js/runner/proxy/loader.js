@@ -17,6 +17,9 @@
  */
 
 /**
+ * @deprecated please use `taoTests/runner/providerLoader` instead
+ *
+ *
  * Loads the configured proxy provider, based on the module config :
  *
  * {
