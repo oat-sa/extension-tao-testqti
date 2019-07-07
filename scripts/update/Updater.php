@@ -1861,5 +1861,29 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('33.10.0', '33.10.1');
+
+        if( $this->isVersion('33.10.1') ) {
+
+            $providerRegistry = ProviderRegistry::getRegistry();
+            $providerRegistry->remove('taoQtiTest/runner/provider/qti');
+            $providerRegistry->register(
+                TestProvider::fromArray([
+                    'id' => 'qti',
+                    'module' => 'taoQtiTest/runner/provider/qti',
+                    'bundle' => 'taoQtiTest/loader/qtiTestRunner.min',
+                    'position' => null,
+                    'name' => 'QTI runner',
+                    'description' => 'QTI implementation of the test runner',
+                    'category' => 'runner',
+                    'active' => true,
+                    'tags' => [
+                        'core',
+                        'qti',
+                        'runner'
+                    ]
+                ])
+            );
+            $this->setVersion('33.10.2');
+        }
     }
 }
