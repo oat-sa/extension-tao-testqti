@@ -1870,7 +1870,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 TestProvider::fromArray([
                     'id' => 'qti',
                     'module' => 'taoQtiTest/runner/provider/qti',
-                    'bundle' => 'taoQtiTest/loader/qtiTestRunner.min',
+                    'bundle' => 'taoQtiTest/loader/taoQtiTestRunner.min',
                     'position' => null,
                     'name' => 'QTI runner',
                     'description' => 'QTI implementation of the test runner',
