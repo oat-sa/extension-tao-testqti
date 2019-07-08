@@ -1892,5 +1892,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             }
             $this->setVersion('33.10.2');
         }
+
+        $this->skip('33.10.2', '33.10.3');
     }
 }
