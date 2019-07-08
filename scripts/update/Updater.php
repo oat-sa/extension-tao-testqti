@@ -1883,6 +1883,13 @@ class Updater extends \common_ext_ExtensionUpdater {
                     ]
                 ])
             );
+            if ($providerRegistry->isRegistered('taoQtiTest/runner/proxy/qtiServiceProxy')) {
+                $registeredProxy = $providerRegistry->get('taoQtiTest/runner/proxy/qtiServiceProxy');
+                $registeredProxy['bundle'] = 'taoQtiTest/loader/taoQtiTestRunner.min';
+                $providerRegistry->register(
+                    TestProvider::fromArray($registeredProxy)
+                );
+            }
             $this->setVersion('33.10.2');
         }
     }
