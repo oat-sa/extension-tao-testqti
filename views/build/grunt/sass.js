@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                 files : [
                     { dest : root + 'css/creator.css', src : root + 'scss/creator.scss' },
                     { dest : root + 'css/test-runner.css', src : root + 'scss/test-runner.scss' },
-                    { dest : root + 'node_modules/@oat-sa/tao-test-runner-qti/scss/new-test-runner.css', src :  root + 'scss/new-test-runner.scss'},
+                    { dest : root + 'css/new-test-runner.css', src : root + 'node_modules/@oat-sa/tao-test-runner-qti/scss/new-test-runner.css'},
                     { dest : pluginDir + 'controls/timer/component/css/countdown.css', src : pluginDir + 'controls/timer/component/scss/countdown.scss'},
                     { dest : pluginDir + 'controls/timer/component/css/timerbox.css', src : pluginDir + 'controls/timer/component/scss/timerbox.scss'}
                 ]
