@@ -4,7 +4,7 @@
   "description": "",
   "license": "GPL-2.0",
   "dependencies": {
-    "@oat-sa/tao-test-runner": "^0.1.0",
-    "@oat-sa/tao-test-runner-qti": "^0.1.0"
+    "@oat-sa/tao-test-runner": "oat-sa/tao-test-runner-fe#feature/NEX-150_update-code-from-old-repo",
+    "@oat-sa/tao-test-runner-qti": "oat-sa/tao-test-runner-qti-fe#feature/NEX-150_update-code-from-old-repo"
   }
 }
