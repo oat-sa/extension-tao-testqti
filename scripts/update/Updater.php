@@ -1831,7 +1831,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 ])
             );
 
-            //if the proxy was different 
+            //if the proxy was different
             $clientLibRegistry = ClientLibConfigRegistry::getRegistry();
             if ($clientLibRegistry->isRegistered('taoQtiTest/runner/proxy/loader')) {
                 $registeredProxy = $clientLibRegistry->get('taoQtiTest/runner/proxy/loader');
@@ -1862,13 +1862,45 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('33.10.0');
         }
 
-        if ($this->isVersion('33.10.0')) {
+        $this->skip('33.10.0', '33.10.1');
+
+        if( $this->isVersion('33.10.1') ) {
+
+            $providerRegistry = ProviderRegistry::getRegistry();
+            $providerRegistry->remove('taoQtiTest/runner/provider/qti');
+            $providerRegistry->register(
+                TestProvider::fromArray([
+                    'id' => 'qti',
+                    'module' => 'taoQtiTest/runner/provider/qti',
+                    'bundle' => 'taoQtiTest/loader/taoQtiTestRunner.min',
+                    'position' => null,
+                    'name' => 'QTI runner',
+                    'description' => 'QTI implementation of the test runner',
+                    'category' => 'runner',
+                    'active' => true,
+                    'tags' => [
+                        'core',
+                        'qti',
+                        'runner'
+                    ]
+                ])
+            );
+            if ($providerRegistry->isRegistered('taoQtiTest/runner/proxy/qtiServiceProxy')) {
+                $registeredProxy = $providerRegistry->get('taoQtiTest/runner/proxy/qtiServiceProxy');
+                $registeredProxy['bundle'] = 'taoQtiTest/loader/taoQtiTestRunner.min';
+                $providerRegistry->register(
+                    TestProvider::fromArray($registeredProxy)
+                );
+            }
+            $this->setVersion('33.10.2');
+        }
+
+        if ($this->isVersion('33.10.2')) {
             $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
             $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
             $clientLibRegistry = ClientLibRegistry::getRegistry();
             $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
             $this->setVersion('34.0.0');
-    }
-
+        }
     }
 }
