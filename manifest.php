@@ -30,6 +30,7 @@ use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
+use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -78,7 +79,7 @@ return array(
             RegisterTestContainer::class,
             SetUpQueueTasks::class,
             SetLinearNextItemWarningConfig::class,
-            \oat\taoQtiTest\scripts\install\RegisterFrontendPaths::class
+            RegisterFrontendPaths::class
         )
     ),
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
