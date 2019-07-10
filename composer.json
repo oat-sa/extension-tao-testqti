@@ -54,7 +54,7 @@
     "tao-extension-name": "taoQtiTest",
     "npm-bridge": {
       "arguments": ["--prefix", "views"]
-  }
+    }
   },
   "minimum-stability": "dev",
   "require": {
