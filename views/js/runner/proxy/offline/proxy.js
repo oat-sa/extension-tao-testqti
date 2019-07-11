@@ -297,7 +297,7 @@ define([
                             if (self.isConnectivityError(err)) {
                                 self.setOffline('communicator');
                                 _.forEach(actions, function (action) {
-                                    self.actionStore.push(action.action, action.parameters);
+                                    self.actionStore.push(action.action, action.parameters, action.timestamp);
                                 });
                             }
 
@@ -330,7 +330,7 @@ define([
                         .flush()
                         .then(function(actions) {
                             _.forEach(actions, function (action) {
-                                self.actionStore.push(action.action, action.parameters);
+                                self.actionStore.push(action.action, action.parameters, action.timestamp);
                             });
 
                             return actions;
