@@ -1902,5 +1902,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
             $this->setVersion('34.0.0');
         }
+
+        $this->skip('34.0.0', '34.0.1');
     }
 }
