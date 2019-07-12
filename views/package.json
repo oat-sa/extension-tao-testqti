@@ -1,7 +1,11 @@
 {
   "name": "@oat-sa/tao-testqti",
   "version": "0.1.0",
-  "description": "",
+  "description": "Tao Test Qti",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oat-sa/extension-tao-testqti.git"
+  },
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "^0.2.0",
