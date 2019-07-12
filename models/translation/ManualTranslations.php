@@ -67,6 +67,7 @@ class ManualTranslations
             __('Black on magenta'),
             __('White on black'),
             __('Light yellow on royal blue'),
+            __('Gray on Green'),
             __('Gray on green (low contrast option)'),
             __('You answered all %s question(s) in this section'),
             __('You answered all %s question(s) in this test'),
