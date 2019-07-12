@@ -446,6 +446,9 @@ msgstr ""
 msgid "Go to the next item?"
 msgstr ""
 
+msgid "Gray on Green"
+msgstr "Grey on Green"
+
 msgid "Gray on green (low contrast option)"
 msgstr "Grey on green (low contrast option)"
 
@@ -677,7 +680,7 @@ msgstr ""
 msgid "Missed test package file"
 msgstr ""
 
-msgid "Missing required option %s"
+msgid "Missing required configuration option %s"
 msgstr ""
 
 msgid "Move Down"
