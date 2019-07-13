@@ -19,18 +19,17 @@
  import runnerSelectors from '../runnerSelectors';
  import '../_setup/setupCommands';
 
-describe('Start a Delivery', () => {
+describe('Deliveries', () => {
    
     /**
-     * Setup for the test runner:
+     * Setup to have a proper delivery:
      * - Admin login
-     * - Import and publish example test
+     * - Import and publish example tests
      * - Set guest access on delivery and save
      * - Logout
      * - Guest login
      */
     beforeEach(() => {
-        cy.setupServer();
         cy.login('admin');
         cy.publishImportedTest();
         cy.setDeliveryForGuests();
@@ -41,9 +40,9 @@ describe('Start a Delivery', () => {
     /**
      * Delivery tests
      */
-    describe('Delivery list', () => {
+    describe('Delivery list is not empty', () => {
 
-        it('At least one delivery is available to start', () => {
+        it('At least one delivery is available to start', function() {
             cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e example test');
         });
     });
