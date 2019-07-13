@@ -26,7 +26,7 @@ import base64Test from './base64QtiExampleTestPackage';
 Cypress.Commands.add('publishImportedTest', () => {
     
     // Visit Tests page
-    cy.visit(setupData.testsPage.testsPageUrl);
+    cy.visit(setupData.testsPageUrl);
     
     // Select test import
     cy.get(setupSelectors.testsPage.testImportbutton).click();
