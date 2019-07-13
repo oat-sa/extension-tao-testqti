@@ -24,17 +24,29 @@ import cleanupSelectors from './cleanupSelectors';
  */
 Cypress.Commands.add('deleteImportedTest', () => {
     
+    // Register route for test deletion
+    cy.route('POST', '**/delete').as('deleteTest');
+
     // Visit Tests page
     cy.visit(cleanupData.testsPageUrl);
 
     // Select e2e example test
-    cy.get(cleanupSelectors.testsPage.treeManageTests).containes('e2e example test').click();
+    cy.get(cleanupSelectors.testsPage.treeManageTests).contains('e2e example test').click();
 
     // Delete test
     cy.get(cleanupSelectors.testsPage.testDeleteButton).click();  
+
+    // Confirm deletion
+    cy.get(cleanupSelectors.common.confirmationModalOk).click();
+
+    // Wait until deletion finishes
+    cy.wait('@deleteTest');
 });
 
 Cypress.Commands.add('deleteDelivery', () => {
+
+    // Register route for delivery deletion
+    cy.route('POST', '**/delete').as('deleteDelivery');
     
     // Go to Deliveries page
     cy.visit(cleanupData.deliveriesPageUrl);
@@ -44,4 +56,10 @@ Cypress.Commands.add('deleteDelivery', () => {
 
     // Delete delivery
     cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();  
+
+    // Confirm deletion
+    cy.get(cleanupSelectors.common.confirmationModalOk).click();
+
+    // Wait until deletion finishes
+    cy.wait('@deleteDelivery');
 });

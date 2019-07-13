@@ -25,6 +25,9 @@ import base64Test from './base64QtiExampleTestPackage';
  */
 Cypress.Commands.add('publishImportedTest', () => {
     
+    // Register route for test deletion
+    cy.route('POST', '**/editTest').as('editTest');
+    
     // Visit Tests page
     cy.visit(setupData.testsPageUrl);
     
@@ -49,8 +52,8 @@ Cypress.Commands.add('publishImportedTest', () => {
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
 
-    // Wait until publish button appears
-    cy.wait(500);
+    // Wait until publish button appears again
+    cy.wait('@editTest');
 
     // Publish example test
     cy.get(setupSelectors.testsPage.testPublishButton).click();
@@ -63,6 +66,7 @@ Cypress.Commands.add('publishImportedTest', () => {
 });
 
 Cypress.Commands.add('setDeliveryForGuests', () => {
+    
     // Go to Deliveries page
     cy.visit(setupData.deliveriesPageUrl);
 

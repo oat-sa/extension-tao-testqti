@@ -24,6 +24,7 @@ describe('Deliveries', () => {
    
     /**
      * Setup to have a proper delivery:
+     * - Start server
      * - Admin login
      * - Import and publish e2e example test
      * - Set guest access on delivery and save
@@ -31,6 +32,7 @@ describe('Deliveries', () => {
      * - Guest login
      */
     beforeEach(() => {
+        cy.setupServer();
         cy.login('admin');
         cy.publishImportedTest();
         cy.setDeliveryForGuests();

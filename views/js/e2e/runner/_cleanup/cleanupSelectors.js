@@ -27,5 +27,8 @@ export default {
     deliveriesPage: {
        resourceTree: '.taotree-delivery',
        deliveryDeleteButton: '#delivery-delete'
+    },
+    common: {
+        confirmationModalOk: '.preview-modal-feedback button[data-control="ok"]'
     }
 };
