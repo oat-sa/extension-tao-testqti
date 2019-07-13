@@ -21,17 +21,11 @@
  */
 export default {
     testsPage: {
-        testImportbutton: '#test-import',
-        fileInput: '.main-container .file-uploader input[type="file"]',
-        fileImportButton: '.content-block .form-toolbar button[title="Import"]',
-        feedbackContinueButton: '.feedback-success button[title="continue"]',
-        testPublishButton: '#test-publish',
-        destinationSelector: '.destination-selector',
-        destinationSelectorActions: '.destination-selector .actions',
-        testsPanel: '#panel-manage_tests'
+        testDeleteButton: '#test-delete',
+        treeManageTests: '#tree-manage_tests'
     },
     deliveriesPage: {
        resourceTree: '.taotree-delivery',
-       formContainer: '#form-container'
+       deliveryDeleteButton: '#delivery-delete'
     }
 };

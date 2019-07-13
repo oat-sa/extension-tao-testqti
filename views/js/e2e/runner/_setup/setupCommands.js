@@ -21,7 +21,7 @@ import setupSelectors from './setupSelectors';
 import base64Test from './base64QtiExampleTestPackage';
 
 /**
- * Commands
+ * Setup Commands
  */
 Cypress.Commands.add('publishImportedTest', () => {
     
@@ -43,9 +43,6 @@ Cypress.Commands.add('publishImportedTest', () => {
         }
     );
 
-    // Wait until loader loads
-    cy.wait(1000);
-
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
@@ -62,7 +59,7 @@ Cypress.Commands.add('publishImportedTest', () => {
     cy.get(setupSelectors.testsPage.destinationSelector).contains('Assembled Delivery').click();
 
     // Clicking on publish
-    cy.get(setupSelectors.testsPage.destinationSelector).contains('Publish').click();
+    cy.get(setupSelectors.testsPage.destinationSelectorActions).contains('Publish').click();
 });
 
 Cypress.Commands.add('setDeliveryForGuests', () => {

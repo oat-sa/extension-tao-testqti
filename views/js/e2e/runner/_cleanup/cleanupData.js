@@ -16,22 +16,10 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-/**
- * CSS Selectors for setup
+ /**
+ * Data object
  */
 export default {
-    testsPage: {
-        testImportbutton: '#test-import',
-        fileInput: '.main-container .file-uploader input[type="file"]',
-        fileImportButton: '.content-block .form-toolbar button[title="Import"]',
-        feedbackContinueButton: '.feedback-success button[title="continue"]',
-        testPublishButton: '#test-publish',
-        destinationSelector: '.destination-selector',
-        destinationSelectorActions: '.destination-selector .actions',
-        testsPanel: '#panel-manage_tests'
-    },
-    deliveriesPage: {
-       resourceTree: '.taotree-delivery',
-       formContainer: '#form-container'
-    }
+    testsPageUrl: 'tao/Main/index?structure=tests&ext=taoTests&section=manage_tests&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23Test',
+    deliveriesPageUrl: 'tao/Main/index?structure=delivery&ext=taoDeliveryRdf&section=manage_delivery_assembly&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAODelivery.rdf%23AssembledDelivery'
 };

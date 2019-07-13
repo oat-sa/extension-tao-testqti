@@ -18,13 +18,14 @@
 
  import runnerSelectors from '../runnerSelectors';
  import '../_setup/setupCommands';
+ import '../_cleanup/cleanupCommands';
 
 describe('Deliveries', () => {
    
     /**
      * Setup to have a proper delivery:
      * - Admin login
-     * - Import and publish example tests
+     * - Import and publish e2e example test
      * - Set guest access on delivery and save
      * - Logout
      * - Guest login
@@ -38,11 +39,22 @@ describe('Deliveries', () => {
     });
 
     /**
+     * Destroy everything we created during setup, leaving the environment clean for next time.
+     */
+    afterEach(() => {
+        cy.guestLogout();
+        cy.login('admin');
+        cy.deleteImportedTest();
+        cy.deleteDelivery();
+        cy.logout();
+    });
+
+    /**
      * Delivery tests
      */
-    describe('Delivery list is not empty', () => {
+    describe('Delivery list', () => {
 
-        it('At least one delivery is available to start', function() {
+        it('List contains example e2e delivery', function() {
             cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e example test');
         });
     });
