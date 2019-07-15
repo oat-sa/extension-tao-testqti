@@ -50,6 +50,7 @@ describe('Deliveries', () => {
     afterEach(() => {
         cy.guestLogout();
         cy.login('admin');
+        cy.deleteImportedItem();
         cy.deleteImportedTest();
         cy.deleteDelivery();
         cy.logout();

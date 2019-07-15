@@ -22,11 +22,15 @@
 export default {
     testsPage: {
         testDeleteButton: '#test-delete',
-        treeManageTests: '#tree-manage_tests'
+        testsTree: '#tree-manage_tests'
     },
     deliveriesPage: {
        resourceTree: '.taotree-delivery',
        deliveryDeleteButton: '#delivery-delete'
+    },
+    itemsPage: {
+        itemTree: '#tree-manage_items',
+        itemDeleteButton: '#item-class-delete'
     },
     common: {
         confirmationModalOk: '.preview-modal-feedback button[data-control="ok"]'

@@ -24,7 +24,11 @@ Cypress.Commands.add('addRoutes', () => {
     // Register routes for test actions
     cy.route('POST', '**/editTest').as('editTest');
 
+    // Register routes for delivery actions
+    cy.route('POST', '**/editDelivery').as('editDelivery');
+
     // Register routes for common actions
     cy.route('POST', '**/editClassLabel').as('editClassLabel');
     cy.route('POST', '**/delete').as('delete');
+    cy.route('POST', '**/deleteClass').as('deleteClass');
 });

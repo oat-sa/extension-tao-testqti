@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import setupData from './setupData';
+import runnerUrls from '../_urls/runnerUrls';
 import setupSelectors from './setupSelectors';
 import base64Test from './base64QtiExampleTestPackage';
 
@@ -26,7 +26,10 @@ import base64Test from './base64QtiExampleTestPackage';
 Cypress.Commands.add('publishImportedTest', () => {
     
     // Visit Tests page
-    cy.visit(setupData.testsPageUrl);
+    cy.visit(runnerUrls.testsPageUrl);
+
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
     
     // Select test import
     cy.get(setupSelectors.testsPage.testImportbutton).click();
@@ -65,7 +68,10 @@ Cypress.Commands.add('publishImportedTest', () => {
 Cypress.Commands.add('setDeliveryForGuests', () => {
     
     // Go to Deliveries page
-    cy.visit(setupData.deliveriesPageUrl);
+    cy.visit(runnerUrls.deliveriesPageUrl);
+
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
 
     // Select example delivery
     cy.get(setupSelectors.deliveriesPage.resourceTree).contains('Delivery of e2e example test').click();
@@ -75,4 +81,7 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
 
     // Save delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Save').click();
+
+    // Wait until edit gets fired
+    cy.wait('@editDelivery');
 });

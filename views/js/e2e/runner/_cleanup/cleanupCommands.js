@@ -16,22 +16,44 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import cleanupData from './cleanupData';
+import runnerUrls from '../_urls/runnerUrls';
 import cleanupSelectors from './cleanupSelectors';
 
 /**
  * Cleanup Commands
  */
-Cypress.Commands.add('deleteImportedTest', () => {
+
+Cypress.Commands.add('deleteImportedItem', () => {
     
     // Visit Tests page
-    cy.visit(cleanupData.testsPageUrl);
+    cy.visit(runnerUrls.itemsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
 
-    // Select e2e example test
-    cy.get(cleanupSelectors.testsPage.treeManageTests).contains('e2e example test').click();
+    // Select e2e example test subclass
+    cy.get(cleanupSelectors.itemsPage.itemTree).contains('e2e example test').click();
+
+    // Delete test
+    cy.get(cleanupSelectors.itemsPage.itemDeleteButton).click();  
+
+    // Confirm deletion
+    cy.get(cleanupSelectors.common.confirmationModalOk).click();
+
+    // Wait until deletion finishes
+    cy.wait('@deleteClass');
+});
+
+Cypress.Commands.add('deleteImportedTest', () => {
+    
+    // Visit Tests page
+    cy.visit(runnerUrls.testsPageUrl);
+
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
+
+    // Select e2e example test subcalss
+    cy.get(cleanupSelectors.testsPage.testsTree).contains('e2e example test').click();
 
     // Delete test
     cy.get(cleanupSelectors.testsPage.testDeleteButton).click();  
@@ -46,7 +68,7 @@ Cypress.Commands.add('deleteImportedTest', () => {
 Cypress.Commands.add('deleteDelivery', () => {
     
     // Go to Deliveries page
-    cy.visit(cleanupData.deliveriesPageUrl);
+    cy.visit(runnerUrls.deliveriesPageUrl);
     
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
