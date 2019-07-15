@@ -35,6 +35,7 @@ Cypress.Commands.add('publishImportedTest', () => {
     cy.get(setupSelectors.testsPage.testImportbutton).click();
 
     // Upload example qti test file to file input
+    // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
     cy.get(setupSelectors.testsPage.fileInput).upload(
         {
             fileContent: base64Test, 
@@ -42,7 +43,8 @@ Cypress.Commands.add('publishImportedTest', () => {
             mimeType: 'application/zip'
         }, 
         { 
-            subjectType: 'input' 
+            subjectType: 'input',
+            force: true 
         }
     );
 
