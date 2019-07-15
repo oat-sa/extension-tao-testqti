@@ -25,9 +25,6 @@ import base64Test from './base64QtiExampleTestPackage';
  */
 Cypress.Commands.add('publishImportedTest', () => {
     
-    // Register route for test deletion
-    cy.route('POST', '**/editTest').as('editTest');
-    
     // Visit Tests page
     cy.visit(setupData.testsPageUrl);
     

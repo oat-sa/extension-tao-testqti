@@ -16,8 +16,10 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
- import runnerSelectors from '../runnerSelectors';
+ import runnerSelectors from '../_selectors/runnerSelectors';
+
  import '../_setup/setupCommands';
+ import '../_routes/runnerRoutes';
  import '../_cleanup/cleanupCommands';
 
 describe('Deliveries', () => {
@@ -25,6 +27,7 @@ describe('Deliveries', () => {
     /**
      * Setup to have a proper delivery:
      * - Start server
+     * - Add necessary routes
      * - Admin login
      * - Import and publish e2e example test
      * - Set guest access on delivery and save
@@ -33,6 +36,7 @@ describe('Deliveries', () => {
      */
     beforeEach(() => {
         cy.setupServer();
+        cy.addRoutes();
         cy.login('admin');
         cy.publishImportedTest();
         cy.setDeliveryForGuests();

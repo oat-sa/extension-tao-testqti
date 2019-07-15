@@ -24,9 +24,6 @@ import cleanupSelectors from './cleanupSelectors';
  */
 Cypress.Commands.add('deleteImportedTest', () => {
     
-    // Register route for test deletion
-    cy.route('POST', '**/delete').as('deleteTest');
-
     // Visit Tests page
     cy.visit(cleanupData.testsPageUrl);
 
@@ -40,16 +37,16 @@ Cypress.Commands.add('deleteImportedTest', () => {
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
 
     // Wait until deletion finishes
-    cy.wait('@deleteTest');
+    cy.wait('@delete');
 });
 
 Cypress.Commands.add('deleteDelivery', () => {
-
-    // Register route for delivery deletion
-    cy.route('POST', '**/delete').as('deleteDelivery');
     
     // Go to Deliveries page
     cy.visit(cleanupData.deliveriesPageUrl);
+    
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
 
     // Select example delivery
     cy.get(cleanupSelectors.deliveriesPage.resourceTree).contains('Delivery of e2e example test').click();
@@ -61,5 +58,5 @@ Cypress.Commands.add('deleteDelivery', () => {
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
 
     // Wait until deletion finishes
-    cy.wait('@deleteDelivery');
+    cy.wait('@delete');
 });
