@@ -27,8 +27,7 @@ export default {
         feedbackContinueButton: '.feedback-success button[title="continue"]',
         testPublishButton: '#test-publish',
         destinationSelector: '.destination-selector',
-        destinationSelectorActions: '.destination-selector .actions',
-        testsPanel: '#panel-manage_tests'
+        destinationSelectorActions: '.destination-selector .actions'
     },
     deliveriesPage: {
         rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',

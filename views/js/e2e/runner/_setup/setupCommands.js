@@ -51,6 +51,9 @@ Cypress.Commands.add('publishImportedTest', () => {
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
+    // Wait until test import request finishes
+    cy.wait('@testImportIndex');
+
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
 
