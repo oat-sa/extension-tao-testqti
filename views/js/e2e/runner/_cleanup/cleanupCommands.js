@@ -32,7 +32,7 @@ Cypress.Commands.add('deleteImportedItem', () => {
     cy.wait('@editClassLabel');
 
     // Select e2e example test subclass
-    cy.get(cleanupSelectors.itemsPage.itemTree).contains('e2e example test').click();
+    cy.get(cleanupSelectors.itemsPage.rootItemClass).contains('e2e example test').click();
 
     // Delete test
     cy.get(cleanupSelectors.itemsPage.itemDeleteButton).click();  
@@ -53,7 +53,7 @@ Cypress.Commands.add('deleteImportedTest', () => {
     cy.wait('@editClassLabel');
 
     // Select e2e example test subcalss
-    cy.get(cleanupSelectors.testsPage.testsTree).contains('e2e example test').click();
+    cy.get(cleanupSelectors.testsPage.rootTestClass).contains('e2e example test').click();
 
     // Delete test
     cy.get(cleanupSelectors.testsPage.testDeleteButton).click();  
@@ -74,7 +74,7 @@ Cypress.Commands.add('deleteDelivery', () => {
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(cleanupSelectors.deliveriesPage.deliveryTree).contains('Delivery of e2e example test').click();
+    cy.get(cleanupSelectors.deliveriesPage.rootDeliveryClass).contains('Delivery of e2e example test').click();
 
     // Delete delivery
     cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();  

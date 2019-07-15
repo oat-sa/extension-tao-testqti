@@ -74,7 +74,7 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(setupSelectors.deliveriesPage.resourceTree).contains('Delivery of e2e example test').click();
+    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains('Delivery of e2e example test').click();
 
     // Set guest access on the delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();

@@ -31,7 +31,7 @@ export default {
         testsPanel: '#panel-manage_tests'
     },
     deliveriesPage: {
-       resourceTree: '.taotree-delivery',
-       formContainer: '#form-container'
+        rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',
+        formContainer: '#form-container'
     }
 };

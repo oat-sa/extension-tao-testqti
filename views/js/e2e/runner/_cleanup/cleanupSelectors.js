@@ -22,14 +22,14 @@
 export default {
     testsPage: {
         testDeleteButton: '#test-delete',
-        testsTree: '#tree-manage_tests'
+        rootTestClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAOTest.rdf#Test"]'
     },
     deliveriesPage: {
-       deliveryTree: '#panel-manage_delivery_assembly',
-       deliveryDeleteButton: '#delivery-delete'
+        rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',
+        deliveryDeleteButton: '#delivery-delete'
     },
     itemsPage: {
-        itemTree: '#tree-manage_items',
+        rootItemClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAOItem.rdf#Item"]',
         itemDeleteButton: '#item-class-delete'
     },
     common: {
