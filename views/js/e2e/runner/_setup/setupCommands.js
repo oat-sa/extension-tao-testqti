@@ -82,6 +82,7 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
     // Save delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Save').click();
 
-    // Wait until edit gets fired
-    cy.wait('@editDelivery');
+    // Wait until save happened properly
+    // Not ideal but these requests have to be waited in this order upon delivery save
+    cy.wait(['@editDelivery', '@getData','@editDelivery', '@getData', '@editDelivery' ]);
 });

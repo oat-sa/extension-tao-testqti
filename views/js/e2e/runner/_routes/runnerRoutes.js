@@ -31,4 +31,5 @@ Cypress.Commands.add('addRoutes', () => {
     cy.route('POST', '**/editClassLabel').as('editClassLabel');
     cy.route('POST', '**/delete').as('delete');
     cy.route('POST', '**/deleteClass').as('deleteClass');
+    cy.route('POST', '/tao/GenerisTree/getData').as('getData');
 });
