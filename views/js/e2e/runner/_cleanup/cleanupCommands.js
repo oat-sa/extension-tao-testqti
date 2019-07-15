@@ -27,6 +27,9 @@ Cypress.Commands.add('deleteImportedTest', () => {
     // Visit Tests page
     cy.visit(cleanupData.testsPageUrl);
 
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
+
     // Select e2e example test
     cy.get(cleanupSelectors.testsPage.treeManageTests).contains('e2e example test').click();
 
