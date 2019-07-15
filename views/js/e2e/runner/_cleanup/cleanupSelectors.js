@@ -25,7 +25,7 @@ export default {
         testsTree: '#tree-manage_tests'
     },
     deliveriesPage: {
-       resourceTree: '.taotree-delivery',
+       deliveryTree: '#panel-manage_delivery_assembly',
        deliveryDeleteButton: '#delivery-delete'
     },
     itemsPage: {

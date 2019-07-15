@@ -74,7 +74,7 @@ Cypress.Commands.add('deleteDelivery', () => {
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(cleanupSelectors.deliveriesPage.resourceTree).contains('Delivery of e2e example test').click();
+    cy.get(cleanupSelectors.deliveriesPage.deliveryTree).contains('Delivery of e2e example test').click();
 
     // Delete delivery
     cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();  
