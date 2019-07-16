@@ -53,7 +53,6 @@ describe('Deliveries', () => {
         cy.deleteImportedItem();
         cy.deleteImportedTest();
         cy.deleteDelivery();
-        cy.logout();
     });
 
     /**

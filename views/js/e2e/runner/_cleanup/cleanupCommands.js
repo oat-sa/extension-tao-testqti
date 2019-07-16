@@ -82,13 +82,9 @@ Cypress.Commands.add('deleteDelivery', () => {
     // Delete delivery
     cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();  
 
-    // Wait until getdata finishes
-    cy.wait('@getData');
-
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
 
     // Wait until deletion finishes
-    // ending the commands
-    cy.wait('@delete').end();
+    cy.wait('@delete');
 });
