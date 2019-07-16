@@ -24,6 +24,7 @@ Cypress.Commands.add('addRoutes', () => {
     // Register routes for test actions
     cy.route('POST', '**/editTest').as('editTest');
     cy.route('POST', '/taoTests/TestImport/index').as('testImportIndex');
+    cy.route('GET', '/tao/TaskQueueWebApi/**').as('taskQueueWebApi');
 
     // Register routes for delivery actions
     cy.route('POST', '**/editDelivery').as('editDelivery');

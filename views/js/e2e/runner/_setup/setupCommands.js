@@ -34,6 +34,9 @@ Cypress.Commands.add('publishImportedTest', () => {
     // Select test import
     cy.get(setupSelectors.testsPage.testImportbutton).click();
 
+    // Wait until test import request finishes
+    cy.wait('@testImportIndex');
+
     // Upload example qti test file to file input
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
     cy.get(setupSelectors.testsPage.fileInput).upload(
@@ -52,7 +55,7 @@ Cypress.Commands.add('publishImportedTest', () => {
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
     // Wait until test import request finishes
-    cy.wait('@testImportIndex');
+    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 5000 });
 
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();

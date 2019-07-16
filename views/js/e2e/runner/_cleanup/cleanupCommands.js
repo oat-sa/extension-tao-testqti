@@ -56,7 +56,10 @@ Cypress.Commands.add('deleteImportedTest', () => {
     cy.get(cleanupSelectors.testsPage.rootTestClass).contains('e2e example test').click();
 
     // Delete test
-    cy.get(cleanupSelectors.testsPage.testDeleteButton).click();  
+    cy.get(cleanupSelectors.testsPage.testDeleteButton).click();
+
+    // Wait until getdata finishes
+    cy.wait('@getData');
 
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
@@ -79,9 +82,13 @@ Cypress.Commands.add('deleteDelivery', () => {
     // Delete delivery
     cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();  
 
+    // Wait until getdata finishes
+    cy.wait('@getData');
+
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
 
     // Wait until deletion finishes
-    cy.wait('@delete');
+    // ending the commands
+    cy.wait('@delete').end();
 });
