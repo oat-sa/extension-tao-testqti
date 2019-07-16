@@ -62,7 +62,7 @@ Cypress.Commands.add('deleteImportedTest', () => {
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
 
     // Wait until deletion finishes
-    cy.wait(['@delete', '@editClassLabel']);
+    cy.wait('@delete');
 });
 
 Cypress.Commands.add('deleteDelivery', () => {
