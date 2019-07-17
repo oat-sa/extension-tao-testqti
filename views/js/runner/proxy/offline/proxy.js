@@ -32,7 +32,7 @@ define([
     'taoQtiTest/runner/helpers/offlineErrorHelper',
     'taoQtiTest/runner/helpers/offlineSyncModal',
     'taoQtiTest/runner/services/responseStore',
-    'util/download'
+    'taoQtiTest/runner/proxy/offline/download',
 ], function(
     _,
     __,
