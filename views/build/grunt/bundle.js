@@ -31,6 +31,7 @@ module.exports = function(grunt) {
                 options : {
                     extension : 'taoQtiTest',
                     outputDir : 'loader',
+                    paths: require('./paths.json'),
                     dependencies : ['taoItems', 'taoQtiItem', 'taoTests'],
                     bundles : [{
                         name : 'taoQtiTest',

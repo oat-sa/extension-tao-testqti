@@ -602,10 +602,10 @@ msgid "Magnifier"
 msgstr "Лупа"
 
 msgid "Magnify less"
-msgstr "Увеличить больше"
+msgstr "Увеличить меньше"
 
 msgid "Magnify more"
-msgstr "Увеличить меньше"
+msgstr "Увеличить больше"
 
 msgid "Magnifying Glass"
 msgstr "Увеличительная лупа"
