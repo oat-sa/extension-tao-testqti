@@ -1,27 +1,61 @@
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2014-2019 (original work) Open Assessment Technologies SA;
+ */
+
+const path = require('path');
+
+/**
+ * configure the extension sass compilation
+ * @author Bertrand Chevrier <bertrand@taotesting.com>
+ *
+ * @param {Object} grunt - the grunt object (by convention)
+ */
 module.exports = function(grunt) {
     'use strict';
 
-    var root    = grunt.option('root') + '/taoQtiTest/views/';
-    var pluginDir = root + 'js/runner/plugins/';
+    const sassConfig = grunt.config('sass') || {};
+    const root       = path.join(grunt.option('root'), 'x/taoQtiTest/views/');
+    const runnerScssPath = path.join(root, 'node_modules/@oat-sa/tao-test-runner-qti/scss');
 
     grunt.config.merge({
         sass : {
-            options: {
-                includePaths : [ root + 'node_modules/@oat-sa/tao-test-runner-qti/scss' ]
-            },
             taoqtitest: {
+                options: {
+                    includePaths : [
+                        ...sassConfig.options.includePaths,
+                        runnerScssPath
+                    ]
+                },
                 files : [
-                    { dest : root + 'css/creator.css', src : root + 'scss/creator.scss' },
-                    { dest : root + 'css/test-runner.css', src : root + 'scss/test-runner.scss' },
-                    { dest : root + 'css/new-test-runner.css', src : root + 'node_modules/@oat-sa/tao-test-runner-qti/scss/new-test-runner.scss'},
-                    { dest : pluginDir + 'controls/timer/component/css/countdown.css', src : pluginDir + 'controls/timer/component/scss/countdown.scss'},
-                    { dest : pluginDir + 'controls/timer/component/css/timerbox.css', src : pluginDir + 'controls/timer/component/scss/timerbox.scss'}
+                    {
+                        dest : path.join(root, 'css/creator.css'),
+                        src : path.join(root, 'scss/creator.scss')
+                    }, {
+                        dest : path.join(root, 'css/test-runner.css'),
+                        src : path.join(root, 'scss/test-runner.scss')
+                    }, {
+                        dest : path.join(root, 'css/new-test-runner.css'),
+                        src : path.join(runnerScssPath, 'new-test-runner.scss')                    },
                 ]
             },
         },
         watch : {
             taoqtitestsass : {
-                files : [root + 'scss/**/*.scss', pluginDir + '**/*.scss'],
+                files : [path.join(root, 'scss/**/*.scss')],
                 tasks : ['sass:taoqtitest'],
                 options : {
                     debounceDelay : 1000
