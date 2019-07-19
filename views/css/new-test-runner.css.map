@@ -7,7 +7,7 @@
 		"../../../tao/views/node_modules/@oat-sa/tao-core-ui/scss/inc/_variables.scss",
 		"../../../tao/views/node_modules/@oat-sa/tao-core-ui/scss/inc/_functions.scss",
 		"../../../tao/views/node_modules/@oat-sa/tao-core-ui/scss/inc/_colors.scss",
-		"../../../tao/views/node_modules/@oat-sa/tao-core-ui/scss/inc/fonts/_tao-icon-vars.scss",
+		"../../../tao/views/scss/inc/fonts/_tao-icon-vars.scss",
 		"../node_modules/@oat-sa/tao-test-runner-qti/scss/inc/_plugin-colors.scss",
 		"../node_modules/@oat-sa/tao-test-runner-qti/scss/inc/_loading-bar.scss",
 		"../node_modules/@oat-sa/tao-test-runner-qti/scss/inc/_action-bars.scss",
