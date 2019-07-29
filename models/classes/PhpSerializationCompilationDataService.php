@@ -4,6 +4,7 @@ namespace oat\taoQtiTest\models;
 
 use qtism\data\QtiComponent;
 use qtism\data\AssessmentItemRef;
+use qtism\data\storage\xml\XmlCompactDocument;
 
 /**
  * PHP Serialization Compilation Data Service.
@@ -29,7 +30,6 @@ class PhpSerializationCompilationDataService extends CompilationDataService
     
     public function readPhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
-
         if (($compilationData = $compilationDirectory->read($path)) !== false) {
             if (($component = @unserialize($compilationData)) !== false) {
                 return $component;
@@ -41,5 +41,23 @@ class PhpSerializationCompilationDataService extends CompilationDataService
             $msg = "PHP Compilation data in directory '" . $compilationDirectory->getId() . "' could not be read properly.";
             throw new \common_Exception($msg);
         }
+    }
+
+    public function convertToSourceFormat($compiledString)
+    {
+        $component = unserialize($compiledString);
+
+        $compactDoc = new XmlCompactDocument();
+        $compactDoc->setDocumentComponent($component);
+
+        return $compactDoc->saveToString();
+    }
+
+    public function convertToCompiledFormat($sourceFormat)
+    {
+        $compactDoc = new XmlCompactDocument();
+        $compactDoc->loadFromString($sourceFormat);
+
+        return serialize($compactDoc->getDocumentComponent());
     }
 }

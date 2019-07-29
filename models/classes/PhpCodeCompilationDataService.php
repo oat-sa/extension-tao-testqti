@@ -5,6 +5,7 @@ namespace oat\taoQtiTest\models;
 use qtism\data\storage\php\PhpDocument;
 use qtism\data\storage\php\PhpStorageException;
 use qtism\data\QtiComponent;
+use qtism\data\storage\xml\XmlCompactDocument;
 
 /**
  * PHP Code Compilation Data Service.
@@ -58,6 +59,28 @@ class PhpCodeCompilationDataService extends CompilationDataService
         }
         
         return $doc->getDocumentComponent();
+    }
+
+    public function convertToSourceFormat($compiledString)
+    {
+        $phpDoc = new PhpDocument();
+        $phpDoc->loadFromString($compiledString);
+
+        $compactDoc = new XmlCompactDocument();
+        $compactDoc->setDocumentComponent($phpDoc->getDocumentComponent());
+
+        return $compactDoc->saveToString();
+    }
+
+    public function convertToCompiledFormat($sourceFormat)
+    {
+        $compactDoc = new XmlCompactDocument();
+        $compactDoc->loadFromString($sourceFormat);
+
+        $phpDoc = new PhpDocument();
+        $phpDoc->setDocumentComponent($compactDoc->getDocumentComponent());
+
+        return $phpDoc->saveToString();
     }
 
     /**

@@ -48,4 +48,8 @@ abstract class CompilationDataService extends ConfigurableService
      * @throws \common_Exception In case of error.
      */
     abstract public function readPhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '');
+
+    abstract public function convertToSourceFormat($compiledString);
+
+    abstract public function convertToCompiledFormat($sourceFormat);
 }
