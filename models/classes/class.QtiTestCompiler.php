@@ -821,7 +821,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function compileTest(AssessmentTest $test) {
         common_Logger::t("Compiling QTI test definition...");
 
-        $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID)->writePhpCompilationData(
+        $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID)->writeCompilationData(
             $this->getPrivateDirectory(),
             taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME,
             $test
@@ -897,7 +897,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     \common_Logger::d("QTI Adaptive Section with identifier '" . $current->getIdentifier() . "' found.");
                     
                     // Deal with AssessmentSection Compiling.
-                    $compilationDataService->writePhpCompilationData(
+                    $compilationDataService->writeCompilationData(
                         $this->getPrivateDirectory(),
                         "adaptive-assessment-section-${sectionIdentifier}.php",
                         $current
@@ -910,7 +910,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                             $sectionPartHref = $sectionPart->getHref();
                             
                             // Deal with AssessmentItemRef Compiling.
-                            $compilationDataService->writePhpCompilationData(
+                            $compilationDataService->writeCompilationData(
                                 $this->getPrivateDirectory(),
                                 "adaptive-assessment-item-ref-${sectionPartIdentifier}.php",
                                 $sectionPart

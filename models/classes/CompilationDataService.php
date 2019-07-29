@@ -33,7 +33,7 @@ abstract class CompilationDataService extends ConfigurableService
      * @param string $path
      * @param \qtism\data\QtiComponent $object
      */
-    abstract public function writePhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object);
+    abstract public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object);
     
     
     /**
@@ -47,5 +47,5 @@ abstract class CompilationDataService extends ConfigurableService
      * @return \qtism\data\QtiComponent
      * @throws \common_Exception In case of error.
      */
-    abstract public function readPhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '');
+    abstract public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '');
 }

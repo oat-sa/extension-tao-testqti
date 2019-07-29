@@ -24,7 +24,7 @@ class PhpCodeCompilationDataService extends CompilationDataService
         $this->cacheDir = sys_get_temp_dir() . '/taooldtestrunnerphpcache';
     }
     
-    public function writePhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
+    public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
         $doc = new PhpDocument();
         $doc->setDocumentComponent($object);
@@ -35,7 +35,7 @@ class PhpCodeCompilationDataService extends CompilationDataService
         );
     }
     
-    public function readPhpCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
+    public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
         $dir = $this->ensureCacheDirectory($compilationDirectory);
         $cacheKey = $this->cacheKey($cacheInfo);

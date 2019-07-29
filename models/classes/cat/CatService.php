@@ -150,7 +150,7 @@ class CatService extends ConfigurableService
         $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
         $filename = "adaptive-assessment-item-ref-${identifier}";
         
-        return $compilationDataService->readPhpCompilationData(
+        return $compilationDataService->readCompilationData(
             $privateCompilationDirectory,
             "${filename}.php",
             "${filename}"
@@ -191,7 +191,7 @@ class CatService extends ConfigurableService
         $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
         $filename = "adaptive-assessment-section-${adaptiveSectionId}";
         
-        $component = $compilationDataService->readPhpCompilationData(
+        $component = $compilationDataService->readCompilationData(
             $privateCompilationDirectory,
             "${filename}.php",
             $filename
