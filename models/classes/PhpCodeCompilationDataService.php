@@ -26,6 +26,7 @@ class PhpCodeCompilationDataService extends CompilationDataService
     
     public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
+        $path .= '.php';
         $doc = new PhpDocument();
         $doc->setDocumentComponent($object);
         
@@ -37,6 +38,7 @@ class PhpCodeCompilationDataService extends CompilationDataService
     
     public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
+        $path .= '.php';
         $dir = $this->ensureCacheDirectory($compilationDirectory);
         $cacheKey = $this->cacheKey($cacheInfo);
         $cacheFile = "${dir}/${cacheKey}.php";

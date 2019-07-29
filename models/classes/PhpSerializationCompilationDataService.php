@@ -16,6 +16,8 @@ class PhpSerializationCompilationDataService extends CompilationDataService
 {
     public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
+        $path .= '.php';
+
         // Clone the component to make sure observers are not saved.
         if ($object instanceof AssessmentItemRef) {
             $object = clone $object;
@@ -29,6 +31,8 @@ class PhpSerializationCompilationDataService extends CompilationDataService
     
     public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
+
+        $path .= '.php';
 
         if (($compilationData = $compilationDirectory->read($path)) !== false) {
             if (($component = @unserialize($compilationData)) !== false) {
