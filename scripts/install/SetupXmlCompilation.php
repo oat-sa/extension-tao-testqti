@@ -23,7 +23,7 @@ use oat\oatbox\extension\InstallAction;
 use oat\taoQtiTest\models\XmlCompilationDataService;
 
 /**
- * Setup PHP code compilation for QTI-SDK components.
+ * Setup XML compilation for QTI-SDK components.
  */
 class SetupXmlCompilation extends InstallAction
 {
