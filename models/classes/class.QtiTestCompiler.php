@@ -955,10 +955,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     {
         common_Logger::t("Compiling test metadata...");
         $compiledDocDir = $this->getPrivateDirectory();
-        $meta = taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
-        $phpCode = common_Utils::toPHPVariableString($meta);
-        $phpCode = '<?php return ' . $phpCode . '; ?>';
-        $compiledDocDir->write(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME, $phpCode);
+
+        /** @var CompilationDataService $compilationDataService */
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $compilationDataService->writeCompilationMetadata($compiledDocDir, $test);
     }
 
     /**

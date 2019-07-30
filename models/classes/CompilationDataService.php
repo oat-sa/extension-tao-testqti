@@ -3,6 +3,7 @@
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
+use qtism\data\AssessmentTest;
 use qtism\data\QtiComponent;
 
 /**
@@ -48,4 +49,20 @@ abstract class CompilationDataService extends ConfigurableService
      * @throws \common_Exception In case of error.
      */
     abstract public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '');
+
+    public function writeCompilationMetadata(\tao_models_classes_service_StorageDirectory $compilationDirectory, AssessmentTest $test)
+    {
+        $meta = \taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
+        $phpCode = \common_Utils::toPHPVariableString($meta);
+        $phpCode = '<?php return ' . $phpCode . '; ?>';
+        $compilationDirectory->write(\taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.php', $phpCode);
+    }
+
+    public function readCompilationMetadata(\tao_models_classes_service_StorageDirectory $compilationDirectory)
+    {
+        $data = $compilationDirectory->read(\taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.php');
+        $data = str_replace('<?php', '', $data);
+        $data = str_replace('?>', '', $data);
+        return eval($data);
+    }
 }
