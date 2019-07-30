@@ -10,7 +10,7 @@ use qtism\data\QtiComponent;
  * Compilation Data Service
  * 
  * An abstract Compilation Data Service. Its implementation aim 
- * at proding a way to compile Delivery data in various ways.
+ * at providing a way to compile Delivery data in various ways.
  */
 abstract class CompilationDataService extends ConfigurableService
 {
@@ -26,7 +26,7 @@ abstract class CompilationDataService extends ConfigurableService
     }
     
     /**
-     * Write PHP Compilation Data
+     * Write Compilation Data
      * 
      * Write a QtiComponent $object into a given $compilationDirectory at a given $path.
      * 
@@ -38,7 +38,7 @@ abstract class CompilationDataService extends ConfigurableService
     
     
     /**
-     * Read PHP Compilation Data
+     * Read Compilation Data
      * 
      * Read a QtiComponent object from a given $compilationDirectory at a given $path.
      * 
@@ -50,19 +50,49 @@ abstract class CompilationDataService extends ConfigurableService
      */
     abstract public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '');
 
+    /**
+     * Write Compilation Metadata
+     *
+     * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
+     * @param AssessmentTest $test
+     * @throws \common_Exception
+     */
     public function writeCompilationMetadata(\tao_models_classes_service_StorageDirectory $compilationDirectory, AssessmentTest $test)
     {
-        $meta = \taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
-        $phpCode = \common_Utils::toPHPVariableString($meta);
-        $phpCode = '<?php return ' . $phpCode . '; ?>';
-        $compilationDirectory->write(\taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.php', $phpCode);
+        try {
+            $filename = \taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.json';
+            $meta = \taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
+            $compilationDirectory->write($filename, json_encode($meta));
+        } catch (\Exception $e) {
+            throw new \common_Exception("Unable to write file '${filename}'.");
+        }
+
     }
 
+    /**
+     * Read Compilation Metadata
+     *
+     * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
+     * @return mixed
+     * @throws \common_Exception
+     */
     public function readCompilationMetadata(\tao_models_classes_service_StorageDirectory $compilationDirectory)
     {
-        $data = $compilationDirectory->read(\taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.php');
-        $data = str_replace('<?php', '', $data);
-        $data = str_replace('?>', '', $data);
-        return eval($data);
+        try {
+            $data = $compilationDirectory->read(\taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.json');
+            return json_decode($data, true);
+
+        } catch (\Exception $e) {
+            // Legacy compilation support.
+            try {
+                $filename = \taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.php';
+                $data = $compilationDirectory->read($filename);
+                $data = str_replace('<?php', '', $data);
+                $data = str_replace('?>', '', $data);
+                return eval($data);
+            } catch (\Exception $e) {
+                throw new \common_Exception("Unable to read file '${filename}'.");
+            }
+        }
     }
 }
