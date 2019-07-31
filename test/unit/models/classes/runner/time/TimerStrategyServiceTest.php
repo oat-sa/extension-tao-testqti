@@ -24,7 +24,6 @@ use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 
 class TimerStrategyServiceTest extends TestCase
 {
-
     /**
      * @dataProvider dataProviderTestRoundToMinutes
      * @param int $expected
