@@ -27,6 +27,7 @@ use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
 use oat\taoTests\models\runner\time\InvalidDataException;
 use oat\taoTests\models\runner\time\InvalidStorageException;
+use oat\taoTests\models\runner\time\InvalidTimerStrategyException;
 use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
@@ -67,6 +68,11 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      * @var TimeStorage
      */
     protected $storage;
+
+    /**
+     * @var TimerStrategyInterface
+     */
+    protected $timerStrategy;
 
     /**
      * The total added extra time
@@ -341,6 +347,15 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     }
 
     /**
+     * @inheritDoc
+     */
+    public function setStrategy(TimerStrategyInterface $strategy)
+    {
+        $this->timerStrategy = $strategy;
+        return $this;
+    }
+
+    /**
      * Gets the storage used to maintain the data
      * @return TimeStorage
      */
@@ -417,7 +432,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         if (!$this->storage) {
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
-        
+
         $data = $this->storage->load();
 
         if (isset($data)) {
@@ -453,6 +468,10 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             if (!$this->timeLine instanceof TimeLine) {
                 throw new InvalidDataException('The storage did not provide acceptable data when loading!');
             }
+
+            if (!$this->timerStrategy) {
+                throw new InvalidTimerStrategyException('A timer strategy must be defined!');
+            }
         }
 
         return $this;
@@ -466,10 +485,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     public function getExtraTime($maxTime = 0)
     {
         if ($maxTime && $this->getExtendedTime()) {
-            $secondsNew = $maxTime * $this->getExtendedTime();
-            $extraTime = $secondsNew - $maxTime;
-            $this->setExtraTime($extraTime);
-            return $extraTime;
+            $this->setExtraTime($this->timerStrategy->getExtraTime($maxTime, $this->getExtendedTime()));
         }
         return $this->extraTime;
     }

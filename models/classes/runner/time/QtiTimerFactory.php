@@ -98,10 +98,10 @@ class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDe
         /* @var Timer $timer */
         $timerClass = $this->getTimerClass();
         $timer = new $timerClass();
-        $timer->setStorage($timerStorage);
-        $timer->load();
-        
-        return $timer;
+
+        return $timer->setStorage($timerStorage)
+            ->setStrategy($this->getServiceLocator()->get(TimerStrategyService::SERVICE_ID))
+            ->load();
     }
 
     /**
