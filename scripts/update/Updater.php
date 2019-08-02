@@ -82,6 +82,7 @@ use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
 use oat\tao\model\ClientLibRegistry;
 use oat\tao\model\asset\AssetService;
+use oat\taoTests\models\runner\time\TimerStrategyInterface;
 
 /**
  *
@@ -1907,7 +1908,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         if ($this->isVersion('34.2.0')) {
             $this->getServiceManager()->register(
-                TimerStrategyService::SERVICE_ID,
+                TimerStrategyInterface::SERVICE_ID,
                 new TimerStrategyService()
             );
             $this->setVersion('34.3.0');

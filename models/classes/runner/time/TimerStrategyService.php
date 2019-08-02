@@ -21,11 +21,10 @@
 namespace oat\taoQtiTest\models\runner\time;
 
 use oat\oatbox\service\ConfigurableService;
+use oat\taoTests\models\runner\time\TimerStrategyInterface;
 
 class TimerStrategyService extends ConfigurableService implements TimerStrategyInterface
 {
-    const SERVICE_ID = 'taoQtiTest/TimerStrategyService';
-
     /**
      * @inheritDoc
      */

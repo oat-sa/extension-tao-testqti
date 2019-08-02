@@ -31,6 +31,7 @@ use oat\taoTests\models\runner\time\InvalidTimerStrategyException;
 use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoTests\models\runner\time\TimerStrategyInterface;
 use oat\taoTests\models\runner\time\TimeStorage;
 use oat\taoTests\models\runner\time\Timer;
 
