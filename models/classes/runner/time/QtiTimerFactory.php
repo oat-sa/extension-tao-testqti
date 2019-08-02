@@ -26,6 +26,7 @@ use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStorageJsonFormat;
 use oat\taoTests\models\runner\time\Timer;
+use oat\taoTests\models\runner\time\TimerStrategyInterface;
 use oat\taoTests\models\runner\time\TimeStorage;
 
 /**
