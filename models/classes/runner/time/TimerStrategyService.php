@@ -34,13 +34,13 @@ class TimerStrategyService extends ConfigurableService implements TimerStrategyI
             return 0;
         }
 
-        return $this->getNewTime($time, $multiplier) - $time;
+        return $this->getMultipliedTime($time, $multiplier) - $time;
     }
 
     /**
      * @inheritDoc
      */
-    public function getNewTime($time, $multiplier)
+    public function getMultipliedTime($time, $multiplier)
     {
         if ($multiplier < 1) {
             return $time;

@@ -54,23 +54,23 @@ class TimerStrategyServiceTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderTestGetNewTime
+     * @dataProvider dataProviderTestGetMultipliedTime
      * @param int $expected
      * @param int $time
      * @param int $multiplier
      */
-    public function testGetNewTime($expected, $time, $multiplier)
+    public function testGetMultipliedTime($expected, $time, $multiplier)
     {
         $this->assertEquals(
             $expected,
-            (new TimerStrategyService())->getNewTime($time, $multiplier)
+            (new TimerStrategyService())->getMultipliedTime($time, $multiplier)
         );
     }
 
     /**
      * @return array
      */
-    public function dataProviderTestGetNewTime()
+    public function dataProviderTestGetMultipliedTime()
     {
         return [
             [60, 60, 1],
