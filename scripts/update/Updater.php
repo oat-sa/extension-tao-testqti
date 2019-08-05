@@ -39,6 +39,7 @@ use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
+use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
 use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
@@ -79,9 +80,9 @@ use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
-use oat\taoTests\models\runner\time\TimePoint;
 use oat\tao\model\ClientLibRegistry;
 use oat\tao\model\asset\AssetService;
+use oat\taoTests\models\runner\time\TimerStrategyInterface;
 
 /**
  *
@@ -1904,5 +1905,13 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('34.0.0', '34.2.1');
+
+        if ($this->isVersion('34.2.1')) {
+            $this->getServiceManager()->register(
+                TimerStrategyInterface::SERVICE_ID,
+                new TimerStrategyService()
+            );
+            $this->setVersion('34.3.0');
+        }
     }
 }

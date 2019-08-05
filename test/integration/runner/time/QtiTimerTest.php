@@ -23,6 +23,7 @@ use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 use oat\taoTests\models\runner\time\TimePoint;
 use oat\taoTests\models\runner\time\Timer;
 use oat\taoTests\models\runner\time\TimeStorage;
@@ -538,7 +539,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(0, $newTimer->getConsumedExtraTime());
 
         $newStorage = $this->getTimeStorage($dataStorage);
-        $newTimer->setStorage($newStorage);
+        $newTimer->setStorage($newStorage)->setStrategy(new TimerStrategyService());
         $newTimer = $newTimer->load();
         $timeLine = $this->getTimeLine($newTimer);
 
