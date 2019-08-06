@@ -31,6 +31,7 @@ use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
 use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
+use oat\taoQtiTest\scripts\install\RegisterTimerStrategyService;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -40,11 +41,11 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '34.2.0',
+    'version'     => '34.4.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
         'taoQtiItem' => '>=20.0.2',
-        'taoTests'   => '>=13.0.0',
+        'taoTests'   => '>=13.1.0',
         'tao'        => '>=37.0.0',
         'generis'    => '>=7.12.1',
         'taoDelivery' => '>=13.3.0',
@@ -79,7 +80,8 @@ return array(
             RegisterTestContainer::class,
             SetUpQueueTasks::class,
             SetLinearNextItemWarningConfig::class,
-            RegisterFrontendPaths::class
+            RegisterFrontendPaths::class,
+            RegisterTimerStrategyService::class
         )
     ),
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
