@@ -22,7 +22,6 @@
 
 namespace oat\taoQtiTest\models\runner;
 
-use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\service\ConfigurableService;
 use tao_models_classes_service_FileStorage;
 use taoQtiTest_models_classes_QtiTestService;
@@ -34,8 +33,6 @@ class TestDefinitionSerializerService extends ConfigurableService
     /**
      * @param QtiRunnerServiceContext $serviceContext
      * @return array
-     * @throws \common_exception_InconsistentData
-     * @throws \oat\tao\model\websource\WebsourceNotFound
      */
     public function getSerializedTestDefinition(QtiRunnerServiceContext $serviceContext)
     {
@@ -51,11 +48,14 @@ class TestDefinitionSerializerService extends ConfigurableService
         $xml = simplexml_load_string($xml);
         $parsedXml = json_decode(json_encode($xml), true);
 
-        return $this->setSubObjectToArray($parsedXml, [
-            taoQtiTest_models_classes_QtiTestService::XML_TEST_PART,
-            taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_SECTION,
-            taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_ITEM_REF,
-        ]);
+        return $this->setSubObjectToArray(
+            $parsedXml,
+            [
+                taoQtiTest_models_classes_QtiTestService::XML_TEST_PART,
+                taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_SECTION,
+                taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_ITEM_REF,
+            ]
+        );
     }
 
     /**
