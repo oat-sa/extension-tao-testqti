@@ -164,6 +164,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
         $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+        $testDefinition = $context->getTestDefinition();
+
         if ($session->isRunning() !== false) {
             $route         = $session->getRoute();
             $store         = $session->getAssessmentItemSessionStore();
@@ -178,6 +180,14 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 case RunnerMap::SCOPE_TEST:
                 default:
                     $routeItems = $route->getAllRouteItems();
+
+                    $map['title'] = $testDefinition->getTitle();
+                    $map['identifier'] = $testDefinition->getIdentifier();
+                    $map['className'] = $testDefinition->getQtiClassName();
+                    $map['toolName'] = $testDefinition->getToolName();
+                    $map['exclusivelyLinear'] = $testDefinition->isExclusivelyLinear();
+                    $map['hasTimeLimits'] = $testDefinition->hasTimeLimits();
+
                     break;
             }
 
