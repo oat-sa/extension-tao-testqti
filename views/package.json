@@ -9,6 +9,6 @@
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "github:oat-sa/tao-test-runner-fe#feature/NEX-238_deprecate-test-data",
-    "@oat-sa/tao-test-runner-qti": "github:oat-sa/tao-test-runner-qti-fe#feature/NEX-238_deprecate-test-data"
+    "@oat-sa/tao-test-runner-qti": "github:oat-sa/tao-test-runner-qti-fe#feature/NEX-239_update-test-context_plus-NEX-238"
   }
 }
