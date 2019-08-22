@@ -22,7 +22,7 @@
  import '../_routes/runnerRoutes';
  import '../_cleanup/cleanupCommands';
 
-describe('Deliveries', () => {
+describe('Tools', () => {
 
     /**
      * Setup to have a proper delivery:
@@ -38,7 +38,7 @@ describe('Deliveries', () => {
         cy.setupServer();
         cy.addRoutes();
         cy.login('admin');
-        cy.importAndPublishTest('../_setup/base64QtiExampleTestPackage.js');
+        cy.importAndPublishTest('./e2e_tools_test.zip.base64');
         cy.setDeliveryForGuests();
         cy.logout();
         cy.guestLogin();
@@ -60,8 +60,8 @@ describe('Deliveries', () => {
      */
     describe('Delivery list', () => {
 
-        it('List contains example e2e delivery', function() {
-            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e example test');
+        it('List contains Tools e2e delivery', function() {
+            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e Tools test');
         });
     });
 });

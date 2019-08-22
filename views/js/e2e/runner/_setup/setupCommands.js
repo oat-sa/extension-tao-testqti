@@ -23,14 +23,13 @@ import base64Test from './base64QtiExampleTestPackage';
 /**
  * Setup Commands
  */
-Cypress.Commands.add('publishImportedTest', () => {
-    
+Cypress.Commands.add('importTestPackage', (fileName, mimeType = 'application/zip') => {
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
-    
+
     // Select test import
     cy.get(setupSelectors.testsPage.testImportbutton).click();
 
@@ -39,17 +38,19 @@ Cypress.Commands.add('publishImportedTest', () => {
 
     // Upload example qti test file to file input
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
-    cy.get(setupSelectors.testsPage.fileInput).upload(
-        {
-            fileContent: base64Test, 
-            fileName: 'e2eExampleTest.zip', 
-            mimeType: 'application/zip'
-        }, 
-        { 
-            subjectType: 'input',
-            force: true 
-        }
-    );
+    cy.fixture(fileName).then(fileContent => {
+        cy.get(setupSelectors.testsPage.fileInput).upload(
+            {
+                fileContent,
+                fileName,
+                mimeType
+            },
+            {
+                subjectType: 'input',
+                force: true
+            }
+        );
+    });
 
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
@@ -59,6 +60,12 @@ Cypress.Commands.add('publishImportedTest', () => {
 
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
+
+});
+
+Cypress.Commands.add('importAndPublishTest', (fileName = '') => {
+
+    cy.importTestPackage(fileName);
 
     // Wait until publish button appears again
     cy.wait('@editTest');
@@ -74,7 +81,7 @@ Cypress.Commands.add('publishImportedTest', () => {
 });
 
 Cypress.Commands.add('setDeliveryForGuests', () => {
-    
+
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
 
