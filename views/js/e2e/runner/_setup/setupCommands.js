@@ -19,6 +19,7 @@
 import runnerUrls from '../_urls/runnerUrls';
 import setupSelectors from './setupSelectors';
 import base64Test from './base64QtiExampleTestPackage';
+import runnerSelectors from "../_selectors/runnerSelectors";
 
 /**
  * Setup Commands
@@ -40,14 +41,10 @@ Cypress.Commands.add('publishImportedTest', () => {
     // Upload example qti test file to file input
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
     cy.get(setupSelectors.testsPage.fileInput).upload(
+        base64Test.linearTests.with3Items,
         {
-            fileContent: base64Test, 
-            fileName: 'e2eExampleTest.zip', 
-            mimeType: 'application/zip'
-        }, 
-        { 
             subjectType: 'input',
-            force: true 
+            force: true
         }
     );
 
@@ -101,8 +98,8 @@ Cypress.Commands.add('startTest', () => {
     // some windows workaround
     cy.wait(500);
 
-    cy.get(setupSelectors.testList)
-        .find(setupSelectors.availableDeliveries)
+    cy.get(runnerSelectors.testList)
+        .find(runnerSelectors.availableDeliveries)
         .contains('Delivery of e2e example test')
         .click();
 

@@ -34,10 +34,10 @@ export default {
         formContainer: '#form-container'
     },
     testNavigation: {
-        nextItem: '.navi-box-list [data-control="move-forward"]',
-        previousItem: '.navi-box-list [data-control="move-backward"]',
-        skipItem: '.navi-box-list [data-control="skip"]',
-        endTest: '.navi-box-list [data-control="move-end"]',
-        skipAndEndTest: '.navi-box-list [data-control="skip-end"]',
+        nextItem: '[data-control="move-forward"]',
+        previousItem: '[data-control="move-backward"]',
+        skipItem: '[data-control="skip"]',
+        endTest: '[data-control="move-end"]',
+        skipAndEndTest: '[data-control="skip-end"]',
     }
 };
