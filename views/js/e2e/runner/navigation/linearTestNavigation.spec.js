@@ -50,7 +50,6 @@ describe('Deliveries', () => {
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     afterEach(() => {
-        cy.endTest();
         cy.guestLogout();
         cy.login('admin');
         cy.deleteImportedItem();
