@@ -19,6 +19,7 @@
 import runnerUrls from '../_urls/runnerUrls';
 import setupSelectors from './setupSelectors';
 import base64Test from './base64QtiExampleTestPackage';
+import runnerSelectors from "../_selectors/runnerSelectors";
 
 /**
  * Setup Commands
@@ -51,11 +52,13 @@ Cypress.Commands.add('publishImportedTest', () => {
         }
     );
 
+    cy.wait(200);
+
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
     // Wait until test import request finishes
-    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 5000 });
+    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 10000 });
 
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
@@ -92,5 +95,43 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
 
     // Wait until save happened properly
     // Not ideal but these requests have to be waited in this order upon delivery save
-    cy.wait(['@editDelivery', '@getData','@editDelivery', '@getData', '@editDelivery' ]);
+    cy.wait(['@editDelivery', '@getData','@editDelivery', '@getData', '@editDelivery', '@getData' ]);
 });
+
+Cypress.Commands.add('startDeliveryExecution', () => {
+    // some windows workaround
+    cy.wait(500);
+
+    cy.get(runnerSelectors.testList)
+        .find(runnerSelectors.availableDeliveries)
+        .contains('Delivery of e2e example test')
+        .click();
+
+    cy.wait(['@testRunnerGet', '@testRunnerPost']);
+});
+
+Cypress.Commands.add('nextItem', () => {
+    cy.get(setupSelectors.testNavigation.nextItem).click();
+    cy.wait(['@testRunnerGet', '@testRunnerPost']);
+});
+
+Cypress.Commands.add('previousItem', () => {
+    cy.get(setupSelectors.testNavigation.previousItem).click();
+    cy.wait(['@testRunnerGet', '@testRunnerPost']);
+});
+
+Cypress.Commands.add('skipItem', () => {
+    cy.get(setupSelectors.testNavigation.skipItem).click();
+    cy.wait(['@testRunnerGet', '@testRunnerPost']);
+});
+
+Cypress.Commands.add('endTest', () => {
+    cy.get(setupSelectors.testNavigation.endTest).click();
+    cy.wait('@testRunnerPost');
+});
+
+Cypress.Commands.add('skipAndEndTest', () => {
+    cy.get(setupSelectors.testNavigation.skipAndEndTest).click();
+    cy.wait('@testRunnerPost');
+});
+
