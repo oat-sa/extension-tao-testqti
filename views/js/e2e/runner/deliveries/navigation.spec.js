@@ -32,6 +32,7 @@ describe('Deliveries', () => {
      * - Set guest access on delivery and save
      * - Logout
      * - Guest login
+     * - Start Test
      */
     beforeEach(() => {
         cy.setupServer();
