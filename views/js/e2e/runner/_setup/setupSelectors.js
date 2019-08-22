@@ -32,5 +32,12 @@ export default {
     deliveriesPage: {
         rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',
         formContainer: '#form-container'
+    },
+    testNavigation: {
+        nextItem: '.navi-box-list [data-control="move-forward"]',
+        previousItem: '.navi-box-list [data-control="move-backward"]',
+        skipItem: '.navi-box-list [data-control="skip"]',
+        endTest: '.navi-box-list [data-control="move-end"]',
+        skipAndEndTest: '.navi-box-list [data-control="skip-end"]',
     }
 };
