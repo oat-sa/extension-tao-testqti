@@ -24,13 +24,13 @@ import base64Test from './base64QtiExampleTestPackage';
  * Setup Commands
  */
 Cypress.Commands.add('publishImportedTest', () => {
-    
+
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
-    
+
     // Select test import
     cy.get(setupSelectors.testsPage.testImportbutton).click();
 
@@ -41,13 +41,13 @@ Cypress.Commands.add('publishImportedTest', () => {
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
     cy.get(setupSelectors.testsPage.fileInput).upload(
         {
-            fileContent: base64Test, 
-            fileName: 'e2eExampleTest.zip', 
+            fileContent: base64Test,
+            fileName: 'e2eExampleTest.zip',
             mimeType: 'application/zip'
-        }, 
-        { 
+        },
+        {
             subjectType: 'input',
-            force: true 
+            force: true
         }
     );
 
@@ -55,7 +55,7 @@ Cypress.Commands.add('publishImportedTest', () => {
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
     // Wait until test import request finishes
-    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 5000 });
+    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 15000 });
 
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
@@ -74,7 +74,7 @@ Cypress.Commands.add('publishImportedTest', () => {
 });
 
 Cypress.Commands.add('setDeliveryForGuests', () => {
-    
+
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
 
