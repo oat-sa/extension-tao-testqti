@@ -20,6 +20,7 @@ import '../_routes/runnerRoutes';
 import '../_setup/setupCommands';
 import '../_cleanup/cleanupCommands';
 import runnerUrls from '../_urls/runnerUrls';
+import setupSelectors from '../_setup/setupSelectors';
 
 describe('Deliveries', () => {
 
@@ -67,15 +68,15 @@ describe('Deliveries', () => {
             it('Has proper navigation buttons', function () {
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get('[data-control="move-forward"]').should('exist').and('be.visible');
-                    cy.get('[data-control="skip"]').should('exist').and('be.visible');
+                    cy.get(setupSelectors.testNavigation.nextItem).should('exist').and('be.visible');
+                    cy.get(setupSelectors.testNavigation.skipItem).should('exist').and('be.visible');
 
                     // not visible navigation buttons
-                    cy.get('[data-control="move-backward"]').should('exist').and('not.be.visible');
+                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
 
                     //not existing buttons
-                    cy.get('[data-control="move-end"]').should('not.exist');
-                    cy.get('[data-control="skip-end"]').should('not.exist');
+                    cy.get(setupSelectors.testNavigation.endTest).should('not.exist');
+                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('not.exist');
                 });
             });
 
@@ -93,15 +94,15 @@ describe('Deliveries', () => {
 
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get('[data-control="move-forward"]').should('exist').and('be.visible');
-                    cy.get('[data-control="skip"]').should('exist').and('be.visible');
+                    cy.get(setupSelectors.testNavigation.nextItem).should('exist').and('be.visible');
+                    cy.get(setupSelectors.testNavigation.skipItem).should('exist').and('be.visible');
 
                     // not visible navigation buttons
-                    cy.get('[data-control="move-backward"]').should('exist').and('not.be.visible');
+                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
 
                     //not existing buttons
-                    cy.get('[data-control="move-end"]').should('not.exist');
-                    cy.get('[data-control="skip-end"]').should('not.exist');
+                    cy.get(setupSelectors.testNavigation.endTest).should('not.exist');
+                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('not.exist');
                 });
             });
 
@@ -127,15 +128,15 @@ describe('Deliveries', () => {
 
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get('[data-control="move-end"]').should('exist').and('be.visible');
-                    cy.get('[data-control="skip-end"]').should('exist').and('be.visible');
+                    cy.get(setupSelectors.testNavigation.endTest).should('exist').and('be.visible');
+                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('exist').and('be.visible');
 
                     // not visible navigation buttons
-                    cy.get('[data-control="move-backward"]').should('exist').and('not.be.visible');
+                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
 
                     //not existing buttons
-                    cy.get('[data-control="skip"]').should('not.exist');
-                    cy.get('[data-control="move-forward"]').should('not.exist');
+                    cy.get(setupSelectors.testNavigation.skipItem).should('not.exist');
+                    cy.get(setupSelectors.testNavigation.nextItem).should('not.exist');
                 });
             });
 
