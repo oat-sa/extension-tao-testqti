@@ -34,4 +34,8 @@ Cypress.Commands.add('addRoutes', () => {
     cy.route('POST', '**/delete').as('delete');
     cy.route('POST', '**/deleteClass').as('deleteClass');
     cy.route('POST', '/tao/GenerisTree/getData').as('getData');
+
+    // Register routes for delivery execution
+    cy.route('POST', '/taoQtiTest/Runner/**').as('testRunnerPost'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/init\S+/'
+    cy.route('GET', '/taoQtiTest/Runner/**').as('testRunnerGet'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/getItem\S+/'
 });
