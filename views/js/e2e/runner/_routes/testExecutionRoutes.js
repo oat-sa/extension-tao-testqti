@@ -17,21 +17,9 @@
  */
 
 /**
- * Add extra routes
+ * Add routes for test execution
  */
 Cypress.Commands.add('addRoutes', () => {
-
-    // Register routes for test actions
-    cy.route('POST', '**/editTest').as('editTest');
-    cy.route('POST', '/taoTests/TestImport/index').as('testImportIndex');
-    cy.route('GET', '/tao/TaskQueueWebApi/**').as('taskQueueWebApi');
-
-    // Register routes for delivery actions
-    cy.route('POST', '**/editDelivery').as('editDelivery');
-
-    // Register routes for common actions
-    cy.route('POST', '**/editClassLabel').as('editClassLabel');
-    cy.route('POST', '**/delete').as('delete');
-    cy.route('POST', '**/deleteClass').as('deleteClass');
-    cy.route('POST', '/tao/GenerisTree/getData').as('getData');
+    cy.route('POST', '/taoQtiTest/Runner/**').as('testRunnerPost'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/init\S+/'
+    cy.route('GET', '/taoQtiTest/Runner/**').as('testRunnerGet'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/getItem\S+/'
 });

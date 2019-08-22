@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import '../_routes/runnerRoutes';
+import '../_routes/testExecutionRoutes';
 import '../_setup/setupCommands';
 import '../_cleanup/cleanupCommands';
 import runnerUrls from '../_urls/runnerUrls';
