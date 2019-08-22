@@ -19,19 +19,18 @@
 import runnerUrls from '../_urls/runnerUrls';
 import setupSelectors from './setupSelectors';
 import base64Test from './base64QtiExampleTestPackage';
-import runnerSelectors from "../_selectors/runnerSelectors";
 
 /**
  * Setup Commands
  */
 Cypress.Commands.add('publishImportedTest', () => {
-    
+
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
-    
+
     // Select test import
     cy.get(setupSelectors.testsPage.testImportbutton).click();
 
@@ -77,7 +76,7 @@ Cypress.Commands.add('publishImportedTest', () => {
 });
 
 Cypress.Commands.add('setDeliveryForGuests', () => {
-    
+
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
 
@@ -102,8 +101,8 @@ Cypress.Commands.add('startTest', () => {
     // some windows workaround
     cy.wait(500);
 
-    cy.get(runnerSelectors.testList)
-        .find(runnerSelectors.availableDeliveries)
+    cy.get(setupSelectors.testList)
+        .find(setupSelectors.availableDeliveries)
         .contains('Delivery of e2e example test')
         .click();
 
