@@ -19,7 +19,7 @@
 /**
  * Add routes for test execution
  */
-Cypress.Commands.add('addRoutes', () => {
+Cypress.Commands.add('addExecutionRoutes', () => {
     cy.route('POST', '/taoQtiTest/Runner/**').as('testRunnerPost'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/init\S+/'
     cy.route('GET', '/taoQtiTest/Runner/**').as('testRunnerGet'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/getItem\S+/'
 });
