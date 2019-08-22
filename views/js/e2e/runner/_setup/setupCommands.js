@@ -98,7 +98,7 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
     cy.wait(['@editDelivery', '@getData','@editDelivery', '@getData', '@editDelivery', '@getData' ]);
 });
 
-Cypress.Commands.add('startDeliveryExecution', () => {
+Cypress.Commands.add('startTest', () => {
     // some windows workaround
     cy.wait(500);
 
