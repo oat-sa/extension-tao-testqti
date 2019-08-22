@@ -41,7 +41,11 @@ Cypress.Commands.add('publishImportedTest', () => {
     // Upload example qti test file to file input
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
     cy.get(setupSelectors.testsPage.fileInput).upload(
-        base64Test.linearTests.with3Items,
+        {
+            fileContent: base64Test,
+            fileName: 'e2eExampleTest.zip',
+            mimeType: 'application/zip'
+        },
         {
             subjectType: 'input',
             force: true
