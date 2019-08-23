@@ -16,11 +16,11 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
- import runnerSelectors from '../_selectors/runnerSelectors';
+import runnerSelectors from '../_selectors/runnerSelectors';
 
- import '../_setup/setupCommands';
- import '../_routes/runnerRoutes';
- import '../_cleanup/cleanupCommands';
+import '../_setup/setupCommands';
+import '../_routes/runnerRoutes';
+import '../_cleanup/cleanupCommands';
 
 describe('Tools', () => {
 
@@ -65,15 +65,15 @@ describe('Tools', () => {
     after(() => {
         cy.guestLogout();
         cy.login('admin');
-        cy.deleteImportedItem(); // name?
-        cy.deleteImportedTest(); // name?
-        cy.deleteDelivery();     // name?
+        cy.deleteItem('e2e Tools test');
+        cy.deleteTest('e2e Tools test');
+        cy.deleteDelivery('Delivery of e2e Tools test');
     });
 
     /**
-     * Delivery tests
+     * Tools tests
      */
-    describe('Delivery list', () => {
+    describe('Test-Taker Tools', () => {
 
         it('List contains Tools e2e delivery', function() {
             cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e Tools test');

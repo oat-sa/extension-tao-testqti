@@ -23,8 +23,8 @@ import cleanupSelectors from './cleanupSelectors';
  * Cleanup Commands
  */
 
-Cypress.Commands.add('deleteImportedItem', () => {
-    
+Cypress.Commands.add('deleteItem', (itemName) => {
+
     // Visit Tests page
     cy.visit(runnerUrls.itemsPageUrl);
 
@@ -32,10 +32,10 @@ Cypress.Commands.add('deleteImportedItem', () => {
     cy.wait('@editClassLabel');
 
     // Select e2e example test subclass
-    cy.get(cleanupSelectors.itemsPage.rootItemClass).contains('e2e example test').click();
+    cy.get(cleanupSelectors.itemsPage.rootItemClass).contains(itemName).click();
 
     // Delete test
-    cy.get(cleanupSelectors.itemsPage.itemDeleteButton).click();  
+    cy.get(cleanupSelectors.itemsPage.itemDeleteButton).click();
 
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
@@ -44,8 +44,8 @@ Cypress.Commands.add('deleteImportedItem', () => {
     cy.wait(['@deleteClass', '@editClassLabel']);
 });
 
-Cypress.Commands.add('deleteImportedTest', () => {
-    
+Cypress.Commands.add('deleteTest', (testName) => {
+
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
 
@@ -53,7 +53,7 @@ Cypress.Commands.add('deleteImportedTest', () => {
     cy.wait('@editClassLabel');
 
     // Select e2e example test subcalss
-    cy.get(cleanupSelectors.testsPage.rootTestClass).contains('e2e example test').click();
+    cy.get(cleanupSelectors.testsPage.rootTestClass).contains(testName).click();
 
     // Delete test
     cy.get(cleanupSelectors.testsPage.testDeleteButton).click();
@@ -68,19 +68,19 @@ Cypress.Commands.add('deleteImportedTest', () => {
     cy.wait('@delete');
 });
 
-Cypress.Commands.add('deleteDelivery', () => {
-    
+Cypress.Commands.add('deleteDelivery', (deliveryName) => {
+
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
-    
+
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(cleanupSelectors.deliveriesPage.rootDeliveryClass).contains('Delivery of e2e example test').click();
+    cy.get(cleanupSelectors.deliveriesPage.rootDeliveryClass).contains(deliveryName).click();
 
     // Delete delivery
-    cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();  
+    cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();
 
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
