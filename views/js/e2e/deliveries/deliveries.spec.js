@@ -38,7 +38,7 @@ describe('Deliveries', () => {
         cy.setupServer();
         cy.addRoutes();
         cy.login('admin');
-        cy.importTestPackage('./fixtures/e2e_example_test.zip'); //FIXME:
+        cy.importTestPackage('./fixtures/e2e_example_test.zip');
         cy.publishTest('e2e example test');
         cy.setDeliveryForGuests('e2e example test');
         cy.logout();
