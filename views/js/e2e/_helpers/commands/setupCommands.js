@@ -109,29 +109,3 @@ Cypress.Commands.add('startTest', () => {
 
     cy.wait(['@testRunnerGet', '@testRunnerPost']);
 });
-
-Cypress.Commands.add('nextItem', () => {
-    cy.get(setupSelectors.testNavigation.nextItem).click();
-    cy.wait(['@testRunnerGet', '@testRunnerPost']);
-});
-
-Cypress.Commands.add('previousItem', () => {
-    cy.get(setupSelectors.testNavigation.previousItem).click();
-    cy.wait(['@testRunnerGet', '@testRunnerPost']);
-});
-
-Cypress.Commands.add('skipItem', () => {
-    cy.get(setupSelectors.testNavigation.skipItem).click();
-    cy.wait(['@testRunnerGet', '@testRunnerPost']);
-});
-
-Cypress.Commands.add('endTest', () => {
-    cy.get(setupSelectors.testNavigation.endTest).click();
-    cy.wait('@testRunnerPost');
-});
-
-Cypress.Commands.add('skipAndEndTest', () => {
-    cy.get(setupSelectors.testNavigation.skipAndEndTest).click();
-    cy.wait('@testRunnerPost');
-});
-
