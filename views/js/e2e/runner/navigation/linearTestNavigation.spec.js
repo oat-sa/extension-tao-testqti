@@ -16,55 +16,70 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import '../_routes/runnerRoutes';
-import '../_routes/testExecutionRoutes';
+import '../../_helpers/routes/runnerRoutes';
+import '../../_helpers/routes/testRoutes';
 
-import '../_setup/setupCommands';
-import '../_cleanup/cleanupCommands';
+import '../../_helpers/commands/setupCommands';
+import '../../_helpers/commands/cleanupCommands';
+import '../../_helpers/commands/navigationCommands';
 
-import runnerUrls from '../_urls/runnerUrls';
-import setupSelectors from '../_setup/setupSelectors';
+import runnerUrls from '../../_helpers/urls/runnerUrls';
+import setupSelectors from '../../_helpers/selectors/setupSelectors';
+
+import base64Test from './base64Tests';
 
 describe('Deliveries', () => {
 
     /**
-     * Setup to have a proper delivery:
-     * - Start server
-     * - Add necessary routes
-     * - Admin login
-     * - Import and publish e2e example test
-     * - Set guest access on delivery and save
-     * - Logout
-     * - Guest login
-     * - Start Test
-     */
-    beforeEach(() => {
-        cy.setupServer();
-        cy.addExecutionRoutes();
-        cy.addRoutes();
-        cy.login('admin');
-        cy.publishImportedTest();
-        cy.setDeliveryForGuests();
-        cy.logout();
-        cy.guestLogin();
-        cy.startTest();
-    });
-
-    /**
-     * Destroy everything we created during setup, leaving the environment clean for next time.
-     */
-    afterEach(() => {
-        cy.guestLogout();
-        cy.login('admin');
-        cy.deleteImportedItem();
-        cy.deleteImportedTest();
-        cy.deleteDelivery();
-    });
-
-    /**
-     * Delivery tests
+     * Linear test Navigation
      */
     describe('Linear Test Navigation', () => {
+
+        /**
+         * Setup to have a proper delivery:
+         * - Start server
+         * - Add necessary routes
+         * - Admin login
+         * - Import and publish e2e example test
+         * - Set guest access on delivery and save
+         * - Logout
+         */
+        before(() => {
+            cy.setupServer();
+            cy.addRoutes();
+            cy.login('admin');
+            cy.importTestPackage(base64Test.linearTest);
+            cy.publishTest('e2e navigation linear test');
+            cy.setDeliveryForGuests('Delivery of e2e navigation linear test');
+            cy.logout();
+        });
+
+        /**
+         * Setup to have a proper delivery:
+         * - Start server
+         * - Add necessary routes
+         * - Guest login
+         * - Start test
+         */
+        beforeEach(() => {
+            cy.setupServer();
+            cy.addRoutes();
+            cy.addTestRoutes();
+            cy.guestLogin();
+            cy.startTest('Delivery of e2e navigation linear test');
+        });
+
+        /**
+         * Destroy everything we created during setup, leaving the environment clean for next time.
+         */
+        after(() => {
+            cy.setupServer();
+            cy.addRoutes();
+            cy.login('admin');
+            cy.deleteItem('e2e navigation linear test');
+            cy.deleteTest('e2e navigation linear test');
+            cy.deleteDelivery('Delivery of e2e navigation linear test');
+        });
 
         describe('First Item', () => {
 
