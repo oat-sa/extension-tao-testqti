@@ -24,4 +24,5 @@ Cypress.Commands.add('addExecutionRoutes', () => {
     cy.route('GET', '/taoQtiTest/Runner/**').as('testRunnerGet'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/getItem\S+/'
     cy.route('POST', /\/taoQtiTest\/Runner\/init\S+/).as('testRunnerInit');
     cy.route('GET', /\/taoQtiTest\/Runner\/getItem\S+/).as('testRunnerGetItem');
+    cy.route('POST', /\/taoQtiTest\/Runner\/comment/).as('comment');
 });

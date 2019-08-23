@@ -53,6 +53,9 @@ describe('Tools', () => {
      * Log in & start the test
      */
     beforeEach(() => {
+        cy.setupServer();
+        cy.addRoutes();
+        cy.addExecutionRoutes();
         // cy.guestLogin();
         // cy.startTest('e2e Tools test');
     });
@@ -119,6 +122,10 @@ describe('Tools', () => {
                 // submit => textarea closes
                 cy.get('@submitBtn').click();
                 cy.get('@popup').should('not.be.visible');
+                // xhr
+                cy.wait('@comment').then((xhr) => {
+                    assert.ok(xhr.response.body.success, 'comment response success true');
+                });
             });
         });
 
