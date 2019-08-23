@@ -29,30 +29,45 @@ describe('Tools', () => {
      * - Start server
      * - Add necessary routes
      * - Admin login
-     * - Import and publish e2e example test
+     * - Import test package
+     * - Publish imported test as a delivery
      * - Set guest access on delivery and save
      * - Logout
-     * - Guest login
      */
-    beforeEach(() => {
+    before(() => {
         cy.setupServer();
         cy.addRoutes();
         cy.login('admin');
-        cy.importAndPublishTest('./e2e_tools_test.zip.base64');
-        cy.setDeliveryForGuests();
+        cy.importTestPackage('./fixtures/e2e_tools_test.zip');
+        cy.publishTest('e2e Tools test');
+        cy.setDeliveryForGuests('e2e Tools test');
         cy.logout();
+    });
+
+    /**
+     * Log in & start the test
+     */
+    beforeEach(() => {
         cy.guestLogin();
+        // cy.startTest('e2e Tools test'); // TODO:
+    });
+
+    /**
+     * Log out
+     */
+    afterEach(() => {
+        cy.guestLogout();
     });
 
     /**
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
-    afterEach(() => {
+    after(() => {
         cy.guestLogout();
         cy.login('admin');
-        cy.deleteImportedItem();
-        cy.deleteImportedTest();
-        cy.deleteDelivery();
+        cy.deleteImportedItem(); // name?
+        cy.deleteImportedTest(); // name?
+        cy.deleteDelivery();     // name?
     });
 
     /**

@@ -38,7 +38,7 @@ describe('Deliveries', () => {
         cy.setupServer();
         cy.addRoutes();
         cy.login('admin');
-        cy.importAndPublishTest('../_setup/base64QtiExampleTestPackage.js');
+        cy.importAndPublishTest('');
         cy.setDeliveryForGuests();
         cy.logout();
         cy.guestLogin();

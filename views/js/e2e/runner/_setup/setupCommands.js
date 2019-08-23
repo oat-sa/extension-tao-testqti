@@ -18,12 +18,11 @@
 
 import runnerUrls from '../_urls/runnerUrls';
 import setupSelectors from './setupSelectors';
-import base64Test from './base64QtiExampleTestPackage';
 
 /**
  * Setup Commands
  */
-Cypress.Commands.add('importTestPackage', (fileName, mimeType = 'application/zip') => {
+Cypress.Commands.add('importTestPackage', (fileName) => {
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
 
@@ -36,14 +35,22 @@ Cypress.Commands.add('importTestPackage', (fileName, mimeType = 'application/zip
     // Wait until test import request finishes
     cy.wait('@testImportIndex');
 
+    // Prepare to load fixture
+    const cwd = Cypress.spec.absolute.substring(0, Cypress.spec.absolute.lastIndexOf("/"));
+    const absolutePathToFile = `${cwd}/${fileName}`;
+    cy.task('log', `CWD: ${cwd}`);
+    cy.log('CWD', cwd);
+
     // Upload example qti test file to file input
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
-    cy.fixture(fileName).then(fileContent => {
+    cy.readFile(absolutePathToFile, 'base64').then((fileContent) => {
+
         cy.get(setupSelectors.testsPage.fileInput).upload(
             {
                 fileContent,
                 fileName,
-                mimeType
+                mimeType: 'application/zip',
+                encoding: 'base64'
             },
             {
                 subjectType: 'input',
@@ -61,14 +68,21 @@ Cypress.Commands.add('importTestPackage', (fileName, mimeType = 'application/zip
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
 
-});
-
-Cypress.Commands.add('importAndPublishTest', (fileName = '') => {
-
-    cy.importTestPackage(fileName);
-
     // Wait until publish button appears again
     cy.wait('@editTest');
+});
+
+Cypress.Commands.add('publishTest', (testName) => {
+    // Visit Tests page
+    cy.visit(runnerUrls.testsPageUrl);
+
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
+
+    // Select tree node
+    cy.get(setupSelectors.resourceTree).within(() => {
+        cy.contains(testName).click({ force: true });
+    });
 
     // Publish example test
     cy.get(setupSelectors.testsPage.testPublishButton).click();
@@ -80,7 +94,7 @@ Cypress.Commands.add('importAndPublishTest', (fileName = '') => {
     cy.get(setupSelectors.testsPage.destinationSelectorActions).contains('Publish').click();
 });
 
-Cypress.Commands.add('setDeliveryForGuests', () => {
+Cypress.Commands.add('setDeliveryForGuests', (testName) => {
 
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
@@ -89,7 +103,7 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains('Delivery of e2e example test').click();
+    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
 
     // Set guest access on the delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();

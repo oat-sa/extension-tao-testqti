@@ -20,6 +20,7 @@
  * CSS Selectors for setup
  */
 export default {
+    resourceTree: '.resource-tree',
     testsPage: {
         testImportbutton: '#test-import',
         fileInput: '.main-container .file-uploader input[type="file"]',
