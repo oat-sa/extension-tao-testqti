@@ -63,7 +63,7 @@ Cypress.Commands.add('importTestPackage', (fileName) => {
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
     // Wait until test import request finishes
-    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 5000 });
+    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 15000 });
 
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
