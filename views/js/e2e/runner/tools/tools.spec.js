@@ -16,11 +16,11 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerSelectors from '../_selectors/runnerSelectors';
+import runnerSelectors from '../../_helpers/_selectors/runnerSelectors';
 
-import '../_setup/setupCommands';
-import '../_routes/runnerRoutes';
-import '../_cleanup/cleanupCommands';
+import '../../_helpers/_setup/setupCommands';
+import '../../_helpers/_routes/runnerRoutes';
+import '../../_helpers/_cleanup/cleanupCommands';
 
 describe('Tools', () => {
 
