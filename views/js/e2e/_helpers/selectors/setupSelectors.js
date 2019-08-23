@@ -20,6 +20,7 @@
  * CSS Selectors for setup
  */
 export default {
+    testsTree: '.taotree',
     testsPage: {
         testImportbutton: '#test-import',
         fileInput: '.main-container .file-uploader input[type="file"]',
