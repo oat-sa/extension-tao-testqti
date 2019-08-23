@@ -16,14 +16,16 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
- import runnerSelectors from '../_selectors/runnerSelectors';
+import '../_helpers/routes/runnerRoutes';
+import '../_helpers/commands/setupCommands';
+import '../_helpers/commands/cleanupCommands';
 
- import '../_setup/setupCommands';
- import '../_routes/runnerRoutes';
- import '../_cleanup/cleanupCommands';
+import runnerSelectors from '../_helpers/selectors/runnerSelectors';
+
+import base64Test from './base64QtiExampleTestPackage';
 
 describe('Deliveries', () => {
-   
+
     /**
      * Setup to have a proper delivery:
      * - Start server
@@ -38,8 +40,9 @@ describe('Deliveries', () => {
         cy.setupServer();
         cy.addRoutes();
         cy.login('admin');
-        cy.publishImportedTest();
-        cy.setDeliveryForGuests();
+        cy.importTestPackage(base64Test);
+        cy.publishTest('e2e example test');
+        cy.setDeliveryForGuests('Delivery of e2e example test');
         cy.logout();
         cy.guestLogin();
     });
@@ -49,10 +52,12 @@ describe('Deliveries', () => {
      */
     afterEach(() => {
         cy.guestLogout();
+        cy.setupServer();
+        cy.addRoutes();
         cy.login('admin');
-        cy.deleteImportedItem();
-        cy.deleteImportedTest();
-        cy.deleteDelivery();
+        cy.deleteItem('e2e example test');
+        cy.deleteTest('e2e example test');
+        cy.deleteDelivery('Delivery of e2e example test');
     });
 
     /**
