@@ -16,15 +16,15 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../_urls/runnerUrls';
-import setupSelectors from './setupSelectors';
-import base64Test from './base64QtiExampleTestPackage';
-import runnerSelectors from "../_selectors/runnerSelectors";
+import runnerUrls from '../urls/runnerUrls';
+import setupSelectors from '../selectors/setupSelectors';
+import runnerSelectors from "../selectors/runnerSelectors";
 
 /**
  * Setup Commands
  */
-Cypress.Commands.add('publishImportedTest', () => {
+Cypress.Commands.add('importTestPackage', (testContent) => {
+    cy.log('COMMAND: importTestPackage', testContent);
 
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
@@ -42,7 +42,7 @@ Cypress.Commands.add('publishImportedTest', () => {
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
     cy.get(setupSelectors.testsPage.fileInput).upload(
         {
-            fileContent: base64Test,
+            fileContent: testContent,
             fileName: 'e2eExampleTest.zip',
             mimeType: 'application/zip'
         },
@@ -52,7 +52,8 @@ Cypress.Commands.add('publishImportedTest', () => {
         }
     );
 
-    cy.wait(200);
+    // windows workaround
+    cy.wait(1000);
 
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
@@ -65,6 +66,21 @@ Cypress.Commands.add('publishImportedTest', () => {
 
     // Wait until publish button appears again
     cy.wait('@editTest');
+});
+
+Cypress.Commands.add('publishTest', (testName) => {
+    cy.log('COMMAND: publishTest', testName);
+
+    // Visit Tests page
+    cy.visit(runnerUrls.testsPageUrl);
+
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
+
+    // Select tree node
+    cy.get(setupSelectors.testsTree).within(() => {
+        cy.contains(testName).click({ force: true });
+    });
 
     // Publish example test
     cy.get(setupSelectors.testsPage.testPublishButton).click();
@@ -76,7 +92,8 @@ Cypress.Commands.add('publishImportedTest', () => {
     cy.get(setupSelectors.testsPage.destinationSelectorActions).contains('Publish').click();
 });
 
-Cypress.Commands.add('setDeliveryForGuests', () => {
+Cypress.Commands.add('setDeliveryForGuests', (deliveryName) => {
+    cy.log('COMMAND: setDeliveryForGuests', deliveryName);
 
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
@@ -85,7 +102,10 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains('Delivery of e2e example test').click();
+    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(deliveryName).click();
+
+    //windows workaround
+    cy.wait(1000);
 
     // Set guest access on the delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
@@ -95,16 +115,18 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
 
     // Wait until save happened properly
     // Not ideal but these requests have to be waited in this order upon delivery save
-    cy.wait(['@editDelivery', '@getData','@editDelivery', '@getData', '@editDelivery', '@getData' ]);
+    cy.wait(['@editDelivery', '@getData', '@editDelivery', '@getData', '@editDelivery', '@getData']);
 });
 
-Cypress.Commands.add('startTest', () => {
-    // some windows workaround
-    cy.wait(500);
+Cypress.Commands.add('startTest', (testName) => {
+    cy.log('COMMAND: startTest', testName);
+
+    //windows workaround
+    cy.wait(1000);
 
     cy.get(runnerSelectors.testList)
         .find(runnerSelectors.availableDeliveries)
-        .contains('Delivery of e2e example test')
+        .contains(testName)
         .click();
 
     cy.wait(['@testRunnerGet', '@testRunnerPost']);

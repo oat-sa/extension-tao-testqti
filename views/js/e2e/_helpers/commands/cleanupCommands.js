@@ -16,15 +16,16 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../_urls/runnerUrls';
-import cleanupSelectors from './cleanupSelectors';
+import runnerUrls from '../urls/runnerUrls';
+import cleanupSelectors from '../selectors/cleanupSelectors';
 
 /**
  * Cleanup Commands
  */
 
-Cypress.Commands.add('deleteImportedItem', () => {
-    
+Cypress.Commands.add('deleteItem', (itemName) => {
+    cy.log('COMMAND: deleteItem', itemName);
+
     // Visit Tests page
     cy.visit(runnerUrls.itemsPageUrl);
 
@@ -32,10 +33,13 @@ Cypress.Commands.add('deleteImportedItem', () => {
     cy.wait('@editClassLabel');
 
     // Select e2e example test subclass
-    cy.get(cleanupSelectors.itemsPage.rootItemClass).contains('e2e example test').click();
+    cy.get(cleanupSelectors.itemsPage.rootItemClass).contains(itemName).click();
 
     // Delete test
-    cy.get(cleanupSelectors.itemsPage.itemDeleteButton).click();  
+    cy.get(cleanupSelectors.itemsPage.itemDeleteButton).click();
+
+    //windows workaround
+    cy.wait(1000);
 
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
@@ -44,22 +48,23 @@ Cypress.Commands.add('deleteImportedItem', () => {
     cy.wait(['@deleteClass', '@editClassLabel']);
 });
 
-Cypress.Commands.add('deleteImportedTest', () => {
-    
+Cypress.Commands.add('deleteTest', (testName) => {
+    cy.log('COMMAND: deleteTest', testName);
+
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
 
-    // Select e2e example test subcalss
-    cy.get(cleanupSelectors.testsPage.rootTestClass).contains('e2e example test').click();
+    // Select e2e example test subclass
+    cy.get(cleanupSelectors.testsPage.rootTestClass).contains(testName).click();
 
     // Delete test
     cy.get(cleanupSelectors.testsPage.testDeleteButton).click();
 
-    // Wait until getdata finishes
-    cy.wait('@getData');
+    //windows workaround
+    cy.wait(1000);
 
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
@@ -68,19 +73,23 @@ Cypress.Commands.add('deleteImportedTest', () => {
     cy.wait('@delete');
 });
 
-Cypress.Commands.add('deleteDelivery', () => {
-    
+Cypress.Commands.add('deleteDelivery', (deliveryName) => {
+    cy.log('COMMAND: deleteDelivery', deliveryName);
+
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
-    
+
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(cleanupSelectors.deliveriesPage.rootDeliveryClass).contains('Delivery of e2e example test').click();
+    cy.get(cleanupSelectors.deliveriesPage.rootDeliveryClass).contains(deliveryName).click();
 
     // Delete delivery
-    cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();  
+    cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();
+
+    //windows workaround
+    cy.wait(1000);
 
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
