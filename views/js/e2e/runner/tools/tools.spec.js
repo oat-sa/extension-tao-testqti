@@ -21,6 +21,7 @@ import '../../_helpers/_routes/testExecutionRoutes';
 
 import '../../_helpers/_setup/setupCommands';
 import '../../_helpers/_cleanup/cleanupCommands';
+import '../../_helpers/_general/selectionCommands';
 
 import setupSelectors from '../../_helpers/_setup/setupSelectors';
 
@@ -172,7 +173,7 @@ describe('Tools', () => {
             cy.get('@closer').click();
         });
 
-        it('Has zoom tool', function() {
+        it.skip('Has zoom tool', function() {
             cy.get('.tools-box-list').within(() => {
                 cy.get('[data-control=zoomOut]').as('zoomOut');
                 cy.get('[data-control=zoomIn]').as('zoomIn');
@@ -222,8 +223,41 @@ describe('Tools', () => {
 
         it('Has highlighter tool', function() {
             cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=highlight-trigger]').should('exist').and('be.visible');
-                cy.get('[data-control=highlight-clear]').should('exist').and('be.visible');
+                // plugin loaded?
+                cy.get('[data-control=highlight-trigger]').as('trigger');
+                cy.get('[data-control=highlight-clear]').as('clear');
+                cy.get('@trigger').should('exist').and('be.visible');
+                cy.get('@clear').should('exist').and('be.visible');
+            });
+            cy.get('.test-runner-scope .qti-item').within(() => {
+                // tool first mode
+                cy.get('@trigger').click();
+                cy.get('h1').selectText();
+                cy.get('h1').find('span.txt-user-highlight')
+                    .contains('Tools')
+                    .and('has.css', 'background-color', 'rgb(255, 255, 0)');
+
+                // clear
+                cy.get('@clear').click();
+                cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
+
+                // selection first mode
+                cy.get('.qti-prompt').selectText();
+                cy.get('@trigger').click();
+                cy.get('.qti-prompt').find('span.txt-user-highlight')
+                    .contains('Here is the test for Answer Elimination and Answer Masking')
+                    .and('has.css', 'background-color', 'rgb(255, 255, 0)');
+
+                // clear
+                cy.get('@clear').click();
+                cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
+
+                // turn on, off
+                cy.get('@trigger').click();
+                cy.get('@trigger').click();
+                cy.get('h1').selectText()
+                    .should('not.contain', 'span.txt-user-highlight');
+
             });
         });
 
