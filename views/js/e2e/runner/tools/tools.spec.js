@@ -82,14 +82,14 @@ describe('Tools', () => {
      */
     describe('Test-Taker Tools', () => {
 
-        it('Has end test button', function() {
+        it.skip('Has end test button', function() {
             cy.get('.navi-box-list').within(() => {
                 // visible navigation buttons
                 cy.get(setupSelectors.testNavigation.endTest).should('exist').and('be.visible');
             });
         });
 
-        it('Has comments tool', function() {
+        it.skip('Has comments tool', function() {
             cy.get('.tools-box-list [data-control=comment]').within(() => {
                 cy.get('a').as('toolBtn');
                 cy.get('[data-control=qti-comment]').as('popup');
@@ -129,7 +129,7 @@ describe('Tools', () => {
             });
         });
 
-        it('Has calculator tool', function() {
+        it.skip('Has calculator tool', function() {
             cy.get('.tools-box-list [data-control=calculator] a').as('toolBtn');
             // plugin loaded?
             cy.get('@toolBtn').should('be.visible');
@@ -174,9 +174,50 @@ describe('Tools', () => {
 
         it('Has zoom tool', function() {
             cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=zoomOut]').should('exist').and('be.visible');
-                cy.get('[data-control=zoomIn]').should('exist').and('be.visible');
+                cy.get('[data-control=zoomOut]').as('zoomOut');
+                cy.get('[data-control=zoomIn]').as('zoomIn');
+                // plugin loaded?
+                cy.get('@zoomOut').should('exist').and('be.visible');
+                cy.get('@zoomIn').should('exist').and('be.visible');
             });
+            cy.get('.test-runner-scope .qti-item').as('item');
+
+            // zoom out
+            cy.get('@zoomOut').click();
+            cy.get('@item')
+                .should('have.class', 'transform-scale')
+                // .and('have.css', 'transform-origin', '0px 0px');
+                .and('have.attr', 'style').and('contain', 'scaleX(0.9)').and('contain', 'scaleY(0.9)');
+            cy.get('@zoomOut').click();
+            cy.get('@item')
+                .should('have.class', 'transform-scale')
+                .and('have.attr', 'style').and('contain', 'scaleX(0.8)').and('contain', 'scaleY(0.8)');
+
+            // reset
+            cy.get('@zoomIn').click();
+            cy.get('@zoomIn').click();
+
+            // zoom in
+            cy.get('@zoomIn').click();
+            cy.get('@item')
+                .should('have.class', 'transform-scale')
+                .and('have.attr', 'style').and('contain', 'scaleX(1.1)').and('contain', 'scaleY(1.1)');
+            cy.get('@zoomIn').click();
+            cy.get('@item')
+                .should('have.class', 'transform-scale')
+                .and('have.attr', 'style').and('contain', 'scaleX(1.2)').and('contain', 'scaleY(1.2)');
+
+            // beyond the max! (2.0)
+            cy.get('@zoomIn').click().click().click().click().click().click().click().click().click().click();
+            cy.get('@item')
+                .should('have.class', 'transform-scale')
+                .and('have.attr', 'style').and('contain', 'scaleX(2)').and('contain', 'scaleY(2)');
+
+            // reset
+            cy.get('@zoomOut').click().click().click().click().click().click().click().click().click().click();
+            cy.get('@item')
+                .should('not.have.class', 'transform-scale')
+                .should('have.css', 'transform', 'none');
         });
 
         it('Has highlighter tool', function() {
