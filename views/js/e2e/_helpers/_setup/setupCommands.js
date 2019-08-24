@@ -118,9 +118,9 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
 });
 
 Cypress.Commands.add('startTest', (testName) => {
-    cy.wait(2000);
 
-    // Attachment of event listeners to links?
+    // Wait for attachment of event listeners to links
+    cy.wait(2000);
 
     cy.get(runnerSelectors.testList)
         .find(runnerSelectors.availableDeliveries)

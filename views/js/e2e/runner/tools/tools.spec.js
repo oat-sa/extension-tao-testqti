@@ -97,7 +97,7 @@ describe('Tools', () => {
                 cy.get('[data-control=qti-comment-cancel]').as('cancelBtn');
                 cy.get('[data-control=qti-comment-send]').as('submitBtn');
 
-                // loaded?
+                // plugin loaded?
                 cy.get('@toolBtn').should('be.visible');
                 // click tool => textarea visible
                 cy.get('@toolBtn').click();
@@ -130,9 +130,46 @@ describe('Tools', () => {
         });
 
         it('Has calculator tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=calculator]').should('exist').and('be.visible');
-            });
+            cy.get('.tools-box-list [data-control=calculator] a').as('toolBtn');
+            // plugin loaded?
+            cy.get('@toolBtn').should('be.visible');
+            cy.get('.test-runner-scope .widget-calculator').as('calcContainer');
+            cy.get('@calcContainer').should('be.empty').and('not.be.visible');
+
+            // click tool => calc renders
+            cy.get('@toolBtn').click();
+            cy.get('@calcContainer').find('.dynamic-component-container').as('calc');
+            cy.get('@calc').should('be.visible');
+            cy.get('@calc').find('a[title="Close"]').as('closer');
+            cy.get('@calc').find('.calcDisplay').as('display');
+            cy.get('@calc').find('[data-key="2"]').as('key2');
+            cy.get('@calc').find('[data-key="+"]').as('plus');
+            cy.get('@calc').find('[data-key="="]').as('equals');
+            cy.get('@calc').find('[data-key="C"]').as('clear');
+
+            // click tool => hide
+            cy.get('@toolBtn').click();
+            cy.get('@calc').should('not.be.visible');
+            // click tool => calc visible
+            cy.get('@toolBtn').click();
+            cy.get('@calc').should('be.visible');
+            // click close => hide
+            cy.get('@closer').click();
+            cy.get('@calc').should('not.be.visible');
+            // click tool => calc visible
+            cy.get('@toolBtn').click();
+
+            // 2 + 2 => 4
+            cy.get('@key2').click();
+            cy.get('@plus').click();
+            cy.get('@key2').click();
+            cy.get('@equals').click();
+            cy.get('@display').should('have.value', '4');
+            // clear
+            cy.get('@clear').click();
+            cy.get('@display').should('have.value', '0');
+
+            cy.get('@closer').click();
         });
 
         it('Has zoom tool', function() {
