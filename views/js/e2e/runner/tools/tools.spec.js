@@ -221,7 +221,7 @@ describe('Tools', () => {
                 .should('have.css', 'transform', 'none');
         });
 
-        it('Has highlighter tool', function() {
+        it.skip('Has highlighter tool', function() {
             cy.get('.tools-box-list').within(() => {
                 // plugin loaded?
                 cy.get('[data-control=highlight-trigger]').as('trigger');
@@ -261,16 +261,53 @@ describe('Tools', () => {
             });
         });
 
-        it('Has calculator tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=calculator]').should('exist').and('be.visible');
-            });
-        });
-
         it('Has magnifier tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=magnify]').should('exist').and('be.visible');
-            });
+            // plugin loaded?
+            cy.get('.tools-box-list [data-control=magnify] a').as('toolBtn');
+            cy.get('@toolBtn').should('be.visible');
+
+            // click tool => magnifier renders
+            cy.get('@toolBtn').click();
+            cy.get('.runner > .magnifier-container').as('magnifierContainer');
+            cy.get('@magnifierContainer').find('.magnifier').as('magnifier');
+            cy.get('@magnifier').should('be.visible');
+            cy.get('@magnifier').find('.inner').as('inner');
+            cy.get('@magnifier').find('[data-control="zoomIn"]').as('zoomIn');
+            cy.get('@magnifier').find('[data-control="zoomOut"]').as('zoomOut');
+            cy.get('@magnifier').find('[data-control="closeMagnifier"]').as('closer');
+
+            // click tool => hide
+            cy.get('@toolBtn').click();
+            cy.get('@magnifier').should('not.be.visible');
+            // click tool => magnifier visible
+            cy.get('@toolBtn').click();
+            cy.get('@magnifier').should('be.visible');
+            // click close => hide
+            cy.get('@closer').click();
+            cy.get('@magnifier').should('not.be.visible');
+            // click tool => magnifier visible
+            cy.get('@toolBtn').click();
+
+            // contains inner item
+            cy.get('@inner').find('.qti-itemBody').should('exist').and('be.visible');
+
+            // initial transform scale applied (2x)
+            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2)');
+            // zoom out (min zoom 2x)
+            cy.get('@zoomOut').click();
+            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2)');
+            // zoom in (scales in 0.5 incrs)
+            cy.get('@zoomIn').click();
+            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2.5)');
+            cy.get('@zoomIn').click();
+            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(3)');
+            // zoom out
+            cy.get('@zoomOut').click();
+            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2.5)');
+            // zoom in (max zoom 8x)
+            cy.get('@zoomIn').click().click().click().click().click().click().click().click().click().click().click().click(); // now 8.5x
+            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(8)');
+
         });
 
         it('Has line reader tool', function() {
