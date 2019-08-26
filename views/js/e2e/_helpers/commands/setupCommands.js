@@ -106,7 +106,7 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
     cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
 
     //windows workaround
-    cy.wait(1000)
+    cy.wait(1000);
 
     // Set guest access on the delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
@@ -131,4 +131,10 @@ Cypress.Commands.add('startTest', (testName) => {
         .click();
 
     cy.wait(['@testRunnerGet', '@testRunnerPost']);
+});
+
+Cypress.Commands.add('isTestFinished', (testName) => {
+    cy.location().should((loc) => {
+        expect(loc.pathname).to.eq(runnerUrls.availableDeliveriesPageUrl);
+    });
 });

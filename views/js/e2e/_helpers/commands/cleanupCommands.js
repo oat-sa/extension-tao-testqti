@@ -37,6 +37,9 @@ Cypress.Commands.add('deleteItem', (itemName) => {
     // Delete test
     cy.get(cleanupSelectors.itemsPage.itemDeleteButton).click();
 
+    //windows workaround
+    cy.wait(1000);
+
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
 
@@ -58,8 +61,8 @@ Cypress.Commands.add('deleteTest', (testName) => {
     // Delete test
     cy.get(cleanupSelectors.testsPage.testDeleteButton).click();
 
-    // Wait until getdata finishes
-    cy.wait('@getData');
+    //windows workaround
+    cy.wait(1000);
 
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
@@ -81,6 +84,9 @@ Cypress.Commands.add('deleteDelivery', (deliveryName) => {
 
     // Delete delivery
     cy.get(cleanupSelectors.deliveriesPage.deliveryDeleteButton).click();
+
+    //windows workaround
+    cy.wait(1000);
 
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
