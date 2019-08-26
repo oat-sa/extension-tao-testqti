@@ -153,7 +153,7 @@ class SessionStateService extends ConfigurableService
 
             $format = $this->hasOption(self::OPTION_STATE_FORMAT)
                 ? $this->getOption(self::OPTION_STATE_FORMAT)
-                : __('%s - item %p/%c');
+                : '%s - item %p/%c';
             $map = array(
                 '%s' => $session->getCurrentAssessmentSection()->getTitle(),
                 '%p' => $itemPosition,
@@ -161,7 +161,7 @@ class SessionStateService extends ConfigurableService
             );
             return strtr($format, $map);
         } else {
-            return __('finished');
+            return 'finished';
         }
     }
 
