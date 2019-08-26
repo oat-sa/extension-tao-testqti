@@ -16,9 +16,9 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../_urls/runnerUrls';
-import setupSelectors from './setupSelectors';
-import runnerSelectors from '../_selectors/runnerSelectors';
+import runnerUrls from '../urls/runnerUrls';
+import setupSelectors from '../selectors/setupSelectors';
+import runnerSelectors from '../selectors/runnerSelectors';
 
 /**
  * Setup Commands

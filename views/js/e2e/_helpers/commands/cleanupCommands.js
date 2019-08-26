@@ -16,8 +16,8 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../_urls/runnerUrls';
-import cleanupSelectors from './cleanupSelectors';
+import runnerUrls from '../urls/runnerUrls';
+import cleanupSelectors from '../selectors/cleanupSelectors';
 
 /**
  * Cleanup Commands
