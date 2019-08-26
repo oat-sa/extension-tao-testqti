@@ -18,6 +18,7 @@
 
 import runnerUrls from '../_urls/runnerUrls';
 import setupSelectors from './setupSelectors';
+import runnerSelectors from '../_selectors/runnerSelectors';
 
 /**
  * Setup Commands
@@ -110,4 +111,18 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
     // Wait until save happened properly
     // Not ideal but these requests have to be waited in this order upon delivery save
     cy.wait(['@editDelivery', '@getData','@editDelivery', '@getData', '@editDelivery' ]);
+});
+
+Cypress.Commands.add('startTest', (testName) => {
+    cy.log('COMMAND: startTest', testName);
+
+    // Wait for attachment of event listeners to links
+    cy.wait(2000);
+
+    cy.get(runnerSelectors.testList)
+        .find(runnerSelectors.availableDeliveries)
+        .contains(`Delivery of ${testName}`)
+        .click();
+
+    cy.wait(['@testRunnerInit', '@testRunnerGetItem']);
 });
