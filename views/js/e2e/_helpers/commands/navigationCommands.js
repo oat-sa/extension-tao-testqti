@@ -21,30 +21,30 @@ import setupSelectors from "../selectors/setupSelectors";
 Cypress.Commands.add('nextItem', () => {
     cy.log('COMMAND: nextItem');
     cy.get(setupSelectors.testNavigation.nextItem).click();
-    cy.wait(['@testRunnerGet', '@testRunnerPost']);
+    cy.wait(['@testRunnerGetItem', '@testRunnerInit']);
 });
 
 Cypress.Commands.add('previousItem', () => {
     cy.log('COMMAND: previousItem');
     cy.get(setupSelectors.testNavigation.previousItem).click();
-    cy.wait(['@testRunnerGet', '@testRunnerPost']);
+    cy.wait(['@testRunnerGetItem', '@testRunnerInit']);
 });
 
 Cypress.Commands.add('skipItem', () => {
     cy.log('COMMAND: skipItem');
     cy.get(setupSelectors.testNavigation.skipItem).click();
-    cy.wait(['@testRunnerGet', '@testRunnerPost']);
+    cy.wait(['@testRunnerGetItem', '@testRunnerInit']);
 });
 
 Cypress.Commands.add('endTest', () => {
     cy.log('COMMAND: endTest');
     cy.get(setupSelectors.testNavigation.endTest).click();
-    cy.wait('@testRunnerPost');
+    cy.wait('@testRunnerInit');
 });
 
 Cypress.Commands.add('skipAndEndTest', () => {
     cy.log('COMMAND: skipAndEndTest');
     cy.get(setupSelectors.testNavigation.skipAndEndTest).click();
-    cy.wait('@testRunnerPost');
+    cy.wait('@testRunnerInit');
 });
 
