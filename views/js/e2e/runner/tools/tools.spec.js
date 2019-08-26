@@ -22,6 +22,8 @@ import '../../_helpers/_setup/setupCommands';
 import '../../_helpers/_routes/runnerRoutes';
 import '../../_helpers/_cleanup/cleanupCommands';
 
+import base64Test from './fixtures/base64TestTakerToolsTestPackage';
+
 describe('Tools', () => {
 
     /**
@@ -38,7 +40,7 @@ describe('Tools', () => {
         cy.setupServer();
         cy.addRoutes();
         cy.login('admin');
-        cy.importTestPackage('./fixtures/e2e_tools_test.zip');
+        cy.importTestPackage(base64Test, 'e2e Tools test');
         cy.publishTest('e2e Tools test');
         cy.setDeliveryForGuests('e2e Tools test');
         cy.logout();
