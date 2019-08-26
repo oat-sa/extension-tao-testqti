@@ -18,12 +18,13 @@
 
 import runnerUrls from '../_urls/runnerUrls';
 import setupSelectors from './setupSelectors';
-import base64Test from './base64QtiExampleTestPackage';
+import runnerSelectors from '../_selectors/runnerSelectors';
 
 /**
  * Setup Commands
  */
-Cypress.Commands.add('publishImportedTest', () => {
+Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
+    cy.log('COMMAND: importTestPackage', fileName);
 
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
@@ -41,9 +42,10 @@ Cypress.Commands.add('publishImportedTest', () => {
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
     cy.get(setupSelectors.testsPage.fileInput).upload(
         {
-            fileContent: base64Test,
-            fileName: 'e2eExampleTest.zip',
-            mimeType: 'application/zip'
+            fileContent,
+            fileName,
+            mimeType: 'application/zip',
+            encoding: 'base64'
         },
         {
             subjectType: 'input',
@@ -62,6 +64,21 @@ Cypress.Commands.add('publishImportedTest', () => {
 
     // Wait until publish button appears again
     cy.wait('@editTest');
+});
+
+Cypress.Commands.add('publishTest', (testName) => {
+    cy.log('COMMAND: publishTest', testName);
+
+    // Visit Tests page
+    cy.visit(runnerUrls.testsPageUrl);
+
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
+
+    // Select tree node
+    cy.get(setupSelectors.resourceTree).within(() => {
+        cy.contains(testName).click({ force: true });
+    });
 
     // Publish example test
     cy.get(setupSelectors.testsPage.testPublishButton).click();
@@ -73,7 +90,8 @@ Cypress.Commands.add('publishImportedTest', () => {
     cy.get(setupSelectors.testsPage.destinationSelectorActions).contains('Publish').click();
 });
 
-Cypress.Commands.add('setDeliveryForGuests', () => {
+Cypress.Commands.add('setDeliveryForGuests', (testName) => {
+    cy.log('COMMAND: setDeliveryForGuests', testName);
 
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
@@ -82,7 +100,7 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains('Delivery of e2e example test').click();
+    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
 
     // Set guest access on the delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
@@ -93,4 +111,18 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
     // Wait until save happened properly
     // Not ideal but these requests have to be waited in this order upon delivery save
     cy.wait(['@editDelivery', '@getData','@editDelivery', '@getData', '@editDelivery' ]);
+});
+
+Cypress.Commands.add('startTest', (testName) => {
+    cy.log('COMMAND: startTest', testName);
+
+    // Wait for attachment of event listeners to links
+    cy.wait(2000);
+
+    cy.get(runnerSelectors.testList)
+        .find(runnerSelectors.availableDeliveries)
+        .contains(`Delivery of ${testName}`)
+        .click();
+
+    cy.wait(['@testRunnerInit', '@testRunnerGetItem']);
 });
