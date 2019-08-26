@@ -19,8 +19,8 @@
 import runnerSelectors from '../_helpers/selectors/runnerSelectors';
 
 import '../_helpers/commands/setupCommands';
+import '../_helpers/commands/cleanupCommands';
 import '../_helpers/routes/runnerRoutes';
-import '../_helpers/_cleanup/cleanupCommands';
 
 import base64Test from './fixtures/base64QtiExampleTestPackage';
 

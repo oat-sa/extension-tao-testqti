@@ -17,7 +17,7 @@
  */
 
 import runnerUrls from '../urls/runnerUrls';
-import cleanupSelectors from './cleanupSelectors';
+import cleanupSelectors from '../selectors/cleanupSelectors';
 
 /**
  * Cleanup Commands
