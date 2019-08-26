@@ -130,5 +130,5 @@ Cypress.Commands.add('startTest', (testName) => {
         .contains(`Delivery of ${testName}`)
         .click();
 
-    cy.wait(['@testRunnerInit', '@testRunnerGetItem']);
+    cy.wait(['@testRunnerGet', '@testRunnerPost']);
 });
