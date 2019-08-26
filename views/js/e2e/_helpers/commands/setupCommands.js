@@ -133,8 +133,3 @@ Cypress.Commands.add('startTest', (testName) => {
     cy.wait(['@testRunnerGet', '@testRunnerPost']);
 });
 
-Cypress.Commands.add('isTestFinished', (testName) => {
-    cy.location().should((loc) => {
-        expect(loc.pathname).to.eq(runnerUrls.availableDeliveriesPageUrl);
-    });
-});
