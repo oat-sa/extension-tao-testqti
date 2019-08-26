@@ -261,7 +261,7 @@ describe('Tools', () => {
             });
         });
 
-        it('Has magnifier tool', function() {
+        it.skip('Has magnifier tool', function() {
             // plugin loaded?
             cy.get('.tools-box-list [data-control=magnify] a').as('toolBtn');
             cy.get('@toolBtn').should('be.visible');
@@ -310,16 +310,75 @@ describe('Tools', () => {
 
         });
 
-        it('Has line reader tool', function() {
+        it.skip('Has line reader tool', function() {
             cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=line-reader]').should('exist').and('be.visible');
+                // plugin loaded?
+                cy.get('[data-control=line-reader]').as('toolBtn');
+                cy.get('@toolBtn').should('exist').and('be.visible');
+            });
+            cy.get('.test-runner-scope').within(() => {
+                // open/close toolBtn
+                cy.get('@toolBtn').click();
+                cy.get('.line-reader-mask').as('maskParts').should('have.length', 8).and('be.visible');
+                cy.get('.line-reader-overlay').as('overlay').should('be.visible');
+                cy.get('.line-reader-overlay .icon').as('outerDrag').should('be.visible');
+                cy.get('.line-reader-inner-drag').as('innerDrag').should('be.visible');
+                cy.get('.line-reader-closer').as('closer').should('be.visible');
+                cy.get('@maskParts').should('be.visible');
+                cy.get('@toolBtn').click();
+                cy.get('@maskParts').should('not.be.visible');
+
+                // open + closer
+                cy.get('@toolBtn').click();
+                cy.get('@maskParts').should('be.visible');
+                cy.get('@closer').click();
+                cy.get('@maskParts').should('not.be.visible');
+
+                // item visibility checks
+                cy.get('@toolBtn').click();
+                cy.log('efp1', document.elementFromPoint(100, 100));
+
+                // TODO: draggable
+                cy.get('@overlay')
+                    .trigger('mouseover')
+                    .trigger('mousedown', { which: 1 })
+                    .trigger('dragstart', {})
+                    .trigger('mousemove', { clientX: 1000, clientY: 1000 })
+                    .trigger('drag')
+                    .trigger('mouseup', { force: true })
+                    .trigger('dragend', {});
+
+                // TODO: resizable
+                // TODO: resizable inner
             });
         });
 
         it('Has answer masking tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=answer-masking]').should('exist').and('be.visible');
-            });
+            // plugin loaded?
+            cy.get('.tools-box-list [data-control=answer-masking]').as('toolBtn');
+            cy.get('@toolBtn').should('exist').and('be.visible');
+            cy.get('.qti-choice').as('choices').should('have.length', 4);
+
+            // click tool => masks visible
+            cy.get('@toolBtn').click();
+            cy.get('.qti-choice.masked').should('have.length', 4);
+            cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
+            // choices not visible
+            cy.get('.qti-choice').find('.pseudo-label-box').should('have.length', 4).and('not.be.visible');
+            // click tool => masks hidden
+            cy.get('@toolBtn').click();
+            cy.get('.qti-choice.masked').should('have.length', 0);
+            cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 0);
+            // click tool => masks visible
+            cy.get('@toolBtn').click();
+
+            // unmask first
+            cy.get('.qti-choice.masked .answer-mask.masked').first().find('.answer-mask-toggle').as('toggle1');
+            cy.get('@toggle1').click();
+            cy.get('.qti-choice.masked').should('have.length', 3);
+            cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 3);
+            cy.get('.qti-choice:eq(1)').find('.pseudo-label-box').should('be.visible');
+
         });
 
         it('Has answer elimination tool', function() {

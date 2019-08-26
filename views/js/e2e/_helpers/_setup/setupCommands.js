@@ -24,6 +24,8 @@ import runnerSelectors from '../_selectors/runnerSelectors';
  * Setup Commands
  */
 Cypress.Commands.add('importTestPackage', (fileName) => {
+    cy.log('COMMAND: importTestPackage', fileName);
+
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
 
@@ -39,8 +41,6 @@ Cypress.Commands.add('importTestPackage', (fileName) => {
     // Prepare to load fixture
     const cwd = Cypress.spec.absolute.substring(0, Cypress.spec.absolute.lastIndexOf("/"));
     const absolutePathToFile = `${cwd}/${fileName}`;
-    cy.task('log', `CWD: ${cwd}`);
-    cy.log('CWD', cwd);
 
     // Upload example qti test file to file input
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
@@ -74,6 +74,8 @@ Cypress.Commands.add('importTestPackage', (fileName) => {
 });
 
 Cypress.Commands.add('publishTest', (testName) => {
+    cy.log('COMMAND: publishTest', testName);
+
     // Visit Tests page
     cy.visit(runnerUrls.testsPageUrl);
 
@@ -96,6 +98,7 @@ Cypress.Commands.add('publishTest', (testName) => {
 });
 
 Cypress.Commands.add('setDeliveryForGuests', (testName) => {
+    cy.log('COMMAND: setDeliveryForGuests', testName);
 
     // Go to Deliveries page
     cy.visit(runnerUrls.deliveriesPageUrl);
@@ -118,6 +121,7 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
 });
 
 Cypress.Commands.add('startTest', (testName) => {
+    cy.log('COMMAND: startTest', testName);
 
     // Wait for attachment of event listeners to links
     cy.wait(2000);
