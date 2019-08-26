@@ -139,14 +139,6 @@ describe('Navigation', () => {
                 cy.skipItem();
             });
 
-            it('Move to previous item', () => {
-                // go to 2nd item
-                cy.nextItem();
-
-                // go to previous item
-                cy.previousItem();
-            });
-
         });
 
         describe('Last Item', () => {
