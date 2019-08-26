@@ -43,7 +43,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.get(setupSelectors.testsPage.fileInput).upload(
         {
             fileContent,
-            fileName,
+            fileName: `${fileName}.zip`,
             mimeType: 'application/zip',
             encoding: 'base64'
         },
@@ -52,6 +52,9 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
             force: true
         }
     );
+
+    // windows workaround
+    cy.wait(2000);
 
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
@@ -101,6 +104,9 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
 
     // Select example delivery
     cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
+
+    //windows workaround
+    cy.wait(1000)
 
     // Set guest access on the delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
