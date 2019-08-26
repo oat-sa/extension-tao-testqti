@@ -76,7 +76,7 @@ Cypress.Commands.add('publishTest', (testName) => {
     cy.wait('@editClassLabel');
 
     // Select tree node
-    cy.get(setupSelectors.resourceTree).within(() => {
+    cy.get(setupSelectors.testsPage.rootTestClass).within(() => {
         cy.contains(testName).click({ force: true });
     });
 
