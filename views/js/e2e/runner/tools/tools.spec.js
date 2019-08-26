@@ -16,14 +16,13 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import '../../_helpers/_routes/runnerRoutes';
-import '../../_helpers/_routes/testExecutionRoutes';
+import runnerSelectors from '../../_helpers/selectors/runnerSelectors';
 
-import '../../_helpers/_setup/setupCommands';
-import '../../_helpers/_cleanup/cleanupCommands';
-import '../../_helpers/_general/selectionCommands';
+import '../../_helpers/commands/setupCommands';
+import '../../_helpers/commands/cleanupCommands';
+import '../../_helpers/routes/runnerRoutes';
 
-import setupSelectors from '../../_helpers/_setup/setupSelectors';
+import base64Test from './fixtures/base64TestTakerToolsTestPackage';
 
 describe('Tools', () => {
 

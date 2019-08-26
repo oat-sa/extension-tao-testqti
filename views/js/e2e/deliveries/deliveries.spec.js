@@ -16,11 +16,13 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerSelectors from '../_helpers/_selectors/runnerSelectors';
+import runnerSelectors from '../_helpers/selectors/runnerSelectors';
 
-import '../_helpers/_setup/setupCommands';
-import '../_helpers/_routes/runnerRoutes';
-import '../_helpers/_cleanup/cleanupCommands';
+import '../_helpers/commands/setupCommands';
+import '../_helpers/commands/cleanupCommands';
+import '../_helpers/routes/runnerRoutes';
+
+import base64Test from './fixtures/base64QtiExampleTestPackage';
 
 describe('Deliveries', () => {
 
@@ -38,7 +40,7 @@ describe('Deliveries', () => {
         cy.setupServer();
         cy.addRoutes();
         cy.login('admin');
-        cy.importTestPackage('./fixtures/e2e_example_test.zip');
+        cy.importTestPackage(base64Test, 'e2e example test');
         cy.publishTest('e2e example test');
         cy.setDeliveryForGuests('e2e example test');
         cy.logout();

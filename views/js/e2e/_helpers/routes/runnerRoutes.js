@@ -20,7 +20,7 @@
  * Add extra routes
  */
 Cypress.Commands.add('addRoutes', () => {
-    
+
     // Register routes for test actions
     cy.route('POST', '**/editTest').as('editTest');
     cy.route('POST', '/taoTests/TestImport/index').as('testImportIndex');

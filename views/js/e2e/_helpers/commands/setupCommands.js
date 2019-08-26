@@ -16,14 +16,14 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../_urls/runnerUrls';
-import setupSelectors from './setupSelectors';
-import runnerSelectors from '../_selectors/runnerSelectors';
+import runnerUrls from '../urls/runnerUrls';
+import setupSelectors from '../selectors/setupSelectors';
+import runnerSelectors from '../selectors/runnerSelectors';
 
 /**
  * Setup Commands
  */
-Cypress.Commands.add('importTestPackage', (fileName) => {
+Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.log('COMMAND: importTestPackage', fileName);
 
     // Visit Tests page
@@ -38,27 +38,20 @@ Cypress.Commands.add('importTestPackage', (fileName) => {
     // Wait until test import request finishes
     cy.wait('@testImportIndex');
 
-    // Prepare to load fixture
-    const cwd = Cypress.spec.absolute.substring(0, Cypress.spec.absolute.lastIndexOf("/"));
-    const absolutePathToFile = `${cwd}/${fileName}`;
-
     // Upload example qti test file to file input
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
-    cy.readFile(absolutePathToFile, 'base64').then((fileContent) => {
-
-        cy.get(setupSelectors.testsPage.fileInput).upload(
-            {
-                fileContent,
-                fileName,
-                mimeType: 'application/zip',
-                encoding: 'base64'
-            },
-            {
-                subjectType: 'input',
-                force: true
-            }
-        );
-    });
+    cy.get(setupSelectors.testsPage.fileInput).upload(
+        {
+            fileContent,
+            fileName,
+            mimeType: 'application/zip',
+            encoding: 'base64'
+        },
+        {
+            subjectType: 'input',
+            force: true
+        }
+    );
 
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
