@@ -388,8 +388,30 @@ describe('Tools', () => {
         });
 
         it('Has answer elimination tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=eliminator]').should('exist').and('be.visible');
+            // plugin loaded?
+            cy.get('.tools-box-list [data-control=eliminator] a').as('toolBtn');
+            cy.get('@toolBtn').should('be.visible');
+
+            cy.get('.qti-itemBody').within(() => {
+                // turn on
+                cy.get('@toolBtn').click();
+                cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('be.visible');
+                cy.get('.qti-choice [data-eliminable="trigger"]').should('have.length', 4).and('be.visible');
+
+                // toggle first choice
+                cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').click();
+                cy.get('.qti-choice:eq(0)').should('have.class', 'eliminated');
+                // TODO: assert .real-label & .label-box not actionable
+
+                // untoggle first choice
+                cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').click();
+                cy.get('.qti-choice:eq(0)').should('not.have.class', 'eliminated');
+                // TODO: assert .real-label & .label-box not actionable
+
+                // turn off
+                cy.get('@toolBtn').click();
+                cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('not.be.visible');
+                cy.get('.qti-choice [data-eliminable="trigger"]').should('have.length', 4).and('not.be.visible');
             });
         });
 
