@@ -16,6 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
+import '../../_helpers/routes/backOfficeRoutes';
 import '../../_helpers/routes/runnerRoutes';
 
 import '../../_helpers/commands/setupCommands';
@@ -46,7 +47,7 @@ describe('Navigation', () => {
          */
         before(() => {
             cy.setupServer();
-            cy.addRoutes();
+            cy.addBackOfficeRoutes();
             cy.login('admin');
             cy.importTestPackage(base64LinearTest, 'e2e navigation linear test');
             cy.publishTest('e2e navigation linear test');
@@ -63,7 +64,7 @@ describe('Navigation', () => {
          */
         beforeEach(() => {
             cy.setupServer();
-            cy.addRoutes();
+            cy.addRunnerRoutes();
             cy.guestLogin();
             cy.startTest('e2e navigation linear test');
         });
@@ -73,7 +74,7 @@ describe('Navigation', () => {
          */
         after(() => {
             cy.setupServer();
-            cy.addRoutes();
+            cy.addBackOfficeRoutes();
             cy.login('admin');
             cy.deleteItem('e2e navigation linear test');
             cy.deleteTest('e2e navigation linear test');
@@ -207,7 +208,7 @@ describe('Navigation', () => {
          */
         before(() => {
             cy.setupServer();
-            cy.addRoutes();
+            cy.addBackOfficeRoutes();
             cy.login('admin');
             cy.importTestPackage(base64NonLinearTest, 'e2e navigation non linear test');
             cy.publishTest('e2e navigation non linear test');
@@ -224,7 +225,7 @@ describe('Navigation', () => {
          */
         beforeEach(() => {
             cy.setupServer();
-            cy.addRoutes();
+            cy.addRunnerRoutes();
             cy.guestLogin();
             cy.startTest('e2e navigation non linear test');
         });
@@ -234,7 +235,7 @@ describe('Navigation', () => {
          */
         after(() => {
             cy.setupServer();
-            cy.addRoutes();
+            cy.addBackOfficeRoutes();
             cy.login('admin');
             cy.deleteItem('e2e navigation non linear test');
             cy.deleteTest('e2e navigation non linear test');

@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../urls/runnerUrls';
+import backOfficeUrls from '../urls/backOfficeUrls';
 import setupSelectors from '../selectors/setupSelectors';
 import runnerSelectors from '../selectors/runnerSelectors';
 
@@ -27,7 +27,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.log('COMMAND: importTestPackage', fileName);
 
     // Visit Tests page
-    cy.visit(runnerUrls.testsPageUrl);
+    cy.visit(backOfficeUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
@@ -72,7 +72,7 @@ Cypress.Commands.add('publishTest', (testName) => {
     cy.log('COMMAND: publishTest', testName);
 
     // Visit Tests page
-    cy.visit(runnerUrls.testsPageUrl);
+    cy.visit(backOfficeUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
@@ -99,7 +99,7 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
     cy.log('COMMAND: setDeliveryForGuests', testName);
 
     // Go to Deliveries page
-    cy.visit(runnerUrls.deliveriesPageUrl);
+    cy.visit(backOfficeUrls.deliveriesPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');

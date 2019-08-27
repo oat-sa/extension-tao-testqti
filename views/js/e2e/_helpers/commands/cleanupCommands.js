@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../urls/runnerUrls';
+import backOfficeUrls from '../urls/backOfficeUrls';
 import cleanupSelectors from '../selectors/cleanupSelectors';
 
 /**
@@ -26,7 +26,7 @@ import cleanupSelectors from '../selectors/cleanupSelectors';
 Cypress.Commands.add('deleteItem', (itemName) => {
 
     // Visit Tests page
-    cy.visit(runnerUrls.itemsPageUrl);
+    cy.visit(backOfficeUrls.itemsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
@@ -47,7 +47,7 @@ Cypress.Commands.add('deleteItem', (itemName) => {
 Cypress.Commands.add('deleteTest', (testName) => {
 
     // Visit Tests page
-    cy.visit(runnerUrls.testsPageUrl);
+    cy.visit(backOfficeUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
@@ -68,7 +68,7 @@ Cypress.Commands.add('deleteTest', (testName) => {
 Cypress.Commands.add('deleteDelivery', (deliveryName) => {
 
     // Go to Deliveries page
-    cy.visit(runnerUrls.deliveriesPageUrl);
+    cy.visit(backOfficeUrls.deliveriesPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
