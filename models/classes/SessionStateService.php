@@ -138,7 +138,7 @@ class SessionStateService extends ConfigurableService
     }
     
     /**
-     * Return a human readable description of the test session
+     * Return a description of the test session
      *  
      * @return string
      */
@@ -151,17 +151,14 @@ class SessionStateService extends ConfigurableService
             $itemPosition = $progress[$progressScope];
             $itemCount = $progress[$progressScope . 'Length'];
 
-            $format = $this->hasOption(self::OPTION_STATE_FORMAT)
-                ? $this->getOption(self::OPTION_STATE_FORMAT)
-                : '%s - item %p/%c';
             $map = array(
-                '%s' => $session->getCurrentAssessmentSection()->getTitle(),
-                '%p' => $itemPosition,
-                '%c' => $itemCount
+                'title' => $session->getCurrentAssessmentSection()->getTitle(),
+                'itemPosition' => $itemPosition,
+                'itemCount' => $itemCount
             );
-            return strtr($format, $map);
+            return json_encode($map);
         } else {
-            return 'finished';
+            return json_encode(['title' => 'finished']);
         }
     }
 
