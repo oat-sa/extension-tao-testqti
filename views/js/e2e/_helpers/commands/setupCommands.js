@@ -33,7 +33,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.wait('@editClassLabel');
 
     // Select test import
-    cy.get(setupSelectors.testsPage.testImportbutton).click();
+    cy.get(setupSelectors.testsPage.testImportButton).click();
 
     // Wait until test import request finishes
     cy.wait('@testImportIndex');
@@ -79,7 +79,7 @@ Cypress.Commands.add('publishTest', (testName) => {
     cy.wait('@editClassLabel');
 
     // Select tree node
-    cy.get(setupSelectors.resourceTree).within(() => {
+    cy.get(setupSelectors.testsPage.rootTestClass).within(() => {
         cy.contains(testName).click({ force: true });
     });
 
