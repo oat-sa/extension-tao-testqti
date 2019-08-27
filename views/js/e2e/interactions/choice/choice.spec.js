@@ -37,10 +37,12 @@ describe('Tools', () => {
      * - Logout
      */
     before(() => {
+        cy.setupServer();
+        cy.addRoutes();
         cy.login('admin');
-        // cy.importTestPackage(base64Test, 'choice');
-        // cy.publishTest('choice');
-        // cy.setDeliveryForGuests('choice');
+        cy.importTestPackage(base64Test, 'choice');
+        cy.publishTest('choice');
+        cy.setDeliveryForGuests('Delivery of choice');
         cy.logout();
     });
 
@@ -55,34 +57,21 @@ describe('Tools', () => {
     });
 
     /**
-     * Log out
-     */
-    afterEach(() => {
-        cy.guestLogout();
-    });
-
-    /**
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        cy.guestLogout();
+        cy.setupServer();
+        cy.addRoutes();
         cy.login('admin');
-        // cy.deleteItem('choice');
-        // cy.deleteTest('choice');
-        // cy.deleteDelivery('choice');
+        cy.deleteItem('choice');
+        cy.deleteTest('choice');
+        cy.deleteDelivery('Delivery of choice');
     });
 
     /**
      * Tools tests
      */
-    describe('Sample choice interaction - Multiple selection allowed)', () => {
-
-        it('item contains at least one choice', function() {
-            cy.get(interactionSelectors.choiceArea).within(() => {
-                cy.get(interactionSelectors.choice).should('exist');
-            });
-        });
-
+    describe('Sample choice interaction)', () => {
         it('item gets selected on click', function() {
             cy.get(interactionSelectors.choiceArea).within(() => {
                 cy.get(interactionSelectors.choice).first().click();
@@ -91,8 +80,18 @@ describe('Tools', () => {
             });
         });
 
-        it('Can select multiple choices', function() {
-            cy.get(interactionSelectors.choiceArea).within(() => {
+        it('Should not allow multiple selection if disabled', function() {
+            cy.get(interactionSelectors.interaction).contains('single selection').parents(interactionSelectors.interaction).within(() => {
+                cy.get(interactionSelectors.choice).first().click();
+                cy.get(interactionSelectors.choice).first().next().click();
+                cy.get(interactionSelectors.choice).first().should('not.have.class', 'user-selected');
+                cy.get(interactionSelectors.choice).first().next().should('have.class', 'user-selected');
+
+            });
+        });
+
+        it('Should allow multiple selection if enabled', function() {
+            cy.get(interactionSelectors.interaction).contains('multiple selection').parents(interactionSelectors.interaction).within(() => {
                 cy.get(interactionSelectors.choice).first().click();
                 cy.get(interactionSelectors.choice).first().next().click();
                 cy.get(interactionSelectors.choice).first().should('have.class', 'user-selected');
@@ -100,6 +99,5 @@ describe('Tools', () => {
 
             });
         });
-
     });
 });

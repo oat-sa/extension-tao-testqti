@@ -58,9 +58,6 @@ Cypress.Commands.add('deleteTest', (testName) => {
     // Delete test
     cy.get(cleanupSelectors.testsPage.testDeleteButton).click();
 
-    // Wait until getdata finishes
-    cy.wait('@getData');
-
     // Confirm deletion
     cy.get(cleanupSelectors.common.confirmationModalOk).click();
 

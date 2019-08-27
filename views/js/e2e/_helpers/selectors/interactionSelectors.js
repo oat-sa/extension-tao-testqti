@@ -20,6 +20,7 @@
  * CSS Selectors for the test runner
  */
 export default {
+    interaction: '.qti-interaction',
     choiceArea: '.choice-area',
     choice: '.qti-choice'
 };
