@@ -43,7 +43,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.get(setupSelectors.testsPage.fileInput).upload(
         {
             fileContent,
-            fileName,
+            fileName: `${fileName}.zip`,
             mimeType: 'application/zip',
             encoding: 'base64'
         },
