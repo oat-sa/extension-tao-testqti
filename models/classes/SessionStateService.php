@@ -157,9 +157,8 @@ class SessionStateService extends ConfigurableService
                 'itemCount' => $itemCount
             );
             return json_encode($map);
-        } else {
-            return json_encode(['title' => 'finished']);
         }
+        return json_encode(['title' => 'finished']);
     }
 
     /**
