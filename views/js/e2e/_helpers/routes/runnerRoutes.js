@@ -39,6 +39,8 @@ Cypress.Commands.add('addRoutes', () => {
 
     // Register test runner routes
     cy.route('POST', /\/taoQtiTest\/Runner\/init\?\S+/).as('testRunnerInit');
+    cy.route('POST', /\/taoQtiTest\/Runner\/move\?\S+/).as('testRunnerMove');
+    cy.route('POST', /\/taoQtiTest\/Runner\/skip\?\S+/).as('testRunnerSkip');
     cy.route('GET', /\/taoQtiTest\/Runner\/getItem\?\S+/).as('testRunnerGetItem');
 
 });
