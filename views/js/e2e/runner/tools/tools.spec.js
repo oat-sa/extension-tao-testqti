@@ -416,9 +416,45 @@ describe('Tools', () => {
         });
 
         it('Has area mask tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=area-masking]').should('exist').and('be.visible');
-            });
+            // plugin loaded?
+            cy.get('.tools-box-list [data-control=area-masking] a').as('toolBtn');
+            cy.get('@toolBtn').should('be.visible');
+
+            // click tool => areaMask renders
+            cy.get('@toolBtn').click();
+            cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
+            cy.get('@areaMaskContainer').find('.mask').as('areaMask');
+            cy.get('@areaMask').should('be.visible');
+            cy.get('@areaMask').find('.inner').as('inner');
+            cy.get('@areaMask').find('.controls .close').as('closer');
+            cy.get('@areaMask').find('.controls .view').as('viewer');
+
+            // click close => destroy
+            cy.get('@closer').click();
+            cy.get('@areaMaskContainer').should('not.exist');
+            // click tool => areaMask renders
+            cy.get('@toolBtn').click();
+
+            // look through
+            cy.get('@viewer').click();
+            cy.get('@areaMaskContainer').should('have.class', 'previewing');
+            cy.get('@inner').should('have.css', 'opacity', '0.15');
+            // un-look through
+            // the component uses a default delay of 3000ms before restoring the mask
+            cy.wait(3000);
+            cy.get('@areaMaskContainer').should('not.have.class', 'previewing');
+            cy.get('@inner').should('have.css', 'opacity', '1');
+
+            // TODO: draggable
+            // TODO: resizable
+
+            // add multiple instances (max 5)
+            cy.get('@toolBtn').click().click().click().click().click();
+            cy.get('@areaMaskContainer').should('have.length', 5);
+
+            // clean up
+            cy.get('@closer').click({ multiple: true, force: true });
+            cy.get('@areaMaskContainer').should('not.exist');
         });
     });
 });
