@@ -57,7 +57,8 @@ define([
 
         var selectorConfig = {
             type : __('items'),
-            selectionMode : resourceSelector.selectionModes.multiple
+            selectionMode : resourceSelector.selectionModes.multiple,
+            selectAllPolicy: resourceSelector.selectAllPolicies.visible
         };
 
         //load the classes hierarchy

@@ -189,13 +189,13 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
 
         $this->assertInstanceOf(common_report_Report::class, $report);
         $file = $report->getData();
-        
-        $this->assertInternalType('string', $file);
-        $this->assertFileExists($file);
-        $this->assertStringStartsWith($this->outputDir, $file);
 
-        $this->assertContains('qti_unit_test', $file);
-        unlink($file);
+        $this->assertArrayHasKey('path', $file);
+        $this->assertFileExists($file['path']);
+        $this->assertStringStartsWith($this->outputDir, $file['path']);
+
+        $this->assertContains('qti_unit_test', $file['path']);
+        unlink($file['path']);
     }
 
     /**
@@ -280,6 +280,68 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
         $directoryWithTestXml = $testsDirectory . end($testsDirectories);
         $directoryWithTestXmlContents = scandir($directoryWithTestXml);
         $this->assertEquals(end($directoryWithTestXmlContents), 'test.xml');
+
+        $class->delete(true);
+
+        \tao_helpers_File::delTree($dirForChecking);
+    }
+
+    /**
+     * Scenario:
+     * 1. Imports archive from samples with a label specified
+     * 2. Checks that the resulting test resource has the same label as in archive
+     * 2. Exports created test
+     * 3. Checks that exported archive has the same label in it
+     *
+     * @throws \common_exception_Error
+     * @throws \common_exception_Unauthorized
+     */
+    public function testLabelOfTestIsSaved()
+    {
+        // import
+        $label = 'this label should be persisted';
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/test_label_is_persisted.zip'; // contains label 'QTI Example Te2211111st (LABEL)'
+        $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter'));
+        $report = \taoQtiTest_models_classes_QtiTestService::singleton()
+            ->importMultipleTests($class, $testFile);
+
+        $this->assertEquals($report->getType(), \common_report_Report::TYPE_SUCCESS);
+        $this->assertFalse($report->containsError());
+
+        // find imported URI
+        $resources = $class->getInstances();
+        $this->assertCount(1, $resources);
+        $resource = current($resources);
+        $createdLabel = $resource->getLabel();
+        $this->assertEquals($createdLabel, $label);
+
+        // export just imported to ZIP
+        $file = $this->outputDir . 'qti_unit_test.zip';
+
+        $zip = new ZipArchive();
+        $this->assertTrue($zip->open($file, ZipArchive::CREATE));
+
+        $qtiTestExporter = new taoQtiTest_models_classes_export_QtiTestExporter(
+            new \core_kernel_classes_Resource($resource->getUri()), $zip, taoQtiTest_helpers_Utils::emptyImsManifest()
+        );
+        $qtiTestExporter->export();
+        $zip->close();
+        $this->assertTrue($zip->open($file, ZipArchive::CREATE));
+
+        // dump exported archive to a directory to check the label later on
+        $dirForChecking = mkdir(uniqid(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test-exporter-paths', true));
+
+        $this->assertTrue($zip->extractTo($dirForChecking));
+
+        // delete archive
+        $zip->close();
+        $this->assertFileExists($file);
+        unlink($file);
+
+        // check that label was saved there inside
+        $manifestFile = $dirForChecking . '/imsmanifest.xml';
+        $this->assertTrue(file_exists($manifestFile));
+        $this->assertTrue(strpos(file_get_contents($manifestFile), $label) !== false);
 
         $class->delete(true);
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint98\n"
-"PO-Revision-Date: 2019-03-15T10:06:37\n"
+"Project-Id-Version: TAO 3.3.0-sprint105\n"
+"PO-Revision-Date: 2019-06-21T09:20:10\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-CN\n"
@@ -334,6 +334,9 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr ""
 
+msgid "Download"
+msgstr ""
+
 msgid "Eliminate choices"
 msgstr ""
 
@@ -614,11 +617,11 @@ msgstr "管理指导语区块"
 msgid "Manage test properties"
 msgstr "管理考试属性"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "管理考试"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr ""
@@ -740,10 +743,10 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "不是随机顺序，该位置保持固定。"
 
-msgid "Ok"
+msgid "OK"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr ""
 
 msgid "OK & End test"
@@ -762,6 +765,9 @@ msgid "Only display the unanswered items"
 msgstr ""
 
 msgid "Open Calculator"
+msgstr ""
+
+msgid "or"
 msgstr ""
 
 msgid "Ordering"
@@ -791,6 +797,9 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
+msgid "Please continue waiting while we try to restore the connection. Alternatively, you may end this test by downloading it as a file which you will have to submit manually."
+msgstr ""
+
 msgid "Please wait while we try to restore the connection."
 msgstr ""
 
@@ -799,6 +808,9 @@ msgstr ""
 
 msgid "Previous"
 msgstr "上一个"
+
+msgid "Proceed & End Test"
+msgstr ""
 
 msgid "Proctor"
 msgstr "监考人"
@@ -881,10 +893,10 @@ msgstr "评分人"
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1082,7 +1094,13 @@ msgstr ""
 msgid "The connection seems to be back, please proceed"
 msgstr ""
 
+msgid "The connection seems to be back, please proceed."
+msgstr ""
+
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
+msgstr ""
+
+msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
@@ -1329,6 +1347,9 @@ msgid "You are about to go to the previous item. Click OK to continue and go to 
 msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgstr ""
+
+msgid "You are encountering a prolonged connectivity loss."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "

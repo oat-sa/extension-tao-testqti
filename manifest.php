@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
@@ -30,6 +30,8 @@ use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
+use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
+use oat\taoQtiTest\scripts\install\RegisterTimerStrategyService;
 
 $extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
@@ -39,14 +41,14 @@ return array(
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '32.1.1',
+    'version'     => '34.4.1',
     'author'      => 'Open Assessment Technologies',
     'requires'    => array(
-        'taoQtiItem' => '>=18.0.0',
-        'taoTests'   => '>=8.3.0',
-        'tao'        => '>=27.2.0',
+        'taoQtiItem' => '>=20.0.2',
+        'taoTests'   => '>=13.2.0',
+        'tao'        => '>=38.5.0',
         'generis'    => '>=7.12.1',
-        'taoDelivery' => '>=11.0.0',
+        'taoDelivery' => '>=13.3.0',
         'taoItems'   => '>=6.0.0',
     ),
 	'models' => array(
@@ -77,7 +79,9 @@ return array(
             SyncChannelInstaller::class,
             RegisterTestContainer::class,
             SetUpQueueTasks::class,
-            SetLinearNextItemWarningConfig::class
+            SetLinearNextItemWarningConfig::class,
+            RegisterFrontendPaths::class,
+            RegisterTimerStrategyService::class
         )
     ),
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',

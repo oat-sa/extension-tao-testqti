@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2019 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -23,11 +23,12 @@
 
 namespace oat\taoQtiTest\scripts\install;
 
-use oat\tao\model\ClientLibConfigRegistry;
+use oat\taoTests\models\runner\providers\ProviderRegistry;
+use oat\taoTests\models\runner\providers\TestProvider;
 
 /**
  * Set Precaching Configuration Installation Action
- * 
+ *
  * This action prepares the test runner configuration to use
  * a caching proxy in order to cache the next N items in item flow
  * of a given assessment test session.
@@ -48,16 +49,38 @@ class SetPreCachingConfig extends \common_ext_action_InstallAction
         ]);
         $qtiTest->setConfig('testRunner', $config);
 
-        //change the proxy implementation
-        ClientLibConfigRegistry::getRegistry()->register('taoQtiTest/runner/proxy/loader', [
-            'providerName' => 'preCachingProxy',
-            'module'       => 'taoQtiTest/runner/proxy/cache/proxy'
-        ]);
+        if (!$this->registerPrecachingProxy()) {
+            return new \common_report_Report(
+                \common_report_Report::TYPE_ERROR,
+                "Unable to register the proxy."
+            );
+        }
 
         return new \common_report_Report(
             \common_report_Report::TYPE_SUCCESS,
             "Precaching configuration set."
         );
+    }
+
+    private function registerPrecachingProxy()
+    {
+        $providerRegistry = $this->getProviderRegistry();
+        $providerRegistry->removeByCategory('proxy');
+        $providerRegistry->register(TestProvider::fromArray([
+            'id'       => 'preCachingProxy',
+            'module'   => 'taoQtiTest/runner/proxy/cache/proxy',
+            'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
+            'category' => 'proxy'
+        ]));
+        return $providerRegistry->isRegistered('taoQtiTest/runner/proxy/cache/proxy');
+    }
+
+    /**
+     * @return ProviderRegistry|AbstractRegistry
+     */
+    private function getProviderRegistry()
+    {
+        return ProviderRegistry::getRegistry();
     }
 }
 

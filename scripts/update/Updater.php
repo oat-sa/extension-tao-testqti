@@ -14,12 +14,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015-2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2015-2019 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\scripts\update;
 
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\tao\model\ClientLibConfigRegistry;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\taskQueue\TaskLogInterface;
@@ -38,6 +39,7 @@ use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
+use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
 use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
@@ -78,7 +80,9 @@ use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
-use oat\taoTests\models\runner\time\TimePoint;
+use oat\tao\model\ClientLibRegistry;
+use oat\tao\model\asset\AssetService;
+use oat\taoTests\models\runner\time\TimerStrategyInterface;
 
 /**
  *
@@ -1777,6 +1781,139 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('32.1.0');
         }
 
-        $this->skip('32.1.0', '32.1.1');
+        $this->skip('32.1.0', '32.7.1');
+
+        if ($this->isVersion('32.7.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['keyNavigation']['contentNavigatorType'] = 'default';
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('32.8.0');
+        }
+
+        $this->skip('32.8.0', '32.10.1');
+
+        if ($this->isVersion('32.10.1')) {
+            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['validateResponses']['validateOnPreviousMove'] = true;
+            $extension->setConfig('testRunner', $config);
+            $this->setVersion('32.11.0');
+        }
+
+        $this->skip('32.11.0', '33.8.0');
+
+        if ($this->isVersion('33.8.0')) {
+            OntologyUpdater::syncModels();
+            $this->setVersion('33.9.0');
+        }
+
+	if ($this->isVersion('33.9.0')) {
+
+            $providerRegistry = ProviderRegistry::getRegistry();
+            $providerRegistry->register(
+                TestProvider::fromArray([
+                    'id'       => 'request',
+                    'name'     => 'request communicator',
+                    'module'   => 'core/communicator/request',
+                    'category' => 'communicator',
+                    'active'   => true,
+                    'tags'     => [ ]
+                ])
+            );
+            $providerRegistry->register(
+                TestProvider::fromArray([
+                    'id'       => 'poll',
+                    'name'     => 'poll communicator',
+                    'module'   => "core/communicator/poll",
+                    'category' => 'communicator',
+                    'active'   => true,
+                    'tags'     => [ ]
+                ])
+            );
+
+            //if the proxy was different
+            $clientLibRegistry = ClientLibConfigRegistry::getRegistry();
+            if ($clientLibRegistry->isRegistered('taoQtiTest/runner/proxy/loader')) {
+                $registeredProxy = $clientLibRegistry->get('taoQtiTest/runner/proxy/loader');
+                $providerRegistry->register(
+                    TestProvider::fromArray([
+                        'id'       => $registeredProxy['providerName'],
+                        'module'   => $registeredProxy['module'],
+                        'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
+                        'category' => 'proxy',
+                        'active'   => true,
+                        'tags'     => [ ]
+                    ])
+                );
+
+            } else {
+                $providerRegistry->register(
+                    TestProvider::fromArray([
+                        'id'       => 'qtiServiceProxy',
+                        'module'   => 'taoQtiTest/runner/proxy/qtiServiceProxy',
+                        'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
+                        'category' => 'proxy',
+                        'active'   => true,
+                        'tags'     => [ ]
+                    ])
+                );
+            }
+
+            $this->setVersion('33.10.0');
+        }
+
+        $this->skip('33.10.0', '33.10.1');
+
+        if( $this->isVersion('33.10.1') ) {
+
+            $providerRegistry = ProviderRegistry::getRegistry();
+            $providerRegistry->remove('taoQtiTest/runner/provider/qti');
+            $providerRegistry->register(
+                TestProvider::fromArray([
+                    'id' => 'qti',
+                    'module' => 'taoQtiTest/runner/provider/qti',
+                    'bundle' => 'taoQtiTest/loader/taoQtiTestRunner.min',
+                    'position' => null,
+                    'name' => 'QTI runner',
+                    'description' => 'QTI implementation of the test runner',
+                    'category' => 'runner',
+                    'active' => true,
+                    'tags' => [
+                        'core',
+                        'qti',
+                        'runner'
+                    ]
+                ])
+            );
+            if ($providerRegistry->isRegistered('taoQtiTest/runner/proxy/qtiServiceProxy')) {
+                $registeredProxy = $providerRegistry->get('taoQtiTest/runner/proxy/qtiServiceProxy');
+                $registeredProxy['bundle'] = 'taoQtiTest/loader/taoQtiTestRunner.min';
+                $providerRegistry->register(
+                    TestProvider::fromArray($registeredProxy)
+                );
+            }
+            $this->setVersion('33.10.2');
+        }
+
+        if ($this->isVersion('33.10.2')) {
+            $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
+            $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
+            $clientLibRegistry = ClientLibRegistry::getRegistry();
+            $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
+            $this->setVersion('34.0.0');
+        }
+
+        $this->skip('34.0.0', '34.2.1');
+
+        if ($this->isVersion('34.2.1')) {
+            $this->getServiceManager()->register(
+                TimerStrategyInterface::SERVICE_ID,
+                new TimerStrategyService()
+            );
+            $this->setVersion('34.3.0');
+        }
+
+        $this->skip('34.3.0', '34.4.1');
     }
 }

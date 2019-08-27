@@ -20,6 +20,7 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+
     'jquery',
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'json!taoQtiTest/test/creator/encoders/dom2qti/rubricBlock.json',
@@ -28,7 +29,17 @@ define([
     'tpl!taoQtiTest/test/creator/encoders/dom2qti/multiRoots',
     'json!taoQtiTest/test/creator/encoders/dom2qti/feedbackBlock.json',
     'tpl!taoQtiTest/test/creator/encoders/dom2qti/feedbackBlock'
-], function($, dom2qti, rubricBlockJson, rubricBlockTpl, multiRootsJson, multiRootsTpl, feedbackBlockJson, feedbackBlockTpl){
+], function(
+
+    $,
+    dom2qti,
+    rubricBlockJson,
+    rubricBlockTpl,
+    multiRootsJson,
+    multiRootsTpl,
+    feedbackBlockJson,
+    feedbackBlockTpl
+) {
     'use strict';
 
     var dom2qtiApi = [
@@ -50,48 +61,43 @@ define([
         model: feedbackBlockJson
     }];
 
-
     QUnit.module('encoders/dom2qti');
 
-
-    QUnit.test('module', function (assert) {
-        QUnit.expect(1);
-        assert.equal(typeof dom2qti, 'object', "The dom2qti encoder module exposes an object");
+    QUnit.test('module', function(assert) {
+        assert.expect(1);
+        assert.equal(typeof dom2qti, 'object', 'The dom2qti encoder module exposes an object');
     });
 
-
     QUnit
-        .cases(dom2qtiApi)
-        .test('encoders/dom2qti API ', function (data, assert) {
-            QUnit.expect(1);
+        .cases.init(dom2qtiApi)
+        .test('encoders/dom2qti API ', function(data, assert) {
+            assert.expect(1);
             assert.equal(typeof dom2qti[data.title], 'function', 'The dom2qti encoder exposes a "' + data.title + '" function');
         });
 
-
     QUnit
-        .cases(dom2qtiCases)
-        .test('encoders/dom2qti.encode() ', function(data, assert){
+        .cases.init(dom2qtiCases)
+        .test('encoders/dom2qti.encode() ', function(data, assert) {
             var result = dom2qti.encode(data.text);
             var pattern = /\s/g;
-            QUnit.expect(1);
+            assert.expect(1);
             assert.equal(result.replace(pattern, ''), data.text.replace(pattern, ''));
         });
 
     QUnit
-        .cases(dom2qtiCases)
-        .test('encoders/dom2qti.encode() #already encoded ', function(data, assert){
+        .cases.init(dom2qtiCases)
+        .test('encoders/dom2qti.encode() #already encoded ', function(data, assert) {
             var result = dom2qti.encode(data.model);
             var pattern = /\s/g;
-            QUnit.expect(1);
+            assert.expect(1);
             assert.equal(result.replace(pattern, ''), data.text.replace(pattern, ''));
         });
 
-
     QUnit
-        .cases(dom2qtiCases)
-        .test('encoders/dom2qti.decode() ', function(data, assert){
+        .cases.init(dom2qtiCases)
+        .test('encoders/dom2qti.decode() ', function(data, assert) {
             var result = dom2qti.decode(data.text.replace(/\s+/gm, ' '));
-            QUnit.expect(1);
+            assert.expect(1);
             assert.deepEqual(result, data.model);
         });
 });

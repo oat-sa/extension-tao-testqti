@@ -25,7 +25,7 @@
  */
 define([
     'lodash',
-    'core/areaBroker'
+    'ui/areaBroker'
 ], function (_, areaBroker) {
     'use strict';
 
@@ -40,7 +40,7 @@ define([
     /**
      * Creates an area broker with the required areas for the item creator
      *
-     * @see core/areaBroker
+     * @see ui/areaBroker
      *
      * @param {jQueryElement|HTMLElement|String} $container - the main container
      * @param {Object} mapping - keys are the area names, values are jQueryElement

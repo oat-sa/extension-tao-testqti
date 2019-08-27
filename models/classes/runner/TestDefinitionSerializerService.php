@@ -22,8 +22,6 @@
 
 namespace oat\taoQtiTest\models\runner;
 
-use core_kernel_classes_Literal;
-use core_kernel_classes_Property;
 use oat\oatbox\service\ConfigurableService;
 use tao_models_classes_service_FileStorage;
 use taoQtiTest_models_classes_QtiTestService;
@@ -35,30 +33,29 @@ class TestDefinitionSerializerService extends ConfigurableService
     /**
      * @param QtiRunnerServiceContext $serviceContext
      * @return array
-     * @throws \common_exception_Error
-     * @throws \common_exception_InconsistentData
-     * @throws \core_kernel_persistence_Exception
-     * @throws \oat\tao\model\websource\WebsourceNotFound
      */
     public function getSerializedTestDefinition(QtiRunnerServiceContext $serviceContext)
     {
-        return $this->parseXmlToArray($this->getTestDefinitionFilePath($serviceContext));
+        return $this->parseXmlToArray($this->getTestDefinitionXml($serviceContext));
     }
 
     /**
-     * @param string $filePath
+     * @param string $xml
      * @return array
      */
-    private function parseXmlToArray($filePath)
+    private function parseXmlToArray($xml)
     {
-        $xml = simplexml_load_file($filePath);
+        $xml = simplexml_load_string($xml);
         $parsedXml = json_decode(json_encode($xml), true);
 
-        return $this->setSubObjectToArray($parsedXml, [
-            taoQtiTest_models_classes_QtiTestService::XML_TEST_PART,
-            taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_SECTION,
-            taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_ITEM_REF,
-        ]);
+        return $this->setSubObjectToArray(
+            $parsedXml,
+            [
+                taoQtiTest_models_classes_QtiTestService::XML_TEST_PART,
+                taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_SECTION,
+                taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_ITEM_REF,
+            ]
+        );
     }
 
     /**
@@ -89,43 +86,15 @@ class TestDefinitionSerializerService extends ConfigurableService
     /**
      * @param QtiRunnerServiceContext $serviceContext
      * @return string
-     * @throws \common_exception_Error
-     * @throws \common_exception_InconsistentData
-     * @throws \core_kernel_persistence_Exception
-     * @throws \oat\tao\model\websource\WebsourceNotFound
      */
-    private function getTestDefinitionFilePath(QtiRunnerServiceContext $serviceContext)
+    private function getTestDefinitionXml(QtiRunnerServiceContext $serviceContext)
     {
-        $testDefinitionUri = $serviceContext->getTestDefinitionUri();
-        $testDefinitionResource = new \core_kernel_classes_Resource($testDefinitionUri);
-        /** @var core_kernel_classes_Literal $qtiTestIdentifier */
-        $qtiTestIdentifier = $testDefinitionResource->getOnePropertyValue(
-            new core_kernel_classes_Property(taoQtiTest_models_classes_QtiTestService::PROPERTY_QTI_TEST_IDENTIFIER)
-        );
+        $privateDirectoryId = explode('|', $serviceContext->getTestCompilationUri())[0];
+        $directory = $this->getFileStorageService()->getDirectoryById($privateDirectoryId);
 
-        return implode('', [
-            $this->getPrivateDirectoryPath($serviceContext->getTestCompilationUri()),
-            '/tests/',
-            $qtiTestIdentifier,
-            '/',
-            taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME,
-        ]);
-    }
+        $path = $directory->getFile(taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX)->read();
 
-    /**
-     * @param string $testCompilationUri
-     * @return string
-     * @throws \oat\tao\model\websource\WebsourceNotFound
-     * @throws \common_exception_InconsistentData
-     */
-    private function getPrivateDirectoryPath($testCompilationUri)
-    {
-        $privateDirectoryId = explode('|', $testCompilationUri)[0];
-
-        return $this
-            ->getFileStorageService()
-            ->getDirectoryById($privateDirectoryId)
-            ->getPath();
+        return $directory->getFile($path)->read();
     }
 
     /**
