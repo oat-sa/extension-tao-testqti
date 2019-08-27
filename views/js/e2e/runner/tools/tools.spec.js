@@ -82,16 +82,21 @@ describe('Tools', () => {
      */
     describe('Test-Taker Tools', () => {
 
-        it('Has comments tool', function() {
-            cy.get('.tools-box-list [data-control=comment]').within(() => {
-                cy.get('a').as('toolBtn');
+        describe('Comments tool', () => {
+
+            beforeEach(() => {
+                cy.get('.tools-box-list [data-control=comment] a').as('toolBtn');
                 cy.get('[data-control=qti-comment]').as('popup');
                 cy.get('[data-control=qti-comment-text]').as('textarea');
-                cy.get('[data-control=qti-comment-cancel]').as('cancelBtn');
                 cy.get('[data-control=qti-comment-send]').as('submitBtn');
+                cy.get('[data-control=qti-comment-cancel]').as('cancelBtn');
+            });
 
-                // plugin loaded?
-                cy.get('@toolBtn').should('be.visible');
+            it('loads', function() {
+                cy.get('@toolBtn').should('have.length', 1).and('be.visible');
+            });
+
+            it('opens/closes', () => {
                 // click tool => textarea visible
                 cy.get('@toolBtn').click();
                 cy.get('@popup').should('be.visible');
@@ -103,18 +108,22 @@ describe('Tools', () => {
                 // cancel => textarea closes
                 cy.get('@cancelBtn').click();
                 cy.get('@popup').should('not.be.visible');
-                // click tool => textarea visible
+            });
+
+            it('submits', () => {
+                // open it
                 cy.get('@toolBtn').click();
                 cy.get('@popup').should('be.visible');
                 cy.get('@textarea').should('have.attr', 'placeholder', 'Your comment…');
+
                 // empty => cannot submit
                 cy.get('@submitBtn').click();
                 cy.get('@popup').should('be.visible');
-                // type text => can submit
+                // type text => can submit & close
                 cy.get('@textarea').type('Blah blah blah');
-                // submit => textarea closes
                 cy.get('@submitBtn').click();
                 cy.get('@popup').should('not.be.visible');
+
                 // xhr
                 cy.wait('@comment').then((xhr) => {
                     assert.ok(xhr.response.body.success, 'comment response success true');
@@ -122,347 +131,465 @@ describe('Tools', () => {
             });
         });
 
-        it('Has calculator tool', function() {
-            cy.get('.tools-box-list [data-control=calculator] a').as('toolBtn');
-            // plugin loaded?
-            cy.get('@toolBtn').should('be.visible');
-            cy.get('.test-runner-scope .widget-calculator').as('calcContainer');
-            cy.get('@calcContainer').should('be.empty').and('not.be.visible');
+        describe('Calculator tool', () => {
 
-            // click tool => calc renders
-            cy.get('@toolBtn').click();
-            cy.get('@calcContainer').find('.dynamic-component-container').as('calc');
-            cy.get('@calc').should('be.visible');
-            cy.get('@calc').find('a[title="Close"]').as('closer');
-            cy.get('@calc').find('.calcDisplay').as('display');
-            cy.get('@calc').find('[data-key="2"]').as('key2');
-            cy.get('@calc').find('[data-key="+"]').as('plus');
-            cy.get('@calc').find('[data-key="="]').as('equals');
-            cy.get('@calc').find('[data-key="C"]').as('clear');
+            beforeEach(() => {
+                cy.get('.tools-box-list [data-control=calculator] a').as('toolBtn');
+                cy.get('.test-runner-scope .widget-calculator').as('calcContainer');
+            });
 
-            // click tool => hide
-            cy.get('@toolBtn').click();
-            cy.get('@calc').should('not.be.visible');
-            // click tool => calc visible
-            cy.get('@toolBtn').click();
-            cy.get('@calc').should('be.visible');
-            // click close => hide
-            cy.get('@closer').click();
-            cy.get('@calc').should('not.be.visible');
-            // click tool => calc visible
-            cy.get('@toolBtn').click();
+            it('loads', function() {
+                cy.get('@toolBtn').should('have.length', 1).and('be.visible');
+                cy.get('@calcContainer').should('have.length', 1).and('be.empty').and('not.be.visible');
+            });
 
-            // 2 + 2 => 4
-            cy.get('@key2').click();
-            cy.get('@plus').click();
-            cy.get('@key2').click();
-            cy.get('@equals').click();
-            cy.get('@display').should('have.value', '4');
-            // clear
-            cy.get('@clear').click();
-            cy.get('@display').should('have.value', '0');
+            it('opens/closes', function() {
+                // click tool => calc renders
+                cy.get('@toolBtn').click();
+                cy.get('@calcContainer').find('.dynamic-component-container').as('calc');
+                cy.get('@calc').should('be.visible');
+                cy.get('@calc').find('a[title="Close"]').as('closer');
 
-            // TODO: draggable
-            // TODO: resizable
+                // click tool => hide
+                cy.get('@toolBtn').click();
+                cy.get('@calc').should('not.be.visible');
+                // click tool => calc visible
+                cy.get('@toolBtn').click();
+                cy.get('@calc').should('be.visible');
+                // click close => hide
+                cy.get('@closer').click();
+                cy.get('@calc').should('not.be.visible');
+            });
 
-            cy.get('@closer').click();
+            it('calculates', function() {
+                // click tool => calc renders
+                cy.get('@toolBtn').click();
+                cy.get('@calcContainer').find('.dynamic-component-container').as('calc');
+                cy.get('@calc').should('be.visible');
+                cy.get('@calc').find('.calcDisplay').as('display');
+
+                // 2 + 2 => 4
+                cy.get('@calc').find('[data-key="2"]').click();
+                cy.get('@calc').find('[data-key="+"]').click();
+                cy.get('@calc').find('[data-key="2"]').click();
+                cy.get('@calc').find('[data-key="="]').click();
+                cy.get('@display').should('have.value', '4');
+                // clear
+                cy.get('@calc').find('[data-key="C"]').click();
+                cy.get('@display').should('have.value', '0');
+
+                // close it
+                cy.get('@toolBtn').click();
+            });
+
+            it('is dynamic', function() {
+                // TODO: draggable
+                // TODO: resizable
+            });
         });
 
-        it('Has zoom tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                cy.get('[data-control=zoomOut]').as('zoomOut');
-                cy.get('[data-control=zoomIn]').as('zoomIn');
-                // plugin loaded?
-                cy.get('@zoomOut').should('exist').and('be.visible');
-                cy.get('@zoomIn').should('exist').and('be.visible');
+        describe('Zoom tool', () => {
+
+            beforeEach(() => {
+                cy.get('.tools-box-list').within(() => {
+                    cy.get('[data-control=zoomOut] a').as('zoomOut');
+                    cy.get('[data-control=zoomIn] a').as('zoomIn');
+                });
+                cy.get('.test-runner-scope .qti-item').as('item');
             });
-            cy.get('.test-runner-scope .qti-item').as('item');
 
-            // zoom out
-            cy.get('@zoomOut').click();
-            cy.get('@item')
-                .should('have.class', 'transform-scale')
-                // .and('have.css', 'transform-origin', '0px 0px');
-                .and('have.attr', 'style').and('contain', 'scaleX(0.9)').and('contain', 'scaleY(0.9)');
-            cy.get('@zoomOut').click();
-            cy.get('@item')
-                .should('have.class', 'transform-scale')
-                .and('have.attr', 'style').and('contain', 'scaleX(0.8)').and('contain', 'scaleY(0.8)');
+            it('loads', function() {
+                cy.get('@zoomOut').should('have.length', 1).and('be.visible');
+                cy.get('@zoomIn').should('have.length', 1).and('be.visible');
+            });
 
-            // reset
-            cy.get('@zoomIn').click();
-            cy.get('@zoomIn').click();
+            it('zooms in/out', function() {
+                // zoom out
+                cy.get('@zoomOut').click();
+                cy.get('@item')
+                    .should('have.class', 'transform-scale')
+                    // .and('have.css', 'transform-origin', '0px 0px');
+                    .and('have.attr', 'style').and('contain', 'scaleX(0.9)').and('contain', 'scaleY(0.9)');
+                cy.get('@zoomOut').click();
+                cy.get('@item')
+                    .should('have.class', 'transform-scale')
+                    .and('have.attr', 'style').and('contain', 'scaleX(0.8)').and('contain', 'scaleY(0.8)');
 
-            // zoom in
-            cy.get('@zoomIn').click();
-            cy.get('@item')
-                .should('have.class', 'transform-scale')
-                .and('have.attr', 'style').and('contain', 'scaleX(1.1)').and('contain', 'scaleY(1.1)');
-            cy.get('@zoomIn').click();
-            cy.get('@item')
-                .should('have.class', 'transform-scale')
-                .and('have.attr', 'style').and('contain', 'scaleX(1.2)').and('contain', 'scaleY(1.2)');
+                // reset
+                cy.get('@zoomIn').click();
+                cy.get('@zoomIn').click();
 
-            // beyond the max! (2.0)
-            cy.get('@zoomIn').click().click().click().click().click().click().click().click().click().click();
-            cy.get('@item')
-                .should('have.class', 'transform-scale')
-                .and('have.attr', 'style').and('contain', 'scaleX(2)').and('contain', 'scaleY(2)');
+                // zoom in
+                cy.get('@zoomIn').click();
+                cy.get('@item')
+                    .should('have.class', 'transform-scale')
+                    .and('have.attr', 'style').and('contain', 'scaleX(1.1)').and('contain', 'scaleY(1.1)');
+                cy.get('@zoomIn').click();
+                cy.get('@item')
+                    .should('have.class', 'transform-scale')
+                    .and('have.attr', 'style').and('contain', 'scaleX(1.2)').and('contain', 'scaleY(1.2)');
 
-            // reset
-            cy.get('@zoomOut').click().click().click().click().click().click().click().click().click().click();
-            cy.get('@item')
-                .should('not.have.class', 'transform-scale')
-                .should('have.css', 'transform', 'none');
+                // beyond the max! (2.0)
+                cy.get('@zoomIn').click().click().click().click().click().click().click().click().click().click();
+                cy.get('@item')
+                    .should('have.class', 'transform-scale')
+                    .and('have.attr', 'style').and('contain', 'scaleX(2)').and('contain', 'scaleY(2)');
+
+                // reset
+                cy.get('@zoomOut').click().click().click().click().click().click().click().click().click().click();
+                cy.get('@item')
+                    .should('not.have.class', 'transform-scale')
+                    .should('have.css', 'transform', 'none');
+            });
         });
 
-        it('Has highlighter tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                // plugin loaded?
-                cy.get('[data-control=highlight-trigger]').as('trigger');
-                cy.get('[data-control=highlight-clear]').as('clear');
-                cy.get('@trigger').should('exist').and('be.visible');
-                cy.get('@clear').should('exist').and('be.visible');
+        describe('Highlighter tool', () => {
+
+            beforeEach(() => {
+                cy.get('.tools-box-list').within(() => {
+                    cy.get('[data-control=highlight-trigger] a').as('trigger');
+                    cy.get('[data-control=highlight-clear] a').as('clear');
+                });
             });
-            cy.get('.test-runner-scope .qti-item').within(() => {
-                // tool first mode
-                cy.get('@trigger').click();
-                cy.get('h1').selectText();
-                cy.get('h1').find('span.txt-user-highlight')
-                    .contains('Tools')
-                    .and('has.css', 'background-color', 'rgb(255, 255, 0)');
 
-                // clear
-                cy.get('@clear').click();
-                cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
+            it('loads', function() {
+                cy.get('@trigger').should('have.length', 1).and('be.visible');
+                cy.get('@clear').should('have.length', 1).and('be.visible');
+            });
 
-                // selection first mode
-                cy.get('.qti-prompt').selectText();
-                cy.get('@trigger').click();
-                cy.get('.qti-prompt').find('span.txt-user-highlight')
-                    .contains('Here is the test for Answer Elimination and Answer Masking')
-                    .and('has.css', 'background-color', 'rgb(255, 255, 0)');
+            it('highlights (tool first)', function() {
+                cy.get('.test-runner-scope .qti-item').within(() => {
+                    // tool first mode
+                    cy.get('@trigger').click();
+                    cy.get('h1').selectText();
+                    cy.get('h1').find('span.txt-user-highlight')
+                        .contains('Tools')
+                        .and('has.css', 'background-color', 'rgb(255, 255, 0)');
 
-                // clear
-                cy.get('@clear').click();
-                cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
+                    // clear
+                    cy.get('@clear').click();
+                    cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
+                });
+            });
 
+            it('highlights (selection first)', function() {
+                cy.get('.test-runner-scope .qti-item').within(() => {
+                    // selection first mode
+                    cy.get('.qti-prompt').selectText();
+                    cy.get('@trigger').click();
+                    cy.get('.qti-prompt').find('span.txt-user-highlight')
+                        .contains('Here is the test for Answer Elimination and Answer Masking')
+                        .and('has.css', 'background-color', 'rgb(255, 255, 0)');
+
+                    // clear
+                    cy.get('@clear').click();
+                    cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
+                });
+            });
+
+            it('turns off', function() {
                 // turn on, off
                 cy.get('@trigger').click();
                 cy.get('@trigger').click();
-                cy.get('h1').selectText()
+                cy.get('.test-runner-scope .qti-item h1').selectText()
                     .should('not.contain', 'span.txt-user-highlight');
-
             });
         });
 
-        it('Has line reader tool', function() {
-            cy.get('.tools-box-list').within(() => {
-                // plugin loaded?
-                cy.get('[data-control=line-reader]').as('toolBtn');
-                cy.get('@toolBtn').should('exist').and('be.visible');
-            });
-            cy.get('.test-runner-scope').within(() => {
-                // open/close toolBtn
-                cy.get('@toolBtn').click();
-                cy.get('.line-reader-mask').as('maskParts').should('have.length', 8).and('be.visible');
-                cy.get('.line-reader-overlay').as('overlay').should('be.visible');
-                cy.get('.line-reader-overlay .icon').as('outerDrag').should('be.visible');
-                cy.get('.line-reader-inner-drag').as('innerDrag').should('be.visible');
-                cy.get('.line-reader-closer').as('closer').should('be.visible');
-                cy.get('@maskParts').should('be.visible');
-                cy.get('@toolBtn').click();
-                cy.get('@maskParts').should('not.be.visible');
+        describe('Line reader tool', () => {
 
-                // open + closer
+            beforeEach(() => {
+                cy.get('.tools-box-list [data-control=line-reader] a').as('toolBtn');
+            });
+
+            it('loads', function() {
+                cy.get('@toolBtn').should('have.length', 1).and('be.visible');
+            });
+
+            it('opens/closes', function() {
+                cy.get('.test-runner-scope').within(() => {
+                    // open/close toolBtn
+                    cy.get('@toolBtn').click();
+                    cy.get('.line-reader-mask').as('maskParts').should('have.length', 8).and('be.visible');
+                    cy.get('.line-reader-overlay').as('overlay').should('be.visible');
+                    cy.get('.line-reader-overlay .icon').as('outerDrag').should('be.visible');
+                    cy.get('.line-reader-inner-drag').as('innerDrag').should('be.visible');
+                    cy.get('.line-reader-closer').as('closer').should('be.visible');
+                    cy.get('@maskParts').should('be.visible');
+                    cy.get('@toolBtn').click();
+                    cy.get('@maskParts').should('not.be.visible');
+
+                    // open + closer
+                    cy.get('@toolBtn').click();
+                    cy.get('@maskParts').should('be.visible');
+                    cy.get('@closer').click();
+                    cy.get('@maskParts').should('not.be.visible');
+                });
+            });
+
+            it('masks item', function() {
+                cy.get('.test-runner-scope').within(() => {
+                    // TODO: item visibility checks
+                    cy.get('@toolBtn').click();
+                    cy.log('efp1', document.elementFromPoint(100, 100));
+
+                    cy.get('@toolBtn').click();
+                });
+            });
+
+            it('is dynamic', function() {
+                cy.get('.test-runner-scope').within(() => {
+                    // open it
+                    cy.get('@toolBtn').click();
+                    cy.get('.line-reader-overlay').as('overlay').should('be.visible');
+                    cy.get('.line-reader-overlay .icon').as('outerDrag').should('be.visible');
+                    cy.get('.line-reader-inner-drag').as('innerDrag').should('be.visible');
+
+                    // TODO: draggable
+                    cy.get('@overlay')
+                        .trigger('mouseover')
+                        .trigger('mousedown', { which: 1 })
+                        .trigger('dragstart', {})
+                        .trigger('mousemove', { clientX: 1000, clientY: 1000 })
+                        .trigger('drag')
+                        .trigger('mouseup', { force: true })
+                        .trigger('dragend', {});
+
+                    // TODO: resizable
+                    // TODO: resizable inner
+
+                    // close
+                    cy.get('@toolBtn').click();
+                });
+            });
+        });
+
+        describe('Answer masking tool', function() {
+
+            beforeEach(() => {
+                cy.get('.tools-box-list [data-control=answer-masking] a').as('toolBtn');
+            });
+
+            it('loads', function() {
+                cy.get('@toolBtn').should('have.length', 1).and('be.visible');
+                cy.get('.qti-choice').as('choices').should('have.length', 4);
+            });
+
+            it('turns on/off', function() {
+                // click tool => masks visible
                 cy.get('@toolBtn').click();
-                cy.get('@maskParts').should('be.visible');
+                cy.get('.qti-choice.masked').should('have.length', 4);
+                cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
+                // click tool => masks hidden
+                cy.get('@toolBtn').click();
+                cy.get('.qti-choice.masked').should('have.length', 0);
+                cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 0);
+            });
+
+            it('controls single choice mask', function() {
+                // click tool => masks visible
+                cy.get('@toolBtn').click();
+
+                // unmask first choice
+                cy.get('.qti-choice.masked:eq(0) .answer-mask-toggle').as('toggle1');
+                cy.get('@toggle1').click();
+                cy.get('.qti-choice.masked').should('have.length', 3);
+                cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 3);
+                cy.get('.qti-choice:eq(0) .answer-mask').invoke('width').should('be.lt', 40);
+
+                // remask first choice
+                cy.get('@toggle1').click();
+                cy.get('.qti-choice.masked').should('have.length', 4);
+                cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
+                cy.get('.qti-choice:eq(0) .answer-mask').invoke('width').should('be.gt', 40);
+
+                // TODO: see if .pseudo-label-box is covered by .answer-mask
+
+                // hide tool
+                cy.get('@toolBtn').click();
+            });
+        });
+
+        describe('Answer elimination tool', function() {
+
+            beforeEach(() => {
+                cy.get('.tools-box-list [data-control=eliminator] a').as('toolBtn');
+            });
+
+            it('loads', function() {
+                cy.get('@toolBtn').should('have.length', 1).and('be.visible');
+            });
+
+            it('turns on/off', function() {
+                cy.get('.qti-itemBody').within(() => {
+                    // turn on
+                    cy.get('@toolBtn').click();
+                    cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('be.visible');
+                    cy.get('.qti-choice [data-eliminable="trigger"]').should('have.length', 4).and('be.visible');
+
+                    // turn off
+                    cy.get('@toolBtn').click();
+                    cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('not.be.visible');
+                    cy.get('.qti-choice [data-eliminable="trigger"]').should('have.length', 4).and('not.be.visible');
+                });
+            });
+
+            it('eliminates single choice', function() {
+                cy.get('.qti-itemBody').within(() => {
+                    // turn on
+                    cy.get('@toolBtn').click();
+
+                    // toggle first choice
+                    cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').click();
+                    cy.get('.qti-choice:eq(0)').should('have.class', 'eliminated');
+                    // TODO: assert .real-label & .label-box not actionable
+
+                    // untoggle first choice
+                    cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').click();
+                    cy.get('.qti-choice:eq(0)').should('not.have.class', 'eliminated');
+                    // TODO: assert .real-label & .label-box not actionable
+
+                    // turn off
+                    cy.get('@toolBtn').click();
+                });
+            });
+        });
+
+        describe('Area mask tool', function() {
+
+            beforeEach(() => {
+                cy.get('.tools-box-list [data-control=area-masking] a').as('toolBtn');
+            });
+
+            it('loads', function() {
+                cy.get('@toolBtn').should('have.length', 1).and('be.visible');
+            });
+
+            it('launches/destroys', function() {
+                // click tool => areaMask renders
+                cy.get('@toolBtn').click();
+                cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
+                cy.get('@areaMaskContainer').find('.mask').as('areaMask');
+                cy.get('@areaMask').should('be.visible');
+                cy.get('@areaMask').find('.inner').as('inner');
+                cy.get('@areaMask').find('.controls .close').as('closer');
+                cy.get('@areaMask').find('.controls .view').as('viewer');
+
+                // click close => destroy
                 cy.get('@closer').click();
-                cy.get('@maskParts').should('not.be.visible');
+                cy.get('@areaMaskContainer').should('not.exist');
+            });
 
-                // item visibility checks
+            it('unhides content', function() {
+                // click tool => areaMask renders
                 cy.get('@toolBtn').click();
-                cy.log('efp1', document.elementFromPoint(100, 100));
+                cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
+                cy.get('@areaMaskContainer').find('.mask').as('areaMask');
+                cy.get('@areaMask').find('.inner').as('inner');
+                cy.get('@areaMask').find('.controls .close').as('closer');
+                cy.get('@areaMask').find('.controls .view').as('viewer');
 
+                // look through
+                cy.get('@viewer').click();
+                cy.get('@areaMaskContainer').should('have.class', 'previewing');
+                cy.get('@inner').should('have.css', 'opacity', '0.15');
+                // un-look through
+                // the component uses a default delay of 3000ms before restoring the mask
+                cy.wait(3000);
+                cy.get('@areaMaskContainer').should('not.have.class', 'previewing');
+                cy.get('@inner').should('have.css', 'opacity', '1');
+
+                // click close => destroy
+                cy.get('@closer').click();
+            });
+
+            it('can have multiple instances', function() {
+                // add multiple instances (max 5)
+                cy.get('@toolBtn').click().click().click().click().click().click();
+                cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
+                cy.get('@areaMaskContainer').find('.mask').as('areaMask').should('have.length', 5);
+                cy.get('@areaMask').find('.controls .close').as('closer');
+
+                // clean up
+                cy.get('@closer').should('have.length', 5);
+                cy.get('@closer').click({ multiple: true, force: true });
+                cy.get('@areaMaskContainer').should('not.exist');
+            });
+
+            it('is dynamic', function() {
                 // TODO: draggable
-                cy.get('@overlay')
-                    .trigger('mouseover')
-                    .trigger('mousedown', { which: 1 })
-                    .trigger('dragstart', {})
-                    .trigger('mousemove', { clientX: 1000, clientY: 1000 })
-                    .trigger('drag')
-                    .trigger('mouseup', { force: true })
-                    .trigger('dragend', {});
-
                 // TODO: resizable
-                // TODO: resizable inner
-
-                // hide
-                cy.get('@toolBtn').click();
             });
-        });
-
-        it('Has answer masking tool', function() {
-            // plugin loaded?
-            cy.get('.tools-box-list [data-control=answer-masking]').as('toolBtn');
-            cy.get('@toolBtn').should('exist').and('be.visible');
-            cy.get('.qti-choice').as('choices').should('have.length', 4);
-
-            // click tool => masks visible
-            cy.get('@toolBtn').click();
-            cy.get('.qti-choice.masked').should('have.length', 4);
-            cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
-            // choices not visible
-            cy.get('.qti-choice').find('.pseudo-label-box').should('have.length', 4);//.and('not.be.visible');
-            // click tool => masks hidden
-            cy.get('@toolBtn').click();
-            cy.get('.qti-choice.masked').should('have.length', 0);
-            cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 0);
-            // click tool => masks visible
-            cy.get('@toolBtn').click();
-
-            // unmask first choice
-            cy.get('.qti-choice.masked:eq(0) .answer-mask-toggle').as('toggle1');
-            cy.get('@toggle1').click();
-            cy.get('.qti-choice.masked').should('have.length', 3);
-            cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 3);
-            cy.get('.qti-choice:eq(0) .answer-mask').invoke('width').should('be.lt', 40);
-
-            // remask first choice
-            cy.get('@toggle1').click();
-            cy.get('.qti-choice.masked').should('have.length', 4);
-            cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
-            cy.get('.qti-choice:eq(0) .answer-mask').invoke('width').should('be.gt', 40);
-
-            // TODO: see if .pseudo-label-box is covered by .answer-mask
-
-            // hide tool
-            cy.get('@toolBtn').click();
-        });
-
-        it('Has answer elimination tool', function() {
-            // plugin loaded?
-            cy.get('.tools-box-list [data-control=eliminator] a').as('toolBtn');
-            cy.get('@toolBtn').should('be.visible');
-
-            cy.get('.qti-itemBody').within(() => {
-                // turn on
-                cy.get('@toolBtn').click();
-                cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('be.visible');
-                cy.get('.qti-choice [data-eliminable="trigger"]').should('have.length', 4).and('be.visible');
-
-                // toggle first choice
-                cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').click();
-                cy.get('.qti-choice:eq(0)').should('have.class', 'eliminated');
-                // TODO: assert .real-label & .label-box not actionable
-
-                // untoggle first choice
-                cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').click();
-                cy.get('.qti-choice:eq(0)').should('not.have.class', 'eliminated');
-                // TODO: assert .real-label & .label-box not actionable
-
-                // turn off
-                cy.get('@toolBtn').click();
-                cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('not.be.visible');
-                cy.get('.qti-choice [data-eliminable="trigger"]').should('have.length', 4).and('not.be.visible');
-            });
-        });
-
-        it('Has area mask tool', function() {
-            // plugin loaded?
-            cy.get('.tools-box-list [data-control=area-masking] a').as('toolBtn');
-            cy.get('@toolBtn').should('be.visible');
-
-            // click tool => areaMask renders
-            cy.get('@toolBtn').click();
-            cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
-            cy.get('@areaMaskContainer').find('.mask').as('areaMask');
-            cy.get('@areaMask').should('be.visible');
-            cy.get('@areaMask').find('.inner').as('inner');
-            cy.get('@areaMask').find('.controls .close').as('closer');
-            cy.get('@areaMask').find('.controls .view').as('viewer');
-
-            // click close => destroy
-            cy.get('@closer').click();
-            cy.get('@areaMaskContainer').should('not.exist');
-            // click tool => areaMask renders
-            cy.get('@toolBtn').click();
-
-            // look through
-            cy.get('@viewer').click();
-            cy.get('@areaMaskContainer').should('have.class', 'previewing');
-            cy.get('@inner').should('have.css', 'opacity', '0.15');
-            // un-look through
-            // the component uses a default delay of 3000ms before restoring the mask
-            cy.wait(3000);
-            cy.get('@areaMaskContainer').should('not.have.class', 'previewing');
-            cy.get('@inner').should('have.css', 'opacity', '1');
-
-            // TODO: draggable
-            // TODO: resizable
-
-            // add multiple instances (max 5)
-            cy.get('@toolBtn').click().click().click().click().click();
-            cy.get('@areaMaskContainer').should('have.length', 5);
-
-            // clean up
-            cy.get('@closer').click({ multiple: true, force: true });
-            cy.get('@areaMaskContainer').should('not.exist');
         });
 
         //Note: the magnifier is tested last, because it duplicates the DOM and can break other tests
-        it('Has magnifier tool', function() {
-            // plugin loaded?
-            cy.get('.tools-box-list [data-control=magnify] a').as('toolBtn');
-            cy.get('@toolBtn').should('be.visible');
+        describe('Magnifier tool', function() {
 
-            // click tool => magnifier renders
-            cy.get('@toolBtn').click();
-            cy.get('.runner > .magnifier-container').as('magnifierContainer');
-            cy.get('@magnifierContainer').find('.magnifier').as('magnifier');
-            cy.get('@magnifier').should('be.visible');
-            cy.get('@magnifier').find('.inner').as('inner');
-            cy.get('@magnifier').find('[data-control="zoomIn"]').as('zoomIn');
-            cy.get('@magnifier').find('[data-control="zoomOut"]').as('zoomOut');
-            cy.get('@magnifier').find('[data-control="closeMagnifier"]').as('closer');
+            beforeEach(() => {
+                // Even the toolBtn will be duplicated, when the magnifier is opened!
+                cy.get('.tools-box-list [data-control=magnify] a').first().as('toolBtn');
+            });
 
-            // click tool => hide
-            cy.get('@toolBtn').click();
-            cy.get('@magnifier').should('not.be.visible');
-            // click tool => magnifier visible
-            cy.get('@toolBtn').click();
-            cy.get('@magnifier').should('be.visible');
-            // click close => hide
-            cy.get('@closer').click();
-            cy.get('@magnifier').should('not.be.visible');
-            // click tool => magnifier visible
-            cy.get('@toolBtn').click();
+            it('loads', function() {
+                cy.get('@toolBtn').should('have.length', 1).and('be.visible');
+            });
 
-            // contains inner item
-            cy.get('@inner').find('.qti-itemBody').should('exist').and('be.visible');
+            it('opens/closes', function() {
+                // click tool => magnifier renders
+                cy.get('@toolBtn').click();
+                cy.get('.runner > .magnifier-container').as('magnifierContainer');
+                cy.get('@magnifierContainer').find('.magnifier').first().as('magnifier');
+                cy.get('@magnifier').should('be.visible');
+                cy.get('@magnifier').find('[data-control="closeMagnifier"]').first().as('closer');
 
-            // initial transform scale applied (2x)
-            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2)');
-            // zoom out (min zoom 2x)
-            cy.get('@zoomOut').click();
-            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2)');
-            // zoom in (scales in 0.5 incrs)
-            cy.get('@zoomIn').click();
-            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2.5)');
-            cy.get('@zoomIn').click();
-            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(3)');
-            // zoom out
-            cy.get('@zoomOut').click();
-            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2.5)');
-            // zoom in (max zoom 8x)
-            cy.get('@zoomIn').click().click().click().click().click().click().click().click().click().click().click().click(); // now 8.5x
-            cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(8)');
+                // click tool => hide
+                cy.get('@toolBtn').click();
+                cy.get('@magnifier').should('not.be.visible');
+                // click tool => magnifier visible
+                cy.get('@toolBtn').click();
+                cy.get('@magnifier').should('be.visible');
+                // click close => hide
+                cy.get('@closer').click();
+                cy.get('@magnifier').should('not.be.visible');
+            });
 
-            // TODO: draggable
-            // TODO: resizable
+            it('zooms in/out', function() {
+                // click tool => magnifier renders
+                cy.get('@toolBtn').click();
+                cy.get('.runner > .magnifier-container').as('magnifierContainer');
+                cy.get('@magnifierContainer').find('.magnifier').first().as('magnifier');
+                cy.get('@magnifier').find('.inner').first().as('inner');
+                cy.get('@magnifier').find(':not(.inner) .control[data-control="zoomIn"]').as('magZoomIn');
+                cy.get('@magnifier').find(':not(.inner) .control[data-control="zoomOut"]').as('magZoomOut');
 
-            // close it
-            cy.get('@toolBtn').click();
+                // contains inner item
+                cy.get('@inner').find('.qti-itemBody').should('exist').and('be.visible');
+
+                // initial transform scale applied (2x)
+                cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2)');
+                // zoom out (min zoom 2x)
+                cy.get('@magZoomOut').click();
+                cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2)');
+                // zoom in (scales in 0.5 incrs)
+                cy.get('@magZoomIn').click();
+                cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2.5)');
+                cy.get('@magZoomIn').click();
+                cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(3)');
+                // zoom out
+                cy.get('@magZoomOut').click();
+                cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2.5)');
+                // zoom in (max zoom 8x)
+                cy.get('@magZoomIn').click().click().click().click().click().click().click().click().click().click().click().click(); // now 8.5x
+                cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(8)');
+
+                // close it
+                cy.get('@toolBtn').click();
+            });
+
+            it('is dynamic', function() {
+                // TODO: draggable
+                // TODO: resizable
+            });
         });
     });
 });
