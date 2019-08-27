@@ -25,6 +25,8 @@ Cypress.Commands.add('addRoutes', () => {
     cy.route('POST', '**/editTest').as('editTest');
     cy.route('POST', '/taoTests/TestImport/index').as('testImportIndex');
     cy.route('GET', '/tao/TaskQueueWebApi/**').as('taskQueueWebApi');
+    cy.route('POST', 'taoDeliveryRdf/Publish/publish').as('testPublish');
+    cy.route('POST', 'tao/File/upload').as('fileUpload');
 
     // Register routes for delivery actions
     cy.route('POST', '**/editDelivery').as('editDelivery');

@@ -53,8 +53,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
         }
     );
 
-    // windows workaround
-    cy.wait(2000);
+    cy.wait('@fileUpload');
 
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
@@ -91,6 +90,9 @@ Cypress.Commands.add('publishTest', (testName) => {
 
     // Clicking on publish
     cy.get(setupSelectors.testsPage.destinationSelectorActions).contains('Publish').click();
+
+    //Wait until test is published
+    cy.wait('@testPublish');
 });
 
 Cypress.Commands.add('setDeliveryForGuests', (testName) => {
@@ -104,9 +106,6 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
 
     // Select example delivery
     cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
-
-    //windows workaround
-    cy.wait(1000);
 
     // Set guest access on the delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
@@ -130,6 +129,6 @@ Cypress.Commands.add('startTest', (testName) => {
         .contains(`Delivery of ${testName}`)
         .click();
 
-    cy.wait(['@testRunnerGetItem', '@testRunnerInit']);
+    cy.wait(['@testRunnerInit', '@testRunnerGetItem']);
 });
 
