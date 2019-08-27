@@ -79,7 +79,7 @@ Cypress.Commands.add('publishTest', (testName) => {
 
     // Select tree node
     cy.get(setupSelectors.testsPage.rootTestClass).within(() => {
-        cy.contains(testName).click({ force: true });
+        cy.contains(testName).click();
     });
 
     // Publish example test
