@@ -126,5 +126,6 @@ Cypress.Commands.add('startTest', (testName) => {
         .contains(`Delivery of ${testName}`)
         .click();
 
-    cy.wait(['@testRunnerInit', '@testRunnerGetItem']);
+    // The test should be launching now, but it can take several seconds
+    cy.wait(['@testRunnerInit', '@testRunnerGetItem'], {timeout: 10000});
 });
