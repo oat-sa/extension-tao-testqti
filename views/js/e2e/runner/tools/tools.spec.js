@@ -253,7 +253,7 @@ describe('Tools', () => {
             });
         });
 
-        it.skip('Has magnifier tool', function() {
+        it('Has magnifier tool', function() {
             // TODO: isolate the magnifier, because it duplicates the DOM and breaks other tests
             // plugin loaded?
             cy.get('.tools-box-list [data-control=magnify] a').as('toolBtn');
@@ -368,13 +368,23 @@ describe('Tools', () => {
             // click tool => masks visible
             cy.get('@toolBtn').click();
 
-            // unmask first
-            cy.get('.qti-choice.masked .answer-mask.masked').first().find('.answer-mask-toggle').as('toggle1');
+            // unmask first choice
+            cy.get('.qti-choice.masked:eq(0) .answer-mask-toggle').as('toggle1');
             cy.get('@toggle1').click();
             cy.get('.qti-choice.masked').should('have.length', 3);
             cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 3);
-            cy.get('.qti-choice:eq(1)').find('.pseudo-label-box').should('be.visible');
+            cy.get('.qti-choice:eq(0) .answer-mask').invoke('width').should('be.lt', 40);
 
+            // remask first choice
+            cy.get('@toggle1').click();
+            cy.get('.qti-choice.masked').should('have.length', 4);
+            cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
+            cy.get('.qti-choice:eq(0) .answer-mask').invoke('width').should('be.gt', 40);
+
+            // TODO: see if .pseudo-label-box is covered by .answer-mask
+
+            // hide tool
+            cy.get('@toolBtn').click();
         });
 
         it('Has answer elimination tool', function() {
