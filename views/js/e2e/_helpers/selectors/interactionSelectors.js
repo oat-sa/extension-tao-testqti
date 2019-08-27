@@ -21,6 +21,5 @@
  */
 export default {
     choiceArea: '.choice-area',
-    choice: '.qti-choice',
-    selectedChoice: '.qti-choice .user-selected'
+    choice: '.qti-choice'
 };

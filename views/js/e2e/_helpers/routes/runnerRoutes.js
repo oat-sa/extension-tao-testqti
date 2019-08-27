@@ -34,4 +34,8 @@ Cypress.Commands.add('addRoutes', () => {
     cy.route('POST', '**/delete').as('delete');
     cy.route('POST', '**/deleteClass').as('deleteClass');
     cy.route('POST', '/tao/GenerisTree/getData').as('getData');
+
+    // Register test runner routes
+    cy.route('POST', /\/taoQtiTest\/Runner\/init\?\S+/).as('testRunnerInit');
+    cy.route('GET', /\/taoQtiTest\/Runner\/getItem\?\S+/).as('testRunnerGetItem');
 });

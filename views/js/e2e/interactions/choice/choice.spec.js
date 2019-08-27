@@ -37,12 +37,10 @@ describe('Tools', () => {
      * - Logout
      */
     before(() => {
-        cy.setupServer();
-        cy.addRoutes();
         cy.login('admin');
-        cy.importTestPackage(base64Test, 'Sample choice interaction');
-        cy.publishTest('Sample choice interaction');
-        cy.setDeliveryForGuests('Sample choice interaction');
+        // cy.importTestPackage(base64Test, 'choice');
+        // cy.publishTest('choice');
+        // cy.setDeliveryForGuests('choice');
         cy.logout();
     });
 
@@ -50,8 +48,10 @@ describe('Tools', () => {
      * Log in & start the test
      */
     beforeEach(() => {
+        cy.setupServer();
+        cy.addRoutes();
         cy.guestLogin();
-        // cy.startTest('e2e Tools test'); // TODO:
+        cy.startTest('choice');
     });
 
     /**
@@ -67,18 +67,39 @@ describe('Tools', () => {
     after(() => {
         cy.guestLogout();
         cy.login('admin');
-        cy.deleteItem('Sample choice interaction');
-        cy.deleteTest('Sample choice interaction');
-        cy.deleteDelivery('Sample choice interaction');
+        // cy.deleteItem('choice');
+        // cy.deleteTest('choice');
+        // cy.deleteDelivery('choice');
     });
 
     /**
      * Tools tests
      */
-    describe('Sample choice interaction', () => {
+    describe('Sample choice interaction - Multiple selection allowed)', () => {
 
         it('item contains at least one choice', function() {
-            cy.get(interactionSelectors.choiceArea).contains(interactionSelectors.choice);
+            cy.get(interactionSelectors.choiceArea).within(() => {
+                cy.get(interactionSelectors.choice).should('exist');
+            });
         });
+
+        it('item gets selected on click', function() {
+            cy.get(interactionSelectors.choiceArea).within(() => {
+                cy.get(interactionSelectors.choice).first().click();
+                cy.get(interactionSelectors.choice).first().should('have.class', 'user-selected');
+
+            });
+        });
+
+        it('Can select multiple choices', function() {
+            cy.get(interactionSelectors.choiceArea).within(() => {
+                cy.get(interactionSelectors.choice).first().click();
+                cy.get(interactionSelectors.choice).first().next().click();
+                cy.get(interactionSelectors.choice).first().should('have.class', 'user-selected');
+                cy.get(interactionSelectors.choice).first().next().should('have.class', 'user-selected');
+
+            });
+        });
+
     });
 });
