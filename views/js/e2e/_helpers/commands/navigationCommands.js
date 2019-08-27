@@ -16,35 +16,35 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import setupSelectors from "../selectors/setupSelectors";
+import navigationSelectors from "../selectors/navigationSelectors";
 
 Cypress.Commands.add('nextItem', () => {
     cy.log('COMMAND: nextItem');
-    cy.get(setupSelectors.testNavigation.nextItem).click();
+    cy.get(navigationSelectors.testNavigation.nextItem).click();
     cy.wait(['@testRunnerMove', '@testRunnerGetItem']);
 });
 
 Cypress.Commands.add('previousItem', () => {
     cy.log('COMMAND: previousItem');
-    cy.get(setupSelectors.testNavigation.previousItem).click();
+    cy.get(navigationSelectors.testNavigation.previousItem).click();
     cy.wait(['@testRunnerMove', '@testRunnerGetItem']);
 });
 
 Cypress.Commands.add('skipItem', () => {
     cy.log('COMMAND: skipItem');
-    cy.get(setupSelectors.testNavigation.skipItem).click();
+    cy.get(navigationSelectors.testNavigation.skipItem).click();
     cy.wait(['@testRunnerSkip', '@testRunnerGetItem']);
 });
 
 Cypress.Commands.add('endTest', () => {
     cy.log('COMMAND: endTest');
-    cy.get(setupSelectors.testNavigation.endTest).click();
+    cy.get(navigationSelectors.testNavigation.endTest).click();
     cy.wait('@testRunnerMove');
 });
 
 Cypress.Commands.add('skipAndEndTest', () => {
     cy.log('COMMAND: skipAndEndTest');
-    cy.get(setupSelectors.testNavigation.skipAndEndTest).click();
+    cy.get(navigationSelectors.testNavigation.skipAndEndTest).click();
     cy.wait('@testRunnerSkip');
 });
 

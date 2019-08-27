@@ -27,7 +27,7 @@ import runnerUrls from '../../_helpers/urls/runnerUrls';
 
 import base64LinearTest from './fixtures/base64NavigationLinearTestPackage';
 import base64NonLinearTest from './fixtures/base64NavigationNonLinearTestPackage';
-import setupSelectors from "../../_helpers/selectors/setupSelectors";
+import navigationSelectors from "../../_helpers/selectors/navigationSelectors";
 
 describe('Navigation', () => {
 
@@ -86,15 +86,15 @@ describe('Navigation', () => {
             it('Has proper navigation buttons', function () {
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.nextItem).should('exist').and('be.visible');
-                    cy.get(setupSelectors.testNavigation.skipItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.nextItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.skipItem).should('exist').and('be.visible');
 
                     // not visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
+                    cy.get(navigationSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
 
                     //not existing buttons
-                    cy.get(setupSelectors.testNavigation.endTest).should('not.exist');
-                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.endTest).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.skipAndEndTest).should('not.exist');
                 });
             });
 
@@ -112,15 +112,15 @@ describe('Navigation', () => {
 
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.nextItem).should('exist').and('be.visible');
-                    cy.get(setupSelectors.testNavigation.skipItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.nextItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.skipItem).should('exist').and('be.visible');
 
                     // not visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
+                    cy.get(navigationSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
 
                     //not existing buttons
-                    cy.get(setupSelectors.testNavigation.endTest).should('not.exist');
-                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.endTest).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.skipAndEndTest).should('not.exist');
                 });
             });
 
@@ -151,15 +151,15 @@ describe('Navigation', () => {
 
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.endTest).should('exist').and('be.visible');
-                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.endTest).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.skipAndEndTest).should('exist').and('be.visible');
 
                     // not visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
+                    cy.get(navigationSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
 
                     //not existing buttons
-                    cy.get(setupSelectors.testNavigation.skipItem).should('not.exist');
-                    cy.get(setupSelectors.testNavigation.nextItem).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.skipItem).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.nextItem).should('not.exist');
                 });
             });
 
@@ -247,15 +247,15 @@ describe('Navigation', () => {
             it('Has proper navigation buttons', function () {
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.nextItem).should('exist').and('be.visible');
-                    cy.get(setupSelectors.testNavigation.skipItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.nextItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.skipItem).should('exist').and('be.visible');
 
                     // not visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
+                    cy.get(navigationSelectors.testNavigation.previousItem).should('exist').and('not.be.visible');
 
                     //not existing buttons
-                    cy.get(setupSelectors.testNavigation.endTest).should('not.exist');
-                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.endTest).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.skipAndEndTest).should('not.exist');
                 });
             });
 
@@ -273,13 +273,13 @@ describe('Navigation', () => {
 
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.nextItem).should('exist').and('be.visible');
-                    cy.get(setupSelectors.testNavigation.skipItem).should('exist').and('be.visible');
-                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.nextItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.skipItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.previousItem).should('exist').and('be.visible');
 
                     //not existing buttons
-                    cy.get(setupSelectors.testNavigation.endTest).should('not.exist');
-                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.endTest).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.skipAndEndTest).should('not.exist');
                 });
             });
 
@@ -318,13 +318,13 @@ describe('Navigation', () => {
 
                 cy.get('.navi-box-list').within(() => {
                     // visible navigation buttons
-                    cy.get(setupSelectors.testNavigation.endTest).should('exist').and('be.visible');
-                    cy.get(setupSelectors.testNavigation.skipAndEndTest).should('exist').and('be.visible');
-                    cy.get(setupSelectors.testNavigation.previousItem).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.endTest).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.skipAndEndTest).should('exist').and('be.visible');
+                    cy.get(navigationSelectors.testNavigation.previousItem).should('exist').and('be.visible');
 
                     //not existing buttons
-                    cy.get(setupSelectors.testNavigation.skipItem).should('not.exist');
-                    cy.get(setupSelectors.testNavigation.nextItem).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.skipItem).should('not.exist');
+                    cy.get(navigationSelectors.testNavigation.nextItem).should('not.exist');
                 });
             });
 

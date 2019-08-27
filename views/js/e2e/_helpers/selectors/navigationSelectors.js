@@ -20,18 +20,11 @@
  * CSS Selectors for setup
  */
 export default {
-    testsPage: {
-        rootTestClass:'li[data-uri="http://www.tao.lu/Ontologies/TAOTest.rdf#Test"]',
-        testImportButton: '#test-import',
-        fileInput: '.main-container .file-uploader input[type="file"]',
-        fileImportButton: '.content-block .form-toolbar button[title="Import"]',
-        feedbackContinueButton: '.feedback-success button[title="continue"]',
-        testPublishButton: '#test-publish',
-        destinationSelector: '.destination-selector',
-        destinationSelectorActions: '.destination-selector .actions'
-    },
-    deliveriesPage: {
-        rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',
-        formContainer: '#form-container'
+    testNavigation: {
+        nextItem: '[data-control="move-forward"]',
+        previousItem: '[data-control="move-backward"]',
+        skipItem: '[data-control="skip"]',
+        endTest: '[data-control="move-end"]',
+        skipAndEndTest: '[data-control="skip-end"]',
     }
 };
