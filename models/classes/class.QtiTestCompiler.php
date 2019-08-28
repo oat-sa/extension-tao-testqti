@@ -912,7 +912,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                             // Deal with AssessmentItemRef Compiling.
                             $compilationDataService->writeCompilationData(
                                 $this->getPrivateDirectory(),
-                                "adaptive-assessment-item-ref-${sectionPartIdentifier}.php",
+                                "adaptive-assessment-item-ref-${sectionPartIdentifier}",
                                 $sectionPart
                             );
                             

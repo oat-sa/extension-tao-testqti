@@ -152,8 +152,8 @@ class CatService extends ConfigurableService
         
         return $compilationDataService->readCompilationData(
             $privateCompilationDirectory,
-            "${filename}.php",
-            "${filename}"
+            $filename,
+            $filename
         );
     }
     
@@ -193,7 +193,7 @@ class CatService extends ConfigurableService
         
         $component = $compilationDataService->readCompilationData(
             $privateCompilationDirectory,
-            "${filename}.php",
+            $filename,
             $filename
         );
 
