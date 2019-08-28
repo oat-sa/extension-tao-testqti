@@ -346,15 +346,6 @@ describe('Tools', () => {
                 });
             });
 
-            it('masks item', function() {
-                cy.get('.test-runner-scope').within(() => {
-                    // TODO: item visibility checks
-                    cy.get('@toolBtn').click();
-
-                    cy.get('@toolBtn').click();
-                });
-            });
-
             it('is dynamic (drag/resize)', function() {
                 // open it
                 cy.get('@toolBtn').click();
@@ -408,6 +399,11 @@ describe('Tools', () => {
                 cy.get('.tools-box-list [data-control=answer-masking] a').as('toolBtn');
             });
 
+            after(() => {
+                // close tool after final test
+                cy.get('@toolBtn').click({ force: true });
+            });
+
             it('loads', function() {
                 cy.get('@toolBtn').should('have.length', 1).and('be.visible');
                 cy.get('.qti-choice').as('choices').should('have.length', 4);
@@ -441,10 +437,9 @@ describe('Tools', () => {
                 cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
                 cy.get('.qti-choice:eq(0) .answer-mask').invoke('width').should('be.gt', 40);
 
-                // TODO: see if .pseudo-label-box is covered by .answer-mask
-
-                // hide tool
-                cy.get('@toolBtn').click();
+                // see if choice is really covered (not clickable)
+                // must be the last line in the test, further code will not be reached
+                cy.get('.qti-choice:eq(0) .pseudo-label-box').isNotActionable();
             });
         });
 
@@ -452,6 +447,11 @@ describe('Tools', () => {
 
             beforeEach(() => {
                 cy.get('.tools-box-list [data-control=eliminator] a').as('toolBtn');
+            });
+
+            after(() => {
+                // close tool after final test
+                cy.get('@toolBtn').click({ force: true });
             });
 
             it('loads', function() {
@@ -474,21 +474,31 @@ describe('Tools', () => {
 
             it('eliminates single choice', function() {
                 cy.get('.qti-itemBody').within(() => {
+                    cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').as('firstTrigger');
+                    cy.get('.qti-choice:eq(0) .label-box').as('firstLabel');
+
                     // turn on
                     cy.get('@toolBtn').click();
 
-                    // toggle first choice
-                    cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').click();
+                    // eliminate first choice
+                    cy.get('@firstTrigger').click();
                     cy.get('.qti-choice:eq(0)').should('have.class', 'eliminated');
-                    // TODO: assert .real-label & .label-box not actionable
 
-                    // untoggle first choice
-                    cy.get('.qti-choice:eq(0) [data-eliminable="trigger"]').click();
+                    // un-eliminate first choice
+                    cy.get('@firstTrigger').click();
                     cy.get('.qti-choice:eq(0)').should('not.have.class', 'eliminated');
-                    // TODO: assert .real-label & .label-box not actionable
+                    cy.get('@firstLabel').click();
 
-                    // turn off
-                    cy.get('@toolBtn').click();
+                    // eliminate first choice again
+                    cy.get('@firstTrigger').click();
+                    cy.get('.qti-choice:eq(0)').should('have.class', 'eliminated');
+                    // see if choice is really covered (not clickable)
+                    // must be the last line in the test, further code will not be reached
+                    cy.get('@firstLabel').isNotActionable()
+                        .then(() => {
+                            cy.log('yay');
+                            cy.get('@firstTrigger').click();
+                        });
                 });
             });
         });
@@ -541,21 +551,6 @@ describe('Tools', () => {
                 cy.get('@closer').click();
             });
 
-            it('can have multiple instances', function() {
-                // add multiple instances (max 5)
-                for (let i = 0; i < 6; i++) {
-                    cy.get('@toolBtn').click();
-                }
-                cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
-                cy.get('@areaMaskContainer').find('.mask').as('areaMask').should('have.length', 5);
-                cy.get('@areaMask').find('.controls .close').as('closer');
-
-                // clean up
-                cy.get('@closer').should('have.length', 5);
-                cy.get('@closer').click({ multiple: true, force: true });
-                cy.get('@areaMaskContainer').should('not.exist');
-            });
-
             it('is dynamic (drag/resize)', function() {
                 // open it
                 cy.get('@toolBtn').click();
@@ -575,6 +570,23 @@ describe('Tools', () => {
 
                 // close it
                 cy.get('@toolBtn').click();
+            });
+
+            it('can have multiple instances', function() {
+                // add multiple instances (max 5)
+                for (let i = 0; i < 6; i++) {
+                    cy.get('@toolBtn').click();
+                }
+                cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
+                cy.get('@areaMaskContainer').find('.mask').as('areaMask').should('have.length', 5);
+                cy.get('@areaMask').find('.controls .close').as('closer');
+
+                // clean up
+                cy.get('@closer').should('have.length', 5);
+                for (let i = 0; i < 5; i++) {
+                    cy.get('@closer').first().click({ force: true });
+                }
+                cy.get('@areaMaskContainer').should('not.exist');
             });
         });
 

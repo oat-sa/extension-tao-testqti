@@ -35,3 +35,21 @@ Cypress.Commands.add('dragToPoint', { prevSubject: true }, (subject, point, posi
 
     return cy.wrap(subject);
 });
+
+/**
+ * Asserts that subject is not clickable (covered up, offscreen...)
+ * @see https://stackoverflow.com/questions/52073331/assert-that-element-is-not-actionable-in-cypress
+ *
+ * Any assertions that follow this command will never be run, so make sure it is
+ * the last in the `it()` block (or ideally an `it()` to itself)
+ */
+Cypress.Commands.add("isNotActionable", { prevSubject: true }, function(subject) {
+    cy.once('fail', (err) => {
+        expect(err.message).to.include('cy.click() failed because this element');
+        expect(err.message).to.include('is being covered by another element');
+    });
+    cy.get(subject).click({ timeout: 25 }).then(() => {
+        // '.then' will only fire if '.click' succeeded
+        throw new Error('Expected element NOT to be clickable, but click() succeeded');
+    });
+});
