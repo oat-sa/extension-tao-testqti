@@ -20,9 +20,9 @@
  * CSS Selectors for setup
  */
 export default {
-    resourceTree: '.resource-tree',
     testsPage: {
-        testImportbutton: '#test-import',
+        rootTestClass:'li[data-uri="http://www.tao.lu/Ontologies/TAOTest.rdf#Test"]',
+        testImportButton: '#test-import',
         fileInput: '.main-container .file-uploader input[type="file"]',
         fileImportButton: '.content-block .form-toolbar button[title="Import"]',
         feedbackContinueButton: '.feedback-success button[title="continue"]',

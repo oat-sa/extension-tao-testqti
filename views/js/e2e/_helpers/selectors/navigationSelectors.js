@@ -17,8 +17,14 @@
  */
 
 /**
- * Url object
+ * CSS Selectors for setup
  */
 export default {
-    availableDeliveriesPageUrl: '/taoDelivery/DeliveryServer/index'
+    testNavigation: {
+        nextItem: '[data-control="move-forward"]',
+        previousItem: '[data-control="move-backward"]',
+        skipItem: '[data-control="skip"]',
+        endTest: '[data-control="move-end"]',
+        skipAndEndTest: '[data-control="skip-end"]',
+    }
 };
