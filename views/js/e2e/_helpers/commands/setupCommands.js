@@ -16,23 +16,24 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../_urls/runnerUrls';
-import setupSelectors from './setupSelectors';
-import base64Test from './base64QtiExampleTestPackage';
+import backOfficeUrls from '../urls/backOfficeUrls';
+import setupSelectors from '../selectors/setupSelectors';
+import runnerSelectors from '../selectors/runnerSelectors';
 
 /**
  * Setup Commands
  */
-Cypress.Commands.add('publishImportedTest', () => {
-    
+Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
+    cy.log('COMMAND: importTestPackage', fileName);
+
     // Visit Tests page
-    cy.visit(runnerUrls.testsPageUrl);
+    cy.visit(backOfficeUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
-    
+
     // Select test import
-    cy.get(setupSelectors.testsPage.testImportbutton).click();
+    cy.get(setupSelectors.testsPage.testImportButton).click();
 
     // Wait until test import request finishes
     cy.wait('@testImportIndex');
@@ -41,27 +42,46 @@ Cypress.Commands.add('publishImportedTest', () => {
     // force:true needed because of a known issue (https://github.com/abramenal/cypress-file-upload/issues/34)
     cy.get(setupSelectors.testsPage.fileInput).upload(
         {
-            fileContent: base64Test, 
-            fileName: 'e2eExampleTest.zip', 
-            mimeType: 'application/zip'
-        }, 
-        { 
+            fileContent,
+            fileName: `${fileName}.zip`,
+            mimeType: 'application/zip',
+            encoding: 'base64'
+        },
+        {
             subjectType: 'input',
-            force: true 
+            force: true
         }
     );
+
+    cy.wait('@fileUpload');
 
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
     // Wait until test import request finishes
-    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 5000 });
+    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 15000 });
 
     // Continue
     cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
 
     // Wait until publish button appears again
     cy.wait('@editTest');
+});
+
+Cypress.Commands.add('publishTest', (testName) => {
+    cy.log('COMMAND: publishTest', testName);
+
+    // Visit Tests page
+    cy.visit(backOfficeUrls.testsPageUrl);
+
+    // Wait until page gets loaded and root class gets selected
+    cy.wait('@editClassLabel');
+
+    // Select tree node
+    cy.get(setupSelectors.testsPage.rootTestClass).within(() => {
+        // using 'force: true' because the list item can be off screen
+        cy.contains(testName).click({ force: true });
+    });
 
     // Publish example test
     cy.get(setupSelectors.testsPage.testPublishButton).click();
@@ -71,18 +91,22 @@ Cypress.Commands.add('publishImportedTest', () => {
 
     // Clicking on publish
     cy.get(setupSelectors.testsPage.destinationSelectorActions).contains('Publish').click();
+
+    //Wait until test is published
+    cy.wait('@testPublish');
 });
 
-Cypress.Commands.add('setDeliveryForGuests', () => {
-    
+Cypress.Commands.add('setDeliveryForGuests', (testName) => {
+    cy.log('COMMAND: setDeliveryForGuests', testName);
+
     // Go to Deliveries page
-    cy.visit(runnerUrls.deliveriesPageUrl);
+    cy.visit(backOfficeUrls.deliveriesPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
 
     // Select example delivery
-    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains('Delivery of e2e example test').click();
+    cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
 
     // Set guest access on the delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
@@ -94,3 +118,18 @@ Cypress.Commands.add('setDeliveryForGuests', () => {
     // Not ideal but these requests have to be waited in this order upon delivery save
     cy.wait(['@editDelivery', '@getData','@editDelivery', '@getData', '@editDelivery' ]);
 });
+
+Cypress.Commands.add('startTest', (testName) => {
+    cy.log('COMMAND: startTest', testName);
+
+    // Wait for attachment of event listeners to links
+    cy.wait(2000);
+
+    cy.get(runnerSelectors.testList)
+        .find(runnerSelectors.availableDeliveries)
+        .contains(`Delivery of ${testName}`)
+        .click();
+
+    cy.wait(['@testRunnerInit', '@testRunnerGetItem'], {timeout: 10000});
+});
+

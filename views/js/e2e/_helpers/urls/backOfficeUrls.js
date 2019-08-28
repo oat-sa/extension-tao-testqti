@@ -17,20 +17,10 @@
  */
 
 /**
- * CSS Selectors for setup
+ * Url object
  */
 export default {
-    testsPage: {
-        testImportbutton: '#test-import',
-        fileInput: '.main-container .file-uploader input[type="file"]',
-        fileImportButton: '.content-block .form-toolbar button[title="Import"]',
-        feedbackContinueButton: '.feedback-success button[title="continue"]',
-        testPublishButton: '#test-publish',
-        destinationSelector: '.destination-selector',
-        destinationSelectorActions: '.destination-selector .actions'
-    },
-    deliveriesPage: {
-        rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',
-        formContainer: '#form-container'
-    }
+    itemsPageUrl: 'tao/Main/index?structure=items&ext=taoItems&section=manage_items&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOItem.rdf%23Item',
+    testsPageUrl: 'tao/Main/index?structure=tests&ext=taoTests&section=manage_tests&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23Test',
+    deliveriesPageUrl: 'tao/Main/index?structure=delivery&ext=taoDeliveryRdf&section=manage_delivery_assembly&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAODelivery.rdf%23AssembledDelivery'
 };
