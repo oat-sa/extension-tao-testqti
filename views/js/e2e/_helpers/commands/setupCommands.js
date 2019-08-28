@@ -79,7 +79,8 @@ Cypress.Commands.add('publishTest', (testName) => {
 
     // Select tree node
     cy.get(setupSelectors.testsPage.rootTestClass).within(() => {
-        cy.contains(testName).click();
+        // using 'force: true' because the list item can be off screen
+        cy.contains(testName).click({ force: true });
     });
 
     // Publish example test
