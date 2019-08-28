@@ -40,11 +40,11 @@ describe('Tools', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.addRunnerRoutes(); // temporarily here, for startTest
-        // cy.login('admin');
-        // cy.importTestPackage(base64Test, 'e2e Tools test');
-        // cy.publishTest('e2e Tools test');
-        // cy.setDeliveryForGuests('e2e Tools test');
-        // cy.logout();
+        cy.login('admin');
+        cy.importTestPackage(base64Test, 'e2e Tools test');
+        cy.publishTest('e2e Tools test');
+        cy.setDeliveryForGuests('e2e Tools test');
+        cy.logout();
         cy.guestLogin(); // temporarily here
         cy.startTest('e2e Tools test'); // temporarily here
     });
@@ -54,6 +54,7 @@ describe('Tools', () => {
      */
     beforeEach(() => {
         cy.setupServer();
+        cy.addBackOfficeRoutes();
         cy.addRunnerRoutes();
         // cy.guestLogin();
         // cy.startTest('e2e Tools test');
@@ -70,10 +71,11 @@ describe('Tools', () => {
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        // cy.login('admin');
-        // cy.deleteItem('e2e Tools test');
-        // cy.deleteTest('e2e Tools test');
-        // cy.deleteDelivery('Delivery of e2e Tools test');
+        cy.guestLogout();
+        cy.login('admin');
+        cy.deleteItem('e2e Tools test');
+        cy.deleteTest('e2e Tools test');
+        cy.deleteDelivery('Delivery of e2e Tools test');
     });
 
     /**
