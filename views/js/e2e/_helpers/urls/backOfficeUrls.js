@@ -17,12 +17,10 @@
  */
 
 /**
- * Add routes for test execution
+ * Url object
  */
-Cypress.Commands.add('addExecutionRoutes', () => {
-    cy.route('POST', '/taoQtiTest/Runner/**').as('testRunnerPost'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/init\S+/'
-    cy.route('GET', '/taoQtiTest/Runner/**').as('testRunnerGet'); // Should be done with a regex -> '/\/taoQtiTest\/Runner\/getItem\S+/'
-    cy.route('POST', /\/taoQtiTest\/Runner\/init\S+/).as('testRunnerInit');
-    cy.route('GET', /\/taoQtiTest\/Runner\/getItem\S+/).as('testRunnerGetItem');
-    cy.route('POST', /\/taoQtiTest\/Runner\/comment/).as('comment');
-});
+export default {
+    itemsPageUrl: 'tao/Main/index?structure=items&ext=taoItems&section=manage_items&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOItem.rdf%23Item',
+    testsPageUrl: 'tao/Main/index?structure=tests&ext=taoTests&section=manage_tests&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23Test',
+    deliveriesPageUrl: 'tao/Main/index?structure=delivery&ext=taoDeliveryRdf&section=manage_delivery_assembly&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAODelivery.rdf%23AssembledDelivery'
+};
