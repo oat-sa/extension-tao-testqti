@@ -39,14 +39,14 @@ describe('Tools', () => {
     before(() => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
-        cy.addRunnerRoutes(); // temporarily here, for startTest
+        cy.addRunnerRoutes();
         cy.login('admin');
         cy.importTestPackage(base64Test, 'e2e Tools test');
         cy.publishTest('e2e Tools test');
         cy.setDeliveryForGuests('e2e Tools test');
         cy.logout();
-        cy.guestLogin(); // temporarily here
-        cy.startTest('e2e Tools test'); // temporarily here
+        cy.guestLogin();
+        cy.startTest('e2e Tools test');
     });
 
     /**
@@ -56,15 +56,6 @@ describe('Tools', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.addRunnerRoutes();
-        // cy.guestLogin();
-        // cy.startTest('e2e Tools test');
-    });
-
-    /**
-     * Log out
-     */
-    afterEach(() => {
-        // cy.guestLogout();
     });
 
     /**
