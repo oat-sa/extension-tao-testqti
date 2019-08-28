@@ -183,8 +183,25 @@ describe('Tools', () => {
             });
 
             it('is dynamic (drag/resize)', function() {
-                // TODO: draggable
-                // TODO: resizable
+                // open it
+                cy.get('@toolBtn').click();
+                cy.get('@calcContainer').find('.dynamic-component-container').as('calc');
+
+                cy.get('@calc').within(() => {
+                    // draggable
+                    cy.get('.dynamic-component-title-bar').dragToPoint({x: 400, y: 250}, 'left');
+                    // using approximate position values because pointer can't get right into corner of title bar
+                    cy.root().invoke('data', 'x').should('be.gt', 385);
+                    cy.root().invoke('data', 'y').should('be.gt', 75);
+
+                    // resizable (to its minimum size)
+                    cy.get('.dynamic-component-resize-wrapper').dragToPoint({x: 0, y: 0});
+                    cy.root().invoke('width').should('equal', 148);
+                    cy.root().invoke('height').should('equal', 218);
+                });
+
+                // close it
+                cy.get('@toolBtn').click();
             });
         });
 
