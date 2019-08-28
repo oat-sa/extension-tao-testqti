@@ -247,13 +247,17 @@ describe('Tools', () => {
                     .and('have.attr', 'style').and('contain', 'scaleX(1.2)').and('contain', 'scaleY(1.2)');
 
                 // beyond the max! (2.0)
-                cy.get('@zoomIn').click().click().click().click().click().click().click().click().click().click();
+                for (let i = 0; i < 10; i++) {
+                    cy.get('@zoomIn').click();
+                }
                 cy.get('@item')
                     .should('have.class', 'transform-scale')
                     .and('have.attr', 'style').and('contain', 'scaleX(2)').and('contain', 'scaleY(2)');
 
                 // reset
-                cy.get('@zoomOut').click().click().click().click().click().click().click().click().click().click();
+                for (let i = 0; i < 10; i++) {
+                    cy.get('@zoomOut').click();
+                }
                 cy.get('@item')
                     .should('not.have.class', 'transform-scale')
                     .should('have.css', 'transform', 'none');
@@ -541,7 +545,9 @@ describe('Tools', () => {
 
             it('can have multiple instances', function() {
                 // add multiple instances (max 5)
-                cy.get('@toolBtn').click().click().click().click().click().click();
+                for (let i = 0; i < 6; i++) {
+                    cy.get('@toolBtn').click();
+                }
                 cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
                 cy.get('@areaMaskContainer').find('.mask').as('areaMask').should('have.length', 5);
                 cy.get('@areaMask').find('.controls .close').as('closer');
@@ -631,7 +637,10 @@ describe('Tools', () => {
                 cy.get('@magZoomOut').click();
                 cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(2.5)');
                 // zoom in (max zoom 8x)
-                cy.get('@magZoomIn').click().click().click().click().click().click().click().click().click().click().click().click(); // now 8.5x
+                for (let i = 0; i < 12; i++) {
+                    cy.get('@magZoomIn').click();
+                }
+                // now 8.5x
                 cy.get('@inner').should('have.attr', 'style').and('contain', 'scale(8)');
 
                 // close it
