@@ -21,6 +21,11 @@
  */
 export default {
     interaction: '.qti-interaction',
-    choiceArea: '.choice-area',
-    choice: '.qti-choice'
+    choice: {
+        choiceArea: '.choice-area',
+        choice: '.qti-choice'
+    },
+    associate : {
+
+    }
 };

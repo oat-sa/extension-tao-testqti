@@ -23,7 +23,7 @@ import '../../_helpers/commands/cleanupCommands';
 import '../../_helpers/routes/backOfficeRoutes';
 import '../../_helpers/routes/runnerRoutes';
 
-import base64Test from './fixtures/base64ChoiceInteractionTestPackage';
+import base64Test from './fixtures/base64AssociateInteractionTestPackage';
 
 describe('Tools', () => {
 
@@ -41,9 +41,9 @@ describe('Tools', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.importTestPackage(base64Test, 'choice');
-        cy.publishTest('choice');
-        cy.setDeliveryForGuests('Delivery of choice');
+        cy.importTestPackage(base64Test, 'associate');
+        cy.publishTest('associate');
+        cy.setDeliveryForGuests('Delivery of associate');
         cy.logout();
     });
 
@@ -54,7 +54,7 @@ describe('Tools', () => {
         cy.setupServer();
         cy.addRunnerRoutes();
         cy.guestLogin();
-        cy.startTest('choice');
+        cy.startTest('associate');
     });
 
     /**
@@ -64,39 +64,39 @@ describe('Tools', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.deleteItem('choice');
-        cy.deleteTest('choice');
-        cy.deleteDelivery('Delivery of choice');
+        cy.deleteItem('associate');
+        cy.deleteTest('associate');
+        cy.deleteDelivery('Delivery of associate');
     });
 
     /**
      * Tools tests
      */
-    describe('Sample choice interaction)', () => {
+    describe('Sample associate interaction)', () => {
         it('item gets selected on click', function() {
-            cy.get(interactionSelectors.choice.choiceArea).within(() => {
-                cy.get(interactionSelectors.choice.choice).first().click();
-                cy.get(interactionSelectors.choice.choice).first().should('have.class', 'user-selected');
+            cy.get(interactionSelectors.associateArea).within(() => {
+                cy.get(interactionSelectors.associate).first().click();
+                cy.get(interactionSelectors.associate).first().should('have.class', 'user-selected');
 
             });
         });
 
         it('Should not allow multiple selection if disabled', function() {
             cy.get(interactionSelectors.interaction).contains('single selection').parents(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.choice.choice).first().click();
-                cy.get(interactionSelectors.choice.choice).first().next().click();
-                cy.get(interactionSelectors.choice.choice).first().should('not.have.class', 'user-selected');
-                cy.get(interactionSelectors.choice.choice).first().next().should('have.class', 'user-selected');
+                cy.get(interactionSelectors.associate).first().click();
+                cy.get(interactionSelectors.associate).first().next().click();
+                cy.get(interactionSelectors.associate).first().should('not.have.class', 'user-selected');
+                cy.get(interactionSelectors.associate).first().next().should('have.class', 'user-selected');
 
             });
         });
 
         it('Should allow multiple selection if enabled', function() {
             cy.get(interactionSelectors.interaction).contains('multiple selection').parents(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.choice.choice).first().click();
-                cy.get(interactionSelectors.choice.choice).first().next().click();
-                cy.get(interactionSelectors.choice.choice).first().should('have.class', 'user-selected');
-                cy.get(interactionSelectors.choice.choice).first().next().should('have.class', 'user-selected');
+                cy.get(interactionSelectors.associate).first().click();
+                cy.get(interactionSelectors.associate).first().next().click();
+                cy.get(interactionSelectors.associate).first().should('have.class', 'user-selected');
+                cy.get(interactionSelectors.associate).first().next().should('have.class', 'user-selected');
 
             });
         });
