@@ -20,6 +20,7 @@ import interactionSelectors from '../../_helpers/selectors/interactionSelectors'
 
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
+import '../../_helpers/routes/backOfficeRoutes';
 import '../../_helpers/routes/runnerRoutes';
 
 import base64Test from './fixtures/base64ChoiceInteractionTestPackage';
@@ -38,7 +39,7 @@ describe('Tools', () => {
      */
     before(() => {
         cy.setupServer();
-        cy.addRoutes();
+        cy.addBackOfficeRoutes();
         cy.login('admin');
         cy.importTestPackage(base64Test, 'choice');
         cy.publishTest('choice');
@@ -51,7 +52,7 @@ describe('Tools', () => {
      */
     beforeEach(() => {
         cy.setupServer();
-        cy.addRoutes();
+        cy.addRunnerRoutes();
         cy.guestLogin();
         cy.startTest('choice');
     });
@@ -61,7 +62,7 @@ describe('Tools', () => {
      */
     after(() => {
         cy.setupServer();
-        cy.addRoutes();
+        cy.addBackOfficeRoutes();
         cy.login('admin');
         cy.deleteItem('choice');
         cy.deleteTest('choice');

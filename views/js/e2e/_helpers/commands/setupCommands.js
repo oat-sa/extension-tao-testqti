@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerUrls from '../urls/runnerUrls';
+import backOfficeUrls from '../urls/backOfficeUrls';
 import setupSelectors from '../selectors/setupSelectors';
 import runnerSelectors from '../selectors/runnerSelectors';
 
@@ -27,13 +27,13 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.log('COMMAND: importTestPackage', fileName);
 
     // Visit Tests page
-    cy.visit(runnerUrls.testsPageUrl);
+    cy.visit(backOfficeUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
 
     // Select test import
-    cy.get(setupSelectors.testsPage.testImportbutton).click();
+    cy.get(setupSelectors.testsPage.testImportButton).click();
 
     // Wait until test import request finishes
     cy.wait('@testImportIndex');
@@ -43,7 +43,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.get(setupSelectors.testsPage.fileInput).upload(
         {
             fileContent,
-            fileName,
+            fileName: `${fileName}.zip`,
             mimeType: 'application/zip',
             encoding: 'base64'
         },
@@ -52,6 +52,8 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
             force: true
         }
     );
+
+    cy.wait('@fileUpload');
 
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
@@ -70,13 +72,14 @@ Cypress.Commands.add('publishTest', (testName) => {
     cy.log('COMMAND: publishTest', testName);
 
     // Visit Tests page
-    cy.visit(runnerUrls.testsPageUrl);
+    cy.visit(backOfficeUrls.testsPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
 
     // Select tree node
-    cy.get(setupSelectors.resourceTree).within(() => {
+    cy.get(setupSelectors.testsPage.rootTestClass).within(() => {
+        // using 'force: true' because the list item can be off screen
         cy.contains(testName).click({ force: true });
     });
 
@@ -88,13 +91,16 @@ Cypress.Commands.add('publishTest', (testName) => {
 
     // Clicking on publish
     cy.get(setupSelectors.testsPage.destinationSelectorActions).contains('Publish').click();
+
+    //Wait until test is published
+    cy.wait('@testPublish');
 });
 
 Cypress.Commands.add('setDeliveryForGuests', (testName) => {
     cy.log('COMMAND: setDeliveryForGuests', testName);
 
     // Go to Deliveries page
-    cy.visit(runnerUrls.deliveriesPageUrl);
+    cy.visit(backOfficeUrls.deliveriesPageUrl);
 
     // Wait until page gets loaded and root class gets selected
     cy.wait('@editClassLabel');
@@ -103,7 +109,11 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
     cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
 
     // Set guest access on the delivery
-    cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
+    cy.get(setupSelectors.deliveriesPage.formContainer).within(() => {
+        cy.get(setupSelectors.deliveriesPage.guestAccessCheckbox).check();
+    });
+
+    // cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
 
     // Save delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Save').click();
@@ -126,3 +136,4 @@ Cypress.Commands.add('startTest', (testName) => {
 
     cy.wait(['@testRunnerInit', '@testRunnerGetItem'], {timeout: 10000});
 });
+

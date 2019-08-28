@@ -20,9 +20,9 @@
  * CSS Selectors for setup
  */
 export default {
-    resourceTree: '.taotree',
     testsPage: {
-        testImportbutton: '#test-import',
+        rootTestClass:'li[data-uri="http://www.tao.lu/Ontologies/TAOTest.rdf#Test"]',
+        testImportButton: '#test-import',
         fileInput: '.main-container .file-uploader input[type="file"]',
         fileImportButton: '.content-block .form-toolbar button[title="Import"]',
         feedbackContinueButton: '.feedback-success button[title="continue"]',
@@ -32,6 +32,7 @@ export default {
     },
     deliveriesPage: {
         rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',
-        formContainer: '#form-container'
+        formContainer: '#form-container',
+        guestAccessCheckbox: 'input#http_2_www_0_tao_0_lu_1_Ontologies_1_TAODelivery_0_rdf_3_AccessSettings_0'
     }
 };
