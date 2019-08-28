@@ -18,3 +18,20 @@ Cypress.Commands.add('selectText', { prevSubject: true }, (subject) => {
     cy.document().trigger('selectionchange');
     return cy.wrap(subject);
 });
+
+/**
+ * Drags a DOM element by simulating mouse events
+ * @param {Object} point
+ * @param {Number} point.x
+ * @param {Number} point.y
+ * @param {String} [position] - Valid positions are topLeft, top, topRight, left, center, right, bottomLeft, bottom, and bottomRight
+ * @returns {DOMElement}
+ */
+Cypress.Commands.add('dragToPoint', { prevSubject: true }, (subject, point, position = 'center') => {
+    cy.wrap(subject)
+        .trigger('mousedown', position)
+        .trigger('mousemove', { pageX: point.x, pageY: point.y, clientX: point.x, clientY: point.y , view: window })
+        .trigger('mouseup');
+
+    return cy.wrap(subject);
+});

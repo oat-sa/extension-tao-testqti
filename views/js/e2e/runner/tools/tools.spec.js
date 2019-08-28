@@ -182,7 +182,7 @@ describe('Tools', () => {
                 cy.get('@toolBtn').click();
             });
 
-            it('is dynamic', function() {
+            it('is dynamic (drag/resize)', function() {
                 // TODO: draggable
                 // TODO: resizable
             });
@@ -337,7 +337,7 @@ describe('Tools', () => {
                 });
             });
 
-            it('is dynamic', function() {
+            it('is dynamic (drag/resize)', function() {
                 cy.get('.test-runner-scope').within(() => {
                     // open it
                     cy.get('@toolBtn').click();
@@ -455,7 +455,7 @@ describe('Tools', () => {
             });
         });
 
-        describe('Area mask tool', function() {
+        describe.only('Area mask tool', function() {
 
             beforeEach(() => {
                 cy.get('.tools-box-list [data-control=area-masking] a').as('toolBtn');
@@ -516,9 +516,22 @@ describe('Tools', () => {
                 cy.get('@areaMaskContainer').should('not.exist');
             });
 
-            it('is dynamic', function() {
-                // TODO: draggable
-                // TODO: resizable
+            it('is dynamic (drag/resize)', function() {
+                // open it
+                cy.get('@toolBtn').click();
+
+                cy.get('.test-runner-scope .mask-container').within(() => {
+                    // draggable
+                    cy.get('.dynamic-component-title-bar').dragToPoint({x: 400, y: 250}, 'left');
+                    // using approximate position values because pointer can't get right into corner of title bar
+                    cy.root().invoke('data', 'x').should('be.gt', '385');
+                    cy.root().invoke('data', 'y').should('be.gt', '75');
+
+                    // resizable
+                    cy.get('.dynamic-component-resize-wrapper').dragToPoint({x: 700, y: 450});
+                    cy.root().invoke('width').should('be.gt', '250');
+                    cy.root().invoke('height').should('be.gt', '100');
+                });
             });
         });
 
@@ -586,7 +599,7 @@ describe('Tools', () => {
                 cy.get('@toolBtn').click();
             });
 
-            it('is dynamic', function() {
+            it('is dynamic (drag/resize)', function() {
                 // TODO: draggable
                 // TODO: resizable
             });
