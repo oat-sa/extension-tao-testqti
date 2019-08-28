@@ -455,7 +455,7 @@ describe('Tools', () => {
             });
         });
 
-        describe.only('Area mask tool', function() {
+        describe('Area mask tool', function() {
 
             beforeEach(() => {
                 cy.get('.tools-box-list [data-control=area-masking] a').as('toolBtn');
@@ -532,6 +532,9 @@ describe('Tools', () => {
                     cy.root().invoke('width').should('be.gt', '250');
                     cy.root().invoke('height').should('be.gt', '100');
                 });
+
+                // close it
+                cy.get('@toolBtn').click();
             });
         });
 
@@ -600,8 +603,24 @@ describe('Tools', () => {
             });
 
             it('is dynamic (drag/resize)', function() {
-                // TODO: draggable
-                // TODO: resizable
+                // open it
+                cy.get('@toolBtn').click();
+
+                cy.get('.runner > .magnifier-container').within(() => {
+                    // draggable
+                    cy.get('.dynamic-component-title-bar').dragToPoint({x: 400, y: 250}, 'left');
+                    // using approximate position values because pointer can't get right into corner of title bar
+                    cy.root().invoke('data', 'x').should('be.gt', '385');
+                    cy.root().invoke('data', 'y').should('be.gt', '75');
+
+                    // resizable
+                    cy.get('.dynamic-component-resize-wrapper').dragToPoint({x: 700, y: 450});
+                    cy.root().invoke('width').should('be.gt', '250');
+                    cy.root().invoke('height').should('be.gt', '100');
+                });
+
+                // close it
+                cy.get('@toolBtn').click();
             });
         });
     });
