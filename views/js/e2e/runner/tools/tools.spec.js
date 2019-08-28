@@ -348,36 +348,55 @@ describe('Tools', () => {
                 cy.get('.test-runner-scope').within(() => {
                     // TODO: item visibility checks
                     cy.get('@toolBtn').click();
-                    cy.log('efp1', document.elementFromPoint(100, 100));
 
                     cy.get('@toolBtn').click();
                 });
             });
 
             it('is dynamic (drag/resize)', function() {
+                // open it
+                cy.get('@toolBtn').click();
+
                 cy.get('.test-runner-scope').within(() => {
-                    // open it
-                    cy.get('@toolBtn').click();
-                    cy.get('.line-reader-overlay').as('overlay').should('be.visible');
-                    cy.get('.line-reader-overlay .icon').as('outerDrag').should('be.visible');
-                    cy.get('.line-reader-inner-drag').as('innerDrag').should('be.visible');
+                    cy.get('.line-reader-overlay').as('overlay');
+                    cy.get('.line-reader-inner-drag').as('innerDrag');
 
-                    // TODO: draggable
+                    // draggable
                     cy.get('@overlay')
-                        .trigger('mouseover')
-                        .trigger('mousedown', { which: 1 })
-                        .trigger('dragstart', {})
-                        .trigger('mousemove', { clientX: 1000, clientY: 1000 })
-                        .trigger('drag')
-                        .trigger('mouseup', { force: true })
-                        .trigger('dragend', {});
+                        .dragToPoint({x: 500, y: 200})
+                        .invoke('position').then(pos => {
+                            cy.wrap(pos).its('left').should('equal', 0);
+                            cy.wrap(pos).its('top').should('be.gt', 75);
+                        });
 
-                    // TODO: resizable
-                    // TODO: resizable inner
+                    // movable slot
+                    cy.get('@innerDrag')
+                        .dragToPoint({x: 600, y: 400})
+                        .invoke('position').then(pos => {
+                            cy.wrap(pos).its('left').should('be.gt', 40);
+                            cy.wrap(pos).its('top').should('be.gt', 200);
+                        });
 
-                    // close
-                    cy.get('@toolBtn').click();
+                    // resizable (taller)
+                    cy.get('.line-reader-mask.se .resize-control').dragToPoint({x: 1000, y: 600});
+                    cy.get('@overlay').invoke('width').should('be.gt', 800);
+                    // inner window height only knowable by sum:
+                    cy.get('.line-reader-mask.ne').then($top => {
+                        cy.get('.line-reader-mask.e').then($middle => {
+                            cy.get('.line-reader-mask.se').then($bottom => {
+                                expect($top.height() + $middle.height() + $bottom.height()).to.be.greaterThan(400);
+                            });
+                        });
+                    });
+
+                    // resizable inner (tall and thin)
+                    cy.get('.line-reader-mask.e .resize-control').dragToPoint({x: 750, y: 500});
+                    cy.get('.line-reader-mask.n').invoke('width').should('be.lt', 800);
+                    cy.get('.line-reader-mask.e').invoke('height').should('be.gt', 200);
                 });
+
+                // close it
+                cy.get('@toolBtn').click();
             });
         });
 
