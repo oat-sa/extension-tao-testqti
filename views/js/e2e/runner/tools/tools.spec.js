@@ -225,7 +225,6 @@ describe('Tools', () => {
                 cy.get('@zoomOut').click();
                 cy.get('@item')
                     .should('have.class', 'transform-scale')
-                    // .and('have.css', 'transform-origin', '0px 0px');
                     .and('have.attr', 'style').and('contain', 'scaleX(0.9)').and('contain', 'scaleY(0.9)');
                 cy.get('@zoomOut').click();
                 cy.get('@item')
@@ -653,13 +652,13 @@ describe('Tools', () => {
 
                 cy.get('.runner > .magnifier-container').within(() => {
                     // draggable
-                    cy.get('.dynamic-component-title-bar').dragToPoint({x: 400, y: 250}, 'left');
+                    cy.root().children('.dynamic-component-title-bar').dragToPoint({x: 400, y: 250}, 'left');
                     // using approximate position values because pointer can't get right into corner of title bar
                     cy.root().invoke('data', 'x').should('be.gt', '385');
                     cy.root().invoke('data', 'y').should('be.gt', '75');
 
                     // resizable
-                    cy.get('.dynamic-component-resize-wrapper').dragToPoint({x: 700, y: 450});
+                    cy.root().children().children('.dynamic-component-resize-wrapper').dragToPoint({x: 700, y: 450});
                     cy.root().invoke('width').should('be.gt', '250');
                     cy.root().invoke('height').should('be.gt', '100');
                 });
