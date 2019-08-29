@@ -74,29 +74,29 @@ describe('Tools', () => {
      */
     describe('Sample choice interaction)', () => {
         it('item gets selected on click', function() {
-            cy.get(interactionSelectors.choice.choiceArea).within(() => {
-                cy.get(interactionSelectors.choice.choice).first().click();
-                cy.get(interactionSelectors.choice.choice).first().should('have.class', 'user-selected');
+            cy.get(interactionSelectors.choiceArea).within(() => {
+                cy.get(interactionSelectors.qtiChoice).first().click();
+                cy.get(interactionSelectors.qtiChoice).first().should('have.class', 'user-selected');
 
             });
         });
 
         it('Should not allow multiple selection if disabled', function() {
             cy.get(interactionSelectors.interaction).contains('single selection').parents(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.choice.choice).first().click();
-                cy.get(interactionSelectors.choice.choice).first().next().click();
-                cy.get(interactionSelectors.choice.choice).first().should('not.have.class', 'user-selected');
-                cy.get(interactionSelectors.choice.choice).first().next().should('have.class', 'user-selected');
+                cy.get(interactionSelectors.qtiChoice).first().click();
+                cy.get(interactionSelectors.qtiChoice).first().next().click();
+                cy.get(interactionSelectors.qtiChoice).first().should('not.have.class', 'user-selected');
+                cy.get(interactionSelectors.qtiChoice).first().next().should('have.class', 'user-selected');
 
             });
         });
 
         it('Should allow multiple selection if enabled', function() {
             cy.get(interactionSelectors.interaction).contains('multiple selection').parents(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.choice.choice).first().click();
-                cy.get(interactionSelectors.choice.choice).first().next().click();
-                cy.get(interactionSelectors.choice.choice).first().should('have.class', 'user-selected');
-                cy.get(interactionSelectors.choice.choice).first().next().should('have.class', 'user-selected');
+                cy.get(interactionSelectors.qtiChoice).first().click();
+                cy.get(interactionSelectors.qtiChoice).first().next().click();
+                cy.get(interactionSelectors.qtiChoice).first().should('have.class', 'user-selected');
+                cy.get(interactionSelectors.qtiChoice).first().next().should('have.class', 'user-selected');
 
             });
         });

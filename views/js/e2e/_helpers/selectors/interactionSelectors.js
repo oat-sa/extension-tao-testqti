@@ -21,10 +21,9 @@
  */
 export default {
     interaction: '.qti-interaction',
-    choice: {
-        choiceArea: '.choice-area',
-        choice: '.qti-choice'
-    },
+    qtiChoice: '.qti-choice',
+    choiceArea: '.choice-area',
+    resultArea: '.result-area',
     associate : {
 
     }

@@ -73,32 +73,12 @@ describe('Tools', () => {
      * Tools tests
      */
     describe('Sample associate interaction)', () => {
-        it('item gets selected on click', function() {
-            cy.get(interactionSelectors.associateArea).within(() => {
-                cy.get(interactionSelectors.associate).first().click();
-                cy.get(interactionSelectors.associate).first().should('have.class', 'user-selected');
-
+        it('Essential elements exist', function() {
+            cy.get(interactionSelectors.interaction).within(() => {
+                cy.get(interactionSelectors.qtiChoice).should('exist');
+                cy.get(interactionSelectors.resultArea).should('exist');
             });
         });
 
-        it('Should not allow multiple selection if disabled', function() {
-            cy.get(interactionSelectors.interaction).contains('single selection').parents(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.associate).first().click();
-                cy.get(interactionSelectors.associate).first().next().click();
-                cy.get(interactionSelectors.associate).first().should('not.have.class', 'user-selected');
-                cy.get(interactionSelectors.associate).first().next().should('have.class', 'user-selected');
-
-            });
-        });
-
-        it('Should allow multiple selection if enabled', function() {
-            cy.get(interactionSelectors.interaction).contains('multiple selection').parents(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.associate).first().click();
-                cy.get(interactionSelectors.associate).first().next().click();
-                cy.get(interactionSelectors.associate).first().should('have.class', 'user-selected');
-                cy.get(interactionSelectors.associate).first().next().should('have.class', 'user-selected');
-
-            });
-        });
     });
 });
