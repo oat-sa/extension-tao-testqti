@@ -29,8 +29,8 @@ Cypress.Commands.add('selectText', { prevSubject: true }, (subject) => {
  */
 Cypress.Commands.add('dragToPoint', { prevSubject: true }, (subject, point, position = 'center') => {
     cy.wrap(subject)
-        .trigger('mousedown', position)
-        .trigger('mousemove', { pageX: point.x, pageY: point.y, clientX: point.x, clientY: point.y , view: window })
+        .trigger('mousedown', position, { force: true })
+        .trigger('mousemove', { force: true, pageX: point.x, pageY: point.y, clientX: point.x, clientY: point.y, view: window })
         .trigger('mouseup');
 
     return cy.wrap(subject);
