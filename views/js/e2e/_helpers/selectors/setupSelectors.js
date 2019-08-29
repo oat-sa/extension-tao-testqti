@@ -33,6 +33,6 @@ export default {
     deliveriesPage: {
         rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',
         formContainer: '#form-container',
-        guestAccessCheckbox: 'input#http_2_www_0_tao_0_lu_1_Ontologies_1_TAODelivery_0_rdf_3_AccessSettings_0'
+        guestAccessCheckbox: '#form-container input[name="http_2_www_0_tao_0_lu_1_Ontologies_1_TAODelivery_0_rdf_3_AccessSettings_0"]'
     }
 };

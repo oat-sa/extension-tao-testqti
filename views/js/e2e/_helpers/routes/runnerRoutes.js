@@ -24,6 +24,6 @@ Cypress.Commands.add('addRunnerRoutes', () => {
     cy.route('POST', /\/taoQtiTest\/Runner\/init\?\S+/).as('testRunnerInit');
     cy.route('POST', /\/taoQtiTest\/Runner\/move\?\S+/).as('testRunnerMove');
     cy.route('POST', /\/taoQtiTest\/Runner\/skip\?\S+/).as('testRunnerSkip');
-    cy.route('GET', /\/taoQtiTest\/Runner\/getItem\?\S+/).as('testRunnerGetItem');
-
+    cy.route('GET',  /\/taoQtiTest\/Runner\/getItem\?\S+/).as('testRunnerGetItem');
+    cy.route('POST', /\/taoQtiTest\/Runner\/comment\?\S+/).as('comment');
 });

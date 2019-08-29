@@ -108,12 +108,8 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
     // Select example delivery
     cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
 
-    // Set guest access on the delivery
-    cy.get(setupSelectors.deliveriesPage.formContainer).within(() => {
-        cy.get(setupSelectors.deliveriesPage.guestAccessCheckbox).check();
-    });
-
-    // cy.get(setupSelectors.deliveriesPage.formContainer).contains('Guest Access').click();
+    // Set guest access on the delivery (if not yet enabled)
+    cy.get(setupSelectors.deliveriesPage.guestAccessCheckbox).check();
 
     // Save delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Save').click();
@@ -134,6 +130,6 @@ Cypress.Commands.add('startTest', (testName) => {
         .contains(`Delivery of ${testName}`)
         .click();
 
+    // The test should be launching now, but it can take several seconds
     cy.wait(['@testRunnerInit', '@testRunnerGetItem'], {timeout: 10000});
 });
-
