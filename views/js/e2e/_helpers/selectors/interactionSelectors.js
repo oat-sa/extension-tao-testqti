@@ -20,11 +20,17 @@
  * CSS Selectors for the test runner
  */
 export default {
-    interaction: '.qti-interaction',
-    qtiChoice: '.qti-choice',
-    choiceArea: '.choice-area',
-    resultArea: '.result-area',
-    associate : {
-
+    commonInteractionSelectors: {
+        interaction: '.qti-interaction',
+        qtiChoice: '.qti-choice',
+        choiceArea: '.choice-area',
+        resultArea: '.result-area'
+    },
+    orderInteractionSelectors: {
+        addToSelection: 'span.icon-add-to-selection',
+        removeFromSelection: 'span.icon-remove-from-selection',
+        moveBefore: 'span.icon-move-before',
+        moveAfter: 'span.icon-move-after',
+        firstItem: '.qti-choice'
     }
 };

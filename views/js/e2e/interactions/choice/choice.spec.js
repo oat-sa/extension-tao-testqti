@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import interactionSelectors from '../../_helpers/selectors/interactionSelectors';
+import {commonInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
 
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
@@ -25,7 +25,7 @@ import '../../_helpers/routes/runnerRoutes';
 
 import base64Test from './fixtures/base64ChoiceInteractionTestPackage';
 
-describe('Tools', () => {
+describe('Interactions', () => {
 
     /**
      * Setup to have a proper delivery:
@@ -72,31 +72,31 @@ describe('Tools', () => {
     /**
      * Tools tests
      */
-    describe('Sample choice interaction)', () => {
-        it('item gets selected on click', function() {
-            cy.get(interactionSelectors.choiceArea).within(() => {
-                cy.get(interactionSelectors.qtiChoice).first().click();
-                cy.get(interactionSelectors.qtiChoice).first().should('have.class', 'user-selected');
+    describe('Choice  Interaction)', () => {
+        it('Choice item gets selected on click', function () {
+            cy.get(commonInteractionSelectors.choiceArea).within(() => {
+                cy.get(commonInteractionSelectors.qtiChoice).first().click();
+                cy.get(commonInteractionSelectors.qtiChoice).first().should('have.class', 'user-selected');
 
             });
         });
 
-        it('Should not allow multiple selection if disabled', function() {
-            cy.get(interactionSelectors.interaction).contains('single selection').parents(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.qtiChoice).first().click();
-                cy.get(interactionSelectors.qtiChoice).first().next().click();
-                cy.get(interactionSelectors.qtiChoice).first().should('not.have.class', 'user-selected');
-                cy.get(interactionSelectors.qtiChoice).first().next().should('have.class', 'user-selected');
+        it('Should not allow multiple selection if disabled', function () {
+            cy.get(commonInteractionSelectors.interaction).contains('single selection').parents(commonInteractionSelectors.interaction).within(() => {
+                cy.get(commonInteractionSelectors.qtiChoice).first().click();
+                cy.get(commonInteractionSelectors.qtiChoice).first().next().click();
+                cy.get(commonInteractionSelectors.qtiChoice).first().should('not.have.class', 'user-selected');
+                cy.get(commonInteractionSelectors.qtiChoice).first().next().should('have.class', 'user-selected');
 
             });
         });
 
-        it('Should allow multiple selection if enabled', function() {
-            cy.get(interactionSelectors.interaction).contains('multiple selection').parents(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.qtiChoice).first().click();
-                cy.get(interactionSelectors.qtiChoice).first().next().click();
-                cy.get(interactionSelectors.qtiChoice).first().should('have.class', 'user-selected');
-                cy.get(interactionSelectors.qtiChoice).first().next().should('have.class', 'user-selected');
+        it('Should allow multiple selection if enabled', function () {
+            cy.get(commonInteractionSelectors.interaction).contains('multiple selection').parents(commonInteractionSelectors.interaction).within(() => {
+                cy.get(commonInteractionSelectors.qtiChoice).first().click();
+                cy.get(commonInteractionSelectors.qtiChoice).first().next().click();
+                cy.get(commonInteractionSelectors.qtiChoice).first().should('have.class', 'user-selected');
+                cy.get(commonInteractionSelectors.qtiChoice).first().next().should('have.class', 'user-selected');
 
             });
         });

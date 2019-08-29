@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import interactionSelectors from '../../_helpers/selectors/interactionSelectors';
+import {commonInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
 
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
@@ -25,7 +25,7 @@ import '../../_helpers/routes/runnerRoutes';
 
 import base64Test from './fixtures/base64AssociateInteractionTestPackage';
 
-describe('Tools', () => {
+describe('Interactions', () => {
 
     /**
      * Setup to have a proper delivery:
@@ -70,13 +70,13 @@ describe('Tools', () => {
     });
 
     /**
-     * Tools tests
+     * Interaction tests
      */
-    describe('Sample associate interaction)', () => {
+    describe('Associate interaction)', () => {
         it('Essential elements exist', function() {
-            cy.get(interactionSelectors.interaction).within(() => {
-                cy.get(interactionSelectors.qtiChoice).should('exist');
-                cy.get(interactionSelectors.resultArea).should('exist');
+            cy.get(commonInteractionSelectors.interaction).within(() => {
+                cy.get(commonInteractionSelectors.qtiChoice).should('exist');
+                cy.get(commonInteractionSelectors.resultArea).should('exist');
             });
         });
 
