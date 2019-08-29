@@ -19,11 +19,21 @@
 /**
  * Add extra routes
  */
-Cypress.Commands.add('addRunnerRoutes', () => {
-    // Register test runner routes
-    cy.route('POST', /\/taoQtiTest\/Runner\/init\?\S+/).as('testRunnerInit');
-    cy.route('POST', /\/taoQtiTest\/Runner\/move\?\S+/).as('testRunnerMove');
-    cy.route('POST', /\/taoQtiTest\/Runner\/skip\?\S+/).as('testRunnerSkip');
-    cy.route('GET', /\/taoQtiTest\/Runner\/getItem\?\S+/).as('testRunnerGetItem');
+Cypress.Commands.add('addBackOfficeRoutes', () => {
 
+    // Register routes for test actions
+    cy.route('POST', '**/editTest').as('editTest');
+    cy.route('POST', '/taoTests/TestImport/index').as('testImportIndex');
+    cy.route('GET', '/tao/TaskQueueWebApi/**').as('taskQueueWebApi');
+    cy.route('POST', 'taoDeliveryRdf/Publish/publish').as('testPublish');
+    cy.route('POST', 'tao/File/upload').as('fileUpload');
+
+    // Register routes for delivery actions
+    cy.route('POST', '**/editDelivery').as('editDelivery');
+
+    // Register routes for common actions
+    cy.route('POST', '**/editClassLabel').as('editClassLabel');
+    cy.route('POST', '**/delete').as('delete');
+    cy.route('POST', '**/deleteClass').as('deleteClass');
+    cy.route('POST', '/tao/GenerisTree/getData').as('getData');
 });
