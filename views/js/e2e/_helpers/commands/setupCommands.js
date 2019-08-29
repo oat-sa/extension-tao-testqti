@@ -109,11 +109,7 @@ Cypress.Commands.add('setDeliveryForGuests', (testName) => {
     cy.get(setupSelectors.deliveriesPage.rootDeliveryClass).contains(testName).click();
 
     // Set guest access on the delivery (if not yet enabled)
-    cy.get(setupSelectors.deliveriesPage.guestAccessCheckbox).then($checkbox => {
-        if (!$checkbox.prop('checked')) {
-            cy.wrap($checkbox).click();
-        }
-    });
+    cy.get(setupSelectors.deliveriesPage.guestAccessCheckbox).check();
 
     // Save delivery
     cy.get(setupSelectors.deliveriesPage.formContainer).contains('Save').click();
