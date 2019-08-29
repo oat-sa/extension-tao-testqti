@@ -24,6 +24,17 @@ import '../../_helpers/routes/runnerRoutes';
 
 import base64Test from './fixtures/base64TestTakerToolsTestPackage';
 
+/**
+ * Re-login as guest and enter the test
+ * Intended for the before hook of each tool's describe() block
+ */
+Cypress.Commands.add('resetAndEnterTest', function() {
+    cy.setupServer();
+    cy.addRunnerRoutes();
+    cy.guestLogin();
+    cy.startTest('e2e Tools test');
+});
+
 describe('Tools', () => {
 
     /**
@@ -39,29 +50,19 @@ describe('Tools', () => {
     before(() => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
-        cy.addRunnerRoutes();
         cy.login('admin');
         cy.importTestPackage(base64Test, 'e2e Tools test');
         cy.publishTest('e2e Tools test');
         cy.setDeliveryForGuests('e2e Tools test');
         cy.logout();
-        cy.guestLogin();
-        cy.startTest('e2e Tools test');
-    });
-
-    /**
-     * Log in & start the test
-     */
-    beforeEach(() => {
-        cy.setupServer();
-        cy.addBackOfficeRoutes();
-        cy.addRunnerRoutes();
     });
 
     /**
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
+        cy.setupServer();
+        cy.addBackOfficeRoutes();
         cy.guestLogout();
         cy.login('admin');
         cy.deleteItem('e2e Tools test');
@@ -76,7 +77,15 @@ describe('Tools', () => {
 
         describe('Comments tool', () => {
 
+            before(() => {
+                cy.resetAndEnterTest();
+            });
+
             beforeEach(() => {
+                // server & routes needed here for comment submission test
+                cy.setupServer();
+                cy.addRunnerRoutes();
+
                 cy.get('.tools-box-list [data-control=comment] a').as('toolBtn');
                 cy.get('[data-control=qti-comment]').as('popup');
                 cy.get('[data-control=qti-comment-text]').as('textarea');
@@ -124,6 +133,10 @@ describe('Tools', () => {
         });
 
         describe('Calculator tool', () => {
+
+            before(() => {
+                cy.resetAndEnterTest();
+            });
 
             beforeEach(() => {
                 cy.get('.tools-box-list [data-control=calculator] a').as('toolBtn');
@@ -199,6 +212,10 @@ describe('Tools', () => {
 
         describe('Zoom tool', () => {
 
+            before(() => {
+                cy.resetAndEnterTest();
+            });
+
             beforeEach(() => {
                 cy.get('.tools-box-list').within(() => {
                     cy.get('[data-control=zoomOut] a').as('zoomOut');
@@ -257,6 +274,10 @@ describe('Tools', () => {
 
         describe('Highlighter tool', () => {
 
+            before(() => {
+                cy.resetAndEnterTest();
+            });
+
             beforeEach(() => {
                 cy.get('.tools-box-list').within(() => {
                     cy.get('[data-control=highlight-trigger] a').as('trigger');
@@ -309,6 +330,10 @@ describe('Tools', () => {
         });
 
         describe('Line reader tool', () => {
+
+            before(() => {
+                cy.resetAndEnterTest();
+            });
 
             beforeEach(() => {
                 cy.get('.tools-box-list [data-control=line-reader] a').as('toolBtn');
@@ -388,6 +413,10 @@ describe('Tools', () => {
 
         describe('Answer masking tool', function() {
 
+            before(() => {
+                cy.resetAndEnterTest();
+            });
+
             beforeEach(() => {
                 cy.get('.tools-box-list [data-control=answer-masking] a').as('toolBtn');
             });
@@ -437,6 +466,10 @@ describe('Tools', () => {
         });
 
         describe('Answer elimination tool', function() {
+
+            before(() => {
+                cy.resetAndEnterTest();
+            });
 
             beforeEach(() => {
                 cy.get('.tools-box-list [data-control=eliminator] a').as('toolBtn');
@@ -497,6 +530,10 @@ describe('Tools', () => {
         });
 
         describe('Area mask tool', function() {
+
+            before(() => {
+                cy.resetAndEnterTest();
+            });
 
             beforeEach(() => {
                 cy.get('.tools-box-list [data-control=area-masking] a').as('toolBtn');
@@ -585,6 +622,10 @@ describe('Tools', () => {
 
         //Note: the magnifier is tested last, because it duplicates the DOM and can break other tests
         describe('Magnifier tool', function() {
+
+            before(() => {
+                cy.resetAndEnterTest();
+            });
 
             beforeEach(() => {
                 // Even the toolBtn will be duplicated, when the magnifier is opened!
