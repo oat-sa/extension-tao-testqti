@@ -187,7 +187,7 @@ describe('Tools', () => {
                 cy.get('@toolBtn').click();
             });
 
-            it('is dynamic (drag/resize)', function() {
+            it.skip('is dynamic (drag/resize)', function() {
                 // open it
                 cy.get('@toolBtn').click();
                 cy.get('@calcContainer').find('.dynamic-component-container').as('calc');
@@ -364,7 +364,7 @@ describe('Tools', () => {
                 });
             });
 
-            it('is dynamic (drag/resize)', function() {
+            it.skip('is dynamic (drag/resize)', function() {
                 // open it
                 cy.get('@toolBtn').click();
 
@@ -581,7 +581,7 @@ describe('Tools', () => {
                 cy.get('@closer').click();
             });
 
-            it('is dynamic (drag/resize)', function() {
+            it.skip('is dynamic (drag/resize)', function() {
                 // open it
                 cy.get('@toolBtn').click();
 
@@ -691,7 +691,7 @@ describe('Tools', () => {
                 cy.get('@toolBtn').click();
             });
 
-            it('is dynamic (drag/resize)', function() {
+            it.skip('is dynamic (drag/resize)', function() {
                 // open it
                 cy.get('@toolBtn').click();
 
