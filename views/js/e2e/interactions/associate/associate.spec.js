@@ -72,7 +72,7 @@ describe('Interactions', () => {
     /**
      * Interaction tests
      */
-    describe('Associate interaction)', () => {
+    describe('Associate interaction', () => {
         it('Essential elements exist', function() {
             cy.get(commonInteractionSelectors.interaction).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).should('exist');

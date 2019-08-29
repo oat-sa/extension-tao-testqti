@@ -72,7 +72,7 @@ describe('Interactions', () => {
     /**
      * Tools tests
      */
-    describe('Choice  Interaction)', () => {
+    describe('Choice  interaction', () => {
         it('Choice item gets selected on click', function () {
             cy.get(commonInteractionSelectors.choiceArea).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).first().click();

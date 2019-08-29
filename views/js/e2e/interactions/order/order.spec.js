@@ -72,7 +72,7 @@ describe('Interactions', () => {
     /**
      * Interactions tests
      */
-    describe('Order interaction)', () => {
+    describe('Order interaction', () => {
         it('Loads in proper state', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
                 // we should see at least 1 choice item in the left square

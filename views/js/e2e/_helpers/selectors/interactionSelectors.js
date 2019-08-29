@@ -30,7 +30,6 @@ export default {
         addToSelection: 'span.icon-add-to-selection',
         removeFromSelection: 'span.icon-remove-from-selection',
         moveBefore: 'span.icon-move-before',
-        moveAfter: 'span.icon-move-after',
-        firstItem: '.qti-choice'
+        moveAfter: 'span.icon-move-after'
     }
 };
