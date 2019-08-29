@@ -20,7 +20,7 @@ import runnerSelectors from '../_helpers/selectors/runnerSelectors';
 
 import '../_helpers/commands/setupCommands';
 import '../_helpers/commands/cleanupCommands';
-import '../_helpers/routes/runnerRoutes';
+import '../_helpers/routes/backOfficeRoutes';
 
 import base64Test from './fixtures/base64QtiExampleTestPackage';
 
@@ -38,7 +38,7 @@ describe('Deliveries', () => {
      */
     beforeEach(() => {
         cy.setupServer();
-        cy.addRoutes();
+        cy.addBackOfficeRoutes();
         cy.login('admin');
         cy.importTestPackage(base64Test, 'e2e example test');
         cy.publishTest('e2e example test');
