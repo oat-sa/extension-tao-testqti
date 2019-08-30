@@ -1896,7 +1896,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('33.10.2');
         }
 
-        if ($this->isVersion('33.10.2')) {
+        $this->skip('33.10.2', '33.10.3');
+
+        if ($this->isVersion('33.10.3')) {
             $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
             $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
             $clientLibRegistry = ClientLibRegistry::getRegistry();
@@ -1914,6 +1916,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('34.3.0');
         }
 
-        $this->skip('34.3.0', '34.4.1');
+        $this->skip('34.3.0', '34.9.3');
+
     }
 }

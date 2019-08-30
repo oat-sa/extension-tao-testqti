@@ -257,6 +257,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Provides the test definition data
+     *
+     * @deprecated
      */
     public function getTestData()
     {

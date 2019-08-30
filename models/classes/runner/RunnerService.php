@@ -56,6 +56,10 @@ interface RunnerService extends DeliveryExecutionDelete
 
     /**
      * Gets the test definition data
+     *
+     * @deprecated the testData is not necessary anymore
+     * if the config is given directly to the test runner configuration
+     *
      * @param RunnerServiceContext $context
      * @return array
      * @throws \common_Exception
