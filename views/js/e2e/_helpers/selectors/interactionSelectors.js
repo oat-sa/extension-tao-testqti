@@ -42,5 +42,9 @@ export default {
         minLabel: '.slider-min',
         maxLabel: '.slider-max',
         currentValue: 'span.qti-slider-cur-value'
+    },
+    extendedTextInteractionSelectors: {
+        textContainer: '.text-container',
+        countChars: '.count-chars'
     }
 };
