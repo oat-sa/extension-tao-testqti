@@ -22,7 +22,7 @@ import '../../_helpers/commands/cleanupCommands';
 import '../../_helpers/routes/backOfficeRoutes';
 import '../../_helpers/routes/runnerRoutes';
 
-import {commonInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
+import {commonInteractionSelectors, hottextInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
 
 import base64Test from './fixtures/base64HottextInteractionTestPackage';
 
@@ -77,33 +77,33 @@ describe('Interactions', () => {
 
         it('Loads in proper state', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
-                cy.get('.item-instruction').should('exist').and('be.visible').and('have.class', 'feedback-info');
-                cy.get('.qti-hottext').should('exist').and('be.visible').should('have.length', 4);
+                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
+                cy.get(commonInteractionSelectors.qtiChoice).should('exist').and('be.visible').should('have.length', 4);
             });
         });
 
 
         it('Click 1 choice and get info feedback', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
-                cy.get('.qti-hottext').first().click();
-                cy.get('.item-instruction').should('exist').and('be.visible').and('have.class', 'feedback-info');
+                cy.get(commonInteractionSelectors.qtiChoice).first().click();
+                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
             });
         });
 
         it('Click 2 choices and get success feedback', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
-                cy.get('.qti-hottext').eq(0).click();
-                cy.get('.qti-hottext').eq(1).click();
-                cy.get('.item-instruction').should('exist').and('be.visible').and('have.class', 'feedback-success');
+                cy.get(commonInteractionSelectors.qtiChoice).eq(0).click();
+                cy.get(commonInteractionSelectors.qtiChoice).eq(1).click();
+                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-success');
             });
         });
 
         it('Click 3 choices and get warning feedback', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
-                cy.get('.qti-hottext').eq(0).click();
-                cy.get('.qti-hottext').eq(1).click();
-                cy.get('.qti-hottext').eq(2).click();
-                cy.get('.item-instruction').should('exist').and('be.visible').and('have.class', 'feedback-warning');
+                cy.get(commonInteractionSelectors.qtiChoice).eq(0).click();
+                cy.get(commonInteractionSelectors.qtiChoice).eq(1).click();
+                cy.get(commonInteractionSelectors.qtiChoice).eq(2).click();
+                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-warning');
             });
         });
 

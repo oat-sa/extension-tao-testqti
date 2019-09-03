@@ -31,5 +31,8 @@ export default {
         removeFromSelection: 'span.icon-remove-from-selection',
         moveBefore: 'span.icon-move-before',
         moveAfter: 'span.icon-move-after'
+    },
+    hottextInteractionSelectors: {
+        itemInstruction: '.item-instruction'
     }
 };
