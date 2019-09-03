@@ -34,5 +34,13 @@ export default {
     },
     hottextInteractionSelectors: {
         itemInstruction: '.item-instruction'
+    },
+    sliderInteractionSelectors: {
+        sliderHandle: '.noUi-handle-lower',
+        sliderBar: '.noUi-origin',
+        labels: '.qti-slider-values',
+        minLabel: '.slider-min',
+        maxLabel: '.slider-max',
+        currentValue: 'span.qti-slider-cur-value'
     }
 };
