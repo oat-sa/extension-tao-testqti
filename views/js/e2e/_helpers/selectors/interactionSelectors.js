@@ -24,7 +24,11 @@ export default {
         interaction: '.qti-interaction',
         qtiChoice: '.qti-choice',
         choiceArea: '.choice-area',
-        resultArea: '.result-area'
+        resultArea: '.result-area',
+        checkboxIcon: '.icon-checkbox'
+    },
+    matchInteractionSelectors: {
+        interactionArea: '.match-interaction-area'
     },
     orderInteractionSelectors: {
         addToSelection: 'span.icon-add-to-selection',
