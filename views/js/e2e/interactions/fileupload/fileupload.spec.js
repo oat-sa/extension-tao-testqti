@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import {commonInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
+import {commonInteractionSelectors, fileUploadInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
 
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
@@ -40,13 +40,13 @@ describe('Interactions', () => {
      * - Logout
      */
     before(() => {
-        cy.setupServer();
-        cy.addBackOfficeRoutes();
-        cy.login('admin');
-        cy.importTestPackage(base64Test, 'e2e fileupload interaction test');
-        cy.publishTest('e2e fileupload interaction test');
-        cy.setDeliveryForGuests('Delivery of e2e fileupload interaction test');
-        cy.logout();
+        // cy.setupServer();
+        // cy.addBackOfficeRoutes();
+        // cy.login('admin');
+        // cy.importTestPackage(base64Test, 'e2e fileupload interaction test');
+        // cy.publishTest('e2e fileupload interaction test');
+        // cy.setDeliveryForGuests('Delivery of e2e fileupload interaction test');
+        // cy.logout();
     });
 
     /**
@@ -63,12 +63,12 @@ describe('Interactions', () => {
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        cy.setupServer();
-        cy.addBackOfficeRoutes();
-        cy.login('admin');
-        cy.deleteItem('e2e fileupload interaction test');
-        cy.deleteTest('e2e fileupload interaction test');
-        cy.deleteDelivery('Delivery of e2e fileupload interaction test');
+        // cy.setupServer();
+        // cy.addBackOfficeRoutes();
+        // cy.login('admin');
+        // cy.deleteItem('e2e fileupload interaction test');
+        // cy.deleteTest('e2e fileupload interaction test');
+        // cy.deleteDelivery('Delivery of e2e fileupload interaction test');
     });
 
     /**
@@ -79,10 +79,8 @@ describe('Interactions', () => {
         it('Loads in proper state', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
                 cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
-                cy.get('.file-upload').should('exist').and('be.visible');
-                cy.get('.file-upload-preview').should('exist').and('be.visible');
-                cy.get('.file-upload-preview-popup').should('exist').and('be.visible');
-                cy.get('input[type="file"]').should('exist').and('be.visible');
+                cy.get(fileUploadInteractionSelectors.fileUploadInput).should('exist').and('be.visible');
+                cy.get(fileUploadInteractionSelectors.fileUploadPreview).should('exist').and('be.visible');
             });
         });
 
@@ -98,7 +96,7 @@ describe('Interactions', () => {
                 cy.readFile(absolutePathToFile, 'base64').then((fileContent) => {
 
                     // upload file using the file input
-                    cy.get('.file-upload input[type="file"]').upload(
+                    cy.get(fileUploadInteractionSelectors.fileUploadInput).upload(
                         {
                             fileContent,
                             fileName,
@@ -116,9 +114,9 @@ describe('Interactions', () => {
                     // feedback updated
                     cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-success');
                     //progress bar updated
-                    cy.get('.progressbar').find('span').should("have.attr", "title", "100%");
+                    cy.get(fileUploadInteractionSelectors.progressBar).find('span').should("have.attr", "title", "100%");
                     // preview updated
-                    cy.get('.file-upload-preview').find('img').should('exist').and('be.visible');
+                    cy.get(fileUploadInteractionSelectors.fileUploadPreview).find('img').should('exist').and('be.visible');
                 });
 
             });
@@ -133,7 +131,7 @@ describe('Interactions', () => {
                 cy.readFile(absolutePathToFile, 'base64').then((fileContent) => {
 
                     // upload file using the file input
-                    cy.get('.file-upload input[type="file"]').upload(
+                    cy.get(fileUploadInteractionSelectors.fileUploadInput).upload(
                         {
                             fileContent,
                             fileName,
@@ -151,9 +149,9 @@ describe('Interactions', () => {
                     // feedback updated
                     cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-error');
                     //progress bar updated
-                    cy.get('.progressbar').find('span').should("have.attr", "title", "0%");
+                    cy.get(fileUploadInteractionSelectors.progressBar).find('span').should("have.attr", "title", "0%");
                     // preview updated
-                    cy.get('.file-upload-preview').find('img').should('not.exist');
+                    cy.get(fileUploadInteractionSelectors.fileUploadPreview).find('img').should('not.exist');
                 });
 
             });
@@ -168,7 +166,7 @@ describe('Interactions', () => {
                 cy.readFile(absolutePathToFile, 'base64').then((fileContent) => {
 
                     // upload file using the file input
-                    cy.get('.file-upload input[type="file"]').upload(
+                    cy.get(fileUploadInteractionSelectors.fileUploadInput).upload(
                         {
                             fileContent,
                             fileName,
@@ -186,9 +184,9 @@ describe('Interactions', () => {
                     // feedback updated
                     cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-error');
                     //progress bar updated
-                    cy.get('.progressbar').find('span').should("have.attr", "title", "0%");
+                    cy.get(fileUploadInteractionSelectors.progressBar).find('span').should("have.attr", "title", "0%");
                     // preview updated
-                    cy.get('.file-upload-preview').find('img').should('not.exist');
+                    cy.get(fileUploadInteractionSelectors.fileUploadPreview).find('img').should('not.exist');
                 });
 
             });

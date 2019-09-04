@@ -48,5 +48,10 @@ export default {
     extendedTextInteractionSelectors: {
         textContainer: '.text-container',
         countChars: '.count-chars'
+    },
+    fileUploadInteractionSelectors: {
+        fileUploadInput: '.file-upload input[type="file"]',
+        fileUploadPreview: '.file-upload-preview',
+        progressBar: '.progressbar'
     }
 };
