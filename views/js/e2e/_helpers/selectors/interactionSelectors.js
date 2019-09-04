@@ -35,5 +35,20 @@ export default {
         removeFromSelection: 'span.icon-remove-from-selection',
         moveBefore: 'span.icon-move-before',
         moveAfter: 'span.icon-move-after'
+    },
+    hottextInteractionSelectors: {
+        itemInstruction: '.item-instruction'
+    },
+    sliderInteractionSelectors: {
+        sliderHandle: '.noUi-handle-lower',
+        sliderBar: '.noUi-origin',
+        labels: '.qti-slider-values',
+        minLabel: '.slider-min',
+        maxLabel: '.slider-max',
+        currentValue: 'span.qti-slider-cur-value'
+    },
+    extendedTextInteractionSelectors: {
+        textContainer: '.text-container',
+        countChars: '.count-chars'
     }
 };
