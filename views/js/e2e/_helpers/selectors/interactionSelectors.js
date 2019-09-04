@@ -24,16 +24,14 @@ export default {
         interaction: '.qti-interaction',
         qtiChoice: '.qti-choice',
         choiceArea: '.choice-area',
-        resultArea: '.result-area'
+        resultArea: '.result-area',
+        itemInstruction: '.item-instruction'
     },
     orderInteractionSelectors: {
         addToSelection: 'span.icon-add-to-selection',
         removeFromSelection: 'span.icon-remove-from-selection',
         moveBefore: 'span.icon-move-before',
         moveAfter: 'span.icon-move-after'
-    },
-    hottextInteractionSelectors: {
-        itemInstruction: '.item-instruction'
     },
     sliderInteractionSelectors: {
         sliderHandle: '.noUi-handle-lower',

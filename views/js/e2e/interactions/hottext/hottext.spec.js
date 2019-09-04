@@ -77,7 +77,7 @@ describe('Interactions', () => {
 
         it('Loads in proper state', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
-                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
+                cy.get(commonInteractionSelectors.e2e slider interaction test).should('exist').and('be.visible').and('have.class', 'feedback-info');
                 cy.get(commonInteractionSelectors.qtiChoice).should('exist').and('be.visible').should('have.length', 4);
             });
         });
@@ -86,7 +86,7 @@ describe('Interactions', () => {
         it('Click 1 choice and get info feedback', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).first().click();
-                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
+                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
             });
         });
 
@@ -94,7 +94,7 @@ describe('Interactions', () => {
             cy.get(commonInteractionSelectors.interaction).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).eq(0).click();
                 cy.get(commonInteractionSelectors.qtiChoice).eq(1).click();
-                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-success');
+                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-success');
             });
         });
 
@@ -103,7 +103,7 @@ describe('Interactions', () => {
                 cy.get(commonInteractionSelectors.qtiChoice).eq(0).click();
                 cy.get(commonInteractionSelectors.qtiChoice).eq(1).click();
                 cy.get(commonInteractionSelectors.qtiChoice).eq(2).click();
-                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-warning');
+                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-warning');
             });
         });
 
