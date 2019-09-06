@@ -68,8 +68,8 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.wait('@editTest');
 });
 
-Cypress.Commands.add('publishTest', (testName) => {
-    cy.log('COMMAND: publishTest', testName);
+Cypress.Commands.add('publishTest', (testName, deliveryType) => {
+    cy.log('COMMAND: publishTest', testName, deliveryType);
 
     // Visit Tests page
     cy.visit(backOfficeUrls.testsPageUrl);
@@ -83,8 +83,16 @@ Cypress.Commands.add('publishTest', (testName) => {
         cy.contains(testName).click({ force: true });
     });
 
+    cy.wait('@editTest');
+
     // Publish example test
     cy.get(setupSelectors.testsPage.testPublishButton).click();
+
+    if(deliveryType === 'remote') {
+        
+        // Selects TAO Remote tab
+        cy.get(setupSelectors.testsPage.deliveryTypeTabs).contains('TAO Remote').click();
+    }
 
     // Select Assembled Delivery as root class for publishing
     cy.get(setupSelectors.testsPage.destinationSelector).contains('Assembled Delivery').click();

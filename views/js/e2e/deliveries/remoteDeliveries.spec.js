@@ -22,7 +22,7 @@ import '../_helpers/commands/setupCommands';
 import '../_helpers/commands/cleanupCommands';
 import '../_helpers/routes/backOfficeRoutes';
 
-import base64Test from './fixtures/base64QtiExampleTestPackage';
+import base64Test from './fixtures/base64RemoteQtiExampleTestPackage';
 
 describe('Deliveries', () => {
 
@@ -40,9 +40,9 @@ describe('Deliveries', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.importTestPackage(base64Test, 'e2e example test');
-        cy.publishTest('e2e example test');
-        cy.setDeliveryForGuests('e2e example test');
+        cy.importTestPackage(base64Test, 'e2e remote example test');
+        cy.publishTest('e2e remote example test', 'remote');
+        cy.setDeliveryForGuests('e2e remote example test');
         cy.logout();
         cy.guestLogin();
     });
@@ -53,9 +53,9 @@ describe('Deliveries', () => {
     afterEach(() => {
         cy.guestLogout();
         cy.login('admin');
-        cy.deleteItem('e2e example test');
-        cy.deleteTest('e2e example test');
-        cy.deleteDelivery('Delivery of e2e example test');
+        cy.deleteItem('e2e remote example test');
+        cy.deleteTest('e2e remote example test');
+        cy.deleteDelivery('Delivery of e2e remote example test');
     });
 
     /**
@@ -64,7 +64,7 @@ describe('Deliveries', () => {
     describe('Delivery list', () => {
 
         it('List contains example e2e delivery', function() {
-            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e example test');
+            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e remote example test');
         });
     });
 });
