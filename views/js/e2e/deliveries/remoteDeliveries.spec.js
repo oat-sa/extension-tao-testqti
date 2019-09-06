@@ -24,7 +24,7 @@ import '../_helpers/routes/backOfficeRoutes';
 
 import base64Test from './fixtures/base64RemoteQtiExampleTestPackage';
 
-describe('Deliveries', () => {
+describe('Remote deliveries', () => {
 
     /**
      * Setup to have a proper delivery:
