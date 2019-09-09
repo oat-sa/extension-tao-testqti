@@ -17,6 +17,7 @@
  */
 
 import {commonInteractionSelectors, orderInteractionSelectors} from '../../../_helpers/selectors/interactionSelectors';
+import {testNavigation} from '../../../_helpers/selectors/navigationSelectors';
 
 import '../../../_helpers/commands/setupCommands';
 import '../../../_helpers/commands/cleanupCommands';
@@ -32,15 +33,15 @@ describe('Order Interaction', () => {
     /**
      * Setup to have a proper delivery
      */
-    // before(() => {
-    //     cy.setupServer();
-    //     cy.addBackOfficeRoutes();
-    //     cy.login('admin');
-    //     cy.importTestPackage(base64Test, testName);
-    //     cy.publishTest(testName);
-    //     cy.setDeliveryForGuests(deliveryName);
-    //     cy.logout();
-    // });
+    before(() => {
+        cy.setupServer();
+        cy.addBackOfficeRoutes();
+        cy.login('admin');
+        cy.importTestPackage(base64Test, testName);
+        cy.publishTest(testName);
+        cy.setDeliveryForGuests(deliveryName);
+        cy.logout();
+    });
 
     /**
      * Log in & start the test
@@ -55,14 +56,14 @@ describe('Order Interaction', () => {
     /**
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
-    // after(() => {
-    //     cy.setupServer();
-    //     cy.addBackOfficeRoutes();
-    //     cy.login('admin');
-    //     cy.deleteItem(testName);
-    //     cy.deleteTest(testName);
-    //     cy.deleteDelivery(deliveryName);
-    // });
+    after(() => {
+        cy.setupServer();
+        cy.addBackOfficeRoutes();
+        cy.login('admin');
+        cy.deleteItem(testName);
+        cy.deleteTest(testName);
+        cy.deleteDelivery(deliveryName);
+    });
 
     /**
      * Interaction tests
@@ -70,6 +71,7 @@ describe('Order Interaction', () => {
     describe('Order interaction', () => {
         const firstChoiceSelector = '.qti-choice[data-identifier=choice_1]';
         const secondChoiceSelector = '.qti-choice[data-identifier=choice_2]';
+        const thirdChoiceSelector = '.qti-choice[data-identifier=choice_3]';
 
         beforeEach(() => {
             cy.get(commonInteractionSelectors.qtiOrder).as('interaction').within(() => {
@@ -85,8 +87,7 @@ describe('Order Interaction', () => {
             cy.get('@addToSelection').should('visible');
         });
 
-        it.only('Able to move choice between choice and result area', () => {
-
+        it('Able to move choice between choice and result area', () => {
             // choice1 is not in result area
             cy.get('@resultArea').within(() => {
                 cy.get(firstChoiceSelector).should('not.exist');
@@ -115,9 +116,128 @@ describe('Order Interaction', () => {
                 cy.get(firstChoiceSelector).should('visible');
             });
         });
-    });
 
-    it.only('Able to reorder choices in result area', () => {
-        //add choice1 and choice2 to result area
+        it('Interaction keep add order in result area', () => {
+            cy.get('@choiceArea').within(() => {
+                cy.get(secondChoiceSelector).click();
+                cy.get(thirdChoiceSelector).click();
+                cy.get(firstChoiceSelector).click();
+            });
+
+            cy.get('@resultArea').then(resultArea => {                
+                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+                // second choice is before all of them
+                expect(secondChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+                expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+
+                //third choice is before first one
+                expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            });
+        });
+
+        it('Able to reorder choices in result area', () => {
+            cy.get('@choiceArea').within(() => {
+                cy.get(firstChoiceSelector).click();
+                cy.get(secondChoiceSelector).click();
+                cy.get(thirdChoiceSelector).click();
+            });
+
+            cy.get('@resultArea').then(resultArea => {                
+                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+                // first choice is before all of them
+                expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+                expect(firstChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+
+                //second choice is before third one
+                expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            });
+
+            // move third choice upper
+            cy.get('@resultArea').within(() => {
+                cy.get(thirdChoiceSelector).click();
+            });
+            cy.get(orderInteractionSelectors.moveBefore).click();
+            cy.get('@resultArea').then(resultArea => {
+                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+                // first choice is before all of them
+                expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+                expect(firstChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+
+                //second choice is after third one
+                expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_PRECEDING).to.not.equal(0);
+            });
+
+            //move first choice downer
+            cy.get('@resultArea').within(() => {
+                cy.get(firstChoiceSelector).click();
+            });
+            cy.get(orderInteractionSelectors.moveAfter).click();
+            cy.get('@resultArea').then(resultArea => {
+                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+               // third choice is before all of them
+               expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+               expect(thirdChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+
+               // first choice is before second one
+               expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            });
+
+            //move first choice to the bottom
+            cy.get(orderInteractionSelectors.moveAfter).click();
+            cy.get('@resultArea').then(resultArea => {
+                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+               // third choice is before all of them
+               expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+               expect(thirdChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+
+               // first choice is after second one
+               expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_PRECEDING).to.not.equal(0);
+            });
+        });
+
+        it('Interaction keeps state when move to next question', () => {
+            cy.get('@choiceArea').within(() => {
+                cy.get(secondChoiceSelector).click();
+                cy.get(thirdChoiceSelector).click();
+                cy.get(firstChoiceSelector).click();
+            });
+
+            // go forward
+            cy.get(testNavigation.nextItem).click();
+            cy.wait('@testRunnerGetItem');
+
+            // go backward
+            cy.get(testNavigation.previousItem).click();
+            cy.wait('@testRunnerGetItem');
+
+            // choices are in in the same orders
+            cy.get('@resultArea').then(resultArea => {                
+                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+                // second choice is before all of them
+                expect(secondChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+                expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+
+                //third choice is before first one
+                expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            });
+        });
     });
 });
