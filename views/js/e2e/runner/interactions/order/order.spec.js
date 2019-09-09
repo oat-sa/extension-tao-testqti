@@ -54,8 +54,8 @@ describe('Order Interaction', () => {
 
         // basic elements
         cy.get(commonInteractionSelectors.qtiOrder).as('interaction').within(() => {
-            cy.get(orderInteractionSelectors.choiceArea).as('choiceArea');
-            cy.get(orderInteractionSelectors.resultArea).as('resultArea');
+            cy.get(commonInteractionSelectors.choiceArea).as('choiceArea');
+            cy.get(commonInteractionSelectors.resultArea).as('resultArea');
             cy.get(orderInteractionSelectors.addToSelection).as('addToSelection');
         });
     });
@@ -254,14 +254,14 @@ describe('Order Interaction', () => {
         cy.nextItem();
         cy.nextItem();
 
-        cy.get('.instruction-container').children().first().should('have.class', 'feedback-info');
+        cy.get('.instruction-container').children().eq(0).should('have.class', 'feedback-info');
         
         // add two item to reach min requirement
         cy.get(firstChoiceSelector).click();
         cy.get(secondChoiceSelector).click();
 
         // min requirement should be success
-        cy.get('.instruction-container').children().first().should('have.class', 'feedback-success');
+        cy.get('.instruction-container').children().eq(0).should('have.class', 'feedback-success');
 
 
         // cannot add more element
@@ -272,6 +272,6 @@ describe('Order Interaction', () => {
         });
 
         // max requirement should be warning
-        cy.get('.instruction-container').children().first().next().should('have.class', 'feedback-warning');
+        cy.get('.instruction-container').children().eq(1).should('have.class', 'feedback-warning');
     });
 });

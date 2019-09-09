@@ -33,8 +33,6 @@ export default {
         interactionArea: '.match-interaction-area'
     },
     orderInteractionSelectors: {
-        choiceArea: '.choice-area',
-        resultArea: '.result-area',
         addToSelection: 'span.icon-add-to-selection',
         removeFromSelection: 'span.icon-remove-from-selection',
         moveBefore: 'span.icon-move-before',
@@ -56,5 +54,10 @@ export default {
         fileUploadInput: '.file-upload input[type="file"]',
         fileUploadPreview: '.file-upload-preview',
         progressBar: '.progressbar'
+    },
+    inlineInteractionSelectors: {
+        choiceDropdown: 'div.qti-inlineChoiceInteraction',
+        choiceOption: '.select2-result-label',
+        choosenOption: '.select2-chosen'
     }
 };
