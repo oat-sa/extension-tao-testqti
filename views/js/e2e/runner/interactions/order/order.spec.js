@@ -17,10 +17,10 @@
  */
 
 import {commonInteractionSelectors, orderInteractionSelectors} from '../../../_helpers/selectors/interactionSelectors';
-import {testNavigation} from '../../../_helpers/selectors/navigationSelectors';
 
 import '../../../_helpers/commands/setupCommands';
 import '../../../_helpers/commands/cleanupCommands';
+import '../../../_helpers/commands/navigationCommands';
 import '../../../_helpers/routes/backOfficeRoutes';
 import '../../../_helpers/routes/runnerRoutes';
 
@@ -51,6 +51,13 @@ describe('Order Interaction', () => {
         cy.addRunnerRoutes();
         cy.guestLogin();
         cy.startTest(testName);
+
+        // basic elements
+        cy.get(commonInteractionSelectors.qtiOrder).as('interaction').within(() => {
+            cy.get(orderInteractionSelectors.choiceArea).as('choiceArea');
+            cy.get(orderInteractionSelectors.resultArea).as('resultArea');
+            cy.get(orderInteractionSelectors.addToSelection).as('addToSelection');
+        });
     });
 
     /**
@@ -65,179 +72,206 @@ describe('Order Interaction', () => {
         cy.deleteDelivery(deliveryName);
     });
 
-    /**
-     * Interaction tests
-     */
-    describe('Order interaction', () => {
-        const firstChoiceSelector = '.qti-choice[data-identifier=choice_1]';
-        const secondChoiceSelector = '.qti-choice[data-identifier=choice_2]';
-        const thirdChoiceSelector = '.qti-choice[data-identifier=choice_3]';
+    const firstChoiceSelector = '.qti-choice[data-identifier=choice_1]';
+    const secondChoiceSelector = '.qti-choice[data-identifier=choice_2]';
+    const thirdChoiceSelector = '.qti-choice[data-identifier=choice_3]';
 
-        beforeEach(() => {
-            cy.get(commonInteractionSelectors.qtiOrder).as('interaction').within(() => {
-                cy.get(orderInteractionSelectors.choiceArea).as('choiceArea');
-                cy.get(orderInteractionSelectors.resultArea).as('resultArea');
-                cy.get(orderInteractionSelectors.addToSelection).as('addToSelection');
-            });
+    it.only('Interaction keeps adding order in result area', () => {
+        cy.get('@choiceArea').within(() => {
+            cy.get(secondChoiceSelector).click();
+            cy.get(thirdChoiceSelector).click();
+            cy.get(firstChoiceSelector).click();
         });
 
-        it('Essential elements exist', () => {
-            cy.get('@interaction').should('visible');
-            cy.get('@resultArea').should('visible');
-            cy.get('@addToSelection').should('visible');
+        cy.get('@resultArea').then(resultArea => {                
+            const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+            const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+            const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+            // second choice is before all of them
+            expect(secondChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+
+            //third choice is before first one
+            expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+        });
+    });
+
+    it('Able to reorder choices in result area', () => {
+        cy.get('@choiceArea').within(() => {
+            cy.get(firstChoiceSelector).click();
+            cy.get(secondChoiceSelector).click();
+            cy.get(thirdChoiceSelector).click();
         });
 
-        it('Able to move choice between choice and result area', () => {
-            // choice1 is not in result area
-            cy.get('@resultArea').within(() => {
-                cy.get(firstChoiceSelector).should('not.exist');
-            });
+        cy.get('@resultArea').then(resultArea => {                
+            const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+            const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+            const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
 
-            // choice1 is in choice area and after click it is not there anymore
-            cy.get('@choiceArea').within(() => {
-                cy.get(firstChoiceSelector).should('visible').click();
-                cy.get(firstChoiceSelector).should('not.exist');
-            });
+            // first choice is before all of them
+            expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            expect(firstChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
 
-            // choice1 is in result area
-            cy.get('@resultArea').within(() => {
-                cy.get(firstChoiceSelector).should('visible').click();
-            });
-            // choice1 selection activate remove action
-            cy.get(orderInteractionSelectors.removeFromSelection).click();
-
-            // choice1 is not in result box anymore
-            cy.get('@resultArea').within(() => {
-                cy.get(firstChoiceSelector).should('not.exist');
-            });
-
-            // choice1 went back to choice area
-            cy.get('@choiceArea').within(() => {
-                cy.get(firstChoiceSelector).should('visible');
-            });
+            //second choice is before third one
+            expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
         });
 
-        it('Interaction keeps adding order in result area', () => {
-            cy.get('@choiceArea').within(() => {
-                cy.get(secondChoiceSelector).click();
-                cy.get(thirdChoiceSelector).click();
-                cy.get(firstChoiceSelector).click();
-            });
+        // move third choice upper
+        cy.get('@resultArea').within(() => {
+            cy.get(thirdChoiceSelector).click();
+        });
+        cy.get(orderInteractionSelectors.moveBefore).click();
+        cy.get('@resultArea').then(resultArea => {
+            const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+            const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+            const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
 
-            cy.get('@resultArea').then(resultArea => {                
-                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
-                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
-                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+            // first choice is before all of them
+            expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            expect(firstChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
 
-                // second choice is before all of them
-                expect(secondChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-                expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-
-                //third choice is before first one
-                expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-            });
+            //second choice is after third one
+            expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_PRECEDING).to.not.equal(0);
         });
 
-        it('Able to reorder choices in result area', () => {
-            cy.get('@choiceArea').within(() => {
-                cy.get(firstChoiceSelector).click();
-                cy.get(secondChoiceSelector).click();
-                cy.get(thirdChoiceSelector).click();
-            });
+        //move first choice downer
+        cy.get('@resultArea').within(() => {
+            cy.get(firstChoiceSelector).click();
+        });
+        cy.get(orderInteractionSelectors.moveAfter).click();
+        cy.get('@resultArea').then(resultArea => {
+            const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+            const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+            const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
 
-            cy.get('@resultArea').then(resultArea => {                
-                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
-                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
-                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+            // third choice is before all of them
+            expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            expect(thirdChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
 
-                // first choice is before all of them
-                expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-                expect(firstChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-
-                //second choice is before third one
-                expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-            });
-
-            // move third choice upper
-            cy.get('@resultArea').within(() => {
-                cy.get(thirdChoiceSelector).click();
-            });
-            cy.get(orderInteractionSelectors.moveBefore).click();
-            cy.get('@resultArea').then(resultArea => {
-                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
-                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
-                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
-
-                // first choice is before all of them
-                expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-                expect(firstChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-
-                //second choice is after third one
-                expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_PRECEDING).to.not.equal(0);
-            });
-
-            //move first choice downer
-            cy.get('@resultArea').within(() => {
-                cy.get(firstChoiceSelector).click();
-            });
-            cy.get(orderInteractionSelectors.moveAfter).click();
-            cy.get('@resultArea').then(resultArea => {
-                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
-                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
-                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
-
-               // third choice is before all of them
-               expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-               expect(thirdChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-
-               // first choice is before second one
-               expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-            });
-
-            //move first choice to the bottom
-            cy.get(orderInteractionSelectors.moveAfter).click();
-            cy.get('@resultArea').then(resultArea => {
-                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
-                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
-                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
-
-               // third choice is before all of them
-               expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-               expect(thirdChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-
-               // first choice is after second one
-               expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_PRECEDING).to.not.equal(0);
-            });
+            // first choice is before second one
+            expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
         });
 
-        it('Interaction keeps state when move to next question', () => {
-            cy.get('@choiceArea').within(() => {
-                cy.get(secondChoiceSelector).click();
-                cy.get(thirdChoiceSelector).click();
-                cy.get(firstChoiceSelector).click();
-            });
+        //move first choice to the bottom
+        cy.get(orderInteractionSelectors.moveAfter).click();
+        cy.get('@resultArea').then(resultArea => {
+            const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+            const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+            const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
 
-            // go forward
-            cy.get(testNavigation.nextItem).click();
-            cy.wait('@testRunnerGetItem');
+            // third choice is before all of them
+            expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            expect(thirdChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
 
-            // go backward
-            cy.get(testNavigation.previousItem).click();
-            cy.wait('@testRunnerGetItem');
-
-            // choices are in in the same orders
-            cy.get('@resultArea').then(resultArea => {                
-                const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
-                const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
-                const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
-
-                // second choice is before all of them
-                expect(secondChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-                expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-
-                //third choice is before first one
-                expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
-            });
+            // first choice is after second one
+            expect(firstChoice.compareDocumentPosition(secondChoice) & Node.DOCUMENT_POSITION_PRECEDING).to.not.equal(0);
         });
+    });
+
+    it('Interaction keeps state when move to next question', () => {
+        cy.get('@choiceArea').within(() => {
+            cy.get(secondChoiceSelector).click();
+            cy.get(thirdChoiceSelector).click();
+            cy.get(firstChoiceSelector).click();
+        });
+
+        // go forward
+        cy.nextItem();
+
+        // go backward
+        cy.previousItem();
+
+        // choices are in in the same orders
+        cy.get('@resultArea').then(resultArea => {                
+            const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
+            const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+            const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+            // second choice is before all of them
+            expect(secondChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+            expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+
+            //third choice is before first one
+            expect(thirdChoice.compareDocumentPosition(firstChoice) & Node.DOCUMENT_POSITION_FOLLOWING).to.not.equal(0);
+        });
+    });
+
+    it('Horizontal orientation basic features are working', () => {
+        // go to horizontal orientation
+        cy.nextItem();
+
+        cy.get('@choiceArea').within(() => {
+            cy.get(secondChoiceSelector).click();
+            cy.get(thirdChoiceSelector).click();
+            cy.get(firstChoiceSelector).click();
+        });
+
+        cy.get('@resultArea').within(() => {
+            cy.get(firstChoiceSelector).should('visible').click();
+            cy.get(secondChoiceSelector).should('visible');
+            cy.get(thirdChoiceSelector).should('visible');
+        });
+
+        // choice1 selection activate remove action
+        cy.get(orderInteractionSelectors.removeFromSelection).click();
+
+        // choice1 is back again in choice area
+        cy.get('@choiceArea').within(() => {
+            cy.get(firstChoiceSelector).should('visible');
+        });
+
+        // select choice2
+        cy.get('@resultArea').within(() => {
+            cy.get(secondChoiceSelector).click();
+        });
+
+        cy.get(orderInteractionSelectors.moveAfter).click();
+
+        cy.get('@resultArea').then(resultArea => {
+            const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
+            const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
+
+            // second choice is after third choice
+            expect(secondChoice.compareDocumentPosition(thirdChoice) & Node.DOCUMENT_POSITION_PRECEDING).to.not.equal(0);
+        });
+    });
+
+    it('Random order list all choices', () => {
+        // go to random choices test
+        cy.nextItem();
+        cy.nextItem();
+
+        cy.get('@choiceArea').within(() => {
+            for (let i = 1; i <= 7; i++) {
+                cy.get(`.qti-choice[data-identifier=choice_${i}]`).should('visible');
+            }
+        });
+    });
+
+    it('Minimun and maximum selection instruction', () => {
+        // go to random choices test
+        cy.nextItem();
+        cy.nextItem();
+
+        cy.get('.instruction-container').children().first().should('have.class', 'feedback-info');
+        
+        // add two item to reach min requirement
+        cy.get(firstChoiceSelector).click();
+        cy.get(secondChoiceSelector).click();
+
+        // min requirement should be success
+        cy.get('.instruction-container').children().first().should('have.class', 'feedback-success');
+
+
+        // cannot add more element
+        cy.get(thirdChoiceSelector).click();
+
+        cy.get('@choiceArea').within(() => {
+            cy.get(thirdChoiceSelector).should('exist');
+        });
+
+        // max requirement should be warning
+        cy.get('.instruction-container').children().first().next().should('have.class', 'feedback-warning');
     });
 });
