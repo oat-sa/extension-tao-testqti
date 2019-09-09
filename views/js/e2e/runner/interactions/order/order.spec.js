@@ -117,7 +117,7 @@ describe('Order Interaction', () => {
             });
         });
 
-        it('Interaction keep add order in result area', () => {
+        it('Interaction keeps adding order in result area', () => {
             cy.get('@choiceArea').within(() => {
                 cy.get(secondChoiceSelector).click();
                 cy.get(thirdChoiceSelector).click();
