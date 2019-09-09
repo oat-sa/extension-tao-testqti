@@ -76,7 +76,7 @@ describe('Order Interaction', () => {
     const secondChoiceSelector = '.qti-choice[data-identifier=choice_2]';
     const thirdChoiceSelector = '.qti-choice[data-identifier=choice_3]';
 
-    it.only('Interaction keeps adding order in result area', () => {
+    it('Interaction keeps adding order in result area', () => {
         cy.get('@choiceArea').within(() => {
             cy.get(secondChoiceSelector).click();
             cy.get(thirdChoiceSelector).click();
