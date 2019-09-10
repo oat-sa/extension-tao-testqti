@@ -58,6 +58,7 @@ export default {
     inlineInteractionSelectors: {
         choiceDropdown: 'div.qti-inlineChoiceInteraction',
         choiceOption: '.select2-result-label',
-        choosenOption: '.select2-chosen'
+        choosenOption: '.select2-chosen',
+        textEntry: '.qti-textEntryInteraction'
     }
 };
