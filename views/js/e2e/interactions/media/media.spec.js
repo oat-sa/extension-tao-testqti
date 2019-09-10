@@ -151,9 +151,6 @@ describe('Interactions', () => {
                     cy.get(mediaInteractionSelectors.playButton).should('exist').and('be.visible');
                     cy.get(mediaInteractionSelectors.pauseButton).should('exist').and('not.be.visible');
 
-                    cy.get(mediaInteractionSelectors.overlayPlayButton).should('exist').and('be.visible');
-                    cy.get(mediaInteractionSelectors.overlayPauseButton).should('exist').and('not.be.visible');
-
                     // sound controls
                     cy.get(mediaInteractionSelectors.muteSound).should('exist').and('be.visible');
                     cy.get(mediaInteractionSelectors.unmuteSound).should('exist').and('not.be.visible');
