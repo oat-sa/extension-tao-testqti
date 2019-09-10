@@ -70,8 +70,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     const INSTANCE_FORMAL_PARAM_TEST_DEFINITION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition';
     const INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
 
-    const TEST_COMPILED_FILENAME = 'compact-test.php';
-    const TEST_COMPILED_META_FILENAME = 'test-meta.php';
+    const TEST_COMPILED_FILENAME = 'compact-test';
+    const TEST_COMPILED_META_FILENAME = 'test-meta';
     const TEST_COMPILED_METADATA_FILENAME = 'test-metadata.json';
     const TEST_COMPILED_INDEX = 'test-index.json';
     const TEST_COMPILED_HREF_INDEX_FILE_PREFIX = 'assessment-item-ref-href-index-';
