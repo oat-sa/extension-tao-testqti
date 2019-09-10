@@ -17,7 +17,7 @@
  */
 
 /**
- * Add extra routes
+ * Add routes for back office
  */
 Cypress.Commands.add('addBackOfficeRoutes', () => {
 

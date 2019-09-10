@@ -77,8 +77,8 @@ describe('Interactions', () => {
 
         it('Loads in proper state', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
-                cy.get(commonInteractionSelectors.e2e slider interaction test).should('exist').and('be.visible').and('have.class', 'feedback-info');
-                cy.get(commonInteractionSelectors.qtiChoice).should('exist').and('be.visible').should('have.length', 4);
+                cy.get(hottextInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
+                cy.get(commonInteractionSelectors.qtiChoice).should('exist').and('be.visible').and('have.length', 4);
             });
         });
 

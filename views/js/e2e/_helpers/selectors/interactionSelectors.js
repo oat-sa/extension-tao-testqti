@@ -17,7 +17,7 @@
  */
 
 /**
- * CSS Selectors for the test runner
+ * CSS Selectors for interactions
  */
 export default {
     commonInteractionSelectors: {
@@ -53,5 +53,22 @@ export default {
         fileUploadInput: '.file-upload input[type="file"]',
         fileUploadPreview: '.file-upload-preview',
         progressBar: '.progressbar'
+    },
+    mediaInteractionSelectors: {
+        mediaPlayer: '.mediaplayer',
+        video: '.video',
+        playButton: '.playback [data-control="play"]',
+        pauseButton: '.playback [data-control="pause"]',
+        overlayPlayButton: '.overlay [data-control="play"]',
+        overlayPauseButton: '.overlay [data-control="pause"]',
+        muteSound: '.sound [data-control="mute"]',
+        unmuteSound: '.sound [data-control="unmute"]',
+        currentTime: '[data-control="time-cur"]',
+        durationTime: '[data-control="time-end"]',
+        seekSliderBar: '.seek .noUi-origin',
+        seekSliderHandle: '.seek .noUi-handle-lower',
+        volumeSliderBar: '.volume .noUi-base', //
+        volumeSliderHandle: '.volume .noUi-handle-upper',
+        volumeSliderPosition: '.volume .noUi-origin.noUi-connect', //
     }
 };
