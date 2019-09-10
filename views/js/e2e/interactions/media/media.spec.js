@@ -94,13 +94,13 @@ describe('Interactions', () => {
      * - Logout
      */
     before(() => {
-        // cy.setupServer();
-        // cy.addBackOfficeRoutes();
-        // cy.login('admin');
-        // cy.importTestPackage(base64Test, 'e2e media interaction test');
-        // cy.publishTest('e2e media interaction test');
-        // cy.setDeliveryForGuests('Delivery of e2e media interaction test');
-        // cy.logout();
+        cy.setupServer();
+        cy.addBackOfficeRoutes();
+        cy.login('admin');
+        cy.importTestPackage(base64Test, 'e2e media interaction test');
+        cy.publishTest('e2e media interaction test');
+        cy.setDeliveryForGuests('Delivery of e2e media interaction test');
+        cy.logout();
     });
 
     /**
@@ -117,12 +117,12 @@ describe('Interactions', () => {
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        // cy.setupServer();
-        // cy.addBackOfficeRoutes();
-        // cy.login('admin');
-        // cy.deleteItem('e2e media interaction test');
-        // cy.deleteTest('e2e media interaction test');
-        // cy.deleteDelivery('Delivery of e2e media interaction test');
+        cy.setupServer();
+        cy.addBackOfficeRoutes();
+        cy.login('admin');
+        cy.deleteItem('e2e media interaction test');
+        cy.deleteTest('e2e media interaction test');
+        cy.deleteDelivery('Delivery of e2e media interaction test');
     });
 
     /**
