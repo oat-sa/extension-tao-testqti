@@ -25,7 +25,7 @@ import '../../_helpers/commands/pointerCommands';
 import '../../_helpers/routes/backOfficeRoutes';
 import '../../_helpers/routes/runnerRoutes';
 
-// import base64Test from './fixtures/base64ExtendedTextInteractionTest';
+import base64Test from './fixtures/base64ExtendedTextInteractionTest';
 
 describe('Interactions', () => {
 
