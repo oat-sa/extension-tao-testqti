@@ -38,13 +38,13 @@ describe('Interactions', () => {
      * - Logout
      */
     before(() => {
-        cy.setupServer();
-        cy.addBackOfficeRoutes();
-        cy.login('admin');
-        cy.importTestPackage(base64Test, 'associate');
-        cy.publishTest('associate');
-        cy.setDeliveryForGuests('Delivery of associate');
-        cy.logout();
+        // cy.setupServer();
+        // cy.addBackOfficeRoutes();
+        // cy.login('admin');
+        // cy.importTestPackage(base64Test, 'associate');
+        // cy.publishTest('associate');
+        // cy.setDeliveryForGuests('Delivery of associate');
+        // cy.logout();
     });
 
     /**
@@ -61,23 +61,52 @@ describe('Interactions', () => {
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        cy.setupServer();
-        cy.addBackOfficeRoutes();
-        cy.login('admin');
-        cy.deleteItem('associate');
-        cy.deleteTest('associate');
-        cy.deleteDelivery('Delivery of associate');
+        // cy.setupServer();
+        // cy.addBackOfficeRoutes();
+        // cy.login('admin');
+        // cy.deleteItem('associate');
+        // cy.deleteTest('associate');
+        // cy.deleteDelivery('Delivery of associate');
     });
 
     /**
      * Interaction tests
      */
     describe('Associate interaction', () => {
-        it('Essential elements exist', function() {
-            cy.get(commonInteractionSelectors.interaction).within(() => {
-                cy.get(commonInteractionSelectors.qtiChoice).should('exist');
+        it('Loads in proper state', function () {
+            cy.get(commonInteractionSelectors.interaction).eq(0).within(() => {
+                cy.get(commonInteractionSelectors.choiceArea).should('exist');
+                cy.get('.qti-choice').should('have.length', 4);
+
                 cy.get(commonInteractionSelectors.resultArea).should('exist');
+                cy.get('.target.lft.filled.active').should('have.length', 0);
             });
+        });
+
+        it.skip('Add item to resultArea', function () {
+            cy.get(commonInteractionSelectors.interaction).eq(0).within(() => {
+                cy.get('.qti-choice[data-identifier=choice_1]').click();
+                cy.get('.qti-choice[data-identifier=choice_1]').should('have.class', 'active');
+                cy.get('.qti-choice').should('have.length', 3);
+
+                cy.get('.target').eq(0).click();
+                cy.get('.target.lft.filled.active').should('have.length', 1);
+            });
+        });
+
+        it.skip('Remove item from resultArea', function () {
+        });
+
+        it.skip('Cannot create same association', function () {
+        });
+
+        it.skip('Removing left association makes row disappear', function () {
+        });
+
+        it.skip('Cannot create association because max amount is reached', function () {
+        });
+
+        it.skip('Interaction keeps state', function () {
         });
 
     });
