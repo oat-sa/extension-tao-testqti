@@ -54,6 +54,9 @@ export default {
         fileUploadPreview: '.file-upload-preview',
         progressBar: '.progressbar'
     },
+    hotTextInteractionSelectors: {
+        checkboxChecked: 'input[type="checkbox"]:checked'
+    },
     mediaInteractionSelectors: {
         mediaPlayer: '.mediaplayer',
         video: '.video',
