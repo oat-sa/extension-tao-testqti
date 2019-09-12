@@ -71,5 +71,11 @@ export default {
         volumeSliderBar: '.volume .noUi-base', //
         volumeSliderHandle: '.volume .noUi-handle-upper',
         volumeSliderPosition: '.volume .noUi-origin.noUi-connect', //
+    },
+    itemInstructionFeedback: {
+        info: 'feedback-info',
+        warning: 'feedback-warning',
+        success: 'feedback-success',
+        error: 'feedback-error'
     }
 };

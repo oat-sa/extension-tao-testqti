@@ -83,7 +83,7 @@ describe('Interactions', () => {
             cy.get(commonInteractionSelectors.interaction).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).should('exist');
                 cy.get(matchInteractionSelectors.interactionArea).find(commonInteractionSelectors.checkboxIcon).should('exist');
-                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
+                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', commonInteractionSelectors.itemInstructionFeedback.info);
             });
         });
 
@@ -92,7 +92,7 @@ describe('Interactions', () => {
                 cy.get(commonInteractionSelectors.checkboxIcon).first().click();
                 cy.get(commonInteractionSelectors.checkboxChecked).should('have.length', 1);
             });
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-info');
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.info);
         });
 
         it('Cannot choose because max reached', function () {
@@ -104,9 +104,9 @@ describe('Interactions', () => {
                 cy.get(commonInteractionSelectors.checkboxChecked).should('have.length', 3);
             });
 
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-warning');
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.warning);
             cy.wait(1000);
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-success');
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.success);
         });
 
         it('Interaction keeps state', function () {
@@ -114,13 +114,13 @@ describe('Interactions', () => {
                 cy.get(commonInteractionSelectors.checkboxIcon).eq(0).click();
                 cy.get(commonInteractionSelectors.checkboxIcon).eq(1).click();
             });
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-success');
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.success);
 
             cy.nextItem();
             cy.previousItem();
 
             cy.get(matchInteractionSelectors.interactionArea).find(commonInteractionSelectors.checkboxChecked).should('have.length', 2);
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-success');
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.success);
         });
 
     });
