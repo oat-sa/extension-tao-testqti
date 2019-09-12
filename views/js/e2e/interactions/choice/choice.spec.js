@@ -20,6 +20,7 @@ import {commonInteractionSelectors} from '../../_helpers/selectors/interactionSe
 
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
+import '../../_helpers/commands/navigationCommands';
 import '../../_helpers/routes/backOfficeRoutes';
 import '../../_helpers/routes/runnerRoutes';
 
@@ -41,9 +42,9 @@ describe('Interactions', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.importTestPackage(base64Test, 'choice');
-        cy.publishTest('choice');
-        cy.setDeliveryForGuests('Delivery of choice');
+        cy.importTestPackage(base64Test, 'e2e choice interaction test');
+        cy.publishTest('e2e extendedtext interaction test');
+        cy.setDeliveryForGuests('Delivery of e2e choice interaction test');
         cy.logout();
     });
 
@@ -54,7 +55,7 @@ describe('Interactions', () => {
         cy.setupServer();
         cy.addRunnerRoutes();
         cy.guestLogin();
-        cy.startTest('choice');
+        cy.startTest('e2e choice interaction test');
     });
 
     /**
@@ -64,9 +65,9 @@ describe('Interactions', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.deleteItem('choice');
-        cy.deleteTest('choice');
-        cy.deleteDelivery('Delivery of choice');
+        cy.deleteItem('e2e choice interaction test');
+        cy.deleteTest('e2e choice interaction test');
+        cy.deleteDelivery('Delivery of e2e choice interaction test');
     });
 
     /**
@@ -77,12 +78,11 @@ describe('Interactions', () => {
             cy.get(commonInteractionSelectors.choiceArea).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).first().click();
                 cy.get(commonInteractionSelectors.qtiChoice).first().should('have.class', 'user-selected');
-
             });
         });
 
         it('Should not allow multiple selection if disabled', function () {
-            cy.get(commonInteractionSelectors.interaction).contains('single selection').parents(commonInteractionSelectors.interaction).within(() => {
+            cy.get(commonInteractionSelectors.interaction).first().within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).first().click();
                 cy.get(commonInteractionSelectors.qtiChoice).first().next().click();
                 cy.get(commonInteractionSelectors.qtiChoice).first().should('not.have.class', 'user-selected');
@@ -92,13 +92,37 @@ describe('Interactions', () => {
         });
 
         it('Should allow multiple selection if enabled', function () {
-            cy.get(commonInteractionSelectors.interaction).contains('multiple selection').parents(commonInteractionSelectors.interaction).within(() => {
+            cy.get(commonInteractionSelectors.interaction).eq(1).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).first().click();
                 cy.get(commonInteractionSelectors.qtiChoice).first().next().click();
                 cy.get(commonInteractionSelectors.qtiChoice).first().should('have.class', 'user-selected');
                 cy.get(commonInteractionSelectors.qtiChoice).first().next().should('have.class', 'user-selected');
 
             });
+        });
+
+        it('Interaction keeps state', function () {
+            cy.get(commonInteractionSelectors.interaction).first().within(() => {
+                cy.get(commonInteractionSelectors.qtiChoice).first().click();
+            });
+
+            cy.get(commonInteractionSelectors.interaction).eq(1).within(() => {
+                cy.get(commonInteractionSelectors.qtiChoice).first().click();
+                cy.get(commonInteractionSelectors.qtiChoice).first().next().click();
+            });
+
+            cy.nextItem();
+            cy.previousItem();
+
+            cy.get(commonInteractionSelectors.interaction).first().within(() => {
+                cy.get(commonInteractionSelectors.qtiChoice).first().should('have.class', 'user-selected');
+            });
+
+            cy.get(commonInteractionSelectors.interaction).eq(1).within(() => {
+                cy.get(commonInteractionSelectors.qtiChoice).first().should('have.class', 'user-selected');
+                cy.get(commonInteractionSelectors.qtiChoice).first().next().should('have.class', 'user-selected');
+            });
+
         });
     });
 });
