@@ -28,6 +28,7 @@ use oat\libCat\result\AbstractResult;
 use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\helpers\TestSessionMemento;
+use oat\taoQtiTest\models\CompilationDataService;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
@@ -330,10 +331,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         if (!isset($this->testMeta)) {
             $directories = $this->getCompilationDirectory();
-            $data = $directories['private']->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME);
-            $data = str_replace('<?php', '', $data);
-            $data = str_replace('?>', '', $data);
-            $this->testMeta = eval($data);
+
+            /** @var CompilationDataService $compilationDataService */
+            $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+            $this->testMeta = $compilationDataService->readCompilationMetadata($directories['private']);
         }
 
         return $this->testMeta;

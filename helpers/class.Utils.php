@@ -227,7 +227,7 @@ class taoQtiTest_helpers_Utils {
 
             $compilationDataService = ServiceManager::getServiceManager()->get(CompilationDataService::SERVICE_ID);
 
-            return $compilationDataService->readPhpCompilationData(
+            return $compilationDataService->readCompilationData(
                 $directory,
                 taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME
             );
