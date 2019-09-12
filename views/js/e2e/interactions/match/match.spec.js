@@ -16,10 +16,16 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import interactionSelectors, {commonInteractionSelectors, matchInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
+import interactionSelectors, {
+    commonInteractionSelectors,
+    hotTextInteractionSelectors,
+    matchInteractionSelectors
+} from '../../_helpers/selectors/interactionSelectors';
 
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
+import '../../_helpers/commands/navigationCommands';
+
 import '../../_helpers/routes/backOfficeRoutes';
 import '../../_helpers/routes/runnerRoutes';
 
@@ -41,9 +47,9 @@ describe('Interactions', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.importTestPackage(base64Test, 'match');
-        cy.publishTest('match');
-        cy.setDeliveryForGuests('Delivery of match');
+        cy.importTestPackage(base64Test, 'e2e match interaction test');
+        cy.publishTest('e2e match interaction test');
+        cy.setDeliveryForGuests('Delivery of e2e match interaction test');
         cy.logout();
     });
 
@@ -54,7 +60,7 @@ describe('Interactions', () => {
         cy.setupServer();
         cy.addRunnerRoutes();
         cy.guestLogin();
-        cy.startTest('match');
+        cy.startTest('e2e match interaction test');
     });
 
     /**
@@ -64,29 +70,58 @@ describe('Interactions', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.deleteItem('match');
-        cy.deleteTest('match');
-        cy.deleteDelivery('Delivery of match');
+        cy.deleteItem('e2e match interaction test');
+        cy.deleteTest('e2e match interaction test');
+        cy.deleteDelivery('Delivery of e2e match interaction test');
     });
 
     /**
      * Interaction tests
      */
     describe('Match interaction', () => {
-        it('Essential elements exist', () => {
+        it('Loads in proper state', () => {
             cy.get(commonInteractionSelectors.interaction).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).should('exist');
-                cy.get(matchInteractionSelectors.interactionArea).within(() => {
-                    cy.get(commonInteractionSelectors.checkboxIcon).should('exist');
-                });
+                cy.get(matchInteractionSelectors.interactionArea).find(commonInteractionSelectors.checkboxIcon).should('exist');
+                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', 'feedback-info');
             });
         });
 
         it('Can interact with checkbox', () => {
             cy.get(matchInteractionSelectors.interactionArea).within(() => {
                 cy.get(commonInteractionSelectors.checkboxIcon).first().click();
-
+                cy.get(commonInteractionSelectors.checkboxChecked).should('have.length', 1);
             });
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-info');
         });
+
+        it('Cannot choose because max reached', function () {
+            cy.get(matchInteractionSelectors.interactionArea).within(() => {
+                cy.get(commonInteractionSelectors.checkboxIcon).eq(0).click();
+                cy.get(commonInteractionSelectors.checkboxIcon).eq(1).click();
+                cy.get(commonInteractionSelectors.checkboxIcon).eq(2).click();
+                cy.get(commonInteractionSelectors.checkboxIcon).eq(3).click();
+                cy.get(commonInteractionSelectors.checkboxChecked).should('have.length', 3);
+            });
+
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-warning');
+            cy.wait(1000);
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-success');
+        });
+
+        it('Interaction keeps state', function () {
+            cy.get(matchInteractionSelectors.interactionArea).within(() => {
+                cy.get(commonInteractionSelectors.checkboxIcon).eq(0).click();
+                cy.get(commonInteractionSelectors.checkboxIcon).eq(1).click();
+            });
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-success');
+
+            cy.nextItem();
+            cy.previousItem();
+
+            cy.get(matchInteractionSelectors.interactionArea).find(commonInteractionSelectors.checkboxChecked).should('have.length', 2);
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', 'feedback-success');
+        });
+
     });
 });

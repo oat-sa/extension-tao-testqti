@@ -26,7 +26,8 @@ export default {
         choiceArea: '.choice-area',
         resultArea: '.result-area',
         itemInstruction: '.item-instruction',
-        checkboxIcon: '.icon-checkbox'
+        checkboxIcon: '.icon-checkbox',
+        checkboxChecked: 'input[type="checkbox"]:checked'
     },
     matchInteractionSelectors: {
         interactionArea: '.match-interaction-area'
@@ -53,9 +54,6 @@ export default {
         fileUploadInput: '.file-upload input[type="file"]',
         fileUploadPreview: '.file-upload-preview',
         progressBar: '.progressbar'
-    },
-    hotTextInteractionSelectors: {
-        checkboxChecked: 'input[type="checkbox"]:checked'
     },
     mediaInteractionSelectors: {
         mediaPlayer: '.mediaplayer',
