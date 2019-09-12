@@ -43,7 +43,7 @@ describe('Interactions', () => {
         cy.addBackOfficeRoutes();
         cy.login('admin');
         cy.importTestPackage(base64Test, 'e2e choice interaction test');
-        cy.publishTest('e2e extendedtext interaction test');
+        cy.publishTest('e2e choice interaction test');
         cy.setDeliveryForGuests('Delivery of e2e choice interaction test');
         cy.logout();
     });

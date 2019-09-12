@@ -38,13 +38,13 @@ describe('Interactions', () => {
      * - Logout
      */
     before(() => {
-        // cy.setupServer();
-        // cy.addBackOfficeRoutes();
-        // cy.login('admin');
-        // cy.importTestPackage(base64Test, 'associate');
-        // cy.publishTest('associate');
-        // cy.setDeliveryForGuests('Delivery of associate');
-        // cy.logout();
+        cy.setupServer();
+        cy.addBackOfficeRoutes();
+        cy.login('admin');
+        cy.importTestPackage(base64Test, 'associate');
+        cy.publishTest('associate');
+        cy.setDeliveryForGuests('Delivery of associate');
+        cy.logout();
     });
 
     /**
@@ -61,12 +61,12 @@ describe('Interactions', () => {
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        // cy.setupServer();
-        // cy.addBackOfficeRoutes();
-        // cy.login('admin');
-        // cy.deleteItem('associate');
-        // cy.deleteTest('associate');
-        // cy.deleteDelivery('Delivery of associate');
+        cy.setupServer();
+        cy.addBackOfficeRoutes();
+        cy.login('admin');
+        cy.deleteItem('associate');
+        cy.deleteTest('associate');
+        cy.deleteDelivery('Delivery of associate');
     });
 
     /**
