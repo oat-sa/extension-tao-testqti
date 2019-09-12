@@ -21,6 +21,7 @@ import {commonInteractionSelectors, sliderInteractionSelectors} from '../../_hel
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
 import '../../_helpers/commands/pointerCommands';
+import '../../_helpers/commands/navigationCommands';
 
 import '../../_helpers/routes/backOfficeRoutes';
 import '../../_helpers/routes/runnerRoutes';
@@ -104,5 +105,25 @@ describe('Interactions', () => {
             });
         });
 
+        it('Step check', function () {
+            cy.get(commonInteractionSelectors.interaction).within(() => {
+                for (let step = 1; step < 10; step++) {
+                    cy.get(sliderInteractionSelectors.sliderHandle).dragToPoint({x: step * 100, y: 0});
+                    cy.get(sliderInteractionSelectors.currentValue).should('have.text', `${step}`);
+                }
+            });
+        });
+
+        it('Interaction keeps state', function () {
+            cy.get(commonInteractionSelectors.interaction).within(() => {
+                cy.get(sliderInteractionSelectors.sliderBar).click('center', {force: true});
+                cy.get(sliderInteractionSelectors.currentValue).should('have.text', '5');
+            });
+
+            cy.nextItem();
+            cy.previousItem();
+
+            cy.get(commonInteractionSelectors.interaction).find(sliderInteractionSelectors.currentValue).should('have.text', '5');
+        });
     });
 });
