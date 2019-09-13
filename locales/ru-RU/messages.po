@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint105\n"
-"PO-Revision-Date: 2019-04-12T12:03:45\n"
+"Project-Id-Version: TAO 3.3.0-sprint110\n"
+"PO-Revision-Date: 2019-09-13T08:47:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s - item %p/%c"
-msgstr "%s — элемент %p/%c"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Невозможно скомпоновать элемент QTI, включенный в тест QTI «%s»."
@@ -328,6 +325,9 @@ msgstr "Отображаемая метка"
 msgid "Displays a customisable magnifier"
 msgstr "Отображает настраиваемую лупу"
 
+msgid "DO NOT CHANGE THE NAME OF THE FILE."
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "Не помечать текущий элемент для дальнейшего пересмотра"
 
@@ -336,6 +336,9 @@ msgstr "Не отображать оповещение во время ожид�
 
 msgid "Download"
 msgstr "Загрузить"
+
+msgid "Download the file and submit manually."
+msgstr ""
 
 msgid "Eliminate choices"
 msgstr "Исключать варианты выбора"
@@ -361,10 +364,10 @@ msgstr "Включить экран пересмотра элемента/нав
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Завершить тест"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Завершить тест"
 
 msgid "Enter a blueprint"
@@ -379,8 +382,9 @@ msgstr "Ошибка"
 msgid "Error during file import"
 msgstr "Ошибка во время импорта файла"
 
-msgid "Error found in the IMS QTI Test:\n %s"
-msgstr "В тесте IMS QTI обнаружена ошибка:\n %s"
+msgid "Error found in the IMS QTI Test:\n"
+"%s"
+msgstr ""
 
 msgid "Expand the review panel"
 msgstr "Развернуть панель пересмотра"
@@ -418,9 +422,6 @@ msgstr "Файл не найден!"
 msgid "Filter"
 msgstr "Фильтр"
 
-msgid "finished"
-msgstr "завершено"
-
 msgid "Fixed"
 msgstr "Зафиксировано"
 
@@ -444,6 +445,9 @@ msgstr "Перейти к следующему элементу"
 
 msgid "Go to the next item?"
 msgstr "Перейти к следующему элементу?"
+
+msgid "Gray on Green"
+msgstr ""
 
 msgid "Gray on green (low contrast option)"
 msgstr "Серый на зеленом (опция низкого контраста)"
@@ -495,6 +499,9 @@ msgstr "Если задана опция категории, балл будет
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
 msgstr "Если задана опция категории, балл будет также обрабатываться по категориям, а все результаты будут включены в результат SCORE_xxx, где xxx — наименование категории."
+
+msgid "If you need help, please contact us."
+msgstr ""
 
 msgid "Import"
 msgstr "Импорт"
@@ -556,11 +563,11 @@ msgstr "Свойства ссылки на элемент"
 msgid "Item Session Control"
 msgstr "Контроль за сеансом для элемента"
 
-msgid "Items"
-msgstr "Элементы"
-
 msgid "items"
 msgstr "элементы"
+
+msgid "Items"
+msgstr "Элементы"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Элементы могут дополнительно назначаться одной или нескольким категориям."
@@ -616,10 +623,10 @@ msgstr "Управление тематическими блоками"
 msgid "Manage test properties"
 msgstr "Управление свойствами тестов"
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr "Управление тестами"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Управление тестами"
 
 msgid "Mark for review"
@@ -676,8 +683,8 @@ msgstr "Минимальная длительность для этой част
 msgid "Missed test package file"
 msgstr "Пропущен файл с пакетом для тестирования"
 
-msgid "Missing required option %s"
-msgstr "Отсутствует обязательная опция %s"
+msgid "Missing required configuration option %s"
+msgstr ""
 
 msgid "Move Down"
 msgstr "Переместить вниз"
@@ -742,6 +749,9 @@ msgstr "Не все тесты могут экспортироваться"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Не перемешано, позиция остается фиксированной."
 
+msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
+msgstr ""
+
 msgid "OK"
 msgstr "OK"
 
@@ -768,6 +778,9 @@ msgstr "Открыть калькулятор"
 
 msgid "or"
 msgstr "или"
+
+msgid "OR"
+msgstr ""
 
 msgid "Ordering"
 msgstr "Упорядочение"
@@ -796,8 +809,14 @@ msgstr "Воспроизвести"
 msgid "Please confirm you want to leave the test."
 msgstr "Подтвердите, что желаете покинуть тест."
 
-msgid "Please continue waiting while we try to restore the connection. Alternatively, you may end this test by downloading it as a file which you will have to submit manually."
-msgstr "Подождите, мы пытаемся восстановить подключение. Кроме того, вы можете пройти этот тест, загрузив его в виде файла и затем отправив его вручную."
+msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
+msgstr ""
+
+msgid "Please continue waiting while we try to restore the connection."
+msgstr ""
+
+msgid "Please stay on this screen."
+msgstr ""
 
 msgid "Please wait while we try to restore the connection."
 msgstr "Подождите, мы пытаемся восстановить подключение."
@@ -1102,6 +1121,9 @@ msgstr "Невозможно обработать зависимость для 
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr "Загрузка будет доступна через <strong>%d</strong> секунд (-ы)"
 
+msgid "The file will save into the Downloads folder on your PC."
+msgstr ""
+
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Следующие идентификаторы не уникальны в пределах теста: %s"
 
@@ -1297,6 +1319,9 @@ msgstr "Весовые коэффициенты"
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "При выборе дочерних элементов каждый элемент обычно доступен для выбора только один раз."
 
+msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
+msgstr ""
+
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "Определяет, может ли приниматься ответ кандидата, по которому превышена максимальная длительность, заданная для элемента."
 
@@ -1377,3 +1402,4 @@ msgstr "Увеличить масштаб"
 
 msgid "Zoom out"
 msgstr "Уменьшить масштаб"
+

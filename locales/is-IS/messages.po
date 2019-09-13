@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint105\n"
-"PO-Revision-Date: 2019-06-21T09:20:07\n"
+"Project-Id-Version: TAO 3.3.0-sprint110\n"
+"PO-Revision-Date: 2019-09-13T08:47:02\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: is-IS\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s - item %p/%c"
-msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
@@ -328,6 +325,9 @@ msgstr ""
 msgid "Displays a customisable magnifier"
 msgstr ""
 
+msgid "DO NOT CHANGE THE NAME OF THE FILE."
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr ""
 
@@ -335,6 +335,9 @@ msgid "Do not show alert on timeout"
 msgstr ""
 
 msgid "Download"
+msgstr ""
+
+msgid "Download the file and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
@@ -361,11 +364,11 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End test"
-msgstr ""
-
 msgid "End Test"
 msgstr "Ljúka prófi"
+
+msgid "End test"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -419,9 +422,6 @@ msgstr ""
 msgid "Filter"
 msgstr "Sía"
 
-msgid "finished"
-msgstr ""
-
 msgid "Fixed"
 msgstr "Fast"
 
@@ -444,6 +444,9 @@ msgid "Go to next item"
 msgstr ""
 
 msgid "Go to the next item?"
+msgstr ""
+
+msgid "Gray on Green"
 msgstr ""
 
 msgid "Gray on green (low contrast option)"
@@ -495,6 +498,9 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+msgstr ""
+
+msgid "If you need help, please contact us."
 msgstr ""
 
 msgid "Import"
@@ -557,11 +563,11 @@ msgstr "Tilvísunareiginleikar atriðis"
 msgid "Item Session Control"
 msgstr "Stjórn á atriðisaðgerð"
 
-msgid "Items"
-msgstr "Atriði"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Atriði"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Atriði má tengja við einn eða fleiri flokka."
@@ -617,11 +623,11 @@ msgstr "Sýsla fyrirmælablokkir"
 msgid "Manage test properties"
 msgstr "Sýsla með eiginleika prófs"
 
-msgid "Manage Tests"
-msgstr "Sýsla með próf"
-
 msgid "Manage tests"
 msgstr ""
+
+msgid "Manage Tests"
+msgstr "Sýsla með próf"
 
 msgid "Mark for review"
 msgstr ""
@@ -677,7 +683,7 @@ msgstr "Lágmarkstími fyrir þennan prófhluta."
 msgid "Missed test package file"
 msgstr ""
 
-msgid "Missing required option %s"
+msgid "Missing required configuration option %s"
 msgstr ""
 
 msgid "Move Down"
@@ -743,6 +749,9 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "Ekki stokkað, staðsetning föst."
 
+msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
+msgstr ""
+
 msgid "OK"
 msgstr ""
 
@@ -768,6 +777,9 @@ msgid "Open Calculator"
 msgstr ""
 
 msgid "or"
+msgstr ""
+
+msgid "OR"
 msgstr ""
 
 msgid "Ordering"
@@ -797,7 +809,13 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
-msgid "Please continue waiting while we try to restore the connection. Alternatively, you may end this test by downloading it as a file which you will have to submit manually."
+msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
+msgstr ""
+
+msgid "Please continue waiting while we try to restore the connection."
+msgstr ""
+
+msgid "Please stay on this screen."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
@@ -1103,6 +1121,9 @@ msgstr ""
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr ""
 
+msgid "The file will save into the Downloads folder on your PC."
+msgstr ""
+
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr ""
 
@@ -1297,6 +1318,9 @@ msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "Þegar valin eru barnaatriði er yfirleitt aðeins hægt að velja hvert einu sinni."
+
+msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "Hvort svar próftaka sem hefur notað meira en hámarkstíma í atriðið skuli tekið gilt."
