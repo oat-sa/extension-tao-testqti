@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint105\n"
-"PO-Revision-Date: 2019-06-21T09:20:05\n"
+"Project-Id-Version: TAO 3.3.0-sprint110\n"
+"PO-Revision-Date: 2019-09-13T08:47:01\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s - item %p/%c"
-msgstr "%s - ítem %p/%c"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Un Elemento QTI involucrado en la Prueba '%s' QTI no pudo ser compilado."
@@ -328,6 +325,9 @@ msgstr ""
 msgid "Displays a customisable magnifier"
 msgstr "Muestra una lupa adaptable"
 
+msgid "DO NOT CHANGE THE NAME OF THE FILE."
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr ""
 
@@ -335,6 +335,9 @@ msgid "Do not show alert on timeout"
 msgstr ""
 
 msgid "Download"
+msgstr ""
+
+msgid "Download the file and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
@@ -361,10 +364,10 @@ msgstr "Activar la pantalla de revisión/navegador de ítems."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finalizar prueba"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finalizar prueba"
 
 msgid "Enter a blueprint"
@@ -420,9 +423,6 @@ msgstr ""
 msgid "Filter"
 msgstr "Filtro"
 
-msgid "finished"
-msgstr "finalizada"
-
 msgid "Fixed"
 msgstr "Fijo"
 
@@ -445,6 +445,9 @@ msgid "Go to next item"
 msgstr ""
 
 msgid "Go to the next item?"
+msgstr ""
+
+msgid "Gray on Green"
 msgstr ""
 
 msgid "Gray on green (low contrast option)"
@@ -496,6 +499,9 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+msgstr ""
+
+msgid "If you need help, please contact us."
 msgstr ""
 
 msgid "Import"
@@ -558,11 +564,11 @@ msgstr "Elemento Referencia Propiedades"
 msgid "Item Session Control"
 msgstr "Control de Sesión de Elemento"
 
-msgid "Items"
-msgstr "Elementos"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Elementos"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
@@ -618,11 +624,11 @@ msgstr "Administrar Bloques de Rúbrica"
 msgid "Manage test properties"
 msgstr "Administrar las propiedades de prueba"
 
-msgid "Manage Tests"
-msgstr "Gestionar Pruebas"
-
 msgid "Manage tests"
 msgstr "Gestionar pruebas"
+
+msgid "Manage Tests"
+msgstr "Gestionar Pruebas"
 
 msgid "Mark for review"
 msgstr "Marcar para revisión"
@@ -678,7 +684,7 @@ msgstr "Minima duración para esta parte de la prueba."
 msgid "Missed test package file"
 msgstr ""
 
-msgid "Missing required option %s"
+msgid "Missing required configuration option %s"
 msgstr ""
 
 msgid "Move Down"
@@ -744,6 +750,9 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "No barajada, la posición permanece fija."
 
+msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
+msgstr ""
+
 msgid "OK"
 msgstr ""
 
@@ -769,6 +778,9 @@ msgid "Open Calculator"
 msgstr "Abrir calculadora"
 
 msgid "or"
+msgstr ""
+
+msgid "OR"
 msgstr ""
 
 msgid "Ordering"
@@ -798,7 +810,13 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
-msgid "Please continue waiting while we try to restore the connection. Alternatively, you may end this test by downloading it as a file which you will have to submit manually."
+msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
+msgstr ""
+
+msgid "Please continue waiting while we try to restore the connection."
+msgstr ""
+
+msgid "Please stay on this screen."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
@@ -1104,6 +1122,9 @@ msgstr "La dependencia a la IMS QTI AssessmentItemRef \"%s\" en el archivo Manif
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr ""
 
+msgid "The file will save into the Downloads folder on your PC."
+msgstr ""
+
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr ""
 
@@ -1299,6 +1320,9 @@ msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "Cuando seleccione elementos secundarios de cada elemento es normalmente elegible para la selección de una sola vez."
+
+msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "Si la respuesta de un candidato que ha superado la duración máxima del elemento aún debe ser aceptada."

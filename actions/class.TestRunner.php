@@ -40,6 +40,7 @@ use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\oatbox\service\ServiceManager;
+use oat\taoQtiTest\models\CompilationDataService;
 
 /**
  * Runs a QTI Test.
@@ -898,15 +899,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule {
         $directories = $this->getCompilationDirectory();
         /** @var tao_models_classes_service_StorageDirectory $privateDirectory */
         $privateDirectory = $directories['private'];
-        $data = $privateDirectory->read(taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME);
-        if ($data == false) {
-            throw new common_exception_InconsistentData('Missing data for compiled test');
-        }
 
-        $data = str_replace('<?php', '', $data);
-        $data = str_replace('?>', '', $data);
-        $meta = eval($data);
-        $this->setTestMeta($meta);
+        /** @var CompilationDataService $compilationDataService */
+        $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
+        $this->setTestMeta($compilationDataService->readCompilationMetadata($privateDirectory));
     }
 
     /**
