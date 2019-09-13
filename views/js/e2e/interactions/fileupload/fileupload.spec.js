@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import {commonInteractionSelectors, fileUploadInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
+import {commonInteractionSelectors, fileUploadInteractionSelectors, itemInstructionFeedback} from '../../_helpers/selectors/interactionSelectors';
 
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
@@ -78,7 +78,7 @@ describe('Interactions', () => {
 
         it('Loads in proper state', function () {
             cy.get(commonInteractionSelectors.interaction).within(() => {
-                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', commonInteractionSelectors.itemInstructionFeedback.info);
+                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', itemInstructionFeedback.info);
                 cy.get(fileUploadInteractionSelectors.fileUploadInput).should('exist').and('be.visible');
                 cy.get(fileUploadInteractionSelectors.fileUploadPreview).should('exist').and('be.visible');
             });
@@ -112,7 +112,7 @@ describe('Interactions', () => {
 
                 cy.get(commonInteractionSelectors.interaction).within(() => {
                     // feedback updated
-                    cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.success);
+                    cy.get(commonInteractionSelectors.itemInstruction).should('have.class', itemInstructionFeedback.success);
                     //progress bar updated
                     cy.get(fileUploadInteractionSelectors.progressBar).find('span').should("have.attr", "title", "100%");
                     // preview updated
@@ -147,7 +147,7 @@ describe('Interactions', () => {
 
                 cy.get(commonInteractionSelectors.interaction).within(() => {
                     // feedback updated
-                    cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.error);
+                    cy.get(commonInteractionSelectors.itemInstruction).should('have.class', itemInstructionFeedback.error);
                     //progress bar updated
                     cy.get(fileUploadInteractionSelectors.progressBar).find('span').should("have.attr", "title", "0%");
                     // preview updated
@@ -182,7 +182,7 @@ describe('Interactions', () => {
 
                 cy.get(commonInteractionSelectors.interaction).within(() => {
                     // feedback updated
-                    cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.error);
+                    cy.get(commonInteractionSelectors.itemInstruction).should('have.class', itemInstructionFeedback.error);
                     //progress bar updated
                     cy.get(fileUploadInteractionSelectors.progressBar).find('span').should("have.attr", "title", "0%");
                     // preview updated

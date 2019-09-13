@@ -16,11 +16,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import interactionSelectors, {
-    commonInteractionSelectors,
-    hotTextInteractionSelectors,
-    matchInteractionSelectors
-} from '../../_helpers/selectors/interactionSelectors';
+import {commonInteractionSelectors, itemInstructionFeedback, matchInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
 
 import '../../_helpers/commands/setupCommands';
 import '../../_helpers/commands/cleanupCommands';
@@ -83,7 +79,7 @@ describe('Interactions', () => {
             cy.get(commonInteractionSelectors.interaction).within(() => {
                 cy.get(commonInteractionSelectors.qtiChoice).should('exist');
                 cy.get(matchInteractionSelectors.interactionArea).find(commonInteractionSelectors.checkboxIcon).should('exist');
-                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', commonInteractionSelectors.itemInstructionFeedback.info);
+                cy.get(commonInteractionSelectors.itemInstruction).should('exist').and('be.visible').and('have.class', itemInstructionFeedback.info);
             });
         });
 
@@ -92,7 +88,7 @@ describe('Interactions', () => {
                 cy.get(commonInteractionSelectors.checkboxIcon).first().click();
                 cy.get(commonInteractionSelectors.checkboxChecked).should('have.length', 1);
             });
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.info);
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', itemInstructionFeedback.info);
         });
 
         it('Cannot choose because max reached', function () {
@@ -104,9 +100,9 @@ describe('Interactions', () => {
                 cy.get(commonInteractionSelectors.checkboxChecked).should('have.length', 3);
             });
 
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.warning);
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', itemInstructionFeedback.warning);
             cy.wait(1000);
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.success);
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', itemInstructionFeedback.success);
         });
 
         it('Interaction keeps state', function () {
@@ -114,13 +110,13 @@ describe('Interactions', () => {
                 cy.get(commonInteractionSelectors.checkboxIcon).eq(0).click();
                 cy.get(commonInteractionSelectors.checkboxIcon).eq(1).click();
             });
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.success);
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', itemInstructionFeedback.success);
 
             cy.nextItem();
             cy.previousItem();
 
             cy.get(matchInteractionSelectors.interactionArea).find(commonInteractionSelectors.checkboxChecked).should('have.length', 2);
-            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', commonInteractionSelectors.itemInstructionFeedback.success);
+            cy.get(commonInteractionSelectors.itemInstruction).should('have.class', itemInstructionFeedback.success);
         });
 
     });
