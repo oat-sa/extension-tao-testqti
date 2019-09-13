@@ -92,13 +92,13 @@ describe('Inline Choice Interaction', () => {
     });
 
     it('Saves value if go to next question', () => {
-        cy.get(inlineInteractionSelectors.textEntry).eq(0).type('question');
+        cy.get(inlineInteractionSelectors.textEntry).eq(0).type('answer');
 
         cy.nextItem();
         cy.previousItem();
 
         // have previously set value
-        cy.get(inlineInteractionSelectors.textEntry).eq(0).should('have.value', 'question');
+        cy.get(inlineInteractionSelectors.textEntry).eq(0).should('have.value', 'answer');
     });
 
     it('Regular expression validator', () => {
