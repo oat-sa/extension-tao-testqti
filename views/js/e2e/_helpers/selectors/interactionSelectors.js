@@ -27,7 +27,8 @@ export default {
         resultArea: '.result-area',
         itemInstruction: '.item-instruction',
         checkboxIcon: '.icon-checkbox',
-        checkboxChecked: 'input[type="checkbox"]:checked'
+        checkboxChecked: 'input[type="checkbox"]:checked',
+        qtiOrder: '.qti-orderInteraction'
     },
     matchInteractionSelectors: {
         interactionArea: '.match-interaction-area'
@@ -71,6 +72,12 @@ export default {
         volumeSliderBar: '.volume .noUi-base', //
         volumeSliderHandle: '.volume .noUi-handle-upper',
         volumeSliderPosition: '.volume .noUi-origin.noUi-connect', //
+    },
+    inlineInteractionSelectors: {
+        choiceDropdown: 'div.qti-inlineChoiceInteraction',
+        choiceOption: '.select2-result-label',
+        choosenOption: '.select2-chosen',
+        textEntry: '.qti-textEntryInteraction'
     },
     itemInstructionFeedback: {
         info: 'feedback-info',
