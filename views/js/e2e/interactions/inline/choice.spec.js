@@ -16,13 +16,13 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import {inlineInteractionSelectors} from '../../../_helpers/selectors/interactionSelectors';
+import {inlineInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
 
-import '../../../_helpers/commands/setupCommands';
-import '../../../_helpers/commands/cleanupCommands';
-import '../../../_helpers/commands/navigationCommands';
-import '../../../_helpers/routes/backOfficeRoutes';
-import '../../../_helpers/routes/runnerRoutes';
+import '../../_helpers/commands/setupCommands';
+import '../../_helpers/commands/cleanupCommands';
+import '../../_helpers/commands/navigationCommands';
+import '../../_helpers/routes/backOfficeRoutes';
+import '../../_helpers/routes/runnerRoutes';
 
 import base64Test from './fixtures/inlineChoiceInteractionTest';
 
@@ -75,7 +75,7 @@ describe('Inline Choice Interaction', () => {
         cy.get(inlineInteractionSelectors.choiceOption).should('have.length', 3).and('be.visible')
 
         // select second option
-        .eq(2).click();
+            .eq(2).click();
 
         cy.get(inlineInteractionSelectors.choosenOption).contains('that');
 

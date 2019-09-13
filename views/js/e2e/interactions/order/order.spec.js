@@ -16,13 +16,13 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import {commonInteractionSelectors, orderInteractionSelectors} from '../../../_helpers/selectors/interactionSelectors';
+import {commonInteractionSelectors, orderInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
 
-import '../../../_helpers/commands/setupCommands';
-import '../../../_helpers/commands/cleanupCommands';
-import '../../../_helpers/commands/navigationCommands';
-import '../../../_helpers/routes/backOfficeRoutes';
-import '../../../_helpers/routes/runnerRoutes';
+import '../../_helpers/commands/setupCommands';
+import '../../_helpers/commands/cleanupCommands';
+import '../../_helpers/commands/navigationCommands';
+import '../../_helpers/routes/backOfficeRoutes';
+import '../../_helpers/routes/runnerRoutes';
 
 import base64Test from './fixtures/orderInteractionTest';
 
@@ -83,7 +83,7 @@ describe('Order Interaction', () => {
             cy.get(firstChoiceSelector).click();
         });
 
-        cy.get('@resultArea').then(resultArea => {                
+        cy.get('@resultArea').then(resultArea => {
             const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
             const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
             const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
@@ -104,7 +104,7 @@ describe('Order Interaction', () => {
             cy.get(thirdChoiceSelector).click();
         });
 
-        cy.get('@resultArea').then(resultArea => {                
+        cy.get('@resultArea').then(resultArea => {
             const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
             const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
             const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
@@ -183,7 +183,7 @@ describe('Order Interaction', () => {
         cy.previousItem();
 
         // choices are in in the same orders
-        cy.get('@resultArea').then(resultArea => {                
+        cy.get('@resultArea').then(resultArea => {
             const firstChoice = resultArea[0].querySelector(firstChoiceSelector);
             const secondChoice = resultArea[0].querySelector(secondChoiceSelector);
             const thirdChoice = resultArea[0].querySelector(thirdChoiceSelector);
@@ -255,7 +255,7 @@ describe('Order Interaction', () => {
         cy.nextItem();
 
         cy.get('.instruction-container').children().eq(0).should('have.class', 'feedback-info');
-        
+
         // add two item to reach min requirement
         cy.get(firstChoiceSelector).click();
         cy.get(secondChoiceSelector).click();
