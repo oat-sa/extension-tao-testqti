@@ -17,7 +17,7 @@
  */
 
 /**
- * Add extra routes
+ * Add routes for the runner
  */
 Cypress.Commands.add('addRunnerRoutes', () => {
     // Register test runner routes

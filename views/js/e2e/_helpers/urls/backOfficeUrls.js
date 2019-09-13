@@ -17,7 +17,7 @@
  */
 
 /**
- * Url object
+ * Urls for back office
  */
 export default {
     itemsPageUrl: 'tao/Main/index?structure=items&ext=taoItems&section=manage_items&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOItem.rdf%23Item',

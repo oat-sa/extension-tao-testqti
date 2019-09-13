@@ -16,13 +16,13 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import {inlineInteractionSelectors} from '../../../_helpers/selectors/interactionSelectors';
+import {inlineInteractionSelectors} from '../../_helpers/selectors/interactionSelectors';
 
-import '../../../_helpers/commands/setupCommands';
-import '../../../_helpers/commands/cleanupCommands';
-import '../../../_helpers/commands/navigationCommands';
-import '../../../_helpers/routes/backOfficeRoutes';
-import '../../../_helpers/routes/runnerRoutes';
+import '../../_helpers/commands/setupCommands';
+import '../../_helpers/commands/cleanupCommands';
+import '../../_helpers/commands/navigationCommands';
+import '../../_helpers/routes/backOfficeRoutes';
+import '../../_helpers/routes/runnerRoutes';
 
 import base64Test from './fixtures/inlineTextEntryInteractionTest';
 
@@ -68,12 +68,12 @@ describe('Inline Choice Interaction', () => {
     it('Basic behaviour', () => {
         cy.get(inlineInteractionSelectors.textEntry).eq(0)
         // have placeholder
-        .should('have.attr', 'placeholder', 'what?')
-        
-        .type('question')
+            .should('have.attr', 'placeholder', 'what?')
 
-        // can type in it
-        .should('have.value', 'question');
+            .type('question')
+
+            // can type in it
+            .should('have.value', 'question');
     });
 
     it('Max length', () => {
@@ -83,12 +83,12 @@ describe('Inline Choice Interaction', () => {
         cy.get('.tooltip').contains('4 characters allowed');
 
         cy.get(inlineInteractionSelectors.textEntry).eq(1).type('100');
-        
+
         cy.get('.tooltip').contains('3/4');
 
         // cannot type more if length is reached
         cy.get(inlineInteractionSelectors.textEntry).eq(1).type('00')
-        .should('have.value', '1000');
+            .should('have.value', '1000');
     });
 
     it('Saves value if go to next question', () => {
@@ -107,7 +107,7 @@ describe('Inline Choice Interaction', () => {
 
         // invalid format should be notified
         cy.get('.tooltip').contains('This is not a valid answer');
-        
+
         cy.get(inlineInteractionSelectors.textEntry).eq(0).clear().type('31');
 
         cy.get('.tooltip').should('be.not.visible');
