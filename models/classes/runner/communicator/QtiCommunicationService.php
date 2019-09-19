@@ -24,7 +24,6 @@ namespace oat\taoQtiTest\models\runner\communicator;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * Class QtiCommunicationService
@@ -43,6 +42,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     const CONFIG_ID = 'taoQtiTest/QtiCommunicationService';
 
     const OPTION_CHANNELS = 'channels';
+    const OPTION_LOG_INPUT = 'log_input';
 
     /**
      * Processes the input messages
@@ -54,6 +54,10 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     public function processInput(QtiRunnerServiceContext $context, array $input)
     {
         $responses = [];
+
+        if ($this->islogInputEnabled()) {
+            $this->logInfo('Test runner message: '.json_encode($input));
+        }
 
         foreach ($input as $data) {
             if (!is_array($data) || !isset($data['channel']) || !isset($data['message'])) {
@@ -154,6 +158,17 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
         $this->propagate($channel);
 
         return $channel;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function islogInputEnabled()
+    {
+        if (!$this->hasOption(self::OPTION_LOG_INPUT)) {
+            return false;
+        }
+        return filter_var($this->getOption(self::OPTION_LOG_INPUT), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
