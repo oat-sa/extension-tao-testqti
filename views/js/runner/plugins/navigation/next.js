@@ -135,42 +135,40 @@ define([
 
                 testRunner.trigger('disablenav');
 
-                if (self.getState('enabled') !== false) {
-                    var warningHelper = nextWarningHelper({
-                        endTestWarning:     testOptions.endTestWarning,
-                        isLast:             context.isLast,
-                        isLinear:           context.isLinear,
-                        nextItemWarning:    nextItemWarning,
-                        nextPartWarning:    nextPartWarning,
-                        nextPart:           mapHelper.getItemPart(map, nextItemPosition),
-                        remainingAttempts:  context.remainingAttempts,
-                        testPartId:         context.testPartId,
-                        unansweredWarning:  testOptions.unansweredWarning,
-                        stats:              statsHelper.getInstantStats(warningScope, testRunner),
-                        unansweredOnly:     unansweredOnly
-                    });
+                var warningHelper = nextWarningHelper({
+                    endTestWarning:     testOptions.endTestWarning,
+                    isLast:             context.isLast,
+                    isLinear:           context.isLinear,
+                    nextItemWarning:    nextItemWarning,
+                    nextPartWarning:    nextPartWarning,
+                    nextPart:           mapHelper.getItemPart(map, nextItemPosition),
+                    remainingAttempts:  context.remainingAttempts,
+                    testPartId:         context.testPartId,
+                    unansweredWarning:  testOptions.unansweredWarning,
+                    stats:              statsHelper.getInstantStats(warningScope, testRunner),
+                    unansweredOnly:     unansweredOnly
+                });
 
-                    if (warningHelper.shouldWarnBeforeEnd()) {
-                        testRunner.trigger(
-                            'confirm.endTest',
-                            messages.getExitMessage(
-                                __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
-                                warningScope, testRunner),
-                            _.partial(triggerNextAction, context), // if the test taker accept
-                            enableNav                              // if he refuse
-                        );
+                if (warningHelper.shouldWarnBeforeEnd()) {
+                    testRunner.trigger(
+                        'confirm.endTest',
+                        messages.getExitMessage(
+                            __('You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test.'),
+                            warningScope, testRunner),
+                        _.partial(triggerNextAction, context), // if the test taker accept
+                        enableNav                              // if he refuse
+                    );
 
-                    } else if (warningHelper.shouldWarnBeforeNext()) {
-                        testRunner.trigger(
-                            'confirm.next',
-                            __('You are about to go to the next item. Click OK to continue and go to the next item.'),
-                            _.partial(triggerNextAction, context), // if the test taker accept
-                            enableNav                              // if he refuse
-                        );
+                } else if (warningHelper.shouldWarnBeforeNext()) {
+                    testRunner.trigger(
+                        'confirm.next',
+                        __('You are about to go to the next item. Click OK to continue and go to the next item.'),
+                        _.partial(triggerNextAction, context), // if the test taker accept
+                        enableNav                              // if he refuse
+                    );
 
-                    } else {
-                        triggerNextAction(context);
-                    }
+                } else {
+                    triggerNextAction(context);
                 }
             }
 
@@ -187,12 +185,16 @@ define([
             //attach behavior
             this.$element.on('click', function(e){
                 e.preventDefault();
-                testRunner.trigger('nav-next');
+                if (self.getState('enabled') === true) {
+                    self.setState('enabled', false);
+                    testRunner.trigger('nav-next');
+                }
             });
 
             if(testConfig.allowShortcuts && pluginShortcuts.trigger){
                 shortcut.add(namespaceHelper.namespaceAll(pluginShortcuts.trigger, this.getName(), true), function(e) {
                     if (self.getState('enabled') === true) {
+                        self.setState('enabled', false);
                         testRunner.trigger('nav-next', true);
                     }
                 }, {
