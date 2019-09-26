@@ -73,7 +73,8 @@ define([
                     return Promise.resolve();
                 }
 
-
+                self.trigger('disableitem');
+                
                 if ( isInteracting && testContext.enableValidateResponses &&  testContext.validateResponses) {
                     return new Promise(function (resolve, reject) {
                         if(_.size(currentItemHelper.getDeclarations(self)) === 0){
