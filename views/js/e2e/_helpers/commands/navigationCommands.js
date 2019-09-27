@@ -18,6 +18,9 @@
 
 import navigationSelectors from "../selectors/navigationSelectors";
 
+/**
+ * Navigation Commands
+ */
 Cypress.Commands.add('nextItem', () => {
     cy.log('COMMAND: nextItem');
     cy.get(navigationSelectors.testNavigation.nextItem).click();
