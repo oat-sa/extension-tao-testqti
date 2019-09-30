@@ -18,6 +18,8 @@
  *
  */
 
+use oat\tao\model\service\ServiceFileStorage;
+use oat\taoQtiItem\model\ItemModel;
 use oat\taoQtiTest\models\runner\RunnerService;
 use qtism\runtime\rendering\markup\xhtml\XhtmlRenderingEngine;
 use qtism\data\storage\xml\XmlStorageException;
@@ -521,16 +523,28 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     }
 
     /**
-     *
-     * @param AssessmentItemRef $item
-     * @return common_report_Report
+     * Get configured item compiler
+     * @param core_kernel_classes_Resource $resource
+     * @param ServiceFileStorage $storage
+     * @return taoItems_models_classes_ItemCompiler
      */
-    protected function compileJsonItem(AssessmentItemRef &$assessmentItemRef) {
-        $jsonCompiler = new QtiJsonItemCompiler(
+    private function getItemCompiler(core_kernel_classes_Resource $resource, ServiceFileStorage $storage)
+    {
+        /** @var ItemModel $itemModelService */
+        $itemModelService = $this->getServiceLocator()->get(ItemModel::SERVICE_ID);
+        return $itemModelService->getItemCompiler($resource, $storage);
+    }
+
+    /**
+     * @param AssessmentItemRef $assessmentItemRef
+     * @return mixed
+     * @throws common_exception_Error
+     */
+    protected function compileJsonItem(AssessmentItemRef $assessmentItemRef) {
+        $jsonCompiler = $this->getItemCompiler(
             new core_kernel_classes_Resource($assessmentItemRef->getHref()),
             $this->getStorage()
         );
-        $jsonCompiler->setServiceLocator($this->getServiceLocator());
         $jsonCompiler->setContext($this->getContext());
         $report = $jsonCompiler->compileJson();
         if ($report->getType() == common_report_Report::TYPE_SUCCESS) {
