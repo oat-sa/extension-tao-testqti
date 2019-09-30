@@ -144,7 +144,7 @@ trait RunnerParamParserTrait
 
     /**
      * Save the item responses
-     * Requires params itemDuration and optionaly consumedExtraTime
+     * Requires params itemDuration and optionally consumedExtraTime
      *
      * @param boolean $emptyAllowed if we allow empty responses
      * @return boolean true if saved
@@ -160,6 +160,10 @@ trait RunnerParamParserTrait
             $itemResponse = $this->getRequestParameter('itemResponse')
                 ? json_decode($this->getRequestParameter('itemResponse'), true)
                 : null;
+
+            if ($serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemDefinition) {
+                throw new QtiRunnerItemResponseException(__('Item response identifier does not match current item'));
+            }
 
             if (!is_null($itemResponse) && !empty($itemDefinition)) {
                 $responses = $this
