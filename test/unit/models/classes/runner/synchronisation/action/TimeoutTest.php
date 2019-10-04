@@ -29,6 +29,7 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
 use PHPUnit_Framework_MockObject_MockObject;
+use qtism\data\ExtendedAssessmentItemRef;
 
 class TimeoutTest extends TestCase
 {
@@ -52,6 +53,10 @@ class TimeoutTest extends TestCase
         $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->testSession = $this->createMock(TestSession::class);
         $this->eventManager = $this->createMock(EventManager::class);
+        $itemRef = $this->createMock(ExtendedAssessmentItemRef::class);
+        $itemRef
+            ->method('getIdentifier')
+            ->willReturn('expectedItemDefinition');
 
         $this->qtiRunnerService
             ->method('getServiceContext')
@@ -60,6 +65,10 @@ class TimeoutTest extends TestCase
         $this->qtiRunnerServiceContext
             ->method('getTestSession')
             ->willReturn($this->testSession);
+
+        $this->qtiRunnerServiceContext
+            ->method('getCurrentAssessmentItemRef')
+            ->willReturn($itemRef);
     }
 
     /**
@@ -280,6 +289,19 @@ class TimeoutTest extends TestCase
             ->with($this->qtiRunnerServiceContext, 'expectedItemDefinition', $expectedItemResponse);
 
         $this->createSubjectWithParameters($requestParameters)->process();
+
+    }
+
+    public function testWrongCurrentItem()
+    {
+        $expectedItemResponse = ['item' => 'response'];
+        $requestParameters = [
+                'itemDefinition' => 'wrongItemDefinition',
+                'itemResponse' => json_encode($expectedItemResponse),
+            ] + $this->getRequiredRequestParameters();
+
+        $response = $this->createSubjectWithParameters($requestParameters)->process();
+        $this->assertFalse($response['success']);
     }
 
     /**
