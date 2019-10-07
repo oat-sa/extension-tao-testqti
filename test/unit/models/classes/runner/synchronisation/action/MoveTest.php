@@ -32,6 +32,7 @@ use oat\taoQtiTest\models\runner\synchronisation\action\Move;
 use PHPUnit_Framework_MockObject_MockObject;
 use qtism\runtime\tests\Route;
 use qtism\runtime\tests\RouteItem;
+use qtism\data\ExtendedAssessmentItemRef;
 
 class MoveTest extends TestCase
 {
@@ -55,6 +56,10 @@ class MoveTest extends TestCase
         $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->testSession = $this->createMock(TestSession::class);
         $this->eventManager = $this->createMock(EventManager::class);
+        $itemRef = $this->createMock(ExtendedAssessmentItemRef::class);
+        $itemRef
+            ->method('getIdentifier')
+            ->willReturn('expectedItemDefinition');
 
         $this->qtiRunnerService
             ->method('getServiceContext')
@@ -63,6 +68,10 @@ class MoveTest extends TestCase
         $this->qtiRunnerServiceContext
             ->method('getTestSession')
             ->willReturn($this->testSession);
+
+        $this->qtiRunnerServiceContext
+            ->method('getCurrentAssessmentItemRef')
+            ->willReturn($itemRef);
     }
 
     /**
@@ -315,6 +324,18 @@ class MoveTest extends TestCase
             ->with($this->qtiRunnerServiceContext, 'expectedItemDefinition', $expectedItemResponse);
 
         $this->createSubjectWithParameters($requestParameters)->process();
+    }
+
+    public function testWrongCurrentItem()
+    {
+        $expectedItemResponse = ['item' => 'response'];
+        $requestParameters = [
+                'itemDefinition' => 'wrongItemDefinition',
+                'itemResponse' => json_encode($expectedItemResponse),
+            ] + $this->getRequiredRequestParameters();
+
+        $response = $this->createSubjectWithParameters($requestParameters)->process();
+        $this->assertFalse($response['success']);
     }
 
     /**
