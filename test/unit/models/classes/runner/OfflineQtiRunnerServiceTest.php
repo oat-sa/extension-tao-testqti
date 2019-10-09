@@ -6,17 +6,17 @@ use oat\generis\test\TestCase;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
-use PHPUnit_Framework_MockObject_MockObject;
+use oat\generis\test\MockObject;
 
 class OfflineQtiRunnerServiceTest extends TestCase
 {
     /** @var OfflineQtiRunnerService */
     private $offlineQtiRunnerService;
 
-    /** @var QtiRunnerService|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerService|MockObject */
     private $qtiRunnerServiceMock;
 
-    /** @var RunnerServiceContext|PHPUnit_Framework_MockObject_MockObject */
+    /** @var RunnerServiceContext|MockObject */
     private $serviceContextMock;
 
     /**
