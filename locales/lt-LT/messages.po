@@ -1378,9 +1378,6 @@ msgid "You are about to submit the test. You will not be able to access this tes
 msgstr "Jūs ketinate pateikti savo testą. Jūs negalėsite pasiekti šio testo, kai jis bus pateiktas. Spauskite Taip norėdami pateikti testą."
 
 msgid "You are encountering a prolonged connectivity loss."
-msgstr ""
-
-msgid "You are encountering a prolonged connectivity loss. "
 msgstr "Jūs turite užsitęsusius ryšio trūkčius."
 
 msgid "You have %s item(s) marked for review."
