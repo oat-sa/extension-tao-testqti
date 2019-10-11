@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use oat\generis\test\MockObject;
 
 /**
  * Class QtiCommunicationServiceTest
@@ -208,7 +209,7 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
 
     /**
      * @param $sessionState
-     * @return QtiRunnerServiceContext|\PHPUnit_Framework_MockObject_MockObject test session mock
+     * @return QtiRunnerServiceContext|MockObject test session mock
      */
     private function getQtiRunnerServiceContext($sessionState)
     {

@@ -28,20 +28,21 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
-use PHPUnit_Framework_MockObject_MockObject;
+use oat\generis\test\MockObject;
+use qtism\data\ExtendedAssessmentItemRef;
 
 class TimeoutTest extends TestCase
 {
-    /** @var QtiRunnerService|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerService|MockObject */
     private $qtiRunnerService;
 
-    /** @var QtiRunnerServiceContext|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerServiceContext|MockObject */
     private $qtiRunnerServiceContext;
 
-    /** @var TestSession|PHPUnit_Framework_MockObject_MockObject */
+    /** @var TestSession|MockObject */
     private $testSession;
 
-    /** @var EventManager|PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventManager|MockObject */
     private $eventManager;
 
     protected function setUp()
@@ -52,6 +53,10 @@ class TimeoutTest extends TestCase
         $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->testSession = $this->createMock(TestSession::class);
         $this->eventManager = $this->createMock(EventManager::class);
+        $itemRef = $this->createMock(ExtendedAssessmentItemRef::class);
+        $itemRef
+            ->method('getIdentifier')
+            ->willReturn('expectedItemDefinition');
 
         $this->qtiRunnerService
             ->method('getServiceContext')
@@ -60,6 +65,10 @@ class TimeoutTest extends TestCase
         $this->qtiRunnerServiceContext
             ->method('getTestSession')
             ->willReturn($this->testSession);
+
+        $this->qtiRunnerServiceContext
+            ->method('getCurrentAssessmentItemRef')
+            ->willReturn($itemRef);
     }
 
     /**
@@ -280,6 +289,19 @@ class TimeoutTest extends TestCase
             ->with($this->qtiRunnerServiceContext, 'expectedItemDefinition', $expectedItemResponse);
 
         $this->createSubjectWithParameters($requestParameters)->process();
+
+    }
+
+    public function testWrongCurrentItem()
+    {
+        $expectedItemResponse = ['item' => 'response'];
+        $requestParameters = [
+                'itemDefinition' => 'wrongItemDefinition',
+                'itemResponse' => json_encode($expectedItemResponse),
+            ] + $this->getRequiredRequestParameters();
+
+        $response = $this->createSubjectWithParameters($requestParameters)->process();
+        $this->assertFalse($response['success']);
     }
 
     /**

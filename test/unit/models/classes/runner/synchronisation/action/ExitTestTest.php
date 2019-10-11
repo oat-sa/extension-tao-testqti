@@ -26,17 +26,17 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\ExitTest;
-use PHPUnit_Framework_MockObject_MockObject;
+use oat\generis\test\MockObject;
 
 class ExitTestTest extends TestCase
 {
-    /** @var QtiRunnerService|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerService|MockObject */
     private $qtiRunnerService;
 
-    /** @var QtiRunnerServiceContext|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerServiceContext|MockObject */
     private $qtiRunnerServiceContext;
 
-    /** @var TestSession|PHPUnit_Framework_MockObject_MockObject */
+    /** @var TestSession|MockObject */
     private $testSession;
 
     protected function setUp()
