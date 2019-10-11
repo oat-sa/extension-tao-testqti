@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint110\n"
-"PO-Revision-Date: 2019-09-13T08:47:03\n"
+"Project-Id-Version: TAO 3.4.0-sprint112\n"
+"PO-Revision-Date: 2019-10-11T09:03:23\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -364,10 +364,10 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr "Fine test"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Fine test"
 
 msgid "Enter a blueprint"
@@ -560,6 +560,9 @@ msgstr "Item %d of %d"
 msgid "Item Reference Properties"
 msgstr "Item Reference Properties"
 
+msgid "Item response identifier does not match current item"
+msgstr ""
+
 msgid "Item Session Control"
 msgstr "Sessione di controllo item"
 
@@ -623,11 +626,11 @@ msgstr "Gestisci Blocchi Rubrica"
 msgid "Manage test properties"
 msgstr "Gestisci proprietà del test"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "Gestisci Test"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr "Segna per la revisione"
@@ -776,10 +779,10 @@ msgstr "Visualizzare solo gli item senza risposta"
 msgid "Open Calculator"
 msgstr "Calcolatrice"
 
-msgid "or"
+msgid "OR"
 msgstr ""
 
-msgid "OR"
+msgid "or"
 msgstr ""
 
 msgid "Ordering"

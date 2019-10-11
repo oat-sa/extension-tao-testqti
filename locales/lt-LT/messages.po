@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.4.0-sprint112\n"
-"PO-Revision-Date: 2019-10-09T09:03:03\n"
+"PO-Revision-Date: 2019-10-11T09:03:24\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -393,8 +393,8 @@ msgstr "Praplėsti apžvalgos skydelį"
 msgid "Export"
 msgstr "Eksportuoti"
 
-msgid "Export failed for the test \"%s\""
-msgstr "Nepavyko testo \"%s\" eksportavimas"
+msgid "Export failed for the test \"%s"
+msgstr ""
 
 msgid "Export metadata"
 msgstr "Eksportuoti metaduomenis"
@@ -405,8 +405,8 @@ msgstr "Eksportuoti QTI 2.1 Testų Paketą"
 msgid "Export QTI 2.2 Test Package"
 msgstr "Eksportuoti QTI 2.2 Testų Paketą"
 
-msgid "Export successful for the test \"%s\""
-msgstr "Pavyko testo \"%s\" eksportavimas"
+msgid "Export successful for the test \"%s"
+msgstr ""
 
 msgid "Feedback block"
 msgstr "Atsiliepimo blokas"
@@ -510,8 +510,8 @@ msgstr "Importuoti"
 msgid "Import a QTI/APIP Content Package"
 msgstr "Importuoti QTI/APIP Turinio Paketą"
 
-msgid "Import QTI TEST into \"%s\""
-msgstr "Importuoti QTI TEST į \"%s\""
+msgid "Import QTI TEST into \"%s"
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "IMS QTI Elementas nurodytas kaip \"%s\" IMS Manifesto faile negali būti importuojamas."
@@ -663,8 +663,8 @@ msgstr "Maksimali trukmė šiam skyriui."
 msgid "Maximum duration for this test part."
 msgstr "Maksimali trukmė šio testo daliai."
 
-msgid "Metadata export is not available for test \"%s\"."
-msgstr "Negalimas meta duomenų eksportavimas \"%s\" testui."
+msgid "Metadata export is not available for test \"%s."
+msgstr ""
 
 msgid "Minimum Duration"
 msgstr "Minimali Trukmė"
@@ -1379,6 +1379,9 @@ msgstr "Jūs ketinate pateikti savo testą. Jūs negalėsite pasiekti šio testo
 
 msgid "You are encountering a prolonged connectivity loss."
 msgstr "Jūs turite užsitęsusius ryšio trūkčius."
+
+msgid "You are encountering a prolonged connectivity loss. "
+msgstr ""
 
 msgid "You have %s item(s) marked for review."
 msgstr "Jūs turite %s elementą(-us) pažymėtus peržiūrai."
