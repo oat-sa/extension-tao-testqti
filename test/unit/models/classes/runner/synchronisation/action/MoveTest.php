@@ -29,23 +29,23 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
-use PHPUnit_Framework_MockObject_MockObject;
+use oat\generis\test\MockObject;
 use qtism\runtime\tests\Route;
 use qtism\runtime\tests\RouteItem;
 use qtism\data\ExtendedAssessmentItemRef;
 
 class MoveTest extends TestCase
 {
-    /** @var QtiRunnerService|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerService|MockObject */
     private $qtiRunnerService;
 
-    /** @var QtiRunnerServiceContext|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerServiceContext|MockObject */
     private $qtiRunnerServiceContext;
 
-    /** @var TestSession|PHPUnit_Framework_MockObject_MockObject */
+    /** @var TestSession|MockObject */
     private $testSession;
 
-    /** @var EventManager|PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventManager|MockObject */
     private $eventManager;
 
     protected function setUp()

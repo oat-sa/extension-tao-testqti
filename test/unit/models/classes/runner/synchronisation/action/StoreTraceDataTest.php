@@ -28,23 +28,23 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
-use PHPUnit_Framework_MockObject_MockObject;
+use oat\generis\test\MockObject;
 
 class StoreTraceDataTest extends TestCase
 {
-    /** @var QtiRunnerService|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerService|MockObject */
     private $qtiRunnerService;
 
-    /** @var QtiRunnerServiceContext|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerServiceContext|MockObject */
     private $qtiRunnerServiceContext;
 
-    /** @var TestSession|PHPUnit_Framework_MockObject_MockObject */
+    /** @var TestSession|MockObject */
     private $testSession;
 
-    /** @var EventManager|PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventManager|MockObject */
     private $eventManager;
 
-    /** @var QtiRunnerMap|PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerMap|MockObject */
     private $qtiRunnerMap;
 
     protected function setUp()
