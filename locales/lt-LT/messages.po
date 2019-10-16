@@ -394,7 +394,7 @@ msgid "Export"
 msgstr "Eksportuoti"
 
 msgid "Export failed for the test \"%s"
-msgstr ""
+msgstr "Nepavyko testo \"%s eksportavimas"
 
 msgid "Export metadata"
 msgstr "Eksportuoti metaduomenis"
@@ -406,7 +406,7 @@ msgid "Export QTI 2.2 Test Package"
 msgstr "Eksportuoti QTI 2.2 Testų Paketą"
 
 msgid "Export successful for the test \"%s"
-msgstr ""
+msgstr "Pavyko testo \"%s eksportavimas"
 
 msgid "Feedback block"
 msgstr "Atsiliepimo blokas"
@@ -664,7 +664,7 @@ msgid "Maximum duration for this test part."
 msgstr "Maksimali trukmė šio testo daliai."
 
 msgid "Metadata export is not available for test \"%s."
-msgstr ""
+msgstr "Negalimas meta duomenų eksportavimas \"%s testui."
 
 msgid "Minimum Duration"
 msgstr "Minimali Trukmė"
