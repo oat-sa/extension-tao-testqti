@@ -36,6 +36,9 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.get(setupSelectors.testsPage.testImportButton).click();
 
     // Wait until test import request finishes
+    if (Cypress.env('taoTaskQueue') === 'true') {
+        cy.wait('@taskQueueWebApiGetAll');
+    }
     cy.wait('@testImportIndex');
 
     // Upload example qti test file to file input
@@ -58,14 +61,41 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     // Import selected example test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
-    // Wait until test import request finishes
-    cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 15000 });
+    /*
+     * Two different processes to handle different UX
+     * for taoTaskQueue enabled or disabled
+     */
+    if (Cypress.env('taoTaskQueue') === 'true') {
+        cy.wait(Array(4).fill('@taskQueueWebApi')); // skip?
 
-    // Continue
-    cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
+        // Listen to TaskQueue polling until test is imported
+        // Recursive with a limit on depth
+        const pollTaskQueue = (retries = 5) => {
+            cy.wait('@taskQueueWebApiGetAll').then((xhr) => {
+                if (xhr.response.body.data[0].category === 'import' &&
+                    xhr.response.body.data[0].status === 'completed') {
+                    // Our test import completed, woohoo
+                    console.log('completed');
+                }
+                else if (retries > 0) {
+                    pollTaskQueue(retries - 1);
+                }
+            });
+        };
+        // begin:
+        pollTaskQueue();
 
-    // Wait until publish button appears again
-    cy.wait('@editTest');
+    }
+    else {
+        // Wait until test import request finishes
+        cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 15000 });
+
+        // Continue
+        cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
+
+        // Wait until publish button appears again
+        cy.wait('@editTest');
+    }
 });
 
 Cypress.Commands.add('publishTest', (testName, deliveryType) => {
@@ -89,7 +119,7 @@ Cypress.Commands.add('publishTest', (testName, deliveryType) => {
     cy.get(setupSelectors.testsPage.testPublishButton).click();
 
     if(deliveryType === 'remote') {
-        
+
         // Selects TAO Remote tab
         cy.get(setupSelectors.testsPage.deliveryTypeTabs).contains('TAO Remote').click();
     }
