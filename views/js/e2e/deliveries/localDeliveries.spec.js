@@ -26,6 +26,8 @@ import base64Test from './fixtures/base64LocalQtiExampleTestPackage';
 
 describe('Local deliveries', () => {
 
+    const testTitle = 'e2e local example test';
+
     /**
      * Setup to have a proper delivery:
      * - Start server
@@ -40,9 +42,9 @@ describe('Local deliveries', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.importTestPackage(base64Test, 'e2e local example test');
-        cy.publishTest('e2e local example test');
-        cy.setDeliveryForGuests('e2e local example test');
+        cy.importTestPackage(base64Test, testTitle);
+        cy.publishTest(testTitle);
+        cy.setDeliveryForGuests(testTitle);
         cy.logout();
         cy.guestLogin();
     });
@@ -53,9 +55,9 @@ describe('Local deliveries', () => {
     afterEach(() => {
         cy.guestLogout();
         cy.login('admin');
-        cy.deleteItem('e2e local example test');
-        cy.deleteTest('e2e local example test');
-        cy.deleteDelivery('Delivery of e2e local example test');
+        cy.deleteItem(testTitle);
+        cy.deleteTest(testTitle);
+        cy.deleteDelivery(`Delivery of ${testTitle}`);
     });
 
     /**
@@ -64,7 +66,7 @@ describe('Local deliveries', () => {
     describe('Delivery list', () => {
 
         it('List contains local example e2e delivery', function() {
-            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e local example test');
+            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains(`Delivery of ${testTitle}`);
         });
     });
 });
