@@ -20,6 +20,39 @@ import backOfficeUrls from '../urls/backOfficeUrls';
 import setupSelectors from '../selectors/setupSelectors';
 import runnerSelectors from '../selectors/runnerSelectors';
 
+
+/**
+ * Listen to TaskQueue polling until a response matches
+ * @example
+ * pollTaskQueue({ category: 'import', status: 'completed' }, 3);
+ *
+ * @param {Object} criteria - response data parameters we are waiting for
+ * @param {String} [criteria.category] - category value we are waiting for
+ * @param {String} [criteria.status] - status value we are waiting for
+ * @param {Integer} [retries=5] - max number of `getAll` requests to look at before timing out
+ */
+const pollTaskQueue = (criteria, retries = 5) => {
+    // Recursive fn with a limit on depth
+    const awaitTaskQueue = (retries) => {
+        cy.wait('@taskQueueWebApiGetAll').then((xhr) => {
+            cy.log(JSON.stringify(xhr.response.body.data[0])); //
+            if (Object.keys(criteria).every((key) => {
+                cy.log(criteria[key], xhr.response.body.data[0][key]); //
+                return criteria[key] === xhr.response.body.data[0][key];
+            })) {
+                // Task Queue entry contains what we're looking for, woohoo
+                cy.log(`${JSON.stringify(criteria)} : OK`);
+            }
+            else if (retries > 0) {
+                awaitTaskQueue(retries - 1);
+            }
+        });
+    }
+    // begin:
+    awaitTaskQueue(retries);
+};
+
+
 /**
  * Setup Commands
  */
@@ -35,7 +68,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     // Select test import
     cy.get(setupSelectors.testsPage.testImportButton).click();
 
-    // Wait until test import request finishes
+    // Wait until test import form is loaded
     if (Cypress.env('taoTaskQueue') === 'true') {
         cy.wait('@taskQueueWebApiGetAll');
     }
@@ -66,25 +99,9 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
      * for taoTaskQueue enabled or disabled
      */
     if (Cypress.env('taoTaskQueue') === 'true') {
-        cy.wait(Array(4).fill('@taskQueueWebApi')); // skip?
+        cy.wait(Array(4).fill('@taskQueueWebApi'));
 
-        // Listen to TaskQueue polling until test is imported
-        // Recursive with a limit on depth
-        const pollTaskQueue = (retries = 5) => {
-            cy.wait('@taskQueueWebApiGetAll').then((xhr) => {
-                if (xhr.response.body.data[0].category === 'import' &&
-                    xhr.response.body.data[0].status === 'completed') {
-                    // Our test import completed, woohoo
-                    console.log('completed');
-                }
-                else if (retries > 0) {
-                    pollTaskQueue(retries - 1);
-                }
-            });
-        };
-        // begin:
-        pollTaskQueue();
-
+        pollTaskQueue({ category: 'import', status: 'completed' });
     }
     else {
         // Wait until test import request finishes
@@ -98,7 +115,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     }
 });
 
-Cypress.Commands.add('publishTest', (testName, deliveryType) => {
+Cypress.Commands.add('publishTest', (testName, deliveryType = 'local') => {
     cy.log('COMMAND: publishTest', testName, deliveryType);
 
     // Visit Tests page
@@ -115,11 +132,10 @@ Cypress.Commands.add('publishTest', (testName, deliveryType) => {
 
     cy.wait('@editTest');
 
-    // Publish example test
+    // Publish selected test
     cy.get(setupSelectors.testsPage.testPublishButton).click();
 
-    if(deliveryType === 'remote') {
-
+    if (deliveryType === 'remote') {
         // Selects TAO Remote tab
         cy.get(setupSelectors.testsPage.deliveryTypeTabs).contains('TAO Remote').click();
     }
@@ -130,8 +146,24 @@ Cypress.Commands.add('publishTest', (testName, deliveryType) => {
     // Clicking on publish
     cy.get(setupSelectors.testsPage.destinationSelectorActions).contains('Publish').click();
 
-    //Wait until test is published
-    cy.wait('@testPublish');
+    // Wait until test is published
+    if (deliveryType === 'remote') {
+        cy.wait('@publishDeliverConnect');
+    }
+    else {
+        cy.wait('@publishDeliveryRdf');
+    }
+    /*
+     * Two different processes to handle different UX
+     * for taoTaskQueue enabled or disabled
+     */
+    if (Cypress.env('taoTaskQueue') === 'true') {
+        cy.wait(Array(3).fill('@taskQueueWebApi'));
+
+        pollTaskQueue({ category: 'publishing', status: 'completed' });
+    }
+    else {
+    }
 });
 
 Cypress.Commands.add('setDeliveryForGuests', (testName) => {
