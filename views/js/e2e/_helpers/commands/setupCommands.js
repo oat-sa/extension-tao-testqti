@@ -34,14 +34,18 @@ import runnerSelectors from '../selectors/runnerSelectors';
 const pollTaskQueue = (criteria, retries = 5) => {
     // Recursive fn with a limit on depth
     const awaitTaskQueue = (retries) => {
-        cy.wait('@taskQueueWebApiGetAll').then((xhr) => {
-            cy.log(JSON.stringify(xhr.response.body.data[0])); //
-            if (Object.keys(criteria).every((key) => {
-                cy.log(criteria[key], xhr.response.body.data[0][key]); //
-                return criteria[key] === xhr.response.body.data[0][key];
-            })) {
-                // Task Queue entry contains what we're looking for, woohoo
-                cy.log(`${JSON.stringify(criteria)} : OK`);
+        cy.wait('@taskQueueWebApiGetAll', { timeout: 20000 }).then((xhr) => {
+            if (xhr.response.body && xhr.response.body.data && xhr.response.body.data.length) {
+                cy.log(JSON.stringify(xhr.response.body.data[0])); //
+                if (Object.keys(criteria).every((key) => {
+                    return criteria[key] === xhr.response.body.data[0][key];
+                })) {
+                    // Task Queue entry contains what we're looking for, woohoo
+                    cy.log(`${JSON.stringify(criteria)} : OK`);
+                }
+                else if (retries > 0) {
+                    awaitTaskQueue(retries - 1);
+                }
             }
             else if (retries > 0) {
                 awaitTaskQueue(retries - 1);
@@ -52,6 +56,18 @@ const pollTaskQueue = (criteria, retries = 5) => {
     awaitTaskQueue(retries);
 };
 
+/**
+ * Archive taoTaskQueue tasks
+ * @returns {Promise}
+ */
+const archiveTasks = () => {
+    return cy.request({
+        url: backOfficeUrls.taskQueueArchiveUrl,
+        headers: {
+            'X-Requested-With': 'XmlHttpRequest'
+        }
+    });
+};
 
 /**
  * Setup Commands
@@ -70,6 +86,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
 
     // Wait until test import form is loaded
     if (Cypress.env('taoTaskQueue') === 'true') {
+        archiveTasks();
         cy.wait('@taskQueueWebApiGetAll');
     }
     cy.wait('@testImportIndex');
@@ -102,6 +119,7 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
         cy.wait(Array(4).fill('@taskQueueWebApi'));
 
         pollTaskQueue({ category: 'import', status: 'completed' });
+        archiveTasks();
     }
     else {
         // Wait until test import request finishes
