@@ -43,7 +43,7 @@ describe('Remote deliveries', () => {
         cy.addBackOfficeRoutes();
         cy.login('admin');
         cy.importTestPackage(base64Test, testTitle);
-        cy.publishTest(testTitle, 'remote'); // FAILS on currentgen.docker.localhost
+        cy.publishTest(testTitle, 'remote');
         cy.setDeliveryForGuests(testTitle);
         cy.logout();
         cy.guestLogin();

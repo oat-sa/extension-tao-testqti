@@ -22,5 +22,6 @@
 export default {
     itemsPageUrl: 'tao/Main/index?structure=items&ext=taoItems&section=manage_items&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOItem.rdf%23Item',
     testsPageUrl: 'tao/Main/index?structure=tests&ext=taoTests&section=manage_tests&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23Test',
-    deliveriesPageUrl: 'tao/Main/index?structure=delivery&ext=taoDeliveryRdf&section=manage_delivery_assembly&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAODelivery.rdf%23AssembledDelivery'
+    deliveriesPageUrl: 'tao/Main/index?structure=delivery&ext=taoDeliveryRdf&section=manage_delivery_assembly&uri=http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAODelivery.rdf%23AssembledDelivery',
+    taskQueueArchiveUrl: 'tao/TaskQueueWebApi/archive?taskId=all'
 };

@@ -43,7 +43,7 @@ describe('Local deliveries', () => {
         cy.addBackOfficeRoutes();
         cy.login('admin');
         cy.importTestPackage(base64Test, testTitle);
-        cy.publishTest(testTitle);
+        cy.publishTest(testTitle, 'local');
         cy.setDeliveryForGuests(testTitle);
         cy.logout();
         cy.guestLogin();
