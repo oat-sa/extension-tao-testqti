@@ -24,6 +24,7 @@ use oat\oatbox\filesystem\File;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
 use tao_models_classes_service_StorageDirectory;
+use oat\generis\test\MockObject;
 
 class TestDefinitionSerializerServiceTest extends TestCase
 {
@@ -91,19 +92,19 @@ class TestDefinitionSerializerServiceTest extends TestCase
     /** @var TestDefinitionSerializerService */
     private $testDefinitionSerializerService;
 
-    /** @var \tao_models_classes_service_FileStorage|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var \tao_models_classes_service_FileStorage|MockObject */
     private $fileStorageServiceMock;
 
-    /** @var tao_models_classes_service_StorageDirectory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var tao_models_classes_service_StorageDirectory|MockObject */
     private $directoryMock;
 
-    /** @var File|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var File|MockObject */
     private $indexFileMock;
 
-    /** @var File|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var File|MockObject */
     private $fileMock;
 
-    /** @var QtiRunnerServiceContext|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QtiRunnerServiceContext|MockObject */
     private $qtiRunnerServiceContext;
 
     public function setUp ()

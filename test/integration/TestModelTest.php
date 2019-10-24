@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\test\integration;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\TestModelService;
+use oat\generis\test\MockObject;
 
 class TestModelTest extends GenerisPhpUnitTestRunner
 {
@@ -29,7 +30,7 @@ class TestModelTest extends GenerisPhpUnitTestRunner
      *
      * @author Lionel Lecaque, lionel@taotesting.com
      * @param string $uri
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function getResourceMock($uri)
     {
