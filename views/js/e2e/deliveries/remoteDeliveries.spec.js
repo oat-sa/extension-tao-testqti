@@ -27,6 +27,7 @@ import base64Test from './fixtures/base64RemoteQtiExampleTestPackage';
 describe('Remote deliveries', () => {
 
     const testTitle = 'e2e remote example test';
+    let deliveryId;
 
     /**
      * Setup to have a proper delivery:
@@ -38,35 +39,63 @@ describe('Remote deliveries', () => {
      * - Logout
      * - Guest login
      */
-    beforeEach(() => {
+    before(() => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
         cy.importTestPackage(base64Test, testTitle);
         cy.publishTest(testTitle, 'remote');
         cy.setDeliveryForGuests(testTitle);
+        // Extract the published delivery id, we'll need it for LTI call
+        cy.get('#http_2_www_0_tao_0_lu_1_Ontologies_1_taoDeliverConnect_0_rdf_3_PublishedDeliveryId')
+            .then(els => {
+                deliveryId = els[0].value;
+                cy.log(deliveryId);
+            });
         cy.logout();
-        cy.guestLogin();
     });
 
     /**
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
-    afterEach(() => {
-        cy.guestLogout();
+    after(() => {
         cy.login('admin');
         cy.deleteItem(testTitle);
         cy.deleteTest(testTitle);
-        cy.deleteDelivery(`Delivery of ${testTitle}`);
+        cy.deleteDelivery(testTitle);
     });
 
     /**
      * Delivery tests
      */
-    describe('Delivery list', () => {
+    describe('Publish and access remote delivery', () => {
 
-        it('List contains example e2e delivery', function() {
-            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains(`Delivery of ${testTitle}`);
+        it('Delivery can be reached through LTI call', function() {
+            // Initiate LTI call to the provider TAO, with deliveryId
+            const ltiParams = {
+                key: 'key',
+                secret: 'secret',
+                lti_message_type: 'basic-lti-launch-request',
+                lti_version: 'LTI-1p0',
+                oauth_consumer_key: 'anything',
+                resource_link_id: 'something',
+                roles: 'Learner',
+                user_id: '12345'
+            };
+            cy.request({
+                url: `${Cypress.env('taoDeliverBackendUrl')}/api/v1/auth/launch-lti/${deliveryId}`,
+                method: 'POST',
+                form: true,
+                body: ltiParams
+            })
+            .then(xhr => {
+                cy.wrap(xhr).should(xhr => {
+                    expect(xhr.status).to.equal(200);
+                    expect(xhr.body).to.contain('TAO');
+                });
+                // we know we loaded a TAO page
+                // TODO: further assertions to verify test content?
+            });
         });
     });
 });
