@@ -17,7 +17,7 @@
  */
 
 /**
- * Url object
+ * Urls for the test runner
  */
 export default {
     availableDeliveriesPageUrl: '/taoDelivery/DeliveryServer/index'

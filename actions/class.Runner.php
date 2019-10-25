@@ -23,6 +23,7 @@
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
+use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\libCat\exception\CatEngineConnectivityException;
@@ -496,12 +497,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         if($this->hasRequestParameter('itemDefinition') && $this->hasRequestParameter('itemResponse')){
 
+            $itemIdentifier = $this->getRequestParameter('itemDefinition');
             $serviceContext = $this->getServiceContext();
-            $itemDefinition = $this->getRunnerService()->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
+            $itemDefinition = $this->getRunnerService()->getItemHref($serviceContext, $itemIdentifier);
 
             //to read JSON encoded params
             $params = $this->getRequest()->getRawParameters();
             $itemResponse = isset($params['itemResponse']) ? $params['itemResponse'] : null;
+
+            if ($serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemIdentifier) {
+                throw new QtiRunnerItemResponseException(__('Item response identifier does not match current item'));
+            }
 
             if(!is_null($itemResponse) && ! empty($itemDefinition)) {
 

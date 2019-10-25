@@ -17,7 +17,7 @@
  */
 
 /**
- * CSS Selectors for setup
+ * CSS Selectors for setup cleaning
  */
 export default {
     testsPage: {

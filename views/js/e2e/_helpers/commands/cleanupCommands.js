@@ -22,7 +22,6 @@ import cleanupSelectors from '../selectors/cleanupSelectors';
 /**
  * Cleanup Commands
  */
-
 Cypress.Commands.add('deleteItem', (itemName) => {
 
     // Visit Tests page

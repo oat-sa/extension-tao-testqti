@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint105\n"
-"PO-Revision-Date: 2019-04-12T12:03:31\n"
+"Project-Id-Version: TAO 3.4.0-sprint114\n"
+"PO-Revision-Date: 2019-10-25T09:07:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s - item %p/%c"
-msgstr "%s - item %p/%c"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Un item QTI contenu dans le test QTI '%s' n'a pas pu être compilé"
@@ -328,6 +325,9 @@ msgstr "Libellé affiché"
 msgid "Displays a customisable magnifier"
 msgstr "Affiche une loupe personnalisable"
 
+msgid "DO NOT CHANGE THE NAME OF THE FILE."
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "Ne pas marquer l'item actuel en vue d'une révision ultérieure"
 
@@ -336,6 +336,9 @@ msgstr "Ne pas afficher d'alerte en cas de dépassement de délai"
 
 msgid "Download"
 msgstr "Télécharger"
+
+msgid "Download the file and submit manually."
+msgstr ""
 
 msgid "Eliminate choices"
 msgstr "Éliminer des choix"
@@ -381,8 +384,7 @@ msgstr "Erreur pendant l'import du fichier."
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr ""
-"Erreur détectée dans le test IMS QTI :\n"
+msgstr "Erreur détectée dans le test IMS QTI :\n"
 "%s"
 
 msgid "Expand the review panel"
@@ -421,9 +423,6 @@ msgstr "Fichier introuvable !"
 msgid "Filter"
 msgstr "Filtrer"
 
-msgid "finished"
-msgstr "terminé"
-
 msgid "Fixed"
 msgstr "Fixe"
 
@@ -447,6 +446,9 @@ msgstr "Passer à l'item suivant"
 
 msgid "Go to the next item?"
 msgstr "Passer à l'item suivant ?"
+
+msgid "Gray on Green"
+msgstr ""
 
 msgid "Gray on green (low contrast option)"
 msgstr "Gris sur vert (option de faible contraste)"
@@ -498,6 +500,9 @@ msgstr "Si l'option de catégorie est définie, le score sera également traité
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
 msgstr "Si l'option de catégorie est définie, le score sera également traité par catégories et chaque résultat figurera dans un bloc SCORE_xxx, où xxx est le nom de la catégorie."
+
+msgid "If you need help, please contact us."
+msgstr ""
 
 msgid "Import"
 msgstr "Importer"
@@ -556,14 +561,17 @@ msgstr "Item %d sur %d"
 msgid "Item Reference Properties"
 msgstr "Propriétés de référence d'item"
 
+msgid "Item response identifier does not match current item"
+msgstr ""
+
 msgid "Item Session Control"
 msgstr "Contrôle de session d'item"
 
-msgid "Items"
-msgstr "Items"
-
 msgid "items"
 msgstr "items"
+
+msgid "Items"
+msgstr "Items"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Les items peuvent éventuellement être affectés à une ou plusieurs catégories."
@@ -679,8 +687,8 @@ msgstr "Durée minimum pour cette partie du test."
 msgid "Missed test package file"
 msgstr "Fichier manqué dans le paquet de tests"
 
-msgid "Missing required option %s"
-msgstr "Option requise %s manquante"
+msgid "Missing required configuration option %s"
+msgstr ""
 
 msgid "Move Down"
 msgstr "Descendre"
@@ -745,6 +753,9 @@ msgstr "Le test n'a pas pu être exporté en entier"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Pas de brassage aléatoire, la position reste fixe."
 
+msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
+msgstr ""
+
 msgid "OK"
 msgstr "OK"
 
@@ -771,6 +782,9 @@ msgstr "Ouvrir la calculatrice"
 
 msgid "or"
 msgstr "ou"
+
+msgid "OR"
+msgstr ""
 
 msgid "Ordering"
 msgstr "Organisation"
@@ -799,8 +813,14 @@ msgstr "Exécuter"
 msgid "Please confirm you want to leave the test."
 msgstr "Merci de confirmer que vous souhaitez quitter le test."
 
-msgid "Please continue waiting while we try to restore the connection. Alternatively, you may end this test by downloading it as a file which you will have to submit manually."
-msgstr "Merci de patienter encore pendant que nous essayons de rétablir la connexion. Vous avez également la possibilité de mettre fin à ce test en le téléchargeant en tant que fichier que vous devrez soumettre manuellement."
+msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
+msgstr ""
+
+msgid "Please continue waiting while we try to restore the connection."
+msgstr ""
+
+msgid "Please stay on this screen."
+msgstr ""
 
 msgid "Please wait while we try to restore the connection."
 msgstr "Veuillez patienter pendant que nous essayons de rétablir la connexion."
@@ -895,10 +915,10 @@ msgstr "Titulaire du score"
 msgid "Scoring"
 msgstr "Notation"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Bloc-notes"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Bloc-notes"
 
 msgid "Scratchpad"
@@ -1039,6 +1059,9 @@ msgstr "technique"
 msgid "Test"
 msgstr "Test"
 
+msgid "Test 1"
+msgstr ""
+
 msgid "Test constructor"
 msgstr "Auteur du test"
 
@@ -1104,6 +1127,9 @@ msgstr "Impossible de résoudre la dépendance à la référence IMS QTI Assessm
 
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr "Le téléchargement sera disponible dans <strong>%d</strong> secondes"
+
+msgid "The file will save into the Downloads folder on your PC."
+msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Les identifiants suivants ne sont pas uniques au sein du test : %s"
@@ -1300,6 +1326,9 @@ msgstr "Poids"
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "Lors de la sélection d'éléments enfants, chaque élément es normalement admissible pour sélection une seule fois."
 
+msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
+msgstr ""
+
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "Est-ce qu'une réponse du candidat au-delà de la durée maximum de l'item doit être néanmoins acceptée ?"
 
@@ -1380,3 +1409,4 @@ msgstr "Zoom avant"
 
 msgid "Zoom out"
 msgstr "Zoom arrière"
+

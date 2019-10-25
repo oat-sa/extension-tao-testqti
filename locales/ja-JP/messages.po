@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.3.0-sprint105\n"
-"PO-Revision-Date: 2019-06-21T09:20:07\n"
+"Project-Id-Version: TAO 3.4.0-sprint114\n"
+"PO-Revision-Date: 2019-10-25T09:07:48\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s - item %p/%c"
-msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTIテスト '%s' 内のQTIアイテムがコンパイルできませんでした。"
@@ -328,6 +325,9 @@ msgstr ""
 msgid "Displays a customisable magnifier"
 msgstr ""
 
+msgid "DO NOT CHANGE THE NAME OF THE FILE."
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr ""
 
@@ -335,6 +335,9 @@ msgid "Do not show alert on timeout"
 msgstr ""
 
 msgid "Download"
+msgstr ""
+
+msgid "Download the file and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
@@ -420,9 +423,6 @@ msgstr ""
 msgid "Filter"
 msgstr "フィルター"
 
-msgid "finished"
-msgstr "終了"
-
 msgid "Fixed"
 msgstr "固定"
 
@@ -445,6 +445,9 @@ msgid "Go to next item"
 msgstr ""
 
 msgid "Go to the next item?"
+msgstr ""
+
+msgid "Gray on Green"
 msgstr ""
 
 msgid "Gray on green (low contrast option)"
@@ -496,6 +499,9 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+msgstr ""
+
+msgid "If you need help, please contact us."
 msgstr ""
 
 msgid "Import"
@@ -555,14 +561,17 @@ msgstr "%dのアイテム %d"
 msgid "Item Reference Properties"
 msgstr "アイテム参照プロパティ"
 
+msgid "Item response identifier does not match current item"
+msgstr ""
+
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "Items"
-msgstr "アイテム"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "アイテムはひとつまたは複数のカテゴリーに割り当てることができます。"
@@ -678,7 +687,7 @@ msgstr "このテストパートの最小時間"
 msgid "Missed test package file"
 msgstr ""
 
-msgid "Missing required option %s"
+msgid "Missing required configuration option %s"
 msgstr ""
 
 msgid "Move Down"
@@ -744,6 +753,9 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "シャッフルされません。位置は固定のままです。"
 
+msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
+msgstr ""
+
 msgid "OK"
 msgstr ""
 
@@ -769,6 +781,9 @@ msgid "Open Calculator"
 msgstr ""
 
 msgid "or"
+msgstr ""
+
+msgid "OR"
 msgstr ""
 
 msgid "Ordering"
@@ -798,7 +813,13 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
-msgid "Please continue waiting while we try to restore the connection. Alternatively, you may end this test by downloading it as a file which you will have to submit manually."
+msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
+msgstr ""
+
+msgid "Please continue waiting while we try to restore the connection."
+msgstr ""
+
+msgid "Please stay on this screen."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
@@ -894,10 +915,10 @@ msgstr "採点者"
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1038,6 +1059,9 @@ msgstr ""
 msgid "Test"
 msgstr "テスト"
 
+msgid "Test 1"
+msgstr ""
+
 msgid "Test constructor"
 msgstr "テスト作成"
 
@@ -1102,6 +1126,9 @@ msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifes
 msgstr "IMSマニフェストファイルのIMS QTIのアセスメント参照\"%s\"の依存性が解決されませんでした。"
 
 msgid "The download will be available in <strong>%d</strong> seconds"
+msgstr ""
+
+msgid "The file will save into the Downloads folder on your PC."
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
@@ -1298,6 +1325,9 @@ msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "子エレメントを選択する際、各エレメントは通常一度だけ選択可能です。"
+
+msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "受験者の回答でアイテムで設定された制限時間を超えてもそれを許可する。"
