@@ -27,6 +27,26 @@ describe('Remote deliveries', () => {
     const testTitle = 'e2e remote example test';
     let deliveryId;
 
+    const ltiCall = (ltiConfig = {}) => {
+        const ltiDefaultConfig = {
+            key: 'key',
+            secret: 'secret',
+            lti_message_type: 'basic-lti-launch-request',
+            lti_version: 'LTI-1p0',
+            oauth_consumer_key: 'anything',
+            resource_link_id: 'something',
+            roles: 'Learner',
+            user_id: '12345'
+        };
+        // Initiate LTI call to the provider TAO, with deliveryId
+        cy.visit({
+            url: `${Cypress.env('taoDeliverBackendUrl')}/api/v1/auth/launch-lti/${deliveryId}`,
+            method: 'POST',
+            form: true,
+            body: {...ltiDefaultConfig, ...ltiConfig}
+        });
+    };
+
     /**
      * Setup to have a proper delivery:
      * - Start server
@@ -41,8 +61,8 @@ describe('Remote deliveries', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.importTestPackage(base64Test, testTitle);
-        cy.publishTest(testTitle, 'remote');
+        // cy.importTestPackage(base64Test, testTitle);
+        // cy.publishTest(testTitle, 'remote');
         cy.setDeliveryForGuests(testTitle);
         // Extract the published delivery id, we'll need it for LTI call
         cy.get('#http_2_www_0_tao_0_lu_1_Ontologies_1_taoDeliverConnect_0_rdf_3_PublishedDeliveryId')
@@ -57,10 +77,10 @@ describe('Remote deliveries', () => {
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        cy.login('admin');
-        cy.deleteItem(testTitle);
-        cy.deleteTest(testTitle);
-        cy.deleteDelivery(testTitle);
+        // cy.login('admin');
+        // cy.deleteItem(testTitle);
+        // cy.deleteTest(testTitle);
+        // cy.deleteDelivery(testTitle);
     });
 
     /**
@@ -69,31 +89,42 @@ describe('Remote deliveries', () => {
     describe('Publish and access remote delivery', () => {
 
         it('Delivery can be reached through LTI call', function() {
-            // Initiate LTI call to the provider TAO, with deliveryId
-            const ltiParams = {
-                key: 'key',
-                secret: 'secret',
-                lti_message_type: 'basic-lti-launch-request',
-                lti_version: 'LTI-1p0',
-                oauth_consumer_key: 'anything',
-                resource_link_id: 'something',
-                roles: 'Learner',
-                user_id: '12345'
-            };
-            cy.request({
-                url: `${Cypress.env('taoDeliverBackendUrl')}/api/v1/auth/launch-lti/${deliveryId}`,
-                method: 'POST',
-                form: true,
-                body: ltiParams
-            })
-            .then(xhr => {
-                cy.wrap(xhr).should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.body).to.contain('TAO');
-                    expect(xhr.redirects.length).to.be.greaterThan(0);
-                });
-                // we know we loaded a TAO page
-                // TODO: further assertions to verify test content?
+            ltiCall();
+        });
+
+        it('Delivery can be taken', function() {
+            cy.get('.title-box').contains(testTitle);
+            cy.get('[data-control="move-end"]');
+            cy.get('[data-control="skip-end"]');
+        });
+
+        it('Delivery shows its thank you page on completion', function() {
+            cy.get('[data-control="move-end"]').click();
+
+            cy.location().should(loc => {
+                expect(loc.origin).to.eq(Cypress.env('taoDeliverFrontendUrl'));
+                expect(loc.pathname).to.eq('/thank-you')
+            });
+        });
+    });
+
+    describe('Publish and access remote delivery', () => {
+
+        it('Delivery can be reached through LTI call (return URL specified)', function() {
+            ltiCall({ launch_presentation_return_url: Cypress.env('baseUrl') })
+        });
+
+        it('Delivery can be taken', function() {
+            cy.get('.title-box').contains(testTitle);
+            cy.get('[data-control="move-end"]');
+            cy.get('[data-control="skip-end"]');
+        });
+
+        it('Delivery redirects to returnURL on completion', function() {
+            cy.get('[data-control="move-end"]').click();
+
+            cy.location().should(loc => {
+                expect(loc.origin).to.eq(Cypress.env('baseUrl'));
             });
         });
     });
