@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint112\n"
-"PO-Revision-Date: 2019-10-11T09:03:20\n"
+"Project-Id-Version: TAO 3.4.0-sprint114\n"
+"PO-Revision-Date: 2019-10-25T09:07:46\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-MX\n"
@@ -780,10 +780,10 @@ msgstr "Mostrar solo los ítems sin respuesta"
 msgid "Open Calculator"
 msgstr "Abrir calculadora"
 
-msgid "OR"
+msgid "or"
 msgstr ""
 
-msgid "or"
+msgid "OR"
 msgstr ""
 
 msgid "Ordering"
@@ -915,11 +915,11 @@ msgstr "Puntuador"
 msgid "Scoring"
 msgstr "Puntaje"
 
-msgid "Scratch Pad"
-msgstr "Bloc de Notas"
-
 msgid "Scratch pad"
 msgstr "Bloc de notas"
+
+msgid "Scratch Pad"
+msgstr "Bloc de Notas"
 
 msgid "Scratchpad"
 msgstr "Bloc de notas"
@@ -1058,6 +1058,9 @@ msgstr "técnico"
 
 msgid "Test"
 msgstr "Prueba"
+
+msgid "Test 1"
+msgstr ""
 
 msgid "Test constructor"
 msgstr "Constructor de prueba"
