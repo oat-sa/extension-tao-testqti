@@ -16,8 +16,6 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
 
-import runnerSelectors from '../_helpers/selectors/runnerSelectors';
-
 import '../_helpers/commands/setupCommands';
 import '../_helpers/commands/cleanupCommands';
 import '../_helpers/routes/backOfficeRoutes';
@@ -92,6 +90,7 @@ describe('Remote deliveries', () => {
                 cy.wrap(xhr).should(xhr => {
                     expect(xhr.status).to.equal(200);
                     expect(xhr.body).to.contain('TAO');
+                    expect(xhr.redirects.length).to.be.greaterThan(0);
                 });
                 // we know we loaded a TAO page
                 // TODO: further assertions to verify test content?

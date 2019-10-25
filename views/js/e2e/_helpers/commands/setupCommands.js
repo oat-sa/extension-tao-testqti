@@ -70,10 +70,32 @@ const archiveTasks = () => {
 };
 
 /**
+ * Ping taoTaskQueue via XHR
+ * Alias the result so it is available on this.
+ * @exposes {Cypress alias<Boolean>} isTaskQueueWorking
+ */
+Cypress.Commands.add('queryTaskQueue', () => {
+    return cy.request({
+        url: backOfficeUrls.taskQueueGetUrl,
+        headers: {
+            'X-Requested-With': 'XmlHttpRequest'
+        }
+    })
+    .then(xhr => {
+        // Set status on Cypress context
+        cy.wrap(xhr.status === 200).as('isTaskQueueWorking');
+    });
+});
+
+
+/**
  * Setup Commands
  */
-Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
+Cypress.Commands.add('importTestPackage', function(fileContent, fileName) {
     cy.log('COMMAND: importTestPackage', fileName);
+
+    // Check if Task Queue worker is alive (stores isTaskQueueWorking property on context)
+    cy.queryTaskQueue();
 
     // Visit Tests page
     cy.visit(backOfficeUrls.testsPageUrl);
@@ -85,10 +107,13 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
     cy.get(setupSelectors.testsPage.testImportButton).click();
 
     // Wait until test import form is loaded
-    if (Cypress.env('taoTaskQueue') === 'true') {
-        archiveTasks();
-        cy.wait('@taskQueueWebApiGetAll');
-    }
+    cy.get('@isTaskQueueWorking').then(working => {
+        if (working) {
+            archiveTasks();
+            cy.wait('@taskQueueWebApiGetAll');
+        }
+    });
+    // If Task Queue is turned off, or is on but isn't working, we fall back to the synchronous import request:
     cy.wait('@testImportIndex');
 
     // Upload example qti test file to file input
@@ -105,36 +130,41 @@ Cypress.Commands.add('importTestPackage', (fileContent, fileName) => {
             force: true
         }
     );
-
     cy.wait('@fileUpload');
 
-    // Import selected example test file
+    // Import selected test file
     cy.get(setupSelectors.testsPage.fileImportButton).click();
 
     /*
      * Two different processes to handle different UX
      * for taoTaskQueue enabled or disabled
      */
-    if (Cypress.env('taoTaskQueue') === 'true') {
-        cy.wait(Array(4).fill('@taskQueueWebApi'));
+    cy.get('@isTaskQueueWorking').then(working => {
+        if (working) {
+            cy.wait(Array(4).fill('@taskQueueWebApi'));
 
-        pollTaskQueue({ category: 'import', status: 'completed' });
-        archiveTasks();
-    }
-    else {
-        // Wait until test import request finishes
-        cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 15000 });
+            pollTaskQueue({ category: 'import', status: 'completed' });
 
-        // Continue
-        cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
+            archiveTasks();
+        }
+        else {
+            // Wait until test import request finishes
+            cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 15000 });
 
-        // Wait until publish button appears again
-        cy.wait('@editTest');
-    }
+            // Continue
+            cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
+
+            // Wait until publish button appears again
+            cy.wait('@editTest');
+        }
+        })
 });
 
-Cypress.Commands.add('publishTest', (testName, deliveryType = 'local') => {
+Cypress.Commands.add('publishTest', function(testName, deliveryType = 'local') {
     cy.log('COMMAND: publishTest', testName, deliveryType);
+
+    // Check if Task Queue worker is alive (stores isTaskQueueWorking property on context)
+    cy.queryTaskQueue();
 
     // Visit Tests page
     cy.visit(backOfficeUrls.testsPageUrl);
@@ -178,16 +208,16 @@ Cypress.Commands.add('publishTest', (testName, deliveryType = 'local') => {
      * Two different processes to handle different UX
      * for taoTaskQueue enabled or disabled
      */
-    if (Cypress.env('taoTaskQueue') === 'true') {
-        archiveTasks();
-        cy.wait('@taskQueueWebApi'); // can be 1-4 of them
+    cy.get('@isTaskQueueWorking').then(working => {
+        if (working) {
+            archiveTasks();
+            cy.wait('@taskQueueWebApi'); // can be 1-4 of them
 
-        // pollTaskQueue({ title: `Publishing of "${testName}"`, status: 'completed' });
-        cy.wait(10000); // hack to circumvent TaskQueue problems
-    }
+            //pollTaskQueue({ title: `Publishing of "${testName}"`, status: 'completed' }, 10);
+            cy.wait(10000); // hack to circumvent TaskQueue problems
+        }
+    });
 });
-
-// TODO: Publish a Test to LTI on the Deliveries page
 
 Cypress.Commands.add('setDeliveryForGuests', (testName) => {
     cy.log('COMMAND: setDeliveryForGuests', testName);
