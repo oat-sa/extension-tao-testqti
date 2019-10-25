@@ -210,11 +210,13 @@ Cypress.Commands.add('publishTest', function(testName, deliveryType = 'local') {
      */
     cy.get('@isTaskQueueWorking').then(working => {
         if (working) {
-            archiveTasks();
-            cy.wait('@taskQueueWebApi'); // can be 1-4 of them
+            cy.wait('@taskQueueWebApi'); // can be 1-4 of them :(
 
-            //pollTaskQueue({ title: `Publishing of "${testName}"`, status: 'completed' }, 10);
-            cy.wait(10000); // hack to circumvent TaskQueue problems
+            pollTaskQueue({ taskLabel: 'Remote Publication Lookup', status: 'completed' });
+            archiveTasks();
+        }
+        else {
+            cy.wait('@editTest');
         }
     });
 });
