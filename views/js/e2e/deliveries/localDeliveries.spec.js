@@ -38,7 +38,7 @@ describe('Local deliveries', () => {
      * - Logout
      * - Guest login
      */
-    beforeEach(() => {
+    before(() => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
@@ -52,7 +52,7 @@ describe('Local deliveries', () => {
     /**
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
-    afterEach(() => {
+    after(() => {
         cy.guestLogout();
         cy.login('admin');
         cy.deleteItem(testTitle);

@@ -61,8 +61,8 @@ describe('Remote deliveries', () => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        // cy.importTestPackage(base64Test, testTitle);
-        // cy.publishTest(testTitle, 'remote');
+        cy.importTestPackage(base64Test, testTitle);
+        cy.publishTest(testTitle, 'remote');
         cy.setDeliveryForGuests(testTitle);
         // Extract the published delivery id, we'll need it for LTI call
         cy.get('#http_2_www_0_tao_0_lu_1_Ontologies_1_taoDeliverConnect_0_rdf_3_PublishedDeliveryId')
@@ -77,10 +77,12 @@ describe('Remote deliveries', () => {
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        // cy.login('admin');
-        // cy.deleteItem(testTitle);
-        // cy.deleteTest(testTitle);
-        // cy.deleteDelivery(testTitle);
+        cy.setupServer();
+        cy.addBackOfficeRoutes();
+        cy.login('admin');
+        cy.deleteItem(testTitle);
+        cy.deleteTest(testTitle);
+        cy.deleteDelivery(testTitle);
     });
 
     /**

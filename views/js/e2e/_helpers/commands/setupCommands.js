@@ -75,11 +75,14 @@ const archiveTasks = () => {
  * @exposes {Cypress alias<Boolean>} isTaskQueueWorking
  */
 Cypress.Commands.add('queryTaskQueue', () => {
-    return cy.request({
+    cy.log('COMMAND: queryTaskQueue');
+
+    cy.request({
         url: backOfficeUrls.taskQueueGetUrl,
         headers: {
             'X-Requested-With': 'XmlHttpRequest'
-        }
+        },
+        failOnStatusCode: false // we want to process 4xx and 5xx responses too
     })
     .then(xhr => {
         // Set status on Cypress context
@@ -141,7 +144,7 @@ Cypress.Commands.add('importTestPackage', function(fileContent, fileName) {
      */
     cy.get('@isTaskQueueWorking').then(working => {
         if (working) {
-            cy.wait(Array(4).fill('@taskQueueWebApi'));
+            cy.wait(Array(4).fill('@taskQueueWebApi'), { timeout: 20000 });
 
             pollTaskQueue({ category: 'import', status: 'completed' });
 
@@ -149,7 +152,7 @@ Cypress.Commands.add('importTestPackage', function(fileContent, fileName) {
         }
         else {
             // Wait until test import request finishes
-            cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 15000 });
+            cy.wait(['@testImportIndex', '@taskQueueWebApi', '@taskQueueWebApi'], { timeout: 20000 });
 
             // Continue
             cy.get(setupSelectors.testsPage.feedbackContinueButton).click();
@@ -186,10 +189,9 @@ Cypress.Commands.add('publishTest', function(testName, deliveryType = 'local') {
     if (deliveryType === 'remote') {
         // Selects TAO Remote tab
         cy.get(setupSelectors.testsPage.deliveryTypeTabs).contains('TAO Remote').click();
+        // Select suitable tenant
+        cy.get('.deliver-tenant-list').select('3');
     }
-
-    // Select suitable tenant
-    cy.get('.deliver-tenant-list').select('3');
 
     // Select Assembled Delivery as root class for publishing
     cy.get(setupSelectors.testsPage.destinationSelector).contains('Assembled Delivery').click();
@@ -210,9 +212,11 @@ Cypress.Commands.add('publishTest', function(testName, deliveryType = 'local') {
      */
     cy.get('@isTaskQueueWorking').then(working => {
         if (working) {
-            cy.wait('@taskQueueWebApi'); // can be 1-4 of them :(
+            cy.wait('@taskQueueWebApi', { timeout: 20000 }); // can be 1-4 of them :(
 
-            pollTaskQueue({ taskLabel: 'Remote Publication Lookup', status: 'completed' });
+            if (deliveryType === 'remote') {
+                pollTaskQueue({ taskLabel: 'Remote Publication Lookup', status: 'completed' });
+            }
             archiveTasks();
         }
         else {
