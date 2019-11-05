@@ -378,6 +378,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category'    => 'tools',
                 'active'      => true,
                 'tags'        => [  ]
+            ], [
+                'id'          => 'apiptts',
+                'name'        => 'APIP Text To Speech',
+                'module'      => 'taoQtiTest/runner/plugins/tools/apipTextToSpeech/plugin',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to item content.',
+                'category'    => 'tools',
+                'active'      => false,
+                'tags'        => [  ]
             ]
         ],
         'security' => [
