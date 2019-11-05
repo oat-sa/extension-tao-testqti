@@ -202,7 +202,15 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allows Test-taker to zoom in and out the item content.'),
                     'order'         => 700,
                     'pluginId'      => 'zoom'
-                ])
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'apiptts',
+                    'label'         => __('APIP Text To Speech'),
+                    'qtiCategory'   => 'x-tao-option-apiptts',
+                    'description'   => __('Allow Test-taker to playback media files associated according to APIP protocol to item content.'),
+                    'order'         => 900,
+                    'pluginId'      => 'apiptts'
+              ])
             ]
         );
 
