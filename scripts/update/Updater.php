@@ -1916,9 +1916,9 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('34.3.0');
         }
 
-        $this->skip('34.3.0', '35.0.4');
+        $this->skip('34.3.0', '35.1.1');
 
-        if ($this->isVersion('35.0.4')) {
+        if ($this->isVersion('35.1.1')) {
             // Register APIP TTS plugin
             $registry = PluginRegistry::getRegistry();
 
@@ -1947,7 +1947,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('35.1.0');
+            $this->setVersion('35.2.0');
         }
     }
 }
