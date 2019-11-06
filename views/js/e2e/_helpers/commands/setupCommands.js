@@ -186,11 +186,13 @@ Cypress.Commands.add('publishTest', function(testName, deliveryType = 'local') {
     // Publish selected test
     cy.get(setupSelectors.testsPage.testPublishButton).click();
 
-    if (deliveryType === 'remote') {
-        // Selects TAO Remote tab
+    const tenantLabel = Cypress.env('deliverTenantLabel');
+
+    if (deliveryType === 'remote' && tenantLabel && tenantLabel.length) {
+        // Select TAO Remote tab
         cy.get(setupSelectors.testsPage.deliveryTypeTabs).contains('TAO Remote').click();
         // Select suitable tenant
-        cy.get('.deliver-tenant-list').select('3');
+        cy.get('.deliver-tenant-list').select(tenantLabel);
     }
 
     // Select Assembled Delivery as root class for publishing
