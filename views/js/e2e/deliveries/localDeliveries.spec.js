@@ -22,9 +22,11 @@ import '../_helpers/commands/setupCommands';
 import '../_helpers/commands/cleanupCommands';
 import '../_helpers/routes/backOfficeRoutes';
 
-import base64Test from './fixtures/base64QtiExampleTestPackage';
+import base64Test from './fixtures/base64LocalQtiExampleTestPackage';
 
-describe('Deliveries', () => {
+describe('Local deliveries', () => {
+
+    const testTitle = 'e2e local example test';
 
     /**
      * Setup to have a proper delivery:
@@ -36,13 +38,13 @@ describe('Deliveries', () => {
      * - Logout
      * - Guest login
      */
-    beforeEach(() => {
+    before(() => {
         cy.setupServer();
         cy.addBackOfficeRoutes();
         cy.login('admin');
-        cy.importTestPackage(base64Test, 'e2e example test');
-        cy.publishTest('e2e example test');
-        cy.setDeliveryForGuests('e2e example test');
+        cy.importTestPackage(base64Test, testTitle);
+        cy.publishTest(testTitle, 'local');
+        cy.setDeliveryForGuests(testTitle);
         cy.logout();
         cy.guestLogin();
     });
@@ -50,12 +52,12 @@ describe('Deliveries', () => {
     /**
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
-    afterEach(() => {
+    after(() => {
         cy.guestLogout();
         cy.login('admin');
-        cy.deleteItem('e2e example test');
-        cy.deleteTest('e2e example test');
-        cy.deleteDelivery('Delivery of e2e example test');
+        cy.deleteItem(testTitle);
+        cy.deleteTest(testTitle);
+        cy.deleteDelivery(`Delivery of ${testTitle}`);
     });
 
     /**
@@ -63,8 +65,8 @@ describe('Deliveries', () => {
      */
     describe('Delivery list', () => {
 
-        it('List contains example e2e delivery', function() {
-            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains('Delivery of e2e example test');
+        it('List contains local example e2e delivery', function() {
+            cy.get(runnerSelectors.testList).find(runnerSelectors.availableDeliveries).contains(`Delivery of ${testTitle}`);
         });
     });
 });

@@ -28,7 +28,8 @@ export default {
         feedbackContinueButton: '.feedback-success button[title="continue"]',
         testPublishButton: '#test-publish',
         destinationSelector: '.destination-selector',
-        destinationSelectorActions: '.destination-selector .actions'
+        destinationSelectorActions: '.destination-selector .actions',
+        deliveryTypeTabs: '.tab-group.rendered'
     },
     deliveriesPage: {
         rootDeliveryClass: 'li[data-uri="http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDelivery"]',
