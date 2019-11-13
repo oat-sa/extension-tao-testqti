@@ -1916,7 +1916,24 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('34.3.0');
         }
 
-        $this->skip('34.3.0', '34.12.0.2');
+        $this->skip('34.3.0', '34.12.0.1');
 
+        if ($this->isVersion('34.12.0.1')) {
+            $providerRegistry = ProviderRegistry::getRegistry();
+            if ($providerRegistry->isRegistered('taoQtiTest/runner/proxy/offline/proxy')) {
+                $pluginRegistry = PluginRegistry::getRegistry();
+                $pluginRegistry->register(TestPlugin::fromArray([
+                    'id' => 'connectivity',
+                    'name' => 'Connectivity check',
+                    'module' => 'taoQtiTest/runner/plugins/controls/connectivity/connectivity',
+                    'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                    'description' => 'Pause the test when the network loose the connection',
+                    'category' => 'controls',
+                    'active' => true,
+                    'tags' => [ 'core', 'technical' ]
+                ]));
+            }
+            $this->setVersion('34.12.0.2');
+        }
     }
 }
