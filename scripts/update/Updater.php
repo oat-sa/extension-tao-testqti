@@ -1922,6 +1922,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $providerRegistry = ProviderRegistry::getRegistry();
             if ($providerRegistry->isRegistered('taoQtiTest/runner/proxy/offline/proxy')) {
                 $pluginRegistry = PluginRegistry::getRegistry();
+                $pluginRegistry->remove('taoTestRunnerPlugins/runner/plugins/security/autoPause');
                 $pluginRegistry->register(TestPlugin::fromArray([
                     'id' => 'connectivity',
                     'name' => 'Connectivity check',
