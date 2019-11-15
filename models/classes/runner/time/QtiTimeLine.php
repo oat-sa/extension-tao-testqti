@@ -261,13 +261,18 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             $ranges[$point->getRef()][] = $point;
         }
 
+        $this->sortRanges($ranges);
+
         // compute the total duration by summing all gathered ranges
         // this loop can throw exceptions 
         $duration = 0;
-        foreach ($ranges as $range) {
-
+        foreach ($ranges as $rangeKey => $range) {
+            $nextTimestamp = $lastTimestamp;
+            if (isset($ranges[$rangeKey + 1])) {
+                $nextTimestamp = $ranges[$rangeKey + 1][0]->getTimestamp();
+            }
             // the last range could be still open, or some range could be malformed due to connection issues...
-            $range = $this->fixRange($range, $lastTimestamp);
+            $range = $this->fixRange($range, $nextTimestamp);
             
             // compute the duration of the range, an exception may be thrown if the range is malformed
             // possible errors are (but should be avoided by the `fixRange()` method):
@@ -423,5 +428,21 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         }
 
         return $rangeDuration;
+    }
+
+    /**
+     * @param array $ranges
+     * @return array
+     */
+    private function sortRanges(array &$ranges)
+    {
+        usort($ranges, function(array $a, array $b) {
+            if ($a[0]->getTimestamp() === $b[0]->getTimestamp()) {
+                return 0;
+            }
+            return ($a[0]->getTimestamp() < $b[0]->getTimestamp()) ? -1 : 1;
+
+        });
+        return $ranges;
     }
 }
