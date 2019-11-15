@@ -310,6 +310,23 @@ class QtiTimeLineTest extends GenerisPhpUnitTestRunner
 
     /**
      * Test the QtiTimeLine::compute()
+     */
+    public function testComputeOpenRange()
+    {
+        $points = [
+            new TimePoint(['test-a', 'item-a'], 1459519500.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+            new TimePoint(['test-a', 'item-a'], 1459519501.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+            new TimePoint(['test-a', 'item-b'], 1459519520.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
+            new TimePoint(['test-a', 'item-b'], 1459519532.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
+        ];
+        $timeLine = new QtiTimeLine($points);
+        $duration = $timeLine->compute(null, TimePoint::TARGET_SERVER);
+        $expectedDuration = $points[3]->getTimestamp() - $points[0]->getTimestamp();
+        $this->assertEquals($expectedDuration, $duration);
+    }
+
+    /**
+     * Test the QtiTimeLine::compute()
      * @dataProvider malformedRangeExceptionProvider
      * @param TimePoint[] $points
      * @param int $expectedDuration
