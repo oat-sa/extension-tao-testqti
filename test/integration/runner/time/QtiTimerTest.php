@@ -480,7 +480,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $timer->setStorage($storage);
         $result = $timer->save();
         $this->assertEquals($timer, $result);
-
+        $timer->setStrategy(new TimerStrategyService());
         $loadedTimer = $timer->load();
         $this->assertEquals($loadedTimer, $result);
 
