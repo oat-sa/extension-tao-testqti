@@ -46,13 +46,15 @@ describe('Navigation', () => {
          * - Logout
          */
         before(() => {
-            cy.setupServer();
-            cy.addBackOfficeRoutes();
-            cy.login('admin');
-            cy.importTestPackage(base64LinearTest, 'e2e navigation linear test');
-            cy.publishTest('e2e navigation linear test');
-            cy.setDeliveryForGuests('e2e navigation linear test');
-            cy.logout();
+            if (Cypress.env('bypassBackOffice') !== "true") {
+                cy.setupServer();
+                cy.addBackOfficeRoutes();
+                cy.login('admin');
+                cy.importTestPackage(base64LinearTest, 'e2e navigation linear test');
+                cy.publishTest('e2e navigation linear test');
+                cy.setDeliveryForGuests('e2e navigation linear test');
+                cy.logout();
+            }
         });
 
         /**
@@ -73,12 +75,14 @@ describe('Navigation', () => {
          * Destroy everything we created during setup, leaving the environment clean for next time.
          */
         after(() => {
-            cy.setupServer();
-            cy.addBackOfficeRoutes();
-            cy.login('admin');
-            cy.deleteItem('e2e navigation linear test');
-            cy.deleteTest('e2e navigation linear test');
-            cy.deleteDelivery('e2e navigation linear test');
+            if (Cypress.env('bypassBackOffice') !== "true") {
+                cy.setupServer();
+                cy.addBackOfficeRoutes();
+                cy.login('admin');
+                cy.deleteItem('e2e navigation linear test');
+                cy.deleteTest('e2e navigation linear test');
+                cy.deleteDelivery('e2e navigation linear test');
+            }
         });
 
         describe('First Item', () => {

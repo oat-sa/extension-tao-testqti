@@ -48,26 +48,30 @@ describe('Tools', () => {
      * - Logout
      */
     before(() => {
-        cy.setupServer();
-        cy.addBackOfficeRoutes();
-        cy.login('admin');
-        cy.importTestPackage(base64Test, 'e2e Tools test');
-        cy.publishTest('e2e Tools test');
-        cy.setDeliveryForGuests('e2e Tools test');
-        cy.logout();
+        if (Cypress.env('bypassBackOffice') !== "true") {
+            cy.setupServer();
+            cy.addBackOfficeRoutes();
+            cy.login('admin');
+            cy.importTestPackage(base64Test, 'e2e Tools test');
+            cy.publishTest('e2e Tools test');
+            cy.setDeliveryForGuests('e2e Tools test');
+            cy.logout();
+        }
     });
 
     /**
      * Destroy everything we created during setup, leaving the environment clean for next time.
      */
     after(() => {
-        cy.setupServer();
-        cy.addBackOfficeRoutes();
-        cy.guestLogout();
-        cy.login('admin');
-        cy.deleteItem('e2e Tools test');
-        cy.deleteTest('e2e Tools test');
-        cy.deleteDelivery('Delivery of e2e Tools test');
+        if (Cypress.env('bypassBackOffice') !== "true") {
+            cy.setupServer();
+            cy.addBackOfficeRoutes();
+            cy.guestLogout();
+            cy.login('admin');
+            cy.deleteItem('e2e Tools test');
+            cy.deleteTest('e2e Tools test');
+            cy.deleteDelivery('Delivery of e2e Tools test');
+        }
     });
 
     /**

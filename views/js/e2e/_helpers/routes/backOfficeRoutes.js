@@ -23,10 +23,12 @@ Cypress.Commands.add('addBackOfficeRoutes', () => {
 
     // Register routes for test actions
     cy.route('POST', '**/editTest').as('editTest');
-    cy.route('POST', '/taoTests/TestImport/index').as('testImportIndex');
-    cy.route('GET', '/tao/TaskQueueWebApi/**').as('taskQueueWebApi');
-    cy.route('POST', 'taoDeliveryRdf/Publish/publish').as('testPublish');
+    cy.route('POST', 'taoTests/TestImport/index').as('testImportIndex');
     cy.route('POST', 'tao/File/upload').as('fileUpload');
+    cy.route('GET', /tao\/TaskQueueWebApi\/get\?/).as('taskQueueWebApi');
+    cy.route('GET', /tao\/TaskQueueWebApi\/getAll\?/).as('taskQueueWebApiGetAll');
+    cy.route('POST', 'taoDeliveryRdf/Publish/publish').as('publishDeliveryRdf');
+    cy.route('POST', 'taoDeliverConnect/PublishDelivery/submitFromTests').as('publishDeliverConnect');
 
     // Register routes for delivery actions
     cy.route('POST', '**/editDelivery').as('editDelivery');
