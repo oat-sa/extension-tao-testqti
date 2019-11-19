@@ -32,7 +32,7 @@ use oat\tao\model\modules\DynamicModule;
 class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
 {
     private $unsupportedPlugins = [
-        'taoQtiTest/runner/plugins/controls/connectivity/connectivity',
+        'taoTestRunnerPlugins/runner/plugins/security/autoPause',
         'taoTestRunnerPlugins/runner/plugins/connectivity/disconnectedTestSaver',
     ];
 
