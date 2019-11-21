@@ -1961,9 +1961,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
             $config['shortcuts']['apiptts'] = [
                 'enterTogglePlayback' => 'Enter',
-                'next' => 'Tab',
                 'togglePlayback' => 'P',
-                'previous' => 'Shift+Tab',
                 'spaceTogglePlayback' => 'Space'
             ];
 

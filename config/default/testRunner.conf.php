@@ -609,9 +609,7 @@ return array(
         ),
         'apiptts' => array(
             'enterTogglePlayback' => 'Enter',
-            'next' => 'Tab',
             'togglePlayback' => 'P',
-            'previous' => 'Shift+Tab',
             'spaceTogglePlayback' => 'Space'
         ),
     ],
