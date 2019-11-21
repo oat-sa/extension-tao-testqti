@@ -1939,5 +1939,35 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('35.1.2', '35.1.3');
+
+        if ($this->isVersion('35.1.3')) {
+            // Register APIP TTS plugin
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'apiptts',
+                'name'        => 'APIP Text To Speech',
+                'module'      => 'taoQtiTest/runner/plugins/tools/apipTextToSpeech/plugin',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to item content.',
+                'category'    => 'tools',
+                'active'      => false,
+                'tags'        => [  ]
+            ]));
+
+            // Register APIP TTS plugin shortcuts
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['apiptts'] = [
+                'enterTogglePlayback' => 'Enter',
+                'togglePlayback' => 'P',
+                'spaceTogglePlayback' => 'Space'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('35.2.0');
+        }
     }
 }

@@ -606,7 +606,12 @@ return array(
         ),
         'answer-masking' => array(
             'toggle' => 'D'
-        )
+        ),
+        'apiptts' => array(
+            'enterTogglePlayback' => 'Enter',
+            'togglePlayback' => 'P',
+            'spaceTogglePlayback' => 'Space'
+        ),
     ],
 
     /**
