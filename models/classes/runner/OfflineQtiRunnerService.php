@@ -53,11 +53,17 @@ class OfflineQtiRunnerService extends ConfigurableService
         foreach ($this->getItemIdentifiersFromTestMap($testMap) as $itemIdentifier) {
             $itemRef = $runnerService->getItemHref($serviceContext, $itemIdentifier);
 
+            $itemState = $runnerService->getItemState($serviceContext, $itemIdentifier);
+
+            if (is_array($itemState) && (0 === count($itemState))) {
+                $itemState = null;
+            }
+
             /** @var QtiRunnerServiceContext $serviceContext */
             $items[$itemIdentifier] = [
                 'baseUrl' => $runnerService->getItemPublicUrl($serviceContext, $itemRef),
                 'itemData' => $this->getItemData($serviceContext, $itemRef),
-                'itemState' => $runnerService->getItemState($serviceContext, $itemIdentifier),
+                'itemState' => $itemState,
                 'itemIdentifier' => $itemIdentifier,
                 'portableElements' => $runnerService->getItemPortableElements($serviceContext, $itemRef),
             ];
