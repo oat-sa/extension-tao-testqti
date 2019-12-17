@@ -327,6 +327,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
             $itemReport = $this->compileItems($compiledDoc);
             $report->add($itemReport);
             if ($itemReport->getType() != common_report_Report::TYPE_SUCCESS) {
+                common_Logger::e($report->getMessage(), $report->getErrors());
                 $msg = 'Failed item compilation.';
                 $code = taoQtiTest_models_classes_QtiTestCompilationFailedException::ITEM_COMPILATION;
                 throw new taoQtiTest_models_classes_QtiTestCompilationFailedException($msg, $this->getResource(), $code);
