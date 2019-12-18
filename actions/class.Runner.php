@@ -794,7 +794,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $this->endItemTimer();
             }
 
-            $this->getRunnerService()->initServiceContext($serviceContext);
+            $serviceContext = $this->getRunnerService()->initServiceContext($serviceContext);
 
             $response = [
                 'success' => $this->getRunnerService()->pause($serviceContext),
