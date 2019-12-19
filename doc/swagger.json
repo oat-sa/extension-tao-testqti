@@ -20,6 +20,66 @@
         }
     ],
     "paths": {
+        "/taoQtiTest/RestQtiTests/exportQtiPackage": {
+            "post": {
+                "description": "Download a QTI Package for given delivery",
+                "tags": [
+                    "export"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request was correctly handled, qti package was exported",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "application/json": {
+                                    "success": false,
+                                    "errorCode": 0,
+                                    "errorMsg": "At least one mandatory parameter was required but found missing in your request",
+                                    "version": "3.1.0"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "You don't have permission to access this resource.",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error, if class-parent-uri is not a valid test class.",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                }
+            }
+        },
         "/taoQtiTest/RestQtiTests/import": {
             "post": {
                 "description": "Import a QTI test package into the TAO platform. Available since Tao 3.1.",
