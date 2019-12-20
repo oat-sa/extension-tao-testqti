@@ -1971,5 +1971,20 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('35.2.0', '35.3.1');
+
+        if ($this->isVersion('35.3.1')) {
+            $registry->register(TestPlugin::fromArray([
+                'id'          => 'apiptts',
+                'name'        => 'APIP Text To Speech',
+                'module'      => 'taoQtiTest/runner/plugins/tools/apipTextToSpeech/plugin',
+                'bundle'      => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to item content.',
+                'category'    => 'tools',
+                'active'      => true,
+                'tags'        => [  ]
+            ]));
+
+            $this->setVersion('35.4.0');
+        }
     }
 }
