@@ -41,6 +41,7 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
+use oat\tao\model\service\ApplicationService;
 
 /**
  * the QTI TestModel service.
@@ -992,7 +993,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
     protected function searchInTestDirectory(Directory $dir) {
 
             $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
-            $file = null;
+            $files = [];
             /**
              * @var File $file
              */
@@ -1003,8 +1004,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 }
             }
 
-            if (is_null($file)) {
+            if (empty($files)) {
                 throw new Exception('No QTI-XML test file found.');
+            }
+            if (count($files) > 1) {
+                throw new Exception('Multiple QTI-XML test files found.');
             }
             $file = current($files);
             $fileName = str_replace($dir->getPrefix() . '/', '', $file->getPrefix());
@@ -1093,8 +1097,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             }
             $doc->documentElement->setAttribute('identifier', $identifier);
 
-            $tao = $this->getServiceLocator()->get(common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('tao');
-            $doc->documentElement->setAttribute('toolVersion', $tao->getConstant('TAO_VERSION'));
+            $appService = $this->getServiceLocator()->get(ApplicationService::SERVICE_ID);
+            $doc->documentElement->setAttribute('toolVersion', $appService->getPlatformVersion());
 
             if (!$file->write($doc->saveXML())) {
                 $msg = "Unable to write raw QTI Test template.";
