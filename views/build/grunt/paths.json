@@ -1,3 +1,4 @@
 {
-    "taoQtiTest/runner": "../../../taoQtiTest/views/node_modules/@oat-sa/tao-test-runner-qti/dist"
+    "taoQtiTest/runner": "../../../taoQtiTest/views/node_modules/@oat-sa/tao-test-runner-qti/dist",
+    "taoQtiTestCss": "../../../taoQtiTest/views/css"
 }

@@ -14,9 +14,19 @@ use qtism\data\AssessmentItemRef;
  */
 class PhpSerializationCompilationDataService extends CompilationDataService
 {
+    const OUTPUT_FILE_TYPE = 'php';
+
+    /**
+     * @return string
+     */
+    public function getOutputFileType()
+    {
+        return self::OUTPUT_FILE_TYPE;
+    }
+
     public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
-        $path .= '.php';
+        $path .= '.' . self::OUTPUT_FILE_TYPE;
 
         // Clone the component to make sure observers are not saved.
         if ($object instanceof AssessmentItemRef) {
@@ -32,7 +42,7 @@ class PhpSerializationCompilationDataService extends CompilationDataService
     public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
 
-        $path .= '.php';
+        $path .= '.' . self::OUTPUT_FILE_TYPE;
 
         if (($compilationData = $compilationDirectory->read($path)) !== false) {
             if (($component = @unserialize($compilationData)) !== false) {
