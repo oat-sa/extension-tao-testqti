@@ -267,7 +267,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $session->beginTestSession();
                 $event = new TestInitEvent($session);
                 $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
-                \common_Logger::i("Assessment Test Session begun.");
+                \common_Logger::i(sprintf('Assessment Test Session begun. Session id: %s', $session->getSessionId()));
 
                 if ($context->isAdaptive()) {
                     \common_Logger::t("Very first item is adaptive.");
