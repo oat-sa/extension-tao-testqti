@@ -1973,6 +1973,8 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('35.2.0', '35.4.1');
 
         if ($this->isVersion('35.4.1')) {
+            $registry = PluginRegistry::getRegistry();
+
             $registry->register(TestPlugin::fromArray([
                 'id'          => 'apiptts',
                 'name'        => 'APIP Text To Speech',
