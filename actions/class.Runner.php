@@ -986,7 +986,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext();
 
             /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
-            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
+            $communicationService = $this->getServiceLocator()->get(QtiCommunicationService::SERVICE_ID);
 
             $response = [
                 'responses' => $communicationService->processInput($serviceContext, $input),

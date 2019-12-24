@@ -43,7 +43,6 @@ class QtiTestImporter extends AbstractTestImporter
      */
     public function import(File $file, \core_kernel_classes_Class $class = null, $enableMetadataGuardians = true, $enableValidators = true, $itemMustExist = false, $itemMustBeOverwritten = false)
     {
-        \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
         return $service->importQtiTest($file, $class, $enableMetadataGuardians, $enableValidators, $itemMustExist, $itemMustBeOverwritten);
     }
