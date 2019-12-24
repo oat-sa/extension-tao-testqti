@@ -1007,9 +1007,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             if (empty($files)) {
                 throw new Exception('No QTI-XML test file found.');
             }
-            if (count($files) > 1) {
-                throw new Exception('Multiple QTI-XML test files found.');
-            }
             $file = current($files);
             $fileName = str_replace($dir->getPrefix() . '/', '', $file->getPrefix());
             $this->setQtiIndexFile($dir , $fileName);
