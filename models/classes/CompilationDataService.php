@@ -24,7 +24,12 @@ abstract class CompilationDataService extends ConfigurableService
     public function __construct($options = []) {
         parent::__construct($options);
     }
-    
+
+    /**
+     * @return string
+     */
+    abstract public function getOutputFileType();
+
     /**
      * Write Compilation Data
      * 

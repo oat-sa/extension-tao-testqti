@@ -18,15 +18,25 @@ class PhpCodeCompilationDataService extends CompilationDataService
 
     const OPTION_CACHE_COMPACT_TEST_FILE = 'cacheCompactTestFile';
 
+    const OUTPUT_FILE_TYPE = 'php';
+
     public function __construct($options = []) {
         parent::__construct($options);
         
         $this->cacheDir = sys_get_temp_dir() . '/taooldtestrunnerphpcache';
     }
-    
+
+    /**
+     * @return string
+     */
+    public function getOutputFileType()
+    {
+        return self::OUTPUT_FILE_TYPE;
+    }
+
     public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
-        $path .= '.php';
+        $path .= '.' . self::OUTPUT_FILE_TYPE;
         $doc = new PhpDocument();
         $doc->setDocumentComponent($object);
         
@@ -38,10 +48,10 @@ class PhpCodeCompilationDataService extends CompilationDataService
     
     public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
-        $path .= '.php';
+        $path .= '.' . self::OUTPUT_FILE_TYPE;
         $dir = $this->ensureCacheDirectory($compilationDirectory);
         $cacheKey = $this->cacheKey($cacheInfo);
-        $cacheFile = "${dir}/${cacheKey}.php";
+        $cacheFile = "${dir}/${cacheKey}." . self::OUTPUT_FILE_TYPE;
 
         if ($this->useCompactCacheFile() && !is_file($cacheFile)) {
             file_put_contents($cacheFile, $compilationDirectory->read($path));

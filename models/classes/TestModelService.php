@@ -45,7 +45,7 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
      * @see \taoTests_models_classes_TestModel::prepareContent()
      */
     public function prepareContent( \core_kernel_classes_Resource $test, $items = array()) {
-        $service = \taoQtiTest_models_classes_QtiTestService::singleton();
+        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         $service->save($test, $items);
     }
 
@@ -54,7 +54,7 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
      * @see \taoTests_models_classes_TestModel::deleteContent()
      */
     public function deleteContent( \core_kernel_classes_Resource $test) {
-        $service = \taoQtiTest_models_classes_QtiTestService::singleton();
+        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         $service->deleteContent($test);
     }
 
@@ -63,7 +63,7 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
      * @see \taoTests_models_classes_TestModel::getItems()
      */
     public function getItems( \core_kernel_classes_Resource $test) {
-    	$service = \taoQtiTest_models_classes_QtiTestService::singleton();
+        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         return $service->getItems($test);
     }
 
