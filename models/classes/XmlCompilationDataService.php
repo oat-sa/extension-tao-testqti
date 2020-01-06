@@ -31,9 +31,11 @@ use qtism\data\storage\xml\XmlCompactDocument;
  */
 class XmlCompilationDataService extends CompilationDataService
 {
+    const OUTPUT_FILE_TYPE = 'xml';
+
     public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
     {
-        $path .= '.xml';
+        $path .= '.' . self::OUTPUT_FILE_TYPE;
         $compactDoc = new XmlCompactDocument();
         $compactDoc->setDocumentComponent($object);
         
@@ -45,10 +47,18 @@ class XmlCompilationDataService extends CompilationDataService
     
     public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
-        $path .= '.xml';
+        $path .= '.' . self::OUTPUT_FILE_TYPE;
         $compactDoc = new XmlCompactDocument();
         $compactDoc->loadFromString($compilationDirectory->read($path));
 
         return $compactDoc->getDocumentComponent();
+    }
+
+    /**
+     * @return string
+     */
+    public function getOutputFileType()
+    {
+        return self::OUTPUT_FILE_TYPE;
     }
 }

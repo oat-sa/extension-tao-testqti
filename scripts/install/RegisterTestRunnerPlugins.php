@@ -385,7 +385,7 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'bundle'      => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to item content.',
                 'category'    => 'tools',
-                'active'      => false,
+                'active'      => true,
                 'tags'        => [  ]
             ]
         ],
