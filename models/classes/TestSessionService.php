@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\models;
 
+use common_exception_NoContent;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
@@ -33,7 +34,9 @@ use oat\taoQtiTest\models\runner\session\UserUriAware;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
+use tao_models_classes_service_ServiceCallHelper;
 use taoQtiTest_helpers_TestSessionStorage;
+use Throwable;
 
 /**
  * Interface TestSessionService
@@ -71,7 +74,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
             $inputParameters = $this->getRuntimeInputParameters($deliveryExecution);
             $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
             $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
-        } catch (\common_exception_NoContent $e) {
+        } catch (common_exception_NoContent $e) {
             if (!$withCache && !isset(self::$cache[$sessionId])) {
                 self::$cache = [];
             }
@@ -225,14 +228,17 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      *   'QtiTestDefinition' => 'http://sample/first.rdf#i14369752345581135'
      * )
      * </pre>
+     * @throws common_exception_NoContent
      */
     public function getRuntimeInputParameters(DeliveryExecution $deliveryExecution)
     {
-        $compiledDelivery = $deliveryExecution->getDelivery();
-        $runtime = $this->getServiceLocator()->get(AssignmentService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
-        $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
-
-        return $inputParameters;
+        try {
+            $compiledDelivery = $deliveryExecution->getDelivery();
+            $runtime = $this->getServiceLocator()->get(AssignmentService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
+            return tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
+        } catch (Throwable $exception) {
+            throw new common_exception_NoContent($exception->getMessage());
+        }
     }
 
     /**
