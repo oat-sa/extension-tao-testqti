@@ -143,11 +143,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function init()
     {
-        // code borrowed from the previous implementation, maybe obsolete...
-        /** @var SessionStateService $sessionStateService */
-        $sessionStateService = $this->getServiceManager()->get(SessionStateService::SERVICE_ID);
-        $sessionStateService->resumeSession($this->getTestSession());
-
         $this->retrieveItemIndex();
     }
 

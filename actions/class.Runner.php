@@ -787,13 +787,18 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
-            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+
+            $serviceContext = $this->getServiceContext();
+
+            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
+                $this->endItemTimer();
+            }
+
+            $serviceContext = $this->getRunnerService()->initServiceContext($serviceContext);
 
             $response = [
                 'success' => $this->getRunnerService()->pause($serviceContext),
             ];
-
-            $this->getRunnerService()->persist($serviceContext);
 
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
@@ -981,7 +986,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext();
 
             /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
-            $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
+            $communicationService = $this->getServiceLocator()->get(QtiCommunicationService::SERVICE_ID);
 
             $response = [
                 'responses' => $communicationService->processInput($serviceContext, $input),
