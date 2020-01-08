@@ -1986,7 +1986,7 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'tags'        => [  ]
             ]));
 
-            $this->setVersion('35.6.0');
+            $this->setVersion('35.6.1');
       }
     }
 }
