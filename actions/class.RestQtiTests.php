@@ -50,14 +50,14 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     public function exportQtiPackage()
     {
         $params = $this->getPsrRequest()->getQueryParams();
-        if (!$deliveryId = $params[self::PARAM_TEST_URI]) {
+        if (!$testId = $params[self::PARAM_TEST_URI]) {
             $this->returnFailure(new common_exception_MissingParameter);
         }
-        if (!$delivery = $this->getResource($deliveryId)) {
+        if (!$test = $this->getResource($testId)) {
             $this->returnFailure(new common_exception_ResourceNotFound);
         }
 
-        $qtiPackage = $this->getQtiPackageExporter()->exportDeliveryQtiPackage($delivery);
+        $qtiPackage = $this->getQtiPackageExporter()->exportDeliveryQtiPackage($test);
 
         $data[self::PARAM_PACKAGE_NAME] = base64_encode(file_get_contents($qtiPackage['path']));
 
