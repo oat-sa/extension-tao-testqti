@@ -30,7 +30,7 @@ class QtiPackageExporter extends ConfigurableService
     /**
      * @param RdfResource $test
      *
-     * @return mixed|null
+     * @return array
      * @throws \common_Exception
      * @throws \common_exception_Error
      */
