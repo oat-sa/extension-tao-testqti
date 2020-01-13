@@ -27,8 +27,11 @@ use Slim\Http\RequestBody;
 use Slim\Http\Uri;
 use tao_helpers_File;
 use taoQtiTest_actions_RestQtiTests;
+use taoQtiTest_models_classes_QtiTestService as QtiTestService;
+use taoTests_models_classes_TestsService as TestsService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use common_report_Report as Report;
+use ZipArchive;
 
 class QtiPackageExportTest extends RestTestRunner
 {
@@ -49,10 +52,10 @@ class QtiPackageExportTest extends RestTestRunner
         //create test resource based on qti package zip
         $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/multiple_items_with_ms.zip';
         //create temporary subclass
-        $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter', true));
+        $class = TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter', true));
         //Importing test form zip file into temporary subclass
         /** @var Report $report */
-        $report = \taoQtiTest_models_classes_QtiTestService::singleton()
+        $report = QtiTestService::singleton()
             ->importMultipleTests($class, $testFile);
         $reportSuccesses = $report->getSuccesses();
         $successfulImport = reset($reportSuccesses);
@@ -85,7 +88,7 @@ class QtiPackageExportTest extends RestTestRunner
         fclose($filehandler);
 
         $extractExportPath = sys_get_temp_dir() . '/extractedExportPackage' . time();
-        $zip = new \ZipArchive();
+        $zip = new ZipArchive();
         if ($zip->open($exportTempFile)) {
             $zip->extractTo($extractExportPath);
             $zip->close();
