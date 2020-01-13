@@ -46,8 +46,6 @@ class QtiPackageExportTest extends RestTestRunner
 
     public function testExportQtiPackage()
     {
-        $exportTempFile = tempnam(sys_get_temp_dir(), 'testExport_');
-
         //create test resource based on qti package zip
         $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/multiple_items_with_ms.zip';
         //create temporary subclass
@@ -81,20 +79,24 @@ class QtiPackageExportTest extends RestTestRunner
         $response = $restQtiTests->exportQtiPackage();
 
         //Handle Zip file
+        $exportTempFile = tempnam(sys_get_temp_dir(), 'testExport_');
         $filehandler = fopen($exportTempFile, 'wb');
         fwrite($filehandler, base64_decode($response[TestableRestQtiTests::PARAM_PACKAGE_NAME]));
         fclose($filehandler);
 
-        $extractExportPath = sys_get_temp_dir() . '/extractedExportPackage';
+        $extractExportPath = sys_get_temp_dir() . '/extractedExportPackage' . time();
         $zip = new \ZipArchive();
         if ($zip->open($exportTempFile)) {
             $zip->extractTo($extractExportPath);
             $zip->close();
         }
         $manifestFile = $extractExportPath . '/imsmanifest.xml';
+        $itemsPath = $extractExportPath . '/items';
+        $itemsInExtractedPath = array_slice(scandir($itemsPath,  null), 2);
 
         //Assert zip content
-        $this->assertTrue(file_exists($manifestFile));
+        $this->assertFileExists($manifestFile);
+        $this->assertCount(15, $itemsInExtractedPath);
 
         //Clean up
         $class->delete(true);
