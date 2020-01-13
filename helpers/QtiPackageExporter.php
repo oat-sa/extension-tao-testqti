@@ -36,13 +36,13 @@ class QtiPackageExporter extends ConfigurableService
      */
     public function exportDeliveryQtiPackage(RdfResource $test)
     {
-        $exportRaport = $this->getTestExporter()->export([
+        $exportReport = $this->getTestExporter()->export([
             'filename' => Util::normalizePath('qti_package_'),
             'instances' => $test->getUri(),
         ],
             FileHelper::createTempDir());
 
-        return $exportRaport->getData();
+        return $exportReport->getData();
     }
 
     /**
