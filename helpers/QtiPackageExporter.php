@@ -21,7 +21,7 @@ namespace oat\taoQtiTest\helpers;
 
 use League\Flysystem\Util;
 use oat\oatbox\service\ConfigurableService;
-use taoQtiTest_models_classes_export_TestExport as TestExporter;
+use taoQtiTest_models_classes_export_TestExport22 as TestExporter;
 use core_kernel_classes_Resource as RdfResource;
 use tao_helpers_File as FileHelper;
 

@@ -49,7 +49,12 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     public function exportQtiPackage()
     {
+        if ($this->getRequestMethod() != Request::HTTP_GET) {
+            throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
+        }
+
         $params = $this->getPsrRequest()->getQueryParams();
+
         if (!$testId = $params[self::PARAM_TEST_URI]) {
             $this->returnFailure(new common_exception_MissingParameter);
         }
@@ -61,7 +66,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
         $data[self::PARAM_PACKAGE_NAME] = base64_encode(file_get_contents($qtiPackage['path']));
 
-        $this->returnSuccess($data);
+        return $this->returnSuccess($data);
     }
 
     /**
