@@ -21,7 +21,7 @@
     ],
     "paths": {
         "/taoQtiTest/RestQtiTests/exportQtiPackage": {
-            "post": {
+            "get": {
                 "description": "Download a QTI Package for given delivery",
                 "tags": [
                     "export"
@@ -30,7 +30,26 @@
                     "200": {
                         "description": "Request was correctly handled, qti package was exported",
                         "schema": {
-                            "type": "file"
+                            "title": "response",
+                            "format": "json",
+                            "type": "object",
+                            "required": [
+                                "success",
+                                "data"
+                            ],
+                            "properties": {
+                                "success": {
+                                    "type": "boolean",
+                                    "description": "True on success"
+                                },
+                                "version": {
+                                    "type": "string",
+                                    "description": "Tao version"
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/qtiPackageData"
+                                }
+                            }
                         }
                     },
                     "400": {
@@ -77,7 +96,16 @@
                             "$ref": "#/definitions/errorModel"
                         }
                     }
-                }
+                },
+                "parameters": [
+                    {
+                        "name": "testUri",
+                        "in": "query",
+                        "description": "Test resource URI",
+                        "type": "string",
+                        "required": true
+                    }
+                ]
             }
         },
         "/taoQtiTest/RestQtiTests/import": {
@@ -565,12 +593,22 @@
                 }
             }
         },
+        "qtiPackageData": {
+            "description": "Qti Package data",
+            "type": "array",
+            "items": {
+                "$ref": "#definitions/qtiPackage"
+            }
+        },
         "data": {
             "description": "output user data",
             "type": "array",
             "items": {
                 "$ref": "#/definitions/test"
             }
+        },
+        "qtiPackage": {
+            "type": "string"
         },
         "test": {
             "type": "object",
