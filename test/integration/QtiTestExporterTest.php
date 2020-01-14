@@ -171,6 +171,28 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     }
 
     /**
+     * test export
+     *
+     * @depends testInitExport
+     * @depends testExportFormCreate
+     * @depends testCreateInstance
+     *
+     * @param taoQtiTest_models_classes_export_TestExport $testExport
+     * @param tao_helpers_form_Form $form
+     *
+     * @throws \common_Exception
+     * @throws \common_exception_Error
+     */
+    public function testExportFormSubmitWithMissingClassUri($testExport, $form)
+    {
+        $formValues = $form->getValues();
+
+        $report = $testExport->export($formValues, $this->outputDir);
+        $this->assertInstanceOf(common_report_Report::class, $report);
+        $this->assertTrue($report->containsError());
+    }
+
+    /**
 	 * test export
 	 *
      * @depends testInitExport

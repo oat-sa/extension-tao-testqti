@@ -19,6 +19,7 @@
 use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\TaskLog\Entity\EntityInterface;
 use oat\tao\model\taskQueue\TaskLogInterface;
+use oat\taoQtiTest\helpers\QtiPackageExporter;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiItem\controller\AbstractRestQti;
 
@@ -29,7 +30,8 @@ use oat\taoQtiItem\controller\AbstractRestQti;
  */
 class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 {
-    const PARAM_PACKAGE_NAME = 'qtiPackage';
+    public const PARAM_PACKAGE_NAME = 'qtiPackage';
+    private const PARAM_TEST_URI = 'testUri';
 
     /**
      * @throws common_exception_NotImplemented
@@ -37,6 +39,37 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     public function index()
     {
         $this->returnFailure(new \common_exception_NotImplemented('This API does not support this call.'));
+    }
+
+    /**
+     * Method will return qti package encoded in base64 for delivery
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_NotImplemented
+     */
+    public function exportQtiPackage()
+    {
+        if ($this->getRequestMethod() !== Request::HTTP_GET) {
+            throw new \common_exception_NotImplemented('Only post method is accepted to import Qti package.');
+        }
+
+        $params = $this->getPsrRequest()->getQueryParams();
+
+        if (!isset($params[self::PARAM_TEST_URI]) || (!$testId = $params[self::PARAM_TEST_URI])) {
+            return $this->returnFailure(new common_exception_MissingParameter);
+        }
+
+        $test = $this->getResource($testId);
+
+        if (!$test->exists()) {
+            return $this->returnFailure(new common_exception_ResourceNotFound('Resource not found'));
+        }
+
+        $qtiPackage = $this->getQtiPackageExporter()->exportDeliveryQtiPackage($test);
+
+        $data[self::PARAM_PACKAGE_NAME] = base64_encode(file_get_contents($qtiPackage['path']));
+
+        return $this->returnSuccess($data);
     }
 
     /**
@@ -111,7 +144,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
             );
 
             $result = [
-                'reference_id' => $task->getId()
+                'reference_id' => $task->getId(),
             ];
 
             /** @var TaskLogInterface $taskLog */
@@ -211,5 +244,13 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     private function getTestClass()
     {
         return $this->getClassFromRequest(new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
+    }
+
+    /**
+     * @return QtiPackageExporter
+     */
+    private function getQtiPackageExporter()
+    {
+        return $this->getServiceLocator()->get(QtiPackageExporter::class);
     }
 }

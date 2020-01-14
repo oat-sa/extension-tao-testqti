@@ -62,7 +62,7 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
     }
 
     /**
-     * @param array  $formValues
+     * @param array $formValues
      * @param string $destination
      * @return Report
      * @throws common_Exception
@@ -111,9 +111,13 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 
         $zip->close();
 
-        $subjectUri = isset($formValues['uri']) ? $formValues['uri'] : $formValues['classUri'];
+        if (!isset($formValues['uri']) && !isset($formValues['classUri'])) {
+            $report->add(Report::createFailure('Export failed. Key uri nor classUri in formValues are not defined'));
+        } else {
+            $subjectUri = $formValues['uri'] ?? $formValues['classUri'];
+        }
 
-        if (!$report->containsError() && $subjectUri) {
+        if (isset($subjectUri) && !$report->containsError()) {
             $this->getEventManager()->trigger(new QtiTestExportEvent(new core_kernel_classes_Resource($subjectUri)));
             $report->setMessage(__('Resource(s) successfully exported.'));
         }
