@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,7 +75,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
             ? $this->getRequestParameter('itemDefinition')
             : null;
 
-        if(!is_null($itemRef)){
+        if (!is_null($itemRef)) {
             $event = new ItemOfflineEvent($serviceContext->getTestSession(), $itemRef);
             $this->getServiceLocator()->get(EventManager::SERVICE_ID)->trigger($event);
             return true;
@@ -213,7 +214,8 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
      * @param Exception [$e] Optional exception from which extract the error context
      * @return array
      */
-    protected function getErrorResponse($e = null) {
+    protected function getErrorResponse($e = null)
+    {
         $response = [
             'success' => false,
             'type' => 'error',

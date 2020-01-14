@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,11 +77,9 @@ class QtiFlysystemFile extends File implements QtiFile
         if ($obj instanceof QtiFile) {
             if ($this->getFilename() !== $obj->getFilename()) {
                 return false;
-            }
-            else if ($this->getMimeType() !== $obj->getMimeType()) {
+            } elseif ($this->getMimeType() !== $obj->getMimeType()) {
                 return false;
-            }
-            else {
+            } else {
                 // We have to check the content of the file.
                 $myStream = $this->getStream();
                 $objStream = $obj->getStream();

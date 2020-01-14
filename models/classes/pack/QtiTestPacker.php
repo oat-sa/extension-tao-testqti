@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,20 +58,19 @@ class QtiTestPacker implements Packable
         $testPack = null;
 
         try {
-
             $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 
             $doc            = $qtiTestService->getDoc($test);
             $converter      = new \taoQtiTest_models_classes_QtiTestConverter($doc);
-            $items          = array();
-            foreach($qtiTestService->getItems($test) as $item){
+            $items          = [];
+            foreach ($qtiTestService->getItems($test) as $item) {
                 $items[$item->getUri()] = (new Packer($item, ''))
                     ->setServiceLocator(ServiceManager::getServiceManager())
                     ->pack();
             }
             $testPack       = new TestPack(self::$testType, $converter->toArray(), $items);
-        } catch(Exception $e){
-            throw new common_Exception('Unable to pack test '. $test->getUri() . ' : ' . $e->getMessage());
+        } catch (Exception $e) {
+            throw new common_Exception('Unable to pack test ' . $test->getUri() . ' : ' . $e->getMessage());
         }
 
         return $testPack;

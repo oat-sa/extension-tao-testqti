@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,8 +17,8 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
-namespace oat\taoQtiTest\models;
 
+namespace oat\taoQtiTest\models;
 
 class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
 {
@@ -210,7 +211,7 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allow Test-taker to playback media files associated according to APIP protocol to item content.'),
                     'order'         => 900,
                     'pluginId'      => 'apiptts'
-              ])
+                ])
             ]
         );
 
@@ -237,5 +238,4 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
             );
         }
     }
-
 }

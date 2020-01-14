@@ -26,7 +26,7 @@ class CatUtilsTest extends TestCase
             [
                 dirname(__FILE__) . '/../../samples/xml/cat/single-adaptive-section.xml',
                 [
-                    'S01' => 
+                    'S01' =>
                     [
                         'adaptiveEngineRef' => 'http://www.my-cat-engine.com/api/',
                         'adaptiveSettingsRef' => 'cat/settings.data',

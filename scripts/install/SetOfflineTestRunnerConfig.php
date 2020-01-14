@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Péter Halász <peter@taotesting.com>
  */
@@ -145,4 +147,3 @@ class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
         return $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID);
     }
 }
-

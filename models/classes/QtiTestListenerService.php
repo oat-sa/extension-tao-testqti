@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
+
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
@@ -55,7 +57,7 @@ class QtiTestListenerService extends ConfigurableService
      */
     const ARCHIVE_EXCLUDE_EXTRA = 'archive-exclude-extra';
 
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         parent::__construct($options);
         
@@ -113,7 +115,7 @@ class QtiTestListenerService extends ConfigurableService
     
     /**
      * Archive Test States
-     * 
+     *
      * This method archives the Test States (Test + Items) related to the DeliveryExecution throwing $event.
      * Please note that it is only relevant for the new QTI Test Runner.
      *

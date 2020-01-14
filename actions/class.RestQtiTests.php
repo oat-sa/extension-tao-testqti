@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,7 +57,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         $params = $this->getPsrRequest()->getQueryParams();
 
         if (!isset($params[self::PARAM_TEST_URI]) || (!$testId = $params[self::PARAM_TEST_URI])) {
-            return $this->returnFailure(new common_exception_MissingParameter);
+            return $this->returnFailure(new common_exception_MissingParameter());
         }
 
         $test = $this->getResource($testId);
@@ -94,17 +95,17 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
-                $data = array();
+                $data = [];
                 foreach ($report as $r) {
                     $values = $r->getData();
                     $testid = $values->rdfsResource->getUri();
                     foreach ($values->items as $item) {
                         $itemsid[] = $item->getUri();
                     }
-                    $data[] = array(
+                    $data[] = [
                         'testId' => $testid,
                         'testItems' => $itemsid
-                    );
+                    ];
                 }
                 return $this->returnSuccess($data);
             } else {

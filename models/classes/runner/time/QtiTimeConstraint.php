@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -134,7 +135,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      */
     protected function getRemainingTimeFrom(QtiDuration $duration)
     {
-        if(!is_null($duration)){
+        if (!is_null($duration)) {
             $remaining = clone $duration;
 
             if ($this->getApplyExtraTime() && $this->timer) {
@@ -184,7 +185,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      */
     private function durationToMs($duration)
     {
-        if(!is_null($duration) && $duration instanceof QtiDuration){
+        if (!is_null($duration) && $duration instanceof QtiDuration) {
             return TestRunnerUtils::getDurationWithMicroseconds($duration);
         }
         return false;
@@ -198,7 +199,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
     {
         $source = $this->getSource();
         $timeLimits = $source->getTimeLimits();
-        if(!is_null($timeLimits)){
+        if (!is_null($timeLimits)) {
             $identifier = $source->getIdentifier();
 
             $maxTime = $timeLimits->getMaxTime();
@@ -206,7 +207,6 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
             $maxTimeRemaining = $this->getMaximumRemainingTime();
             $minTimeRemaining = $this->getMinimumRemainingTime();
             if ($maxTimeRemaining !== false || $minTimeRemaining !== false) {
-
                 $label = method_exists($source, 'getTitle') ? $source->getTitle() : $identifier;
 
                 $extraTime = [];

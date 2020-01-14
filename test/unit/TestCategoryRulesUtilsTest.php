@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\unit;
 
 use oat\generis\test\TestCase;
@@ -33,7 +35,7 @@ use qtism\data\storage\xml\XmlDocument;
 class TestCategoryRulesUtilsTest extends TestCase
 {
     
-    static public function samplesDir() 
+    public static function samplesDir()
     {
         return dirname(__FILE__) . '/../samples/xml/category_rules/';
     }
@@ -44,7 +46,7 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc->load(self::samplesDir() . 'categories.xml');
         
         $this->assertEquals(
-            array('math', 'english'),
+            ['math', 'english'],
             TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent())
         );
     }
@@ -55,7 +57,7 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc->load(self::samplesDir() . 'no-categories.xml');
         
         $this->assertEquals(
-            array(),
+            [],
             TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent())
         );
     }
@@ -66,8 +68,8 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc->load(self::samplesDir() . 'categories.xml');
         
         $this->assertEquals(
-            array(),
-            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), array('/math/', '/engl/'))
+            [],
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), ['/math/', '/engl/'])
         );
     }
     
@@ -77,8 +79,8 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc->load(self::samplesDir() . 'categories.xml');
         
         $this->assertEquals(
-            array('english'),
-            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), array('/math/', '/math/'))
+            ['english'],
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), ['/math/', '/math/'])
         );
     }
     
@@ -88,8 +90,8 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc->load(self::samplesDir() . 'categories.xml');
         
         $this->assertEquals(
-            array('english'),
-            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), array('/MATH/i'))
+            ['english'],
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), ['/MATH/i'])
         );
     }
     
@@ -99,8 +101,8 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc->load(self::samplesDir() . 'categories-x-tao.xml');
         
         $this->assertEquals(
-            array('math', 'english'),
-            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), array('/^X-TAO-/i'))
+            ['math', 'english'],
+            TestCategoryRulesUtils::extractCategories($doc->getDocumentComponent(), ['/^X-TAO-/i'])
         );
     }
     
@@ -221,7 +223,7 @@ class TestCategoryRulesUtilsTest extends TestCase
         $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $outcomeRules[0]->getIdentifier());
         
         $this->assertInstanceOF(NumberCorrect::class, $outcomeRules[0]->getExpression());
-        $this->assertEquals(array('math'), $outcomeRules[0]->getExpression()->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['math'], $outcomeRules[0]->getExpression()->getIncludeCategories()->getArrayCopy());
         
         // If a second call to TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing occurs for a variable wich
         // is already targeted by a setOutcomeValue rule, no new outcome rule should appear to avoid duplicates.
