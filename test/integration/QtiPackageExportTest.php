@@ -48,6 +48,24 @@ class QtiPackageExportTest extends RestTestRunner
         ]);
     }
 
+    public function testWithEmptyStringInParameterQuery()
+    {
+
+        $restQtiTests = new TestableRestQtiTests();
+        $restQtiTests->setServiceLocator($this->serviceLocatorMock);
+
+        //Preparing right url
+        $query = sprintf('?testUri=');
+        $stream = new RequestBody();
+        $headers = new Headers();
+        $request = new Request(self::GET_REQUEST, Uri::createFromString($query), $headers, [], [], $stream);
+        $restQtiTests->setRequest($request);
+
+        $response = $restQtiTests->exportQtiPackage();
+        $this->assertJson($response);
+        $this->assertTrue((bool) strpos($response, 'Resource not found'));
+    }
+
     public function testWithMissingResource()
     {
 
