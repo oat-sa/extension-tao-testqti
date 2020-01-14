@@ -59,12 +59,10 @@
                         },
                         "examples": {
                             "application/json": {
-                                "application/json": {
-                                    "success": false,
-                                    "errorCode": 0,
-                                    "errorMsg": "At least one mandatory parameter was required but found missing in your request",
-                                    "version": "3.1.0"
-                                }
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "At least one mandatory parameter was required but found missing in your request",
+                                "version": "3.1.0"
                             }
                         }
                     },
@@ -597,7 +595,7 @@
             "description": "Qti Package data",
             "type": "array",
             "items": {
-                "$ref": "#definitions/qtiPackage"
+                "$ref": "#/definitions/qtiPackage"
             }
         },
         "data": {
