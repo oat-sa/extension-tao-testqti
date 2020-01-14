@@ -39,6 +39,7 @@ class QtiPackageExporter extends ConfigurableService
         $exportReport = $this->getTestExporter()->export([
             'filename' => Util::normalizePath('qti_package_'),
             'instances' => $test->getUri(),
+            'uri' => $test->getUri()
         ],
             FileHelper::createTempDir());
 

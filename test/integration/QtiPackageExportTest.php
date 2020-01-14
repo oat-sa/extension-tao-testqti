@@ -63,12 +63,11 @@ class QtiPackageExportTest extends RestTestRunner
 
         $response = $restQtiTests->exportQtiPackage();
         $this->assertJson($response);
-        $this->assertTrue((bool) strpos($response, 'Resource not found'));
+        $this->assertTrue((bool) strpos($response, 'At least one mandatory parameter was required but found missing in your request'));
     }
 
     public function testWithMissingResource()
     {
-
         $restQtiTests = new TestableRestQtiTests();
         $restQtiTests->setServiceLocator($this->serviceLocatorMock);
 
