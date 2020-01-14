@@ -19,6 +19,7 @@
 
 namespace oat\taoQtiTest\test\integration;
 
+use Exception;
 use oat\tao\test\integration\RestTestRunner;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
 use Slim\Http\Headers;
@@ -45,6 +46,42 @@ class QtiPackageExportTest extends RestTestRunner
         $this->serviceLocatorMock = $this->getServiceLocatorMock([
             QtiPackageExporter::class => new QtiPackageExporter(),
         ]);
+    }
+
+    public function testWithMissingResource()
+    {
+
+        $restQtiTests = new TestableRestQtiTests();
+        $restQtiTests->setServiceLocator($this->serviceLocatorMock);
+
+        //Preparing right url
+        $query = sprintf('?testUri=%s', 'http://this-does-not-matter-really');
+        $stream = new RequestBody();
+        $headers = new Headers();
+        $request = new Request(self::GET_REQUEST, Uri::createFromString($query), $headers, [], [], $stream);
+        $restQtiTests->setRequest($request);
+
+        $response = $restQtiTests->exportQtiPackage();
+        $this->assertJson($response);
+        $this->assertTrue((bool) strpos($response, 'Resource not found'));
+    }
+
+    public function testWithMissingParam()
+    {
+
+        $restQtiTests = new TestableRestQtiTests();
+        $restQtiTests->setServiceLocator($this->serviceLocatorMock);
+
+        //Preparing right url
+        $query = sprintf('?test=%s', 'http://this-does-not-matter-really');
+        $stream = new RequestBody();
+        $headers = new Headers();
+        $request = new Request(self::GET_REQUEST, Uri::createFromString($query), $headers, [], [], $stream);
+        $restQtiTests->setRequest($request);
+
+        $response = $restQtiTests->exportQtiPackage();
+        $this->assertJson($response);
+        $this->assertTrue((bool) strpos($response, 'At least one mandatory parameter was required but found missing in your request'));
     }
 
     public function testExportQtiPackage()
@@ -117,5 +154,24 @@ class TestableRestQtiTests extends taoQtiTest_actions_RestQtiTests
     public function returnSuccess($rawData = [], $withMessage = true)
     {
         return $rawData;
+    }
+
+    /**
+     * @param Exception $exception
+     * @param bool $withMessage
+     *
+     * @return string|void
+     * @throws \common_exception_NotImplemented
+     */
+    public function returnFailure(Exception $exception, $withMessage=true)
+    {
+        $data = array();
+        if ($withMessage) {
+            $data['success']	=  false;
+            $data['errorCode']	=  $exception->getCode();
+            $data['errorMsg']	=  $this->getErrorMessage($exception);
+        }
+
+        return $this->encode($data);
     }
 }

@@ -55,11 +55,14 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
         $params = $this->getPsrRequest()->getQueryParams();
 
-        if (!$testId = $params[self::PARAM_TEST_URI]) {
-            $this->returnFailure(new common_exception_MissingParameter);
+        if (!isset($params[self::PARAM_TEST_URI]) || (!$testId = $params[self::PARAM_TEST_URI])) {
+            return $this->returnFailure(new common_exception_MissingParameter);
         }
-        if (!$test = $this->getResource($testId)) {
-            $this->returnFailure(new common_exception_ResourceNotFound);
+
+        $test = $this->getResource($testId);
+
+        if (!$test->exists()) {
+            return $this->returnFailure(new common_exception_ResourceNotFound('Resource not found'));
         }
 
         $qtiPackage = $this->getQtiPackageExporter()->exportDeliveryQtiPackage($test);
