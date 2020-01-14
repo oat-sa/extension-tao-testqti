@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +42,7 @@ class SynchronisationService extends ConfigurableService
      * @param $data
      * @param $serviceContext QtiRunnerServiceContext
      * @return array
-     * @throws 
+     * @throws
      */
     public function process($data, $serviceContext)
     {
@@ -66,7 +67,7 @@ class SynchronisationService extends ConfigurableService
         // - check if the total duration of actions to sync is comprised within
         //   the elapsed time since the last TimePoint.
         // - otherwise compute the start timestamp from now minus the duration
-        //   (caution! this could introduce inconsistency in the TimeLine as the ranges could be interlaced) 
+        //   (caution! this could introduce inconsistency in the TimeLine as the ranges could be interlaced)
         $now = microtime(true);
         $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
         $elapsed = $now - $last;
@@ -76,14 +77,14 @@ class SynchronisationService extends ConfigurableService
         }
 
         // ensure the actions are in chronological order
-        usort($actions, function($a, $b) {
-           return $a->getTimestamp() - $b->getTimestamp(); 
+        usort($actions, function ($a, $b) {
+            return $a->getTimestamp() - $b->getTimestamp();
         });
 
         $response = [];
 
         /** @var TestRunnerAction $action */
-        foreach( $actions as $action) {
+        foreach ($actions as $action) {
             try {
                 $serviceContext->setSyncingMode($action->getRequestParameter('offline'));
                 if ($action->hasRequestParameter('itemDuration') && $serviceContext->isSyncingMode()) {
@@ -153,7 +154,8 @@ class SynchronisationService extends ConfigurableService
     {
         if (!isset($data['action']) || !isset($data['timestamp']) || !isset($data['parameters']) || !is_array($data['parameters'])) {
             throw new \common_exception_InconsistentData(
-                'Action parameters have to contain "action", "timestamp" and "parameters" fields.');
+                'Action parameters have to contain "action", "timestamp" and "parameters" fields.'
+            );
         }
 
         $availableActions = $this->getAvailableActions();

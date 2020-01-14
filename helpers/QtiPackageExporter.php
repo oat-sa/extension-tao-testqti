@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,12 +37,14 @@ class QtiPackageExporter extends ConfigurableService
      */
     public function exportDeliveryQtiPackage(RdfResource $test)
     {
-        $exportReport = $this->getTestExporter()->export([
+        $exportReport = $this->getTestExporter()->export(
+            [
             'filename' => Util::normalizePath('qti_package_'),
             'instances' => $test->getUri(),
             'uri' => $test->getUri()
-        ],
-            FileHelper::createTempDir());
+            ],
+            FileHelper::createTempDir()
+        );
 
         return $exportReport->getData();
     }
@@ -51,6 +54,6 @@ class QtiPackageExporter extends ConfigurableService
      */
     protected function getTestExporter()
     {
-        return new TestExporter;
+        return new TestExporter();
     }
 }

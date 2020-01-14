@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -100,7 +101,8 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
             $testResource = new core_kernel_classes_Resource($instance);
             $testExporter = $this->createExporter($testResource, $zip, $manifest);
             $subReport = $testExporter->export();
-            if ($report->getType() !== Report::TYPE_ERROR &&
+            if (
+                $report->getType() !== Report::TYPE_ERROR &&
                 ($subReport->containsError() || $subReport->getType() === Report::TYPE_ERROR)
             ) {
                 $report->setType(Report::TYPE_ERROR);

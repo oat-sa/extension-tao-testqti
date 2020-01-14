@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -264,7 +266,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         $this->sortRanges($ranges);
 
         // compute the total duration by summing all gathered ranges
-        // this loop can throw exceptions 
+        // this loop can throw exceptions
         $duration = 0;
         foreach ($ranges as $rangeKey => $range) {
             $nextTimestamp = $lastTimestamp;
@@ -352,7 +354,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
                     $fixedRange[] = $this->cloneTimePoint($point, TimePoint::TYPE_END);
                 }
                 $open = true;
-            } else if ($this->isEndPoint($point)) {         // end of range
+            } elseif ($this->isEndPoint($point)) {         // end of range
                 // this range could not be started...
                 if (!$open) {
                     $fixedRange[] = $this->cloneTimePoint($last ? $last : $point, TimePoint::TYPE_START);
@@ -436,12 +438,11 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
      */
     private function sortRanges(array &$ranges)
     {
-        usort($ranges, function(array $a, array $b) {
+        usort($ranges, function (array $a, array $b) {
             if ($a[0]->getTimestamp() === $b[0]->getTimestamp()) {
                 return 0;
             }
             return ($a[0]->getTimestamp() < $b[0]->getTimestamp()) ? -1 : 1;
-
         });
         return $ranges;
     }

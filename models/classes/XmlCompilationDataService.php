@@ -17,11 +17,11 @@
  *
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA;
  */
+
 namespace oat\taoQtiTest\models;
 
 use qtism\data\QtiComponent;
 use qtism\data\storage\xml\XmlCompactDocument;
-
 
 /**
  * XML Serialization Compilation Data Service.

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\integration;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
@@ -28,19 +30,21 @@ use oat\taoQtiTest\models\export\metadata\TestExporter;
  *
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
- * 
+ *
  */
-class TestExporterTest extends GenerisPhpUnitTestRunner {
+class TestExporterTest extends GenerisPhpUnitTestRunner
+{
 
     private $testCreatedUri;
 
-    static public function samplesDir() {
+    public static function samplesDir()
+    {
         return dirname(dirname(__DIR__)) . '/samples/metadata/test/';
     }
 
     
     /**
-     * 
+     *
      * @dataProvider metaProvider
      * @param string $testFile
      * @param array $expectedMeta
@@ -65,9 +69,10 @@ class TestExporterTest extends GenerisPhpUnitTestRunner {
         $this->assertEquals(file_get_contents($expectedMeta), file_get_contents($file));
     }
     
-    public function metaProvider() {
-        return array(
-            array(self::samplesDir() . 'duplicate.zip', self::samplesDir() .'export_duplicate.csv'),
-        );
+    public function metaProvider()
+    {
+        return [
+            [self::samplesDir() . 'duplicate.zip', self::samplesDir() . 'export_duplicate.csv'],
+        ];
     }
 }

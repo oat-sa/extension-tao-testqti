@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -106,7 +108,7 @@ class QtiRunnerNavigation
             $limits = $section->getTimeLimits();
 
             // As we have only one identifier for the whole adaptive section it will consider a jump of section on the first item
-            if(!($context instanceof QtiRunnerServiceContext) || !$context->isAdaptive() ){
+            if (!($context instanceof QtiRunnerServiceContext) || !$context->isAdaptive()) {
                 $isJumpOutOfSection = false;
                 if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
                     $nextSection = $route->getRouteItemAt($nextPosition);
@@ -119,14 +121,13 @@ class QtiRunnerNavigation
                     foreach ($assessmentItemRefs as $assessmentItemRef) {
                         $itemSessions = $session->getAssessmentItemSessions($assessmentItemRef->getIdentifier());
 
-                        if($itemSessions !== false){
+                        if ($itemSessions !== false) {
                             foreach ($itemSessions as $itemSession) {
                                 $itemSession->endItemSession();
                             }
                         }
                     }
                 }
-
             }
         }
     }

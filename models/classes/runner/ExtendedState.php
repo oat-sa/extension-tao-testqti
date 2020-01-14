@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -163,7 +164,7 @@ class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDe
             }
             $success = is_array($this->state);
         } else {
-            $success = false;    
+            $success = false;
         }
         return $success;
     }

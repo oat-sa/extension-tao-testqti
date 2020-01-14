@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -159,7 +161,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 
             // append the new END TimePoint
             $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
-            $this->timeLine->add($point);    
+            $this->timeLine->add($point);
         } else {
             // already closed range found, just log the info
             \common_Logger::t('Range already closed, or missing START TimePoint in QtiTimer, continue anyway');
@@ -256,7 +258,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             $clientDuration = 0;
             try {
                 $clientDuration = $clientTimeLine->compute();
-            } catch(TimeException $e) {
+            } catch (TimeException $e) {
                 \common_Logger::t('Handled client range error');
             }
 
@@ -282,7 +284,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         if (is_null($duration)) {
             $duration = $serverDuration;
             \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
-        } else if ($duration > $serverDuration) {
+        } elseif ($duration > $serverDuration) {
             \common_Logger::w("A client duration must not be larger than the server time range! (${duration} > ${serverDuration})");
             $duration = $serverDuration;
         }
@@ -316,7 +318,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     {
         // cannot compute a duration across different targets
         if (!$this->onlyOneFlag($target)) {
-            throw new InconsistentCriteriaException('Cannot compute a duration across different targets!');    
+            throw new InconsistentCriteriaException('Cannot compute a duration across different targets!');
         }
         
         return $this->timeLine->compute($tags, $target);
@@ -566,8 +568,8 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     public function delete()
     {
-       $storage = $this->getStorage();
-       return $storage->delete();
+        $storage = $this->getStorage();
+        return $storage->delete();
     }
 
     /**
@@ -578,7 +580,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     protected function checkTimestampCoherence($points, $timestamp)
     {
-        foreach($points as $point) {
+        foreach ($points as $point) {
             if ($point->getTimestamp() > $timestamp) {
                 throw new InconsistentRangeException('A new TimePoint cannot be set before an existing one!');
             }

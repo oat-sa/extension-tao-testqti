@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,7 +60,7 @@ class QtiTestDeliveryContainer extends AbstractContainer
         $containerService = $this->getServiceLocator()->get(DeliveryContainerService::SERVICE_ID);
         // set the test parameters
         $container->setData('testDefinition', $this->getSourceTest($execution));
-        $container->setData('testCompilation', $this->getPrivateDirId($execution).'|'.$this->getPublicDirId($execution));
+        $container->setData('testCompilation', $this->getPrivateDirId($execution) . '|' . $this->getPublicDirId($execution));
         $container->setData('providers', $containerService->getProviders($execution));
         $container->setData('plugins', $containerService->getPlugins($execution));
         $container->setData('bootstrap', $containerService->getBootstrap($execution));

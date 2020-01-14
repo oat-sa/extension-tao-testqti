@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,13 +85,14 @@ trait RunnerParamParserTrait
     protected function getServiceContext()
     {
         if (!$this->serviceContext) {
-
             $testExecution = $this->getRequestParameter('serviceCallId');
             $testDefinition  = $this->getRequestParameter('testDefinition');
             $testCompilation = $this->getRequestParameter('testCompilation');
 
             $this->serviceContext = $this->getRunnerService()->getServiceContext(
-                $testDefinition, $testCompilation, $testExecution
+                $testDefinition,
+                $testCompilation,
+                $testExecution
             );
         }
 
@@ -114,7 +116,7 @@ trait RunnerParamParserTrait
      */
     protected function endItemTimer($timestamp = null)
     {
-        if($this->getRequestParameter('itemDuration')){
+        if ($this->getRequestParameter('itemDuration')) {
             $serviceContext    = $this->getServiceContext();
             $itemDuration      = $this->getRequestParameter('itemDuration');
             return $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $timestamp);
@@ -154,7 +156,6 @@ trait RunnerParamParserTrait
     protected function saveItemResponses($emptyAllowed = true)
     {
         if ($this->getRequestParameter('itemDefinition') && $this->getRequestParameter('itemResponse')) {
-
             $itemDefinition = $this->getRequestParameter('itemDefinition');
             $serviceContext = $this->getServiceContext();
             $itemResponse = $this->getRequestParameter('itemResponse')
@@ -174,7 +175,8 @@ trait RunnerParamParserTrait
                 if (
                     !$emptyAllowed
                     && $this->getRunnerService()->getTestConfig()->getConfigValue('enableAllowSkipping')
-                    && !TestRunnerUtils::doesAllowSkipping($serviceContext->getTestSession())) {
+                    && !TestRunnerUtils::doesAllowSkipping($serviceContext->getTestSession())
+                ) {
                     if ($this->getRunnerService()->emptyResponse($serviceContext, $responses)) {
                         throw new QtiRunnerEmptyResponsesException();
                     }

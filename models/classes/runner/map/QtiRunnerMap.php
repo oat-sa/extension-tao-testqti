@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -170,11 +171,11 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $route         = $session->getRoute();
             $store         = $session->getAssessmentItemSessionStore();
 
-            switch($scope){
-                case RunnerMap::SCOPE_SECTION :
+            switch ($scope) {
+                case RunnerMap::SCOPE_SECTION:
                     $routeItems = $route->getRouteItemsByAssessmentSection($session->getCurrentAssessmentSection());
                     break;
-                case RunnerMap::SCOPE_PART :
+                case RunnerMap::SCOPE_PART:
                     $routeItems = $route->getRouteItemsByTestPart($session->getCurrentTestPart());
                     break;
                 case RunnerMap::SCOPE_TEST:
@@ -202,7 +203,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
-
                 $catSession = false;
                 $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
                 $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
@@ -238,10 +238,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $label = $uniqueInformationalTitle === false
                             ? $this->getItemLabel($context, $itemUri, $useTitle)
                             : $uniqueInformationalTitle;
-
                     } elseif ($forceTitles) {
                         $label = __($uniqueTitle, $offsetSection + 1);
-
                     } else {
                         $itemUri = strstr($itemRef->getHref(), '|', true);
                         $label = $this->getItemLabel($context, $itemUri, $useTitle);
@@ -268,7 +266,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $itemInfos['informational'] = $isItemInformational;
                     }
 
-                    if($itemRef->hasTimeLimits()){
+                    if ($itemRef->hasTimeLimits()) {
                         $itemInfos['timeConstraint'] = $this->getTimeConstraint($session, $itemRef, $navigationMode);
                     }
 
@@ -278,7 +276,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $map['parts'][$partId]['position'] = $offset;
                         $map['parts'][$partId]['isLinear'] = $navigationMode == NavigationMode::LINEAR;
 
-                        if($testPart->hasTimeLimits()){
+                        if ($testPart->hasTimeLimits()) {
                             $map['parts'][$partId]['timeConstraint'] =  $this->getTimeConstraint($session, $testPart, $navigationMode);
                         }
                     }
@@ -289,7 +287,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $map['parts'][$partId]['sections'][$sectionId]['isCatAdaptive'] = CatUtils::isAssessmentSectionAdaptive($section);
                         $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
 
-                        if($section->hasTimeLimits()){
+                        if ($section->hasTimeLimits()) {
                             $map['parts'][$partId]['sections'][$sectionId]['timeConstraint'] = $this->getTimeConstraint($session, $section, $navigationMode);
                         }
                     }
@@ -297,20 +295,20 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
 
                     // update the stats
-                    if($scope == RunnerMap::SCOPE_TEST) {
+                    if ($scope == RunnerMap::SCOPE_TEST) {
                         $this->updateStats($map, $itemInfos);
                         $this->updateStats($map['parts'][$partId], $itemInfos);
                         $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
                     }
-                    if($scope == RunnerMap::SCOPE_PART) {
+                    if ($scope == RunnerMap::SCOPE_PART) {
                         $this->updateStats($map['parts'][$partId], $itemInfos);
                         $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
                     }
-                    if($scope == RunnerMap::SCOPE_SECTION) {
+                    if ($scope == RunnerMap::SCOPE_SECTION) {
                         $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
                     }
 
-                    $offset ++;
+                    $offset++;
                     if (!$forceInformationalTitles || ($forceInformationalTitles && !$isItemInformational)) {
                         $offsetSection++;
                     };
@@ -410,8 +408,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
       * @param RouteItem $routeItem
       * @return int the offset position
       */
-     protected function getOffsetPosition(RunnerServiceContext $context, RouteItem $currentRouteItem)
-     {
+    protected function getOffsetPosition(RunnerServiceContext $context, RouteItem $currentRouteItem)
+    {
         $session = $context->getTestSession();
         $route = $session->getRoute();
         $routeCount = $route->count();

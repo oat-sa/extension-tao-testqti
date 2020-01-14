@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\models\creator;
 
 use oat\generis\model\OntologyAwareTrait;
@@ -41,7 +43,7 @@ class CreatorItems extends ConfigurableService
     const LABEL_URI                 = 'http://www.w3.org/2000/01/rdf-schema#label';
 
     const ITEM_MODEL_SEARCH_OPTION  = 'itemModel';
-    const ITEM_CONTENT_SEARCH_OPTION= 'itemContent';
+    const ITEM_CONTENT_SEARCH_OPTION = 'itemContent';
 
     /**
      * The different lookup formats
@@ -71,22 +73,24 @@ class CreatorItems extends ConfigurableService
     {
         $propertyFilters = [];
 
-        if($this->hasOption(self::ITEM_MODEL_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false){
+        if ($this->hasOption(self::ITEM_MODEL_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false) {
             $propertyFilters[self::PROPERTY_ITEM_MODEL_URI] = $this->getOption(self::ITEM_MODEL_SEARCH_OPTION);
         }
 
-        if($this->hasOption(self::ITEM_CONTENT_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false){
+        if ($this->hasOption(self::ITEM_CONTENT_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false) {
             $propertyFilters[self::PROPERTY_ITEM_CONTENT_URI] = '*';
         }
 
-        if(is_string($search) && strlen(trim($search)) > 0){
+        if (is_string($search) && strlen(trim($search)) > 0) {
             $propertyFilters[self::LABEL_URI] = $search;
         }
-        if(is_array($search)){
-            foreach($search as $uri => $value){
-                if( is_string($uri) &&
+        if (is_array($search)) {
+            foreach ($search as $uri => $value) {
+                if (
+                    is_string($uri) &&
                     (is_string($value) && strlen(trim($value)) > 0) ||
-                    (is_array($value) && count($value) > 0) ) {
+                    (is_array($value) && count($value) > 0)
+                ) {
                     $propertyFilters[$uri] = $value;
                 }
             }
@@ -95,11 +99,10 @@ class CreatorItems extends ConfigurableService
         $result = [];
 
         //whitelisting's mandatory to prevent hijacking the dependency injection
-        if(in_array($format, self::$formats)){
-
+        if (in_array($format, self::$formats)) {
             //load the lookup dynamically using the format
             $itemLookup = $this->getServiceLocator()->get(self::SERVICE_ID . '/' . $format);
-            if(!is_null($itemLookup) && $itemLookup instanceof ItemLookup){
+            if (!is_null($itemLookup) && $itemLookup instanceof ItemLookup) {
                 $result = $itemLookup->getItems($itemClass, $propertyFilters, $offset, $limit);
             }
         }

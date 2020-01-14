@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +28,7 @@ use qtism\data\AssessmentSection;
 
 /**
  * Class InitializeAdaptiveSessionEvent
- * 
+ *
  * This Event is thrown when an adaptive session is initialized.
  */
 class InitializeAdaptiveSessionEvent implements Event
@@ -41,7 +42,7 @@ class InitializeAdaptiveSessionEvent implements Event
 
     /**
      * Create a new InitializeAdaptiveSessionEvent object.
-     * 
+     *
      * @param \qtism\runtime\tests\AssessmentTestSession $testSession
      * @param \oat\libCat\CatSession $catSession
      * @param \qtism\data\AssessmentSection $assessmentSection The original QTI section the $catSession belongs to.
@@ -55,7 +56,7 @@ class InitializeAdaptiveSessionEvent implements Event
 
     /**
      * Get the name of the Event.
-     * 
+     *
      * @return string
      */
     public function getName()
@@ -65,7 +66,7 @@ class InitializeAdaptiveSessionEvent implements Event
 
     /**
      * Get the AssessmementTestSession bound to this Event.
-     * 
+     *
      * @return AssessmentTestSession
      */
     public function getTestSession()

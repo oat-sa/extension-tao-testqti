@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,14 +29,14 @@ use qtism\data\rules\BranchRuleCollection;
 
 /**
  * An BranchRule injection script.
- * 
+ *
  * This script aims at providing the mechanics to inject dynamically some QTI-XML representing a QTI branchRule
  * into a QTI-XML test definition.
- * 
+ *
  * Parameter 1 is the URI of the test you want to inject the branchRule.
  * Parameter 2 is the QTI identifier of the assessmentItemRef you want the branchRule to be appended to.
  * stdin must contain the QTI-XML representing the branchRule to inject.
- * 
+ *
  * Example usage:
  * sudo -u www-data php index.php "oat\taoQtiTest\scripts\cli\InjectBranchRule" "http://taoplatform300/300.rdf#i1475242228154935" "item-1" < /home/jerome/Documents/input.txt
  */
@@ -48,14 +49,14 @@ class InjectBranchRule implements Action
         
         if (empty($params[0]) === true) {
             return new \common_report_Report(
-                \common_report_Report::TYPE_ERROR, 
+                \common_report_Report::TYPE_ERROR,
                 'Test URI not provided as parameter 1.'
             );
         }
         
         if (empty($params[1]) === true) {
             return new \common_report_Report(
-                \common_report_Report::TYPE_ERROR, 
+                \common_report_Report::TYPE_ERROR,
                 'AssessmentItemRefIdentifier not provided as parameter 2.'
             );
         }
@@ -63,7 +64,7 @@ class InjectBranchRule implements Action
         $testResource = new \core_kernel_classes_Resource($params[0]);
         if ($testResource->exists() === false) {
             return new \common_report_Report(
-                \common_report_Report::TYPE_ERROR, 
+                \common_report_Report::TYPE_ERROR,
                 'No RDFS Resource found for URI ' . $params[0] . '.'
             );
         }
@@ -75,7 +76,7 @@ class InjectBranchRule implements Action
         $assessmentItemRef = $test->getComponentByIdentifier($params[1]);
         if (!$assessmentItemRef) {
             return new \common_report_Report(
-                \common_report_Report::TYPE_ERROR, 
+                \common_report_Report::TYPE_ERROR,
                 'No QTI assessmentItemRef with identifier ' . $params[1] . ' found in the QTI Test definition.'
             );
         }
@@ -83,7 +84,7 @@ class InjectBranchRule implements Action
         $input = file_get_contents('php://stdin');
         if (empty($input) === true) {
             return new \common_report_Report(
-                \common_report_Report::TYPE_ERROR, 
+                \common_report_Report::TYPE_ERROR,
                 'No QTI-XML input provided in stdin.'
             );
         } else {
@@ -97,17 +98,16 @@ class InjectBranchRule implements Action
                 
                 if (!$component instanceof BranchRule) {
                     return new \common_report_Report(
-                        \common_report_Report::TYPE_ERROR, 
+                        \common_report_Report::TYPE_ERROR,
                         'No QTI branchRule component found in stdin.'
                     );
                 }
                 
-                $assessmentItemRef->setBranchRules(new BranchRuleCollection(array($component)));
+                $assessmentItemRef->setBranchRules(new BranchRuleCollection([$component]));
                 $qtiService->getQtiTestFile($testResource)->update($testDoc->saveToString());
-                
             } else {
                 return new \common_report_Report(
-                    \common_report_Report::TYPE_ERROR, 
+                    \common_report_Report::TYPE_ERROR,
                     'Invalid QTI-XML input provided in stdin.'
                 );
             }

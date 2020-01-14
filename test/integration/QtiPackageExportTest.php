@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -149,7 +150,7 @@ class QtiPackageExportTest extends RestTestRunner
         }
         $manifestFile = $extractExportPath . '/imsmanifest.xml';
         $itemsPath = $extractExportPath . '/items';
-        $itemsInExtractedPath = array_slice(scandir($itemsPath,  null), 2);
+        $itemsInExtractedPath = array_slice(scandir($itemsPath, null), 2);
 
         //Assert zip content
         $this->assertFileExists($manifestFile);
@@ -180,13 +181,13 @@ class TestableRestQtiTests extends taoQtiTest_actions_RestQtiTests
      * @return string|void
      * @throws \common_exception_NotImplemented
      */
-    public function returnFailure(Exception $exception, $withMessage=true)
+    public function returnFailure(Exception $exception, $withMessage = true)
     {
-        $data = array();
+        $data = [];
         if ($withMessage) {
-            $data['success']	=  false;
-            $data['errorCode']	=  $exception->getCode();
-            $data['errorMsg']	=  $this->getErrorMessage($exception);
+            $data['success']    =  false;
+            $data['errorCode']  =  $exception->getCode();
+            $data['errorMsg']   =  $this->getErrorMessage($exception);
         }
 
         return $this->encode($data);
