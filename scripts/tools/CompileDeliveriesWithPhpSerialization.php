@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +24,7 @@ use qtism\data\storage\php\PhpDocument;
 use qtism\data\storage\php\PhpStorageException;
 
 /**
- * 
+ *
  * @package oat\taoQtiTest\scripts\tools
  */
 class CompileDeliveriesWithPhpSerialization extends CompileDeliveriesPhpData
@@ -37,7 +38,6 @@ class CompileDeliveriesWithPhpSerialization extends CompileDeliveriesPhpData
             
             return true;
         } catch (PhpStorageException $e) {
-            
             return false;
         }
     }

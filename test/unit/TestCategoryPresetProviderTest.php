@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 /**
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -121,7 +123,7 @@ class TestCategoryPresetProviderTest extends TestCase
 
         $this->assertCount(4, $sortedPresetGroups, 'sortedPresetGroups have the right number of preset groups');
         $previousOrder = 0;
-        foreach($sortedPresetGroups as $group) {
+        foreach ($sortedPresetGroups as $group) {
             $this->assertTrue($group['groupOrder'] > $previousOrder, 'current group is sorted correctly');
             $previousOrder = $group['groupOrder'];
         }
@@ -129,11 +131,11 @@ class TestCategoryPresetProviderTest extends TestCase
         $sortedPresets = $sortedPresetGroups[0]['presets'];
 
         $previousOrder = 0;
-        foreach($sortedPresets as $preset) {
+        foreach ($sortedPresets as $preset) {
             $this->assertTrue($preset->getOrder() > $previousOrder, "preset {$preset->getId()} has a sort order > as previous order {$previousOrder}");
             $previousOrder = $preset->getOrder();
         }
-   }
+    }
 
 
     public function testFilterByInactivePlugins()

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -86,16 +88,15 @@ class TestStateChannel implements ServiceLocatorAwareInterface, CommunicationCha
                 }
 
                 if (!$result || $state == AssessmentTestSessionState::CLOSED) {
-
                     if ($state == AssessmentTestSessionState::CLOSED) {
                         $type = 'close';
-                    } else if ($state == AssessmentTestSessionState::SUSPENDED) {
+                    } elseif ($state == AssessmentTestSessionState::SUSPENDED) {
                         $type = 'pause';
                     } else {
                         $type = null;
                     }
 
-                    if(is_null($type)){
+                    if (is_null($type)) {
                         \common_Logger::w('Inconsistent ' . self::CHANNEL_NAME . ' event');
                     } else {
                         $result = [

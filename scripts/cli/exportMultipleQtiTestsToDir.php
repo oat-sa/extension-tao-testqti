@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +21,6 @@
  */
 
 namespace oat\taoQtiTest\scripts\cli;
-
 
 use common_report_Report;
 use oat\generis\model\OntologyAwareTrait;
@@ -157,7 +157,7 @@ class exportMultipleQtiTestsToDir extends ScriptAction
         $zip = new ZipArchive();
         $manifest = \taoQtiTest_helpers_Utils::emptyImsManifest('2.1');
         $resource = $this->getResource($testUri);
-        if($resource->exists()) {
+        if ($resource->exists()) {
             $file = tempnam(sys_get_temp_dir(), 'testExport_');
             $zip->open($file, ZipArchive::CREATE);
             $exporter = new \taoQtiTest_models_classes_export_QtiTestExporter22($resource, $zip, $manifest);
@@ -181,7 +181,7 @@ class exportMultipleQtiTestsToDir extends ScriptAction
     {
         $i = 0;
         $fileName = \tao_helpers_File::getSafeFileName($testUri . '.zip');
-        while ($this->fileSystem->has($fileName) ) {
+        while ($this->fileSystem->has($fileName)) {
             $i++;
             $fileName = \tao_helpers_File::getSafeFileName($testUri . '_' . $i . '.zip');
         }
@@ -210,5 +210,4 @@ class exportMultipleQtiTestsToDir extends ScriptAction
     {
         return new common_report_Report(common_report_Report::TYPE_SUCCESS, $testsCount . ' tests exported');
     }
-
 }

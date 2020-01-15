@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,8 +69,8 @@ class RdsToolsStateStorage extends ToolsStateStorage
         $qb = $this->getQueryBuilder()
             ->update(self::TABLE_NAME)
             ->set(self::COLUMN_TOOL_STATE, ':state')
-            ->where(self::COLUMN_DELIVERY_EXECUTION_ID .' = :delivery_execution_id')
-            ->andWhere(self::COLUMN_TOOL_NAME .' = :tool_name')
+            ->where(self::COLUMN_DELIVERY_EXECUTION_ID . ' = :delivery_execution_id')
+            ->andWhere(self::COLUMN_TOOL_NAME . ' = :tool_name')
             ->setParameter('state', $state)
             ->setParameter('delivery_execution_id', $deliveryExecutionId)
             ->setParameter('tool_name', $toolName);

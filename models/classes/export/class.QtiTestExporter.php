@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -174,13 +175,12 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
 
     public function preProcessing()
     {
-        if($this->getServiceManager()->has(AssessmentItemRefPreProcessor::SERVICE_ID)) {
+        if ($this->getServiceManager()->has(AssessmentItemRefPreProcessor::SERVICE_ID)) {
             /** @var AssessmentItemRefPreProcessor $preprocessor */
             $preprocessor = $this->getServiceManager()->get(AssessmentItemRefPreProcessor::SERVICE_ID);
             $items = $preprocessor->process($this->testDocument);
             $this->setItems($items);
         }
-
     }
     /**
      * Export the test definition and all its dependencies (media, items, ...) into
@@ -189,7 +189,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
      * @param array $options An array of options (not used by this implementation).
      * @return common_report_Report
      */
-    public function export($options = array())
+    public function export($options = [])
     {
         $this->preProcessing();
 
@@ -217,7 +217,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     protected function exportItems()
     {
         $report = common_report_Report::createSuccess(__('Export successful for the test "%s"', $this->getItem()->getLabel()));
-        $identifiers = array();
+        $identifiers = [];
 
         foreach ($this->getItems() as $refIdentifier => $item) {
             $itemExporter = $this->createItemExporter($item);
@@ -231,7 +231,8 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             $itemRef = $this->getTestDocument()->getDocumentComponent()->getComponentByIdentifier($refIdentifier);
             $itemRef->setHref($newQtiItemXmlPath);
 
-            if ($report->getType() !== common_report_Report::TYPE_ERROR &&
+            if (
+                $report->getType() !== common_report_Report::TYPE_ERROR &&
                 ($subReport->containsError() || $subReport->getType() === common_report_Report::TYPE_ERROR)
             ) {
                 //only report erros otherwise the list of report can be very long
@@ -239,7 +240,6 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
                 $report->setMessage(__('Export failed for the test "%s"', $this->getItem()->getLabel()));
                 $report->add($subReport);
             }
-
         }
         $report->setData($identifiers);
 
@@ -255,7 +255,7 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
     {
         $testXmlDocument = $this->postProcessing($this->getTestDocument()->saveToString());
 
-        $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()).'/';
+        $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()) . '/';
         $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
         $testHref = $newTestDir . 'test.xml';
 
@@ -263,12 +263,11 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
         $this->getZip()->addFromString($testHref, $testXmlDocument);
         $this->referenceTest($testHref, $itemIdentifiers);
 
-        $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
-        $indexFile = pathinfo(taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX , PATHINFO_BASENAME);
+        $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE | Directory::ITERATOR_FILE);
+        $indexFile = pathinfo(taoQtiTest_models_classes_QtiTestService::QTI_TEST_DEFINITION_INDEX, PATHINFO_BASENAME);
         foreach ($iterator as $f) {
             // Only add dependency files...
             if ($f->getBasename() !== taoQtiTest_models_classes_QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
-
                 // Add the file to the archive.
                 $fileHref = $newTestDir . $f->getBaseName();
                 common_Logger::t('AUXILIARY FILE AT: ' . $fileHref);
@@ -378,7 +377,6 @@ class taoQtiTest_models_classes_export_QtiTestExporter extends taoItems_models_c
             $this->metadataExporter = $this->getServiceManager()->get(MetadataService::SERVICE_ID)->getExporter();
         }
         return $this->metadataExporter;
-
     }
 
     protected function getServiceManager()

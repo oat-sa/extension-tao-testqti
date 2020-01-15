@@ -8,7 +8,7 @@ use qtism\data\QtiComponent;
 
 /**
  * PHP Code Compilation Data Service.
- * 
+ *
  * This Compilation Data Service implementation aims at compiling
  * Delivery data as plain PHP code.
  */
@@ -20,7 +20,8 @@ class PhpCodeCompilationDataService extends CompilationDataService
 
     const OUTPUT_FILE_TYPE = 'php';
 
-    public function __construct($options = []) {
+    public function __construct($options = [])
+    {
         parent::__construct($options);
         
         $this->cacheDir = sys_get_temp_dir() . '/taooldtestrunnerphpcache';

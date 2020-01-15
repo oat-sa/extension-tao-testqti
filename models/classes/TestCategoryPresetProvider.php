@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
+
 /**
  * @author Christophe Noël <christophe@taotesting.com>
  */
@@ -41,13 +43,15 @@ class TestCategoryPresetProvider extends ConfigurableService
      * @param array $options
      * @param array $allPresets - allow override of preset list
      */
-    public function __construct(array $options = [], $allPresets = []) {
+    public function __construct(array $options = [], $allPresets = [])
+    {
         $this->allPresets = $allPresets;
 
-       parent::__construct($options);
+        parent::__construct($options);
     }
 
-    protected function getPresetGroups() {
+    protected function getPresetGroups()
+    {
         return [
             self::GROUP_NAVIGATION => [
                 'groupId'    => self::GROUP_NAVIGATION,
@@ -76,7 +80,8 @@ class TestCategoryPresetProvider extends ConfigurableService
      * Get all active presets
      * @return array - the sorted preset list
      */
-    public function getPresets() {
+    public function getPresets()
+    {
         if (empty($this->allPresets)) {
             $this->loadPresetFromProviders();
         }
@@ -101,26 +106,25 @@ class TestCategoryPresetProvider extends ConfigurableService
      * @param array $config a config flag list as  { key : string => value : boolean }
      * @return array the sorted preset list
      */
-    public function getAvailablePresets($config = []) {
+    public function getAvailablePresets($config = [])
+    {
         //work on a clone
         $presets = array_merge([], $this->getPresets());
 
-        foreach($presets as $groupId => &$presetGroup) {
-
-            if(isset($presetGroup['presets'])){
-
+        foreach ($presets as $groupId => &$presetGroup) {
+            if (isset($presetGroup['presets'])) {
                 //filter presets based on the config value
                 //if the config has the flag, we chek it's value
                 //if the config doesn't have the flag, we keep the preset
                 $presetGroup['presets'] = array_filter(
                     $presetGroup['presets'],
-                    function($preset) use ($config) {
+                    function ($preset) use ($config) {
                         return !$this->isPresetAvailable($preset, $config);
                     }
                 );
 
                 //remove empty groups
-                if(count($presetGroup['presets']) === 0){
+                if (count($presetGroup['presets']) === 0) {
                     unset($presets[$groupId]);
                 }
             }
@@ -131,7 +135,7 @@ class TestCategoryPresetProvider extends ConfigurableService
     /**
      * Is a preset available according to a configuration (ie. based on it's featureFlag)
      *
-     * @param TestCategoryPreset $preset the preset to test 
+     * @param TestCategoryPreset $preset the preset to test
      * @param array $config the configuration
      * @return boolean true if available
      */
@@ -146,7 +150,8 @@ class TestCategoryPresetProvider extends ConfigurableService
         return false;
     }
 
-    private function loadPresetFromProviders() {
+    private function loadPresetFromProviders()
+    {
         $this->allPresets = $this->getPresetGroups();
 
         $providersRegistry = TestCategoryPresetRegistry::getRegistry();
@@ -163,7 +168,8 @@ class TestCategoryPresetProvider extends ConfigurableService
         }
     }
 
-    private function filterInactivePresets() {
+    private function filterInactivePresets()
+    {
         $serviceLocator = $this->getServiceLocator();
         $pluginService = $serviceLocator->get(TestPluginService::SERVICE_ID);
 
@@ -171,12 +177,10 @@ class TestCategoryPresetProvider extends ConfigurableService
 
         if (! empty($this->allPresets)) {
             foreach ($this->allPresets as $groupId => &$presetGroup) {
-
                 if (! empty($presetGroup['presets'])) {
-
                     $presetGroup['presets'] = array_filter(
                         $presetGroup['presets'],
-                        function($preset) use ($pluginService) {
+                        function ($preset) use ($pluginService) {
                             $presetPluginId = $preset->getPluginId();
 
                             if (! empty($presetPluginId)) {
@@ -196,29 +200,31 @@ class TestCategoryPresetProvider extends ConfigurableService
 
         // finally, remove empty groups, if any
         if (! empty($allEmptyGroups)) {
-            foreach($allEmptyGroups as $emptyGroupId) {
+            foreach ($allEmptyGroups as $emptyGroupId) {
                 unset($this->allPresets[$emptyGroupId]);
             }
         }
     }
 
-    private function sortPresets() {
+    private function sortPresets()
+    {
         // sort presets groups
-        usort($this->allPresets, function($a, $b) {
+        usort($this->allPresets, function ($a, $b) {
             return $this->compareNum($a['groupOrder'], $b['groupOrder']);
         });
 
         // sort presets
-        foreach($this->allPresets as &$presetGroup) {
+        foreach ($this->allPresets as &$presetGroup) {
             if (!empty($presetGroup)) {
-                usort($presetGroup['presets'], function($a, $b) {
+                usort($presetGroup['presets'], function ($a, $b) {
                     return $this->compareNum($a->getOrder(), $b->getOrder());
                 });
             }
         }
     }
 
-    private function compareNum($a, $b) {
+    private function compareNum($a, $b)
+    {
         if ($a == $b) {
             return 0;
         }
@@ -229,7 +235,8 @@ class TestCategoryPresetProvider extends ConfigurableService
      * @param $presetGroup
      * @param $presets
      */
-    public function register($presetGroup, $presets) {
+    public function register($presetGroup, $presets)
+    {
         if (!array_key_exists($presetGroup, $this->allPresets)) {
             return;
         }

@@ -122,7 +122,7 @@ class NextItemDataTest extends TestCase
                 ],
             ]
         ], $subject->process());
-   }
+    }
 
     /**
      * @param array $requestParameters

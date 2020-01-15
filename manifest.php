@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,36 +34,36 @@ use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
 use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
 use oat\taoQtiTest\scripts\install\RegisterTimerStrategyService;
 
-$extpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
-$taopath = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'tao'.DIRECTORY_SEPARATOR;
+$extpath = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+$taopath = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
 
-return array(
+return [
     'name'        => 'taoQtiTest',
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '35.6.1',
+    'version'     => '35.8.0',
     'author'      => 'Open Assessment Technologies',
-    'requires'    => array(
+    'requires'    => [
         'taoQtiItem' => '>=20.0.2',
         'taoTests'   => '>=13.2.0',
         'tao'        => '>=38.5.0',
         'generis'    => '>=12.5.0',
         'taoDelivery' => '>=13.3.0',
         'taoItems'   => '>=6.0.0',
-    ),
-	'models' => array(
-		'http://www.tao.lu/Ontologies/TAOTest.rdf'
-	),
-	'install' => array(
-		'rdf' => array(
-			dirname(__FILE__) . '/models/ontology/qtitest.rdf',
-		    dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf',
-			dirname(__FILE__) . '/models/ontology/qtiCat.rdf',
-		),
-		'php'	=> array(
-			dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
-		    dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
+    ],
+    'models' => [
+        'http://www.tao.lu/Ontologies/TAOTest.rdf'
+    ],
+    'install' => [
+        'rdf' => [
+            dirname(__FILE__) . '/models/ontology/qtitest.rdf',
+            dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf',
+            dirname(__FILE__) . '/models/ontology/qtiCat.rdf',
+        ],
+        'php'   => [
+            dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
+            dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
             dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
             \oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders::class,
             \oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins::class,
@@ -82,46 +83,46 @@ return array(
             SetLinearNextItemWarningConfig::class,
             RegisterFrontendPaths::class,
             RegisterTimerStrategyService::class
-        )
-    ),
+        ]
+    ],
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
-    'local'	=> array(
-        'php'	=> array(
-            dirname(__FILE__).'/install/local/addQTIExamples.php'
-        )
-    ),
+    'local' => [
+        'php'   => [
+            dirname(__FILE__) . '/install/local/addQTIExamples.php'
+        ]
+    ],
     'managementRole' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole',
-    'acl' => array(
-        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole', array('ext'=>'taoQtiTest')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'ItemRunner')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'TestRunner')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'Runner')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'OfflineRunner')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Creator')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'Items')),
-        array('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
-        array('grant', \oat\tao\model\user\TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')),
-    ),
-	'constants' => array(
-		# actions directory
-		"DIR_ACTIONS"			=> $extpath."actions".DIRECTORY_SEPARATOR,
+    'acl' => [
+        ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole', ['ext' => 'taoQtiTest']],
+        ['grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', ['ext' => 'taoQtiTest', 'mod' => 'ItemRunner']],
+        ['grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', ['ext' => 'taoQtiTest', 'mod' => 'TestRunner']],
+        ['grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', ['ext' => 'taoQtiTest', 'mod' => 'Runner']],
+        ['grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', ['ext' => 'taoQtiTest', 'mod' => 'OfflineRunner']],
+        ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'Creator']],
+        ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'Items']],
+        ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
+        ['grant', \oat\tao\model\user\TaoRoles::REST_PUBLISHER, ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
+    ],
+    'constants' => [
+        # actions directory
+        "DIR_ACTIONS"           => $extpath . "actions" . DIRECTORY_SEPARATOR,
 
-		# views directory
-		"DIR_VIEWS"				=> $extpath."views".DIRECTORY_SEPARATOR,
+        # views directory
+        "DIR_VIEWS"             => $extpath . "views" . DIRECTORY_SEPARATOR,
 
-		# default module name
-		'DEFAULT_MODULE_NAME'	=> 'Main',
+        # default module name
+        'DEFAULT_MODULE_NAME'   => 'Main',
 
-		#default action name
-		'DEFAULT_ACTION_NAME'	=> 'index',
+        #default action name
+        'DEFAULT_ACTION_NAME'   => 'index',
 
-		#BASE PATH: the root path in the file system (usually the document root)
-		'BASE_PATH'				=> $extpath,
+        #BASE PATH: the root path in the file system (usually the document root)
+        'BASE_PATH'             => $extpath,
 
-		#BASE URL (usually the domain root)
-		'BASE_URL'				=> ROOT_URL	.'taoQtiTest/',
-	),
-    'extra' => array(
-        'structures' => dirname(__FILE__).DIRECTORY_SEPARATOR.'actions'.DIRECTORY_SEPARATOR.'structures.xml',
-    )
-);
+        #BASE URL (usually the domain root)
+        'BASE_URL'              => ROOT_URL . 'taoQtiTest/',
+    ],
+    'extra' => [
+        'structures' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'actions' . DIRECTORY_SEPARATOR . 'structures.xml',
+    ]
+];

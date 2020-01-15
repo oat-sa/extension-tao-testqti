@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,7 +58,7 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
             return Report::createFailure(__('Metadata export is not available for test "%s."', $instance->getLabel()));
         }
 
-        $fileName = $formValues['filename'] .'_'. time() .'.csv';
+        $fileName = $formValues['filename'] . '_' . time() . '.csv';
 
         if (!\tao_helpers_File::securityCheck($fileName, true)) {
             throw new \Exception('Unauthorized file name');

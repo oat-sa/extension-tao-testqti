@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,7 +18,6 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  *
  */
-
 
 namespace oat\taoQtiTest\test\integration\runner;
 
@@ -234,7 +234,7 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
                 ]
             ],
             ExtendedState::VAR_STORE_ID => $storeId
-        ];        
+        ];
         $storedJSON = json_encode($JSON);
         $storedJSON2 = json_encode($JSON2);
         $storageKey = ExtendedState::getStorageKeyFromTestSessionId($testSessionId);

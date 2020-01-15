@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +20,6 @@
  */
 
 namespace oat\taoQtiTest\test\integration\runner\time;
-
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
@@ -180,7 +180,7 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
                     [1, 1, round(1507706526.4789 - $epoch, 6)],
                     [1, 2, round(1507706640.1501 - $epoch, 6)],
                 ],
-                'epoch'=> $epoch
+                'epoch' => $epoch
             ],
             'extraTime' => 0,
             'extendedTime' => 0,

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\integration;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
@@ -25,7 +27,6 @@ use \taoTests_models_classes_TestsService;
 use \taoQtiTest_models_classes_QtiTestService;
 use \common_ext_ExtensionsManager;
 use \common_report_Report;
-
 
 /**
  * This test case focuses on testing the ManifestParser model.
@@ -51,7 +52,7 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
 
     /**
      * verify main class
-     * 
+     *
      * @return void
      */
     public function testService()
@@ -61,7 +62,7 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
 
     /**
      * create qtitest instance
-     * 
+     *
      * @return \core_kernel_classes_Resource
      */
     public function testCreateInstance()
@@ -76,7 +77,7 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
     /**
      * verify that the test exists
      * @depends testCreateInstance
-     * 
+     *
      * @param $qtiTest
      * @return void
      */
@@ -135,7 +136,7 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
     /**
      * Delete test
      * @depends testCreateInstance
-     * 
+     *
      * @param  $qtiTest
      */
     public function testDeleteInstance($qtiTest)
@@ -146,40 +147,39 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
 
 
     /**
-     * 
+     *
      * @author Lionel Lecaque, lionel@taotesting.com
      */
     public function testImportMultipleTests()
     {
         $datadir = dirname(__FILE__) . '/data/';
         $rootclass = $this->testService->getRootclass();
-        $report = $this->testService->importMultipleTests($rootclass,$datadir.'unitqtitest.zip');
-        $this->assertInstanceOf('common_report_Report', $report);      
+        $report = $this->testService->importMultipleTests($rootclass, $datadir . 'unitqtitest.zip');
+        $this->assertInstanceOf('common_report_Report', $report);
         $this->assertEquals($report->getType(), common_report_Report::TYPE_SUCCESS);
         $testService = taoTests_models_classes_TestsService::singleton();
-        foreach ($report as $rep){
+        foreach ($report as $rep) {
             $result = $rep->getData();
            
             $this->assertInstanceOf(\core_kernel_classes_Class::class, $result->itemClass);
             $this->assertInstanceOf(\core_kernel_classes_Resource::class, $result->rdfsResource);
-            foreach ($result->items as $items){
+            foreach ($result->items as $items) {
                 $this->assertInstanceOf(\core_kernel_classes_Resource::class, $items);
                 $type = current($items->getTypes());
                 $this->assertInstanceOf(\core_kernel_classes_Resource::class, $type);
                 
-                $this->assertEquals($result->itemClass->getUri(),$type->getUri());
-                $expectedLabel = array('Unattended Luggage','Associate Things');
-                $this->assertTrue(in_array($items->getLabel(),$expectedLabel));
+                $this->assertEquals($result->itemClass->getUri(), $type->getUri());
+                $expectedLabel = ['Unattended Luggage','Associate Things'];
+                $this->assertTrue(in_array($items->getLabel(), $expectedLabel));
             }
             $testService->deleteTest($result->rdfsResource);
-            
         }
     }
     
     /**
      * Verify that test attribute value in xml file will be properly encoded
      * (<b>&amp;</b>, <b>&lt;</b> and <b>&quot;</b> symbols must be encoded)
-     * 
+     *
      * @author Aleh Hutnikau, hutnikau@1pt.com
      */
     public function testCreateContent()

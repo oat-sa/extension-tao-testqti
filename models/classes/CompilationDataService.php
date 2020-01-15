@@ -8,8 +8,8 @@ use qtism\data\QtiComponent;
 
 /**
  * Compilation Data Service
- * 
- * An abstract Compilation Data Service. Its implementation aim 
+ *
+ * An abstract Compilation Data Service. Its implementation aim
  * at providing a way to compile Delivery data in various ways.
  */
 abstract class CompilationDataService extends ConfigurableService
@@ -18,10 +18,11 @@ abstract class CompilationDataService extends ConfigurableService
     
     /**
      * Create a new CompilationDataService object.
-     * 
+     *
      * @param $options
      */
-    public function __construct($options = []) {
+    public function __construct($options = [])
+    {
         parent::__construct($options);
     }
 
@@ -32,9 +33,9 @@ abstract class CompilationDataService extends ConfigurableService
 
     /**
      * Write Compilation Data
-     * 
+     *
      * Write a QtiComponent $object into a given $compilationDirectory at a given $path.
-     * 
+     *
      * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
      * @param string $path
      * @param \qtism\data\QtiComponent $object
@@ -44,9 +45,9 @@ abstract class CompilationDataService extends ConfigurableService
     
     /**
      * Read Compilation Data
-     * 
+     *
      * Read a QtiComponent object from a given $compilationDirectory at a given $path.
-     * 
+     *
      * @param \tao_models_classes_service_StorageDirectory $compilationDirectory
      * @param string $path
      * @param string $cacheInfo (optional) A context string possibly used by implementations for caching purpose.
@@ -71,7 +72,6 @@ abstract class CompilationDataService extends ConfigurableService
         } catch (\Exception $e) {
             throw new \common_Exception("Unable to write file '${filename}'.");
         }
-
     }
 
     /**
@@ -86,7 +86,6 @@ abstract class CompilationDataService extends ConfigurableService
         try {
             $data = $compilationDirectory->read(\taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.json');
             return json_decode($data, true);
-
         } catch (\Exception $e) {
             // Legacy compilation support.
             try {
