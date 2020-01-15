@@ -187,4 +187,9 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
           ServiceManager::getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
        );
    }
+
+    protected function getServiceLocator()
+    {
+        return ServiceManager::getServiceManager();
+    }
 }
