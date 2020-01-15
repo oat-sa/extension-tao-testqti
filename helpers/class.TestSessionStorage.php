@@ -41,7 +41,9 @@ use oat\oatbox\service\ServiceManager;
  *
  */
 class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
-   
+
+    use oat\oatbox\mutex\LockTrait;
+
    /**
     * The last recorded error.
     * 
@@ -108,7 +110,8 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    
    public function retrieve(AssessmentTest $test, $sessionId) {
        $this->setLastError(-1);
-       
+       $lock = $this->createLock(__METHOD__.$sessionId, 30);
+       $lock->acquire(true);
        return parent::retrieve($test, $sessionId);
    }
    
