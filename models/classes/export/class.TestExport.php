@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,7 +63,7 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
     }
 
     /**
-     * @param array  $formValues
+     * @param array $formValues
      * @param string $destination
      * @return Report
      * @throws common_Exception
@@ -100,7 +101,8 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
             $testResource = new core_kernel_classes_Resource($instance);
             $testExporter = $this->createExporter($testResource, $zip, $manifest);
             $subReport = $testExporter->export();
-            if ($report->getType() !== Report::TYPE_ERROR &&
+            if (
+                $report->getType() !== Report::TYPE_ERROR &&
                 ($subReport->containsError() || $subReport->getType() === Report::TYPE_ERROR)
             ) {
                 $report->setType(Report::TYPE_ERROR);
@@ -111,9 +113,13 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 
         $zip->close();
 
-        $subjectUri = isset($formValues['uri']) ? $formValues['uri'] : $formValues['classUri'];
+        if (!isset($formValues['uri']) && !isset($formValues['classUri'])) {
+            $report->add(Report::createFailure('Export failed. Key uri nor classUri in formValues are not defined'));
+        } else {
+            $subjectUri = $formValues['uri'] ?? $formValues['classUri'];
+        }
 
-        if (!$report->containsError() && $subjectUri) {
+        if (isset($subjectUri) && !$report->containsError()) {
             $this->getEventManager()->trigger(new QtiTestExportEvent(new core_kernel_classes_Resource($subjectUri)));
             $report->setMessage(__('Resource(s) successfully exported.'));
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\models\creator;
 
 use oat\oatbox\service\ConfigurableService;
@@ -73,11 +75,11 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
      */
     private function formatTreeData(array $treeData)
     {
-        return array_map(function($data){
+        return array_map(function ($data) {
             $formatted = [
                 'categories' => $this->getCategoryService()->getItemCategories(new \core_kernel_classes_Resource($data['uri']))
             ];
-            if(isset($data['children'])){
+            if (isset($data['children'])) {
                 $formatted['children'] = $this->formatTreeData($data['children']);
             }
             return array_merge($data, $formatted);

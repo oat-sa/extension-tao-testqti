@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,7 +62,8 @@ class StoreTraceData extends TestRunnerAction
             $size = count($traceData);
 
             foreach ($traceData as $variableIdentifier => $variableValue) {
-                if ($this
+                if (
+                    $this
                     ->getRunnerService()
                     ->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue)
                 ) {
@@ -78,7 +80,6 @@ class StoreTraceData extends TestRunnerAction
             $eventManager = $this->getServiceLocator()->get(EventManager::SERVICE_ID);
             $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
             $eventManager->trigger($event);
-
         } catch (Exception $e) {
             $response = $this->getErrorResponse($e);
         }

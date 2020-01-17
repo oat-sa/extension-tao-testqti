@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -114,7 +116,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     private function loadItemData($itemRef, $path)
     {
         $cacheKey = $itemRef . $path;
-        if(! empty($cacheKey) && isset($this->dataCache[$itemRef . $path])) {
+        if (! empty($cacheKey) && isset($this->dataCache[$itemRef . $path])) {
             return $this->dataCache[$itemRef . $path];
         }
 
@@ -135,8 +137,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
         $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2]);
 
-        if ($directory->has($userDataLang))
-        {
+        if ($directory->has($userDataLang)) {
             $lang = $userDataLang;
         } elseif ($directory->has(DEFAULT_LANG)) {
             \common_Logger::d(
@@ -149,14 +150,14 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             );
         }
         try {
-            $content = $directory->read($lang.DIRECTORY_SEPARATOR.$path);
+            $content = $directory->read($lang . DIRECTORY_SEPARATOR . $path);
             /** @var ItemAssetsReplacement $assetService */
             $assetService = $this->getServiceManager()->get(ItemAssetsReplacement::SERVICE_ID);
             $jsonContent = json_decode($content, true);
             $jsonAssets = [];
-            if(isset($jsonContent['assets'])){
-                foreach ($jsonContent['assets'] as $type => $assets){
-                    foreach ($assets as $key => $asset){
+            if (isset($jsonContent['assets'])) {
+                foreach ($jsonContent['assets'] as $type => $assets) {
+                    foreach ($assets as $key => $asset) {
                         $jsonAssets[$type][$key] = $assetService->postProcessAssets($asset);
                     }
                 }
@@ -235,7 +236,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         \common_Logger::d("Persisting QTI Assessment Test Session '${sessionId}'...");
         $context->getStorage()->persist($testSession);
-        if($this->isTerminated($context)){
+        if ($this->isTerminated($context)) {
             $userId = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
             $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
             $eventManager->trigger(new AfterAssessmentTestSessionClosedEvent($testSession, $userId));
@@ -515,7 +516,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['numberRubrics'] = count($currentItem->getRubricBlockRefs());
 
                 //add rubic blocks
-                if($response['numberRubrics'] > 0){
+                if ($response['numberRubrics'] > 0) {
                     $response['rubrics'] = $this->getRubrics($context, $session->getCurrentAssessmentItemRef());
                 }
 
@@ -537,7 +538,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 // append dynamic options
                 $response['options'] = $testOptions;
             }
-
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -624,9 +624,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getItemData(RunnerServiceContext $context, $itemRef)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-
             return $this->loadItemData($itemRef, QtiJsonItemCompiler::ITEM_FILE_NAME);
-
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -677,7 +675,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($state) {
                 $state = json_decode($state, true);
                 if (is_null($state)) {
-                    throw new \common_exception_InconsistentData('Unable to decode the state for the item '.$itemRef);
+                    throw new \common_exception_InconsistentData('Unable to decode the state for the item ' . $itemRef);
                 }
             }
 
@@ -707,7 +705,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
             $userUri = \common_session_SessionManager::getSession()->getUserUri();
             $stateId = $this->getStateId($context, $itemRef);
-            if(!isset($state)){
+            if (!isset($state)) {
                 $state = '';
             }
             return is_null($userUri) ? false : $serviceService->set($userUri, $stateId, json_encode($state));
@@ -879,7 +877,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $responses)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-
             $session = $this->getCurrentAssessmentSession($context);
 
             try {
@@ -975,7 +972,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             /* @var TestSession $session */
             $session = $context->getTestSession();
 
-            if($session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS){
+            if ($session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS) {
                 $displayFeedbacks = true;
             }
         } else {
@@ -1035,11 +1032,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     {
         $hasFeedbacks     = false;
         $displayFeedbacks = $this->displayFeedbacks($context);
-        if($displayFeedbacks) {
+        if ($displayFeedbacks) {
             $feedbacks = $this->getFeedbacks($context, $itemRef);
             foreach ($feedbacks as $entry) {
-                if(isset($entry['feedbackRules'])){
-                    if(count($entry['feedbackRules']) > 0){
+                if (isset($entry['feedbackRules'])) {
+                    if (count($entry['feedbackRules']) > 0) {
                         $hasFeedbacks = true;
                     }
                     break;
@@ -1077,7 +1074,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $route    = $session->getRoute();
             $position = $route->getPosition();
             $output['itemAnswered'] = TestRunnerUtils::isItemCompleted($route->getRouteItemAt($position), $itemSession);
-
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1168,9 +1164,9 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 if ($late) {
                     if ($scope == 'assessmentTest') {
                         $code = AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW;
-                    } else if ($scope == 'testPart') {
+                    } elseif ($scope == 'testPart') {
                         $code = AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW;
-                    } else if ($scope == 'assessmentSection') {
+                    } elseif ($scope == 'assessmentSection') {
                         $code = AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW;
                     } else {
                         $code = AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW;
@@ -1182,7 +1178,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             } catch (AssessmentTestSessionException $e) {
                 $this->onTimeout($context, $e);
             }
-
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1283,10 +1278,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function pause(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-
             $context->getTestSession()->suspend();
             $this->persist($context);
-
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1309,10 +1302,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function resume(RunnerServiceContext $context)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-
             $context->getTestSession()->resume();
             $this->persist($context);
-
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1353,7 +1344,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @return bool
      * @throws \common_Exception
      */
-    public function isItemCompleted(RunnerServiceContext $context, $routeItem, $itemSession, $partially = true) {
+    public function isItemCompleted(RunnerServiceContext $context, $routeItem, $itemSession, $partially = true)
+    {
         if ($context instanceof QtiRunnerServiceContext && $context->isAdaptive()) {
             $itemIdentifier = $context->getCurrentAssessmentItemRef()->getIdentifier();
             $itemState = $this->getItemState($context, $itemIdentifier);
@@ -1368,9 +1360,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $responses = $this->parsesItemResponse($context, $itemIdentifier, $itemResponse);
 
                 // fork of AssessmentItemSession::isResponded()
-                $excludedResponseVariables = array('numAttempts', 'duration');
+                $excludedResponseVariables = ['numAttempts', 'duration'];
                 foreach ($responses as $var) {
-
                     if ($var instanceof ResponseVariable && in_array($var->getIdentifier(), $excludedResponseVariables) === false) {
                         $value = $var->getValue();
                         $defaultValue = $var->getDefaultValue();
@@ -1423,7 +1414,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @throws \common_exception_Error
      * @throws \common_exception_InvalidArgumentType
      */
-    public function getItemPublicUrl(RunnerServiceContext $context, $itemRef){
+    public function getItemPublicUrl(RunnerServiceContext $context, $itemRef)
+    {
         if ($context instanceof QtiRunnerServiceContext) {
             $directoryIds = explode('|', $itemRef);
 
@@ -1434,7 +1426,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             if ($userDataLang != DEFAULT_LANG && !$directory->has($userDataLang) && $directory->has(DEFAULT_LANG)) {
                 $userDataLang = DEFAULT_LANG;
             }
-            return $directory->getPublicAccessUrl().$userDataLang.'/';
+            return $directory->getPublicAccessUrl() . $userDataLang . '/';
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerService',
@@ -1489,7 +1481,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $session = $context->getTestSession();
 
         if ($session->isRunning() === true && $session->isTimeout() === false) {
-
             $event = new QtiContinueInteractionEvent($context, $this);
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
@@ -1823,7 +1814,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
-            if($session->getState() === AssessmentTestSessionState::INTERACTING) {
+            if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
                 $session->startItemTimer($timestamp);
             }
         } else {
@@ -1875,7 +1866,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function switchClientStoreId(RunnerServiceContext $context, $receivedStoreId)
     {
-        if ($context instanceof QtiRunnerServiceContext){
+        if ($context instanceof QtiRunnerServiceContext) {
             /* @var TestSession $session */
             $session = $context->getTestSession();
             $sessionId = $session->getSessionId();
@@ -1883,7 +1874,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $stateService = $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID);
             $lastStoreId = $stateService->getStoreId($sessionId);
 
-            if($lastStoreId == false || $lastStoreId != $receivedStoreId){
+            if ($lastStoreId == false || $lastStoreId != $receivedStoreId) {
                 $stateService->setStoreId($sessionId, $receivedStoreId);
             }
 
@@ -1930,7 +1921,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $maxTimeSeconds = null;
         $item = null;
         switch ($qtiClassName) {
-            case 'assessmentTest' :
+            case 'assessmentTest':
                 $item = $session->getAssessmentTest();
                 break;
             case 'testPart':
@@ -1986,29 +1977,30 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @throws \common_Exception
      * @throws \common_exception_InconsistentData
      */
-    public function getItemPortableElements(RunnerServiceContext $context, $itemRef){
+    public function getItemPortableElements(RunnerServiceContext $context, $itemRef)
+    {
 
         $portableElementService = new PortableElementService();
         $portableElementService->setServiceLocator($this->getServiceLocator());
 
         $portableElements = [];
-        try{
+        try {
             $portableElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::PORTABLE_ELEMENT_FILE_NAME);
-            foreach($portableElements as $portableModel => &$elements){
-                foreach($elements as $typeIdentifier => &$versions){
-                    foreach($versions as &$portableData){
-                        try{
+            foreach ($portableElements as $portableModel => &$elements) {
+                foreach ($elements as $typeIdentifier => &$versions) {
+                    foreach ($versions as &$portableData) {
+                        try {
                             $portableElementService->setBaseUrlToPortableData($portableData);
-                        }catch(PortableElementNotFoundException $e){
+                        } catch (PortableElementNotFoundException $e) {
                             \common_Logger::w('the portable element version does not exist in delivery server');
-                        }catch(PortableModelMissing $e){
+                        } catch (PortableModelMissing $e) {
                             \common_Logger::w('the portable element model does not exist in delivery server');
                         }
                     }
                 }
             }
-        }catch(\tao_models_classes_FileNotFoundException $e){
-            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item '.$itemRef);
+        } catch (\tao_models_classes_FileNotFoundException $e) {
+            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item ' . $itemRef);
         }
         return $portableElements;
     }
@@ -2021,11 +2013,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getItemMetadataElements($itemRef)
     {
         $metadataElements = [];
-        try{
+        try {
             $metadataElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::METADATA_FILE_NAME);
-        }catch(\tao_models_classes_FileNotFoundException $e){
-            \common_Logger::i('Old delivery that does not contain the compiled portable element data in the item '.$itemRef.'. Original message: ' . $e->getMessage());
-        }catch(\Exception $e) {
+        } catch (\tao_models_classes_FileNotFoundException $e) {
+            \common_Logger::i('Old delivery that does not contain the compiled portable element data in the item ' . $itemRef . '. Original message: ' . $e->getMessage());
+        } catch (\Exception $e) {
             \common_Logger::w('An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage());
         }
         return $metadataElements;
@@ -2046,8 +2038,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
         $driver = $persistence->getDriver();
         if ($driver instanceof common_persistence_AdvKeyValuePersistence) {
-            $keys = $driver->keys(tao_models_classes_service_StateStorage::KEY_NAMESPACE .'*'. $deUri.'*');
-            foreach ($keys as $key){
+            $keys = $driver->keys(tao_models_classes_service_StateStorage::KEY_NAMESPACE . '*' . $deUri . '*');
+            foreach ($keys as $key) {
                 $driver->del($key);
             }
 
@@ -2094,8 +2086,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $request->getDeliveryExecution(),
                 $request->getSession()
             ))->getItemsRefs();
-
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $itemsRefs = [];
         }
 

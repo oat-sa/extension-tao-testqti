@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -91,7 +92,6 @@ class Timeout extends TestRunnerAction
                 // and after context build to avoid timing error
                 $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
             }
-
         } catch (Exception $e) {
             $response = $this->getErrorResponse($e);
         }

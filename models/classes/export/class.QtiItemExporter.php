@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,15 +24,16 @@ use oat\taoQtiItem\model\Export\QTIPackedItemExporter;
 /**
  * A specialized QTIPackedItemExporter aiming at exporting items dependent to a test in a given
  * ZIP archive.
- * 
+ *
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
  */
-class taoQtiTest_models_classes_export_QtiItemExporter extends QTIPackedItemExporter {
+class taoQtiTest_models_classes_export_QtiItemExporter extends QTIPackedItemExporter
+{
     
-    public function buildBasePath() {
+    public function buildBasePath()
+    {
         $basePath = parent::buildBasePath();
         return 'items/' . $basePath;
     }
 }
-    

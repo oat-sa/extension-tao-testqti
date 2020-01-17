@@ -56,7 +56,7 @@ class RegisterTestRunnerPlugins extends InstallAction
             ], [
                 'id' => 'dialog',
                 'name' => 'Dialog',
-                'module' =>'taoQtiTest/runner/plugins/content/dialog/dialog',
+                'module' => 'taoQtiTest/runner/plugins/content/dialog/dialog',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display popups that require user interactions',
                 'category' => 'content',
@@ -291,7 +291,7 @@ class RegisterTestRunnerPlugins extends InstallAction
             ], [
                 'id' => 'calculator',
                 'name' => 'Caculator tool',
-                'module' =>'taoQtiTest/runner/plugins/tools/calculator',
+                'module' => 'taoQtiTest/runner/plugins/tools/calculator',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Gives the student access to a basic calculator',
                 'category' => 'tools',
@@ -300,7 +300,7 @@ class RegisterTestRunnerPlugins extends InstallAction
             ], [
                 'id' => 'zoom',
                 'name' => 'Zoom',
-                'module' =>'taoQtiTest/runner/plugins/tools/zoom',
+                'module' => 'taoQtiTest/runner/plugins/tools/zoom',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Zoom in and out the item content',
                 'category' => 'tools',
@@ -408,9 +408,9 @@ class RegisterTestRunnerPlugins extends InstallAction
         $registry = PluginRegistry::getRegistry();
         $count = 0;
 
-        foreach(self::$plugins as $categoryPlugins) {
-            foreach($categoryPlugins as $pluginData){
-                if( $registry->register(TestPlugin::fromArray($pluginData)) ) {
+        foreach (self::$plugins as $categoryPlugins) {
+            foreach ($categoryPlugins as $pluginData) {
+                if ($registry->register(TestPlugin::fromArray($pluginData))) {
                     $count++;
                 }
             }

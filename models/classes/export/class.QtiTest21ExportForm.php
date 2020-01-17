@@ -28,8 +28,8 @@
  */
 class taoQtiTest_models_classes_export_QtiTest21ExportForm extends taoQtiTest_models_classes_export_ExportForm
 {
-    protected function getFormGroupName(){
+    protected function getFormGroupName()
+    {
         return __('Export QTI 2.1 Test Package');
     }
-
 }

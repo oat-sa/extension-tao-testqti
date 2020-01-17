@@ -2,7 +2,8 @@
 
 namespace oat\taoQtiTest\models\metadata;
 
-interface MetadataTestContextAware {
+interface MetadataTestContextAware
+{
     
     public function contextualizeWithTest($testResourceIdentifier, \DOMDocument $testDocument, $itemResourceIdentifier, array $metadataValues);
 }

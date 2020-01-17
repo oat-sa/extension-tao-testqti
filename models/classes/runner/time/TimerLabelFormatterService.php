@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +36,7 @@ class TimerLabelFormatterService extends ConfigurableService
     public function format($potentialLabel = '')
     {
         $token = (string) $this->getOption(static::OPTION_DEFAULT_TIMER_LABEL);
-        if (empty($token)){
+        if (empty($token)) {
             return $potentialLabel;
         }
 

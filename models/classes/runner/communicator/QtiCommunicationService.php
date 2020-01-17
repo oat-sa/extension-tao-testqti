@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -56,7 +58,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
         $responses = [];
 
         if ($this->islogInputEnabled()) {
-            $this->logInfo('Test runner message: '.json_encode($input));
+            $this->logInfo('Test runner message: ' . json_encode($input));
         }
 
         foreach ($input as $data) {
@@ -67,7 +69,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
             if ($this->hasChannel($data['channel'], self::CHANNEL_TYPE_INPUT)) {
                 $channel = $this->getChannel($data['channel'], self::CHANNEL_TYPE_INPUT);
                 // known channel, forward...
-                $responses[] = $this->processChannel($channel, $context,  $data['message']);
+                $responses[] = $this->processChannel($channel, $context, $data['message']);
             } else {
                 // unknown channel, fallback!
                 $responses[] = $this->fallback($data['channel'], $context, $data['message']);
@@ -154,7 +156,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     protected function getChannel($channelName, $channelType)
     {
         $channels = $this->getOption(self::OPTION_CHANNELS);
-        $channel = new $channels[$channelType][$channelName];
+        $channel = new $channels[$channelType][$channelName]();
         $this->propagate($channel);
 
         return $channel;
@@ -190,7 +192,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
      * @param mixed $message
      * @return mixed
      */
-    protected function fallback($channel, QtiRunnerServiceContext $context,  $message)
+    protected function fallback($channel, QtiRunnerServiceContext $context, $message)
     {
         // do nothing by default, need to be overwritten
         return null;

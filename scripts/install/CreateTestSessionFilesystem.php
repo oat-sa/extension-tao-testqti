@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,10 +22,10 @@ namespace oat\taoQtiTest\scripts\install;
 
 /**
  * Create the Test Session Filesystem.
- * 
+ *
  * This filesystem will deal with Qti File persistence that are stored
  * by QTI Assessment Test Sessions.
- * 
+ *
  * @package oat\taoQtiTest\scripts\install
  */
 class CreateTestSessionFilesystem extends \common_ext_action_InstallAction
@@ -32,7 +33,7 @@ class CreateTestSessionFilesystem extends \common_ext_action_InstallAction
     public function __invoke($params)
     {
         $serviceManager = \oat\oatbox\service\ServiceManager::getServiceManager();
-        $fsService = $serviceManager->get(\oat\oatbox\filesystem\FileSystemService::SERVICE_ID); 
+        $fsService = $serviceManager->get(\oat\oatbox\filesystem\FileSystemService::SERVICE_ID);
         $fsService->createFileSystem('taoQtiTestSessionFilesystem');
         $serviceManager->register(\oat\oatbox\filesystem\FileSystemService::SERVICE_ID, $fsService);
     }

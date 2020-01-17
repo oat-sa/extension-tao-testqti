@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\models\creator;
 
 use oat\generis\model\OntologyAwareTrait;
@@ -64,7 +66,7 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
     {
         $result = $this->getListResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
 
-        array_map(function($item){
+        array_map(function ($item) {
             return array_merge($item, [
                 'categories' => $this->getCategoryService()->getItemCategories($this->getResource($item['uri']))
             ]);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,9 +27,9 @@ use \common_report_Report as Report;
 
 /**
  * Class ShowQtiAdaptiveSectionIds
- * 
+ *
  * Hide the QTI CAT Adaptive Section IDs from the Graphical User Interface.
- * 
+ *
  * @package oat\taoQtiTest\scripts\install
  */
 class HideQtiAdaptiveSectionIds extends InstallAction

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -94,7 +95,7 @@ class RecompileItemsElements extends ScriptAction
      */
     protected function init()
     {
-        $this->wetRun = (boolean) $this->getOption('wetRun');
+        $this->wetRun = (bool) $this->getOption('wetRun');
         $this->report = new Report(Report::TYPE_INFO, 'Starting recompile deliveries');
     }
 
@@ -177,7 +178,7 @@ class RecompileItemsElements extends ScriptAction
                     $this->getProperty(\taoItems_models_classes_ItemsService::PROPERTY_ITEM_CONTENT)
                 );
                 foreach ($languages as $lang) {
-                    $path = $lang.DIRECTORY_SEPARATOR.QtiJsonItemCompiler::METADATA_FILE_NAME;
+                    $path = $lang . DIRECTORY_SEPARATOR . QtiJsonItemCompiler::METADATA_FILE_NAME;
                     if (!$directory->has($path)) {
                         $this->writeMetadata($item, $directory, $path, $properties);
                         $count++;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -250,7 +251,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             try {
                 $timer->adjust($tags, $duration);
             } catch (\oat\taoTests\models\runner\time\TimeException $e) {
-                $this->logAlert($e->getMessage().'; Test session identifier: '.$this->getSessionId());
+                $this->logAlert($e->getMessage() . '; Test session identifier: ' . $this->getSessionId());
             }
         }
         $constraints = $this->getTimeConstraints();

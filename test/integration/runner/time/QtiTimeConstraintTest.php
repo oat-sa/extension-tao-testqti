@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -125,7 +126,7 @@ class QtiTimeConstraintTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-     * Test serialization of a constraint built 
+     * Test serialization of a constraint built
      * with different parameters
      *
      * @dataProvider providesEncodingCases
@@ -138,7 +139,7 @@ class QtiTimeConstraintTest extends GenerisPhpUnitTestRunner
 
         //TimeLimits is a pojo, no need to stub
         $timeLimits = null;
-        if($min != null || $max != null){
+        if ($min != null || $max != null) {
             $timeLimits = new TimeLimits($min, $max, $lateSubmission);
         }
 
@@ -156,6 +157,4 @@ class QtiTimeConstraintTest extends GenerisPhpUnitTestRunner
         $decoded = json_decode($encoded, JSON_OBJECT_AS_ARRAY);
         $this->assertEquals($expected, $decoded);
     }
-
 }
-
