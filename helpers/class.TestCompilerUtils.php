@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -27,22 +28,24 @@ use qtism\data\NavigationMode;
 * @author Jérôme Bogaerts <jerome@taotesting.com>
 *
 */
-class taoQtiTest_helpers_TestCompilerUtils {
+class taoQtiTest_helpers_TestCompilerUtils
+{
     
     /**
      * Get an  associative array representing some meta-data about the
      * given $test.
-     * 
+     *
      * The following keys can be accessed:
-     * 
+     *
      * 'branchRules': whether or not the test definition contains branchRule components in force.
      * 'preConditions': whether or not the test definition contains preCondition components in force.
-     * 
+     *
      * @param AssessmentTest $test
      * @return array An associative array.
      */
-    static public function testMeta(AssessmentTest $test) {
-        $meta = array();
+    public static function testMeta(AssessmentTest $test)
+    {
+        $meta = [];
         
         $meta['branchRules'] = self::testContainsBranchRules($test);
         $meta['preConditions'] = self::testContainsPreConditions($test);
@@ -53,11 +56,12 @@ class taoQtiTest_helpers_TestCompilerUtils {
     /**
      * Whether or not a given $test contains branchRules subject to be
      * in force during its execution.
-     * 
+     *
      * @param AssessmentTest $test
      * @return boolean
      */
-    static private function testContainsBranchRules(AssessmentTest $test) {
+    private static function testContainsBranchRules(AssessmentTest $test)
+    {
         $testParts = $test->getComponentsByClassName('testPart');
         $containsBranchRules = false;
         
@@ -80,11 +84,12 @@ class taoQtiTest_helpers_TestCompilerUtils {
     /**
      * Whether or not a given $test contains preConditions subject to be in force
      * during its execution.
-     * 
+     *
      * @param AssessmentTest $test
      * @return boolean
      */
-    static private function testContainsPreConditions(AssessmentTest $test) {
+    private static function testContainsPreConditions(AssessmentTest $test)
+    {
         $testParts = $test->getComponentsByClassName('testPart');
         $containsPreConditions = false;
         

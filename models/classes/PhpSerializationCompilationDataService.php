@@ -7,7 +7,7 @@ use qtism\data\AssessmentItemRef;
 
 /**
  * PHP Serialization Compilation Data Service.
- * 
+ *
  * This Compilation Data Service implementation aims at compiling
  * Delivery data as PHP serialized data (see serialize/unserialize PHP
  * core functions).

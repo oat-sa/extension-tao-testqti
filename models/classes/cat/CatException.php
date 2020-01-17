@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,16 +23,16 @@ namespace oat\taoQtiTest\models\cat;
 
 /**
  * Generic CAT Exception.
- * 
+ *
  * Specific CAT Exception implementations MUST extend this class.
  */
 class CatException extends \common_Exception
 {
     /**
      * New CAT Exception Object.
-     * 
+     *
      * Creates a new CatException object.
-     * 
+     *
      * @param string $message
      * @param integer $code
      * @param \Exception $previous

@@ -1,4 +1,5 @@
 <?php
+
 use oat\taoQtiTest\models\runner\session\TestSession;
 
 /**
@@ -22,7 +23,7 @@ use oat\taoQtiTest\models\runner\session\TestSession;
 /**
  * Default test runner config
  */
-return array(
+return [
     /**
      * Show warning messages if time remaining less than defined (in seconds) in key.
      * Also you should define type of warning message in value.
@@ -35,12 +36,12 @@ return array(
      * Available warning types: info (blue), warning (yellow), danger (red orange)
      * @type array
      */
-    'timerWarning' => array(
+    'timerWarning' => [
         'assessmentItemRef' => null,
         'assessmentSection' => null,
         'testPart'          => null,
         'assessmentTest'    => null
-    ),
+    ],
 
     /**
      * Tells what type of progress bar to use? Can be:
@@ -589,29 +590,29 @@ return array(
             'trigger' => 'K'
         ],
         'dialog' => [],
-        'magnifier' => array(
+        'magnifier' => [
             'toggle' => 'L',
             'in' => 'Shift+I',
             'out' => 'Shift+O',
             'close' => 'esc'
-        ),
-        'highlighter' => array(
+        ],
+        'highlighter' => [
             'toggle' => 'Shift+U'
-        ),
-        'area-masking' => array(
+        ],
+        'area-masking' => [
             'toggle' => 'Y'
-        ),
-        'line-reader' => array(
+        ],
+        'line-reader' => [
             'toggle' => 'G'
-        ),
-        'answer-masking' => array(
+        ],
+        'answer-masking' => [
             'toggle' => 'D'
-        ),
-        'apiptts' => array(
+        ],
+        'apiptts' => [
             'enterTogglePlayback' => 'Enter',
             'togglePlayback' => 'P',
             'spaceTogglePlayback' => 'Space'
-        ),
+        ],
     ],
 
     /**
@@ -653,4 +654,4 @@ return array(
      */
     'enable-linear-next-item-warning-checkbox' => true,
 
-);
+];

@@ -19,11 +19,13 @@
  *
  *
  */
+
 namespace oat\taoQtiTest\models\compilation;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiItem\model\ItemModel;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
+
 /**
  * TestCompiler factory
  *
@@ -51,7 +53,7 @@ class CompilationService extends ConfigurableService
      */
     public function setRubricBlockStyleSheetScoping($boolean)
     {
-        $this->setOption(self::OPTION_RUBRIC_BLOCK_CSS_SCOPE, (boolean)$boolean);
+        $this->setOption(self::OPTION_RUBRIC_BLOCK_CSS_SCOPE, (bool)$boolean);
     }
 
     /**

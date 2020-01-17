@@ -2,7 +2,6 @@
 
 namespace oat\taoQtiTest\models\export\metadata;
 
-
 interface TestMetadataExporter
 {
     const SERVICE_ID = 'taoQtiTest/metadataExporter';

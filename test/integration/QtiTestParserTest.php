@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\integration;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
@@ -36,12 +38,12 @@ use common_report_Report;
 class QtiTestParserTest extends GenerisPhpUnitTestRunner
 {
 
-    static public function dataDir()
+    public static function dataDir()
     {
         return dirname(__FILE__) . '/data/';
     }
 
-    static public function samplesDir()
+    public static function samplesDir()
     {
         return dirname(__FILE__) . '/../samples/';
     }
@@ -65,7 +67,7 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
 
     /**
      * @depends testManifestParserObject
-     * 
+     *
      * @param $objParser
      * @return void
      */
@@ -76,7 +78,7 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
 
     /**
      * @depends testManifestParserObject
-     * 
+     *
      * @param $objParser
      * @return void
      */
@@ -94,7 +96,7 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
 
     /**
      * Initialize the compiler
-     * 
+     *
      * @return \taoQtiTest_models_classes_QtiTestCompiler
      */
     public function testQtiTestCreateCompiler()
@@ -116,8 +118,8 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
     
     /**
      * @depends testQtiTestCreateCompiler
-     * 
-     * @param \taoQtiTest_models_classes_QtiTestCompiler $compiler            
+     *
+     * @param \taoQtiTest_models_classes_QtiTestCompiler $compiler
      * @return void
      */
     public function testQtiTextCompilerCompile($compiler)

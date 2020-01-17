@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Open Assessment Technologies, S.A.
  */

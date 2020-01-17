@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
 *
 * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
 */
+
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponent;
 use qtism\data\QtiComponentCollection;
@@ -114,9 +116,9 @@ class taoQtiTest_models_classes_QtiTestConverter
      */
     private function componentToArray(QtiComponent $component)
     {
-        $array = array(
+        $array = [
             'qti-type' => $component->getQtiClassName()
-        );
+        ];
 
         $reflector = new ReflectionClass($component);
 
@@ -125,31 +127,27 @@ class taoQtiTest_models_classes_QtiTestConverter
             if ($value !== null) {
                 $key = $property->getName();
                 if ($value instanceof QtiComponentCollection) {
-                    $array[$key] = array();
+                    $array[$key] = [];
                     foreach ($value as $item) {
                         $array[$key][] = $this->componentToArray($item);
                     }
-                } else
-                    if ($value instanceof ViewCollection) {
-                        $array[$property->getName()] = array();
-                        foreach ($value as $item) {
-                            $array[$property->getName()][] = View::getNameByConstant($item);
-                        }
-                    } else
-                        if ($value instanceof QtiComponent) {
-                            $array[$property->getName()] = $this->componentToArray($value);
-                        } else
-                            if ($value instanceof QtiDuration) {
-                                $array[$property->getName()] = taoQtiTest_helpers_TestRunnerUtils::getDurationWithMicroseconds($value);
-                            } else
-                                if ($value instanceof IntegerCollection || $value instanceof StringCollection) {
-                                    $array[$property->getName()] = array();
-                                    foreach ($value as $item) {
-                                        $array[$property->getName()][] = $item;
-                                    }
-                                } else {
-                                    $array[$property->getName()] = $value;
-                                }
+                } elseif ($value instanceof ViewCollection) {
+                    $array[$property->getName()] = [];
+                    foreach ($value as $item) {
+                        $array[$property->getName()][] = View::getNameByConstant($item);
+                    }
+                } elseif ($value instanceof QtiComponent) {
+                    $array[$property->getName()] = $this->componentToArray($value);
+                } elseif ($value instanceof QtiDuration) {
+                    $array[$property->getName()] = taoQtiTest_helpers_TestRunnerUtils::getDurationWithMicroseconds($value);
+                } elseif ($value instanceof IntegerCollection || $value instanceof StringCollection) {
+                    $array[$property->getName()] = [];
+                    foreach ($value as $item) {
+                        $array[$property->getName()][] = $item;
+                    }
+                } else {
+                    $array[$property->getName()] = $value;
+                }
             }
         }
 
@@ -163,7 +161,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      * @param array $childrenProperties for recursive usage only
      * @return ReflectionProperty[] the list of properties
      */
-    private function getProperties(ReflectionClass $reflector, array $childrenProperties = array())
+    private function getProperties(ReflectionClass $reflector, array $childrenProperties = [])
     {
         $properties = array_merge($childrenProperties, $reflector->getProperties());
         if ($reflector->getParentClass()) {
@@ -182,12 +180,12 @@ class taoQtiTest_models_classes_QtiTestConverter
     private function getValue(QtiComponent $component, ReflectionProperty $property)
     {
         $value = null;
-        $getterProps = array(
+        $getterProps = [
             'get',
             'is',
             'does',
             'must'
-        );
+        ];
         foreach ($getterProps as $getterProp) {
             $getterName = $getterProp . ucfirst($property->getName());
             try {
@@ -213,12 +211,12 @@ class taoQtiTest_models_classes_QtiTestConverter
     {
         $setterName = 'set' . ucfirst($property->getName());
         try {
-
             $method = new ReflectionMethod($component, $setterName);
             if ($method->isPublic()) {
                 $component->{$setterName}($value);
             }
-        } catch (ReflectionException $re) {} // this must be ignored
+        } catch (ReflectionException $re) {
+        } // this must be ignored
     }
 
     /**
@@ -232,7 +230,6 @@ class taoQtiTest_models_classes_QtiTestConverter
     {
         $setterName = 'set' . ucfirst($property->getName());
         try {
-
             $method = new ReflectionMethod($component, $setterName);
             $parameters = $method->getParameters();
 
@@ -240,7 +237,8 @@ class taoQtiTest_models_classes_QtiTestConverter
                 $param = $parameters[0];
                 return $param->getClass();
             }
-        } catch (ReflectionException $re) {}
+        } catch (ReflectionException $re) {
+        }
 
         return null;
     }
@@ -256,27 +254,22 @@ class taoQtiTest_models_classes_QtiTestConverter
     private function arrayToComponent(array $testArray, QtiComponent $parent = null, $attach = true)
     {
         if (isset($testArray['qti-type']) && ! empty($testArray['qti-type'])) {
-
             $compName = $this->lookupClass($testArray['qti-type']);
 
             if (! empty($compName)) {
-
                 $reflector = new ReflectionClass($compName);
                 $component = $this->createInstance($reflector, $testArray);
 
-                $properties = array();
+                $properties = [];
                 foreach ($this->getProperties($reflector) as $property) {
                     $properties[$property->getName()] = $property;
                 }
 
                 foreach ($testArray as $key => $value) {
-
                     if (array_key_exists($key, $properties)) {
-
                         $class = $this->getPropertyClass($component, $properties[$key]);
 
                         if (is_array($value) && array_key_exists('qti-type', $value)) {
-
                             $this->arrayToComponent($value, $component, true);
                         } else {
                             $assignableValue = $this->componentValue($value, $class);
@@ -317,10 +310,9 @@ class taoQtiTest_models_classes_QtiTestConverter
         if (! is_null($class)) {
             if (is_array($value)) {
                 return $this->createComponentCollection(new ReflectionClass($class->name), $value);
-            } else
-                if ($class->name === 'qtism\common\datatypes\QtiDuration') {
-                    return new qtism\common\datatypes\QtiDuration('PT' . $value . 'S');
-                }
+            } elseif ($class->name === 'qtism\common\datatypes\QtiDuration') {
+                return new qtism\common\datatypes\QtiDuration('PT' . $value . 'S');
+            }
         }
         return $value;
     }
@@ -349,7 +341,7 @@ class taoQtiTest_models_classes_QtiTestConverter
         }
         if ($collection instanceof IntegerCollection || $collection instanceof StringCollection) {
             foreach ($values as $value) {
-                if(!empty($value)){
+                if (!empty($value)) {
                     $collection[] = $value;
                 }
             }
@@ -368,7 +360,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      */
     private function createInstance(ReflectionClass $class, $properties)
     {
-        $arguments = array();
+        $arguments = [];
         if (is_string($properties) && $class->implementsInterface('qtism\common\enums\Enumeration')) {
             $enum = $class->newInstance();
             return $enum->getConstantByName($properties);
@@ -384,40 +376,38 @@ class taoQtiTest_models_classes_QtiTestConverter
                 $paramClass = $parameter->getClass();
                 if ($paramClass !== null) {
                     if (is_array($properties[$name])) {
-
-                        $component = $this->arrayToComponent( $properties[$name] );
-                        if ( ! $component) {
+                        $component = $this->arrayToComponent($properties[$name]);
+                        if (! $component) {
                             $component = $this->createComponentCollection(new ReflectionClass($paramClass->name), $properties[$name]);
                         }
 
                         $arguments[] = $component;
                     }
-                } else
-                    if (array_key_exists($name, $properties)) {
-                        $arguments[] = $properties[$name];
-                    } else {
-                        $hint = $this->getHint($docComment, $name);
-                        switch ($hint) {
-                            case 'int':
-                                $arguments[] = 0;
-                                break;
-                            case 'integer':
-                                $arguments[] = 0;
-                                break;
-                            case 'boolean':
-                                $arguments[] = false;
-                                break;
-                            case 'string':
-                                $arguments[] = '';
-                                break;
-                            case 'array':
-                                $arguments[] = array();
-                                break;
-                            default:
-                                $arguments[] = null;
-                                break;
-                        }
+                } elseif (array_key_exists($name, $properties)) {
+                    $arguments[] = $properties[$name];
+                } else {
+                    $hint = $this->getHint($docComment, $name);
+                    switch ($hint) {
+                        case 'int':
+                            $arguments[] = 0;
+                            break;
+                        case 'integer':
+                            $arguments[] = 0;
+                            break;
+                        case 'boolean':
+                            $arguments[] = false;
+                            break;
+                        case 'string':
+                            $arguments[] = '';
+                            break;
+                        case 'array':
+                            $arguments[] = [];
+                            break;
+                        default:
+                            $arguments[] = null;
+                            break;
                     }
+                }
             }
         }
 
@@ -434,7 +424,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      */
     private function getHint($docComment, $varName)
     {
-        $matches = array();
+        $matches = [];
         $count = preg_match_all('/@param[\t\s]*(?P<type>[^\t\s]*)[\t\s]*\$(?P<name>[^\t\s]*)/sim', $docComment, $matches);
         if ($count > 0) {
             foreach ($matches['name'] as $n => $name) {
@@ -454,7 +444,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      */
     private function lookupClass($name)
     {
-        $namespaces = array(
+        $namespaces = [
             'qtism\\common\\datatypes\\',
             'qtism\\data\\',
             'qtism\\data\\content\\',
@@ -469,7 +459,7 @@ class taoQtiTest_models_classes_QtiTestConverter
             'qtism\\data\\processing\\',
             'qtism\\data\\rules\\',
             'qtism\\data\\state\\'
-        );
+        ];
         foreach ($namespaces as $namespace) { // this could be cached
             $className = $namespace . ucfirst($name);
             if (class_exists($className, true)) {

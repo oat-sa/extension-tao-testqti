@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\unit\models\classes\runner;
 
 use oat\generis\test\TestCase;
@@ -107,7 +109,7 @@ class TestDefinitionSerializerServiceTest extends TestCase
     /** @var QtiRunnerServiceContext|MockObject */
     private $qtiRunnerServiceContext;
 
-    public function setUp ()
+    public function setUp()
     {
         $this->testDefinitionSerializerService = new TestDefinitionSerializerService();
 
@@ -156,7 +158,7 @@ class TestDefinitionSerializerServiceTest extends TestCase
         $this->testDefinitionSerializerService->setServiceLocator($serviceLocatorMock);
     }
 
-    public function testGetSerializedTestDefinition ()
+    public function testGetSerializedTestDefinition()
     {
         $this->fileStorageServiceMock
             ->expects($this->once())

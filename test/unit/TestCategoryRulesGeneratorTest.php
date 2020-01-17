@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\unit;
 
 use oat\generis\test\TestCase;
@@ -29,7 +31,7 @@ use qtism\data\storage\xml\XmlDocument;
 class TestCategoryRulesGeneratorTest extends TestCase
 {
     
-    static public function samplesDir() 
+    public static function samplesDir()
     {
         return dirname(__FILE__) . '/../samples/xml/category_rules/';
     }
@@ -56,21 +58,21 @@ class TestCategoryRulesGeneratorTest extends TestCase
         
         $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[0]->getIdentifier());
         $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[0]->getExpression());
-        $this->assertEquals(array('math'), $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['math'], $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
 
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[1]->getIdentifier());
         $this->assertInstanceOf(Sum::class, $setOutcomeValues[1]->getExpression());
-        $this->assertEquals(array('math'), $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['math'], $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
         $this->assertEquals('', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
         $this->assertEquals('SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[2]->getIdentifier());
         $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[2]->getExpression());
-        $this->assertEquals(array('english'), $setOutcomeValues[2]->getExpression()->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['english'], $setOutcomeValues[2]->getExpression()->getIncludeCategories()->getArrayCopy());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[3]->getIdentifier());
         $this->assertInstanceOf(Sum::class, $setOutcomeValues[3]->getExpression());
-        $this->assertEquals(array('english'), $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['english'], $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
         $this->assertEquals('', $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getWeightIdentifier());
         $this->assertEquals('SCORE', $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getVariableIdentifier());
     }
@@ -108,11 +110,11 @@ class TestCategoryRulesGeneratorTest extends TestCase
         $this->assertCount(2, $setOutcomeValues);
         $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[0]->getIdentifier());
         $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[0]->getExpression());
-        $this->assertEquals(array('math'), $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['math'], $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[1]->getIdentifier());
         $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[1]->getExpression());
-        $this->assertEquals(array('english'), $setOutcomeValues[1]->getExpression()->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['english'], $setOutcomeValues[1]->getExpression()->getIncludeCategories()->getArrayCopy());
     }
     
     public function testApplyScoreOnly()
@@ -132,13 +134,13 @@ class TestCategoryRulesGeneratorTest extends TestCase
         $this->assertCount(2, $setOutcomeValues);
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[0]->getIdentifier());
         $this->assertInstanceOf(Sum::class, $setOutcomeValues[0]->getExpression());
-        $this->assertEquals(array('math'), $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['math'], $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
         $this->assertEquals('', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getWeightIdentifier());
         $this->assertEquals('SCORE', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier());
         
         $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[1]->getIdentifier());
         $this->assertInstanceOf(Sum::class, $setOutcomeValues[1]->getExpression());
-        $this->assertEquals(array('english'), $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(['english'], $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
         $this->assertEquals('', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
         $this->assertEquals('SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
     }
@@ -194,4 +196,3 @@ class TestCategoryRulesGeneratorTest extends TestCase
         $this->assertEquals('MY_WEIGHT', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
     }
 }
-

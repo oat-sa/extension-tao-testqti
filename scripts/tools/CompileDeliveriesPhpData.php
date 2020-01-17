@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +26,7 @@ use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use oat\taoDelivery\model\RuntimeService;
 
 /**
- * 
+ *
  * @package oat\taoQtiTest\scripts\tools
  */
 abstract class CompileDeliveriesPhpData extends AbstractAction
@@ -36,21 +37,19 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
         $report = new Report(Report::TYPE_INFO, "Script gracefully ended.");
         
         $count = 0;
-        $failCount = 0;    
+        $failCount = 0;
         
         if ($extManager->isInstalled('taoDeliveryRdf') === true && $extManager->isEnabled('taoDeliveryRdf') === true) {
-            
             $extManager->getExtensionById('taoDeliveryRdf');
             $runtimeService = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
             
             $iterator = new \core_kernel_classes_ResourceIterator([DeliveryAssemblyService::singleton()->getRootClass()]);
             
             foreach ($iterator as $delivery) {
-                
                 $deliveryUri = $delivery->getUri();
                 
                 $runtime = $runtimeService->getRuntime($deliveryUri);
-                $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
+                $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, []);
                 list($privateId, $publicId) = explode('|', $inputParameters['QtiTestCompilation'], 2);
                 $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($privateId);
 
@@ -101,11 +100,10 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                     "${failCount} file(s) not successfully compiled."
                 )
             );
-            
         } else {
             $report->add(
                 new Report(
-                    Report::TYPE_ERROR, 
+                    Report::TYPE_ERROR,
                     "Extension taoDeliveryRdf is not installed. No compilation environment is available."
                 )
             );

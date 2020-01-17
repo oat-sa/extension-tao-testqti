@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -289,7 +290,6 @@ class TimeoutTest extends TestCase
             ->with($this->qtiRunnerServiceContext, 'expectedItemDefinition', $expectedItemResponse);
 
         $this->createSubjectWithParameters($requestParameters)->process();
-
     }
 
     public function testWrongCurrentItem()

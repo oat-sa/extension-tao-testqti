@@ -109,7 +109,7 @@ class QtiRunnerServiceTest extends TestCase
         $testData = $this->qtiRunnerService->getTestData($qtiRunnerServiceContextMock);
 
         $this->assertTrue(
-            array_key_exists('config',$testData)
+            array_key_exists('config', $testData)
             && array_key_exists('plugins', $testData['config'])
             && array_key_exists(QtiRunnerService::TOOL_ITEM_THEME_SWITCHER, $testData['config']['plugins'])
             && array_key_exists('activeNamespace', $testData['config']['plugins'][QtiRunnerService::TOOL_ITEM_THEME_SWITCHER])

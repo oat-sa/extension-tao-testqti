@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +31,8 @@ class QtiRunnerEmptyResponsesException extends \common_Exception implements \com
      *
      * @param string $message the message
      */
-    public function __construct($message = 'A response to this item is required', $code = 200) {
+    public function __construct($message = 'A response to this item is required', $code = 200)
+    {
         parent::__construct($message, $code);
     }
 
@@ -39,7 +41,8 @@ class QtiRunnerEmptyResponsesException extends \common_Exception implements \com
      *
      * @return string A human-readable message.
      */
-    public function getUserMessage() {
+    public function getUserMessage()
+    {
         return  __('A response to this item is required.');
     }
 }

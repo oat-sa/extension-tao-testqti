@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +43,7 @@ use oat\taoTests\models\runner\time\TimePoint;
  *          ...
  *          "tagN": [100, 101, 110, 111, ...],
  *      },
- * 
+ *
  *      // A list of tags that applies for all timestamps.
  *      "tags": [
  *          "global-tag-1",
@@ -50,7 +51,7 @@ use oat\taoTests\models\runner\time\TimePoint;
  *          ...
  *          "global-tag-N",
  *      ],
- * 
+ *
  *      // A flat list of timestamps, their tags are moved into the index map.
  *      // Each timestamp is reduced by a reference value to minimize the final size.
  *      "points": [
@@ -59,9 +60,9 @@ use oat\taoTests\models\runner\time\TimePoint;
  *          ...
  *          [target, type, timestamp - todayTimestamp]
  *      ],
- * 
+ *
  *      // The arbitrary reference value that has been used to reduce the timestamps.
- *      // Usually it is the timestamp of today morning at 00:00. 
+ *      // Usually it is the timestamp of today morning at 00:00.
  *      // (could be improved to be based on the assessment start time)
  *      "epoch": todayTimestamp
  * }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,11 +31,12 @@ use qtism\common\datatypes\QtiDuration;
 
 /**
  * A TAO specific implementation of QTISM's AbstractSessionManager.
- * 
+ *
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
  */
-class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
+class taoQtiTest_helpers_SessionManager extends AbstractSessionManager
+{
 
     /**
      * The class name of the default TestSession
@@ -50,7 +52,7 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     
     /**
      * The TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
-     * 
+     *
      * @var core_kernel_classes_Resource
      */
     private $test;
@@ -93,19 +95,21 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
     
     /**
      * Set the TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
-     * 
+     *
      * @param core_kernel_classes_Resource $test A TAO Test Resource.
      */
-    public function setTest(core_kernel_classes_Resource $test) {
+    public function setTest(core_kernel_classes_Resource $test)
+    {
         $this->test = $test;
     }
     
     /**
      * Get the TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
-     * 
+     *
      * @return core_kernel_classes_Resource A TAO Resource.
      */
-    public function getTest() {
+    public function getTest()
+    {
         return $this->test;
     }
 
@@ -116,7 +120,8 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      * @return AssessmentTestSession
      * @throws common_ext_ExtensionException
      */
-    protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route) {
+    protected function instantiateAssessmentTestSession(AssessmentTest $test, Route $route)
+    {
         $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         
         // Test Session class instantiation, depending on configuration.
@@ -146,10 +151,11 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      * Extra configuration for newly instantiated AssessmentTestSession objects. This implementation
      * forces test results to be sent at the end of the candidate session, and get the acceptable
      * latency time from the taoQtiTest extension's configuration.
-     * 
+     *
      * @param AssessmentTestSession $assessmentTestSession
      */
-    protected function configureAssessmentTestSession(AssessmentTestSession $assessmentTestSession) {
+    protected function configureAssessmentTestSession(AssessmentTestSession $assessmentTestSession)
+    {
         $assessmentTestSession->setTestResultsSubmission(TestResultsSubmission::END);
     }
 
@@ -162,8 +168,8 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager {
      * @return AssessmentItemSession A freshly instantiated AssessmentItemSession.
      * @throws \InvalidArgumentException
      */
-    protected function instantiateAssessmentItemSession(IAssessmentItem $assessmentItem, $navigationMode, $submissionMode) {
+    protected function instantiateAssessmentItemSession(IAssessmentItem $assessmentItem, $navigationMode, $submissionMode)
+    {
         return new AssessmentItemSession($assessmentItem, $this, $navigationMode, $submissionMode);
     }
-
 }

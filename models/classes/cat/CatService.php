@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +40,7 @@ use oat\taoQtiTest\models\CompilationDataService;
 
 /**
  * Computerized Adaptive Testing Service
- * 
+ *
  * This Service gives you access to a CatEngine object in addition
  * with relevant services to deal with CAT in TAO.
  *
@@ -89,7 +90,7 @@ class CatService extends ConfigurableService
 
     /**
      * Returns the Adaptive Engine
-     * 
+     *
      * Returns an CatEngine implementation object.
      * If it is the initial call, change endpoint name to differentiate it from nextItem call
      *
@@ -125,7 +126,6 @@ class CatService extends ConfigurableService
                     \common_Logger::e('Fail to connect to CAT endpoint : ' . $e->getMessage());
                     throw new CatEngineNotFoundException('CAT Engine for endpoint "' . $endpoint . '" is misconfigured.', $endpoint, 0, $e);
                 }
-
             }
         }
         
@@ -139,10 +139,10 @@ class CatService extends ConfigurableService
     
     /**
      * Get AssessmentItemRef by Identifier
-     * 
+     *
      * This method enables you to access to a pre-compiled version of a stand alone AssessmentItemRef, that can be run
      * with a stand alone AssessmentItemSession.
-     * 
+     *
      * @return \qtism\data\ExtendedAssessmentItemRef
      */
     public function getAssessmentItemRefByIdentifier(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, $identifier)
@@ -159,10 +159,10 @@ class CatService extends ConfigurableService
     
     /**
      * Get AssessmentItemRef by Identifiers
-     * 
+     *
      * This method enables you to access to a collection of pre-compiled versions of stand alone AssessmentItemRef objects, that can be run
      * with stand alone AssessmentItemSessions.
-     * 
+     *
      * @return array An array of AssessmentItemRef objects.
      */
     public function getAssessmentItemRefByIdentifiers(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, array $identifiers)
@@ -178,9 +178,9 @@ class CatService extends ConfigurableService
     
     /**
      * Get AssessmentItemRefs corresponding to a given Adaptive Placeholder.
-     * 
+     *
      * This method will return an array of AssessmentItemRef objects corresponding to an Adaptive Placeholder.
-     * 
+     *
      * @return array
      */
     public function getAssessmentItemRefsByPlaceholder(\tao_models_classes_service_StorageDirectory $privateCompilationDirectory, AssessmentItemRef $placeholder)
@@ -202,16 +202,16 @@ class CatService extends ConfigurableService
     
     /**
      * Get Information about a given Adaptive Section.
-     * 
+     *
      * This method returns Information about the "adaptivity" of a given QTI AssessmentSection.
      * The method returns an associative array containing the following information:
-     * 
+     *
      * * 'qtiSectionIdentifier' => The original QTI Identifier of the section.
      * * 'adaptiveSectionIdentifier' => The identifier of the adaptive section as known by the Adaptive Engine.
      * * 'adaptiveEngineRef' => The URL to the Adaptive Engine End Point to be used for that Adaptive Section.
-     * 
+     *
      * In case of the Assessment Section is not adaptive, the method returns false.
-     * 
+     *
      * @param \qtism\data\AssessmentTest $test A given AssessmentTest object.
      * @param \tao_models_classes_service_StorageDirectory $compilationDirectory The compilation directory where the test is compiled as a TAO Delivery.
      * @param string $qtiAssessmentSectionIdentifier The QTI identifier of the AssessmentSection you would like to get "adaptivity" information.
@@ -254,7 +254,7 @@ class CatService extends ConfigurableService
     
     /**
      * Import XML data to QTI test RDF properties.
-     * 
+     *
      * This method will import the information found in the CAT specific information of adaptive sections
      * of a QTI test into the ontology for a given $test. This method is designed to be called at QTI Test Import time.
      *
@@ -343,20 +343,20 @@ class CatService extends ConfigurableService
             $dependencies = $sectionsParts->getKeys();
 
             if ($catDiff = array_diff($dependencies, $itemReferences)) {
-                throw new AdaptiveSectionInjectionException('Missed some CAT service items: '. implode(', ', $catDiff), $catDiff);
+                throw new AdaptiveSectionInjectionException('Missed some CAT service items: ' . implode(', ', $catDiff), $catDiff);
             }
 
             if ($packageDiff = array_diff($dependencies, $itemReferences)) {
-                throw new AdaptiveSectionInjectionException('Missed some package items: '. implode(', ', $packageDiff), $packageDiff);
+                throw new AdaptiveSectionInjectionException('Missed some package items: ' . implode(', ', $packageDiff), $packageDiff);
             }
         }
     }
     
     /**
      * Is an AssessmentSection Adaptive?
-     * 
+     *
      * This method returns whether or not a given $section is adaptive.
-     * 
+     *
      * @param \qtism\data\AssessmentSection $section
      * @return boolean
      */
@@ -368,9 +368,9 @@ class CatService extends ConfigurableService
     
     /**
      * Is an AssessmentItemRef an Adaptive Placeholder?
-     * 
+     *
      * This method returns whether or not a given $assessmentItemRef is a runtime adaptive placeholder.
-     * 
+     *
      * @param \qtism\data\AssessmentItemRef $assessmentItemRef
      * @return boolean
      */
@@ -414,7 +414,7 @@ class CatService extends ConfigurableService
         $client = $options[self::OPTION_ENGINE_CLIENT];
         if (is_array($client)) {
             $clientClass = isset($client['class']) ? $client['class'] : null;
-            $clientOptions = isset($client['options']) ? $client['options'] : array();
+            $clientOptions = isset($client['options']) ? $client['options'] : [];
             if (!is_a($clientClass, ClientInterface::class, true)) {
                 throw new \InvalidArgumentException('Client has to implement ClientInterface interface.');
             }
@@ -465,7 +465,6 @@ class CatService extends ConfigurableService
         $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
         
         if (!isset($this->catSection[$sectionId]) || $this->isInitialCall === true) {
-
             // No retrieval trial yet.
             $adaptiveSectionMap = $this->getAdaptiveSectionMap($compilationDirectory);
 
@@ -475,7 +474,6 @@ class CatService extends ConfigurableService
             } else {
                 $this->catSection[$sectionId] = false;
             }
-
         }
         
         return $this->catSection[$sectionId];
@@ -589,7 +587,6 @@ class CatService extends ConfigurableService
             }
 
             return $this->catSession[$catSectionId];
-
         } else {
             return false;
         }
@@ -675,5 +672,4 @@ class CatService extends ConfigurableService
         
         return $options;
     }
-
 }

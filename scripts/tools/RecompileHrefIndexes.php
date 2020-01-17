@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,11 +27,11 @@ use qtism\data\storage\php\PhpDocument;
 
 /**
  * Class RecompileHrefIndexes
- * 
+ *
  * Update every deliveries in order to add the index of AssessmentItemRef's Href by AssessmentItemRef Identifier.
- * 
+ *
  * php index.php 'oat\taoQtiTest\scripts\tools\RecompileHrefIndexes'
- * 
+ *
  * @package oat\taoQtiTest\scripts\tools
  */
 class RecompileHrefIndexes extends AbstractAction
@@ -41,7 +42,6 @@ class RecompileHrefIndexes extends AbstractAction
         $report = new Report(Report::TYPE_INFO, "Script gracefully ended.");
             
         if ($extManager->isInstalled('taoDeliveryRdf') === true && $extManager->isEnabled('taoDeliveryRdf') === true) {
-            
             $extManager->getExtensionById('taoDeliveryRdf');
             
             $compiledDeliveryClass = new \core_kernel_classes_Class(DeliveryAssemblyService::CLASS_URI);
