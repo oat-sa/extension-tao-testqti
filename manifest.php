@@ -44,7 +44,7 @@ return [
     'license'     => 'GPL-2.0',
     'version'     => '36.0.0',
     'author'      => 'Open Assessment Technologies',
-    'requires'    => array(
+    'requires'    => [
         'taoQtiItem' => '>=24.0.0',
         'taoTests'   => '>=13.5.0',
         'tao'        => '>=41.0.0',
