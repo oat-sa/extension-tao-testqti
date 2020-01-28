@@ -33,15 +33,17 @@ use oat\oatbox\service\ServiceManager;
 
 /**
  * A QtiSm AssessmentTestSession Storage Service implementation for TAO.
- * 
+ *
  * It is able to retrieve test sessions related to a given user and a given
  * test definition.
- * 
+ *
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
  */
 class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
-   
+
+    use oat\oatbox\mutex\LockTrait;
+
    /**
     * The last recorded error.
     * 
@@ -51,14 +53,19 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    
    /**
     * The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
-    * 
+    *
     * @var string
     */
    private $userUri;
-    
+
+    /**
+     * @var AssessmentTestSession
+     */
+    static private $session;
+
    /**
     * Create a new TestSessionStorage object.
-    * 
+    *
     * @param AbstractSessionManager $manager The session manager to be used to create new AssessmentTestSession and AssessmentItemSession objects.
     * @param BinaryAssessmentTestSeeker $seeker The seeker making able the storage engine to index AssessmentTest's components.
     * @param string $userUri The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
@@ -71,7 +78,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    /**
     * Get the last retrieved error. -1 means
     * no error.
-    * 
+    *
     * @return integer
     */
    public function getLastError() {
@@ -81,7 +88,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    /**
     * Set the last retrieved error. -1 means
     * no error.
-    * 
+    *
     * @param integer $lastError
     */
    public function setLastError($lastError) {
@@ -90,27 +97,41 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
    
    /**
     * Get the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
-    * 
+    *
     * @return string
     */
    public function getUserUri() {
        return $this->userUri;
    }
    
-   /**
-    * Set the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
-    * 
-    * @param string $userUri
-    */
-   public function setUserUri($userUri) {
-       $this->userUri = $userUri;
-   }
-   
-   public function retrieve(AssessmentTest $test, $sessionId) {
-       $this->setLastError(-1);
-       
-       return parent::retrieve($test, $sessionId);
-   }
+    /**
+     * Set the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
+     *
+     * @param string $userUri
+     */
+    public function setUserUri($userUri)
+    {
+        $this->userUri = $userUri;
+    }
+
+    /**
+     * @param AssessmentTest $test
+     * @param string $sessionId
+     * @return AssessmentTestSession
+     * @throws StorageException
+     */
+    public function retrieve(AssessmentTest $test, $sessionId)
+    {
+        if (static::$session && static::$session->getSessionId() === $sessionId) {
+            return static::$session;
+        }
+        $this->setLastError(-1);
+        $lock = $this->createLock('AssessmentTestSession_'.$sessionId);
+        $lock->acquire(true);
+        static::$session = parent::retrieve($test, $sessionId);
+        static::$session->setLock($lock);
+        return static::$session;
+    }
    
    protected function getRetrievalStream($sessionId) {
     
@@ -184,4 +205,9 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage {
           ServiceManager::getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
        );
    }
+
+    protected function getServiceLocator()
+    {
+        return ServiceManager::getServiceManager();
+    }
 }
