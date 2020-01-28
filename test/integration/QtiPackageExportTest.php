@@ -20,10 +20,7 @@
 
 namespace oat\taoQtiTest\test\integration;
 
-use core_kernel_classes_Resource;
 use Exception;
-use oat\generis\model\data\Ontology;
-use oat\generis\test\MockObject;
 use oat\tao\test\integration\RestTestRunner;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
 use Slim\Http\Headers;
