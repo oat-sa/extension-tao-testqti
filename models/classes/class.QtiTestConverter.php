@@ -264,7 +264,6 @@ class taoQtiTest_models_classes_QtiTestConverter
                 foreach ($this->getProperties($reflector) as $property) {
                     $properties[$property->getName()] = $property;
                 }
-
                 foreach ($testArray as $key => $value) {
                     if (array_key_exists($key, $properties)) {
                         $class = $this->getPropertyClass($component, $properties[$key]);
@@ -466,5 +465,11 @@ class taoQtiTest_models_classes_QtiTestConverter
                 return $className;
             }
         }
+        common_Logger::i('Triggering fallback for '.$name);
+        $className = 'qtism\\data\\expressions\\operators\\' . ucfirst($name). 'Operator';
+        if (class_exists($className, true)) {
+            return $className;
+        }
+        common_Logger::w('Failed Lookup: '.$name);
     }
 }
