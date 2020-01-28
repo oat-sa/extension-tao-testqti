@@ -20,7 +20,10 @@
 
 namespace oat\taoQtiTest\test\integration;
 
+use core_kernel_classes_Resource;
 use Exception;
+use oat\generis\model\data\Ontology;
+use oat\generis\test\MockObject;
 use oat\tao\test\integration\RestTestRunner;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
 use Slim\Http\Headers;
@@ -51,7 +54,6 @@ class QtiPackageExportTest extends RestTestRunner
 
     public function testWithEmptyStringInParameterQuery()
     {
-
         $restQtiTests = new TestableRestQtiTests();
         $restQtiTests->setServiceLocator($this->serviceLocatorMock);
 
@@ -105,7 +107,7 @@ class QtiPackageExportTest extends RestTestRunner
     public function testExportQtiPackage()
     {
         //create test resource based on qti package zip
-        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/multiple_items_with_ms.zip';
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
         //create temporary subclass
         $class = TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter', true));
         //Importing test form zip file into temporary subclass
