@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,15 +43,14 @@ use oat\oatbox\service\ServiceManager;
  */
 class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage
 {
-
     use oat\oatbox\mutex\LockTrait;
 
-   /**
-    * The last recorded error.
-    * 
-    * @var integer
-    */
-   private $lastError = -1;
+    /**
+     * The last recorded error.
+     *
+     * @var integer
+     */
+    private $lastError = -1;
    
     /**
      * The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
@@ -62,7 +62,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage
     /**
      * @var AssessmentTestSession
      */
-    static private $session;
+    private static $session;
 
     protected function setSeeker(\qtism\runtime\storage\common\AssessmentTestSeeker $seeker)
     {
@@ -136,7 +136,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage
             return static::$session;
         }
         $this->setLastError(-1);
-        $lock = $this->createLock('AssessmentTestSession_'.$sessionId);
+        $lock = $this->createLock('AssessmentTestSession_' . $sessionId);
         $lock->acquire(true);
         static::$session = parent::retrieve($test, $sessionId);
         static::$session->setLock($lock);

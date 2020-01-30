@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -264,12 +265,12 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         } else {
             $sessionId = $request->getSession()->getSessionId();
         }
-        try{
+        try {
             $storage = $this->getTestSessionStorage($request->getDeliveryExecution(), false);
             if ($storage instanceof taoQtiTest_helpers_TestSessionStorage) {
                 return $storage->delete($sessionId);
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return false;
         }
 
