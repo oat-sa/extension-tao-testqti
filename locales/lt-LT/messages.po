@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint112\n"
-"PO-Revision-Date: 2019-10-11T09:03:24\n"
+"Project-Id-Version: TAO 3.4.0-sprint120\n"
+"PO-Revision-Date: 2020-01-31T09:37:53\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -73,6 +73,9 @@ msgstr "Leisti Praleidimą"
 msgid "Allow skipping of the current section."
 msgstr "Leisti galimybę praleisti dabartinį skyrių."
 
+msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
+msgstr ""
+
 msgid "Allow the candidate to review his answers."
 msgstr "Leisti kandidatui peržiūrėti savo atsakymus."
 
@@ -142,6 +145,9 @@ msgstr "Įvyko nežinoma klaida sukompiliavus „%s“ QTI Testą."
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Įvyko nežinoma klaida kompiliuojant „%s“ QTI Testą."
 
+msgid "and"
+msgstr ""
+
 msgid "and flagged %s of them"
 msgstr "ir pažymėti %s iš jų"
 
@@ -156,6 +162,9 @@ msgstr "Atsakymų Paslėpimas"
 
 msgid "Answered"
 msgstr "Atsakyta"
+
+msgid "APIP Text To Speech"
+msgstr ""
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
 msgstr "Ar jūs tikrai norite išvalyti atsakymus ir eiti į sekantį elementą? Jūs negalėsite grįžti atgal ir pateikti atsakymą."
@@ -208,6 +217,9 @@ msgstr "Skaičiuotuvas"
 msgid "Calculator BODMAS"
 msgstr "Skaičiuotuvas BODMAS"
 
+msgid "Can not playback media file!"
+msgstr ""
+
 msgid "Cancel"
 msgstr "Atšaukti"
 
@@ -240,6 +252,9 @@ msgstr "Pašalinti Paryškinimus."
 
 msgid "Click to speak"
 msgstr "Spausti kad kalbėti"
+
+msgid "Close"
+msgstr ""
 
 msgid "Close Magnifier"
 msgstr "Uždaryti Didintuvą"
@@ -325,11 +340,11 @@ msgstr "Rodomas pavadinimas"
 msgid "Displays a customisable magnifier"
 msgstr "Didinimo įrankis"
 
-msgid "DO NOT CHANGE THE NAME OF THE FILE."
-msgstr ""
-
 msgid "Do not flag the current item for later review"
 msgstr "Nežymėti šio elemento vėlesnei apžvalgai"
+
+msgid "Do not rename it."
+msgstr ""
 
 msgid "Do not show alert on timeout"
 msgstr "Nėrodyti įspėjimo pasibaigus laikui"
@@ -337,7 +352,7 @@ msgstr "Nėrodyti įspėjimo pasibaigus laikui"
 msgid "Download"
 msgstr ""
 
-msgid "Download the file and submit manually."
+msgid "Download the pupil responses and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
@@ -357,6 +372,9 @@ msgstr "Įjungti pasirinktus"
 
 msgid "Enable Skipping Ahead"
 msgstr "Įgalinti praleidimą į priekį"
+
+msgid "Enable text to speech"
+msgstr ""
 
 msgid "Enable the item review screen / navigator."
 msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
@@ -501,7 +519,10 @@ msgstr ""
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
 msgstr ""
 
-msgid "If you need help, please contact us."
+msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
@@ -549,6 +570,9 @@ msgstr "blogas identifikatorius (raidžiai, skaičiai, pabraukimo simbolis, brū
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "blogas identifikatorius (viskas išskyrus tarpus)"
 
+msgid "It is not possible to save your responses while working offline."
+msgstr ""
+
 msgid "Item \"%s\" is completed."
 msgstr "Elementas \"%s\" yra atliktas."
 
@@ -567,11 +591,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Elemento Sesijos Valdymas"
 
-msgid "items"
-msgstr "elementai"
-
 msgid "Items"
 msgstr "Elementai"
+
+msgid "items"
+msgstr "elementai"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elementai pasirinktinai gali būti paskirti vienai arba daugiau kategorijų."
@@ -627,10 +651,10 @@ msgstr "Tvarkyti Rubrikos Blokus"
 msgid "Manage test properties"
 msgstr "Tvarkyti testo savybes"
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr "Tvarkyti testus"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Tvarkyti testus"
 
 msgid "Mark for review"
@@ -690,6 +714,9 @@ msgstr "Nesurastas testo paketo failas"
 msgid "Missing required configuration option %s"
 msgstr ""
 
+msgid "Move"
+msgstr ""
+
 msgid "Move Down"
 msgstr "Perkelti Žemiau"
 
@@ -698,6 +725,9 @@ msgstr "Perkelti Aukščiau"
 
 msgid "Moving to the next item without time limit reached message."
 msgstr "Pranešimas perėjimui į sekantį elementą be laiko limito pasiekimo."
+
+msgid "name of the pupil"
+msgstr ""
 
 msgid "Navigation"
 msgstr "Navigacija"
@@ -753,9 +783,6 @@ msgstr "Ne visas testas gali būti eksportuotas"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Nemaišoma, vieta išlieka pastovi."
 
-msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
-msgstr ""
-
 msgid "OK"
 msgstr "Gerai"
 
@@ -780,7 +807,10 @@ msgstr "Rodyti tik neatsakytus elementus"
 msgid "Open Calculator"
 msgstr "Atidaryti Skaičiuotuvą"
 
-msgid "OR"
+msgid "Option A"
+msgstr ""
+
+msgid "Option B"
 msgstr ""
 
 msgid "or"
@@ -813,15 +843,6 @@ msgstr "Leisti"
 msgid "Please confirm you want to leave the test."
 msgstr "Prašome patvirtinti, kad jūs norite palikti testą."
 
-msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
-msgstr ""
-
-msgid "Please continue waiting while we try to restore the connection."
-msgstr ""
-
-msgid "Please stay on this screen."
-msgstr ""
-
 msgid "Please wait while we try to restore the connection."
 msgstr "Prašome palaukti, kol mes bandome atstatyti ryšį."
 
@@ -831,7 +852,7 @@ msgstr "Peržiūrėti padengtą plotą"
 msgid "Previous"
 msgstr "Grįžti"
 
-msgid "Proceed & End Test"
+msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
 msgid "Proctor"
@@ -915,10 +936,10 @@ msgstr "Verintojas"
 msgid "Scoring"
 msgstr "Įvertinimas"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Juodraštis"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Juodraštis"
 
 msgid "Scratchpad"
@@ -1035,8 +1056,20 @@ msgstr ""
 msgid "Speech speed"
 msgstr "Kalbos greitis"
 
+msgid "Speed"
+msgstr ""
+
 msgid "Start Test-part"
 msgstr "Pradėti Testo dalį"
+
+msgid "Step 1: Download the file (see below when available)."
+msgstr ""
+
+msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
+msgstr ""
+
+msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
+msgstr ""
 
 msgid "Stop"
 msgstr "Stabdyti"
@@ -1083,11 +1116,20 @@ msgstr "Testai"
 msgid "Text content"
 msgstr "Teksto turinys"
 
+msgid "Text To Speech"
+msgstr ""
+
 msgid "Text to Speech"
 msgstr "Tekstas Balsu"
 
+msgid "that was being taken."
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "Rastas „imsmanifest.xml“ failas archyve yra blogas."
+
+msgid "the assessment (LCL or Mathematics)"
+msgstr ""
 
 msgid "The assessment has been created but is not already running."
 msgstr "Vertinimas buvo sukurtas, bet vis dar nėra vykdomas."
@@ -1116,16 +1158,10 @@ msgstr "Kandidatui neleidžiama pateikti blogus atsakymus."
 msgid "The connection seems to be back, please proceed"
 msgstr "Ryšys atrodo, kad atsirado. Prašome tęsti"
 
-msgid "The connection seems to be back, please proceed."
-msgstr ""
-
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "IMS QTI priklausomybė AssessmentItemRef \"%s\" IMS Manifesto faile negalėjo būti išspręsta."
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr ""
-
-msgid "The file will save into the Downloads folder on your PC."
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
@@ -1242,8 +1278,17 @@ msgstr "Liko Laiko"
 msgid "Title"
 msgstr "Pavadinimas"
 
+msgid "Toggle playback"
+msgstr ""
+
+msgid "Toggle start from here mode"
+msgstr ""
+
 msgid "Total score"
 msgstr "Galutinis rezultatas"
+
+msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
+msgstr ""
 
 msgid "Tutor"
 msgstr "Mokytojas"
@@ -1293,6 +1338,9 @@ msgstr "Matoma"
 msgid "Volume"
 msgstr "Garsumas"
 
+msgid "Wait for your connection to come back online."
+msgstr ""
+
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "Įspėjimas – Jums liko %s testui atlikti."
 
@@ -1322,9 +1370,6 @@ msgstr "Svoriai"
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "Kai renkamasi vaikų elementus, kiekvienas elementas yra tinkamas vienkartiniam pasirinkimui."
-
-msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
-msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "Ar kandidato atsakymas ilgesnis negu maksimali elemento trukmė turėtų būti priimtas."
@@ -1377,8 +1422,8 @@ msgstr "Ar jūs tikrai ketinate grįžti prie ankstesnio elemento? Spauskite tę
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Jūs ketinate pateikti savo testą. Jūs negalėsite pasiekti šio testo, kai jis bus pateiktas. Spauskite Taip norėdami pateikti testą."
 
-msgid "You are encountering a prolonged connectivity loss."
-msgstr "Jūs turite užsitęsusius ryšio trūkčius."
+msgid "You are currently working offline."
+msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr "Jūs turite užsitęsusius ryšio trūkčius."
@@ -1397,6 +1442,9 @@ msgstr "Liko neatsakyti %s klausimai(-ų)."
 
 msgid "Your comment…"
 msgstr "Tavo komentaras..."
+
+msgid "Your connection seems to be back, please proceed."
+msgstr ""
 
 msgid "Zoom"
 msgstr "Priartinimas"
