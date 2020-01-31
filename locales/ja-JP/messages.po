@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint114\n"
-"PO-Revision-Date: 2019-10-25T09:07:48\n"
+"Project-Id-Version: TAO 3.4.0-sprint120\n"
+"PO-Revision-Date: 2020-01-31T09:37:53\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -73,6 +73,9 @@ msgstr "スキップを許可する"
 msgid "Allow skipping of the current section."
 msgstr ""
 
+msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
+msgstr ""
+
 msgid "Allow the candidate to review his answers."
 msgstr "受験者が回答のレビューすることを許可する"
 
@@ -142,6 +145,9 @@ msgstr "QTIテスト'%s'のコンパイル中に未知のエラーが発生し�
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "QTIテスト'%s'のコンパイル中に未知のエラーが発生しました。"
 
+msgid "and"
+msgstr ""
+
 msgid "and flagged %s of them"
 msgstr ""
 
@@ -156,6 +162,9 @@ msgstr ""
 
 msgid "Answered"
 msgstr "回答済み"
+
+msgid "APIP Text To Speech"
+msgstr ""
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
 msgstr ""
@@ -208,6 +217,9 @@ msgstr ""
 msgid "Calculator BODMAS"
 msgstr ""
 
+msgid "Can not playback media file!"
+msgstr ""
+
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -239,6 +251,9 @@ msgid "Clear Highlights"
 msgstr ""
 
 msgid "Click to speak"
+msgstr ""
+
+msgid "Close"
 msgstr ""
 
 msgid "Close Magnifier"
@@ -325,10 +340,10 @@ msgstr ""
 msgid "Displays a customisable magnifier"
 msgstr ""
 
-msgid "DO NOT CHANGE THE NAME OF THE FILE."
+msgid "Do not flag the current item for later review"
 msgstr ""
 
-msgid "Do not flag the current item for later review"
+msgid "Do not rename it."
 msgstr ""
 
 msgid "Do not show alert on timeout"
@@ -337,7 +352,7 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-msgid "Download the file and submit manually."
+msgid "Download the pupil responses and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
@@ -356,6 +371,9 @@ msgid "Enable selection"
 msgstr "選択を可能にする。"
 
 msgid "Enable Skipping Ahead"
+msgstr ""
+
+msgid "Enable text to speech"
 msgstr ""
 
 msgid "Enable the item review screen / navigator."
@@ -501,7 +519,10 @@ msgstr ""
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
 msgstr ""
 
-msgid "If you need help, please contact us."
+msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
@@ -549,6 +570,9 @@ msgstr "有効な識別子（英数字、下線、ダッシュ、ドット）で
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "有効な識別子（空白スペース以外）ではありません。"
 
+msgid "It is not possible to save your responses while working offline."
+msgstr ""
+
 msgid "Item \"%s\" is completed."
 msgstr ""
 
@@ -567,11 +591,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "アイテム"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "アイテムはひとつまたは複数のカテゴリーに割り当てることができます。"
@@ -627,11 +651,11 @@ msgstr "ルーブリックブロックの管理"
 msgid "Manage test properties"
 msgstr "テストプロパティの管理"
 
-msgid "Manage Tests"
-msgstr "テストの管理"
-
 msgid "Manage tests"
 msgstr ""
+
+msgid "Manage Tests"
+msgstr "テストの管理"
 
 msgid "Mark for review"
 msgstr "レビュー用マーク"
@@ -690,6 +714,9 @@ msgstr ""
 msgid "Missing required configuration option %s"
 msgstr ""
 
+msgid "Move"
+msgstr ""
+
 msgid "Move Down"
 msgstr "下へ"
 
@@ -697,6 +724,9 @@ msgid "Move Up"
 msgstr "上へ"
 
 msgid "Moving to the next item without time limit reached message."
+msgstr ""
+
+msgid "name of the pupil"
 msgstr ""
 
 msgid "Navigation"
@@ -753,9 +783,6 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "シャッフルされません。位置は固定のままです。"
 
-msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
-msgstr ""
-
 msgid "OK"
 msgstr ""
 
@@ -780,10 +807,13 @@ msgstr "回答していないアイテムのみを表示"
 msgid "Open Calculator"
 msgstr ""
 
-msgid "or"
+msgid "Option A"
 msgstr ""
 
-msgid "OR"
+msgid "Option B"
+msgstr ""
+
+msgid "or"
 msgstr ""
 
 msgid "Ordering"
@@ -813,15 +843,6 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
-msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
-msgstr ""
-
-msgid "Please continue waiting while we try to restore the connection."
-msgstr ""
-
-msgid "Please stay on this screen."
-msgstr ""
-
 msgid "Please wait while we try to restore the connection."
 msgstr ""
 
@@ -831,7 +852,7 @@ msgstr ""
 msgid "Previous"
 msgstr "前"
 
-msgid "Proceed & End Test"
+msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
 msgid "Proctor"
@@ -1035,8 +1056,20 @@ msgstr ""
 msgid "Speech speed"
 msgstr ""
 
+msgid "Speed"
+msgstr ""
+
 msgid "Start Test-part"
 msgstr "テストパート開始"
+
+msgid "Step 1: Download the file (see below when available)."
+msgstr ""
+
+msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
+msgstr ""
+
+msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
+msgstr ""
 
 msgid "Stop"
 msgstr ""
@@ -1058,9 +1091,6 @@ msgstr ""
 
 msgid "Test"
 msgstr "テスト"
-
-msgid "Test 1"
-msgstr ""
 
 msgid "Test constructor"
 msgstr "テスト作成"
@@ -1086,11 +1116,20 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
+msgid "Text To Speech"
+msgstr ""
+
 msgid "Text to Speech"
+msgstr ""
+
+msgid "that was being taken."
 msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "アーカイブで見つかった 'imsmanifest.xml'ファイルは有効ではありません"
+
+msgid "the assessment (LCL or Mathematics)"
+msgstr ""
 
 msgid "The assessment has been created but is not already running."
 msgstr ""
@@ -1119,16 +1158,10 @@ msgstr ""
 msgid "The connection seems to be back, please proceed"
 msgstr ""
 
-msgid "The connection seems to be back, please proceed."
-msgstr ""
-
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "IMSマニフェストファイルのIMS QTIのアセスメント参照\"%s\"の依存性が解決されませんでした。"
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr ""
-
-msgid "The file will save into the Downloads folder on your PC."
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
@@ -1245,7 +1278,16 @@ msgstr ""
 msgid "Title"
 msgstr "タイトル"
 
+msgid "Toggle playback"
+msgstr ""
+
+msgid "Toggle start from here mode"
+msgstr ""
+
 msgid "Total score"
+msgstr ""
+
+msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
 
 msgid "Tutor"
@@ -1296,6 +1338,9 @@ msgstr "表示可能"
 msgid "Volume"
 msgstr ""
 
+msgid "Wait for your connection to come back online."
+msgstr ""
+
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "警告：テスト完了まであと%sです。"
 
@@ -1325,9 +1370,6 @@ msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "子エレメントを選択する際、各エレメントは通常一度だけ選択可能です。"
-
-msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
-msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "受験者の回答でアイテムで設定された制限時間を超えてもそれを許可する。"
@@ -1380,7 +1422,7 @@ msgstr ""
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr ""
 
-msgid "You are encountering a prolonged connectivity loss."
+msgid "You are currently working offline."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
@@ -1400,6 +1442,9 @@ msgstr "%sの未回答問題があります"
 
 msgid "Your comment…"
 msgstr "あなたのコメント..."
+
+msgid "Your connection seems to be back, please proceed."
+msgstr ""
 
 msgid "Zoom"
 msgstr ""
