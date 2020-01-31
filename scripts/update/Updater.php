@@ -1957,6 +1957,7 @@ class Updater extends \common_ext_ExtensionUpdater
 
             $this->setVersion('35.6.0');
         }
-        $this->skip('35.6.0', '35.8.6');
+
+        $this->skip('35.6.0', '35.9.0');
     }
 }
