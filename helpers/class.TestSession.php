@@ -51,7 +51,7 @@ use oat\taoTests\models\event\TestExecutionResumedEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use oat\taoQtiTest\helpers\TestSessionMemento;
-use Symfony\Component\Lock\Lock;
+use Symfony\Component\Lock\LockInterface;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class. 
@@ -163,9 +163,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession {
     }
 
     /**
-     * @param Lock $lock
+     * @param LockInterface $lock
      */
-    public function setLock(Lock $lock)
+    public function setLock(LockInterface $lock)
     {
         $this->lock = $lock;
     }

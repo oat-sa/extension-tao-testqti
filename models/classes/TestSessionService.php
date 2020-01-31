@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\models;
 
+use common_exception_NoContent;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\AssignmentService;
@@ -28,12 +29,15 @@ use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
-use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
+use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
+use tao_models_classes_service_ServiceCallHelper;
 use taoQtiTest_helpers_TestSessionStorage;
+use Throwable;
 
 /**
  * Interface TestSessionService
@@ -50,9 +54,9 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     const SESSION_PROPERTY_STORAGE = 'storage';
     const SESSION_PROPERTY_COMPILATION = 'compilation';
 
-    /** 
+    /**
      * Cache to store session instances
-     * @var array 
+     * @var array
      */
     protected static $cache = [];
 
@@ -72,7 +76,9 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         $session = null;
         $sessionId = $deliveryExecution->getIdentifier();
         try {
+            /** @var array $inputParameters */
             $inputParameters = $this->getRuntimeInputParameters($deliveryExecution);
+            /** @var AssessmentTest $testDefinition */
             $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
             $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
         } catch (\common_exception_NoContent $e) {
@@ -86,19 +92,23 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         }
 
         /** @var DeliveryServerService $deliveryServerService */
-        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+        $deliveryServerService = $this->getServiceLocator()->get(DeliveryServerService::SERVICE_ID);
         $resultStore = $deliveryServerService->getResultStoreWrapper($deliveryExecution);
 
         $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $userId = $deliveryExecution->getUserIdentifier();
 
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('testRunner');
+
         $storageClassName = $config['test-session-storage'];
         $qtiStorage = new $storageClassName(
             $sessionManager,
             new BinaryAssessmentTestSeeker($testDefinition), $userId
         );
+        $this->propagate($qtiStorage);
 
         if ($qtiStorage->exists($sessionId)) {
             $session = $qtiStorage->retrieve($testDefinition, $sessionId);
@@ -108,12 +118,12 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         }
 
         /** @var \tao_models_classes_service_FileStorage $fileStorage */
-        $fileStorage = $this->getServiceManager()->get(\tao_models_classes_service_FileStorage::SERVICE_ID);
+        $fileStorage = $this->getServiceLocator()->get(\tao_models_classes_service_FileStorage::SERVICE_ID);
         $directoryIds = explode('|', $inputParameters['QtiTestCompilation']);
-        $directories = array(
+        $directories = [
             'private' => $fileStorage->getDirectoryById($directoryIds[0]),
             'public' => $fileStorage->getDirectoryById($directoryIds[1])
-        );
+        ];
 
         self::$cache[$sessionId] = [
             self::SESSION_PROPERTY_SESSION => $session,
@@ -173,16 +183,16 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     
     /**
      * Get a test session data by identifier.
-     * 
+     *
      * Get a session by $sessionId. In case it was previously registered using the TestSessionService::registerTestSession method,
      * an array with the following keys will be returned:
-     * 
+     *
      * * 'session': A qtism AssessmentTestSession object.
      * * 'storage': A taoQtiTest_helpers_TestSessionStorage.
      * * 'context': A RunnerServiceContext object (if not provided at TestSessionService::registerTestSession call time, it contains null).
-     * 
+     *
      * In case of no such session is found for $sessionId, false is returned.
-     * 
+     *
      * @param string $sessionId
      * @return false|array
      */
@@ -223,14 +233,17 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      *   'QtiTestDefinition' => 'http://sample/first.rdf#i14369752345581135'
      * )
      * </pre>
+     * @throws common_exception_NoContent
      */
     public function getRuntimeInputParameters(DeliveryExecution $deliveryExecution)
     {
-        $compiledDelivery = $deliveryExecution->getDelivery();
-        $runtime = $this->getServiceLocator()->get(AssignmentService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
-        $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, array());
-
-        return $inputParameters;
+        try {
+            $compiledDelivery = $deliveryExecution->getDelivery();
+            $runtime = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
+            return tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, []);
+        } catch (Throwable $exception) {
+            throw new common_exception_NoContent($exception->getMessage());
+        }
     }
 
     /**
@@ -257,12 +270,12 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         } else {
             $sessionId = $request->getSession()->getSessionId();
         }
-        try{
+        try {
             $storage = $this->getTestSessionStorage($request->getDeliveryExecution(), false);
             if ($storage instanceof taoQtiTest_helpers_TestSessionStorage) {
                 return $storage->delete($sessionId);
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return false;
         }
 
