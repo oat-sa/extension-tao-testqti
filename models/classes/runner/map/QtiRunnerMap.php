@@ -32,6 +32,7 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
+use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
 use qtism\data\QtiComponent;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -259,7 +260,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
                         'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
-                        'categories' => $itemRef->getCategories()->getArrayCopy()
+                        'categories' => $this->getAvailableCategories($itemRef),
                     ];
 
                     if ($checkInformational) {
@@ -479,5 +480,14 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $label = $item->getLabel();
         }
         return $label;
+    }
+
+    /**
+     * @param AssessmentItemRef $itemRef
+     * @return array
+     */
+    protected function getAvailableCategories(AssessmentItemRef $itemRef)
+    {
+        return array_unique($itemRef->getCategories()->getArrayCopy());
     }
 }
