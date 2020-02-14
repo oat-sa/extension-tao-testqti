@@ -1959,5 +1959,6 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('35.6.0', '35.11.0');
+
     }
 }
