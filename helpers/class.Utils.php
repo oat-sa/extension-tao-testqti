@@ -42,7 +42,7 @@ class taoQtiTest_helpers_Utils extends ConfigurableService
     }
 
     /**
-     * @deprecated use QtiTestUtils::
+     * @deprecated use QtiTestUtils::emptyImsManifest
      */
     public static function emptyImsManifest($version = '2.1')
     {
