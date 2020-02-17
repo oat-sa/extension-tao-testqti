@@ -27,6 +27,7 @@ use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
+use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
@@ -1958,7 +1959,12 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('35.6.0');
         }
 
-        $this->skip('35.6.0', '35.11.0');
+        $this->skip('35.6.0', '35.10.2');
+
+        if ($this->isVersion('35.10.2')) {
+            $this->getServiceManager()->register(QtiTestUtils::SERVICE_ID, new QtiTestUtils([]));
+            $this->setVersion('35.11.0');
+        }
 
     }
 }

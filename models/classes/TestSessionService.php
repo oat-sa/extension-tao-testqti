@@ -79,7 +79,8 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
             /** @var array $inputParameters */
             $inputParameters = $this->getRuntimeInputParameters($deliveryExecution);
             /** @var AssessmentTest $testDefinition */
-            $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
+            $testDefinition = $this->getServiceLocator()->get(QtiTestUtils::SERVICE_ID)
+                ->getTestDefinition($inputParameters['QtiTestCompilation']);
             $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
         } catch (common_exception_NoContent $e) {
             $sessionData = [
