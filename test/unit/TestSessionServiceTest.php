@@ -29,6 +29,7 @@ use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use common_ext_ExtensionsManager;
 use common_ext_Extension;
+use qtism\data\storage\php\PhpDocument;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use Symfony\Component\Lock\Factory;
@@ -36,6 +37,7 @@ use Symfony\Component\Lock\LockInterface;
 use tao_models_classes_service_StateStorage;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use tao_models_classes_service_FileStorage;
+use oat\taoQtiTest\models\QtiTestUtils;
 
 /**
  * Class TestSessionServiceTest
@@ -131,6 +133,14 @@ class TestSessionServiceTest extends TestCase
             ['http://tao.local/tao.rdf#i5e283280660c611408413648d4f380e160+', 'dir_bar'],
         ]));
 
+        $doc = new PhpDocument();
+        $doc->load(__DIR__.'/samples/php-data.php');
+
+        $testDefinition = $doc->getDocumentComponent();
+        $qtiTestUtilsService = $this->getMockBuilder(QtiTestUtils::class)->getMock();
+        $qtiTestUtilsService->method('getTestDefinition')
+            ->willReturn($testDefinition);
+
         $serviceLocator = $this->getServiceLocatorMock([
             RuntimeService::SERVICE_ID => $runtimeServiceMock,
             DeliveryServerService::SERVICE_ID => $deliveryServerServiceMock,
@@ -139,7 +149,9 @@ class TestSessionServiceTest extends TestCase
             LockService::SERVICE_ID => $lockService,
             QtiFlysystemFileManager::SERVICE_ID => $qtiFlysystemFileManagerService,
             tao_models_classes_service_FileStorage::SERVICE_ID => $fileStorageService,
+            QtiTestUtils::SERVICE_ID => $qtiTestUtilsService
         ]);
+
         $service->setServiceLocator($serviceLocator);
         return $service;
     }
