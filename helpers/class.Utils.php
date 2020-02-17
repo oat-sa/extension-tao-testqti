@@ -68,7 +68,7 @@ class taoQtiTest_helpers_Utils extends ConfigurableService
     /**
      * @return QtiTestUtils
      */
-    private function getService()
+    private static function  getService()
     {
         return ServiceManager::getServiceManager()->get(QtiTestUtils::SERVICE_ID);
     }
