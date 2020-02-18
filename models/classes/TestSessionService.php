@@ -30,8 +30,9 @@ use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
-use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\runner\session\UserUriAware;
+use qtism\data\AssessmentTest;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -41,7 +42,6 @@ use Throwable;
 
 /**
  * Interface TestSessionService
- * @package oat\taoProctoring\model
  * @author Aleh Hutnikau <hutnikau@1pt.com>
  */
 class TestSessionService extends ConfigurableService implements DeliveryExecutionDelete
@@ -76,8 +76,11 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         $session = null;
         $sessionId = $deliveryExecution->getIdentifier();
         try {
+            /** @var array $inputParameters */
             $inputParameters = $this->getRuntimeInputParameters($deliveryExecution);
-            $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
+            /** @var AssessmentTest $testDefinition */
+            $testDefinition = $this->getServiceLocator()->get(QtiTestUtils::SERVICE_ID)
+                ->getTestDefinition($inputParameters['QtiTestCompilation']);
             $testResource = new \core_kernel_classes_Resource($inputParameters['QtiTestDefinition']);
         } catch (common_exception_NoContent $e) {
             $sessionData = [
@@ -90,20 +93,24 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         }
 
         /** @var DeliveryServerService $deliveryServerService */
-        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+        $deliveryServerService = $this->getServiceLocator()->get(DeliveryServerService::SERVICE_ID);
         $resultStore = $deliveryServerService->getResultStoreWrapper($deliveryExecution);
 
         $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $userId = $deliveryExecution->getUserIdentifier();
 
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('testRunner');
+
         $storageClassName = $config['test-session-storage'];
         $qtiStorage = new $storageClassName(
             $sessionManager,
             new BinaryAssessmentTestSeeker($testDefinition),
             $userId
         );
+        $this->propagate($qtiStorage);
 
         if ($qtiStorage->exists($sessionId)) {
             $session = $qtiStorage->retrieve($testDefinition, $sessionId);
@@ -113,7 +120,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         }
 
         /** @var \tao_models_classes_service_FileStorage $fileStorage */
-        $fileStorage = $this->getServiceManager()->get(\tao_models_classes_service_FileStorage::SERVICE_ID);
+        $fileStorage = $this->getServiceLocator()->get(\tao_models_classes_service_FileStorage::SERVICE_ID);
         $directoryIds = explode('|', $inputParameters['QtiTestCompilation']);
         $directories = [
             'private' => $fileStorage->getDirectoryById($directoryIds[0]),
@@ -234,7 +241,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     {
         try {
             $compiledDelivery = $deliveryExecution->getDelivery();
-            $runtime = $this->getServiceLocator()->get(AssignmentService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
+            $runtime = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
             return tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, []);
         } catch (Throwable $exception) {
             throw new common_exception_NoContent($exception->getMessage());
