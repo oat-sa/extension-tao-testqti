@@ -38,6 +38,7 @@ use tao_models_classes_service_StateStorage;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use tao_models_classes_service_FileStorage;
 use oat\taoQtiTest\models\QtiTestUtils;
+use oat\oatbox\service\ServiceManager;
 
 /**
  * Class TestSessionServiceTest
@@ -151,6 +152,15 @@ class TestSessionServiceTest extends TestCase
             tao_models_classes_service_FileStorage::SERVICE_ID => $fileStorageService,
             QtiTestUtils::SERVICE_ID => $qtiTestUtilsService
         ]);
+
+        $cacheMock = $this->getMockBuilder(\common_cache_Cache::class)->getMock();
+        $cacheMock->method('get')->willReturnMap([
+            ['tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestCompilation', 'QtiTestCompilation'],
+            ['tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestDefinition', 'QtiTestDefinition'],
+        ]);
+        $config = new \common_persistence_KeyValuePersistence([], new \common_persistence_InMemoryKvDriver());
+        $config->set(\common_cache_NoCache::SERVICE_ID, $cacheMock);
+        ServiceManager::setServiceManager(new ServiceManager($config));
 
         $service->setServiceLocator($serviceLocator);
         return $service;
