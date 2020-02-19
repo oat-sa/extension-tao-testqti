@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
  *
  */
 
@@ -29,6 +29,7 @@ use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use common_ext_ExtensionsManager;
 use common_ext_Extension;
+use qtism\data\storage\php\PhpDocument;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use Symfony\Component\Lock\Factory;
@@ -36,6 +37,8 @@ use Symfony\Component\Lock\LockInterface;
 use tao_models_classes_service_StateStorage;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use tao_models_classes_service_FileStorage;
+use oat\taoQtiTest\models\QtiTestUtils;
+use oat\oatbox\service\ServiceManager;
 
 /**
  * Class TestSessionServiceTest
@@ -131,6 +134,14 @@ class TestSessionServiceTest extends TestCase
             ['http://tao.local/tao.rdf#i5e283280660c611408413648d4f380e160+', 'dir_bar'],
         ]));
 
+        $doc = new PhpDocument();
+        $doc->load(__DIR__.'/samples/php-data.php');
+
+        $testDefinition = $doc->getDocumentComponent();
+        $qtiTestUtilsService = $this->getMockBuilder(QtiTestUtils::class)->getMock();
+        $qtiTestUtilsService->method('getTestDefinition')
+            ->willReturn($testDefinition);
+
         $serviceLocator = $this->getServiceLocatorMock([
             RuntimeService::SERVICE_ID => $runtimeServiceMock,
             DeliveryServerService::SERVICE_ID => $deliveryServerServiceMock,
@@ -139,7 +150,18 @@ class TestSessionServiceTest extends TestCase
             LockService::SERVICE_ID => $lockService,
             QtiFlysystemFileManager::SERVICE_ID => $qtiFlysystemFileManagerService,
             tao_models_classes_service_FileStorage::SERVICE_ID => $fileStorageService,
+            QtiTestUtils::SERVICE_ID => $qtiTestUtilsService
         ]);
+
+        $cacheMock = $this->getMockBuilder(\common_cache_Cache::class)->getMock();
+        $cacheMock->method('get')->willReturnMap([
+            ['tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestCompilation', 'QtiTestCompilation'],
+            ['tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestDefinition', 'QtiTestDefinition'],
+        ]);
+        $config = new \common_persistence_KeyValuePersistence([], new \common_persistence_InMemoryKvDriver());
+        $config->set(\common_cache_NoCache::SERVICE_ID, $cacheMock);
+        ServiceManager::setServiceManager(new ServiceManager($config));
+
         $service->setServiceLocator($serviceLocator);
         return $service;
     }
