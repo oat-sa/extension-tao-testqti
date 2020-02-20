@@ -51,11 +51,15 @@ class TestSessionServiceTest extends TestCase
     {
         $service = $this->getService();
         $de = $this->getDeliveryExecutionMock('id', 'userId', 'deliveryId');
-        $session = $service->getTestSession($de);
+        $session = $service->getTestSession($de, true);
 
         $this->assertInstanceOf(AssessmentTestSession::class, $session);
         $this->assertEquals('id', $session->getSessionId());
         $this->assertEquals(AssessmentTestSessionState::CLOSED, $session->getState());
+        $this->assertTrue($session->isReadOnly());
+
+        $session = $service->getTestSession($de, false);
+        $this->assertFalse($session->isReadOnly());
     }
 
     /**

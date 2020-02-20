@@ -102,6 +102,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     private $lock = null;
 
     /**
+     * Mode specifies the type of access you require to the test session.
+     * In readonly mode exception will be thrown on attempt to persist it in the test session storage
      * @var boolean
      */
     private $readOnly = false;

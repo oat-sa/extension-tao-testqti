@@ -134,6 +134,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
         if (empty(static::$session) || static::$session->getSessionId() !== $sessionId) {
             $this->setLastError(-1);
             static::$session = parent::retrieve($test, $sessionId);
+            static::$session->setReadOnly($forReadingOnly);
         }
 
         if (!$forReadingOnly && static::$session->isReadOnly()) {

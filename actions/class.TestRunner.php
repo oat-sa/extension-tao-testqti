@@ -48,7 +48,7 @@ use oat\taoQtiTest\models\CompilationDataService;
  * @author Joel Bout <joel@taotesting.com>
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
- * @deprecated
+ * @deprecated old testrunner is deprecated. use taoQtiTest_actions_Runner instead
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */
 class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
