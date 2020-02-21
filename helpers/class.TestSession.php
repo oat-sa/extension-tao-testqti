@@ -102,6 +102,13 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     private $lock = null;
 
     /**
+     * Mode specifies the type of access you require to the test session.
+     * In readonly mode exception will be thrown on attempt to persist it in the test session storage
+     * @var boolean
+     */
+    private $readOnly = false;
+
+    /**
      * Create a new TAO QTI Test Session.
      *
      * @param AssessmentTest $assessmentTest The AssessmentTest object representing the QTI test definition.
@@ -174,6 +181,25 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     public function setLock(LockInterface $lock)
     {
         $this->lock = $lock;
+    }
+
+    /**
+     * This mode specifies the type of access you require to the test session.
+     * In readonly mode exception will be thrown on attempt to persist it in the test session storage
+     * @param bool $readOnly
+     */
+    public function setReadOnly(bool $readOnly)
+    {
+        $this->readOnly = $readOnly;
+    }
+
+    /**
+     * Get access mode
+     * @return bool
+     */
+    public function isReadOnly()
+    {
+        return $this->readOnly;
     }
 
     /**

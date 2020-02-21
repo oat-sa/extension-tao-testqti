@@ -125,22 +125,67 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     /**
      * @param AssessmentTest $test
      * @param string $sessionId
+     * @param bool $forReadingOnly
      * @return AssessmentTestSession
      * @throws StorageException
      */
-    public function retrieve(AssessmentTest $test, $sessionId)
+    public function retrieve(AssessmentTest $test, $sessionId, $forReadingOnly = false)
     {
-        if (static::$session && static::$session->getSessionId() === $sessionId) {
-            return static::$session;
+        if (empty(static::$session) || static::$session->getSessionId() !== $sessionId) {
+            $this->setLastError(-1);
+            static::$session = parent::retrieve($test, $sessionId);
+            static::$session->setReadOnly($forReadingOnly);
+            if (!$forReadingOnly) {
+                $this->lockSession(static::$session);
+            }
         }
-        $this->setLastError(-1);
-        $lock = $this->createLock('AssessmentTestSession_' . $sessionId);
-        $lock->acquire(true);
-        static::$session = parent::retrieve($test, $sessionId);
-        static::$session->setLock($lock);
+
+        if (!$forReadingOnly && static::$session->isReadOnly()) {
+            static::$session->setReadOnly(false);
+            $this->lockSession(static::$session);
+        }
+
         return static::$session;
     }
-   
+
+    /**
+     * @param AssessmentTest $test
+     * @param string $sessionId
+     * @return AssessmentTestSession
+     * @throws StorageException
+     */
+    public function instantiate(AssessmentTest $test, $sessionId = '')
+    {
+        $session = parent::instantiate($test, $sessionId);
+        $this->lockSession($session);
+        return $session;
+    }
+
+    /**
+     * @param AssessmentTestSession $assessmentTestSession
+     * @throws StorageException
+     */
+    public function persist(AssessmentTestSession $assessmentTestSession)
+    {
+        if ($assessmentTestSession->isReadOnly()) {
+            throw new StorageException(
+                'Readonly test session cannot be stored. Test session id: ' . $assessmentTestSession->getSessionId(),
+                StorageException::PERSITANCE
+            );
+        }
+        parent::persist($assessmentTestSession);
+    }
+
+    /**
+     * @param AssessmentTestSession $session
+     */
+    protected function lockSession(AssessmentTestSession $session)
+    {
+        $lock = $this->createLock('AssessmentTestSession_' . $session->getSessionId());
+        $lock->acquire(true);
+        $session->setLock($lock);
+    }
+
     protected function getRetrievalStream($sessionId)
     {
     

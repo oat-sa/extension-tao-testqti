@@ -51,11 +51,15 @@ class TestSessionServiceTest extends TestCase
     {
         $service = $this->getService();
         $de = $this->getDeliveryExecutionMock('id', 'userId', 'deliveryId');
-        $session = $service->getTestSession($de);
+        $session = $service->getTestSession($de, true);
 
         $this->assertInstanceOf(AssessmentTestSession::class, $session);
         $this->assertEquals('id', $session->getSessionId());
         $this->assertEquals(AssessmentTestSessionState::CLOSED, $session->getState());
+        $this->assertTrue($session->isReadOnly());
+
+        $session = $service->getTestSession($de, false);
+        $this->assertFalse($session->isReadOnly());
     }
 
     /**
@@ -97,9 +101,10 @@ class TestSessionServiceTest extends TestCase
         $qtiTestExtensionMock = $this->getMockBuilder(common_ext_Extension::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $qtiTestExtensionMock->method('getConfig')->willReturn([
-            'test-session-storage' => '\\taoQtiTest_helpers_TestSessionStorage'
-        ]);
+        $qtiTestExtensionMock->method('getConfig')->will($this->returnValueMap([
+            ['testRunner', ['test-session-storage' => '\\taoQtiTest_helpers_TestSessionStorage']],
+            ['qtiAcceptableLatency', 'PT5S'],
+        ]));
         $extensionsManagerMock = $this->getMockBuilder(common_ext_ExtensionsManager::class)->getMock();
         $extensionsManagerMock->method('getExtensionById')->will($this->returnValueMap([
             ['taoQtiTest', $qtiTestExtensionMock]
@@ -158,8 +163,10 @@ class TestSessionServiceTest extends TestCase
             ['tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestCompilation', 'QtiTestCompilation'],
             ['tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestDefinition', 'QtiTestDefinition'],
         ]);
+
         $config = new \common_persistence_KeyValuePersistence([], new \common_persistence_InMemoryKvDriver());
         $config->set(\common_cache_NoCache::SERVICE_ID, $cacheMock);
+        $config->set(\common_ext_ExtensionsManager::SERVICE_ID, $extensionsManagerMock);
         ServiceManager::setServiceManager(new ServiceManager($config));
 
         $service->setServiceLocator($serviceLocator);
