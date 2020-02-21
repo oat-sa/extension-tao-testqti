@@ -41,6 +41,7 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
+use oat\tao\model\service\ApplicationService;
 
 /**
  * the QTI TestModel service.
@@ -51,7 +52,8 @@ use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
  * @package taoQtiTest
 
  */
-class taoQtiTest_models_classes_QtiTestService extends TestService {
+class taoQtiTest_models_classes_QtiTestService extends TestService
+{
 
     const CONFIG_QTITEST_FILESYSTEM = 'qtiTestFolder';
 
@@ -111,35 +113,43 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     protected $useMetadataValidators = true;
 
-    public function enableMetadataGuardians() {
+    public function enableMetadataGuardians()
+    {
         $this->useMetadataGuardians = true;
     }
 
-    public function disableMetadataGuardians() {
+    public function disableMetadataGuardians()
+    {
         $this->useMetadataGuardians = false;
     }
 
-    public function enableMetadataValidators() {
+    public function enableMetadataValidators()
+    {
         $this->useMetadataValidators = true;
     }
 
-    public function disableMetadataValidators() {
+    public function disableMetadataValidators()
+    {
         $this->useMetadataValidators = false;
     }
 
-    public function enableItemMustExist() {
+    public function enableItemMustExist()
+    {
         $this->itemMustExist = true;
     }
 
-    public function disableItemMustExist() {
+    public function disableItemMustExist()
+    {
         $this->itemMustExist = false;
     }
 
-    public function enableItemMustBeOverwritten() {
+    public function enableItemMustBeOverwritten()
+    {
         $this->itemMustBeOverwritten = true;
     }
 
-    public function disableItemMustBeOverwritten() {
+    public function disableItemMustBeOverwritten()
+    {
         $this->itemMustBeOverwritten = false;
     }
 
@@ -163,7 +173,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     protected function setDefaultModel($test)
     {
-        $this->setTestModel($test, new core_kernel_classes_Resource(self::INSTANCE_TEST_MODEL_QTI));
+        $this->setTestModel($test, $this->getResource(self::INSTANCE_TEST_MODEL_QTI));
     }
 
     /**
@@ -174,7 +184,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @return boolean true if saved
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function saveJsonTest(core_kernel_classes_Resource $test, $json) {
+    public function saveJsonTest(core_kernel_classes_Resource $test, $json)
+    {
         $saved = false;
 
         if (! empty($json)) {
@@ -186,7 +197,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             $saved = $this->saveDoc($test, $doc);
 
             $this->getEventManager()->trigger(new TestUpdatedEvent($test->getUri()));
-
         }
         return $saved;
     }
@@ -222,7 +232,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $doc = $this->getDoc($test);
         $bound = $this->setItemsToDoc($doc, $items);
 
-        if($this->saveDoc($test, $doc)){
+        if ($this->saveDoc($test, $doc)) {
             return $bound == count($items);
         }
 
@@ -238,20 +248,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @return boolean if nothing goes wrong
      * @throws StorageException If an error occurs while serializing/unserializing QTI-XML content.
      */
-    public function save( core_kernel_classes_Resource $test, array $items) {
+    public function save(core_kernel_classes_Resource $test, array $items)
+    {
         try {
             $doc = $this->getDoc($test);
             $this->setItemsToDoc($doc, $items);
             $saved  = $this->saveDoc($test, $doc);
+        } catch (StorageException $e) {
+            throw new taoQtiTest_models_classes_QtiTestServiceException(
+                "An error occured while dealing with the QTI-XML test: " . $e->getMessage(),
+                taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
+            );
         }
-    	catch (StorageException $e) {
-    		throw new taoQtiTest_models_classes_QtiTestServiceException(
-                        "An error occured while dealing with the QTI-XML test: ".$e->getMessage(),
-                        taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
-                   );
-    	}
 
-    	return $saved;
+        return $saved;
     }
 
     /**
@@ -268,7 +278,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $index = 1;
         do {
             $identifier = $this->generateIdentifier($doc, $qtiType, $index);
-            $index ++;
+            $index++;
         } while (! $this->isIdentifierUnique($components, $identifier));
 
         return $identifier;
@@ -312,7 +322,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @return common_report_Report An import report.
      * @throws common_exception_Unauthorized
      */
-    public function importMultipleTests(core_kernel_classes_Class $targetClass, $file) {
+    public function importMultipleTests(core_kernel_classes_Class $targetClass, $file)
+    {
 
         $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
@@ -327,8 +338,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             $qtiPackageParser = new taoQtiTest_models_classes_PackageParser($file);
             $qtiPackageParser->validate();
             $validPackage = true;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $report->add(common_report_Report::createFailure($invalidArchiveMsg));
         }
 
@@ -339,16 +349,15 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             if (is_dir($folder) === false) {
                 $report->add(common_report_Report::createFailure($invalidArchiveMsg));
             } else {
-
                 $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
+                $this->propagate($qtiManifestParser);
                 $qtiManifestParser->validate();
 
                 if ($qtiManifestParser->isValid() === true) {
-
                     $validManifest = true;
 
-                    $tests = array();
-                    foreach(Resource::getTestTypes() as $type){
+                    $tests = [];
+                    foreach (Resource::getTestTypes() as $type) {
                         $tests = array_merge($tests, $qtiManifestParser->getResources($type));
                     }
 
@@ -373,30 +382,27 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     $msg = __("The 'imsmanifest.xml' file found in the archive is not valid.");
                     $report->add(common_report_Report::createFailure($msg));
                 }
 
                 // Cleanup the folder where the archive was extracted.
                 tao_helpers_File::deltree($folder);
-
             }
         }
 
         if ($report->containsError() === true) {
             $report->setMessage(__('The IMS QTI Test Package could not be imported.'));
             $report->setType(common_report_Report::TYPE_ERROR);
-        }
-        else {
+        } else {
             $report->setMessage(__('IMS QTI Test Package successfully imported.'));
             $report->setType(common_report_Report::TYPE_SUCCESS);
         }
 
         if ($report->containsError() === true && $validPackage === true && $validManifest === true && $testsFound === true) {
             // We consider a test package as an atomic component, we then rollback it.
-            $itemService = taoItems_models_classes_ItemsService::singleton();
+            $itemService = $this->getServiceLocator()->get(taoItems_models_classes_ItemsService::class);
 
             foreach ($report as $r) {
                 $data = $r->getData();
@@ -450,21 +456,22 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @param oat\taoQtiItem\model\qti\Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored at import time.
      * @return common_report_Report A report about how the importation behaved.
      */
-    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = []) {
+    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = [])
+    {
 
-        $itemImportService = ImportService::singleton();
+        $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
         $testClass = $targetClass;
         $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
 
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
-        $testResource = $this->createInstance($testClass);
-        $qtiTestModelResource = new core_kernel_classes_Resource(self::INSTANCE_TEST_MODEL_QTI);
-        $modelProperty = new core_kernel_classes_Property(TestService::PROPERTY_TEST_TESTMODEL);
+        $testResource = $this->createInstance($testClass, 'in progress');
+        $qtiTestModelResource = $this->getResource(self::INSTANCE_TEST_MODEL_QTI);
+        $modelProperty = $this->getProperty(TestService::PROPERTY_TEST_TESTMODEL);
         $testResource->editPropertyValues($modelProperty, $qtiTestModelResource);
 
         // Setting qtiIdentifier property
-        $qtiIdentifierProperty = new core_kernel_classes_Property(self::PROPERTY_QTI_TEST_IDENTIFIER);
+        $qtiIdentifierProperty = $this->getProperty(self::PROPERTY_QTI_TEST_IDENTIFIER);
         $testResource->editPropertyValues($qtiIdentifierProperty, $qtiTestResourceIdentifier);
 
         // Create the report that will hold information about the import
@@ -472,11 +479,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
 
         // The class where the items that belong to the test will be imported.
-        $itemClass = new core_kernel_classes_Class(TaoOntology::CLASS_URI_ITEM);
+        $itemClass = $this->getClass(TaoOntology::CLASS_URI_ITEM);
         $targetClass = $itemClass->createSubClass($testResource->getLabel());
 
         // Load and validate the manifest
         $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
+        $this->propagate($qtiManifestParser);
         $qtiManifestParser->validate();
 
         $domManifest = new DOMDocument('1.0', 'UTF-8');
@@ -496,7 +504,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $reportCtx->newItems = [];
         $reportCtx->overwrittenItems = [];
         $reportCtx->itemQtiResources = [];
-        $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : array();
+        $reportCtx->testMetadata = isset($metadataValues[$qtiTestResourceIdentifier]) ? $metadataValues[$qtiTestResourceIdentifier] : [];
         $reportCtx->createdClasses = [];
 
         // 'uriResource' key is needed by javascript in tao/views/templates/form/import.tpl
@@ -513,8 +521,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         // -- Check if the file referenced by the test QTI resource exists.
         if (is_readable($expectedTestFile) === false) {
             $report->add(common_report_Report::createFailure(__('No file found at location "%s".', $qtiTestResource->getFile())));
-        }
-        else {
+        } else {
             // -- Load the test in a QTISM flavour.
             $testDefinition = new XmlDocument();
 
@@ -539,17 +546,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                 $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
 
                 if (count($dependencies['items']) > 0) {
-
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
-
                         if ($qtiDependency !== false) {
-
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
-
                                 $resourceIdentifier = $qtiDependency->getIdentifier();
 
                                 if (!array_key_exists($resourceIdentifier, $ignoreQtiResources)) {
-
                                     $qtiFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiDependency->getFile());
 
                                     // If metadata should be aware of the test context...
@@ -569,8 +571,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
 
                                     // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same file).
                                     if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
-
-                                        $createdClasses = array();
+                                        $createdClasses = [];
 
                                         $itemReport = $itemImportService->importQtiItem(
                                             $folder,
@@ -578,10 +579,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                             $targetClass,
                                             $dependencies['dependencies'],
                                             $metadataValues,
-                                            array(),
-                                            array(),
-                                            array(),
-                                            array(),
+                                            [],
+                                            [],
+                                            [],
+                                            [],
                                             $createdClasses,
                                             $this->useMetadataGuardians,
                                             $this->useMetadataValidators,
@@ -609,8 +610,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                         }
 
                                         $report->add($itemReport);
-                                    }
-                                    else {
+                                    } else {
                                         $reportCtx->items[$assessmentItemRefId] = $alreadyImportedTestItemFiles[$qtiFile];
                                     }
                                 } else {
@@ -624,8 +624,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                     );
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             $msg = __('The dependency to the IMS QTI AssessmentItemRef "%s" in the IMS Manifest file could not be resolved.', $assessmentItemRefId);
                             $report->add(common_report_Report::createFailure($msg));
                             $itemError = ($itemError === false) ? true : $itemError;
@@ -659,22 +658,19 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                                 $targetClass->delete();
                             }
                         }
-                    }
-                    else {
+                    } else {
                         $msg = __("One or more dependent IMS QTI Items could not be imported.");
                         $report->add(common_report_Report::createFailure($msg));
                     }
-                }
-                else {
+                } else {
                     // No depencies found (i.e. no item resources bound to the test).
                     $msg = __("No reference to any IMS QTI Item found.");
                     $report->add(common_report_Report::createFailure($msg));
                 }
-            }
-            catch (StorageException $e) {
+            } catch (StorageException $e) {
                 // Source of the exception = $testDefinition->load()
                 // What is the reason ?
-                $eStrs = array();
+                $eStrs = [];
 
                 if (($libXmlErrors = $e->getErrors()) !== null) {
                     foreach ($libXmlErrors as $libXmlError) {
@@ -687,7 +683,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
                     common_Logger::e($e->getMessage());
                     // Not XML malformation related. No info from LibXmlErrors extracted.
                     if (($previous = $e->getPrevious()) != null) {
-
                         // Useful information could be found here.
                         $finalErrorString = $previous->getMessage();
 
@@ -725,8 +720,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             $report->setType(common_report_Report::TYPE_SUCCESS);
             $msg = __("IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported.", $qtiTestResource->getIdentifier());
             $report->setMessage($msg);
-        }
-        else {
+        } else {
             $report->setType(common_report_Report::TYPE_ERROR);
             $msg = __("The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported.", $qtiTestResource->getIdentifier());
             $report->setMessage($msg);
@@ -757,7 +751,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @return Directory The newly created test content.
      * @throws taoQtiTest_models_classes_QtiTestServiceException If an unexpected runtime error occurs.
      */
-    protected function importTestDefinition(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, Resource $qtiResource, array $itemMapping, $extractionFolder, common_report_Report $report) {
+    protected function importTestDefinition(core_kernel_classes_Resource $testResource, XmlDocument $testDefinition, Resource $qtiResource, array $itemMapping, $extractionFolder, common_report_Report $report)
+    {
 
         foreach ($itemMapping as $itemRefId => $itemResource) {
             $itemRef = $testDefinition->getDocumentComponent()->getComponentByIdentifier($itemRefId);
@@ -768,11 +763,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         $oldFile->delete();
 
         $ds = DIRECTORY_SEPARATOR;
-        $path = dirname($qtiResource->getFile()).$ds.self::TAOQTITEST_FILENAME;
+        $path = dirname($qtiResource->getFile()) . $ds . self::TAOQTITEST_FILENAME;
         $dir = $this->getQtiTestDir($testResource);
         $newFile = $dir->getFile($path);
         $newFile->write($testDefinition->saveToString());
-        $this->setQtiIndexFile($dir , $path);
+        $this->setQtiIndexFile($dir, $path);
         return $this->getQtiTestDir($testResource);
     }
 
@@ -782,7 +777,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @param $path
      * @return bool
      */
-    protected function setQtiIndexFile(Directory $dir , $path) {
+    protected function setQtiIndexFile(Directory $dir, $path)
+    {
         $newFile = $dir->getFile(self::QTI_TEST_DEFINITION_INDEX);
         return $newFile->put($path);
     }
@@ -791,9 +787,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @param Directory $dir
      * @return false|string
      */
-    protected function getQtiDefinitionPath(Directory $dir) {
+    protected function getQtiDefinitionPath(Directory $dir)
+    {
         $index = $dir->getFile(self::QTI_TEST_DEFINITION_INDEX);
-        if($index->exists()) {
+        if ($index->exists()) {
             return $index->read();
         }
         return false;
@@ -810,13 +807,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @param string $extractionFolder The absolute path to the temporary folder containing the content of the imported IMS QTI Package Archive.
      * @param common_report_Report A report about how the importation behaved.
      */
-    protected function importTestAuxiliaryFiles(Directory $testContent, Resource $qtiResource, $extractionFolder, common_report_Report $report) {
+    protected function importTestAuxiliaryFiles(Directory $testContent, Resource $qtiResource, $extractionFolder, common_report_Report $report)
+    {
 
         foreach ($qtiResource->getAuxiliaryFiles() as $aux) {
             try {
                 taoQtiTest_helpers_Utils::storeQtiResource($testContent, $aux, $extractionFolder);
-            }
-            catch (common_Exception $e) {
+            } catch (common_Exception $e) {
                 $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, __('Auxiliary file not found at location "%s".', $aux)));
             }
         }
@@ -832,14 +829,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     public function getTestFile(core_kernel_classes_Resource $test)
     {
-        $testModel = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_TESTMODEL));
+        $testModel = $test->getOnePropertyValue($this->getProperty(TestService::PROPERTY_TEST_TESTMODEL));
         if (is_null($testModel) || $testModel->getUri() != self::INSTANCE_TEST_MODEL_QTI) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
                 'The selected test is not a QTI test',
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
             );
         }
-        $file = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_CONTENT));
+        $file = $test->getOnePropertyValue($this->getProperty(TestService::PROPERTY_TEST_CONTENT));
 
         if (!is_null($file)) {
             return $this->getFileReferenceSerializer()->unserializeFile($file->getUri());
@@ -855,7 +852,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @return XmlDocument the QTI representation from the test content
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function getDoc(core_kernel_classes_Resource $test) {
+    public function getDoc(core_kernel_classes_Resource $test)
+    {
 
         $doc = new XmlDocument('2.1');
         $doc->loadFromString($this->getQtiTestFile($test)->read());
@@ -882,8 +880,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @param array $paths An array of strings representing absolute paths within a given directory.
      * @return array $extractedPath The paths that meet the $fileName criterion.
      */
-    private function filterTestContentDirectory(array $paths, $fileName) {
-        $returnValue = array();
+    private function filterTestContentDirectory(array $paths, $fileName)
+    {
+        $returnValue = [];
 
         foreach ($paths as $path) {
             $pathinfo = pathinfo($path);
@@ -907,12 +906,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @param \qtism\data\storage\xml\XmlDocument $doc The QTI XML document to be inspected to retrieve the items.
      * @return core_kernel_classes_Resource[] An array of core_kernel_classes_Resource object indexed by assessmentItemRef->identifier (string).
      */
-    private function getDocItems(XmlDocument $doc){
-        $itemArray = array();
-    	foreach ($doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef') as $itemRef) {
-            $itemArray[$itemRef->getIdentifier()] = new core_kernel_classes_Resource($itemRef->getHref());
-    	}
-    	return $itemArray;
+    private function getDocItems(XmlDocument $doc)
+    {
+        $itemArray = [];
+        foreach ($doc->getDocumentComponent()->getComponentsByClassName('assessmentItemRef') as $itemRef) {
+            $itemArray[$itemRef->getIdentifier()] = $this->getResource($itemRef->getHref());
+        }
+        return $itemArray;
     }
 
     /**
@@ -922,26 +922,26 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @return int
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    private function setItemsToDoc(XmlDocument $doc, array $items, $sectionIndex = 0) {
+    private function setItemsToDoc(XmlDocument $doc, array $items, $sectionIndex = 0)
+    {
 
         $sections = $doc->getDocumentComponent()->getComponentsByClassName('assessmentSection');
-        if(!isset($sections[$sectionIndex])){
+        if (!isset($sections[$sectionIndex])) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
-                        'No section found in test at index : ' . $sectionIndex,
-                        taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
-                    );
+                'No section found in test at index : ' . $sectionIndex,
+                taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
+            );
         }
         $section = $sections[$sectionIndex];
 
         $itemRefs = new SectionPartCollection();
-        $itemRefIdentifiers = array();
+        $itemRefIdentifiers = [];
         foreach ($items as $itemResource) {
             $itemDoc = new XmlDocument();
 
             try {
                 $itemDoc->loadFromString(Service::singleton()->getXmlByRdfItem($itemResource));
-            }
-            catch (StorageException $e) {
+            } catch (StorageException $e) {
                 // We consider the item not compliant with QTI, let's try the next one.
                 continue;
             }
@@ -949,9 +949,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             $itemRefIdentifier = $itemDoc->getDocumentComponent()->getIdentifier();
 
             //enable more than one reference
-            if(array_key_exists($itemRefIdentifier, $itemRefIdentifiers)){
+            if (array_key_exists($itemRefIdentifier, $itemRefIdentifiers)) {
                     $itemRefIdentifiers[$itemRefIdentifier] += 1;
-                    $itemRefIdentifier .= '-'. $itemRefIdentifiers[$itemRefIdentifier];
+                    $itemRefIdentifier .= '-' . $itemRefIdentifiers[$itemRefIdentifier];
             } else {
                 $itemRefIdentifiers[$itemRefIdentifier] = 0;
             }
@@ -971,14 +971,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     public function getQtiTestDir(core_kernel_classes_Resource $test, $createTestFile = true)
     {
-        $testModel = TestService::singleton()->getTestModel($test);
+        $testModel = $this->getServiceLocator()->get(TestService::class)->getTestModel($test);
         if ($testModel->getUri() != self::INSTANCE_TEST_MODEL_QTI) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
                 'The selected test is not a QTI test',
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
             );
         }
-        $dir = $test->getOnePropertyValue(new core_kernel_classes_Property(TestService::PROPERTY_TEST_CONTENT));
+        $dir = $test->getOnePropertyValue($this->getProperty(TestService::PROPERTY_TEST_CONTENT));
 
         if (!is_null($dir)) {
             return $this->getFileReferenceSerializer()->unserialize($dir);
@@ -987,26 +987,27 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
         }
     }
 
-    protected function searchInTestDirectory(Directory $dir) {
+    protected function searchInTestDirectory(Directory $dir)
+    {
 
-            $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE|Directory::ITERATOR_FILE);
-            $file = null;
+            $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE | Directory::ITERATOR_FILE);
+            $files = [];
             /**
              * @var File $file
              */
-            foreach ($iterator as $file) {
-                if ($file->getBasename() === self::TAOQTITEST_FILENAME) {
-                    $files[] = $file;
-                    break;
-                }
+        foreach ($iterator as $file) {
+            if ($file->getBasename() === self::TAOQTITEST_FILENAME) {
+                $files[] = $file;
+                break;
             }
+        }
 
-            if (is_null($file)) {
-                throw new Exception('No QTI-XML test file found.');
-            }
+        if (empty($files)) {
+            throw new Exception('No QTI-XML test file found.');
+        }
             $file = current($files);
-        $fileName = str_replace($dir->getPrefix() . '/', '', $file->getPrefix());
-            $this->setQtiIndexFile($dir , $fileName);
+            $fileName = str_replace($dir->getPrefix() . '/', '', $file->getPrefix());
+            $this->setQtiIndexFile($dir, $fileName);
             return $file;
     }
 
@@ -1018,7 +1019,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @throws \Exception If file is not found.
      * @return File
      */
-    public function getQtiTestFile(core_kernel_classes_Resource $test) {
+    public function getQtiTestFile(core_kernel_classes_Resource $test)
+    {
 
         $dir = $this->getQtiTestDir($test);
 
@@ -1028,7 +1030,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             return $dir->getFile($file);
         }
         return $this->searchInTestDirectory($dir);
-
     }
 
     /**
@@ -1050,7 +1051,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @return boolean true if saved
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    private function saveDoc( core_kernel_classes_Resource $test, XmlDocument $doc){
+    private function saveDoc(core_kernel_classes_Resource $test, XmlDocument $doc)
+    {
         $file = $this->getQtiTestFile($test);
         return $file->update($doc->saveToString());
     }
@@ -1065,7 +1067,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @throws taoQtiTest_models_classes_QtiTestServiceException If a runtime error occurs while creating the test content.
      * @throws \common_exception_InconsistentData In case of trying to override existing data.
      */
-    public function createContent(core_kernel_classes_Resource $test, $createTestFile = true, $preventOverride = true) {
+    public function createContent(core_kernel_classes_Resource $test, $createTestFile = true, $preventOverride = true)
+    {
 
         $dir = $this->getDefaultDir()->getDirectory(md5($test->getUri()));
         if ($dir->exists() && $preventOverride === true) {
@@ -1086,12 +1089,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             //generate a valid qti identifier
             $identifier = tao_helpers_Display::textCleaner($test->getLabel(), '*', 32);
             $identifier = str_replace('_', '-', $identifier);
-            if(preg_match('/^[0-9]/', $identifier)){
-                $identifier = '_'.$identifier;
+            if (preg_match('/^[0-9]/', $identifier)) {
+                $identifier = '_' . $identifier;
             }
             $doc->documentElement->setAttribute('identifier', $identifier);
 
-            $doc->documentElement->setAttribute('toolVersion', TAO_VERSION);
+            $appService = $this->getServiceLocator()->get(ApplicationService::SERVICE_ID);
+            $doc->documentElement->setAttribute('toolVersion', $appService->getPlatformVersion());
 
             if (!$file->write($doc->saveXML())) {
                 $msg = "Unable to write raw QTI Test template.";
@@ -1099,7 +1103,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
             }
 
             common_Logger::t("Created QTI Test content for test '" . $test->getUri() . "'.");
-        } else if ($file->exists()) {
+        } elseif ($file->exists()) {
             $doc = new DOMDocument('1.0', 'UTF-8');
             $doc->loadXML($file->read());
 
@@ -1152,7 +1156,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     public function getDefaultDir()
     {
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        $ext = $this->getServiceLocator()->get(common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
         $fsId = $ext->getConfig(self::CONFIG_QTITEST_FILESYSTEM);
         return $this->getServiceLocator()->get(FileSystemService::SERVICE_ID)->getDirectory($fsId);
     }
@@ -1176,8 +1180,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      * @return string An ISO 8601 Duration.
      * @see http://www.php.net/manual/en/dateinterval.construct.php PHP's interval_spec format (based on ISO 8601).
      */
-    public function getQtiTestAcceptableLatency() {
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+    public function getQtiTestAcceptableLatency()
+    {
+        $ext = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest');
         $latency = $ext->getConfig(self::CONFIG_QTITEST_ACCEPTABLE_LATENCY);
         if (empty($latency)) {
             // Default duration for legacy code or missing config.
@@ -1193,7 +1199,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService {
      */
     public function getQtiTestTemplateFileAsString()
     {
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        $ext = $this->getServiceLocator()->get(common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
         return file_get_contents($ext->getDir() . 'models' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'qtiTest.xml');
     }
 
