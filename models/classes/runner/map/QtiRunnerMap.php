@@ -260,7 +260,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
                         'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
-                        'categories' => $this->getAvailableCategories($itemRef),
+                        'categories' => array_values($this->getAvailableCategories($itemRef)),
                     ];
 
                     if ($checkInformational) {
@@ -488,6 +488,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      */
     protected function getAvailableCategories(AssessmentItemRef $itemRef)
     {
-        return array_values(array_unique($itemRef->getCategories()->getArrayCopy()));
+        return array_unique($itemRef->getCategories()->getArrayCopy());
     }
 }
