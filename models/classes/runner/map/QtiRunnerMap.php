@@ -488,6 +488,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      */
     protected function getAvailableCategories(AssessmentItemRef $itemRef)
     {
-        return array_unique($itemRef->getCategories()->getArrayCopy());
+        return array_values(array_unique($itemRef->getCategories()->getArrayCopy()));
     }
 }
