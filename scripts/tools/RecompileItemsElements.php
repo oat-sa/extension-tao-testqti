@@ -22,11 +22,11 @@ namespace oat\taoQtiTest\scripts\tools;
 
 use oat\generis\model\OntologyAwareTrait;
 use \common_report_Report as Report;
-use oat\taoDelivery\model\AssignmentAggregator\UnionAssignmentService;
 use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use qtism\data\AssessmentItemRef;
 use oat\oatbox\extension\script\ScriptAction;
+use oat\taoDelivery\model\RuntimeService;
 
 /**
  * Class RecompileItemsElements
@@ -145,9 +145,7 @@ class RecompileItemsElements extends ScriptAction
      */
     protected function getAssessmentsFromDelivery(\core_kernel_classes_Resource $compiledDelivery)
     {
-        /** @var UnionAssignmentService $unionAssignmentService */
-        $unionAssignmentService = $this->getServiceLocator()->get(UnionAssignmentService::SERVICE_ID);
-        $runtime = $unionAssignmentService->getRuntime($compiledDelivery);
+        $runtime = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
 
         $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, []);
         $testDefinition = \taoQtiTest_helpers_Utils::getTestDefinition($inputParameters['QtiTestCompilation']);
