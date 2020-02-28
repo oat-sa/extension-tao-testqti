@@ -1959,13 +1959,13 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('35.6.0');
         }
 
-        $this->skip('35.6.0', '35.10.2');
+        $this->skip('35.6.0', '35.10.2.1');
 
-        if ($this->isVersion('35.10.2')) {
+        if ($this->isBetween('35.10.2', '35.10.2.1')) {
             $this->getServiceManager()->register(QtiTestUtils::SERVICE_ID, new QtiTestUtils([]));
             $this->setVersion('35.11.0');
         }
 
-        $this->skip('35.11.0', '35.13.1');
+        $this->skip('35.11.0', '35.13.2');
     }
 }
