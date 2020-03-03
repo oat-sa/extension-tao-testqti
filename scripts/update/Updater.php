@@ -1967,5 +1967,22 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('35.11.0', '35.13.2');
+
+        if ($this->isVersion('35.13.2')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/content/accessibility/keyNavigation');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'keyNavigation',
+                'name' => 'Keyboard Navigation',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Provide a way to navigate within the test runner with the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('35.14.0');
+        }
     }
 }
