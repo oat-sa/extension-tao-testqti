@@ -1982,7 +1982,7 @@ class Updater extends \common_ext_ExtensionUpdater
                 'tags' => [ 'core', 'qti' ]
             ]));
 
-            $this->setVersion('35.14.0');
+            $this->setVersion('36.0.0');
         }
     }
 }
