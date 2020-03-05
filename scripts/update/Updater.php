@@ -1966,9 +1966,9 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('35.11.0');
         }
 
-        $this->skip('35.11.0', '35.13.2');
+        $this->skip('35.11.0', '35.13.3');
 
-        if ($this->isVersion('35.13.2')) {
+        if ($this->isVersion('35.13.3')) {
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/content/accessibility/keyNavigation');
             $registry->register(TestPlugin::fromArray([
