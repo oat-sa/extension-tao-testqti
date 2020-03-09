@@ -50,19 +50,14 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 
     /**
      * @param core_kernel_classes_Resource $resource
+     *
      * @return tao_helpers_form_Form
      */
     public function getExportForm(core_kernel_classes_Resource $resource)
     {
-        if ($resource instanceof core_kernel_classes_Class) {
-            $formData['items'] = $this->getResourceService()->getChildren($resource);
-            $formData['file_name'] = $resource->getLabel();
-        } else {
-            $formData = ['instance' => $resource];
-        }
+        $formData = $this->getFormData($resource);
 
-        return (new taoQtiTest_models_classes_export_QtiTest21ExportForm($formData))
-            ->getForm();
+        return (new taoQtiTest_models_classes_export_QtiTest21ExportForm($formData))->getForm();
     }
 
     /**
@@ -130,6 +125,20 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
         $report->setData(['path' => $path]);
 
         return $report;
+    }
+
+    protected function getFormData(core_kernel_classes_Resource $resource): array
+    {
+        $formData = [];
+
+        if ($resource instanceof core_kernel_classes_Class) {
+            $formData['items'] = $this->getResourceService()->getAllChildren($resource);
+            $formData['file_name'] = $resource->getLabel();
+        } else {
+            $formData['instance'] = $resource;
+        }
+
+        return $formData;
     }
 
     protected function createExporter(core_kernel_classes_Resource $testResource, ZipArchive $zip, DOMDocument $manifest)

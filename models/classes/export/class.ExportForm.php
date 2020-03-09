@@ -19,43 +19,58 @@
  *
  */
 
+use oat\taoTests\models\MissingTestmodelException;
+
 /**
  * Export form for QTI packages
  *
- * @access public
- * @author Joel Bout, <joel.bout@tudor.lu>
+ * @access  public
+ * @author  Joel Bout, <joel.bout@tudor.lu>
  * @package taoItems
-
  */
 abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_form_FormContainer
 {
     // --- ASSOCIATIONS ---
 
-
     // --- ATTRIBUTES ---
 
     // --- OPERATIONS ---
+
+    /** @var core_kernel_classes_Resource */
+    private $testModel;
+
     /**
-     * Short description of method initForm
-     *
      * @access public
-     * @author Joel Bout, <joel.bout@tudor.lu>
      * @return mixed
+     * @throws common_Exception
+     * @author Joel Bout, <joel.bout@tudor.lu>
      */
     public function initForm()
     {
         $this->form = new tao_helpers_form_xhtml_Form('export');
 
-        $this->form->setDecorators([
-            'element'           => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div']),
-            'group'             => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-group']),
-            'error'             => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-error ui-state-error ui-corner-all']),
-            'actions-bottom'    => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar']),
-            'actions-top'       => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
-        ]);
+        $this->form->setDecorators(
+            [
+                'element' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div']),
+                'group' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-group']),
+                'error' => new tao_helpers_form_xhtml_TagWrapper(
+                    ['tag' => 'div', 'cssClass' => 'form-error ui-state-error ui-corner-all']
+                ),
+                'actions-bottom' => new tao_helpers_form_xhtml_TagWrapper(
+                    ['tag' => 'div', 'cssClass' => 'form-toolbar']
+                ),
+                'actions-top' => new tao_helpers_form_xhtml_TagWrapper(
+                    ['tag' => 'div', 'cssClass' => 'form-toolbar']
+                )
+            ]
+        );
 
         $exportElt = tao_helpers_form_FormFactory::getElement('export', 'Free');
-        $exportElt->setValue('<a href="#" class="form-submitter btn-success small"><span class="icon-export"></span> ' . __('Export') . '</a>');
+        $exportElt->setValue(
+            '<a href="#" class="form-submitter btn-success small"><span class="icon-export"></span> ' . __(
+                'Export'
+            ) . '</a>'
+        );
 
         $this->form->setActions([$exportElt], 'bottom');
     }
@@ -67,67 +82,91 @@ abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_f
      * @return mixed
      *
      * @throws common_Exception
-     * @throws common_exception_Error
+     * @throws MissingTestmodelException
      *
      * @author Joel Bout, <joel.bout@tudor.lu>
      */
     public function initElements()
     {
-        $testService = taoTests_models_classes_TestsService::singleton();
-        $testModel = new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI);
+        $testService = $this->getTestService();
+        $testModel = $this->getTestModel();
 
         $fileName = '';
         $options = [];
         if (isset($this->data['items'])) {
-            $fileName = strtolower(tao_helpers_Display::textCleaner($this->data['file_name'], '*'));
-            foreach ($this->data['items'] as $instance) {
-                if ($testModel->equals($testService->getTestModel($instance))) {
-                    $options[$instance->getUri()] = $instance->getLabel();
-                }
-            }
+            $fileName = $this->getFileName($this->data['file_name']);
+            $options = $this->getInstanceOptions(...$this->data['items']);
         } elseif (isset($this->data['instance'])) {
             $test = $this->data['instance'];
             if (
                 $test instanceof core_kernel_classes_Resource
                 && $testModel->equals($testService->getTestModel($test))
             ) {
-                $fileName = strtolower(tao_helpers_Display::textCleaner($test->getLabel()));
-                $options[$test->getUri()] = $test->getLabel();
+                $fileName = $this->getFileName($test->getLabel());
+                $options = $this->getInstanceOptions($test);
             }
         } else {
-            if (isset($this->data['class'])) {
-                $class = $this->data['class'];
-            } else {
-                $class = $testService->getRootClass();
-            }
+            $class = $this->data['class'] ?? $testService->getRootClass();
+
             if ($class instanceof core_kernel_classes_Class) {
-                $fileName =  strtolower(tao_helpers_Display::textCleaner($class->getLabel(), '*'));
-                foreach ($class->getInstances() as $instance) {
-                    if ($testModel->equals($testService->getTestModel($instance))) {
-                        $options[$instance->getUri()] = $instance->getLabel();
-                    }
-                }
+                $fileName = $this->getFileName($class->getLabel());
+                $options = $this->getInstanceOptions(...$class->getInstances());
             }
         }
 
         $nameElt = tao_helpers_form_FormFactory::getElement('filename', 'Textbox');
         $nameElt->setDescription(__('File name'));
         $nameElt->setValue($fileName);
-        $nameElt->setUnit(".zip");
+        $nameElt->setUnit('.zip');
         $nameElt->addValidator(tao_helpers_form_FormFactory::getValidator('NotEmpty'));
         $this->form->addElement($nameElt);
 
         $instanceElt = tao_helpers_form_FormFactory::getElement('instances', 'Checkbox');
         $instanceElt->setDescription(__('Test'));
-        //$instanceElt->setAttribute('checkAll', true);
         $instanceElt->setOptions(tao_helpers_Uri::encodeArray($options, tao_helpers_Uri::ENCODE_ARRAY_KEYS));
         foreach (array_keys($options) as $value) {
             $instanceElt->setValue($value);
         }
         $this->form->addElement($instanceElt);
 
+        $this->form->createGroup('options', '<h3>' . $this->getFormGroupName() . '</h3>', ['filename', 'instances']);
+    }
 
-        $this->form->createGroup('options', '<h3>' . $this->getFormGroupName() . '</h3>', [ 'filename', 'instances']);
+    protected function getInstanceOptions(core_kernel_classes_Resource ...$resources): array
+    {
+        $testService = $this->getTestService();
+        $testModel = $this->getTestModel();
+
+        $options = [];
+
+        foreach ($resources as $resource) {
+            if ($testModel->equals($testService->getTestModel($resource))) {
+                $options[$resource->getUri()] = $resource->getLabel();
+            }
+        }
+
+        return $options;
+    }
+
+    private function getTestService(): taoTests_models_classes_TestsService
+    {
+        return taoTests_models_classes_TestsService::singleton();
+    }
+
+    private function getTestModel(): core_kernel_classes_Resource
+    {
+        if ($this->testModel === null) {
+            $this->testModel = new core_kernel_classes_Resource(
+                taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI
+            );
+        }
+
+        return $this->testModel;
+    }
+
+    protected function getFileName(string $name): string
+    {
+        return strtolower(tao_helpers_Display::textCleaner($name, '*'));
     }
 
     /**
