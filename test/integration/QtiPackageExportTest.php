@@ -21,6 +21,8 @@
 namespace oat\taoQtiTest\test\integration;
 
 use Exception;
+use oat\generis\model\data\ModelManager;
+use oat\generis\model\data\Ontology;
 use oat\tao\test\integration\RestTestRunner;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
 use Slim\Http\Headers;
@@ -46,6 +48,7 @@ class QtiPackageExportTest extends RestTestRunner
         parent::setUp();
         $this->serviceLocatorMock = $this->getServiceLocatorMock([
             QtiPackageExporter::class => new QtiPackageExporter(),
+            Ontology::SERVICE_ID => ModelManager::getModel(),
         ]);
     }
 
@@ -155,6 +158,76 @@ class QtiPackageExportTest extends RestTestRunner
         //Assert zip content
         $this->assertFileExists($manifestFile);
         $this->assertCount(15, $itemsInExtractedPath);
+
+        //Clean up
+        $class->delete(true);
+        tao_helpers_File::delTree($extractExportPath);
+        tao_helpers_File::remove($exportTempFile);
+    }
+
+    public function testExportQtiPackageWithDependencies()
+    {
+        //create test resource based on qti package zip
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/qtiItemDependency.zip';
+        //create temporary subclass
+        $class = TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter', true));
+        //Importing test form zip file into temporary subclass
+        /** @var Report $report */
+        $report = QtiTestService::singleton()
+            ->importMultipleTests($class, $testFile);
+        $reportSuccesses = $report->getSuccesses();
+        $successfulImport = reset($reportSuccesses);
+        $this->assertCount(1, $reportSuccesses);
+        $this->assertEquals($report->getType(), \common_report_Report::TYPE_SUCCESS);
+        $this->assertFalse($report->containsError());
+
+        //Detremine what uri our new class was defined in tao
+        $uriResource = $successfulImport->getData()->uriResource;
+        //Encode resource uri so it can be passed to url param
+        $testUriEncoded = urlencode($uriResource);
+        $query = sprintf('?testUri=%s', $testUriEncoded);
+
+        $restQtiTests = new TestableRestQtiTests();
+        $restQtiTests->setServiceLocator($this->serviceLocatorMock);
+
+        //Preparing right url
+        $stream = new RequestBody();
+        $headers = new Headers();
+        $request = new Request(self::GET_REQUEST, Uri::createFromString($query), $headers, [], [], $stream);
+        $restQtiTests->setRequest($request);
+
+        //Execute
+        $response = $restQtiTests->exportQtiPackage();
+
+        //Handle Zip file
+        $exportTempFile = tempnam(sys_get_temp_dir(), 'testExport_');
+        $filehandler = fopen($exportTempFile, 'wb');
+        fwrite($filehandler, base64_decode($response[TestableRestQtiTests::PARAM_PACKAGE_NAME]));
+        fclose($filehandler);
+
+        $extractExportPath = sys_get_temp_dir() . '/extractedExportPackage' . time();
+        $zip = new ZipArchive();
+        if ($zip->open($exportTempFile)) {
+            $zip->extractTo($extractExportPath);
+            $zip->close();
+        }
+        $manifestFile = $extractExportPath . '/imsmanifest.xml';
+        $itemsPath = $extractExportPath . '/items';
+        $itemsInDir = scandir($itemsPath, null);
+        $itemsInExtractedPath = array_slice($itemsInDir, 2);
+
+        // images
+        foreach ($itemsInExtractedPath as $item) {
+            $expected = $itemsPath.'/'.$item.'/assets/img';
+            $this->assertFileExists($expected);
+            $itemsInDirAssets = scandir($expected, null);
+            $itemsInExtractedAssetsPath = array_slice($itemsInDirAssets, 2);
+            $this->assertCount(6, $itemsInExtractedAssetsPath);
+        }
+
+        //Assert zip content
+        $this->assertFileExists($manifestFile);
+        $this->assertCount(2, $itemsInExtractedPath);
 
         //Clean up
         $class->delete(true);

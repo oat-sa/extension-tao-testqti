@@ -1182,7 +1182,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     public function getQtiTestAcceptableLatency()
     {
-        $ext = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+        $ext = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest');
         $latency = $ext->getConfig(self::CONFIG_QTITEST_ACCEPTABLE_LATENCY);
         if (empty($latency)) {
             // Default duration for legacy code or missing config.
