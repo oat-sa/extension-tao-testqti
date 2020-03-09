@@ -44,8 +44,6 @@ abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_f
      */
     public function initForm()
     {
-        
-
         $this->form = new tao_helpers_form_xhtml_Form('export');
 
         $this->form->setDecorators([
@@ -61,29 +59,40 @@ abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_f
 
         $this->form->setActions([$exportElt], 'bottom');
     }
-    
+
     /**
      * overriden
      *
      * @access public
-     * @author Joel Bout, <joel.bout@tudor.lu>
      * @return mixed
+     *
+     * @throws common_Exception
+     * @throws common_exception_Error
+     *
+     * @author Joel Bout, <joel.bout@tudor.lu>
      */
     public function initElements()
     {
-
         $testService = taoTests_models_classes_TestsService::singleton();
         $testModel = new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_TEST_MODEL_QTI);
 
         $fileName = '';
         $options = [];
-        if (isset($this->data['instance'])) {
-            $test = $this->data['instance'];
-            if ($test instanceof core_kernel_classes_Resource) {
-                if ($testModel->equals($testService->getTestModel($test))) {
-                    $fileName = strtolower(tao_helpers_Display::textCleaner($test->getLabel()));
-                    $options[$test->getUri()] = $test->getLabel();
+        if (isset($this->data['items'])) {
+            $fileName = strtolower(tao_helpers_Display::textCleaner($this->data['file_name'], '*'));
+            foreach ($this->data['items'] as $instance) {
+                if ($testModel->equals($testService->getTestModel($instance))) {
+                    $options[$instance->getUri()] = $instance->getLabel();
                 }
+            }
+        } elseif (isset($this->data['instance'])) {
+            $test = $this->data['instance'];
+            if (
+                $test instanceof core_kernel_classes_Resource
+                && $testModel->equals($testService->getTestModel($test))
+            ) {
+                $fileName = strtolower(tao_helpers_Display::textCleaner($test->getLabel()));
+                $options[$test->getUri()] = $test->getLabel();
             }
         } else {
             if (isset($this->data['class'])) {
@@ -92,7 +101,7 @@ abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_f
                 $class = $testService->getRootClass();
             }
             if ($class instanceof core_kernel_classes_Class) {
-                    $fileName =  strtolower(tao_helpers_Display::textCleaner($class->getLabel(), '*'));
+                $fileName =  strtolower(tao_helpers_Display::textCleaner($class->getLabel(), '*'));
                 foreach ($class->getInstances() as $instance) {
                     if ($testModel->equals($testService->getTestModel($instance))) {
                         $options[$instance->getUri()] = $instance->getLabel();

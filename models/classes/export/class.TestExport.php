@@ -24,6 +24,8 @@ use common_report_Report as Report;
 use oat\oatbox\event\EventManagerAwareTrait;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
+use oat\oatbox\service\ServiceManager;
+use oat\tao\model\resources\SecureResourceService;
 use oat\taoQtiTest\models\event\QtiTestExportEvent;
 
 /**
@@ -53,7 +55,8 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
     public function getExportForm(core_kernel_classes_Resource $resource)
     {
         if ($resource instanceof core_kernel_classes_Class) {
-            $formData = ['class' => $resource];
+            $formData['items'] = $this->getResourceService()->getChildren($resource);
+            $formData['file_name'] = $resource->getLabel();
         } else {
             $formData = ['instance' => $resource];
         }
@@ -137,5 +140,15 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
     protected function createManifest()
     {
         return taoQtiTest_helpers_Utils::emptyImsManifest('2.1');
+    }
+
+    protected function getResourceService(): SecureResourceService
+    {
+        return $this->getServiceManager()->get(SecureResourceService::SERVICE_ID);
+    }
+
+    protected function getServiceManager()
+    {
+        return ServiceManager::getServiceManager();
     }
 }
