@@ -95,7 +95,7 @@ abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_f
         $options = [];
         if (isset($this->data['items'])) {
             $fileName = $this->getFileName($this->data['file_name']);
-            $options = $this->getInstanceOptions(...$this->data['items']);
+            $options = $this->getInstanceOptions(...array_values($this->data['items']));
         } elseif (isset($this->data['instance'])) {
             $test = $this->data['instance'];
             if (
