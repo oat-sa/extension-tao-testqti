@@ -19,6 +19,8 @@
  *
  */
 
+use oat\tao\model\resources\ResourceAccessDeniedException;
+use oat\tao\model\resources\SecureResourceService;
 use oat\tao\model\TaoOntology;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
@@ -157,21 +159,23 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Get the QTI Test document formated in JSON.
      *
      * @param core_kernel_classes_Resource $test
+     *
      * @return string the json
+     *
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function getJsonTest(core_kernel_classes_Resource $test)
+    public function getJsonTest(core_kernel_classes_Resource $test): string
     {
         $doc = $this->getDoc($test);
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+
         return $converter->toJson();
     }
 
     /**
-     *
-     * @see TestService::setDefaultModel()
+     * @inheritDoc
      */
-    protected function setDefaultModel($test)
+    protected function setDefaultModel($test): void
     {
         $this->setTestModel($test, $this->getResource(self::INSTANCE_TEST_MODEL_QTI));
     }
@@ -180,15 +184,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Save the json formated test into the test resource.
      *
      * @param core_kernel_classes_Resource $test
-     * @param string $json
-     * @return boolean true if saved
+     * @param string                       $json
+     *
+     * @return bool true if saved
+     *
      * @throws taoQtiTest_models_classes_QtiTestServiceException
+     * @throws taoQtiTest_models_classes_QtiTestConverterException
      */
-    public function saveJsonTest(core_kernel_classes_Resource $test, $json)
+    public function saveJsonTest(core_kernel_classes_Resource $test, $json): bool
     {
         $saved = false;
 
         if (! empty($json)) {
+            $this->verifyItemPermissions($json);
+
             $doc = $this->getDoc($test);
 
             $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
@@ -1214,5 +1223,37 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $this->metadataImporter = $this->getServiceLocator()->get(MetadataService::SERVICE_ID)->getImporter();
         }
         return $this->metadataImporter;
+    }
+
+    private function getSecureResourceService(): SecureResourceService
+    {
+        return $this->getServiceLocator()->get(SecureResourceService::SERVICE_ID);
+    }
+
+    /**
+     * @noinspection PhpDocMissingThrowsInspection
+     *
+     * @param string $json
+     *
+     * @throws ResourceAccessDeniedException
+     */
+    private function verifyItemPermissions(string $json): void
+    {
+        $array = json_decode($json, true);
+
+        $ids = [];
+
+        foreach ($array['testParts'] ?? [] as $testPart) {
+            foreach ($testPart['assessmentSections'] ?? [] as $assessmentSection) {
+                foreach ($assessmentSection['sectionParts'] ?? [] as $item) {
+                    if (isset($item['href'], $item['label']) && $item['qti-type'] ?? '' === self::XML_ASSESSMENT_ITEM_REF) {
+                        $ids[] = $item['href'];
+                    }
+                }
+            }
+        }
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $this->getSecureResourceService()->validatePermissions($ids, ['READ']);
     }
 }
