@@ -21,11 +21,12 @@
 
 namespace oat\taoQtiTest\models\creator;
 
+use core_kernel_classes_Class;
+use oat\generis\model\data\permission\PermissionInterface;
 use oat\generis\model\OntologyAwareTrait;
-use oat\generis\model\OntologyRdfs;
 use oat\oatbox\service\ConfigurableService;
+use oat\oatbox\session\SessionService;
 use oat\tao\model\resources\ListResourceLookup;
-use oat\taoItems\model\CategoryService;
 
 /**
  * Look up items and format them as a flat list
@@ -36,15 +37,7 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
 {
     use OntologyAwareTrait;
 
-    const SERVICE_ID = 'taoQtiTest/CreatorItems/list';
-
-    /**
-     * Get the CategoryService
-     */
-    public function getCategoryService()
-    {
-        return $this->getServiceLocator()->get(CategoryService::SERVICE_ID);
-    }
+    public const SERVICE_ID = 'taoQtiTest/CreatorItems/list';
 
     /**
      * Get the ListResourceLookup
@@ -56,22 +49,61 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
 
     /**
      * Retrieve QTI Items for the given parameters.
-     * @param \core_kernel_classes_Class $itemClass the item class
-     * @param array $propertyFilters the lookup format
-     * @param int    $offset for paging
-     * @param int    $limit  for paging
+     *
+     * @param core_kernel_classes_Class $itemClass       the item class
+     * @param array                      $propertyFilters the lookup format
+     * @param int                        $offset          for paging
+     * @param int                        $limit           for paging
+     *
      * @return array the items
+     *
+     * @throws \common_exception_Error
      */
-    public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
-    {
-        $result = $this->getListResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
+    public function getItems(
+        core_kernel_classes_Class $itemClass,
+        array $propertyFilters = [],
+        $offset = 0,
+        $limit = 30
+    ): array {
+        $result = $this->getListResourceLookupService()->getResources(
+            $itemClass,
+            [],
+            $propertyFilters,
+            $offset,
+            $limit
+        );
 
-        array_map(function ($item) {
-            return array_merge($item, [
-                'categories' => $this->getCategoryService()->getItemCategories($this->getResource($item['uri']))
-            ]);
-        }, $result['nodes']);
+        $nodeIds = [];
+        foreach ($result['nodes'] as $node) {
+            if ($node['type'] === 'instance') {
+                $nodeIds[] = $node['uri'];
+            }
+        }
+
+        $permissions = $this->getPermissionProvider()->getPermissions(
+            $this->getSessionService()->getCurrentUser(),
+            $nodeIds
+        );
+
+        foreach ($result['nodes'] as $i => $node) {
+            if (!in_array('READ', $permissions[$node['uri']], true)) {
+                unset($result['nodes'][$i]);
+                $result['total']--;
+            }
+        }
 
         return $result;
+    }
+
+    private function getPermissionProvider(): PermissionInterface
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(PermissionInterface::SERVICE_ID);
+    }
+
+    private function getSessionService(): SessionService
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(SessionService::SERVICE_ID);
     }
 }
