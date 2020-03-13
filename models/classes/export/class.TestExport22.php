@@ -28,7 +28,6 @@
  */
 class taoQtiTest_models_classes_export_TestExport22 extends taoQtiTest_models_classes_export_TestExport
 {
-
     /**
      * @return string
      */
@@ -62,13 +61,8 @@ class taoQtiTest_models_classes_export_TestExport22 extends taoQtiTest_models_cl
      */
     public function getExportForm(core_kernel_classes_Resource $resource)
     {
-        if ($resource instanceof core_kernel_classes_Class) {
-            $formData = ['class' => $resource];
-        } else {
-            $formData = ['instance' => $resource];
-        }
+        $formData = $this->getFormData($resource);
 
-        return (new taoQtiTest_models_classes_export_QtiTest22ExportForm($formData))
-            ->getForm();
+        return (new taoQtiTest_models_classes_export_QtiTest22ExportForm($formData))->getForm();
     }
 }
