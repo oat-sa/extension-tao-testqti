@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:54\n"
+"Project-Id-Version: TAO 3.4.0-sprint124\n"
+"PO-Revision-Date: 2020-03-13T09:40:12\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -382,10 +382,10 @@ msgstr "Включить экран пересмотра элемента/нав
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Завершить тест"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Завершить тест"
 
 msgid "Enter a blueprint"
@@ -406,9 +406,6 @@ msgstr ""
 
 msgid "Expand the review panel"
 msgstr "Развернуть панель пересмотра"
-
-msgid "Export"
-msgstr "Экспорт"
 
 msgid "Export failed for the test \"%s"
 msgstr "Ошибка экспорта для теста «%s"
@@ -590,11 +587,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Контроль за сеансом для элемента"
 
-msgid "Items"
-msgstr "Элементы"
-
 msgid "items"
 msgstr "элементы"
+
+msgid "Items"
+msgstr "Элементы"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Элементы могут дополнительно назначаться одной или нескольким категориям."
@@ -650,10 +647,10 @@ msgstr "Управление тематическими блоками"
 msgid "Manage test properties"
 msgstr "Управление свойствами тестов"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Управление тестами"
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr "Управление тестами"
 
 msgid "Mark for review"
@@ -782,6 +779,9 @@ msgstr "Не все тесты могут экспортироваться"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Не перемешано, позиция остается фиксированной."
 
+msgid "Offline"
+msgstr ""
+
 msgid "OK"
 msgstr "OK"
 
@@ -796,6 +796,9 @@ msgstr "Как только вы закроете этот раздел, вы н
 
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Не удалось импортировать один или несколько зависимых элементов IMS QTI."
+
+msgid "Online"
+msgstr ""
 
 msgid "Only display the items marked for review"
 msgstr "Отображать только элементы, помеченные на пересмотр"
@@ -1091,6 +1094,9 @@ msgstr "техническ."
 msgid "Test"
 msgstr "Тест"
 
+msgid "Test 1"
+msgstr ""
+
 msgid "Test constructor"
 msgstr "Составитель теста"
 
@@ -1115,11 +1121,11 @@ msgstr "Тесты"
 msgid "Text content"
 msgstr "Текстовое содержимое"
 
-msgid "Text To Speech"
-msgstr ""
-
 msgid "Text to Speech"
 msgstr "Текст в речь"
+
+msgid "Text To Speech"
+msgstr ""
 
 msgid "that was being taken."
 msgstr ""

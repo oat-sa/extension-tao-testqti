@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:50\n"
+"Project-Id-Version: TAO 3.4.0-sprint124\n"
+"PO-Revision-Date: 2020-03-13T09:40:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -382,11 +382,11 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End test"
-msgstr ""
-
 msgid "End Test"
 msgstr "Test beenden"
+
+msgid "End test"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -407,9 +407,6 @@ msgstr "Fehler im IMS QTI Test gefunden:\n"
 
 msgid "Expand the review panel"
 msgstr "Vorschau ausklappen"
-
-msgid "Export"
-msgstr "Exportieren"
 
 msgid "Export failed for the test \"%s"
 msgstr "Fehler beim Exportieren in Test: %s"
@@ -591,11 +588,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Element-Sitzungskontrolle"
 
-msgid "Items"
-msgstr "Elemente"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Elemente"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elemente können manuell zu einer oder mehreren Kategorien hinzugefügt werden."
@@ -651,11 +648,11 @@ msgstr "Rubrik-Blöcke verwalten"
 msgid "Manage test properties"
 msgstr "Test-Eigenschaften verwalten"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "Tests verwalten"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr "Zur Bewertung markieren"
@@ -783,6 +780,9 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "Nicht gemischt, die Position bleibt festgelegt."
 
+msgid "Offline"
+msgstr ""
+
 msgid "OK"
 msgstr ""
 
@@ -797,6 +797,9 @@ msgstr ""
 
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Eine oder mehrere abhängige IMS QTI Elemente konnten nicht importiert werden."
+
+msgid "Online"
+msgstr ""
 
 msgid "Only display the items marked for review"
 msgstr "Nur die Elemente anzeigen, die für Bewertung markiert sind"
@@ -1092,6 +1095,9 @@ msgstr ""
 msgid "Test"
 msgstr "Test"
 
+msgid "Test 1"
+msgstr ""
+
 msgid "Test constructor"
 msgstr "Test-Konstruktor"
 
@@ -1116,10 +1122,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:52\n"
+"Project-Id-Version: TAO 3.4.0-sprint124\n"
+"PO-Revision-Date: 2020-03-13T09:40:07\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -382,10 +382,10 @@ msgstr "Activer l'écran / le navigateur de révision de l'item."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Active le saut vers les différents items de cette section. Nécessite l'option d'écran de révision."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finir le test"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finir le test"
 
 msgid "Enter a blueprint"
@@ -407,9 +407,6 @@ msgstr "Erreur détectée dans le test IMS QTI :\n"
 
 msgid "Expand the review panel"
 msgstr "Ouvrir le panneau de révision"
-
-msgid "Export"
-msgstr "Exporter"
 
 msgid "Export failed for the test \"%s"
 msgstr "Échec de l'exportation du test \"%s"
@@ -591,11 +588,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Contrôle de session d'item"
 
-msgid "Items"
-msgstr "Items"
-
 msgid "items"
 msgstr "items"
+
+msgid "Items"
+msgstr "Items"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Les items peuvent éventuellement être affectés à une ou plusieurs catégories."
@@ -651,10 +648,10 @@ msgstr "Gérer les blocs rubriques"
 msgid "Manage test properties"
 msgstr "Gérer les propriétés des tests"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Gérer les tests"
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr "Gérer les tests"
 
 msgid "Mark for review"
@@ -783,6 +780,9 @@ msgstr "Le test n'a pas pu être exporté en entier"
 msgid "Not shuffled, the position remains fixed."
 msgstr "Pas de brassage aléatoire, la position reste fixe."
 
+msgid "Offline"
+msgstr ""
+
 msgid "OK"
 msgstr "OK"
 
@@ -797,6 +797,9 @@ msgstr "Une fois cette section fermée, vous ne pourrez plus y retourner pour mo
 
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Un ou plusieurs items QTI IMS n'ont pas pu être importés."
+
+msgid "Online"
+msgstr ""
 
 msgid "Only display the items marked for review"
 msgstr "Afficher uniquement les items marqués pour révision"
@@ -1092,6 +1095,9 @@ msgstr "technique"
 msgid "Test"
 msgstr "Test"
 
+msgid "Test 1"
+msgstr ""
+
 msgid "Test constructor"
 msgstr "Auteur du test"
 
@@ -1116,11 +1122,11 @@ msgstr "Tests"
 msgid "Text content"
 msgstr "Contenu textuel"
 
-msgid "Text To Speech"
-msgstr ""
-
 msgid "Text to Speech"
 msgstr "Écrit vers Parole"
+
+msgid "Text To Speech"
+msgstr ""
 
 msgid "that was being taken."
 msgstr ""
