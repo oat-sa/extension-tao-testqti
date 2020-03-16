@@ -46,9 +46,9 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
 
     private $dataDir = '';
     private $outputDir;
-    
 
-    public function setUp()
+
+    public function setUp(): void
     {
         parent::initTest();
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();

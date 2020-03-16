@@ -43,7 +43,7 @@ class QtiPackageExportTest extends RestTestRunner
     /** @var ServiceLocatorInterface */
     private $serviceLocatorMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->serviceLocatorMock = $this->getServiceLocatorMock([

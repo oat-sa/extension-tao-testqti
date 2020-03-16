@@ -38,7 +38,7 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -278,14 +278,14 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
             StateStorage::SERVICE_ID => $mockStorage
         ]));
 
-        
+
         $extendedState = new ExtendedState($testSessionId, $userId);
         $extendedState->setServiceLocator($this->getServiceLocatorMock([
             StorageManager::SERVICE_ID => $storageManager
         ]));
 
         $this->assertTrue($extendedState->load());
-        
+
         $this->assertTrue($extendedState->getItemFlag($itemId));
         $this->assertFalse($extendedState->getItemFlag('bar'));
         $this->assertFalse($extendedState->getStoreId());

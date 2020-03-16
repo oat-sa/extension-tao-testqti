@@ -41,7 +41,7 @@ class QtiTimeStorageTest extends GenerisPhpUnitTestRunner
      * @var string
      */
     protected $testSessionId = 'fake_session_id';
-    
+
     /**
      * @var string
      */
@@ -50,7 +50,7 @@ class QtiTimeStorageTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }

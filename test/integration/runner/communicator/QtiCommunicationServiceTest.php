@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\test\integration\runner\communicator;
 
+use common_exception_InconsistentData;
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\communicator\CommunicationChannel as CommunicationChannelInterface;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -69,7 +70,7 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
     /**
      * @param $input
      * @param $expectedException
-     * @throws \common_exception_InconsistentData
+     * @throws common_exception_InconsistentData
      *
      * @dataProvider dataProviderTestProcessInputThrowsException
      */
@@ -147,11 +148,9 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
         );
     }
 
-    /**
-     * @expectedException \common_exception_InconsistentData
-     */
     public function testAttachChannelException()
     {
+        $this->expectException(common_exception_InconsistentData::class);
         $service = new QtiCommunicationService([]);
         $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
@@ -195,11 +194,9 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
         );
     }
 
-    /**
-     * @expectedException \common_exception_InconsistentData
-     */
     public function testDetachChannelException()
     {
+        $this->expectException(common_exception_InconsistentData::class);
         $service = new QtiCommunicationService([]);
         $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
@@ -237,11 +234,11 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
         return [
             'Without message' => [
                 'input' => ['channel' => 'TestChannel'],
-                'expectedException' => \common_exception_InconsistentData::class
+                'expectedException' => common_exception_InconsistentData::class
             ],
             'Without channel' => [
                 'input' => ['message' => 'foo'],
-                'expectedException' => \common_exception_InconsistentData::class
+                'expectedException' => common_exception_InconsistentData::class
             ]
         ];
     }
