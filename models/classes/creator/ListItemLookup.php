@@ -86,7 +86,7 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
         );
 
         foreach ($result['nodes'] as $i => $node) {
-            if (!in_array('READ', $permissions[$node['uri']], true)) {
+            if (isset($permissions[$node['uri']]) && !in_array('READ', $permissions[$node['uri']], true)) {
                 unset($result['nodes'][$i]);
                 $result['total']--;
             }
