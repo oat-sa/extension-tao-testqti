@@ -161,7 +161,7 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
         $eventData = ['foo' => 'bar'];
         $eventId = $extendedState->addEvent($eventName, $eventData);
 
-        $this->assertInternalType('string', $eventId);
+        $this->assertIsString($eventId);
 
         $events = $extendedState->getEvents();
         $this->assertEquals(1, count($events));
