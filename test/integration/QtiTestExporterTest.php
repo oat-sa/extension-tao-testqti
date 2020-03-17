@@ -217,7 +217,7 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
         $this->assertFileExists($file['path']);
         $this->assertStringStartsWith($this->outputDir, $file['path']);
 
-        $this->assertContains('qti_unit_test', $file['path']);
+        $this->assertStringContainsString('qti_unit_test', $file['path']);
         unlink($file['path']);
     }
 

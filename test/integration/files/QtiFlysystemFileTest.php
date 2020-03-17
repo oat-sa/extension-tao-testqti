@@ -79,7 +79,7 @@ class QtiFlysystemFileTest extends GenerisPhpUnitTestRunner
         $this->assertEquals('unittest', $file->getIdentifier());
         $this->assertEquals(BaseType::FILE, $file->getBaseType());
         $this->assertEquals(Cardinality::SINGLE, $file->getCardinality());
-        $this->assertInternalType('resource', $file->getStream());
+        $this->assertIsResource($file->getStream());
     }
 
     /**

@@ -55,9 +55,15 @@ class TreeItemLookupTest extends TestCase
     /** @var TreeItemLookup */
     private $sut;
 
-    /**
-     * @before
-     */
+    public function setUp(): void
+    {
+        $this->initializeTestDoubles();
+        $this->initializeTestDoubleExpectancies();
+        $this->initializeServiceLocator();
+        $this->initializeSut();
+        parent::setUp();
+    }
+
     public function initializeTestDoubles(): void
     {
         $this->rootMock                  = $this->createMock(core_kernel_classes_Class::class);
@@ -66,9 +72,6 @@ class TreeItemLookupTest extends TestCase
         $this->secureResourceServiceMock = $this->createPartialMock(SecureResourceService::class, ['getAllChildren']);
     }
 
-    /**
-     * @before
-     */
     public function initializeTestDoubleExpectancies(): void
     {
         $this->resourceLookupMock
@@ -87,9 +90,6 @@ class TreeItemLookupTest extends TestCase
             ->willReturnCallback([$this, 'getReadableResourceMap']);
     }
 
-    /**
-     * @before
-     */
     public function initializeServiceLocator(): void
     {
         $this->serviceLocatorMock = $this->createMock(ServiceLocatorInterface::class);
@@ -105,9 +105,6 @@ class TreeItemLookupTest extends TestCase
             );
     }
 
-    /**
-     * @before
-     */
     public function initializeSut(): void
     {
         $this->sut = $this->createPartialMock(TreeItemLookup::class, ['getServiceLocator']);
