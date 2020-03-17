@@ -22,6 +22,8 @@ namespace oat\taoQtiTest\test\integration\runner\time;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
+use oat\taoTests\models\runner\time\InconsistentRangeException;
+use oat\taoTests\models\runner\time\InvalidDataException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
 
@@ -33,7 +35,7 @@ use oat\taoTests\models\runner\time\TimePoint;
 class QtiTimeLineTest extends GenerisPhpUnitTestRunner
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -87,7 +89,7 @@ class QtiTimeLineTest extends GenerisPhpUnitTestRunner
         $data = $timeLine->toArray();
         $this->assertEquals($data, json_decode($json, true));
     }
-    
+
     /**
      * @dataProvider linearTestPointsProvider
      * @param TimePoint[] $points
@@ -114,11 +116,9 @@ class QtiTimeLineTest extends GenerisPhpUnitTestRunner
         $this->assertEquals($timeLineUnserialized->getPoints(), $timeLine->getPoints());
     }
 
-    /**
-     * @expectedException \oat\taoTests\models\runner\time\InvalidDataException
-     */
     public function testUnserializeInvalidDataException()
     {
+        $this->expectException(InvalidDataException::class);
         $timeLine = new QtiTimeLine();
         $data = serialize('string');
         $timeLine->unserialize($data);
@@ -356,7 +356,7 @@ class QtiTimeLineTest extends GenerisPhpUnitTestRunner
         $expectedDuration = 11;
         $duration = $timeLine->compute(['test-a', 'item-a'], TimePoint::TARGET_SERVER, 1459519511.2422);
         $this->assertEquals($duration, $expectedDuration);
-        
+
         $expectedDuration = 8;
         $duration = $timeLine->compute(['test-a', 'item-a'], TimePoint::TARGET_CLIENT, 1459519511.2422);
         $this->assertEquals($duration, $expectedDuration);
@@ -364,12 +364,12 @@ class QtiTimeLineTest extends GenerisPhpUnitTestRunner
 
     /**
      * Test the QtiTimeLine::compute()
-     * @expectedException \oat\taoTests\models\runner\time\InconsistentRangeException
      * @dataProvider inconsistentRangeExceptionProvider
      * @param TimePoint[] $points
      */
     public function testInconsistentRangeException($points)
     {
+        $this->expectException(InconsistentRangeException::class);
         $timeLine = new QtiTimeLine($points);
         $timeLine->compute(['test-a', 'item-a']);
     }

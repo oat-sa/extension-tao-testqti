@@ -2,6 +2,7 @@
 
 namespace oat\taoQtiTest\test\models\runner\synchronisation\action;
 
+use common_exception_InconsistentData;
 use oat\generis\test\TestCase;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
@@ -22,7 +23,7 @@ class NextItemDataTest extends TestCase
     /** @var TestSession|MockObject */
     private $testSession;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -39,12 +40,10 @@ class NextItemDataTest extends TestCase
             ->willReturn($this->testSession);
     }
 
-    /**
-     * @expectedException \common_exception_InconsistentData
-     * @expectedExceptionMessage Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, itemDefinition
-     */
     public function testValidationExceptionIfRequestParametersAreMissing()
     {
+        $this->expectException(common_exception_InconsistentData::class);
+        $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, itemDefinition');
         $this->createSubjectWithParameters(['missing parameters'])->process();
     }
 

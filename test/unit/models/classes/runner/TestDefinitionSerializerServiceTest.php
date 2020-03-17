@@ -109,7 +109,7 @@ class TestDefinitionSerializerServiceTest extends TestCase
     /** @var QtiRunnerServiceContext|MockObject */
     private $qtiRunnerServiceContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->testDefinitionSerializerService = new TestDefinitionSerializerService();
 

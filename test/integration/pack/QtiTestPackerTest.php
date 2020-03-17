@@ -33,7 +33,7 @@ use oat\taoQtiTest\models\pack\QtiTestPacker;
 class QtiTestPackerTest extends GenerisPhpUnitTestRunner
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }

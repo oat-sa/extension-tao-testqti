@@ -60,9 +60,15 @@ class ListItemLookupTest extends TestCase
     /** @var ListItemLookup */
     private $sut;
 
-    /**
-     * @before
-     */
+    public function setUp(): void
+    {
+        $this->initializeTestDoubles();
+        $this->initializeTestDoubleExpectancies();
+        $this->initializeServiceLocator();
+        $this->initializeSut();
+        parent::setUp();
+    }
+
     public function initializeTestDoubles(): void
     {
         $this->userMock               = $this->createMock(User::class);
@@ -72,9 +78,6 @@ class ListItemLookupTest extends TestCase
         $this->permissionProviderMock = $this->createMock(PermissionProvider::class);
     }
 
-    /**
-     * @before
-     */
     public function initializeTestDoubleExpectancies(): void
     {
         $this->resourceLookupMock
@@ -88,9 +91,6 @@ class ListItemLookupTest extends TestCase
             ->willReturn($this->userMock);
     }
 
-    /**
-     * @before
-     */
     public function initializeServiceLocator(): void
     {
         $this->serviceLocatorMock = $this->createMock(ServiceLocatorInterface::class);
@@ -106,9 +106,6 @@ class ListItemLookupTest extends TestCase
             );
     }
 
-    /**
-     * @before
-     */
     public function initializeSut(): void
     {
         $this->sut = $this->createPartialMock(ListItemLookup::class, ['getServiceLocator']);

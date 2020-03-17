@@ -37,7 +37,7 @@ class KvToolsStateStorageTest extends ToolsStateStorageTestCase
         return $this->storage;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $persistence = new \common_persistence_AdvKeyValuePersistence([], new \common_persistence_InMemoryAdvKvDriver());
 

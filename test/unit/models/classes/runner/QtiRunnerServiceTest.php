@@ -20,7 +20,7 @@ class QtiRunnerServiceTest extends TestCase
     /** @var \common_ext_ExtensionsManager */
     private $extensionsManagerMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->qtiRunnerService = $this->getMockBuilder(QtiRunnerService::class)
             ->setMethods(['getTestConfig'])
