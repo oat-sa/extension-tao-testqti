@@ -1889,7 +1889,7 @@ class Updater extends \common_ext_ExtensionUpdater
 
         if ($this->isVersion('35.1.1')) {
             $this->getServiceManager()->register(QtiTestUtils::SERVICE_ID, new QtiTestUtils([]));
-            $this->setVersion('35.1.1.1');
+            $this->setVersion('35.1.1');
         }
     }
 }
