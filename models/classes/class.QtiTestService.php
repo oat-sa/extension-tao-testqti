@@ -20,7 +20,7 @@
  */
 
 use oat\tao\model\resources\ResourceAccessDeniedException;
-use oat\tao\model\resources\SecureResourceService;
+use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
@@ -1225,9 +1225,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->metadataImporter;
     }
 
-    private function getSecureResourceService(): SecureResourceService
+    private function getSecureResourceService(): SecureResourceServiceInterface
     {
-        return $this->getServiceLocator()->get(SecureResourceService::SERVICE_ID);
+        return $this->getServiceLocator()->get(SecureResourceServiceInterface::SERVICE_ID);
     }
 
     /**

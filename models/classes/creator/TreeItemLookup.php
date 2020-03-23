@@ -26,7 +26,7 @@ use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\resources\ResourceLookup;
-use oat\tao\model\resources\SecureResourceService;
+use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\resources\TreeResourceLookup;
 use oat\taoItems\model\CategoryService;
 
@@ -119,9 +119,9 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
         return $treeData;
     }
 
-    private function getSecureResourceService(): SecureResourceService
+    private function getSecureResourceService(): SecureResourceServiceInterface
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceLocator()->get(SecureResourceService::SERVICE_ID);
+        return $this->getServiceLocator()->get(SecureResourceServiceInterface::SERVICE_ID);
     }
 }
