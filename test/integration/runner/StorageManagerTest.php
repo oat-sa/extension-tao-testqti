@@ -37,7 +37,7 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -292,7 +292,7 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
-        
+
         $this->assertEquals(true, $storageManager->has($userId, $callId));
         $this->assertEquals($data1, $storageManager->get($userId, $callId));
 
@@ -347,7 +347,7 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
                 'bar' => 'foo bar'
             ]
         ];
-        
+
         $expectedBuffer2 = [
             $userId => [
                 $callId => $data2
@@ -424,7 +424,7 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(true, $storageManager->persist($userId, $callId));
 
         $this->assertEquals($expectedBuffer2, $buffer);
-        
+
         $this->assertEquals(true, $storageManager->persist());
 
         $this->assertEquals($expectedBuffer3, $buffer);
