@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:52\n"
+"Project-Id-Version: TAO 3.4.0-sprint124\n"
+"PO-Revision-Date: 2020-03-13T09:40:08\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: is-IS\n"
@@ -382,11 +382,11 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End test"
-msgstr ""
-
 msgid "End Test"
 msgstr "Ljúka prófi"
+
+msgid "End test"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -406,9 +406,6 @@ msgstr ""
 
 msgid "Expand the review panel"
 msgstr ""
-
-msgid "Export"
-msgstr "Flytja út"
 
 msgid "Export failed for the test \"%s"
 msgstr ""
@@ -590,11 +587,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Stjórn á atriðisaðgerð"
 
-msgid "Items"
-msgstr "Atriði"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Atriði"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Atriði má tengja við einn eða fleiri flokka."
@@ -650,11 +647,11 @@ msgstr "Sýsla fyrirmælablokkir"
 msgid "Manage test properties"
 msgstr "Sýsla með eiginleika prófs"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "Sýsla með próf"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr ""
@@ -782,6 +779,9 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "Ekki stokkað, staðsetning föst."
 
+msgid "Offline"
+msgstr ""
+
 msgid "OK"
 msgstr ""
 
@@ -796,6 +796,9 @@ msgstr ""
 
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Eitt eða fleiri háð IMS QTI atriði var ekki hægt að flytja inn."
+
+msgid "Online"
+msgstr ""
 
 msgid "Only display the items marked for review"
 msgstr ""
@@ -1091,6 +1094,9 @@ msgstr ""
 msgid "Test"
 msgstr "Próf"
 
+msgid "Test 1"
+msgstr ""
+
 msgid "Test constructor"
 msgstr "Prófsmiður"
 
@@ -1115,10 +1121,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."

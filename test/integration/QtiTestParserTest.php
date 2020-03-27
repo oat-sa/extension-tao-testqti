@@ -48,7 +48,7 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
         return dirname(__FILE__) . '/../samples/';
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::initTest();
     }
@@ -61,7 +61,7 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
     {
         $objParser = new taoQtiTest_models_classes_ManifestParser($this->dataDir() . 'imsmanifest_mapping_1.xml');
         $this->assertNotNull($objParser);
-        
+
         return $objParser;
     }
 
@@ -86,10 +86,10 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
     {
         $idResources = $objParser->getResources(null, taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_IDENTIFIER);
         $this->assertEquals(4, count($idResources));
-        
+
         $typeResources = $objParser->getResources('imsqti_test_xmlv2p1', taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
         $this->assertEquals(1, count($typeResources));
-        
+
         $typeResourcesDefault = $objParser->getResources('imsqti_test_xmlv2p1');
         $this->assertEquals(1, count($typeResourcesDefault));
     }
@@ -102,20 +102,20 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
     public function testQtiTestCreateCompiler()
     {
         $content = new core_kernel_classes_Resource($this->dataDir() . 'qtitest.xml');
-        
+
         $storage = tao_models_classes_service_FileStorage::singleton();
-        
+
         $this->assertIsA($content, core_kernel_classes_Resource::class);
         $this->assertIsA($storage, tao_models_classes_service_FileStorage::class);
-        
+
         $compiler = new taoQtiTest_models_classes_QtiTestCompiler($content, $storage);
         $this->assertIsA($compiler, taoQtiTest_models_classes_QtiTestCompiler::class);
-        
+
         return $compiler;
     }
 
-    
-    
+
+
     /**
      * @depends testQtiTestCreateCompiler
      *
