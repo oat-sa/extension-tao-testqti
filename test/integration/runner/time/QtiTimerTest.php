@@ -25,6 +25,10 @@ use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\TimerStrategyService;
+use oat\taoTests\models\runner\time\InconsistentCriteriaException;
+use oat\taoTests\models\runner\time\InconsistentRangeException;
+use oat\taoTests\models\runner\time\InvalidDataException;
+use oat\taoTests\models\runner\time\InvalidStorageException;
 use oat\taoTests\models\runner\time\TimePoint;
 use oat\taoTests\models\runner\time\Timer;
 use oat\taoTests\models\runner\time\TimeStorage;
@@ -42,7 +46,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -101,19 +105,17 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
      * @dataProvider startInvalidDataExceptionProvider
      * @param $routeItem
      * @param $timestamp
-     * @expectedException \oat\taoTests\models\runner\time\InvalidDataException
      */
     public function testStartInvalidDataException($routeItem, $timestamp)
     {
+        $this->expectException(InvalidDataException::class);
         $timer = new QtiTimer();
         $timer->start($routeItem, $timestamp);
     }
 
-    /**
-     * @expectedException \oat\taoTests\models\runner\time\InconsistentRangeException
-     */
     public function testStartInconsistentRangeException()
     {
+        $this->expectException(InconsistentRangeException::class);
         $timer = new QtiTimer();
         $tags = [
             'test_fake_id',
@@ -156,7 +158,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
         $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
     }
-    
+
     /**
      * Test the QtiTimer::end()
      */
@@ -178,7 +180,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $timer->start($tags, 1459335000.0000);
         $timer->end($tags, 1459335010.0000);
         $timer->end($tags, 1459335011.0000);
-        
+
         $timePoints = $timeLine->getPoints();
 
         $this->assertEquals(2, count($timePoints));
@@ -191,10 +193,10 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
      * @dataProvider endInvalidDataExceptionProvider
      * @param $tags
      * @param $timestamp
-     * @expectedException \oat\taoTests\models\runner\time\InvalidDataException
      */
     public function testEndInvalidDataException($tags, $timestamp)
     {
+        $this->expectException(InvalidDataException::class);
         $timer = new QtiTimer();
         $timer->end($tags, $timestamp);
     }
@@ -362,10 +364,10 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
      * @dataProvider adjustInvalidDataExceptionProvider
      * @param $tags
      * @param $timestamp
-     * @expectedException \oat\taoTests\models\runner\time\InvalidDataException
      */
     public function testAdjustInvalidDataException($tags, $timestamp)
     {
+        $this->expectException(InvalidDataException::class);
         $timer = new QtiTimer();
         $timer->adjust($tags, $timestamp);
     }
@@ -393,11 +395,9 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(10, $timer->compute([], TimePoint::TARGET_CLIENT));
     }
 
-    /**
-     * @expectedException \oat\taoTests\models\runner\time\InconsistentCriteriaException
-     */
     public function testComputeInconsistentCriteriaException()
     {
+        $this->expectException(InconsistentCriteriaException::class);
         $timer = new QtiTimer();
         $timer->compute([], TimePoint::TARGET_ALL);
     }
@@ -450,7 +450,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
     {
         $dataStorage = null;
         $storage = $this->getTimeStorage($dataStorage);
-        
+
         $timer = new QtiTimer();
         $this->assertEquals(null, $timer->getStorage());
         $timer->setStorage($storage);
@@ -497,11 +497,9 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
     }
 
-    /**
-     * @expectedException \oat\taoTests\models\runner\time\InvalidStorageException
-     */
     public function testSaveInvalidStorageException()
     {
+        $this->expectException(InvalidStorageException::class);
         $timer = new QtiTimer();
         $timer->save();
     }
@@ -557,20 +555,16 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
     }
 
-    /**
-     * @expectedException \oat\taoTests\models\runner\time\InvalidStorageException
-     */
     public function testLoadInvalidStorageException()
     {
+        $this->expectException(InvalidStorageException::class);
         $timer = new QtiTimer();
         $timer->load();
     }
 
-    /**
-     * @expectedException \oat\taoTests\models\runner\time\InvalidDataException
-     */
     public function testLoadInvalidDataException()
     {
+        $this->expectException(InvalidDataException::class);
         $timer = new QtiTimer();
         $dataStorage = serialize([
             QtiTimer::STORAGE_KEY_TIME_LINE => new \stdClass()
@@ -587,7 +581,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
     {
         $timer = new QtiTimer();
         $this->assertEquals(0, $timer->getExtraTime());
-        
+
         $extraTime1 = 17;
         $timer->setExtraTime($extraTime1);
         $this->assertEquals($extraTime1, $timer->getExtraTime());
@@ -596,7 +590,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $timer->setExtraTime($extraTime2);
         $this->assertEquals($extraTime2, $timer->getExtraTime());
     }
-    
+
     //DATA PROVIDERS
     /**
      * @return array

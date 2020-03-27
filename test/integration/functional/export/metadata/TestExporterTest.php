@@ -66,9 +66,26 @@ class TestExporterTest extends GenerisPhpUnitTestRunner
 
         \taoTests_models_classes_TestsService::singleton()->deleteClass($class);
 
-        $this->assertEquals(file_get_contents($expectedMeta), file_get_contents($file));
+        $this->assertEquals(
+            $this->normalizeLineEndings(file_get_contents($expectedMeta)),
+            $this->normalizeLineEndings(file_get_contents($file))
+        );
     }
-    
+
+    /**
+     * Convert all line-endings to UNIX format
+     * @param $s
+     * @return mixed
+     */
+    private function normalizeLineEndings($s)
+    {
+        $s = str_replace("\r\n", "\n", $s);
+        $s = str_replace("\r", "\n", $s);
+        // Don't allow out-of-control blank lines
+        $s = preg_replace("/\n{2,}/", "\n\n", $s);
+        return $s;
+    }
+
     public function metaProvider()
     {
         return [

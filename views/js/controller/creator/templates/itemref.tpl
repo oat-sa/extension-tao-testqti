@@ -1,5 +1,5 @@
 <li id='{{identifier}}' data-uri='{{href}}' class='itemref'>
-    <span class='title truncate'>{{{dompurify label}}}
+    <span class='title truncate'>{{{dompurify label}}}</span>
     <div class="actions">
         <div class="tlb">
             <div class="tlb-top">

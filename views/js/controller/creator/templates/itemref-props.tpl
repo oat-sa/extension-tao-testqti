@@ -1,6 +1,6 @@
 <div id="itemref-props-{{identifier}}" class="itemref-props props clearfix">
 
-    <h3>{{label}}</h3>
+    <h3>{{{dompurify label}}}</h3>
 
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/identifier -->
     <div class="grid-row">

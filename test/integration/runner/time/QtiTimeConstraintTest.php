@@ -42,7 +42,7 @@ class QtiTimeConstraintTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
         $this->labelFormatter = ServiceManager::getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);

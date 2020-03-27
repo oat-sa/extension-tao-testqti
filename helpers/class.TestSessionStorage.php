@@ -181,7 +181,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
      */
     protected function lockSession(AssessmentTestSession $session)
     {
-        $lock = $this->createLock('AssessmentTestSession_' . $session->getSessionId());
+        $lock = $this->createLock('AssessmentTestSession_' . $session->getSessionId(), 30);
         $lock->acquire(true);
         $session->setLock($lock);
     }
