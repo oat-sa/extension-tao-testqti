@@ -52,9 +52,9 @@ return [
     'requires'    => [
         'taoQtiItem' => '>=20.0.2',
         'taoTests'   => '>=13.2.0',
-        'tao'        => '>=41.6.0',
+        'tao'        => '>=41.10.0',
         'generis'    => '>=12.15.0',
-        'taoDelivery' => '>=13.3.0',
+        'taoDelivery' => '>=14.10.0',
         'taoItems'   => '>=6.0.0',
     ],
     'models' => [
