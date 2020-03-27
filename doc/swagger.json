@@ -17,6 +17,10 @@
         {
             "name": "test",
             "description": "Operations about tests"
+        },
+        {
+            "name": "export",
+            "description": "Operations about test export"
         }
     ],
     "paths": {
@@ -35,6 +39,7 @@
                             "type": "object",
                             "required": [
                                 "success",
+                                "version",
                                 "data"
                             ],
                             "properties": {
