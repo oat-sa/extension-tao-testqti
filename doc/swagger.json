@@ -10,7 +10,9 @@
         "http"
     ],
     "produces": [
-        "application/json"
+        "application/json",
+        "application/xml",
+        "text/xml"
     ],
     "basePath": "/",
     "tags": [
