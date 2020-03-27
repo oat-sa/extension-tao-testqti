@@ -21,3 +21,9 @@ Here is a list of known category options:
 | `x-tao-option-nextSection` | Enable the next section button |
 | `x-tao-option-nextSectionWarning` | Enable the next section button, display a confirm message |
 | `x-tao-proctored-auto-pause` | Enable autopause before entering the next section |
+
+
+REST API
+========
+
+[QTI Test REST API](https://openapi.taotesting.com/viewer/?url=https://raw.githubusercontent.com/oat-sa/extension-tao-testqti/master/doc/swagger.json)
