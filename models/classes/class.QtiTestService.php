@@ -586,7 +586,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             [],
                                             [],
                                             [],
-                                            [],
                                             $createdClasses,
                                             $this->useMetadataGuardians,
                                             $this->useMetadataValidators,
