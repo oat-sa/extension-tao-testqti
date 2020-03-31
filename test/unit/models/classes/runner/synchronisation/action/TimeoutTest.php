@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\synchronisation\action;
 
+use common_exception_InconsistentData;
 use Exception;
 use oat\generis\test\TestCase;
 use oat\oatbox\event\EventManager;
@@ -46,7 +47,7 @@ class TimeoutTest extends TestCase
     /** @var EventManager|MockObject */
     private $eventManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -72,12 +73,10 @@ class TimeoutTest extends TestCase
             ->willReturn($itemRef);
     }
 
-    /**
-     * @expectedException \common_exception_InconsistentData
-     * @expectedExceptionMessage Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, scope
-     */
     public function testValidationExceptionIfRequestParametersAreMissing()
     {
+        $this->expectException(common_exception_InconsistentData::class);
+        $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, scope');
         $this->createSubjectWithParameters(['missing parameters'])->process();
     }
 

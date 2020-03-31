@@ -43,7 +43,7 @@ class QtiPackageExportTest extends RestTestRunner
     /** @var ServiceLocatorInterface */
     private $serviceLocatorMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->serviceLocatorMock = $this->getServiceLocatorMock([
@@ -108,7 +108,7 @@ class QtiPackageExportTest extends RestTestRunner
     public function testExportQtiPackage()
     {
         //create test resource based on qti package zip
-        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/multiple_items_with_ms.zip';
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
         //create temporary subclass
         $class = TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter', true));
         //Importing test form zip file into temporary subclass
@@ -157,7 +157,7 @@ class QtiPackageExportTest extends RestTestRunner
 
         //Assert zip content
         $this->assertFileExists($manifestFile);
-        $this->assertCount(15, $itemsInExtractedPath);
+        $this->assertCount(3, $itemsInExtractedPath);
 
         //Clean up
         $class->delete(true);

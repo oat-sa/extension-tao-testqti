@@ -27,6 +27,7 @@ use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\models\creator\CreatorItems;
+use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
@@ -1958,6 +1959,32 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('35.6.0');
         }
 
-        $this->skip('35.6.0', '35.10.0');
+        $this->skip('35.6.0', '35.10.2.1');
+
+        if ($this->isBetween('35.10.2', '35.10.2.1')) {
+            $this->getServiceManager()->register(QtiTestUtils::SERVICE_ID, new QtiTestUtils([]));
+            $this->setVersion('35.11.0');
+        }
+
+        $this->skip('35.11.0', '35.13.3');
+
+        if ($this->isVersion('35.13.3')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/content/accessibility/keyNavigation');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'keyNavigation',
+                'name' => 'Keyboard Navigation',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Provide a way to navigate within the test runner with the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('36.0.0');
+        }
+
+        $this->skip('36.0.0', '36.6.3');
     }
 }

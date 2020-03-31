@@ -46,9 +46,9 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
 
     private $dataDir = '';
     private $outputDir;
-    
 
-    public function setUp()
+
+    public function setUp(): void
     {
         parent::initTest();
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();
@@ -217,7 +217,7 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
         $this->assertFileExists($file['path']);
         $this->assertStringStartsWith($this->outputDir, $file['path']);
 
-        $this->assertContains('qti_unit_test', $file['path']);
+        $this->assertStringContainsString('qti_unit_test', $file['path']);
         unlink($file['path']);
     }
 

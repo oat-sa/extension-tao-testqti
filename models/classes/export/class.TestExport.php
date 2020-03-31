@@ -24,6 +24,8 @@ use common_report_Report as Report;
 use oat\oatbox\event\EventManagerAwareTrait;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
+use oat\oatbox\service\ServiceManager;
+use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\taoQtiTest\models\event\QtiTestExportEvent;
 
 /**
@@ -48,18 +50,14 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
 
     /**
      * @param core_kernel_classes_Resource $resource
+     *
      * @return tao_helpers_form_Form
      */
     public function getExportForm(core_kernel_classes_Resource $resource)
     {
-        if ($resource instanceof core_kernel_classes_Class) {
-            $formData = ['class' => $resource];
-        } else {
-            $formData = ['instance' => $resource];
-        }
+        $formData = $this->getFormData($resource);
 
-        return (new taoQtiTest_models_classes_export_QtiTest21ExportForm($formData))
-            ->getForm();
+        return (new taoQtiTest_models_classes_export_QtiTest21ExportForm($formData))->getForm();
     }
 
     /**
@@ -129,6 +127,20 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
         return $report;
     }
 
+    protected function getFormData(core_kernel_classes_Resource $resource): array
+    {
+        $formData = [];
+
+        if ($resource instanceof core_kernel_classes_Class) {
+            $formData['items'] = $this->getResourceService()->getAllChildren($resource);
+            $formData['file_name'] = $resource->getLabel();
+        } else {
+            $formData['instance'] = $resource;
+        }
+
+        return $formData;
+    }
+
     protected function createExporter(core_kernel_classes_Resource $testResource, ZipArchive $zip, DOMDocument $manifest)
     {
         return new taoQtiTest_models_classes_export_QtiTestExporter($testResource, $zip, $manifest);
@@ -137,5 +149,15 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
     protected function createManifest()
     {
         return taoQtiTest_helpers_Utils::emptyImsManifest('2.1');
+    }
+
+    protected function getResourceService(): SecureResourceServiceInterface
+    {
+        return $this->getServiceManager()->get(SecureResourceServiceInterface::SERVICE_ID);
+    }
+
+    protected function getServiceManager()
+    {
+        return ServiceManager::getServiceManager();
     }
 }
