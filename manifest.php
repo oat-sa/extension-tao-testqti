@@ -50,7 +50,7 @@ return [
     'version'     => '36.7.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => [
-        'taoQtiItem' => '>=20.0.2',
+        'taoQtiItem' => '>=23.9.2',
         'taoTests'   => '>=13.2.0',
         'tao'        => '>=41.6.0',
         'generis'    => '>=12.15.0',
