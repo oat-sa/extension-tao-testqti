@@ -546,6 +546,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
 
                 if (count($dependencies['items']) > 0) {
+                    // Stores shared files across multiple items to avoid duplicates.
+                    $sharedFiles = [];
+
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
                         if ($qtiDependency !== false) {
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
@@ -577,6 +580,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $folder,
                                             $qtiDependency,
                                             $targetClass,
+                                            $sharedFiles,
                                             $dependencies['dependencies'],
                                             $metadataValues,
                                             [],
