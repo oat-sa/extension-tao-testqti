@@ -35,6 +35,12 @@ use oat\tao\model\theme\Theme;
 <div id="feedback-box"></div>
 <div class="section-container">
     <div class="plain action-bar content-action-bar horizontal-action-bar top-action-bar">
+        <div class="jump-links-box">
+            <a class="jump-link" href="#jump-link-question"><?php echo __("Jump to:"); ?> <b><?php echo __("Question"); ?></b></a>
+            <a class="jump-link" href="#jump-link-navigation"><?php echo __("Jump to:"); ?> <b><?php echo __("Navigation"); ?></b></a>
+            <a class="jump-link" href="#jump-link-toolbox"><?php echo __("Jump to:"); ?> <b><?php echo __("Toolbox"); ?></b></a>
+            <a class="jump-link" href="#jump-link-teststatus"><?php echo __("Jump to:"); ?> <b><?php echo __("Test Status and Structure"); ?></b></a>
+        </div>
         <div class="control-box size-wrapper">
             <div class="title-box truncate">
                 <span data-control="qti-test-title" class="qti-controls"></span>
