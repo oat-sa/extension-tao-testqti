@@ -119,7 +119,16 @@ class QtiTestUtils extends ConfigurableService
      */
     public function emptyImsManifest($version = '2.1')
     {
-        $manifestFileName = ($version === '2.1') ? 'imsmanifest' : 'imsmanifestQti22';
+        switch($version) {
+            case '2.1':
+                $manifestFileName = 'imsmanifest';
+                break;
+            case '3.0':
+                $manifestFileName = 'imsmanifestQti30';
+                break;
+            default:
+                $manifestFileName = 'imsmanifestQti22';
+        }
         $templateRenderer = new \taoItems_models_classes_TemplateRenderer(ROOT_PATH . 'taoQtiItem/model/qti/templates/' . $manifestFileName . '.tpl.php', [
             'qtiItems' => [],
             'manifestIdentifier' => 'QTI-TEST-MANIFEST-' . \tao_helpers_Display::textCleaner(uniqid('tao', true), '-')
