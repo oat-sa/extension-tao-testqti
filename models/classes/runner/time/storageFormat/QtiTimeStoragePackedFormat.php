@@ -21,6 +21,7 @@
 
 namespace oat\taoQtiTest\models\runner\time\storageFormat;
 
+use oat\taoQtiTest\models\runner\time\AdjustmentMap;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
@@ -273,8 +274,11 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
                 }
 
                 foreach ($decodedData as $key => &$value) {
-                    if (is_array($value)) {
+                    if ($key === self::STORAGE_KEY_TIME_LINE) {
                         $decodedData[$key] = $this->unpackTimeLine($value);
+                    }
+                    if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP) {
+                        $decodedData[$key] = $this->decodeAdjustmentMap($value);
                     }
                 }
 
@@ -282,15 +286,30 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
                 unset($decodedData[self::STORAGE_KEY_VERSION]);
             } else {
                 foreach ($decodedData as $key => &$value) {
-                    if (is_array($value)) {
+                    if ($key === self::STORAGE_KEY_TIME_LINE) {
                         $timeLine = new QtiTimeLine();
                         $timeLine->fromArray($value);
                         $decodedData[$key] = $timeLine;
+                    }
+                    if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP) {
+                        $decodedData[$key] = $this->decodeAdjustmentMap($value);
                     }
                 }
             }
         }
 
         return $decodedData;
+    }
+
+    /**
+     * @param $value
+     * @return AdjustmentMap
+     */
+    private function decodeAdjustmentMap($value)
+    {
+        $map = new AdjustmentMap();
+        $map->fromArray($value);
+
+        return $map;
     }
 }

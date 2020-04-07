@@ -21,6 +21,7 @@
 
 namespace oat\taoQtiTest\models\runner\time\storageFormat;
 
+use oat\taoQtiTest\models\runner\time\AdjustmentMap;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorageFormat;
 
@@ -60,10 +61,15 @@ class QtiTimeStorageJsonFormat implements QtiTimeStorageFormat
 
         if (is_array($decodedData)) {
             foreach ($decodedData as $key => &$value) {
-                if (is_array($value)) {
+                if ($key === self::STORAGE_KEY_TIME_LINE) {
                     $timeLine = new QtiTimeLine();
                     $timeLine->fromArray($value);
                     $decodedData[$key] = $timeLine;
+                }
+                if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP) {
+                    $map = new AdjustmentMap();
+                    $map->fromArray($value);
+                    $decodedData[$key] = $map;
                 }
             }
         }
