@@ -24,6 +24,7 @@ use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\runner\time\QtiTimeStorageFormat;
 use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
@@ -567,7 +568,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->expectException(InvalidDataException::class);
         $timer = new QtiTimer();
         $dataStorage = serialize([
-            QtiTimer::STORAGE_KEY_TIME_LINE => new \stdClass()
+            QtiTimeStorageFormat::STORAGE_KEY_TIME_LINE => new \stdClass()
         ]);
         $storage = $this->getTimeStorage($dataStorage);
         $timer->setStorage($storage);
