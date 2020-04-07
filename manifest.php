@@ -47,11 +47,11 @@ return [
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '36.7.2',
+    'version'     => '36.8.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => [
         'taoQtiItem' => '>=23.9.2',
-        'taoTests'   => '>=13.2.0',
+        'taoTests'   => '>=13.7.0',
         'tao'        => '>=41.6.0',
         'generis'    => '>=12.15.0',
         'taoDelivery' => '>=13.3.0',
@@ -87,7 +87,8 @@ return [
             SetUpQueueTasks::class,
             SetLinearNextItemWarningConfig::class,
             RegisterFrontendPaths::class,
-            RegisterTimerStrategyService::class
+            RegisterTimerStrategyService::class,
+            RegisterTimerAdjustmentService::class
         ]
     ],
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
