@@ -777,14 +777,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
-            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+
+            $serviceContext = $this->getServiceContext();
+
+            $timerTarget = $this->getRunnerService()->getTestConfig()->getConfigValue('timer.target');
+            if ($timerTarget === 'client' && !$this->getRunnerService()->isTerminated($serviceContext)) {
+                $this->endItemTimer();
+            }
+
+            $serviceContext = $this->getRunnerService()->initServiceContext($serviceContext);
 
             $response = [
                 'success' => $this->getRunnerService()->pause($serviceContext),
             ];
-
-            $this->getRunnerService()->persist($serviceContext);
-
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
