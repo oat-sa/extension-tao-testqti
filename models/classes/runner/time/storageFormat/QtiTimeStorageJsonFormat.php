@@ -61,12 +61,12 @@ class QtiTimeStorageJsonFormat implements QtiTimeStorageFormat
 
         if (is_array($decodedData)) {
             foreach ($decodedData as $key => &$value) {
-                if ($key === self::STORAGE_KEY_TIME_LINE) {
+                if ($key === self::STORAGE_KEY_TIME_LINE && !$value instanceof QtiTimeLine) {
                     $timeLine = new QtiTimeLine();
                     $timeLine->fromArray($value);
                     $decodedData[$key] = $timeLine;
                 }
-                if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP) {
+                if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP && !$value instanceof AdjustmentMap) {
                     $map = new AdjustmentMap();
                     $map->fromArray($value);
                     $decodedData[$key] = $map;

@@ -286,12 +286,12 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
                 unset($decodedData[self::STORAGE_KEY_VERSION]);
             } else {
                 foreach ($decodedData as $key => &$value) {
-                    if ($key === self::STORAGE_KEY_TIME_LINE) {
+                    if ($key === self::STORAGE_KEY_TIME_LINE && !$value instanceof QtiTimeLine) {
                         $timeLine = new QtiTimeLine();
                         $timeLine->fromArray($value);
                         $decodedData[$key] = $timeLine;
                     }
-                    if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP) {
+                    if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP && !$value instanceof AdjustmentMap) {
                         $decodedData[$key] = $this->decodeAdjustmentMap($value);
                     }
                 }

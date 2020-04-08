@@ -24,7 +24,6 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
-use oat\taoQtiTest\models\runner\time\AdjustmentMap;
 use oat\taoTests\models\runner\time\ExtraTime;
 use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
