@@ -1959,9 +1959,9 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('35.6.0');
         }
 
-        $this->skip('35.6.0', '35.10.2.1');
+        $this->skip('35.6.0', '35.10.2.2');
 
-        if ($this->isBetween('35.10.2', '35.10.2.1')) {
+        if ($this->isBetween('35.10.2', '35.10.2.2')) {
             $this->getServiceManager()->register(QtiTestUtils::SERVICE_ID, new QtiTestUtils([]));
             $this->setVersion('35.11.0');
         }
@@ -1985,6 +1985,6 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('36.0.0');
         }
 
-        $this->skip('36.0.0', '36.8.1');
+        $this->skip('36.0.0', '36.8.2');
     }
 }
