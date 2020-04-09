@@ -769,6 +769,23 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
+     * @param QtiRunnerServiceContext $serviceContext
+     * @return bool
+     * @throws common_ext_ExtensionException
+     */
+    private function shouldTimerStopOnPause($serviceContext)
+    {
+        $isTerminated = $this->getRunnerService()->isTerminated($serviceContext);
+        if (!$isTerminated) {
+            $timerTarget = $this->getRunnerService()->getTestConfig()->getConfigValue('timer.target');
+            if ($timerTarget === 'client') {
+                return  true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sets the test in paused state
      */
     public function pause()
@@ -780,8 +797,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $serviceContext = $this->getServiceContext();
 
-            $timerTarget = $this->getRunnerService()->getTestConfig()->getConfigValue('timer.target');
-            if ($timerTarget === 'client' && !$this->getRunnerService()->isTerminated($serviceContext)) {
+            if ($this->shouldTimerStopOnPause($serviceContext)) {
                 $this->endItemTimer();
             }
 
