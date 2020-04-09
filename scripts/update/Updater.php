@@ -1986,5 +1986,15 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('36.0.0', '36.8.0');
+
+        if ($this->isVersion('36.8.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['dialog']['alert']['focus'] = 'navigable-modal-body';
+            $config['plugins']['dialog']['confirm']['focus'] = 'navigable-modal-body';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('36.8.1');
+        }
     }
 }
