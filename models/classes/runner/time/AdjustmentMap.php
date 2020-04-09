@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,10 +29,10 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, \JsonSerializable, A
     /**
      * @inheritDoc
      */
-    public function put($sourceId, $action, $seconds)
+    public function put(string $sourceId, string $action, int $seconds): TimerAdjustmentMapInterface
     {
         if (empty($sourceId) || !$this->isValidAction($action) || !$seconds) {
-            return false;
+            throw new \InvalidArgumentException('Provided arguments should not be empty.');
         }
         $this->ensureEntryInitialized($sourceId);
         $this->map[$sourceId][$action] += $seconds;
@@ -43,7 +43,7 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, \JsonSerializable, A
     /**
      * @inheritDoc
      */
-    public function get($sourceId)
+    public function get(string $sourceId): int
     {
         if (!isset($this->map[$sourceId])) {
             return 0;
@@ -55,7 +55,7 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, \JsonSerializable, A
     /**
      * @inheritDoc
      */
-    public function clear()
+    public function clear(): TimerAdjustmentMapInterface
     {
         $this->map = [];
 
@@ -65,7 +65,7 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, \JsonSerializable, A
     /**
      * @inheritDoc
      */
-    public function remove($sourceId)
+    public function remove(string $sourceId): TimerAdjustmentMapInterface
     {
         unset($this->map[$sourceId]);
 
@@ -90,12 +90,12 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, \JsonSerializable, A
         }
     }
 
-    private function isValidAction($action)
+    private function isValidAction(string $action): bool
     {
         return in_array($action, [self::ACTION_INCREASE, self::ACTION_DECREASE], true);
     }
 
-    private function ensureEntryInitialized($sourceId)
+    private function ensureEntryInitialized(string $sourceId)
     {
         if (!isset($this->map[$sourceId][self::ACTION_INCREASE])) {
             $this->map[$sourceId][self::ACTION_INCREASE] = 0;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,92 +28,104 @@ use qtism\data\QtiIdentifiable;
 
 class TimerAdjustmentService extends ConfigurableService implements TimerAdjustmentServiceInterface
 {
-    /** @var QtiTimer $timer */
-    private $timer;
+    /** @var DeliveryExecutionInterface */
+    private $deliveryExecution;
 
     /**
      * @inheritDoc
      */
-    public function increase($deliveryExecution, $seconds, $source = null)
-    {
-        $this->timer = $this->getTestSessionService()->getTestSession($deliveryExecution)->getTimer();
+    public function increase(
+        DeliveryExecutionInterface $deliveryExecution,
+        int $seconds,
+        QtiIdentifiable $source = null
+    ): bool {
+        $this->deliveryExecution = $deliveryExecution;
 
-        return $this->register($deliveryExecution, AdjustmentMap::ACTION_INCREASE, $seconds);
+        return $this->register(AdjustmentMap::ACTION_INCREASE, $seconds, $source);
     }
 
     /**
      * @inheritDoc
      */
-    public function decrease($deliveryExecution, $seconds, $source = null)
-    {
-        $this->timer = $this->getTestSessionService()->getTestSession($deliveryExecution)->getTimer();
+    public function decrease(
+        DeliveryExecutionInterface $deliveryExecution,
+        int $seconds,
+        QtiIdentifiable $source = null
+    ): bool {
+        $this->deliveryExecution = $deliveryExecution;
 
-        $maxSeconds = $this->findMaximumPossibleDecrease($deliveryExecution);
-        if ($maxSeconds < $seconds) {
-            $seconds = $maxSeconds;
+        $seconds = $this->findMaximumPossibleDecrease($seconds);
+        if ($seconds === 0) {
+            return false;
         }
 
-        return $this->register($deliveryExecution, AdjustmentMap::ACTION_DECREASE, $seconds);
+        return $this->register(AdjustmentMap::ACTION_DECREASE, $seconds, $source);
     }
 
     /**
-     * @param DeliveryExecutionInterface $deliveryExecution
      * @param string $action
-     * @param integer $seconds
+     * @param int $seconds
+     * @param QtiIdentifiable $source
      * @return bool
      */
-    private function register($deliveryExecution, $action, $seconds)
+    private function register(string $action, int $seconds, QtiIdentifiable $source = null): bool
     {
-        $testSession = $this->getTestSessionService()->getTestSession($deliveryExecution);
-        $this->putAdjustmentToTheMap($testSession->getCurrentAssessmentItemRef(), $action, $seconds);
-        $this->putAdjustmentToTheMap($testSession->getCurrentAssessmentSection(), $action, $seconds);
-        $this->putAdjustmentToTheMap($testSession->getCurrentTestPart(), $action, $seconds);
-        $this->putAdjustmentToTheMap($testSession->getAssessmentTest(), $action, $seconds);
-        $this->timer->save();
-
+        if ($source) {
+            $this->putAdjustmentToTheMap($source, $action, $seconds);
+        } else {
+            $testSession = $this->getTestSessionService()->getTestSession($this->deliveryExecution);
+            $this->putAdjustmentToTheMap($testSession->getCurrentAssessmentItemRef(), $action, $seconds);
+            $this->putAdjustmentToTheMap($testSession->getCurrentAssessmentSection(), $action, $seconds);
+            $this->putAdjustmentToTheMap($testSession->getCurrentTestPart(), $action, $seconds);
+            $this->putAdjustmentToTheMap($testSession->getAssessmentTest(), $action, $seconds);
+        }
+        $this->getTimer()->save();
         $this->getServiceLocator()->get(StorageManager::SERVICE_ID)->persist();
-
-        \common_Logger::i(var_export($this->timer->getAdjustmentMap()->toArray(), true));
 
         return true;
     }
 
-    private function findMaximumPossibleDecrease(DeliveryExecutionInterface $deliveryExecution)
+    private function findMaximumPossibleDecrease(int $requestedSeconds): int
     {
-        $testSession = $this->getTestSessionService()->getTestSession($deliveryExecution);
-        if ($testSession == null) {
+        $testSession = $this->getTestSessionService()->getTestSession($this->deliveryExecution);
+        if ($testSession === null) {
             return 0;
         }
 
         $minRemaining = PHP_INT_MAX;
-        $timeConstraints = $testSession->getTimeConstraints();
-        foreach ($timeConstraints as $tc) {
+        foreach ($testSession->getTimeConstraints() as $tc) {
             $maximumRemainingTime = $tc->getMaximumRemainingTime();
             if ($maximumRemainingTime === false) {
                 continue;
             }
-            $currentTimeConstraintAdjustment = $this->timer->getAdjustmentMap()->get($tc->getSource()->getIdentifier());
-            $maximumRemainingTime = $maximumRemainingTime->getSeconds(true) + $currentTimeConstraintAdjustment;
+            $currentAdjustment = $this->getTimer()->getAdjustmentMap()->get($tc->getSource()->getIdentifier());
+            $maximumRemainingTime = $maximumRemainingTime->getSeconds(true) + $currentAdjustment;
             $minRemaining = min($minRemaining, $maximumRemainingTime);
         }
 
-        return $minRemaining;
-    }
-
-    private function putAdjustmentToTheMap(QtiIdentifiable $element, $action, $seconds)
-    {
-        if (empty($element) || !$element->getTimeLimits() || !$element->getTimeLimits()->hasMaxTime()) {
-            return false;
+        if ($minRemaining < $requestedSeconds) {
+            return $minRemaining;
         }
 
-        $this->timer->getAdjustmentMap()->put($element->getIdentifier(), $action, $seconds);
+        return $requestedSeconds;
     }
 
-    /**
-     * @return TestSessionService
-     */
-    private function getTestSessionService()
+    private function putAdjustmentToTheMap(QtiIdentifiable $element, string $action, int $seconds)
+    {
+        if ($element === null || !$element->getTimeLimits() || !$element->getTimeLimits()->hasMaxTime()) {
+            return;
+        }
+
+        $this->getTimer()->getAdjustmentMap()->put($element->getIdentifier(), $action, $seconds);
+    }
+
+    private function getTestSessionService(): TestSessionService
     {
         return $this->getServiceLocator()->get(TestSessionService::SERVICE_ID);
+    }
+
+    private function getTimer(): QtiTimer
+    {
+        return $this->getTestSessionService()->getTestSession($this->deliveryExecution)->getTimer();
     }
 }
