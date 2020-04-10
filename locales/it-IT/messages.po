@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint124\n"
-"PO-Revision-Date: 2020-03-13T09:40:09\n"
+"Project-Id-Version: TAO 3.4.0-sprint126\n"
+"PO-Revision-Date: 2020-04-10T08:19:15\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -587,11 +587,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Sessione di controllo item"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Item"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Gli item possono opzionalmente essere assegnati a una o più categorie"
@@ -639,6 +639,9 @@ msgid "Magnify more"
 msgstr ""
 
 msgid "Magnifying Glass"
+msgstr ""
+
+msgid "Main navigation"
 msgstr ""
 
 msgid "Manage Rubric Blocks"
@@ -1094,9 +1097,6 @@ msgstr ""
 msgid "Test"
 msgstr "Test"
 
-msgid "Test 1"
-msgstr ""
-
 msgid "Test constructor"
 msgstr "Test constructor"
 
@@ -1111,6 +1111,9 @@ msgstr "Test salvato"
 
 msgid "Test status"
 msgstr "Stato della prova"
+
+msgid "Test status and review structure"
+msgstr ""
 
 msgid "Test-Taker Tools"
 msgstr ""
@@ -1287,6 +1290,9 @@ msgid "Toggle playback"
 msgstr ""
 
 msgid "Toggle start from here mode"
+msgstr ""
+
+msgid "Tool box and flagging for review"
 msgstr ""
 
 msgid "Total score"
