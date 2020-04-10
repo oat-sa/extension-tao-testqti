@@ -19,10 +19,11 @@
 
 namespace oat\taoQtiTest\models\runner\time;
 
+use JsonSerializable;
 use oat\taoTests\models\runner\time\TimerAdjustmentMapInterface;
 use oat\taoTests\models\runner\time\ArraySerializable;
 
-class AdjustmentMap implements TimerAdjustmentMapInterface, \JsonSerializable, ArraySerializable
+class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, ArraySerializable
 {
     private $map = [];
 

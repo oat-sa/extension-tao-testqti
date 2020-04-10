@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\runner\time\AdjustmentMap;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoTests\models\runner\time\TimerAdjustmentMapInterface;
 
 /**
  * Class QtiTimeStoragePackedFormat
@@ -74,6 +75,8 @@ use oat\taoTests\models\runner\time\TimePoint;
  */
 class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
 {
+    use QtiTimeStorageObjectDecodingTrait;
+
     /**
      * A storage key added to the sored data set to keep format type
      */
@@ -273,43 +276,19 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
                     \common_Logger::w(sprintf('QtiTimeStorage: wrong decoder applied! (Expected: %s, Applied: %s)', $decodedData[self::STORAGE_KEY_FORMAT], $this->getFormat()));
                 }
 
-                foreach ($decodedData as $key => &$value) {
-                    if ($key === self::STORAGE_KEY_TIME_LINE) {
-                        $decodedData[$key] = $this->unpackTimeLine($value);
-                    }
-                    if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP) {
-                        $decodedData[$key] = $this->decodeAdjustmentMap($value);
-                    }
+                if (array_key_exists(self::STORAGE_KEY_TIME_LINE, $decodedData)
+                    && !$decodedData[self::STORAGE_KEY_TIME_LINE] instanceof TimeLine) {
+                    $decodedData[self::STORAGE_KEY_TIME_LINE] = $this->unpackTimeLine($decodedData[self::STORAGE_KEY_TIME_LINE]);
                 }
 
                 unset($decodedData[self::STORAGE_KEY_FORMAT]);
                 unset($decodedData[self::STORAGE_KEY_VERSION]);
             } else {
-                foreach ($decodedData as $key => &$value) {
-                    if ($key === self::STORAGE_KEY_TIME_LINE && !$value instanceof QtiTimeLine) {
-                        $timeLine = new QtiTimeLine();
-                        $timeLine->fromArray($value);
-                        $decodedData[$key] = $timeLine;
-                    }
-                    if ($key === self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP && !$value instanceof AdjustmentMap) {
-                        $decodedData[$key] = $this->decodeAdjustmentMap($value);
-                    }
-                }
+                $decodedData = $this->decodeTimeline($decodedData);
             }
+            $decodedData = $this->decodeAdjustmentMap($decodedData);
         }
 
         return $decodedData;
-    }
-
-    /**
-     * @param $value
-     * @return AdjustmentMap
-     */
-    private function decodeAdjustmentMap($value)
-    {
-        $map = new AdjustmentMap();
-        $map->fromArray($value);
-
-        return $map;
     }
 }

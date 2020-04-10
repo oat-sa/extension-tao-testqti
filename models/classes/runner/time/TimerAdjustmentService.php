@@ -62,12 +62,6 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
         return $this->register(AdjustmentMap::ACTION_DECREASE, $seconds, $source);
     }
 
-    /**
-     * @param string $action
-     * @param int $seconds
-     * @param QtiIdentifiable $source
-     * @return bool
-     */
     private function register(string $action, int $seconds, QtiIdentifiable $source = null): bool
     {
         if ($source) {

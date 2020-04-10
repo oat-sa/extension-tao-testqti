@@ -33,6 +33,7 @@ use oat\taoTests\models\runner\time\InvalidTimerStrategyException;
 use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoTests\models\runner\time\TimerAdjustmentMapInterface;
 use oat\taoTests\models\runner\time\TimerStrategyInterface;
 use oat\taoTests\models\runner\time\TimeStorage;
 use oat\taoTests\models\runner\time\Timer;
@@ -417,10 +418,10 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 
     protected function unserializeAdjustmentMap($data)
     {
+        $map = new AdjustmentMap();
         if (is_array($data)) {
-            $map = new AdjustmentMap();
             $map->fromArray($data);
-        } else {
+        } elseif ($data instanceof TimerAdjustmentMapInterface) {
             $map = $data;
         }
 
