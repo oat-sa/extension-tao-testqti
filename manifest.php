@@ -24,6 +24,7 @@ use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders;
+use oat\taoQtiTest\scripts\install\RegisterTimerAdjustmentService;
 use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
