@@ -362,7 +362,7 @@ return [
                  * Which button to focus by default
                  * @type string
                  */
-                'focus' => 'ok'
+                'focus' => 'navigable-modal-body'
             ],
             /**
              * Config for confirm dialogs
@@ -373,7 +373,7 @@ return [
                  * Which button to focus by default
                  * @type string
                  */
-                'focus' => 'ok'
+                'focus' => 'navigable-modal-body'
             ]
         ],
 
