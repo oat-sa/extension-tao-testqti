@@ -1961,9 +1961,9 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('35.6.0');
         }
 
-        $this->skip('35.6.0', '35.10.2.1');
+        $this->skip('35.6.0', '35.10.2.2');
 
-        if ($this->isBetween('35.10.2', '35.10.2.1')) {
+        if ($this->isBetween('35.10.2', '35.10.2.2')) {
             $this->getServiceManager()->register(QtiTestUtils::SERVICE_ID, new QtiTestUtils([]));
             $this->setVersion('35.11.0');
         }
@@ -1987,14 +1987,14 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('36.0.0');
         }
 
-        $this->skip('36.0.0', '36.7.2');
+        $this->skip('36.0.0', '36.8.3');
 
-        if ($this->isversion('36.7.2')) {
+        if ($this->isversion('36.8.3')) {
             $this->getServiceManager()->register(
                 TimerAdjustmentServiceInterface::SERVICE_ID,
                 new TimerAdjustmentService()
             );
-            $this->setVersion('36.8.0');
+            $this->setVersion('36.9.0');
         }
     }
 }

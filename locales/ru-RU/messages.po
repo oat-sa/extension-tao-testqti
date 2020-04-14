@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint124\n"
-"PO-Revision-Date: 2020-03-13T09:40:12\n"
+"Project-Id-Version: TAO 3.4.0-sprint126\n"
+"PO-Revision-Date: 2020-04-10T08:19:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -587,11 +587,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Контроль за сеансом для элемента"
 
-msgid "items"
-msgstr "элементы"
-
 msgid "Items"
 msgstr "Элементы"
+
+msgid "items"
+msgstr "элементы"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Элементы могут дополнительно назначаться одной или нескольким категориям."
@@ -640,6 +640,9 @@ msgstr "Увеличить больше"
 
 msgid "Magnifying Glass"
 msgstr "Увеличительная лупа"
+
+msgid "Main navigation"
+msgstr ""
 
 msgid "Manage Rubric Blocks"
 msgstr "Управление тематическими блоками"
@@ -1094,9 +1097,6 @@ msgstr "техническ."
 msgid "Test"
 msgstr "Тест"
 
-msgid "Test 1"
-msgstr ""
-
 msgid "Test constructor"
 msgstr "Составитель теста"
 
@@ -1111,6 +1111,9 @@ msgstr "Тест сохранен"
 
 msgid "Test status"
 msgstr "Статус теста"
+
+msgid "Test status and review structure"
+msgstr ""
 
 msgid "Test-Taker Tools"
 msgstr "Средства тестируемого"
@@ -1287,6 +1290,9 @@ msgid "Toggle playback"
 msgstr ""
 
 msgid "Toggle start from here mode"
+msgstr ""
+
+msgid "Tool box and flagging for review"
 msgstr ""
 
 msgid "Total score"
