@@ -39,7 +39,7 @@
        <div class="sections" data-bind-each="assessmentSections" data-bind-tmpl="section" data-bind-filter="isSection"></div>
 
         <button class="btn-info small section-adder">
-            <span class="icon-add"></span>New section
+            <span class="icon-add"></span>{{__ 'New section'}}
         </button>
     </div>
 </div>
