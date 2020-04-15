@@ -1467,3 +1467,5 @@ msgstr "Zoom avant"
 msgid "Zoom out"
 msgstr "Zoom arrière"
 
+msgid "Test Part Properties"
+msgstr "Propriétés des pièces d'essai"
