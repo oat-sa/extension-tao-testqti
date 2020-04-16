@@ -10,10 +10,10 @@
                             <span class="tlb-group">
                                 <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Test Part Properties'}}"><span class="icon-settings"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off move-up" title="Move Up"><span class="icon-up"></span></a>
-                                <a href="#" class="tlb-button-off move-down" title="Move Down"><span class="icon-down"></span></a>
+                                <a href="#" class="tlb-button-off move-up" title="{{__ 'Move Up'}}"><span class="icon-up"></span></a>
+                                <a href="#" class="tlb-button-off move-down" title="{{__ 'Move Down'}}"><span class="icon-down"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off" title="Remove Test Part" data-delete="#{{identifier}}"><span class="icon-bin"></span></a>
+                                <a href="#" class="tlb-button-off" title="{{__ 'Remove Test Part'}}" data-delete="#{{identifier}}"><span class="icon-bin"></span></a>
                             </span>
                             <span class="tlb-end"></span>
                         </span>
