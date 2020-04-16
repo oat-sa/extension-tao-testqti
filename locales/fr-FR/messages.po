@@ -1471,4 +1471,4 @@ msgid "Test Part Properties"
 msgstr "Propriétés des pièces d'essai"
 
 msgid "New section"
-msgstr ""
+msgstr "Nouvelle section"

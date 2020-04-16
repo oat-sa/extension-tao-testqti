@@ -17,16 +17,6 @@
                             </span>
                             <span class="tlb-end"></span>
                         </span>
-                        <!--<span class="tlb-bar">-->
-                            <!--<span class="tlb-start"></span>-->
-                            <!--<span class="tlb-text-button-box">-->
-                                <!--<a class="tlb-text-button-off section-adder">-->
-                                    <!--<span class="icon-add"></span>-->
-                                    <!--<span class="tlb-text">New Section</span>-->
-                                <!--</a>-->
-                            <!--</span>-->
-                            <!--<span class="tlb-end"></span>-->
-                        <!--</span>-->
                     </span>
                 </div>
             </div>
@@ -39,7 +29,8 @@
        <div class="sections" data-bind-each="assessmentSections" data-bind-tmpl="section" data-bind-filter="isSection"></div>
 
         <button class="btn-info small section-adder">
-            <span class="icon-add"></span>{{__ 'New section'}}
+            <span class="icon-add"></span>
+            {{__ 'New section'}}
         </button>
     </div>
 </div>
