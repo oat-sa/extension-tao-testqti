@@ -58,16 +58,6 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
     /**
      * @inheritDoc
      */
-    public function clear(): TimerAdjustmentMapInterface
-    {
-        $this->map = [];
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function remove(string $sourceId): TimerAdjustmentMapInterface
     {
         unset($this->map[$sourceId]);
