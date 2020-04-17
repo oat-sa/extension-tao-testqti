@@ -30,6 +30,7 @@ use oat\taoQtiTest\models\TestCategoryPreset;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoTests\models\runner\plugins\TestPluginService;
 use Prophecy\Argument;
+use RuntimeException;
 
 class TestCategoryPresetProviderTest extends TestCase
 {
@@ -380,5 +381,70 @@ class TestCategoryPresetProviderTest extends TestCase
         $availablePresets = $presetProvider->getAvailablePresets($config);
 
         $this->assertSame($result, $availablePresets, 'The available presets match the given configuration');
+    }
+
+    public function testFindPresetGroup(): void
+    {
+        $sut = $this->createSut(['group1', 'group2']);
+
+        $presetGroups = $sut->getPresets();
+
+        foreach ($presetGroups as $presetGroup) {
+            $this->assertSame($presetGroup, $sut->findPresetGroupOrFail($presetGroup['groupId']));
+        }
+    }
+
+    public function testFailOnFindNonexistentPresetGroup(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $sut = $this->createSut(['group1']);
+
+        $sut->findPresetGroupOrFail('group2');
+    }
+
+    public function testFailOnFindEmptyPresetGroup(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $sut = $this->createSut(['group1'], false);
+
+        $sut->findPresetGroupOrFail('group1');
+    }
+
+    private function createSut(array $groupIds, bool $hasPresets = true): TestCategoryPresetProvider
+    {
+        $preset = TestCategoryPreset::fromArray(
+            [
+                'id'          => 'preset',
+                'label'       => 'preset',
+                'qtiCategory' => 'x-tao-option-preset',
+                'order'       => 1,
+            ]
+        );
+
+        $presetGroups = [];
+
+        foreach ($groupIds as $groupId) {
+            $presetGroups[$groupId] = [
+                'groupId'    => $groupId,
+                'groupLabel' => $groupId,
+                'groupOrder' => 1,
+                'presets'    => $hasPresets ? [$preset] : [],
+            ];
+        }
+
+        $sut = new TestCategoryPresetProvider([], $presetGroups);
+
+        $pluginService = $this->prophesize(TestPluginService::class);
+        $sut->setServiceLocator(
+            $this->getServiceLocatorMock(
+                [
+                    TestPluginService::SERVICE_ID => $pluginService->reveal(),
+                ]
+            )
+        );
+
+        return $sut;
     }
 }

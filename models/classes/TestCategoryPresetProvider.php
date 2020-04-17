@@ -28,6 +28,7 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoTests\models\runner\plugins\TestPluginService;
+use RuntimeException;
 
 class TestCategoryPresetProvider extends ConfigurableService
 {
@@ -87,9 +88,27 @@ class TestCategoryPresetProvider extends ConfigurableService
             $this->loadPresetFromProviders();
         }
 
-        $this->groomPresets($keepGroupKeys);
+        $this->groomPresets();
 
-        return $this->allPresets;
+        return $keepGroupKeys ? $this->allPresets : array_values($this->allPresets);
+    }
+
+    /**
+     * @param string $groupId
+     *
+     * @return TestCategoryPreset[]
+     *
+     * @throws RuntimeException
+     */
+    public function findPresetGroupOrFail(string $groupId): array
+    {
+        $presets = $this->getPresets(true);
+
+        if (!isset($presets[$groupId])) {
+            throw new RuntimeException("Failed to fetch #$groupId preset group.");
+        }
+
+        return $presets[$groupId];
     }
 
     /**
@@ -236,12 +255,10 @@ class TestCategoryPresetProvider extends ConfigurableService
         }
     }
 
-    private function sortPresets(bool $keepGroupKeys): void
+    private function sortPresets(): void
     {
-        $sortFunction = $keepGroupKeys ? 'uasort' : 'usort';
-
         // sort presets groups
-        $sortFunction(
+        uasort(
             $this->allPresets,
             static function (array $a, array $b): int {
                 return $a['groupOrder'] <=> $b['groupOrder'];
@@ -261,14 +278,14 @@ class TestCategoryPresetProvider extends ConfigurableService
         }
     }
 
-    private function groomPresets(bool $keepGroupKeys): void
+    private function groomPresets(): void
     {
         if ($this->isGroomed) {
             return;
         }
 
         $this->filterInactivePresets();
-        $this->sortPresets($keepGroupKeys);
+        $this->sortPresets();
 
         $this->isGroomed = true;
     }
