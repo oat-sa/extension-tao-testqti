@@ -22,7 +22,7 @@ namespace oat\taoQtiTest\scripts\install;
 use common_exception;
 use oat\oatbox\extension\InstallAction;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
-use oat\taoTests\models\runner\time\TimerAdjustmentServiceInterface;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 
 class RegisterTimerAdjustmentService extends InstallAction
 {

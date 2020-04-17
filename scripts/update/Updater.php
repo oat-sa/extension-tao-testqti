@@ -85,7 +85,7 @@ use oat\taoTests\models\runner\providers\TestProvider;
 use oat\taoQtiTest\models\compilation\CompilationService;
 use oat\tao\model\ClientLibRegistry;
 use oat\tao\model\asset\AssetService;
-use oat\taoTests\models\runner\time\TimerAdjustmentServiceInterface;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoTests\models\runner\time\TimerStrategyInterface;
 
 /**

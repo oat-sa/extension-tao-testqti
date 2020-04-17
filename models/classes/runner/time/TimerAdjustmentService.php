@@ -22,26 +22,24 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\runner\time;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
+use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\StorageManager;
-use oat\taoQtiTest\models\TestSessionService;
-use oat\taoTests\models\runner\time\TimerAdjustmentServiceInterface;
 use qtism\data\QtiIdentifiable;
 
 class TimerAdjustmentService extends ConfigurableService implements TimerAdjustmentServiceInterface
 {
-    /** @var DeliveryExecutionInterface */
-    private $deliveryExecution;
+    /** @var TestSession */
+    private $testSession;
 
     /**
      * @inheritDoc
      */
     public function increase(
-        DeliveryExecutionInterface $deliveryExecution,
+        TestSession $testSession,
         int $seconds,
         QtiIdentifiable $source = null
     ): bool {
-        $this->deliveryExecution = $deliveryExecution;
+        $this->testSession = $testSession;
 
         return $this->register(AdjustmentMap::ACTION_INCREASE, $seconds, $source);
     }
@@ -50,11 +48,11 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
      * @inheritDoc
      */
     public function decrease(
-        DeliveryExecutionInterface $deliveryExecution,
+        TestSession $testSession,
         int $seconds,
         QtiIdentifiable $source = null
     ): bool {
-        $this->deliveryExecution = $deliveryExecution;
+        $this->testSession = $testSession;
 
         $seconds = $this->findMaximumPossibleDecrease($seconds);
         if ($seconds === 0) {
@@ -69,11 +67,10 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
         if ($source) {
             $this->putAdjustmentToTheMap($source, $action, $seconds);
         } else {
-            $testSession = $this->getTestSessionService()->getTestSession($this->deliveryExecution);
-            $this->putAdjustmentToTheMap($testSession->getCurrentAssessmentItemRef(), $action, $seconds);
-            $this->putAdjustmentToTheMap($testSession->getCurrentAssessmentSection(), $action, $seconds);
-            $this->putAdjustmentToTheMap($testSession->getCurrentTestPart(), $action, $seconds);
-            $this->putAdjustmentToTheMap($testSession->getAssessmentTest(), $action, $seconds);
+            $this->putAdjustmentToTheMap($this->testSession->getCurrentAssessmentItemRef(), $action, $seconds);
+            $this->putAdjustmentToTheMap($this->testSession->getCurrentAssessmentSection(), $action, $seconds);
+            $this->putAdjustmentToTheMap($this->testSession->getCurrentTestPart(), $action, $seconds);
+            $this->putAdjustmentToTheMap($this->testSession->getAssessmentTest(), $action, $seconds);
         }
         $this->getTimer()->save();
         $this->getServiceLocator()->get(StorageManager::SERVICE_ID)->persist();
@@ -83,13 +80,8 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
 
     private function findMaximumPossibleDecrease(int $requestedSeconds): int
     {
-        $testSession = $this->getTestSessionService()->getTestSession($this->deliveryExecution);
-        if ($testSession === null) {
-            return 0;
-        }
-
         $minRemaining = PHP_INT_MAX;
-        foreach ($testSession->getTimeConstraints() as $tc) {
+        foreach ($this->testSession->getTimeConstraints() as $tc) {
             $maximumRemainingTime = $tc->getMaximumRemainingTime();
             if ($maximumRemainingTime === false) {
                 continue;
@@ -115,13 +107,8 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
         $this->getTimer()->getAdjustmentMap()->put($element->getIdentifier(), $action, $seconds);
     }
 
-    private function getTestSessionService(): TestSessionService
-    {
-        return $this->getServiceLocator()->get(TestSessionService::SERVICE_ID);
-    }
-
     private function getTimer(): QtiTimer
     {
-        return $this->getTestSessionService()->getTestSession($this->deliveryExecution)->getTimer();
+        return $this->testSession->getTimer();
     }
 }
