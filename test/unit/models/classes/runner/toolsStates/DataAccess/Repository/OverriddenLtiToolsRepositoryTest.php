@@ -87,7 +87,7 @@ class OverriddenToolsRepositoryTest extends TestCase
         $this->presetRepository
             ->expects(iterator_to_array($unfilteredOption) ? static::once() : static::never())
             ->method('findPresetGroupOrFail')
-            ->willReturn($availableToolPresets);
+            ->willReturn(['presets' => $availableToolPresets]);
 
         $this->assertEquals($expected, $this->sut->findAll());
     }
