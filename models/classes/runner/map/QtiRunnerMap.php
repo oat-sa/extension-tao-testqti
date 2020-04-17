@@ -25,20 +25,21 @@
 namespace oat\taoQtiTest\models\runner\map;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\CatUtils;
+use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
-use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
 use qtism\data\QtiComponent;
-use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-use oat\taoQtiTest\models\cat\CatUtils;
 
 /**
  * Class QtiRunnerMap
@@ -79,10 +80,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         // we are 100% sure it produced Item Href Index Files.
         if ($context->isAdaptive()) {
             return true;
-        } else {
-            $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
-            return $indexFile->exists();
         }
+
+        return $this->getItemHrefIndexFile($context, $itemIdentifier)->exists();
     }
 
     /**
@@ -163,7 +163,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $uniqueInformationalTitle = isset($reviewConfig['informationalItemTitle']) ? $reviewConfig['informationalItemTitle'] : 'Instructions';
         $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
 
-        /* @var AssessmentTestSession $session */
+        /* @var TestSession $session */
         $session = $context->getTestSession();
         $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
         $testDefinition = $context->getTestDefinition();
@@ -488,6 +488,20 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      */
     protected function getAvailableCategories(AssessmentItemRef $itemRef)
     {
-        return array_unique($itemRef->getCategories()->getArrayCopy());
+        $categoriesMap = array_flip($itemRef->getCategories()->getArrayCopy());
+
+        foreach ($this->getOverriddenOptionsRepository()->findAll() as $option) {
+            if ($option->isEnabled()) {
+                $categoriesMap[QtiRunnerConfig::CATEGORY_OPTION_PREFIX . $option->getId()] = true;
+            }
+        }
+
+        return array_keys($categoriesMap);
+    }
+
+    private function getOverriddenOptionsRepository(): OverriddenOptionsRepositoryInterface
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(OverriddenOptionsRepositoryInterface::SERVICE_ID);
     }
 }

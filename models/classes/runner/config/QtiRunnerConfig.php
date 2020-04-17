@@ -35,9 +35,11 @@ use oat\taoQtiTest\models\SectionPauseService;
  */
 class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerConfig';
+    public const SERVICE_ID = 'taoQtiTest/QtiRunnerConfig';
 
-    const OPTION_CONFIG = 'config';
+    public const OPTION_CONFIG = 'config';
+
+    public const CATEGORY_OPTION_PREFIX = 'x-tao-option-';
 
     /**
      * @deprecated since version 29.5.0, to be removed in 30.0.0. Use QtiRunnerService::TOOL_ITEM_THEME_SWITCHER instead
@@ -192,10 +194,9 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 
         // get the options from the categories owned by the current item
         $categories = $this->getCategories($context);
-        $prefixCategory = 'x-tao-option-';
-        $prefixCategoryLen = strlen($prefixCategory);
+        $prefixCategoryLen = strlen(self::CATEGORY_OPTION_PREFIX);
         foreach ($categories as $category) {
-            if (!strncmp($category, $prefixCategory, $prefixCategoryLen)) {
+            if (!strncmp($category, self::CATEGORY_OPTION_PREFIX, $prefixCategoryLen)) {
                 // extract the option name from the category, transform to camelCase if needed
                 $optionName = lcfirst(str_replace(' ', '', ucwords(strtr(substr($category, $prefixCategoryLen), ['-' => ' ', '_' => ' ']))));
 
