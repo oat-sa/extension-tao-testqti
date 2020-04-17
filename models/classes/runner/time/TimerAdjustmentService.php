@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\runner\time;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\StorageManager;
+use oat\taoTests\models\runner\time\InvalidStorageException;
 use qtism\data\QtiIdentifiable;
 
 class TimerAdjustmentService extends ConfigurableService implements TimerAdjustmentServiceInterface
@@ -32,7 +33,8 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
     private $testSession;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     * @throws InvalidStorageException
      */
     public function increase(
         TestSession $testSession,
@@ -45,7 +47,8 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     * @throws InvalidStorageException
      */
     public function decrease(
         TestSession $testSession,
@@ -62,6 +65,9 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
         return $this->register(AdjustmentMap::ACTION_DECREASE, $seconds, $source);
     }
 
+    /**
+     * @throws InvalidStorageException
+     */
     private function register(string $action, int $seconds, QtiIdentifiable $source = null): bool
     {
         if ($source) {

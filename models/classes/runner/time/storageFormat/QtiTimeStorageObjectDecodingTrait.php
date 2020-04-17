@@ -26,27 +26,27 @@ use oat\taoTests\models\runner\time\TimerAdjustmentMapInterface;
 
 trait QtiTimeStorageObjectDecodingTrait
 {
-    private function decodeTimeline(array $decodedData): array
+    private function decodeTimeline(array $data): array
     {
-        if (array_key_exists(self::STORAGE_KEY_TIME_LINE, $decodedData)
-            && !$decodedData[self::STORAGE_KEY_TIME_LINE] instanceof TimeLine) {
+        if (array_key_exists(self::STORAGE_KEY_TIME_LINE, $data)
+            && !$data[self::STORAGE_KEY_TIME_LINE] instanceof TimeLine) {
             $timeLine = new QtiTimeLine();
-            $timeLine->fromArray($decodedData[self::STORAGE_KEY_TIME_LINE]);
-            $decodedData[self::STORAGE_KEY_TIME_LINE] = $timeLine;
+            $timeLine->fromArray($data[self::STORAGE_KEY_TIME_LINE]);
+            $data[self::STORAGE_KEY_TIME_LINE] = $timeLine;
         }
 
-        return $decodedData;
+        return $data;
     }
 
-    private function decodeAdjustmentMap(array $decodedData): array
+    private function decodeAdjustmentMap(array $data): array
     {
-        if (array_key_exists(self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP, $decodedData)
-            && !$decodedData[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP] instanceof TimerAdjustmentMapInterface) {
+        if (array_key_exists(self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP, $data)
+            && !$data[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP] instanceof TimerAdjustmentMapInterface) {
             $map = new AdjustmentMap();
-            $map->fromArray($decodedData[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP]);
-            $decodedData[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP] = $map;
+            $map->fromArray($data[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP]);
+            $data[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP] = $map;
         }
 
-        return $decodedData;
+        return $data;
     }
 }
