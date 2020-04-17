@@ -19,30 +19,19 @@
  */
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\runner\toolsStates\DataAccess\Mapper;
+namespace oat\taoQtiTest\models\runner\config\DataAccess\Repository;
 
-use oat\tao\model\service\InjectionAwareService;
-use oat\taoQtiTest\models\runner\config\Business\Domain\Option;
+use oat\oatbox\service\ConfigurableService;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
 use oat\taoQtiTest\models\runner\config\Business\Domain\OptionCollection;
 
-class OptionCollectionMapper extends InjectionAwareService
+class NoopOverriddenOptionsRepository extends ConfigurableService implements OverriddenOptionsRepositoryInterface
 {
-    public const SERVICE_ID = 'taoQtiTest/OptionCollectionMapper';
-
-    /** @noinspection MagicMethodsValidityInspection */
-    /** @noinspection PhpMissingParentConstructorInspection */
-    public function __construct()
+    /**
+     * @inheritDoc
+     */
+    public function findAll(): OptionCollection
     {
-    }
-
-    public function toDomain(array $rawData): OptionCollection
-    {
-        $resultingOptions = [];
-
-        foreach ($rawData as $tool => $status) {
-            $resultingOptions[] = new Option((string)$tool, (bool)$status);
-        }
-
-        return new OptionCollection(...$resultingOptions);
+        return new OptionCollection();
     }
 }
