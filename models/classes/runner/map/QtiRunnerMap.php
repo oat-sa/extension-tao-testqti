@@ -491,8 +491,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $categoriesMap = array_flip($itemRef->getCategories()->getArrayCopy());
 
         foreach ($this->getOverriddenOptionsRepository()->findAll() as $option) {
+            $categoryId = QtiRunnerConfig::CATEGORY_OPTION_PREFIX . $option->getId();
+
             if ($option->isEnabled()) {
-                $categoriesMap[QtiRunnerConfig::CATEGORY_OPTION_PREFIX . $option->getId()] = true;
+                $categoriesMap[$categoryId] = true;
+            } else {
+                unset($categoriesMap[$categoryId]);
             }
         }
 
