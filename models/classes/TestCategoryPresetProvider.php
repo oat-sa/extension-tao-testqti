@@ -77,15 +77,17 @@ class TestCategoryPresetProvider extends ConfigurableService
     /**
      * Get all active presets
      *
+     * @param bool $keepGroupKeys if `true` returns groups mapped to their group IDs
+     *
      * @return array - the sorted preset list
      */
-    public function getPresets(): array
+    public function getPresets(bool $keepGroupKeys = false): array
     {
         if (empty($this->allPresets)) {
             $this->loadPresetFromProviders();
         }
 
-        $this->groomPresets();
+        $this->groomPresets($keepGroupKeys);
 
         return $this->allPresets;
     }
@@ -234,10 +236,12 @@ class TestCategoryPresetProvider extends ConfigurableService
         }
     }
 
-    private function sortPresets(): void
+    private function sortPresets(bool $keepGroupKeys): void
     {
+        $sortFunction = $keepGroupKeys ? 'uasort' : 'usort';
+
         // sort presets groups
-        usort(
+        $sortFunction(
             $this->allPresets,
             static function (array $a, array $b): int {
                 return $a['groupOrder'] <=> $b['groupOrder'];
@@ -257,14 +261,14 @@ class TestCategoryPresetProvider extends ConfigurableService
         }
     }
 
-    private function groomPresets(): void
+    private function groomPresets(bool $keepGroupKeys): void
     {
         if ($this->isGroomed) {
             return;
         }
 
         $this->filterInactivePresets();
-        $this->sortPresets();
+        $this->sortPresets($keepGroupKeys);
 
         $this->isGroomed = true;
     }

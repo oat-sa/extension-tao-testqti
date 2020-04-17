@@ -25,15 +25,21 @@
 namespace oat\taoQtiTest\test\unit;
 
 use oat\generis\test\TestCase;
-use Prophecy\Argument;
 use oat\tao\model\plugins\PluginModule;
 use oat\taoQtiTest\models\TestCategoryPreset;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoTests\models\runner\plugins\TestPluginService;
+use Prophecy\Argument;
 
 class TestCategoryPresetProviderTest extends TestCase
 {
-    public function testSort()
+    /**
+     * @param bool $keepGroupKeys
+     *
+     * @testWith [false]
+     *           [true]
+     */
+    public function testSort(bool $keepGroupKeys): void
     {
         $allPresets = [
             'group3' => [
@@ -119,7 +125,7 @@ class TestCategoryPresetProviderTest extends TestCase
         $presetProvider->setServiceLocator($this->getServiceLocatorMock([
             TestPluginService::SERVICE_ID => $pluginService->reveal()
         ]));
-        $sortedPresetGroups = $presetProvider->getPresets();
+        $sortedPresetGroups = $presetProvider->getPresets($keepGroupKeys);
 
         $this->assertCount(4, $sortedPresetGroups, 'sortedPresetGroups have the right number of preset groups');
         $previousOrder = 0;
@@ -128,17 +134,25 @@ class TestCategoryPresetProviderTest extends TestCase
             $previousOrder = $group['groupOrder'];
         }
 
-        $sortedPresets = $sortedPresetGroups[0]['presets'];
+        $expectedPresetGroupKeys = $keepGroupKeys
+            ? array_keys($allPresets)
+            : range(0, count($allPresets) - 1);
 
-        $previousOrder = 0;
-        foreach ($sortedPresets as $preset) {
-            $this->assertTrue($preset->getOrder() > $previousOrder, "preset {$preset->getId()} has a sort order > as previous order {$previousOrder}");
-            $previousOrder = $preset->getOrder();
+        $this->assertEmpty(array_diff_key($sortedPresetGroups, array_flip($expectedPresetGroupKeys)));
+
+        foreach ($sortedPresetGroups as $sortedPresets) {
+            $previousOrder = 0;
+            foreach ($sortedPresets['presets'] as $preset) {
+                $this->assertTrue(
+                    $preset->getOrder() > $previousOrder,
+                    "preset {$preset->getId()} has a sort order > as previous order {$previousOrder}"
+                );
+                $previousOrder = $preset->getOrder();
+            }
         }
     }
 
-
-    public function testFilterByInactivePlugins()
+    public function testFilterByInactivePlugins(): void
     {
         $allPresets = [
             // group with presets: will stay
@@ -247,7 +261,7 @@ class TestCategoryPresetProviderTest extends TestCase
      * Provides data sets to test the "getAvailablePresets" method
      * @return array the list of data sets
      */
-    public function presetsConfigDataProvider()
+    public function presetsConfigDataProvider(): array
     {
         $preset1 = TestCategoryPreset::fromArray([
             'id'            => 'preset1',
@@ -350,7 +364,7 @@ class TestCategoryPresetProviderTest extends TestCase
      *
      * @dataProvider presetsConfigDataProvider
      */
-    public function testGetAvailablePresets($allPresets, $config, $result)
+    public function testGetAvailablePresets(array $allPresets, array $config, array $result): void
     {
         $plugin = $this->prophesize(PluginModule::class);
         $plugin->isActive()->willReturn(true);
