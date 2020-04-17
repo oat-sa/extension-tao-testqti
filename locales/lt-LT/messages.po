@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint124\n"
-"PO-Revision-Date: 2020-03-13T09:40:10\n"
+"Project-Id-Version: TAO 3.4.0-sprint126\n"
+"PO-Revision-Date: 2020-04-16T14:36:50\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -382,10 +382,10 @@ msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Baigti testą"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Baigti testą"
 
 msgid "Enter a blueprint"
@@ -588,11 +588,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Elemento Sesijos Valdymas"
 
-msgid "items"
-msgstr "elementai"
-
 msgid "Items"
 msgstr "Elementai"
+
+msgid "items"
+msgstr "elementai"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elementai pasirinktinai gali būti paskirti vienai arba daugiau kategorijų."
@@ -641,6 +641,9 @@ msgstr "Didinti daugiau"
 
 msgid "Magnifying Glass"
 msgstr "Didinimas"
+
+msgid "Main navigation"
+msgstr ""
 
 msgid "Manage Rubric Blocks"
 msgstr "Tvarkyti Rubrikos Blokus"
@@ -737,6 +740,9 @@ msgstr "tinklas"
 
 msgid "New Rubric Block"
 msgstr "Naujas Rubrikos Blokas"
+
+msgid "New section"
+msgstr ""
 
 msgid "New test part"
 msgstr "Nauja testo dalis"
@@ -900,6 +906,9 @@ msgstr "Pašalinti Rubrikos Bloką"
 msgid "Remove Section"
 msgstr "Pašalinti Skyrių"
 
+msgid "Remove Test Part"
+msgstr ""
+
 msgid "Required"
 msgstr "Reikalaujama"
 
@@ -939,10 +948,10 @@ msgstr "Verintojas"
 msgid "Scoring"
 msgstr "Įvertinimas"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Juodraštis"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Juodraštis"
 
 msgid "Scratchpad"
@@ -1095,9 +1104,6 @@ msgstr "techninis"
 msgid "Test"
 msgstr "Testas"
 
-msgid "Test 1"
-msgstr ""
-
 msgid "Test constructor"
 msgstr "Testuoti konstruktorių"
 
@@ -1107,11 +1113,17 @@ msgstr "Testo meta duomenys sėkmingai išeksportuoti."
 msgid "Test Navigation"
 msgstr "Testo Navigacija"
 
+msgid "Test Part Properties"
+msgstr ""
+
 msgid "Test Saved"
 msgstr "Testas Išsaugotas"
 
 msgid "Test status"
 msgstr "Testo būsena"
+
+msgid "Test status and review structure"
+msgstr ""
 
 msgid "Test-Taker Tools"
 msgstr "Testo Laikytojo Įrankiai"
@@ -1288,6 +1300,9 @@ msgid "Toggle playback"
 msgstr ""
 
 msgid "Toggle start from here mode"
+msgstr ""
+
+msgid "Tool box and flagging for review"
 msgstr ""
 
 msgid "Total score"

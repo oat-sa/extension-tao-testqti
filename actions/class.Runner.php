@@ -769,6 +769,23 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
+     * @return bool
+     * @throws common_Exception
+     * @throws common_ext_ExtensionException
+     */
+    private function shouldTimerStopOnPause()
+    {
+        $isTerminated = $this->getRunnerService()->isTerminated($this->getServiceContext());
+        if (!$isTerminated) {
+            $timerTarget = $this->getRunnerService()->getTestConfig()->getConfigValue('timer.target');
+            if ($timerTarget === 'client') {
+                return  true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sets the test in paused state
      */
     public function pause()
@@ -777,14 +794,18 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
-            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+
+            $serviceContext = $this->getServiceContext();
+
+            if ($this->shouldTimerStopOnPause()) {
+                $this->endItemTimer();
+            }
+
+            $serviceContext = $this->getRunnerService()->initServiceContext($serviceContext);
 
             $response = [
                 'success' => $this->getRunnerService()->pause($serviceContext),
             ];
-
-            $this->getRunnerService()->persist($serviceContext);
-
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
