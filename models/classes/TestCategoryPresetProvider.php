@@ -18,76 +18,74 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
 
+declare(strict_types=1);
+
 /**
  * @author Christophe Noël <christophe@taotesting.com>
  */
 
 namespace oat\taoQtiTest\models;
 
-
 use oat\oatbox\service\ConfigurableService;
 use oat\taoTests\models\runner\plugins\TestPluginService;
 
 class TestCategoryPresetProvider extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/CategoryPresetProvider';
+    public const SERVICE_ID = 'taoQtiTest/CategoryPresetProvider';
 
-    const GROUP_NAVIGATION  = 'navigation';
-    const GROUP_WARNING     = 'warning';
-    const GROUP_TOOLS       = 'tools';
+    public const GROUP_NAVIGATION = 'navigation';
+    public const GROUP_WARNING    = 'warning';
+    public const GROUP_TOOLS      = 'tools';
 
     private $allPresets;
 
+    private $isGroomed = false;
+
     /**
      * TestCategoryPresetProvider constructor.
+     *
      * @param array $options
      * @param array $allPresets - allow override of preset list
      */
-    public function __construct(array $options = [], $allPresets = [])
+    public function __construct(array $options = [], array $allPresets = [])
     {
         $this->allPresets = $allPresets;
 
         parent::__construct($options);
     }
 
-    protected function getPresetGroups()
+    /**
+     * @param string               $presetGroup
+     * @param TestCategoryPreset[] $presets
+     */
+    public function register(string $presetGroup, array $presets): void
     {
-        return [
-            self::GROUP_NAVIGATION => [
-                'groupId'    => self::GROUP_NAVIGATION,
-                'groupLabel' => __('Test Navigation'),
-                'groupOrder' => 100,
-                'presets'    => []
-            ],
-
-            self::GROUP_WARNING => [
-                'groupId'    => self::GROUP_WARNING,
-                'groupLabel' => __('Navigation Warnings'),
-                'groupOrder' => 200,
-                'presets'    => []
-            ],
-
-            self::GROUP_TOOLS => [
-                'groupId'    => self::GROUP_TOOLS,
-                'groupLabel' => __('Test-Taker Tools'),
-                'groupOrder' => 300,
-                'presets'    => []
-            ],
-        ];
+        if (!array_key_exists($presetGroup, $this->allPresets)) {
+            return;
+        }
+        if (!is_array($presets)) {
+            $presets = [$presets];
+        }
+        foreach ($presets as $preset) {
+            /** @noinspection TypeUnsafeArraySearchInspection */
+            if (!in_array($preset, $this->allPresets[$presetGroup]['presets'])) {
+                $this->allPresets[$presetGroup]['presets'][] = $preset;
+            }
+        }
     }
 
     /**
      * Get all active presets
+     *
      * @return array - the sorted preset list
      */
-    public function getPresets()
+    public function getPresets(): array
     {
         if (empty($this->allPresets)) {
             $this->loadPresetFromProviders();
         }
 
-        $this->filterInactivePresets();
-        $this->sortPresets();
+        $this->groomPresets();
 
         return $this->allPresets;
     }
@@ -104,9 +102,10 @@ class TestCategoryPresetProvider extends ConfigurableService
      * If the config doesn't have a flag, we keep the preset.
      *
      * @param array $config a config flag list as  { key : string => value : boolean }
+     *
      * @return array the sorted preset list
      */
-    public function getAvailablePresets($config = [])
+    public function getAvailablePresets(array $config = []): array
     {
         //work on a clone
         $presets = array_merge([], $this->getPresets());
@@ -114,12 +113,12 @@ class TestCategoryPresetProvider extends ConfigurableService
         foreach ($presets as $groupId => &$presetGroup) {
             if (isset($presetGroup['presets'])) {
                 //filter presets based on the config value
-                //if the config has the flag, we chek it's value
+                //if the config has the flag, we check it's value
                 //if the config doesn't have the flag, we keep the preset
                 $presetGroup['presets'] = array_filter(
                     $presetGroup['presets'],
                     function ($preset) use ($config) {
-                        return !$this->isPresetAvailable($preset, $config);
+                        return $this->isPresetAvailable($preset, $config);
                     }
                 );
 
@@ -132,25 +131,52 @@ class TestCategoryPresetProvider extends ConfigurableService
         return $presets;
     }
 
+    protected function getPresetGroups(): array
+    {
+        return [
+            self::GROUP_NAVIGATION => [
+                'groupId'    => self::GROUP_NAVIGATION,
+                'groupLabel' => __('Test Navigation'),
+                'groupOrder' => 100,
+                'presets'    => [],
+            ],
+
+            self::GROUP_WARNING => [
+                'groupId'    => self::GROUP_WARNING,
+                'groupLabel' => __('Navigation Warnings'),
+                'groupOrder' => 200,
+                'presets'    => [],
+            ],
+
+            self::GROUP_TOOLS => [
+                'groupId'    => self::GROUP_TOOLS,
+                'groupLabel' => __('Test-Taker Tools'),
+                'groupOrder' => 300,
+                'presets'    => [],
+            ],
+        ];
+    }
+
     /**
      * Is a preset available according to a configuration (ie. based on it's featureFlag)
      *
      * @param TestCategoryPreset $preset the preset to test
-     * @param array $config the configuration
+     * @param array              $config the configuration
+     *
      * @return boolean true if available
      */
-    private function isPresetAvailable(TestCategoryPreset $preset, $config = [])
+    private function isPresetAvailable(TestCategoryPreset $preset, array $config = []): bool
     {
-        if (!is_null($preset)) {
-            $flag = $preset->getFeatureFlag();
-            if ($flag && isset($config[$flag]) && $config[$flag] != true) {
-                return true;
-            }
+        $flag = $preset->getFeatureFlag();
+
+        if ($flag && isset($config[$flag]) && !$config[$flag]) {
+            return false;
         }
-        return false;
+
+        return true;
     }
 
-    private function loadPresetFromProviders()
+    private function loadPresetFromProviders(): void
     {
         $this->allPresets = $this->getPresetGroups();
 
@@ -158,7 +184,7 @@ class TestCategoryPresetProvider extends ConfigurableService
 
         $allProviders = $providersRegistry->getMap();
 
-        if (! empty($allProviders)) {
+        if (!empty($allProviders)) {
             foreach ($allProviders as $providerClass) {
                 if (class_exists($providerClass)) {
                     $providerInstance = new $providerClass();
@@ -168,22 +194,22 @@ class TestCategoryPresetProvider extends ConfigurableService
         }
     }
 
-    private function filterInactivePresets()
+    private function filterInactivePresets(): void
     {
         $serviceLocator = $this->getServiceLocator();
-        $pluginService = $serviceLocator->get(TestPluginService::SERVICE_ID);
+        $pluginService  = $serviceLocator->get(TestPluginService::SERVICE_ID);
 
         $allEmptyGroups = [];
 
-        if (! empty($this->allPresets)) {
+        if (!empty($this->allPresets)) {
             foreach ($this->allPresets as $groupId => &$presetGroup) {
-                if (! empty($presetGroup['presets'])) {
+                if (!empty($presetGroup['presets'])) {
                     $presetGroup['presets'] = array_filter(
                         $presetGroup['presets'],
-                        function ($preset) use ($pluginService) {
+                        static function (TestCategoryPreset $preset) use ($pluginService): bool {
                             $presetPluginId = $preset->getPluginId();
 
-                            if (! empty($presetPluginId)) {
+                            if (!empty($presetPluginId)) {
                                 $presetPlugin = $pluginService->getPlugin($presetPluginId);
                                 return ($presetPlugin !== null) ? $presetPlugin->isActive() : false;
                             }
@@ -196,57 +222,50 @@ class TestCategoryPresetProvider extends ConfigurableService
                     $allEmptyGroups[] = $groupId;
                 }
             }
+
+            unset($presetGroup);
         }
 
         // finally, remove empty groups, if any
-        if (! empty($allEmptyGroups)) {
+        if (!empty($allEmptyGroups)) {
             foreach ($allEmptyGroups as $emptyGroupId) {
                 unset($this->allPresets[$emptyGroupId]);
             }
         }
     }
 
-    private function sortPresets()
+    private function sortPresets(): void
     {
         // sort presets groups
-        usort($this->allPresets, function ($a, $b) {
-            return $this->compareNum($a['groupOrder'], $b['groupOrder']);
-        });
+        usort(
+            $this->allPresets,
+            static function (array $a, array $b): int {
+                return $a['groupOrder'] <=> $b['groupOrder'];
+            }
+        );
 
         // sort presets
         foreach ($this->allPresets as &$presetGroup) {
             if (!empty($presetGroup)) {
-                usort($presetGroup['presets'], function ($a, $b) {
-                    return $this->compareNum($a->getOrder(), $b->getOrder());
-                });
+                usort(
+                    $presetGroup['presets'],
+                    static function (TestCategoryPreset $a, TestCategoryPreset $b): int {
+                        return $a->getOrder() <=> $b->getOrder();
+                    }
+                );
             }
         }
     }
 
-    private function compareNum($a, $b)
+    private function groomPresets(): void
     {
-        if ($a == $b) {
-            return 0;
-        }
-        return ($a < $b) ? -1 : 1;
-    }
-
-    /**
-     * @param $presetGroup
-     * @param $presets
-     */
-    public function register($presetGroup, $presets)
-    {
-        if (!array_key_exists($presetGroup, $this->allPresets)) {
+        if ($this->isGroomed) {
             return;
         }
-        if (!is_array($presets)) {
-            $presets = [$presets];
-        }
-        foreach ($presets as $preset) {
-            if (!in_array($preset, $this->allPresets[$presetGroup]['presets'])) {
-                $this->allPresets[$presetGroup]['presets'][] = $preset;
-            }
-        }
+
+        $this->filterInactivePresets();
+        $this->sortPresets();
+
+        $this->isGroomed = true;
     }
 }
