@@ -64,9 +64,7 @@ class TestCategoryPresetProvider extends ConfigurableService
         if (!array_key_exists($presetGroup, $this->allPresets)) {
             return;
         }
-        if (!is_array($presets)) {
-            $presets = [$presets];
-        }
+
         foreach ($presets as $preset) {
             /** @noinspection TypeUnsafeArraySearchInspection */
             if (!in_array($preset, $this->allPresets[$presetGroup]['presets'])) {
