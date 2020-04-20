@@ -27,7 +27,7 @@ use oat\generis\test\MockObject;
 use oat\generis\test\TestCase;
 use oat\taoQtiTest\models\runner\config\Business\Domain\Option;
 use oat\taoQtiTest\models\runner\config\Business\Domain\OptionCollection;
-use oat\taoQtiTest\models\runner\toolsStates\DataAccess\Repository\OverriddenToolsRepositoryAbstract;
+use oat\taoQtiTest\models\runner\toolsStates\DataAccess\Repository\AbstractOverriddenToolsRepository;
 use oat\taoQtiTest\models\TestCategoryPreset;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 
@@ -39,7 +39,7 @@ class OverriddenToolsRepositoryTest extends TestCase
     /** @var OptionCollection */
     private $unfilteredOptions;
 
-    /** @var OverriddenToolsRepositoryAbstract */
+    /** @var AbstractOverriddenToolsRepository */
     private $sut;
 
     /**
@@ -54,7 +54,7 @@ class OverriddenToolsRepositoryTest extends TestCase
             function (): OptionCollection {
                 return $this->unfilteredOptions;
             }
-        ) extends OverriddenToolsRepositoryAbstract {
+        ) extends AbstractOverriddenToolsRepository {
             private $unfilteredOptionsProvider;
 
             public function __construct(

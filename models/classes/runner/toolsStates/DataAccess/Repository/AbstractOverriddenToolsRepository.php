@@ -31,7 +31,7 @@ use oat\taoQtiTest\models\TestCategoryPreset;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use RuntimeException;
 
-abstract class OverriddenToolsRepositoryAbstract
+abstract class AbstractOverriddenToolsRepository
     extends InjectionAwareService
     implements OverriddenOptionsRepositoryInterface
 {
