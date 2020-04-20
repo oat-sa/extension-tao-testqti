@@ -70,16 +70,6 @@ class AdjustmentMapTest extends TestCase
         $this->assertEquals(-5, $map->get('testSourceId'));
     }
 
-    public function testClear_WhenRequested_ThenMapIsClearedFromAnyValues()
-    {
-        $map = new AdjustmentMap();
-        $map->put('testSourceId1', AdjustmentMap::ACTION_INCREASE, 10);
-        $map->put('testSourceId2', AdjustmentMap::ACTION_INCREASE, 20);
-        $this->assertNotEmpty($map->toArray());
-        $map->clear();
-        $this->assertEmpty($map->toArray());
-    }
-
     public function testRemove_WhenRequested_ThenRemovesEntriesForProvidedSource()
     {
         $map = new AdjustmentMap();
