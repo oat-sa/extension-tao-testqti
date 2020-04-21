@@ -257,10 +257,10 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         $constraints = $this->getTimeConstraints();
 
         $maxTime = 0;
-        /** @var TimeConstraint $constraint */
+        /** @var QtiTimeConstraint $constraint */
         foreach ($constraints as $constraint) {
-            if ($constraint->getSource()->getTimeLimits() && $constraint->getSource()->getTimeLimits()->getMaxTime()) {
-                $maxTime = $constraint->getSource()->getTimeLimits()->getMaxTime()->getSeconds(true);
+            if (($maximumTime = $constraint->getAdjustedMaxTime()) !== null) {
+                $maxTime = $maximumTime->getSeconds(true);
             }
         }
         $this->getTimer()->getConsumedExtraTime($tags, $maxTime);
