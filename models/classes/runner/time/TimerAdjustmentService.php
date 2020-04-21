@@ -29,6 +29,9 @@ use qtism\data\QtiIdentifiable;
 
 class TimerAdjustmentService extends ConfigurableService implements TimerAdjustmentServiceInterface
 {
+    protected CONST INCREASE = 'increase';
+    protected CONST DECREASE = 'decrease';
+
     /** @var TestSession */
     private $testSession;
 
@@ -43,7 +46,7 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
     ): bool {
         $this->testSession = $testSession;
 
-        return $this->register(AdjustmentMap::ACTION_INCREASE, $seconds, $source);
+        return $this->register(self::INCREASE, $seconds, $source);
     }
 
     /**
@@ -62,7 +65,7 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
             return false;
         }
 
-        return $this->register(AdjustmentMap::ACTION_DECREASE, $seconds, $source);
+        return $this->register(self::DECREASE, $seconds, $source);
     }
 
     /**
@@ -110,7 +113,11 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
             return;
         }
 
-        $this->getTimer()->getAdjustmentMap()->put($element->getIdentifier(), $action, $seconds);
+        if ($action === self::INCREASE) {
+            $this->getTimer()->getAdjustmentMap()->increase($element->getIdentifier(), $seconds);
+        } elseif ($action === self::DECREASE) {
+            $this->getTimer()->getAdjustmentMap()->decrease($element->getIdentifier(), $seconds);
+        }
     }
 
     private function getTimer(): QtiTimer

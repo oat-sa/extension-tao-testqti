@@ -27,20 +27,25 @@ use oat\taoTests\models\runner\time\ArraySerializable;
 
 class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, ArraySerializable
 {
+    public const ACTION_DECREASE = 'decrease';
+    public const ACTION_INCREASE = 'increase';
+
     private $map = [];
 
     /**
      * @inheritDoc
      */
-    public function put(string $sourceId, string $action, int $seconds): TimerAdjustmentMapInterface
+    public function increase(string $sourceId, int $seconds): TimerAdjustmentMapInterface
     {
-        if (empty($sourceId) || !$this->isValidAction($action) || !$seconds) {
-            throw new \InvalidArgumentException('Provided arguments should not be empty.');
-        }
-        $this->ensureEntryInitialized($sourceId);
-        $this->map[$sourceId][$action] += $seconds;
+        return $this->put($sourceId, self::ACTION_INCREASE, $seconds);
+    }
 
-        return $this;
+    /**
+     * @inheritDoc
+     */
+    public function decrease(string $sourceId, int $seconds): TimerAdjustmentMapInterface
+    {
+        return $this->put($sourceId, self::ACTION_DECREASE, $seconds);
     }
 
     /**
@@ -81,6 +86,17 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
         if (is_array($map)) {
             $this->map = $map;
         }
+    }
+
+    private function put(string $sourceId, string $action, int $seconds): TimerAdjustmentMapInterface
+    {
+        if (empty($sourceId) || !$this->isValidAction($action) || !$seconds) {
+            throw new \InvalidArgumentException('Provided arguments should not be empty.');
+        }
+        $this->ensureEntryInitialized($sourceId);
+        $this->map[$sourceId][$action] += $seconds;
+
+        return $this;
     }
 
     private function isValidAction(string $action): bool

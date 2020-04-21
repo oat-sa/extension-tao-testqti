@@ -527,7 +527,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $extraTime = 20;
         $consumedTime = 4;
         $timer->setExtraTime($extraTime);
-        $timer->getAdjustmentMap()->put('itemId-1', AdjustmentMap::ACTION_INCREASE, 1);
+        $timer->getAdjustmentMap()->increase('itemId-1', 1);
 
         $dataStorage = null;
         $storage = $this->getTimeStorage($dataStorage);
