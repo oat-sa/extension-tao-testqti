@@ -27,6 +27,14 @@ use oat\taoQtiTest\models\runner\config\Business\Domain\OptionCollection;
 
 class OptionCollectionMapper extends InjectionAwareService
 {
+    public const SERVICE_ID = 'taoQtiTest/OptionCollectionMapper';
+
+    /** @noinspection MagicMethodsValidityInspection */
+    /** @noinspection PhpMissingParentConstructorInspection */
+    public function __construct()
+    {
+    }
+
     public function toDomain(array $rawData): OptionCollection
     {
         $resultingOptions = [];

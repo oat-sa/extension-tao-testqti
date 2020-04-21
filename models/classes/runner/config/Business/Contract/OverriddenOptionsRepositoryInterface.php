@@ -22,14 +22,13 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\runner\config\Business\Contract;
 
 use oat\taoQtiTest\models\runner\config\Business\Domain\OptionCollection;
-use RuntimeException;
 
 interface OverriddenOptionsRepositoryInterface
 {
+    public const SERVICE_ID = 'taoQtiTest/OverriddenOptionsRepository';
+
     /**
      * @return OptionCollection
-     *
-     * @throws RuntimeException
      */
     public function findAll(): OptionCollection;
 }

@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\scripts\update;
 use oat\libCat\custom\EchoAdaptEngine;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\oatbox\session\SessionService;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\tao\model\asset\AssetService;
@@ -48,6 +49,7 @@ use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
@@ -64,6 +66,8 @@ use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
 use oat\taoQtiTest\models\runner\time\TimerStrategyService;
+use oat\taoQtiTest\models\runner\toolsStates\DataAccess\Mapper\OptionCollectionMapper;
+use oat\taoQtiTest\models\runner\toolsStates\DataAccess\Repository\OverriddenLtiToolsRepository;
 use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
 use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
@@ -1998,5 +2002,25 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('37.0.2', '37.0.4');
+
+        if ($this->isVersion('37.0.4')) {
+            $serviceManager = $this->getServiceManager();
+
+            $serviceManager->register(
+                OptionCollectionMapper::SERVICE_ID,
+                new OptionCollectionMapper()
+            );
+
+            $serviceManager->register(
+                OverriddenOptionsRepositoryInterface::SERVICE_ID,
+                new OverriddenLtiToolsRepository(
+                    $serviceManager->get(TestCategoryPresetProvider::SERVICE_ID),
+                    $serviceManager->get(SessionService::SERVICE_ID),
+                    $serviceManager->get(OptionCollectionMapper::SERVICE_ID)
+                )
+            );
+
+            $this->setVersion('37.1.0');
+        }
     }
 }

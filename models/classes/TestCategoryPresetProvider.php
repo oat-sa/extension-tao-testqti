@@ -93,13 +93,6 @@ class TestCategoryPresetProvider extends ConfigurableService
         return $keepGroupKeys ? $this->allPresets : array_values($this->allPresets);
     }
 
-    /**
-     * @param string $groupId
-     *
-     * @return TestCategoryPreset[]
-     *
-     * @throws RuntimeException
-     */
     public function findPresetGroupOrFail(string $groupId): array
     {
         $presets = $this->getPresets(true);

@@ -25,10 +25,9 @@
 namespace oat\taoQtiTest\models\runner\config;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\tao\model\theme\ThemeService;
-use oat\taoQtiTest\models\SectionPauseService;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
-use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoQtiTest\models\SectionPauseService;
 
 /**
  * Class QtiRunnerOptions
@@ -188,7 +187,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             'exitButton'        => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session, $context),
             'logoutButton'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session),
             'validateResponses' => \taoQtiTest_helpers_TestRunnerUtils::doesValidateResponses($session),
-            'sectionPause'      => $this->getServiceManager()->get(SectionPauseService::SERVICE_ID)->couldBePaused($session)
+            'sectionPause'      => $this->getSectionPauseService()->couldBePaused($session)
         ];
 
         // get the options from the categories owned by the current item
@@ -203,6 +202,10 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 // the options added by the categories are just flags
                 $options[$optionName] = true;
             }
+        }
+
+        foreach ($this->getOverriddenOptionsRepository()->findAll() as $option) {
+            $options[$option->getId()] = $option->isEnabled();
         }
 
         return $options;
@@ -233,5 +236,17 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     protected function getCategories(RunnerServiceContext $context)
     {
         return $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
+    }
+
+    private function getSectionPauseService(): SectionPauseService
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(SectionPauseService::SERVICE_ID);
+    }
+
+    private function getOverriddenOptionsRepository(): OverriddenOptionsRepositoryInterface
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(OverriddenOptionsRepositoryInterface::SERVICE_ID);
     }
 }

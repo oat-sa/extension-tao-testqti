@@ -27,13 +27,14 @@ use oat\taoQtiTest\models\runner\config\Business\Domain\Option;
 use oat\taoQtiTest\models\runner\config\Business\Domain\OptionCollection;
 use oat\taoQtiTest\models\TestCategoryPreset;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
+use RuntimeException;
 
 abstract class OverriddenToolsRepositoryAbstract
     extends InjectionAwareService
     implements OverriddenOptionsRepositoryInterface
 {
     /** @var TestCategoryPresetProvider */
-    private $presetRepository;
+    protected $presetRepository;
 
     /** @var int[]|null */
     private $availableToolIds;
@@ -64,12 +65,16 @@ abstract class OverriddenToolsRepositoryAbstract
     private function fetchAvailableToolIds(): array
     {
         if (null === $this->availableToolIds) {
-            $this->availableToolIds = array_map(
-                static function (TestCategoryPreset $preset): string {
-                    return $preset->getId();
-                },
-                $this->presetRepository->findPresetGroupOrFail(TestCategoryPresetProvider::GROUP_TOOLS)
-            );
+            try {
+                $this->availableToolIds = array_map(
+                    static function (TestCategoryPreset $preset): string {
+                        return $preset->getId();
+                    },
+                    $this->presetRepository->findPresetGroupOrFail(TestCategoryPresetProvider::GROUP_TOOLS)['presets']
+                );
+            } catch (RuntimeException $exception) {
+                $this->availableToolIds = [];
+            }
         }
 
         return $this->availableToolIds;
