@@ -235,7 +235,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     {
         // check the provided arguments
         if (!is_null($duration) && (!is_numeric($duration) || $duration < 0)) {
-            throw new InvalidDataException('adjust() needs a valid duration!');
+            throw new InvalidDataException('adjust() needs a valid duration! Provided: ' . $duration);
         }
 
         // extract the TimePoint identification from the provided item, and find existing range
