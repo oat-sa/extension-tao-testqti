@@ -48,6 +48,8 @@ use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
+use oat\taoQtiTest\models\runner\config\DataAccess\Repository\NoopOverriddenOptionsRepository;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
@@ -1998,5 +2000,14 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('37.0.2', '37.0.4');
+
+        if ($this->isVersion('37.0.4')) {
+            $this->getServiceManager()->register(
+                OverriddenOptionsRepositoryInterface::SERVICE_ID,
+                new NoopOverriddenOptionsRepository()
+            );
+
+            $this->setVersion('37.1.0');
+        }
     }
 }
