@@ -56,13 +56,17 @@ class TestCategoryPresetProvider extends ConfigurableService
     }
 
     /**
-     * @param string               $presetGroup
-     * @param TestCategoryPreset[] $presets
+     * @param string                                  $presetGroup
+     * @param TestCategoryPreset[]|TestCategoryPreset $presets
      */
-    public function register(string $presetGroup, array $presets): void
+    public function register(string $presetGroup, $presets): void
     {
         if (!array_key_exists($presetGroup, $this->allPresets)) {
             return;
+        }
+
+        if (!is_array($presets)) {
+            $presets = [$presets];
         }
 
         foreach ($presets as $preset) {
