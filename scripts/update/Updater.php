@@ -20,20 +20,44 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\libCat\custom\EchoAdaptEngine;
+use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\service\ServiceNotFoundException;
-use oat\tao\model\ClientLibConfigRegistry;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\tao\model\asset\AssetService;
+use oat\tao\model\ClientLibConfigRegistry;
+use oat\tao\model\ClientLibRegistry;
+use oat\tao\model\import\ImportersService;
 use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
+use oat\tao\scripts\update\OntologyUpdater;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\compilation\CompilationService;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\creator\CreatorItems;
+use oat\taoQtiTest\models\export\metadata\TestExporter;
+use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
+use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
+use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoQtiTest\models\PhpCodeCompilationDataService;
+use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\QtiTestUtils;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
+use oat\taoQtiTest\models\runner\config\DataAccess\Repository\NoopOverriddenOptionsRepository;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
-use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
@@ -41,27 +65,19 @@ use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
 use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
 use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
-use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
-use oat\taoQtiTest\models\ExtendedStateService;
-use oat\taoQtiTest\models\QtiTestListenerService;
-use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
-use oat\taoQtiTest\models\export\metadata\TestExporter;
-use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
-use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\TestCategoryPresetRegistry;
-use oat\taoQtiTest\models\TestModelService;
-use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestCategoryRulesGenerator;
+use oat\taoQtiTest\models\TestCategoryRulesService;
+use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
-use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
-use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
@@ -70,22 +86,8 @@ use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
-use oat\taoQtiTest\models\PhpCodeCompilationDataService;
-use oat\tao\scripts\update\OntologyUpdater;
-use oat\oatbox\filesystem\FileSystemService;
-use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
-use oat\tao\model\import\ImportersService;
-use oat\taoQtiTest\models\import\QtiTestImporter;
-use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
-use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
-use oat\taoQtiTest\models\cat\CatService;
-use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
-use oat\taoQtiTest\models\compilation\CompilationService;
-use oat\tao\model\ClientLibRegistry;
-use oat\tao\model\asset\AssetService;
-use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoTests\models\runner\time\TimerStrategyInterface;
 
 /**
@@ -1987,14 +1989,37 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('36.0.0');
         }
 
-        $this->skip('36.0.0', '36.8.3');
+        $this->skip('36.0.0', '37.0.1');
 
-        if ($this->isversion('36.8.3')) {
+        if ($this->isVersion('37.0.1')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['dialog']['alert']['focus'] = 'navigable-modal-body';
+            $config['plugins']['dialog']['confirm']['focus'] = 'navigable-modal-body';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('37.0.2');
+        }
+
+        $this->skip('37.0.2', '37.0.4');
+
+        if ($this->isVersion('37.0.4')) {
+            $this->getServiceManager()->register(
+                OverriddenOptionsRepositoryInterface::SERVICE_ID,
+                new NoopOverriddenOptionsRepository()
+            );
+
+            $this->setVersion('37.1.0');
+        }
+
+        $this->skip('37.1.0', '37.1.1');
+
+        if ($this->isversion('37.1.1')) {
             $this->getServiceManager()->register(
                 TimerAdjustmentServiceInterface::SERVICE_ID,
                 new TimerAdjustmentService()
             );
-            $this->setVersion('36.9.0');
+            $this->setVersion('37.2.0');
         }
     }
 }
