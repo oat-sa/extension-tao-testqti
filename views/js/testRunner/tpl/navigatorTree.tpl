@@ -7,19 +7,22 @@
                             <span class="icon-down"></span>
                         </span>
                         {{#if sections.length}}
-                        <ul class="qti-navigator-sections collapsible-panel plain">
+                        <ul aria-label="{{label}}" class="qti-navigator-sections collapsible-panel plain">
                             {{#each sections}}
                             <li class="qti-navigator-section collapsible {{#if active}}active{{else}}collapsed{{/if}}" data-id="{{id}}">
                                 <span class="qti-navigator-label" title="{{label}}">
                                     <span class="qti-navigator-text">{{label}}</span>
                                     <span class="qti-navigator-counter">{{answered}}/{{items.length}}</span>
                                 </span>
-                                <ul class="qti-navigator-items collapsible-panel plain">
+                                <ul aria-label="{{label}}" class="qti-navigator-items collapsible-panel plain">
                                     {{#each items}}
-                                    <li class="qti-navigator-item{{#if active}} active{{/if}}{{#if flagged}} flagged{{/if}}{{#if answered}} answered{{/if}}{{#if viewed}} viewed{{else}} unseen{{/if}}" data-id="{{id}}" data-position="{{position}}">
-                                        <span class="qti-navigator-label truncate" title="{{label}}">
-                                            <span class="qti-navigator-icon icon-{{#if flagged}}flagged{{else}}{{#if answered}}answered{{else}}{{#if viewed}}viewed{{else}}unseen{{/if}}{{/if}}{{/if}}"></span>
-                                            <span class="qti-navigator-number">{{@index}}</span>
+                                    <li tabindex="0" class="qti-navigator-item{{#if active}} active{{/if}}{{#if flagged}} flagged{{/if}}{{#if answered}} answered{{/if}}{{#if viewed}} viewed{{else}} unseen{{/if}}" data-id="{{id}}" data-position="{{position}}">
+                                        <span class="qti-navigator-label truncate" title="{{label}}"
+                                              role="link" aria-disabled="{{#if viewed}}false{{else}}true{{/if}}"
+                                              {{#if active}}aria-current="page"{{/if}}
+                                              aria-label="item {{index}} of {{../stats.questions}} total {{label}} {{icon}}unseen{{/if}}{{/if}}{{/if}}">
+                                            <span class="qti-navigator-icon icon-{{icon}}"></span>
+                                            <span class="qti-navigator-number">{{index}}</span>
                                             {{label}}
                                         </span>
                                     </li>
