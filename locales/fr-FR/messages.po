@@ -934,7 +934,7 @@ msgid "Rubric Block Properties"
 msgstr "Propriétés du bloc de rubrique"
 
 msgid "Rubric Blocks"
-msgstr "Blocs de rubirque"
+msgstr "Blocs de rubrique"
 
 msgid "Save"
 msgstr "Enregistrer"
