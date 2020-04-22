@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-10T08:19:19\n"
+"PO-Revision-Date: 2020-04-22T11:37:18\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -382,11 +382,11 @@ msgstr "Schakel het item herzieningsscherm in / navigator."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Maakt het mogelijk om naar items binnen deze sectie over te gaan. Vereist de optie voor het beoordelingsscherm."
 
-msgid "End Test"
-msgstr "Eindig toets"
-
 msgid "End test"
 msgstr "Einde examen"
+
+msgid "End Test"
+msgstr "Eindig toets"
 
 msgid "Enter a blueprint"
 msgstr "Voer een blauwdruk in"
@@ -741,6 +741,9 @@ msgstr ""
 msgid "New Rubric Block"
 msgstr "Nieuwe rubriek blok"
 
+msgid "New section"
+msgstr ""
+
 msgid "New test part"
 msgstr "Nieuw toets deel"
 
@@ -903,6 +906,9 @@ msgstr "Verwijder rubriek blok"
 msgid "Remove Section"
 msgstr "Verwijder sectie"
 
+msgid "Remove Test Part"
+msgstr ""
+
 msgid "Required"
 msgstr "Vereist"
 
@@ -942,10 +948,10 @@ msgstr "Puntenteller"
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Notitieboekje"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Notitieboekje"
 
 msgid "Scratchpad"
@@ -1106,6 +1112,9 @@ msgstr "Test metagegevens met succes geëxporteerd."
 
 msgid "Test Navigation"
 msgstr "Examennavigatie"
+
+msgid "Test Part Properties"
+msgstr ""
 
 msgid "Test Saved"
 msgstr "Toets opgeslagen"
