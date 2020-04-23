@@ -26,6 +26,7 @@ namespace oat\taoQtiTest\scripts\install;
 
 use common_ext_action_InstallAction;
 use common_report_Report as Report;
+use oat\taoQtiTest\scripts\cli\TestRunnerOfflineMode;
 
 /**
  * Class SetOfflineTestRunnerConfig
