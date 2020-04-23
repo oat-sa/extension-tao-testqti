@@ -44,12 +44,61 @@ use oat\tao\model\modules\DynamicModule;
  * Class TestRunnerOfflineMode, replacement of old one SetOfflineTestRunnerConfig
  * @package oat\taoQtiTest\scripts\cli
  *
- * How to use: php index.php 'oat\taoQtiTest\scripts\cli\TestRunnerOfflineMode' --help
+ * How to use:          php index.php 'oat\taoQtiTest\scripts\cli\TestRunnerOfflineMode' --help
+ * Set offline mode:    php index.php 'oat\taoQtiTest\scripts\cli\TestRunnerOfflineMode' --mode offline
+ * Return online mode:  php index.php 'oat\taoQtiTest\scripts\cli\TestRunnerOfflineMode' --mode online
  */
 class TestRunnerOfflineMode extends ScriptAction
 {
-    public const OPTION_ENABLE = 'enable';
-    public const OPTION_DISABLE = 'disable';
+    public const OPTION_MODE = 'mode';
+
+    public const MODE_ONLINE = 'online';
+    public const MODE_OFFLINE = 'offline';
+
+    private const PERMITTED_MODES = [self::MODE_ONLINE, self::MODE_OFFLINE];
+
+    private const OFFLINE_TEST_RUNNER_CONFIG = [
+        'allow-browse-next-item' => true,
+        'bootstrap' => [
+            'serviceExtension' => 'taoQtiTest',
+            'serviceController' => 'OfflineRunner',
+            'communication' => [
+                'enabled' => true,
+                'type' => 'request',
+                'extension' => 'taoQtiTest',
+                'controller' => 'OfflineRunner',
+                'action' => 'messages',
+                'syncActions' => [
+                    'move',
+                    'skip',
+                    'storeTraceData',
+                    'timeout',
+                    'exitTest',
+                    'getNextItemData',
+                ],
+            ],
+        ],
+    ];
+
+    private const ONLINE_TEST_RUNNER_CONFIG = [
+        'bootstrap' => [
+            'serviceExtension' => 'taoQtiTest',
+            'serviceController' => 'Runner',
+            'communication' => [
+                'type' => 'poll',
+                'extension' => null,
+                'controller' => null,
+                'action' => 'messages',
+                'syncActions' => [
+                    'move',
+                    'skip',
+                    'storeTraceData',
+                    'timeout',
+                    'exitTest',
+                ],
+            ],
+        ],
+    ];
 
     private const UNSUPPORTED_PLUGINS = [
         'taoTestRunnerPlugins/runner/plugins/security/autoPause',
@@ -143,32 +192,9 @@ class TestRunnerOfflineMode extends ScriptAction
      * @throws common_exception_InconsistentData
      * @throws common_ext_ExtensionException
      */
-    private function enable()
+    private function goOffline()
     {
-        $this->updateTestRunnerConfig(
-            [
-                'allow-browse-next-item' => true,
-                'bootstrap' => [
-                    'serviceExtension' => 'taoQtiTest',
-                    'serviceController' => 'OfflineRunner',
-                    'communication' => [
-                        'enabled' => true,
-                        'type' => 'request',
-                        'extension' => 'taoQtiTest',
-                        'controller' => 'OfflineRunner',
-                        'action' => 'messages',
-                        'syncActions' => [
-                            'move',
-                            'skip',
-                            'storeTraceData',
-                            'timeout',
-                            'exitTest',
-                            'getNextItemData',
-                        ],
-                    ],
-                ],
-            ]
-        );
+        $this->updateTestRunnerConfig(self::OFFLINE_TEST_RUNNER_CONFIG);
 
         if (!$this->registerOfflineProxy()) {
             return new Report(Report::TYPE_ERROR, 'Unable to register the proxy.');
@@ -190,29 +216,9 @@ class TestRunnerOfflineMode extends ScriptAction
      * @throws common_exception_InconsistentData
      * @throws common_ext_ExtensionException
      */
-    private function disable()
+    private function goOnline()
     {
-        $this->updateTestRunnerConfig(
-            [
-                'bootstrap' => [
-                    'serviceExtension' => 'taoQtiTest',
-                    'serviceController' => 'Runner',
-                    'communication' => [
-                        'type' => 'poll',
-                        'extension' => null,
-                        'controller' => null,
-                        'action' => 'messages',
-                        'syncActions' => [
-                            'move',
-                            'skip',
-                            'storeTraceData',
-                            'timeout',
-                            'exitTest',
-                        ],
-                    ],
-                ],
-            ]
-        );
+        $this->updateTestRunnerConfig(self::ONLINE_TEST_RUNNER_CONFIG);
 
         $this->unregisterOfflineProxy();
 
@@ -225,18 +231,13 @@ class TestRunnerOfflineMode extends ScriptAction
     protected function provideOptions()
     {
         return [
-            self::OPTION_ENABLE => [
-                'prefix' => 'e',
-                'flag' => true,
-                'longPrefix' => 'enable',
-                'description' => 'Enable offline mode for test runner',
-            ],
-            self::OPTION_DISABLE => [
-                'prefix' => 'd',
-                'flag' => true,
-                'longPrefix' => 'disable',
-                'description' => 'Disable offline mode for test runner',
-            ],
+            self::OPTION_MODE => [
+                'prefix' => 'm',
+                'flag' => false,
+                'longPrefix' => 'mode',
+                'required' => true,
+                'description' => 'Sets online or offline mode for test runner'
+            ]
         ];
     }
 
@@ -264,23 +265,19 @@ class TestRunnerOfflineMode extends ScriptAction
      */
     protected function run()
     {
-        $toEnable = $this->getOption(self::OPTION_ENABLE);
-        $toDisable = $this->getOption(self::OPTION_DISABLE);
+        $mode = $this->getOption(self::OPTION_MODE);
 
-        if (!($toEnable || $toDisable)) {
-            throw new ScriptException('Action is missed. Please, run this script with --help flag to see available parameters.');
+        if (!in_array($mode, self::PERMITTED_MODES, true)) {
+            throw new ScriptException('The mode should be specified by "online" or "offline" value exactly.');
         }
 
-        if ($toEnable !== null && $toDisable !== null) {
-            throw new ScriptException('Only one action (enable or disable) can be specified per one script call.');
-        }
-
-        if ($toEnable) {
-            return $this->enable();
-        }
-
-        if ($toDisable) {
-            return $this->disable();
+        switch ($mode) {
+            case self::MODE_ONLINE:
+                return $this->goOnline();
+                break;
+            case self::MODE_OFFLINE:
+                return $this->goOffline();
+                break;
         }
     }
 }
