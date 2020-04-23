@@ -367,6 +367,9 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
 
         // the last range could be still open...
         if ($last && $open) {
+//            if ($lastTimestamp < $last->getTimestamp()) {
+//                $lastTimestamp = $last->getTimestamp();
+//            }
             $fixedRange[] = $this->cloneTimePoint($last, TimePoint::TYPE_END, $lastTimestamp);
         }
         
