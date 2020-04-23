@@ -121,9 +121,23 @@ class TestRunnerOfflineMode extends ScriptAction
         $taoQtiTestExtension->setConfig('testRunner', $config);
     }
 
-    private function unregisterOfflineProxy()
+    private function registerQtiServiceProxy()
     {
-        $this->getProviderRegistry()->removeByCategory('proxy');
+        $providerRegistry = $this->getProviderRegistry();
+        $providerRegistry->removeByCategory('proxy');
+        $providerRegistry->register(
+            TestProvider::fromArray(
+                [
+                    'id' => 'qtiServiceProxy',
+                    'module' => 'taoQtiTest/runner/proxy/qtiServiceProxy',
+                    'bundle' => 'taoQtiTest/loader/taoQtiTestRunner.min',
+                    'category' => 'proxy',
+                ]
+            )
+        );
+
+        return $providerRegistry->isRegistered('taoQtiTest/runner/proxy/qtiServiceProxy');
+
     }
 
     private function registerOfflineProxy()
@@ -220,7 +234,7 @@ class TestRunnerOfflineMode extends ScriptAction
     {
         $this->updateTestRunnerConfig(self::ONLINE_TEST_RUNNER_CONFIG);
 
-        $this->unregisterOfflineProxy();
+        $this->registerQtiServiceProxy();
 
         // set unsupported plugins as active
         $this->handleUnsupportedTestRunnerPlugins(true);
