@@ -81,12 +81,16 @@ class TestRunnerOfflineMode extends ScriptAction
     {
         $providerRegistry = $this->getProviderRegistry();
         $providerRegistry->removeByCategory('proxy');
-        $providerRegistry->register(TestProvider::fromArray([
-                                                                'id'       => 'offlineProxy',
-                                                                'module'   => 'taoQtiTest/runner/proxy/offline/proxy',
-                                                                'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
-                                                                'category' => 'proxy'
-                                                            ]));
+        $providerRegistry->register(
+            TestProvider::fromArray(
+                [
+                    'id' => 'offlineProxy',
+                    'module' => 'taoQtiTest/runner/proxy/offline/proxy',
+                    'bundle' => 'taoQtiTest/loader/taoQtiTestRunner.min',
+                    'category' => 'proxy',
+                ]
+            )
+        );
 
         return $providerRegistry->isRegistered('taoQtiTest/runner/proxy/offline/proxy');
     }
@@ -204,7 +208,6 @@ class TestRunnerOfflineMode extends ScriptAction
                             'storeTraceData',
                             'timeout',
                             'exitTest',
-//                            'getNextItemData', // remove
                         ],
                     ],
                 ],
@@ -232,7 +235,7 @@ class TestRunnerOfflineMode extends ScriptAction
                 'prefix' => 'd',
                 'flag' => true,
                 'longPrefix' => 'disable',
-                'description' => 'Disable offline mode for test runner'
+                'description' => 'Disable offline mode for test runner',
             ],
         ];
     }
@@ -247,25 +250,37 @@ class TestRunnerOfflineMode extends ScriptAction
         return [
             'prefix' => 'h',
             'longPrefix' => 'help',
-            'description' => 'Prints a help statement'
+            'description' => 'Prints a help statement',
         ];
     }
 
+    /**
+     * @return Report
+     * @throws InvalidServiceManagerException
+     * @throws ScriptException
+     * @throws common_exception_Error
+     * @throws common_exception_InconsistentData
+     * @throws common_ext_ExtensionException
+     */
     protected function run()
     {
-        $e = $this->getOption(self::OPTION_ENABLE);
-        $d = $this->getOption(self::OPTION_DISABLE);
+        $toEnable = $this->getOption(self::OPTION_ENABLE);
+        $toDisable = $this->getOption(self::OPTION_DISABLE);
 
-        if ($e !== null && $d !== null) {
+        if (!($toEnable || $toDisable)) {
+            throw new ScriptException('Action is missed. Please, run this script with --help flag to see available parameters.');
+        }
+
+        if ($toEnable !== null && $toDisable !== null) {
             throw new ScriptException('Only one action (enable or disable) can be specified per one script call.');
         }
 
-        if ($e) {
+        if ($toEnable) {
             return $this->enable();
-        } elseif ($d) {
+        }
+
+        if ($toDisable) {
             return $this->disable();
-        } else {
-            throw new ScriptException('Action is missed. Please, run this script with --help flag to see available parameters.');
         }
     }
 }
