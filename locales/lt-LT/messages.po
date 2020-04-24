@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-10T08:19:18\n"
+"PO-Revision-Date: 2020-04-22T11:37:16\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -382,10 +382,10 @@ msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Baigti testą"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Baigti testą"
 
 msgid "Enter a blueprint"
@@ -741,6 +741,9 @@ msgstr "tinklas"
 msgid "New Rubric Block"
 msgstr "Naujas Rubrikos Blokas"
 
+msgid "New section"
+msgstr ""
+
 msgid "New test part"
 msgstr "Nauja testo dalis"
 
@@ -903,6 +906,9 @@ msgstr "Pašalinti Rubrikos Bloką"
 msgid "Remove Section"
 msgstr "Pašalinti Skyrių"
 
+msgid "Remove Test Part"
+msgstr ""
+
 msgid "Required"
 msgstr "Reikalaujama"
 
@@ -942,10 +948,10 @@ msgstr "Verintojas"
 msgid "Scoring"
 msgstr "Įvertinimas"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Juodraštis"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Juodraštis"
 
 msgid "Scratchpad"
@@ -1106,6 +1112,9 @@ msgstr "Testo meta duomenys sėkmingai išeksportuoti."
 
 msgid "Test Navigation"
 msgstr "Testo Navigacija"
+
+msgid "Test Part Properties"
+msgstr ""
 
 msgid "Test Saved"
 msgstr "Testas Išsaugotas"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-10T08:19:12\n"
+"PO-Revision-Date: 2020-04-22T11:37:07\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: hu-HU\n"
@@ -382,10 +382,10 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr ""
 
-msgid "End test"
+msgid "End Test"
 msgstr ""
 
 msgid "Enter a blueprint"
@@ -740,6 +740,9 @@ msgstr ""
 msgid "New Rubric Block"
 msgstr ""
 
+msgid "New section"
+msgstr ""
+
 msgid "New test part"
 msgstr ""
 
@@ -902,6 +905,9 @@ msgstr ""
 msgid "Remove Section"
 msgstr ""
 
+msgid "Remove Test Part"
+msgstr ""
+
 msgid "Required"
 msgstr ""
 
@@ -941,10 +947,10 @@ msgstr ""
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1104,6 +1110,9 @@ msgid "Test metadata successfully exported."
 msgstr ""
 
 msgid "Test Navigation"
+msgstr ""
+
+msgid "Test Part Properties"
 msgstr ""
 
 msgid "Test Saved"
