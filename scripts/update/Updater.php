@@ -2010,9 +2010,9 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('37.1.0');
         }
 
-        $this->skip('37.1.0', '37.1.1');
+        $this->skip('37.1.0', '37.2.1');
 
-        if ($this->isVersion('37.1.1')) {
+        if ($this->isVersion('37.2.1')) {
             $registry = PluginRegistry::getRegistry();
 
             $registry->register(TestPlugin::fromArray([
@@ -2026,7 +2026,7 @@ class Updater extends \common_ext_ExtensionUpdater
               'tags' => [ ]
             ]));
 
-            $this->setVersion('37.2.0');
+            $this->setVersion('37.3.0');
         }
     }
 }

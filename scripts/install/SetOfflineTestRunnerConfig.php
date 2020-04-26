@@ -24,126 +24,19 @@
 
 namespace oat\taoQtiTest\scripts\install;
 
-use oat\oatbox\AbstractRegistry;
-use oat\oatbox\service\ConfigurableService;
-use oat\taoTests\models\runner\plugins\PluginRegistry;
-use oat\taoTests\models\runner\providers\ProviderRegistry;
-use oat\taoTests\models\runner\providers\TestProvider;
-use oat\tao\model\modules\DynamicModule;
+use common_ext_action_InstallAction;
+use common_report_Report as Report;
+use oat\taoQtiTest\scripts\cli\TestRunnerOfflineMode;
 
-class SetOfflineTestRunnerConfig extends \common_ext_action_InstallAction
+/**
+ * Class SetOfflineTestRunnerConfig
+ * @package oat\taoQtiTest\scripts\install
+ * @deprecated Please, use new script tao\taoQtiTest\script\cli\TestRunnerOfflineMode
+ */
+class SetOfflineTestRunnerConfig extends common_ext_action_InstallAction
 {
-    private $unsupportedPlugins = [
-        'taoTestRunnerPlugins/runner/plugins/security/autoPause',
-        'taoTestRunnerPlugins/runner/plugins/connectivity/disconnectedTestSaver',
-    ];
-
-    /**
-     * @param $params
-     * @return \common_report_Report
-     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
-     * @throws \common_ext_ExtensionException
-     * @throws \common_exception_Error
-     * @throws \common_exception_InconsistentData
-     */
     public function __invoke($params)
     {
-        $this->updateTestRunnerConfig();
-        if (!$this->registerOfflineProxy()) {
-            return new \common_report_Report(
-                \common_report_Report::TYPE_ERROR,
-                "Unable to register the proxy."
-            );
-        }
-        $this->disableUnsupportedTestRunnerPlugins();
-
-        return new \common_report_Report(
-            \common_report_Report::TYPE_SUCCESS,
-            'Offline Test Runner configuration set.'
-        );
-    }
-
-    /**
-     * @throws \common_exception_Error
-     * @throws \common_ext_ExtensionException
-     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
-     */
-    private function updateTestRunnerConfig()
-    {
-        /** @var \common_ext_Extension $taoQtiTestExtension */
-        $taoQtiTestExtension = $this->getExtensionsManagerService()->getExtensionById('taoQtiTest');
-        $config = array_merge($taoQtiTestExtension->getConfig('testRunner'), [
-            'allow-browse-next-item' => true,
-            'bootstrap' => [
-                'serviceExtension' => 'taoQtiTest',
-                'serviceController' => 'OfflineRunner',
-                'communication' => [
-                    'enabled' => true,
-                    'type' => 'request',
-                    'extension' => 'taoQtiTest',
-                    'controller' => 'OfflineRunner',
-                    'action' => 'messages',
-                    'syncActions' => [
-                        'move',
-                        'skip',
-                        'storeTraceData',
-                        'timeout',
-                        'exitTest',
-                        'getNextItemData',
-                    ],
-                ],
-            ],
-        ]);
-
-        $taoQtiTestExtension->setConfig('testRunner', $config);
-    }
-
-    private function registerOfflineProxy()
-    {
-        $providerRegistry = $this->getProviderRegistry();
-        $providerRegistry->removeByCategory('proxy');
-        $providerRegistry->register(TestProvider::fromArray([
-            'id'       => 'offlineProxy',
-            'module'   => 'taoQtiTest/runner/proxy/offline/proxy',
-            'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
-            'category' => 'proxy'
-        ]));
-        return $providerRegistry->isRegistered('taoQtiTest/runner/proxy/offline/proxy');
-    }
-
-    /**
-     * @throws \common_exception_InconsistentData
-     */
-    private function disableUnsupportedTestRunnerPlugins()
-    {
-        /** @var PluginRegistry $pluginRegistry */
-        $pluginRegistry = PluginRegistry::getRegistry();
-
-        foreach ($this->unsupportedPlugins as $unsupportedPluginId) {
-            if ($pluginRegistry->isRegistered($unsupportedPluginId)) {
-                /** @var array $plugin */
-                $plugin = $pluginRegistry->get($unsupportedPluginId);
-                $plugin['active'] = false;
-
-                $pluginRegistry->register(DynamicModule::fromArray($plugin));
-            }
-        }
-    }
-
-    /**
-     * @return ProviderRegistry|AbstractRegistry
-     */
-    private function getProviderRegistry()
-    {
-        return ProviderRegistry::getRegistry();
-    }
-
-    /**
-     * @return \common_ext_ExtensionsManager|ConfigurableService
-     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
-     */
-    private function getExtensionsManagerService()
-    {
-        return $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID);
+        return new Report(Report::TYPE_WARNING, sprintf('This script deprecated, please, use %s to handle offline mode', TestRunnerOfflineMode::class));
     }
 }
