@@ -2010,6 +2010,6 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('37.1.0');
         }
 
-        $this->skip('37.1.0', '37.2.1');
+        $this->skip('37.1.0', '37.2.2');
     }
 }
