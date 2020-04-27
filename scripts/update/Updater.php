@@ -2011,5 +2011,22 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('37.1.0', '37.2.1');
+
+        if ($this->isVersion('37.2.1')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+              'id' => 'jumplinks',
+              'name' => 'Jump links',
+              'module' => 'taoQtiTest/runner/plugins/content/accessibility/jumplinks/plugin',
+              'bundle' => 'taoQtiTest/loader/testPlugins.min',
+              'description' => 'Provide a jump links to fastest keyboard navigation',
+              'category' => 'content',
+              'active' => false,
+              'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.3.0');
+        }
     }
 }
