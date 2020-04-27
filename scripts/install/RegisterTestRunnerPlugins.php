@@ -135,6 +135,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => true,
                 'tags' => []
+            ], [
+                'id' => 'jumplinks',
+                'name' => 'Jump links',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/jumplinks/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Provide a jump links to fastest keyboard navigation',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
             ]
         ],
         'controls' => [
