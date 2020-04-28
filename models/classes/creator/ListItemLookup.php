@@ -83,7 +83,7 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
         $accessible = $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ);
 
         foreach ($result['nodes'] as $i => $node) {
-            if (!in_array($node['uri'], $accessible)) {
+            if ($node['type'] === 'instance' && !in_array($node['uri'], $accessible)) {
                 unset($result['nodes'][$i]);
                 $result['total']--;
             }
