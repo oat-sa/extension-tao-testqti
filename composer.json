@@ -64,6 +64,9 @@
     "oat-sa/generis": "*",
     "oat-sa/tao-core": "*"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^8.5"
+  },
   "autoload": {
     "psr-4": {
       "oat\\taoQtiTest\\models\\": "models/classes/",
