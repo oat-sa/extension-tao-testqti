@@ -977,7 +977,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
-            throw new common_Exception('Something bad happened');
+            throw new common_Exception('Something bad happened', 500);
 
 
             $this->checkSecurityToken();
@@ -1003,7 +1003,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (common_Exception $e) {
             $response = [
                 'responses' => [[
-                    $this->getErrorResponse($e),
+                    array_merge($this->getErrorResponse($e), ['requestParameters' => $this->getRequestParameters()]),
                 ]],
                 'messages' => [],
                 'success' => false,
