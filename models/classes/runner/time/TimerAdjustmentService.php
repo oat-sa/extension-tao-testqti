@@ -25,6 +25,7 @@ use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoTests\models\runner\time\InvalidStorageException;
+use qtism\common\datatypes\QtiDuration;
 use qtism\data\QtiIdentifiable;
 
 class TimerAdjustmentService extends ConfigurableService implements TimerAdjustmentServiceInterface
@@ -66,6 +67,28 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
         }
 
         return $this->register(self::DECREASE, $seconds, $source);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAdjustedMaxTime(QtiIdentifiable $source, QtiTimer $timer): ?QtiDuration
+    {
+        $timeLimits = $source->getTimeLimits();
+        if (!$timeLimits || ($maxTime = $timeLimits->getMaxTime()) === null) {
+            return null;
+        }
+
+        $maximumTime = clone $maxTime;
+        if ($timer !== null) {
+            $adjustmentSeconds = $timer->getAdjustmentMap()->get($source->getIdentifier());
+            if ($adjustmentSeconds > 0) {
+                $maximumTime->add(new QtiDuration('PT' . $adjustmentSeconds . 'S'));
+            } else {
+                $maximumTime->sub(new QtiDuration('PT' . abs($adjustmentSeconds) . 'S'));
+            }
+        }
+        return $maximumTime;
     }
 
     /**

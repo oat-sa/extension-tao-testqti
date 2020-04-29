@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models\runner\time;
 
 
 use oat\taoQtiTest\models\runner\session\TestSession;
+use qtism\common\datatypes\QtiDuration;
 use qtism\data\QtiIdentifiable;
 
 /**
@@ -59,4 +60,15 @@ interface TimerAdjustmentServiceInterface
         int $seconds,
         QtiIdentifiable $source = null
     ): bool;
+
+    /**
+     * Finds adjusted max time limit for a given test component
+     * @param QtiIdentifiable $source
+     * @param QtiTimer $timer
+     * @return QtiDuration|null
+     */
+    public function getAdjustedMaxTime(
+        QtiIdentifiable $source,
+        QtiTimer $timer
+    ): ?QtiDuration;
 }
