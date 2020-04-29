@@ -1002,9 +1002,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = [
-                'responses' => [
+                'responses' => [[
                     $this->getErrorResponse($e),
-                ],
+                ]],
                 'messages' => [],
                 'success' => false,
             ];
