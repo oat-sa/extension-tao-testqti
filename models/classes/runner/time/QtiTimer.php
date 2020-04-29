@@ -499,9 +499,6 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     public function getExtraTime($maxTime = 0)
     {
-        if ($maxTime && $this->getExtendedTime()) {
-            $this->setExtraTime($this->timerStrategy->getExtraTime($maxTime, $this->getExtendedTime()));
-        }
         return $this->extraTime;
     }
 
