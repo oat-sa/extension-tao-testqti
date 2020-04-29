@@ -494,10 +494,9 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 
     /**
      * Gets the added extra time
-     * @param int $maxTime
      * @return float
      */
-    public function getExtraTime($maxTime = 0)
+    public function getExtraTime()
     {
         return $this->extraTime;
     }
@@ -569,7 +568,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     public function getRemainingExtraTime($tags = null, $maxTime = 0, $target = TimePoint::TARGET_SERVER)
     {
-        return max(0, $this->getExtraTime($maxTime) - $this->getConsumedExtraTime($tags, $maxTime, $target));
+        return max(0, $this->getExtraTime() - $this->getConsumedExtraTime($tags, $maxTime, $target));
     }
 
     /**

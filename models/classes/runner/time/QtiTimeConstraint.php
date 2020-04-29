@@ -158,7 +158,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                 // take care of the already consumed extra time under the current constraint
                 // and append the full remaining extra time
                 // the total must correspond to the already elapsed time plus the remaining time
-                $maximumTime->add(new QtiDuration('PT' . $this->timer->getExtraTime($maximumTime->getSeconds(true)) . 'S'));
+                $maximumTime->add(new QtiDuration('PT' . $this->timer->getExtraTime() . 'S'));
             }
 
             return $this->getRemainingTimeFrom($maximumTime);
@@ -245,7 +245,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                     $timer = $this->getTimer();
                     $maxTimeSeconds = $maxTime->getSeconds(true);
                     $extraTime = [
-                        'total' => $timer->getExtraTime($maxTimeSeconds),
+                        'total' => $timer->getExtraTime(),
                         'consumed' => $timer->getConsumedExtraTime($identifier, $maxTimeSeconds, $this->timerTarget),
                         'remaining' => $timer->getRemainingExtraTime($identifier, $maxTimeSeconds, $this->timerTarget),
                     ];
