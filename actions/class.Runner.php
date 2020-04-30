@@ -976,12 +976,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
+        $this->checkSecurityToken(); // will return 500 on error
+
         try {
-            throw new common_Exception('Something bad happened', 500);
-
-
-            $this->checkSecurityToken();
-
             // close the PHP session to prevent session overwriting and loss of security token for secured queries
             session_write_close();
 
@@ -1001,13 +998,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => true,
             ];
         } catch (common_Exception $e) {
-            $response = [
-                'responses' => [[
-                    array_merge($this->getErrorResponse($e), ['requestParameters' => $this->getRequestParameters()]),
-                ]],
-                'messages' => [],
-                'success' => false,
-            ];
+            $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
 
