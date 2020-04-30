@@ -95,8 +95,6 @@ class SynchronisationService extends ConfigurableService
                 }
 
                 $action->setServiceContext($serviceContext);
-                if ($serviceContext instanceof QtiRunnerServiceContext) {
-                }
                 $responseAction = $action->process();
             } catch (\common_Exception $e) {
                 $responseAction = ['error' => $e->getMessage()];
