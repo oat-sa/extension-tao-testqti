@@ -48,38 +48,23 @@ class SynchronisationService extends ConfigurableService
     {
         $this->checkData($data);
 
-        return $this->getResponses($data, $serviceContext, $this->getAvailableActions());
-    }
-
-    /**
-     * @param $data
-     * @param QtiRunnerServiceContext $serviceContext
-     * @param array $availableActions
-     * @return array
-     */
-    protected function getResponses($data, QtiRunnerServiceContext $serviceContext, array $availableActions): array
-    {
         /** @var ResponseGenerator $responseGenerator */
         $responseGenerator = $this->getServiceLocator()->get(ResponseGenerator::class);
 
         // extract the actions and build usable instances
-        $actions = $responseGenerator->prepareActions($data, $availableActions);
+        $actions = $responseGenerator->prepareActions($data, $this->getAvailableActions());
 
-        // determine the start timestamp of the actions:
-        // - check if the total duration of actions to sync is comprised within
-        //   the elapsed time since the last TimePoint.
-        // - otherwise compute the start timestamp from now minus the duration
-        //   (caution! this could introduce inconsistency in the TimeLine as the ranges could be interlaced)
-        $now = microtime(true);
-        $last = $responseGenerator->getLastRegisteredTime(
-            $now,
-            $actions,
-            $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp());
+        $actionTimestamps = $responseGenerator->getTimestamps($actions, $serviceContext, microtime(true));
 
         $response = [];
         foreach ($actions as $action) {
             if ($action instanceof TestRunnerAction) {
-                $response[] = $responseGenerator->getActionResponse($action, $now, $last, $serviceContext);
+                $response[] = $responseGenerator->getActionResponse(
+                    $action,
+                    $actionTimestamps['now'],
+                    $actionTimestamps['last'],
+                    $serviceContext
+                );
             } else {
                 $response[] = $action; // if error happened
             }

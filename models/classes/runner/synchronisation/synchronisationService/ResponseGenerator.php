@@ -72,7 +72,9 @@ class ResponseGenerator implements ServiceLocatorAwareInterface
 
         // ensure the actions are in chronological order
         usort($actions, static function ($a, $b) {
-            return $a instanceof TestRunnerAction ? $a->getTimestamp() - $b->getTimestamp() : 0;
+            $timeA = $a instanceof TestRunnerAction ? $a->getTimestamp() : 0;
+            $timeB = $b instanceof TestRunnerAction ? $b->getTimestamp() : 0;
+            return $timeA - $timeB;
         });
 
         return $actions;
@@ -94,22 +96,28 @@ class ResponseGenerator implements ServiceLocatorAwareInterface
     }
 
     /**
-     * @param float $now
+     * determine the start timestamp of the actions:
+     * - check if the total duration of actions to sync is comprised within
+     *   the elapsed time since the last TimePoint.
+     * - otherwise compute the start timestamp from now minus the duration
+     *   (caution! this could introduce inconsistency in the TimeLine as the ranges could be interlaced)
+     *
      * @param array $actions
-     * @param float $lastRegistered
-     * @return float
+     * @param QtiRunnerServiceContext $serviceContext
+     * @param float $now
+     * @return array
      */
-    public function getLastRegisteredTime(float $now, array $actions, float $lastRegistered): float
+    public function getTimestamps(array $actions, QtiRunnerServiceContext $serviceContext, float $now): array
     {
-        // also compute the total duration to synchronise
-        $duration = $this->computeDuration($actions);
-
-        $elapsed = $now - $lastRegistered;
-        if ($duration > $elapsed) {
+        $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
+        $actionsDuration = $this->computeDuration($actions);
+        $elapsed = $now - $last;
+        if ($actionsDuration > $elapsed) {
             common_Logger::t('Ignoring the last timestamp to take into account the actual duration to sync. Could introduce TimeLine inconsistency!');
-            $lastRegistered = $now - $duration;
+            $last = $now - $actionsDuration;
         }
-        return $lastRegistered;
+
+        return ['now' => $now, 'last' => $last];
     }
 
     /**
