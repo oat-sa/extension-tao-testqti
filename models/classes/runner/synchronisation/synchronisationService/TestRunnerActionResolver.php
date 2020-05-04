@@ -53,18 +53,6 @@ class TestRunnerActionResolver implements ServiceLocatorAwareInterface
     }
 
     /**
-     * @param $actionClass
-     * @param string $actionName
-     * @throws ResolverException
-     */
-    protected function checkClass(string $actionClass, string $actionName): void
-    {
-        if (!is_a($actionClass, TestRunnerAction::class, true)) {
-            throw new ResolverException('Action name "' . $actionName . '" could not be resolved.');
-        }
-    }
-
-    /**
      * @param $data
      * @throws common_exception_InconsistentData
      */
@@ -81,11 +69,23 @@ class TestRunnerActionResolver implements ServiceLocatorAwareInterface
         }
 
         if (
-            !is_array($data['parameters'])
+        !is_array($data['parameters'])
         ) {
             throw new common_exception_InconsistentData(
                 'Action parameters have to contain "parameters" field as an array.'
             );
+        }
+    }
+
+    /**
+     * @param $actionClass
+     * @param string $actionName
+     * @throws ResolverException
+     */
+    protected function checkClass(string $actionClass, string $actionName): void
+    {
+        if (!is_a($actionClass, TestRunnerAction::class, true)) {
+            throw new ResolverException('Action name "' . $actionName . '" could not be resolved.');
         }
     }
 }

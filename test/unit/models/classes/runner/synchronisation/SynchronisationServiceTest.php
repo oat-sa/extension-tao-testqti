@@ -25,13 +25,82 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\models\classes\runner\synchronisation;
 
 use oat\generis\test\TestCase;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
+use oat\taoQtiTest\models\runner\synchronisation\synchronisationService\ResponseGenerator;
+use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
+
+class TestTimer {
+    public function getTimer(): self
+    {
+        return $this;
+    }
+
+    public function getLastRegisteredTimestamp(): int
+    {
+        return 0;
+    }
+}
 
 class SynchronisationServiceTest extends TestCase
 {
 
+    public function testProcessIncorrectDataException(): void
+    {
+        $this->expectException(\common_exception_InconsistentData::class);
+        $this->expectExceptionMessage('No action to check. Processing action requires data.');
+        
+        $service = new SynchronisationService();
+        $serviceContext = $this->createMock(QtiRunnerServiceContext::class);
+        $service->process([], $serviceContext);
+    }
 
     public function testProcess(): void
     {
+        $testRunnerActionMock = $this->createMock(TestRunnerAction::class);
 
+        $responseGeneratorMock = $this->createMock(ResponseGenerator::class);
+        $responseGeneratorMock->method('prepareActions')->willReturn([
+            $testRunnerActionMock,
+            $testRunnerActionMock,
+            ['error 1'],
+            $testRunnerActionMock,
+            ['array with error'],
+            ['another error'],
+        ]);
+
+        $responseGeneratorMock->method('getActionResponse')->willReturn(['phpunit action response']);
+
+        $qtiRunnerServiceMock = $this->createMock(QtiRunnerService::class);
+        $qtiRunnerServiceMock->method('persist')->willReturnSelf();
+
+        $serviceLocator = $this->getServiceLocatorMock([
+            ResponseGenerator::class => $responseGeneratorMock,
+            QtiRunnerService::SERVICE_ID => $qtiRunnerServiceMock,
+        ]);
+
+        $service = new SynchronisationService();
+        $service->setServiceLocator($serviceLocator);
+        $serviceContext = $this->createMock(QtiRunnerServiceContext::class);
+
+        $testTimerMock = $this->createMock(TestTimer::class);
+        $testTimerMock->method('getTimer')->willReturnSelf();
+        $testTimerMock->method('getLastRegisteredTimestamp')
+            ->willReturn(1588580875);
+        $serviceContext->method('getTestSession')->willReturn($testTimerMock);
+
+        $response = $service->process([
+            'a'
+        ], $serviceContext);
+
+        $this->assertSame([
+            ['phpunit action response'],
+            ['phpunit action response'],
+            ['error 1'],
+            ['phpunit action response'],
+            ['array with error'],
+            ['another error'],
+        ], $response);
     }
 }
