@@ -27,16 +27,13 @@ namespace oat\taoQtiTest\models\runner\synchronisation\synchronisationService;
 use common_Exception;
 use common_exception_InconsistentData;
 use common_Logger;
-use oat\oatbox\service\ServiceManagerAwareTrait;
+use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 use ResolverException;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
-class ResponseGenerator implements ServiceLocatorAwareInterface
+class ResponseGenerator extends ConfigurableService
 {
-    use ServiceManagerAwareTrait;
-
     /**
      * Typical amount of time added on TimePoints to avoid timestamp collisions.
      * This value will be used to adjust intervals between moves in the synced time line.

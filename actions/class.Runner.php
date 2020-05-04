@@ -971,6 +971,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Manage the bidirectional communication
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_Unauthorized
+     * @throws common_ext_ExtensionException
      */
     public function messages()
     {
@@ -978,10 +982,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         $this->checkSecurityToken(); // will return 500 on error
 
-        try {
-            // close the PHP session to prevent session overwriting and loss of security token for secured queries
-            session_write_close();
+        // close the PHP session to prevent session overwriting and loss of security token for secured queries
+        session_write_close();
 
+        try {
             $input = taoQtiCommon_helpers_Utils::readJsonPayload();
             if (!$input) {
                 $input = [];

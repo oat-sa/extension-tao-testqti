@@ -25,15 +25,12 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\runner\synchronisation\synchronisationService;
 
 use common_exception_InconsistentData;
-use oat\oatbox\service\ServiceManagerAwareTrait;
+use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 use ResolverException;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
-class TestRunnerActionResolver implements ServiceLocatorAwareInterface
+class TestRunnerActionResolver extends ConfigurableService
 {
-    use ServiceManagerAwareTrait;
-
     /**
      * @param array $data
      * @param array $availableActions
