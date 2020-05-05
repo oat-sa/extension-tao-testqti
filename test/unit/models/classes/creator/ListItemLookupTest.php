@@ -13,6 +13,7 @@ use oat\tao\model\resources\ResourceLookup;
 use oat\taoDacSimple\model\PermissionProvider;
 use oat\taoQtiTest\models\creator\ListItemLookup;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use oat\generis\model\data\permission\PermissionHelper;
 
 /**
  * This program is free software; you can redistribute it and/or
@@ -54,6 +55,9 @@ class ListItemLookupTest extends TestCase
     /** @var PermissionInterface|MockObject */
     private $permissionProviderMock;
 
+    /** @var PermissionHelper */
+    private $permissionHelper;
+
     /** @var ServiceLocatorInterface */
     private $serviceLocatorMock;
 
@@ -76,6 +80,7 @@ class ListItemLookupTest extends TestCase
         $this->sessionServiceMock     = $this->createMock(SessionService::class);
         $this->resourceLookupMock     = $this->createMock(ResourceLookup::class);
         $this->permissionProviderMock = $this->createMock(PermissionProvider::class);
+        $this->permissionHelper       = new PermissionHelper();
     }
 
     public function initializeTestDoubleExpectancies(): void
@@ -89,6 +94,10 @@ class ListItemLookupTest extends TestCase
         $this->sessionServiceMock
             ->method('getCurrentUser')
             ->willReturn($this->userMock);
+
+        $this->permissionProviderMock
+            ->method('getSupportedRights')
+            ->willReturn(['READ']);
     }
 
     public function initializeServiceLocator(): void
@@ -102,8 +111,10 @@ class ListItemLookupTest extends TestCase
                     [SessionService::SERVICE_ID, $this->sessionServiceMock],
                     [ListResourceLookup::SERVICE_ID, $this->resourceLookupMock],
                     [PermissionInterface::SERVICE_ID, $this->permissionProviderMock],
+                    [PermissionHelper::class, $this->permissionHelper],
                 ]
             );
+        $this->permissionHelper->setServiceLocator($this->serviceLocatorMock);
     }
 
     public function initializeSut(): void
