@@ -32,6 +32,7 @@ use oat\taoQtiTest\scripts\install\RegisterTestImporters;
 use oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders;
+use oat\taoQtiTest\scripts\install\RegisterTimerAdjustmentService;
 use oat\taoQtiTest\scripts\install\RegisterTimerStrategyService;
 use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
@@ -47,11 +48,11 @@ return [
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '37.5.0',
+    'version'     => '37.6.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => [
         'taoQtiItem' => '>=24.0.0',
-        'taoTests'   => '>=13.2.0',
+        'taoTests'   => '>=13.7.0',
         'tao'        => '>=42.0.2',
         'generis'    => '>=12.20.0',
         'taoDelivery' => '>=14.10.0',
@@ -87,7 +88,8 @@ return [
             SetUpQueueTasks::class,
             SetLinearNextItemWarningConfig::class,
             RegisterFrontendPaths::class,
-            RegisterTimerStrategyService::class
+            RegisterTimerStrategyService::class,
+            RegisterTimerAdjustmentService::class
         ]
     ],
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
