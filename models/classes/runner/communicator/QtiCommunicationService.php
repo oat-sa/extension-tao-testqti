@@ -63,7 +63,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
         }
 
         foreach ($input as $data) {
-            if (!isset($data['channel'], $data['message']) || !is_array($data)) {
+            if (!is_array($data) || !isset($data['channel'], $data['message'])) {
                 throw new common_exception_InconsistentData('Wrong message chunk received by the bidirectional communication service: either channel or message content is missing!');
             }
 

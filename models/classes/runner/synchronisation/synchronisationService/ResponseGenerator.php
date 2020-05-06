@@ -54,12 +54,7 @@ class ResponseGenerator extends ConfigurableService
         foreach ($data as $entry) {
             try {
                 $actions[] = $resolver->resolve($entry, $availableActions);
-            } catch (common_exception_InconsistentData $e) {
-                $responseAction = $entry;
-                $responseAction['error'] = $e->getMessage();
-                $responseAction['success'] = false;
-                $actions[] = $responseAction;
-            } catch (ResolverException $e) {
+            } catch (common_exception_InconsistentData | ResolverException $e) {
                 $responseAction = $entry;
                 $responseAction['error'] = $e->getMessage();
                 $responseAction['success'] = false;
@@ -81,7 +76,7 @@ class ResponseGenerator extends ConfigurableService
      * @param array $actions
      * @return float
      */
-    protected function computeDuration(array $actions): float
+    private function computeDuration(array $actions): float
     {
         $duration = 0;
         foreach ($actions as $action) {
@@ -101,20 +96,20 @@ class ResponseGenerator extends ConfigurableService
      *
      * @param array $actions
      * @param QtiRunnerServiceContext $serviceContext
-     * @param float $now
-     * @return array
+     * @param float $timeNow
+     * @return float
      */
-    public function getTimestamps(array $actions, QtiRunnerServiceContext $serviceContext, float $now): array
+    public function getLastActionTimestamp(array $actions, QtiRunnerServiceContext $serviceContext, float $timeNow): float
     {
-        $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
+        $lastRegisteredTimestamp = (float) $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
         $actionsDuration = $this->computeDuration($actions);
-        $elapsed = $now - $last;
+        $elapsed = $timeNow - $lastRegisteredTimestamp;
         if ($actionsDuration > $elapsed) {
             common_Logger::t('Ignoring the last timestamp to take into account the actual duration to sync. Could introduce TimeLine inconsistency!');
-            $last = $now - $actionsDuration;
+            $lastRegisteredTimestamp = $timeNow - $actionsDuration;
         }
 
-        return ['now' => $now, 'last' => $last];
+        return $lastRegisteredTimestamp;
     }
 
     /**
@@ -141,16 +136,16 @@ class ResponseGenerator extends ConfigurableService
             }
 
             $action->setServiceContext($serviceContext);
-            $responseAction = $action->process();
+            $actionResponse = $action->process();
         } catch (common_Exception $e) {
-            $responseAction = ['error' => $e->getMessage()];
-            $responseAction['success'] = false;
+            $actionResponse = ['error' => $e->getMessage()];
+            $actionResponse['success'] = false;
         }
 
-        $responseAction['name'] = $action->getName();
-        $responseAction['timestamp'] = $action->getTimeStamp();
-        $responseAction['requestParameters'] = $action->getRequestParameters();
+        $actionResponse['name'] = $action->getName();
+        $actionResponse['timestamp'] = $action->getTimeStamp();
+        $actionResponse['requestParameters'] = $action->getRequestParameters();
 
-        return $responseAction;
+        return $actionResponse;
     }
 }

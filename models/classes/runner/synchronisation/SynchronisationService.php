@@ -46,7 +46,7 @@ class SynchronisationService extends ConfigurableService
      */
     public function process($data, QtiRunnerServiceContext $serviceContext): array
     {
-        $this->checkData($data);
+        $this->validateSynchronisationData($data);
 
         /** @var ResponseGenerator $responseGenerator */
         $responseGenerator = $this->getServiceLocator()->get(ResponseGenerator::class);
@@ -54,15 +54,16 @@ class SynchronisationService extends ConfigurableService
         // extract the actions and build usable instances
         $actions = $responseGenerator->prepareActions($data, $this->getAvailableActions());
 
-        $actionTimestamps = $responseGenerator->getTimestamps($actions, $serviceContext, microtime(true));
+        $timeNow = microtime(true);
+        $lastActionTimestamp = $responseGenerator->getLastActionTimestamp($actions, $serviceContext, $timeNow);
 
         $response = [];
         foreach ($actions as $action) {
             if ($action instanceof TestRunnerAction) {
                 $response[] = $responseGenerator->getActionResponse(
                     $action,
-                    $actionTimestamps['now'],
-                    $actionTimestamps['last'],
+                    $timeNow,
+                    $lastActionTimestamp,
                     $serviceContext
                 );
             } else {
@@ -102,7 +103,7 @@ class SynchronisationService extends ConfigurableService
      * @param $data
      * @throws common_exception_InconsistentData
      */
-    protected function checkData($data): void
+    protected function validateSynchronisationData($data): void
     {
         if (empty($data)) {
             throw new common_exception_InconsistentData('No action to check. Processing action requires data.');

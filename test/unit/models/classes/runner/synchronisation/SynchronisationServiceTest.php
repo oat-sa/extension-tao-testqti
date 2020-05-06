@@ -62,10 +62,7 @@ class SynchronisationServiceTest extends TestCase
         ]);
 
         $responseGeneratorMock->method('getActionResponse')->willReturn(['phpunit action response']);
-        $responseGeneratorMock->method('getTimestamps')->willReturn([
-            'now' => microtime(true),
-            'last' => 1588580875,
-        ]);
+        $responseGeneratorMock->method('getLastActionTimestamp')->willReturn(1588580875.00);
 
         $qtiRunnerServiceMock = $this->createMock(QtiRunnerService::class);
         $qtiRunnerServiceMock->method('persist')->willReturnSelf();

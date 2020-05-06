@@ -100,10 +100,8 @@ class ResponseGeneratorTest extends TestCase
         $responseGenerator = new ResponseGenerator();
         $responseGenerator->setServiceLocator($serviceLocator);
 
-        $timestamps = $responseGenerator->getTimestamps([], $serviceContext, 3.01);
-        $this->assertArrayHasKey('now', $timestamps);
-        $this->assertSame(2.0, $timestamps['last']);
-        $this->assertSame(3.01, $timestamps['now']);
+        $last = $responseGenerator->getLastActionTimestamp([], $serviceContext, 3.01);
+        $this->assertSame(2.0, $last);
     }
 
     public function testGetLastRegisteredTimeWithActionDuration(): void
@@ -131,14 +129,12 @@ class ResponseGeneratorTest extends TestCase
         $testRunnerAction2->method('hasRequestParameter')->willReturn(true);
         $testRunnerAction2->method('getRequestParameter')->willReturn(5);
 
-        $timestamps = $responseGenerator->getTimestamps([
+        $last = $responseGenerator->getLastActionTimestamp([
             $testRunnerAction1,
             $testRunnerAction2,
             []
         ], $serviceContext, $now);
-        $this->assertArrayHasKey('now', $timestamps);
-        $this->assertArrayHasKey('last', $timestamps);
-        $this->assertSame($now - (10 + 5 + 0.002), $timestamps['last']);
+        $this->assertSame($now - (10 + 5 + 0.002), $last);
     }
 
     public function testGetActionResponseEmptyAction(): void

@@ -53,7 +53,7 @@ class TestRunnerActionResolver extends ConfigurableService
      * @param $data
      * @throws common_exception_InconsistentData
      */
-    protected function checkData($data): void
+    private function checkData($data): void
     {
         if (!isset(
             $data['action'],
@@ -65,9 +65,7 @@ class TestRunnerActionResolver extends ConfigurableService
             );
         }
 
-        if (
-        !is_array($data['parameters'])
-        ) {
+        if (!is_array($data['parameters'])) {
             throw new common_exception_InconsistentData(
                 'Action parameters have to contain "parameters" field as an array.'
             );
@@ -79,7 +77,7 @@ class TestRunnerActionResolver extends ConfigurableService
      * @param string $actionName
      * @throws ResolverException
      */
-    protected function checkClass(string $actionClass, string $actionName): void
+    private function checkClass(string $actionClass, string $actionName): void
     {
         if (!is_a($actionClass, TestRunnerAction::class, true)) {
             throw new ResolverException('Action name "' . $actionName . '" could not be resolved.');
