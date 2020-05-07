@@ -82,6 +82,39 @@ class ResponseGeneratorTest extends TestCase
         $this->assertSame($testRunnerAction1Mock, $actions[3]);
     }
 
+    public function testFieldTransformersForExceptions(): void
+    {
+        $testRunnerAction1Mock = $this->createMock(TestRunnerAction::class);
+        $testRunnerAction1Mock->method('getTimestamp')->willReturn(3);
+        $testRunnerAction2Mock = $this->createMock(TestRunnerAction::class);
+        $testRunnerAction2Mock->method('getTimestamp')->willReturn(2);
+
+        $testRunnerActionResolverMock = $this->createMock(TestRunnerActionResolver::class);
+        $testRunnerActionResolverMock->method('resolve')->willThrowException(new ResolverException('msg'));
+
+        $serviceLocator = $this->getServiceLocatorMock([
+            TestRunnerActionResolver::class => $testRunnerActionResolverMock,
+        ]);
+
+        $responseGenerator = new ResponseGenerator();
+        $responseGenerator->setServiceLocator($serviceLocator);
+        $actions = $responseGenerator->prepareActions([['a'], ['action' => 'actionName', 'parameters' => ['all parameters']]], []);
+
+        $this->assertSame([
+            [
+                0 => 'a',
+                'error' => 'msg',
+                'success' => false,
+            ],
+            [
+                'error' => 'msg',
+                'success' => false,
+                'requestParameters' => ['all parameters'],
+                'name' => 'actionName',
+            ]
+        ], $actions);
+    }
+
     /**
      * Use provided last timestamp if no need to use durations
      */

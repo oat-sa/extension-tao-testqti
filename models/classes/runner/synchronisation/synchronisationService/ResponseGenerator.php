@@ -53,12 +53,13 @@ class ResponseGenerator extends ConfigurableService
         $actions = [];
         foreach ($data as $entry) {
             try {
+                throw new ResolverException('aaa');
                 $actions[] = $resolver->resolve($entry, $availableActions);
             } catch (common_exception_InconsistentData | ResolverException $e) {
                 $responseAction = $entry;
                 $responseAction['error'] = $e->getMessage();
                 $responseAction['success'] = false;
-                $actions[] = $responseAction;
+                $actions[] = $this->transform($responseAction);
             }
         }
 
@@ -70,6 +71,24 @@ class ResponseGenerator extends ConfigurableService
         });
 
         return $actions;
+    }
+
+    private function transformField(string $fromFieldName, string $toFieldName, array $data): array
+    {
+        if (array_key_exists($fromFieldName, $data)) {
+            $data[$toFieldName] = $data[$fromFieldName];
+            unset($data[$fromFieldName]);
+        }
+        return $data;
+    }
+
+    private function transform($data)
+    {
+        if (is_array($data)) {
+            $data = $this->transformField('parameters', 'requestParameters', $data);
+            $data = $this->transformField('action', 'name', $data);
+        }
+        return $data;
     }
 
     /**
