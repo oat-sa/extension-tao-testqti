@@ -23,6 +23,7 @@
  */
 
 use oat\taoQtiTest\models\event\TraceVariableStored;
+use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
@@ -81,7 +82,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             // auto append platform messages, if any
             if ($this->serviceContext && !isset($data['messages'])) {
-                /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
+                /* @var $communicationService CommunicationService */
                 $communicationService = $this->getServiceManager()->get(QtiCommunicationService::SERVICE_ID);
                 $data['messages'] = $communicationService->processOutput($this->serviceContext);
             }
@@ -970,25 +971,29 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Manage the bidirectional communication
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws common_exception_Unauthorized
+     * @throws common_ext_ExtensionException
      */
     public function messages()
     {
         $code = 200;
 
+        $this->checkSecurityToken(); // will return 500 on error
+
+        // close the PHP session to prevent session overwriting and loss of security token for secured queries
+        session_write_close();
+
         try {
-            $this->checkSecurityToken();
-
-            // close the PHP session to prevent session overwriting and loss of security token for secured queries
-            session_write_close();
-
-            $input = \taoQtiCommon_helpers_Utils::readJsonPayload();
+            $input = taoQtiCommon_helpers_Utils::readJsonPayload();
             if (!$input) {
                 $input = [];
             }
 
             $serviceContext = $this->getServiceContext();
 
-            /* @var $communicationService \oat\taoQtiTest\models\runner\communicator\CommunicationService */
+            /* @var $communicationService CommunicationService */
             $communicationService = $this->getServiceLocator()->get(QtiCommunicationService::SERVICE_ID);
 
             $response = [
@@ -1001,7 +1006,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $code = $this->getErrorCode($e);
         }
 
-        $this->returnJson($response, $code, false);
+        $this->returnJson($response, $code);
     }
 
     /**
