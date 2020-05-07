@@ -25,8 +25,8 @@ use core_kernel_classes_Class;
 use oat\generis\model\data\permission\PermissionInterface;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
-use oat\oatbox\session\SessionService;
 use oat\tao\model\resources\ListResourceLookup;
+use oat\generis\model\data\permission\PermissionHelper;
 
 /**
  * Look up items and format them as a flat list
@@ -80,13 +80,10 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
             }
         }
 
-        $permissions = $this->getPermissionProvider()->getPermissions(
-            $this->getSessionService()->getCurrentUser(),
-            $nodeIds
-        );
+        $accessible = $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ);
 
         foreach ($result['nodes'] as $i => $node) {
-            if (isset($permissions[$node['uri']]) && !in_array('READ', $permissions[$node['uri']], true)) {
+            if ($node['type'] === 'instance' && !in_array($node['uri'], $accessible)) {
                 unset($result['nodes'][$i]);
                 $result['total']--;
             }
@@ -95,15 +92,9 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
         return $result;
     }
 
-    private function getPermissionProvider(): PermissionInterface
+    private function getPermissionHelper(): PermissionHelper
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceLocator()->get(PermissionInterface::SERVICE_ID);
-    }
-
-    private function getSessionService(): SessionService
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceLocator()->get(SessionService::SERVICE_ID);
+        return $this->getServiceLocator()->get(PermissionHelper::class);
     }
 }

@@ -48,6 +48,8 @@ use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
+use oat\taoQtiTest\models\runner\config\DataAccess\Repository\NoopOverriddenOptionsRepository;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
@@ -1997,6 +1999,39 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('37.0.2');
         }
 
+<<<<<<< HEAD
         $this->skip('37.0.2', '37.1.0');
+=======
+        $this->skip('37.0.2', '37.0.4');
+
+        if ($this->isVersion('37.0.4')) {
+            $this->getServiceManager()->register(
+                OverriddenOptionsRepositoryInterface::SERVICE_ID,
+                new NoopOverriddenOptionsRepository()
+            );
+
+            $this->setVersion('37.1.0');
+        }
+
+        $this->skip('37.1.0', '37.2.1');
+
+        if ($this->isVersion('37.2.1')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+              'id' => 'jumplinks',
+              'name' => 'Jump links',
+              'module' => 'taoQtiTest/runner/plugins/content/accessibility/jumplinks/plugin',
+              'bundle' => 'taoQtiTest/loader/testPlugins.min',
+              'description' => 'Provide a jump links to fastest keyboard navigation',
+              'category' => 'content',
+              'active' => false,
+              'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.3.0');
+        }
+
+        $this->skip('37.3.0', '37.5.0');
     }
 }
