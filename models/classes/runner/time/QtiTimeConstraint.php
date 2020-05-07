@@ -137,13 +137,6 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
     {
         if (!is_null($duration)) {
             $remaining = clone $duration;
-
-            if ($this->getApplyExtraTime() && $this->timer) {
-                // take care of the already consumed extra time under the current constraint
-                // and append the full remaining extra time
-                // the total must correspond to the already elapsed time plus the remaining time
-                $remaining->add(new QtiDuration('PT' . $this->timer->getExtraTime($duration->getSeconds(true)) . 'S'));
-            }
             $remaining->sub($this->getDuration());
             return ($remaining->isNegative() === true) ? new QtiDuration('PT0S') : $remaining;
         }
@@ -158,8 +151,17 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      */
     public function getMaximumRemainingTime()
     {
-        if (($timeLimits = $this->getSource()->getTimeLimits()) !== null && ($maxTime = $timeLimits->getMaxTime()) !== null) {
-            return $this->getRemainingTimeFrom($maxTime);
+        if (($maxTime = $this->getAdjustedMaxTime()) !== null) {
+            $maximumTime = clone $maxTime;
+
+            if ($this->getApplyExtraTime() && $this->timer) {
+                // take care of the already consumed extra time under the current constraint
+                // and append the full remaining extra time
+                // the total must correspond to the already elapsed time plus the remaining time
+                $maximumTime->add(new QtiDuration('PT' . $this->timer->getExtraTime($maximumTime->getSeconds(true)) . 'S'));
+            }
+
+            return $this->getRemainingTimeFrom($maximumTime);
         }
         return false;
     }
@@ -176,6 +178,35 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
             return $this->getRemainingTimeFrom($minTime);
         }
         return false;
+    }
+
+    /**
+     * Calculates maximum time with applied adjustments
+     * @return QtiDuration|null
+     */
+    public function getAdjustedMaxTime()
+    {
+        $timeLimits = $this->getSource()->getTimeLimits();
+        if ($timeLimits === null) {
+            return null;
+        }
+
+        $maxTime = $timeLimits->getMaxTime();
+        if ($maxTime === null) {
+            return null;
+        }
+
+        $maximumTime = clone $maxTime;
+        if ($this->timer) {
+            $adjustmentSeconds = $this->timer->getAdjustmentMap()->get($this->getSource()->getIdentifier());
+            if ($adjustmentSeconds > 0) {
+                $maximumTime->add(new QtiDuration('PT' . $adjustmentSeconds . 'S'));
+            } else {
+                $maximumTime->sub(new QtiDuration('PT' . abs($adjustmentSeconds) . 'S'));
+            }
+        }
+
+        return $maximumTime;
     }
 
     /**
@@ -202,7 +233,7 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
         if (!is_null($timeLimits)) {
             $identifier = $source->getIdentifier();
 
-            $maxTime = $timeLimits->getMaxTime();
+            $maxTime = $this->getAdjustedMaxTime();
             $minTime = $timeLimits->getMinTime();
             $maxTimeRemaining = $this->getMaximumRemainingTime();
             $minTimeRemaining = $this->getMinimumRemainingTime();
@@ -210,9 +241,9 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                 $label = method_exists($source, 'getTitle') ? $source->getTitle() : $identifier;
 
                 $extraTime = [];
-                if (!is_null($this->getTimer()) && $source->getTimeLimits()->hasMaxTime()) {
+                if ($this->getTimer() !== null && $maxTime !== null) {
                     $timer = $this->getTimer();
-                    $maxTimeSeconds = $source->getTimeLimits()->getMaxTime()->getSeconds(true);
+                    $maxTimeSeconds = $maxTime->getSeconds(true);
                     $extraTime = [
                         'total' => $timer->getExtraTime($maxTimeSeconds),
                         'consumed' => $timer->getConsumedExtraTime($identifier, $maxTimeSeconds, $this->timerTarget),
