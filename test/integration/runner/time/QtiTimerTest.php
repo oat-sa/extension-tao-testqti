@@ -21,9 +21,11 @@
 namespace oat\taoQtiTest\test\integration\runner\time;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
+use oat\taoQtiTest\models\runner\time\AdjustmentMap;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
+use oat\taoQtiTest\models\runner\time\QtiTimeStorageFormat;
 use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 use oat\taoTests\models\runner\time\InconsistentCriteriaException;
 use oat\taoTests\models\runner\time\InconsistentRangeException;
@@ -525,6 +527,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $extraTime = 20;
         $consumedTime = 4;
         $timer->setExtraTime($extraTime);
+        $timer->getAdjustmentMap()->increase('itemId-1', 1);
 
         $dataStorage = null;
         $storage = $this->getTimeStorage($dataStorage);
@@ -536,6 +539,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals([], $timeLine->getPoints());
         $this->assertEquals(0, $newTimer->getExtraTime());
         $this->assertEquals(0, $newTimer->getConsumedExtraTime());
+        $this->assertEquals([], $newTimer->getAdjustmentMap()->toArray());
 
         $newStorage = $this->getTimeStorage($dataStorage);
         $newTimer->setStorage($newStorage)->setStrategy(new TimerStrategyService());
@@ -543,6 +547,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $timeLine = $this->getTimeLine($newTimer);
 
         $timePoints = $timeLine->getPoints();
+        $adjustmentMap = $newTimer->getAdjustmentMap();
         $this->assertEquals($extraTime, $newTimer->getExtraTime());
         $this->assertEquals(5, $newTimer->getConsumedExtraTime(null, 20));
         $this->assertEquals(5, $newTimer->getConsumedExtraTime($tags));
@@ -553,6 +558,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(1459335025.0000, $timePoints[1]->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
         $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
+        $this->assertEquals(['itemId-1' => ['increase' => 1, 'decrease' => 0]], $adjustmentMap->toArray());
     }
 
     public function testLoadInvalidStorageException()
@@ -567,7 +573,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->expectException(InvalidDataException::class);
         $timer = new QtiTimer();
         $dataStorage = serialize([
-            QtiTimer::STORAGE_KEY_TIME_LINE => new \stdClass()
+            QtiTimeStorageFormat::STORAGE_KEY_TIME_LINE => new \stdClass()
         ]);
         $storage = $this->getTimeStorage($dataStorage);
         $timer->setStorage($storage);
