@@ -2012,14 +2012,35 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('37.1.0');
         }
 
-        $this->skip('37.1.0', '37.1.1');
+        $this->skip('37.1.0', '37.2.1');
 
-        if ($this->isversion('37.1.1')) {
+        if ($this->isVersion('37.2.1')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+              'id' => 'jumplinks',
+              'name' => 'Jump links',
+              'module' => 'taoQtiTest/runner/plugins/content/accessibility/jumplinks/plugin',
+              'bundle' => 'taoQtiTest/loader/testPlugins.min',
+              'description' => 'Provide a jump links to fastest keyboard navigation',
+              'category' => 'content',
+              'active' => false,
+              'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.3.0');
+        }
+
+        $this->skip('37.3.0', '37.4.2');
+
+        if ($this->isversion('37.4.2')) {
             $this->getServiceManager()->register(
                 TimerAdjustmentServiceInterface::SERVICE_ID,
                 new TimerAdjustmentService()
             );
-            $this->setVersion('37.2.0');
+            $this->setVersion('37.5.0');
         }
+
+        $this->skip('37.5.0', '37.6.0');
     }
 }

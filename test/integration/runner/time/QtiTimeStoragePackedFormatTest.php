@@ -93,7 +93,7 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
 
         $input = $this->getPackedJson();
         $decoded = $format->decode($input);
-        $this->assertEquals($this->getTimeLine(), $decoded, '', 0.001);
+        $this->assertEqualsWithDelta($this->getTimeLine(), $decoded, 0.001, '');
     }
 
     /**
@@ -109,7 +109,7 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
         $encoded = $format->encode($input);
         $decoded = $format->decode($encoded);
 
-        $this->assertEquals($expected, $decoded, '', 0.001);
+        $this->assertEqualsWithDelta($expected, $decoded, 0.001, '');
     }
 
     /**
