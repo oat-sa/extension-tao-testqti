@@ -16,11 +16,11 @@
                                 </span>
                                 <ul aria-label="{{label}}" class="qti-navigator-items collapsible-panel plain">
                                     {{#each items}}
-                                    <li tabindex="0" class="qti-navigator-item{{#if active}} active{{/if}}{{#if flagged}} flagged{{/if}}{{#if answered}} answered{{/if}}{{#if viewed}} viewed{{else}} unseen{{/if}}" data-id="{{id}}" data-position="{{position}}">
-                                        <span class="qti-navigator-label truncate" title="{{label}}"
+                                    <li class="qti-navigator-item {{cls}}" data-id="{{id}}" data-position="{{position}}">
+                                        <span class="qti-navigator-label truncate" title="{{label}}" tabindex="0"
                                               role="link" aria-disabled="{{#if viewed}}false{{else}}true{{/if}}"
                                               {{#if active}}aria-current="page"{{/if}}
-                                              aria-label="item {{index}} of {{../stats.questions}} total {{label}} {{icon}}unseen{{/if}}{{/if}}{{/if}}">
+                                              aria-label="{{icon}} {{index}} of {{../stats.questions}}">
                                             <span class="qti-navigator-icon icon-{{icon}}"></span>
                                             <span class="qti-navigator-number">{{index}}</span>
                                             {{label}}
