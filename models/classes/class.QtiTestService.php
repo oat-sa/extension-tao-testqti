@@ -467,7 +467,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = [])
     {
-
+        /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
         $testClass = $targetClass;
         $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
@@ -592,9 +592,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $sharedFiles,
                                             $dependencies['dependencies'],
                                             $metadataValues,
-                                            [],
-                                            [],
-                                            [],
                                             $createdClasses,
                                             $this->useMetadataGuardians,
                                             $this->useMetadataValidators,

@@ -589,10 +589,10 @@ msgid "Item Session Control"
 msgstr "Contrôle de session de l'item"
 
 msgid "Items"
-msgstr "Items"
+msgstr "Articles"
 
 msgid "items"
-msgstr "items"
+msgstr "articles"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Les items peuvent en option être assignés à une ou plusieurs catégories."
