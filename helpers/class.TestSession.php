@@ -719,7 +719,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             $source = $constraint->getSource();
             $placeId = $source->getIdentifier();
             if ($placeId === $identifier) {
-                if (($timeLimits = $source->getTimeLimits()) !== null && ($maxTime = $timeLimits->getMaxTime()) !== null) {
+                if (($maxTime = $constraint->getAdjustedMaxTime()) !== null) {
                     $constraintDuration = $constraint->getDuration();
                     if ($constraintDuration instanceof QtiDuration) {
                         $constraintDuration->sub($constraintDuration);
