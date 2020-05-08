@@ -23,6 +23,7 @@
  */
 define([
     'jquery',
+    'select2', // TODO: remove as soon as PCI stopped expose jQuery on window
     'lodash',
     'i18n',
     'context',
@@ -37,6 +38,7 @@ define([
     'css!taoQtiTestCss/new-test-runner'
 ], function (
     $,
+    select2,
     _,
     __,
     context,
