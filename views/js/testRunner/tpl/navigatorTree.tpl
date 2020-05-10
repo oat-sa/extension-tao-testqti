@@ -20,7 +20,7 @@
                                         <span class="qti-navigator-label truncate" title="{{label}}" tabindex="0"
                                               role="link" aria-disabled="{{#if viewed}}false{{else}}true{{/if}}"
                                               {{#if active}}aria-current="page"{{/if}}
-                                              aria-label="{{icon}} {{@index}} of {{../stats.questions}}">
+                                              aria-label="{{@index}} of {{../stats.questions}} {{icon}}">
                                             <span class="qti-navigator-icon icon-{{icon}}"></span>
                                             <span class="qti-navigator-number">{{@index}}</span>
                                             {{label}}
