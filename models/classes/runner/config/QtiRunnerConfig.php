@@ -82,6 +82,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             $target = isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null;
             $config = [
                 'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
+                'timerWarningForScreenreader' => isset($rawConfig['timerWarningForScreenreader']) ? $rawConfig['timerWarningForScreenreader'] : null,
                 'catEngineWarning' => isset($rawConfig['catEngineWarning']) ? $rawConfig['catEngineWarning'] : null,
                 'progressIndicator' => [
                     'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
