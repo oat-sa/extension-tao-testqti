@@ -62,21 +62,21 @@ use Symfony\Component\Lock\LockInterface;
  */
 class taoQtiTest_helpers_TestSession extends AssessmentTestSession
 {
-    
+
     /**
      * The ResultServer to be used to transmit Item and Test results.
      *
      * @var ResultStorageWrapper
      */
     private $resultServer;
-    
+
     /**
      * The ResultTransmitter object to be used to transmit test results.
      *
      * @var taoQtiCommon_helpers_ResultTransmitter
      */
     private $resultTransmitter;
-    
+
     /**
      * The TAO Resource describing the test.
      *
@@ -124,7 +124,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
         $this->setTest($test);
     }
-    
+
     /**
      * Set the ResultServer to be used to transmit Item and Test results.
      *
@@ -134,7 +134,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     {
         $this->resultServer = $resultServer;
     }
-    
+
     /**
      * Get the ResultServer in use to transmit Item and Test results.
      *
@@ -144,7 +144,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     {
         return $this->resultServer;
     }
-    
+
     /**
      * Set the ResultTransmitter object to be used to transmit test results.
      *
@@ -154,7 +154,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     {
         $this->resultTransmitter = $resultTransmitter;
     }
-    
+
     /**
      * Get the ResultTransmitter object to be used to transmit test results.
      *
@@ -164,7 +164,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     {
         return $this->resultTransmitter;
     }
-    
+
     /**
      * Set the TAO Resource describing the test in database.
      *
@@ -221,30 +221,30 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     protected function submitItemResults(AssessmentItemSession $itemSession, $occurence = 0)
     {
         parent::submitItemResults($itemSession, $occurence);
-        
+
         $item = $itemSession->getAssessmentItem();
         $occurence = $occurence;
         $sessionId = $this->getSessionId();
-        
+
         common_Logger::t("submitting results for item '" . $item->getIdentifier() . "." . $occurence .  "'.");
-        
+
         try {
             $itemVariableSet = [];
-            
+
             // Get the item session we just responsed and send to the
             // result server.
             $itemSession = $this->getItemSession($item, $occurence);
             $resultTransmitter = $this->getResultTransmitter();
-        
+
             foreach ($itemSession->getKeys() as $identifier) {
                 common_Logger::t("Examination of variable '${identifier}'");
                 $itemVariableSet[] = $itemSession->getVariable($identifier);
             }
-            
+
             $itemUri = self::getItemRefUri($item);
             $testUri = self::getTestDefinitionUri($item);
             $transmissionId = "${sessionId}.${item}.${occurence}";
-            
+
             $resultTransmitter->transmitItemVariable($itemVariableSet, $transmissionId, $itemUri, $testUri);
         } catch (AssessmentTestSessionException $e) {
             // Error whith parent::endAttempt().
@@ -271,19 +271,19 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     {
         $sessionMemento = $this->getSessionMemento();
         parent::endTestSession();
-        
+
         common_Logger::i('Ending test session: ' . $this->getSessionId());
         try {
             // Compute the LtiOutcome variable for LTI support.
             $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT, new QtiFloat(0.0)));
             $outcomeProcessingEngine = new OutcomeProcessingEngine($this->buildLtiOutcomeProcessing(), $this);
             $outcomeProcessingEngine->process();
-        
+
             // if numberPresented returned 0, division by 0 -> null.
             $testUri = $this->getTest()->getUri();
             $var = $this->getVariable('LtiOutcome');
             $varIdentifier = $var->getIdentifier();
-        
+
             common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
             $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
         } catch (ProcessingException $e) {
@@ -295,7 +295,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         } finally {
             $this->unsetVariable('LtiOutcome');
         }
-        
+
         $this->triggerEventChange($sessionMemento);
     }
 
@@ -351,7 +351,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
 
         $this->getResultTransmitter()->transmitTestVariable($this->getAllVariables()->getArrayCopy(), $sessionId, $testUri);
     }
-    
+
     /**
      * Get the TAO URI of an item from an ExtendedAssessmentItemRef object.
      *
@@ -363,7 +363,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         $parts = explode('|', $itemRef->getHref());
         return $parts[0];
     }
-    
+
     /**
      * Get the TAO Uri of the Test Definition from an ExtendedAssessmentItemRef object.
      *
@@ -375,7 +375,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         $parts = explode('|', $itemRef->getHref());
         return $parts[2];
     }
-    
+
     /**
      * Build the OutcomeProcessing object representing the set of QTI instructions
      * to be performed to compute the LtiOutcome variable value.
@@ -725,7 +725,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
                         $constraintDuration->sub($constraintDuration);
                         $constraintDuration->add($maxTime);
                         if ($constraint->getApplyExtraTime()) {
-                            $extraTime = $constraint->getTimer()->getExtraTime($maxTime->getSeconds(true));
+                            $extraTime = $constraint->getTimer()->getExtraTime();
                             $constraintDuration->add(new QtiDuration('PT' . $extraTime . 'S'));
                         }
                     }
@@ -774,7 +774,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         }
         $this->getEventManager()->trigger($event);
     }
-    
+
     protected function triggerEventPaused()
     {
         $event = new TestExecutionPausedEvent(
@@ -782,7 +782,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         );
         $this->getEventManager()->trigger($event);
     }
-    
+
     protected function triggerEventResumed()
     {
         $event = new TestExecutionResumedEvent(
@@ -810,7 +810,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     {
         return $this->getServiceLocator()->get(EventManager::SERVICE_ID);
     }
-    
+
     protected function getServiceLocator()
     {
         return ServiceManager::getServiceManager();
