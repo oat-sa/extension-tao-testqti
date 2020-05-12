@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-22T11:37:06\n"
+"Project-Id-Version: TAO 3.4.0-sprint128\n"
+"PO-Revision-Date: 2020-05-12T12:05:24\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -12,6 +12,18 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Un item QTI contenu dans le test QTI '%s' n'a pas pû être compilé"
@@ -144,6 +156,9 @@ msgstr "Une erreur inconnue s'est produite pendant la compilation du test QTI '%
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Une erreur inconnue s'est produite pendant la compilation du QTI test '%s'. "
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
 
 msgid "and"
 msgstr ""
@@ -382,10 +397,10 @@ msgstr "Permet l'écran de passage en revue de l'item / le navigateur."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Permet le saut vers les items à l'intérieur de cette section. Demande l'option revue écran."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finir le test"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finir le test"
 
 msgid "Enter a blueprint"
@@ -588,11 +603,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Contrôle de session de l'item"
 
-msgid "Items"
-msgstr "Articles"
-
 msgid "items"
 msgstr "articles"
+
+msgid "Items"
+msgstr "Articles"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Les items peuvent en option être assignés à une ou plusieurs catégories."
@@ -606,6 +621,12 @@ msgstr "Items marqués pour une revue tardive"
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr "Les items avec des identifiants assessmentItemRef \"%s\" ne sont pas enregistrés dans le point d'accès CAT correspondant."
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "Conserver ensemble"
 
@@ -614,6 +635,12 @@ msgstr "Soumission tardive permise"
 
 msgid "Leave a comment"
 msgstr "Laisser un commentaire"
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
+msgstr ""
 
 msgid "Light yellow on royal blue"
 msgstr "Jaune clair sur bleu royal"
@@ -816,6 +843,9 @@ msgstr "Afficher uniquement les items non répondus"
 msgid "Open Calculator"
 msgstr "Ouvrir la calculatrice"
 
+msgid "Open Keyboard Shortcuts"
+msgstr ""
+
 msgid "Option A"
 msgstr ""
 
@@ -890,6 +920,9 @@ msgstr "Paquet de test QTI 2.2"
 
 msgid "QTI/APIP Test Content Package"
 msgstr "Paquet de contenu de test QTI/APIP"
+
+msgid "Question"
+msgstr ""
 
 msgid "Reference"
 msgstr "Référence"
@@ -1125,6 +1158,9 @@ msgstr "État du test"
 msgid "Test status and review structure"
 msgstr ""
 
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Outils du participant"
 
@@ -1134,11 +1170,11 @@ msgstr "Tests"
 msgid "Text content"
 msgstr "Contenu du texte"
 
-msgid "Text to Speech"
-msgstr "Synthèse vocale"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Synthèse vocale"
 
 msgid "that was being taken."
 msgstr ""
@@ -1305,6 +1341,9 @@ msgstr ""
 msgid "Tool box and flagging for review"
 msgstr ""
 
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr "Score total"
 
@@ -1451,6 +1490,12 @@ msgstr "Vous rencontrez actuellement une perte de connectivité prolongée."
 
 msgid "You have %s item(s) marked for review."
 msgstr "Vous avez %s item(s) marqués pour la revue."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr "Vous avez %s question(s) restée(s) sans réponse."
