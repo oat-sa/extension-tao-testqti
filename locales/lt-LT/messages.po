@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-22T11:37:16\n"
+"Project-Id-Version: TAO 3.4.0-sprint128\n"
+"PO-Revision-Date: 2020-05-12T12:05:27\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -12,6 +12,18 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTI Elementas dalyvaujantis QTI Teste '%s' negali būti surinktas."
@@ -144,6 +156,9 @@ msgstr "Įvyko nežinoma klaida sukompiliavus „%s“ QTI Testą."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Įvyko nežinoma klaida kompiliuojant „%s“ QTI Testą."
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
 
 msgid "and"
 msgstr ""
@@ -382,10 +397,10 @@ msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Baigti testą"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Baigti testą"
 
 msgid "Enter a blueprint"
@@ -588,11 +603,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Elemento Sesijos Valdymas"
 
-msgid "Items"
-msgstr "Elementai"
-
 msgid "items"
 msgstr "elementai"
+
+msgid "Items"
+msgstr "Elementai"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elementai pasirinktinai gali būti paskirti vienai arba daugiau kategorijų."
@@ -606,6 +621,12 @@ msgstr "Elementai pažymėti vėlesnei peržiūrai"
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr ""
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "Laikyti Kartu"
 
@@ -614,6 +635,12 @@ msgstr "Vėluojamas pateikimas leidžiamas"
 
 msgid "Leave a comment"
 msgstr "Palikti komentarą"
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
+msgstr ""
 
 msgid "Light yellow on royal blue"
 msgstr "Šviesiai geltona su karališka mėlyna"
@@ -816,6 +843,9 @@ msgstr "Rodyti tik neatsakytus elementus"
 msgid "Open Calculator"
 msgstr "Atidaryti Skaičiuotuvą"
 
+msgid "Open Keyboard Shortcuts"
+msgstr ""
+
 msgid "Option A"
 msgstr ""
 
@@ -890,6 +920,9 @@ msgstr "QTI Testo Paketas 2.2"
 
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Testo Turinio Paketas"
+
+msgid "Question"
+msgstr ""
 
 msgid "Reference"
 msgstr "Šaltinis"
@@ -1125,6 +1158,9 @@ msgstr "Testo būsena"
 msgid "Test status and review structure"
 msgstr ""
 
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Testo Laikytojo Įrankiai"
 
@@ -1134,11 +1170,11 @@ msgstr "Testai"
 msgid "Text content"
 msgstr "Teksto turinys"
 
-msgid "Text to Speech"
-msgstr "Tekstas Balsu"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Tekstas Balsu"
 
 msgid "that was being taken."
 msgstr ""
@@ -1305,6 +1341,9 @@ msgstr ""
 msgid "Tool box and flagging for review"
 msgstr ""
 
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr "Galutinis rezultatas"
 
@@ -1451,6 +1490,12 @@ msgstr "Jūs turite užsitęsusius ryšio trūkčius."
 
 msgid "You have %s item(s) marked for review."
 msgstr "Turite %s klausimų(-us) pažymėję patikrinimui."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr "Liko neatsakyti %s klausimai(-ų)."
