@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-16T14:36:33\n"
+"Project-Id-Version: TAO 3.4.0-sprint128\n"
+"PO-Revision-Date: 2020-05-12T12:05:20\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -12,6 +12,18 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Ein QTI Element involviert im QTI Test '%s' konnte nicht kompiliert werden."
@@ -144,6 +156,9 @@ msgstr "Beim Kompilieren des QTI Tests '%s' trat ein unbekannter Fehler auf."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Beim Kompilieren des QTI Tests '%s' trat ein unbekannter Fehler auf."
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
 
 msgid "and"
 msgstr ""
@@ -382,11 +397,11 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End test"
-msgstr ""
-
 msgid "End Test"
 msgstr "Test beenden"
+
+msgid "End test"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -588,11 +603,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Element-Sitzungskontrolle"
 
-msgid "Items"
-msgstr "Elemente"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Elemente"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elemente können manuell zu einer oder mehreren Kategorien hinzugefügt werden."
@@ -606,6 +621,12 @@ msgstr "Elemente markiert für spätere Bewertung"
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr ""
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "Zusammenhalten"
 
@@ -613,6 +634,12 @@ msgid "Late submission allowed"
 msgstr "Spätere Bereitstellung erlaubt"
 
 msgid "Leave a comment"
+msgstr ""
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
 msgstr ""
 
 msgid "Light yellow on royal blue"
@@ -816,6 +843,9 @@ msgstr "Nur die unbeantworteten Elemente anzeigen"
 msgid "Open Calculator"
 msgstr ""
 
+msgid "Open Keyboard Shortcuts"
+msgstr ""
+
 msgid "Option A"
 msgstr ""
 
@@ -889,6 +919,9 @@ msgid "QTI Test Package 2.2"
 msgstr ""
 
 msgid "QTI/APIP Test Content Package"
+msgstr ""
+
+msgid "Question"
 msgstr ""
 
 msgid "Reference"
@@ -1125,6 +1158,9 @@ msgstr "Teststatus"
 msgid "Test status and review structure"
 msgstr ""
 
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr ""
 
@@ -1134,10 +1170,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1305,6 +1341,9 @@ msgstr ""
 msgid "Tool box and flagging for review"
 msgstr ""
 
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr ""
 
@@ -1451,6 +1490,12 @@ msgstr ""
 
 msgid "You have %s item(s) marked for review."
 msgstr "Sie haben %s Element(e) zur Überprüfung markiert."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr ""

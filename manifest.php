@@ -21,23 +21,24 @@
 
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
-use oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter;
-use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
-use oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders;
-use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
+use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
 use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
 use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
 use oat\taoQtiTest\scripts\install\RegisterTestImporters;
+use oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders;
+use oat\taoQtiTest\scripts\install\RegisterTimerAdjustmentService;
+use oat\taoQtiTest\scripts\install\RegisterTimerStrategyService;
+use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
-use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
-use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
-use oat\taoQtiTest\scripts\install\RegisterTimerStrategyService;
 
 $extpath = __DIR__ . DIRECTORY_SEPARATOR;
 $taopath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
@@ -47,13 +48,13 @@ return [
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '37.0.4',
+    'version'     => '37.8.1',
     'author'      => 'Open Assessment Technologies',
     'requires'    => [
-        'taoQtiItem' => '>=23.9.2',
-        'taoTests'   => '>=13.2.0',
+        'taoQtiItem' => '>=24.0.0',
+        'taoTests'   => '>=13.7.0',
         'tao'        => '>=42.0.2',
-        'generis'    => '>=12.15.0',
+        'generis'    => '>=12.20.0',
         'taoDelivery' => '>=14.10.0',
         'taoItems'   => '>=6.0.0',
     ],
@@ -87,7 +88,8 @@ return [
             SetUpQueueTasks::class,
             SetLinearNextItemWarningConfig::class,
             RegisterFrontendPaths::class,
-            RegisterTimerStrategyService::class
+            RegisterTimerStrategyService::class,
+            RegisterTimerAdjustmentService::class
         ]
     ],
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',

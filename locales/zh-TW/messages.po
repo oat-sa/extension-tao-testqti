@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-16T14:37:03\n"
+"Project-Id-Version: TAO 3.4.0-sprint128\n"
+"PO-Revision-Date: 2020-05-12T12:05:31\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-TW\n"
@@ -12,6 +12,18 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
@@ -144,6 +156,9 @@ msgstr "在編譯QTI考試 '%s' 時出現了一個不明錯誤。"
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "在彙集QTI考試 '%s' 中時出現了一個不明錯誤。"
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
 
 msgid "and"
 msgstr ""
@@ -382,11 +397,11 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End test"
-msgstr ""
-
 msgid "End Test"
 msgstr "結束考試"
+
+msgid "End test"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -587,11 +602,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "題目時域控制"
 
-msgid "Items"
-msgstr "題目"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "題目"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "題目可以選擇性的被分配到一個或多個類別。"
@@ -605,6 +620,12 @@ msgstr ""
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr ""
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "保持在一起"
 
@@ -612,6 +633,12 @@ msgid "Late submission allowed"
 msgstr "允許遲交"
 
 msgid "Leave a comment"
+msgstr ""
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
 msgstr ""
 
 msgid "Light yellow on royal blue"
@@ -815,6 +842,9 @@ msgstr ""
 msgid "Open Calculator"
 msgstr ""
 
+msgid "Open Keyboard Shortcuts"
+msgstr ""
+
 msgid "Option A"
 msgstr ""
 
@@ -888,6 +918,9 @@ msgid "QTI Test Package 2.2"
 msgstr ""
 
 msgid "QTI/APIP Test Content Package"
+msgstr ""
+
+msgid "Question"
 msgstr ""
 
 msgid "Reference"
@@ -1124,6 +1157,9 @@ msgstr ""
 msgid "Test status and review structure"
 msgstr ""
 
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr ""
 
@@ -1133,10 +1169,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1304,6 +1340,9 @@ msgstr ""
 msgid "Tool box and flagging for review"
 msgstr ""
 
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr ""
 
@@ -1449,6 +1488,12 @@ msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
+msgstr ""
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
 msgstr ""
 
 msgid "You have %s unanswered question(s)"

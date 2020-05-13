@@ -31,6 +31,12 @@ namespace oat\taoQtiTest\models\runner\time;
  */
 interface QtiTimeStorageFormat
 {
+    public const STORAGE_KEY_TIME_LINE = 'timeLine';
+    public const STORAGE_KEY_EXTRA_TIME = 'extraTime';
+    public const STORAGE_KEY_EXTENDED_TIME = 'extendedTime';
+    public const STORAGE_KEY_CONSUMED_EXTRA_TIME = 'consumedExtraTime';
+    public const STORAGE_KEY_TIMER_ADJUSTMENT_MAP = 'timerAdjustmentMap';
+
     /**
      * Encode a dataset with the managed format.
      * @param mixed $data

@@ -25,10 +25,9 @@
 namespace oat\taoQtiTest\models\runner\config;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\tao\model\theme\ThemeService;
-use oat\taoQtiTest\models\SectionPauseService;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
-use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoQtiTest\models\SectionPauseService;
 
 /**
  * Class QtiRunnerOptions
@@ -36,9 +35,11 @@ use oat\taoTests\models\runner\time\TimePoint;
  */
 class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerConfig';
+    public const SERVICE_ID = 'taoQtiTest/QtiRunnerConfig';
 
-    const OPTION_CONFIG = 'config';
+    public const OPTION_CONFIG = 'config';
+
+    public const CATEGORY_OPTION_PREFIX = 'x-tao-option-';
 
     /**
      * @deprecated since version 29.5.0, to be removed in 30.0.0. Use QtiRunnerService::TOOL_ITEM_THEME_SWITCHER instead
@@ -81,6 +82,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             $target = isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null;
             $config = [
                 'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
+                'timerWarningForScreenreader' => isset($rawConfig['timerWarningForScreenreader']) ? $rawConfig['timerWarningForScreenreader'] : null,
                 'catEngineWarning' => isset($rawConfig['catEngineWarning']) ? $rawConfig['catEngineWarning'] : null,
                 'progressIndicator' => [
                     'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
@@ -188,21 +190,24 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             'exitButton'        => \taoQtiTest_helpers_TestRunnerUtils::doesAllowExit($session, $context),
             'logoutButton'      => \taoQtiTest_helpers_TestRunnerUtils::doesAllowLogout($session),
             'validateResponses' => \taoQtiTest_helpers_TestRunnerUtils::doesValidateResponses($session),
-            'sectionPause'      => $this->getServiceManager()->get(SectionPauseService::SERVICE_ID)->couldBePaused($session)
+            'sectionPause'      => $this->getSectionPauseService()->couldBePaused($session)
         ];
 
         // get the options from the categories owned by the current item
         $categories = $this->getCategories($context);
-        $prefixCategory = 'x-tao-option-';
-        $prefixCategoryLen = strlen($prefixCategory);
+        $prefixCategoryLen = strlen(self::CATEGORY_OPTION_PREFIX);
         foreach ($categories as $category) {
-            if (!strncmp($category, $prefixCategory, $prefixCategoryLen)) {
+            if (!strncmp($category, self::CATEGORY_OPTION_PREFIX, $prefixCategoryLen)) {
                 // extract the option name from the category, transform to camelCase if needed
                 $optionName = lcfirst(str_replace(' ', '', ucwords(strtr(substr($category, $prefixCategoryLen), ['-' => ' ', '_' => ' ']))));
 
                 // the options added by the categories are just flags
                 $options[$optionName] = true;
             }
+        }
+
+        foreach ($this->getOverriddenOptionsRepository()->findAll() as $option) {
+            $options[$option->getId()] = $option->isEnabled();
         }
 
         return $options;
@@ -233,5 +238,17 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     protected function getCategories(RunnerServiceContext $context)
     {
         return $context->getCurrentAssessmentItemRef()->getCategories()->getArrayCopy();
+    }
+
+    private function getSectionPauseService(): SectionPauseService
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(SectionPauseService::SERVICE_ID);
+    }
+
+    private function getOverriddenOptionsRepository(): OverriddenOptionsRepositoryInterface
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(OverriddenOptionsRepositoryInterface::SERVICE_ID);
     }
 }

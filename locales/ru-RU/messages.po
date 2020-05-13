@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-16T14:36:55\n"
+"Project-Id-Version: TAO 3.4.0-sprint128\n"
+"PO-Revision-Date: 2020-05-12T12:05:28\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -12,6 +12,18 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Невозможно скомпоновать элемент QTI, включенный в тест QTI «%s»."
@@ -144,6 +156,9 @@ msgstr "Во время компоновки теста QTI «%s» возник�
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Во время компоновки теста QTI «%s» возникла неизвестная ошибка."
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
 
 msgid "and"
 msgstr ""
@@ -382,10 +397,10 @@ msgstr "Включить экран пересмотра элемента/нав
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Завершить тест"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Завершить тест"
 
 msgid "Enter a blueprint"
@@ -587,11 +602,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Контроль за сеансом для элемента"
 
-msgid "Items"
-msgstr "Элементы"
-
 msgid "items"
 msgstr "элементы"
+
+msgid "Items"
+msgstr "Элементы"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Элементы могут дополнительно назначаться одной или нескольким категориям."
@@ -605,6 +620,12 @@ msgstr "Элементы, помеченные для дальнейшего п�
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr "Элементы с идентификаторами ссылок на элементы оценок «%s» не регистрируются в соответствующей конечной точке CAT."
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "Не разрывать"
 
@@ -613,6 +634,12 @@ msgstr "Поздняя отправка разрешена"
 
 msgid "Leave a comment"
 msgstr "Оставить комментарий"
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
+msgstr ""
 
 msgid "Light yellow on royal blue"
 msgstr "Светло-желтый на ярко-синем"
@@ -815,6 +842,9 @@ msgstr "Показывать только элементы без ответов
 msgid "Open Calculator"
 msgstr "Открыть калькулятор"
 
+msgid "Open Keyboard Shortcuts"
+msgstr ""
+
 msgid "Option A"
 msgstr ""
 
@@ -889,6 +919,9 @@ msgstr "Пакет для тестирования QTI 2.2"
 
 msgid "QTI/APIP Test Content Package"
 msgstr "Пакет содержимого для тестирования QTI/APIP"
+
+msgid "Question"
+msgstr ""
 
 msgid "Reference"
 msgstr "Ссылка"
@@ -1124,6 +1157,9 @@ msgstr "Статус теста"
 msgid "Test status and review structure"
 msgstr ""
 
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Средства тестируемого"
 
@@ -1133,11 +1169,11 @@ msgstr "Тесты"
 msgid "Text content"
 msgstr "Текстовое содержимое"
 
-msgid "Text to Speech"
-msgstr "Текст в речь"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Текст в речь"
 
 msgid "that was being taken."
 msgstr ""
@@ -1304,6 +1340,9 @@ msgstr ""
 msgid "Tool box and flagging for review"
 msgstr ""
 
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr "Суммарный балл"
 
@@ -1450,6 +1489,12 @@ msgstr "Подключение прерывается уже в течение �
 
 msgid "You have %s item(s) marked for review."
 msgstr "У вас имеется элементов, помеченных на пересмотр: %s."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr "У вас имеется вопросов без ответов: %s"
