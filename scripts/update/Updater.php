@@ -2042,5 +2042,11 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('37.5.0', '37.8.2');
+
+        if ($this->isVersion('37.8.2')) {
+
+            $this->getLogger()->debug('taoQtiTest update!');
+            $this->setVersion('37.8.3');
+        }
     }
 }
