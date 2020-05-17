@@ -2042,5 +2042,22 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('37.5.0', '37.8.2');
+
+        if ($this->isVersion('37.8.2')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'testTitleHeader',
+                'name' => 'Test Title Header',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/testHeader/header',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Provide an invisible header with current question information',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.9.0');
+        }
     }
 }
