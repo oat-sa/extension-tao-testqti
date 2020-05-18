@@ -2047,11 +2047,11 @@ class Updater extends \common_ext_ExtensionUpdater
             $registry = PluginRegistry::getRegistry();
 
             $registry->register(TestPlugin::fromArray([
-                'id' => 'testTitleHeader',
-                'name' => 'Test Title Header',
-                'module' => 'taoQtiTest/runner/plugins/content/accessibility/testHeader/header',
+                'id' => 'mainLandmark',
+                'name' => 'Main landmark',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/mainLandmark/header',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
-                'description' => 'Provide an invisible header with current question information',
+                'description' => 'Landmark header for the test runner main',
                 'category' => 'content',
                 'active' => true,
                 'tags' => [ ]
