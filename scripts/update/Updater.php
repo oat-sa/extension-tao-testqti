@@ -2043,7 +2043,7 @@ class Updater extends \common_ext_ExtensionUpdater
 
         $this->skip('37.5.0', '37.9.0');
 
-        if ($this->isVersion('37.8.2')) {
+        if ($this->isVersion('37.9.0')) {
             $registry = PluginRegistry::getRegistry();
 
             $registry->register(TestPlugin::fromArray([
@@ -2057,7 +2057,7 @@ class Updater extends \common_ext_ExtensionUpdater
                 'tags' => [ ]
             ]));
 
-            $this->setVersion('37.9.0');
+            $this->setVersion('37.10.0');
         }
     }
 }
