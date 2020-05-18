@@ -53,6 +53,7 @@ class ResponseGenerator extends ConfigurableService
         $actions = [];
         foreach ($data as $entry) {
             try {
+                throw new ResolverException('TestException');
                 $actions[] = $resolver->resolve($entry, $availableActions);
             } catch (common_exception_InconsistentData | ResolverException $e) {
                 $responseAction = $entry;
