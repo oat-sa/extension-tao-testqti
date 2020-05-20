@@ -2041,9 +2041,9 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('37.5.0');
         }
 
-        $this->skip('37.5.0', '37.9.0');
+        $this->skip('37.5.0', '37.9.3');
 
-        if ($this->isVersion('37.9.0')) {
+        if ($this->isVersion('37.9.3')) {
             $registry = PluginRegistry::getRegistry();
 
             $registry->register(TestPlugin::fromArray([
