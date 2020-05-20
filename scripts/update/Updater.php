@@ -2053,7 +2053,7 @@ class Updater extends \common_ext_ExtensionUpdater
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Landmark header for the test runner main',
                 'category' => 'content',
-                'active' => true,
+                'active' => false,
                 'tags' => [ ]
             ]));
 
