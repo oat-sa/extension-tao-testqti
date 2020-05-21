@@ -144,6 +144,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => false,
                 'tags' => [ ]
+            ], [
+                'id' => 'mainLandmark',
+                'name' => 'Main landmark',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/mainLandmark/header',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Landmark header for the test runner main',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
             ]
         ],
         'controls' => [
