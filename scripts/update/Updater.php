@@ -2057,7 +2057,7 @@ class Updater extends \common_ext_ExtensionUpdater
                 'tags' => [ ]
             ]));
 
-            $this->setVersion('37.10.1');
+            $this->setVersion('37.10.2');
         }
     }
 }
