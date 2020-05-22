@@ -2041,6 +2041,25 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('37.5.0');
         }
 
-        $this->skip('37.5.0', '37.10.1');
+        $this->skip('37.5.0', '37.9.3');
+
+        if ($this->isVersion('37.9.3')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'mainLandmark',
+                'name' => 'Main landmark',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/mainLandmark/header',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Landmark header for the test runner main',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.10.2');
+        }
+
+        $this->skip('37.10.2', '37.10.4');
     }
 }
