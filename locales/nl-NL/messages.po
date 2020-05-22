@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint128\n"
-"PO-Revision-Date: 2020-05-12T12:05:27\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:48\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -468,6 +468,9 @@ msgstr "Markeer het huidige item voor herziening"
 msgid "Flagged"
 msgstr "Gemarkeerd"
 
+msgid "Flagged for review"
+msgstr ""
+
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Forceer dat het item wordt beschouwd als informatie en niet wordt meegenomen bij de tellingen voor (niet) beantwoord of gemarkeerde items."
 
@@ -678,11 +681,11 @@ msgstr "Beheer rubriek blokken"
 msgid "Manage test properties"
 msgstr "beheer toets eigenschappen"
 
-msgid "Manage Tests"
-msgstr "Beheer toetsen"
-
 msgid "Manage tests"
 msgstr "Beheer examens"
+
+msgid "Manage Tests"
+msgstr "Beheer toetsen"
 
 msgid "Mark for review"
 msgstr "Markeer voor herziening"
@@ -809,6 +812,12 @@ msgstr "Geen"
 
 msgid "Not all test could be exported"
 msgstr "Niet alle examens konden worden geëxporteerd"
+
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "Niet door elkaar gehaald, de posities blijven vast"
@@ -981,10 +990,10 @@ msgstr "Puntenteller"
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Notitieboekje"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Notitieboekje"
 
 msgid "Scratchpad"
@@ -1369,6 +1378,9 @@ msgid "Unknown error."
 msgstr "Onbekende fout."
 
 msgid "Unlink to use separated durations"
+msgstr ""
+
+msgid "Unseen"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
