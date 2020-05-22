@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint128\n"
-"PO-Revision-Date: 2020-05-12T12:05:26\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -468,6 +468,9 @@ msgstr ""
 msgid "Flagged"
 msgstr "フラグ付け"
 
+msgid "Flagged for review"
+msgstr ""
+
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
 
@@ -678,11 +681,11 @@ msgstr "ルーブリックブロックの管理"
 msgid "Manage test properties"
 msgstr "テストプロパティの管理"
 
-msgid "Manage Tests"
-msgstr "テストの管理"
-
 msgid "Manage tests"
 msgstr ""
+
+msgid "Manage Tests"
+msgstr "テストの管理"
 
 msgid "Mark for review"
 msgstr "レビュー用マーク"
@@ -808,6 +811,12 @@ msgid "None"
 msgstr ""
 
 msgid "Not all test could be exported"
+msgstr ""
+
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
 msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
@@ -981,10 +990,10 @@ msgstr "採点者"
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1369,6 +1378,9 @@ msgid "Unknown error."
 msgstr "不明なエラー"
 
 msgid "Unlink to use separated durations"
+msgstr ""
+
+msgid "Unseen"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"

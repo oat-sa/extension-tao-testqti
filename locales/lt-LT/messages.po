@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint128\n"
-"PO-Revision-Date: 2020-05-12T12:05:27\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:48\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -468,6 +468,9 @@ msgstr "Pažymėti dabartinį klausimą vėlesniam peržiūrėjimui"
 msgid "Flagged"
 msgstr "Pažymėta"
 
+msgid "Flagged for review"
+msgstr ""
+
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Priversti elementą būti informaciniu ir nebūti atsižvelgtam atsakytų / neatsakytų ir pažymėtų skaičiuoklėje."
 
@@ -678,10 +681,10 @@ msgstr "Tvarkyti Rubrikos Blokus"
 msgid "Manage test properties"
 msgstr "Tvarkyti testo savybes"
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr "Tvarkyti testus"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Tvarkyti testus"
 
 msgid "Mark for review"
@@ -809,6 +812,12 @@ msgstr "Nėra"
 
 msgid "Not all test could be exported"
 msgstr "Ne visas testas gali būti eksportuotas"
+
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "Nemaišoma, vieta išlieka pastovi."
@@ -981,10 +990,10 @@ msgstr "Verintojas"
 msgid "Scoring"
 msgstr "Įvertinimas"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Juodraštis"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Juodraštis"
 
 msgid "Scratchpad"
@@ -1370,6 +1379,9 @@ msgstr "Nežinoma klaida."
 
 msgid "Unlink to use separated durations"
 msgstr "Atrišti, kad naudoti atskirtas trukmes"
+
+msgid "Unseen"
+msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Įkelti QTI 2.1 Testo Paketo Failą"
