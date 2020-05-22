@@ -12,22 +12,22 @@ use oat\oatbox\service\ServiceManagerAwareTrait;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version202005191652362260_taoQtiTest extends AbstractMigration implements ServiceManagerAwareInterface
+final class Version202005221224102260_taoQtiTest extends AbstractMigration implements ServiceManagerAwareInterface
 {
     use ServiceManagerAwareTrait;
 
     public function getDescription(): string
     {
-        return 'A test migration for extension taoQtiTest (1).';
+        return 'A failing migration test for extension taoQtiTest (2).';
     }
 
     public function up(Schema $schema): void
     {
-        $this->getLogger()->debug("taoQtiTest Migration 1 UP.");
+        $this->getLogger()->debug("taoQtiTest Migration 2 UP.");
     }
 
     public function down(Schema $schema): void
     {
-        $this->getLogger()->debug("taoQtiTest Migration 1 DOWN.");
+        $this->getLogger()->debug("taoQtiTest Migration 2 DOWN.");
     }
 }
