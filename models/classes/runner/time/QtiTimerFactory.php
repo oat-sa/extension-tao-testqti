@@ -26,6 +26,7 @@ use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStorageJsonFormat;
+use oat\taoQtiTest\models\TestSessionService;
 use oat\taoTests\models\runner\time\Timer;
 use oat\taoTests\models\runner\time\TimerStrategyInterface;
 use oat\taoTests\models\runner\time\TimeStorage;
@@ -111,11 +112,7 @@ class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDe
      */
     public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
     {
-        if ($request->getSession() === null) {
-            $sessionId = $request->getDeliveryExecution()->getIdentifier();
-        } else {
-            $sessionId = $request->getSession()->getSessionId();
-        }
+        $sessionId = $request->getDeliveryExecution()->getIdentifier();
         $timer = $this->getTimer($sessionId, $request->getDeliveryExecution()->getUserIdentifier());
         return $timer->delete();
     }
