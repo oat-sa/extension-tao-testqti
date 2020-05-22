@@ -24,8 +24,8 @@ final class Version202005221224102260_taoQtiTest extends AbstractMigration imple
 
     public function up(Schema $schema): void
     {
-        $this->getLogger()->debug("This will no break, because we are throwing an exception.");
-        
+        $this->getLogger()->debug("This will now break, because we are throwing an exception.");
+
         throw new Exception('Migration error!');
     }
 
