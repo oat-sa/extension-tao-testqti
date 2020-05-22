@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint128\n"
-"PO-Revision-Date: 2020-05-12T12:05:22\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:38\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-MX\n"
@@ -468,6 +468,9 @@ msgstr "Marcar el ítem actual para revisión posterior"
 msgid "Flagged"
 msgstr "Marcado"
 
+msgid "Flagged for review"
+msgstr ""
+
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Forzar que el ítem se considere informativo y no se tenga en cuenta en los contadores de ítems con/sin respuesta o marcados."
 
@@ -678,11 +681,11 @@ msgstr "Administrar Bloques de Rúbrica"
 msgid "Manage test properties"
 msgstr "Administrar las propiedades de prueba"
 
-msgid "Manage Tests"
-msgstr "Gestionar Pruebas"
-
 msgid "Manage tests"
 msgstr "Gestionar pruebas"
+
+msgid "Manage Tests"
+msgstr "Gestionar Pruebas"
 
 msgid "Mark for review"
 msgstr "Marcar para revisión"
@@ -809,6 +812,12 @@ msgstr "Ninguno"
 
 msgid "Not all test could be exported"
 msgstr "No se pudo exportar toda la prueba"
+
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "No reorganizado, la posición permanece fija."
@@ -981,11 +990,11 @@ msgstr "Puntuador"
 msgid "Scoring"
 msgstr "Puntaje"
 
-msgid "Scratch Pad"
-msgstr "Bloc de Notas"
-
 msgid "Scratch pad"
 msgstr "Bloc de notas"
+
+msgid "Scratch Pad"
+msgstr "Bloc de Notas"
 
 msgid "Scratchpad"
 msgstr "Bloc de notas"
@@ -1371,6 +1380,9 @@ msgstr "Error desconocido."
 
 msgid "Unlink to use separated durations"
 msgstr "Anular enlace para utilizar duraciones independientes"
+
+msgid "Unseen"
+msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Subir un Archivo de Paquete de Prueba QTI 2.1"

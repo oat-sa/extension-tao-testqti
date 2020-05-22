@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint128\n"
-"PO-Revision-Date: 2020-05-12T12:05:28\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:50\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -467,6 +467,9 @@ msgstr "Пометить текущий элемент для дальнейше
 msgid "Flagged"
 msgstr "Помечено"
 
+msgid "Flagged for review"
+msgstr ""
+
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Принудительно пометить элемент как информационный, чтобы он не учитывался счетчиками (не)отвеченных/помеченных в учетной записи."
 
@@ -677,10 +680,10 @@ msgstr "Управление тематическими блоками"
 msgid "Manage test properties"
 msgstr "Управление свойствами тестов"
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr "Управление тестами"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Управление тестами"
 
 msgid "Mark for review"
@@ -808,6 +811,12 @@ msgstr "Нет"
 
 msgid "Not all test could be exported"
 msgstr "Не все тесты могут экспортироваться"
+
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "Не перемешано, позиция остается фиксированной."
@@ -980,10 +989,10 @@ msgstr "Счетчик баллов"
 msgid "Scoring"
 msgstr "Выставление баллов"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Блокнот"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Блокнот"
 
 msgid "Scratchpad"
@@ -1369,6 +1378,9 @@ msgstr "Неизвестная ошибка."
 
 msgid "Unlink to use separated durations"
 msgstr "Отменить связь для применения отдельных длительностей"
+
+msgid "Unseen"
+msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Выгрузка файла пакета для тестирования QTI 2.1"
