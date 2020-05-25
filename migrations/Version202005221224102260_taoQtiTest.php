@@ -7,30 +7,24 @@ namespace oat\taoQtiTest\migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Exception;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
-use oat\oatbox\service\ServiceManagerAwareInterface;
-use oat\oatbox\service\ServiceManagerAwareTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version202005221224102260_taoQtiTest extends AbstractMigration implements ServiceManagerAwareInterface
+final class Version202005221224102260_taoQtiTest extends AbstractMigration
 {
-    use ServiceManagerAwareTrait;
-
     public function getDescription(): string
     {
-        return 'A failing migration test for extension taoQtiTest (2).';
+        return 'A successful migration test for extension taoQtiTest (2).';
     }
 
     public function up(Schema $schema): void
     {
-        $this->getLogger()->debug("This will now break, because we are throwing an exception.");
-
-        throw new Exception('Migration error!');
+        $this->getLogger()->debug("taoQtiTest Migration 2 UP.");
     }
 
     public function down(Schema $schema): void
     {
-        $this->getLogger()->debug("Reverting migration.");
+        $this->getLogger()->debug("taoQtiTest Migration 2 DOWN.");
     }
 }

@@ -6,16 +6,12 @@ namespace oat\taoQtiTest\migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
-use oat\oatbox\service\ServiceManagerAwareInterface;
-use oat\oatbox\service\ServiceManagerAwareTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version202005221220042260_taoQtiTest extends AbstractMigration implements ServiceManagerAwareInterface
+final class Version202005221220042260_taoQtiTest extends AbstractMigration
 {
-    use ServiceManagerAwareTrait;
-
     public function getDescription(): string
     {
         return 'A successful migration test for extension taoQtiTest (1).';

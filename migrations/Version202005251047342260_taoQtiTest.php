@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\migrations;
 
 use Doctrine\DBAL\Schema\Schema;
+use Exception;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
 
 /**
@@ -12,21 +13,20 @@ use oat\tao\scripts\tools\migrations\AbstractMigration;
  */
 final class Version202005251047342260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
-        return '';
+        return 'A failing migration for taoQtiTest.';
     }
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
+        throw new Exception('Database error in migration taoQtiTest migration');
 
+        $this->getLogger()->debug("You've just spotted an issue if you are reading me now. Investigate further.");
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-
+        $this->getLogger()->debug("taoQtiTest Migration 5 DOWN.");
     }
 }

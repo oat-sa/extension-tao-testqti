@@ -12,21 +12,18 @@ use oat\tao\scripts\tools\migrations\AbstractMigration;
  */
 final class Version202005251211392260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
-        return '';
+        return 'A successful migration test for extension taoQtiTest (6).';
     }
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-
+        $this->getLogger()->debug("taoQtiTest Migration 6 UP.");
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-
+        $this->getLogger()->debug("taoQtiTest Migration 6 DOWN.");
     }
 }
