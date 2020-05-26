@@ -147,9 +147,7 @@ class ListItemLookupTest extends TestCase
         $resourceMap   = [];
         $categoriesMap = [];
         foreach ($resources['nodes'] ?? [] as $node) {
-            if ($node['type'] === 'instance') {
-                $nodeIds[] = $node['uri'];
-            }
+            $nodeIds[] = $node['uri'];
 
             $resource = $this->createMock(RdfResource::class);
 
@@ -200,7 +198,6 @@ class ListItemLookupTest extends TestCase
                     'nodes' => [
                         [
                             'uri'        => 'http://child#1',
-                            'type'       => 'instance',
                             'categories' => ['child1_category'],
                         ],
                     ],
@@ -210,7 +207,6 @@ class ListItemLookupTest extends TestCase
                     'nodes' => [
                         [
                             'uri'        => 'http://child#1',
-                            'type'       => 'instance',
                             'categories' => ['child1_category'],
                         ],
                     ],
@@ -225,13 +221,7 @@ class ListItemLookupTest extends TestCase
                     'nodes' => [
                         [
                             'uri'        => 'http://child#2',
-                            'type'       => 'instance',
                             'categories' => ['child2_category'],
-                        ],
-                        [
-                            'uri'        => 'http://child#3',
-                            'type'       => 'class',
-                            'categories' => ['child3_category'],
                         ],
                     ],
                     'total' => 2,
@@ -240,18 +230,11 @@ class ListItemLookupTest extends TestCase
                     'nodes' => [
                         [
                             'uri'        => 'http://child#1',
-                            'type'       => 'instance',
                             'categories' => ['child1_category'],
                         ],
                         [
                             'uri'        => 'http://child#2',
-                            'type'       => 'instance',
                             'categories' => ['child2_category'],
-                        ],
-                        [
-                            'uri'        => 'http://child#3',
-                            'type'       => 'class',
-                            'categories' => ['child3_category'],
                         ],
                     ],
                     'total' => 3,

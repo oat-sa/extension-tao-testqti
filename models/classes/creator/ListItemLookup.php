@@ -66,17 +66,17 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
             $limit
         );
 
-        $nodeIds = [];
-        foreach ($result['nodes'] as $node) {
-            if ($node['type'] === 'instance') {
-                $nodeIds[] = $node['uri'];
-            }
-        }
+        $nodeIds = array_map(
+            static function (array $node): string {
+                return $node['uri'];
+            },
+            $result['nodes']
+        );
 
         $accessible = $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ);
 
         foreach ($result['nodes'] as $i => &$node) {
-            if ($node['type'] === 'instance' && !in_array($node['uri'], $accessible)) {
+            if (!in_array($node['uri'], $accessible, true)) {
                 unset($result['nodes'][$i]);
                 $result['total']--;
 
