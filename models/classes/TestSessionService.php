@@ -163,12 +163,11 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     {
         $sessionId = $deliveryExecution->getIdentifier();
 
-        //load session if no such session or access mode changed
-        if (
-            !$this->hasTestSession($sessionId) ||
-            (!$forReadingOnly && self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]->isReadOnly())
-        ) {
+        if (!$this->hasTestSession($sessionId)) {
             $this->loadSession($deliveryExecution, $forReadingOnly);
+        } elseif ($this->accessChangedToReadOnly($forReadingOnly, $sessionId)) {
+            $this->getTestSessionStorage($deliveryExecution)
+                ->lockSession(self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]);
         }
 
         return self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION];
@@ -286,5 +285,15 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         }
 
         return false;
+    }
+
+    /**
+     * @param $forReadingOnly
+     * @param string $sessionId
+     * @return bool
+     */
+    private function accessChangedToReadOnly($forReadingOnly, string $sessionId): bool
+    {
+        return !$forReadingOnly && self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]->isReadOnly();
     }
 }

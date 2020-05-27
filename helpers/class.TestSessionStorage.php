@@ -131,17 +131,14 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
      */
     public function retrieve(AssessmentTest $test, $sessionId, $forReadingOnly = false)
     {
-        if (empty(static::$session) || static::$session->getSessionId() !== $sessionId) {
-            $this->setLastError(-1);
-            static::$session = parent::retrieve($test, $sessionId);
-            static::$session->setReadOnly($forReadingOnly);
-            if (!$forReadingOnly) {
-                $this->lockSession(static::$session);
-            }
+        if (static::$session && static::$session->getSessionId() === $sessionId) {
+            return static::$session;
         }
 
-        if (!$forReadingOnly && static::$session->isReadOnly()) {
-            static::$session->setReadOnly(false);
+        $this->setLastError(-1);
+        static::$session = parent::retrieve($test, $sessionId);
+        static::$session->setReadOnly($forReadingOnly);
+        if (!$forReadingOnly) {
             $this->lockSession(static::$session);
         }
 
@@ -179,10 +176,11 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     /**
      * @param AssessmentTestSession $session
      */
-    protected function lockSession(AssessmentTestSession $session)
+    public function lockSession(AssessmentTestSession $session)
     {
         $lock = $this->createLock('AssessmentTestSession_' . $session->getSessionId(), 30);
         $lock->acquire(true);
+        $session->setReadOnly(false);
         $session->setLock($lock);
     }
 
