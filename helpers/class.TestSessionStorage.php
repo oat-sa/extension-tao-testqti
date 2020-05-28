@@ -133,8 +133,8 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     {
         if (!$this->sessionExists($sessionId)) {
             $this->setLastError(-1);
-            static::$session = parent::retrieve($test, $sessionId);
-            static::$session->setReadOnly($forReadingOnly);
+            self::$session = parent::retrieve($test, $sessionId);
+            self::$session->setReadOnly($forReadingOnly);
         }
 
         if (!$forReadingOnly) {
@@ -277,6 +277,6 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
      */
     private function sessionExists(string $sessionId): bool
     {
-        return static::$session && static::$session->getSessionId() === $sessionId;
+        return self::$session && self::$session->getSessionId() === $sessionId;
     }
 }
