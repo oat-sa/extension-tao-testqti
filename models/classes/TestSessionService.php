@@ -294,6 +294,8 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      */
     private function accessModeChangedToWrite($forReadingOnly, string $sessionId): bool
     {
-        return !$forReadingOnly && self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]->isReadOnly();
+        return $this->hasTestSession($sessionId)
+            && !$forReadingOnly
+            && self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]->isReadOnly();
     }
 }
