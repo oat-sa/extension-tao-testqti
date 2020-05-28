@@ -48,7 +48,7 @@ use oat\oatbox\service\ServiceManager;
 class TestSessionServiceTest extends TestCase
 {
 
-    public function testGetTestSessionLoadsNewSession()
+    public function testGetTestSessionLoadsSameSession()
     {
         $service = $this->getService();
         $deliveryExecutionMock = $this->getDeliveryExecutionMock('id', 'userId', 'deliveryId');
