@@ -165,7 +165,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
 
         if (!$this->hasTestSession($sessionId)) {
             $this->loadSession($deliveryExecution, $forReadingOnly);
-        } elseif ($this->accessChangedToReadOnly($forReadingOnly, $sessionId)) {
+        } elseif ($this->accessModeChangedToWrite($forReadingOnly, $sessionId)) {
             $this->getTestSessionStorage($deliveryExecution)
                 ->lockSession(self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]);
         }
@@ -292,7 +292,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      * @param string $sessionId
      * @return bool
      */
-    private function accessChangedToReadOnly($forReadingOnly, string $sessionId): bool
+    private function accessModeChangedToWrite($forReadingOnly, string $sessionId): bool
     {
         return !$forReadingOnly && self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]->isReadOnly();
     }
