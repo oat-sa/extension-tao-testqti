@@ -88,17 +88,15 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
         $treeData[0]['children'] = array_filter(
             $treeData[0]['children'],
             static function (array $item) use ($resourceService): bool {
-                if ($item['type'] !== 'instance') {
-                    return true;
-                }
-
                 try {
-                    $resourceService->validatePermission($item['uri'], ['READ']);
-
-                    return true;
+                    if ($item['type'] === 'instance') {
+                        $resourceService->validatePermission($item['uri'], ['READ']);
+                    }
                 } catch (ResourceAccessDeniedException $e) {
                     return false;
                 }
+
+                return true;
             }
         );
 
