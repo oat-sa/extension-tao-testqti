@@ -131,17 +131,35 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
      */
     public function retrieve(AssessmentTest $test, $sessionId, $forReadingOnly = false)
     {
+        if ($forReadingOnly === false) {
+            return $this->retrieveSessionInWriteMode($test, $sessionId);
+        } else {
+            return $this->retrieveSessionInReadMode($test, $sessionId);
+        }
+    }
+
+    private function retrieveSessionInReadMode(AssessmentTest $test, $sessionId)
+    {
         if (!$this->sessionExists($sessionId)) {
             $this->setLastError(-1);
             self::$session = parent::retrieve($test, $sessionId);
-            self::$session->setReadOnly($forReadingOnly);
+            self::$session->setReadOnly(true);
         }
 
-        if (!$forReadingOnly) {
-            $this->lockSession(static::$session);
+        return self::$session;
+    }
+
+    private function retrieveSessionInWriteMode(AssessmentTest $test, $sessionId)
+    {
+        if ($this->sessionExists($sessionId) && self::$session->isLocked()) {
+            return self::$session;
         }
 
-        return static::$session;
+        $this->setLastError(-1);
+        self::$session = parent::retrieve($test, $sessionId);
+        $this->lockSession(self::$session);
+
+        return self::$session;
     }
 
     /**
@@ -278,5 +296,14 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     private function sessionExists(string $sessionId): bool
     {
         return self::$session && self::$session->getSessionId() === $sessionId;
+    }
+
+    /**
+     * @param $forReadingOnly
+     * @return bool
+     */
+    private function assessModeChangedToWrite($forReadingOnly): bool
+    {
+        return !$forReadingOnly && self::$session->isReadOnly();
     }
 }

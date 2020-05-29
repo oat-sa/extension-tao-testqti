@@ -48,7 +48,7 @@ use oat\oatbox\service\ServiceManager;
 class TestSessionServiceTest extends TestCase
 {
 
-    public function testGetTestSessionLoadsSameSession()
+    public function testGetTestSessionLoadsNewSessionWhenAccessModeChanged()
     {
         $service = $this->getService();
         $deliveryExecutionMock = $this->getDeliveryExecutionMock('id', 'userId', 'deliveryId');
@@ -63,10 +63,10 @@ class TestSessionServiceTest extends TestCase
         $sessionNotReadOnly = $service->getTestSession($deliveryExecutionMock, false);
         $this->assertFalse($sessionNotReadOnly->isReadOnly());
 
-        // Check if session and session storage are returned from cache.
+        // Check if session and session storage are new object
         $sessionStorage2 = $service->getTestSessionStorage($deliveryExecutionMock);
-        self::assertSame($session, $sessionNotReadOnly, 'Service must return the same session object.');
-        self::assertSame($sessionStorage, $sessionStorage2, 'Service must return the same session storage object.');
+        self::assertNotSame($session, $sessionNotReadOnly, 'Service must return the same session object.');
+        self::assertNotSame($sessionStorage, $sessionStorage2, 'Service must return the same session storage object.');
     }
 
     /**
@@ -193,8 +193,7 @@ class TestSessionServiceTest extends TestCase
             ->getMock();
         $mock->method('getIdentifier')->willReturn($id);
         $mock->method('getUserIdentifier')->willReturn($userId);
-        $mock->expects($this->once())
-            ->method('getDelivery')->willReturn(new \core_kernel_classes_Resource($deliveryId));
+        $mock->method('getDelivery')->willReturn(new \core_kernel_classes_Resource($deliveryId));
 
         return $mock;
     }

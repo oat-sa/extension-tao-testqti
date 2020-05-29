@@ -162,12 +162,8 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     public function getTestSession(DeliveryExecution $deliveryExecution, $forReadingOnly = false)
     {
         $sessionId = $deliveryExecution->getIdentifier();
-
-        if (!$this->hasTestSession($sessionId)) {
+        if (!$this->hasTestSession($sessionId) || $this->accessModeChangedToWrite($forReadingOnly, $sessionId)) {
             $this->loadSession($deliveryExecution, $forReadingOnly);
-        } elseif ($this->accessModeChangedToWrite($forReadingOnly, $sessionId)) {
-            $this->getTestSessionStorage($deliveryExecution)
-                ->lockSession(self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]);
         }
 
         return self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION];
