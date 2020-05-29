@@ -25,6 +25,7 @@ use common_exception_Error;
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\ResourceLookup;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\resources\TreeResourceLookup;
@@ -72,23 +73,32 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
         $data = $this->getTreeResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
 
         return $this->formatTreeData(
-            $this->filterTreeData($itemClass, $data)
+            $this->filterTreeData($data)
         );
     }
 
-    private function filterTreeData(core_kernel_classes_Class $root, array $treeData): array
+    private function filterTreeData(array $treeData): array
     {
         if (empty($treeData) || empty($treeData[0]['children'])) {
             return $treeData;
         }
 
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $readableResourcesMap = $this->getSecureResourceService()->getAllChildren($root);
+        $resourceService = $this->getSecureResourceService();
 
         $treeData[0]['children'] = array_filter(
             $treeData[0]['children'],
-            static function (array $item) use ($readableResourcesMap): bool {
-                return $item['type'] !== 'instance' || isset($readableResourcesMap[$item['uri']]);
+            static function (array $item) use ($resourceService): bool {
+                if ($item['type'] !== 'instance') {
+                    return true;
+                }
+
+                try {
+                    $resourceService->validatePermission($item['uri'], ['READ']);
+
+                    return true;
+                } catch (ResourceAccessDeniedException $e) {
+                    return false;
+                }
             }
         );
 
