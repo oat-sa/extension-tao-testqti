@@ -212,7 +212,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      */
     public function isLocked()
     {
-        return $this->lock instanceof LockInterface;
+        return ($this->lock instanceof LockInterface) && $this->lock->isAcquired();
     }
 
     /**
