@@ -2061,5 +2061,30 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('37.10.2', '37.11.0');
+
+        if ($this->isVersion('37.11.0')) {
+            // Register accessibility shortcuts
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['next'] = [
+                'trigger' => 'J',
+                'triggerAccessibility' => 'Alt+Shift+N'
+            ];
+
+            $config['shortcuts']['previous'] = [
+                'trigger' => 'K',
+                'triggerAccessibility' => 'Alt+Shift+P'
+            ];
+
+            $config['shortcuts']['jumplinks'] = [
+                'goToQuestion' => 'Alt+Shift+Q',
+                'goToTop' => 'Alt+Shift+T'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('37.12.0');
+        }
     }
 }
