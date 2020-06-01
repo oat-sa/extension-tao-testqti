@@ -71,4 +71,12 @@ interface TimerAdjustmentServiceInterface
         QtiIdentifiable $source,
         QtiTimer $timer
     ): ?QtiDuration;
+
+    /**
+     * Get adjusted seconds
+     * @param QtiIdentifiable $source
+     * @param QtiTimer $qtiTimer
+     * @return int
+     */
+    public function getAdjustment(QtiIdentifiable $source, QtiTimer $qtiTimer): int;
 }
