@@ -134,7 +134,6 @@ class TreeItemLookupTest extends TestCase
                 'expected'            => [
                     [
                         'uri'        => 'http://root',
-                        'categories' => [],
                         'children'   => [
                             [
                                 'uri'        => 'http://child#1',
@@ -163,7 +162,6 @@ class TreeItemLookupTest extends TestCase
                 'expected'            => [
                     [
                         'uri'        => 'http://root',
-                        'categories' => [],
                         'children'   => [
                             [
                                 'uri'        => 'http://child#2',
@@ -173,7 +171,6 @@ class TreeItemLookupTest extends TestCase
                             [
                                 'uri'        => 'http://child#3',
                                 'type'       => 'class',
-                                'categories' => [],
                             ],
                         ],
                     ],

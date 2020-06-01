@@ -2060,9 +2060,9 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('37.10.2');
         }
 
-        $this->skip('37.10.2', '37.11.0');
+        $this->skip('37.10.2', '37.11.5');
 
-        if ($this->isVersion('37.11.0')) {
+        if ($this->isVersion('37.11.5')) {
             // Register accessibility shortcuts
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
