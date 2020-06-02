@@ -91,12 +91,14 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
             }
         }
 
-        $accessibleNodes = $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ);
+        $accessibleNodes = array_flip(
+            $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ)
+        );
 
         $treeData[0]['children'] = array_filter(
             $treeData[0]['children'],
             static function (array $item) use ($accessibleNodes): bool {
-                return $item['type'] !== 'instance' || in_array($item['uri'], $accessibleNodes, true);
+                return $item['type'] !== 'instance' || isset($accessibleNodes[$item['uri']]);
             }
         );
 
