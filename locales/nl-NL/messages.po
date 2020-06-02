@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint126\n"
-"PO-Revision-Date: 2020-04-22T11:37:18\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:48\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -12,6 +12,18 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Een QTI item in QTI Test '%s' kon niet worden gecompileerd."
@@ -144,6 +156,9 @@ msgstr "Er trad een onbekende fout op bij het compileren van QTI toets '%s'."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Er trad een onbekende fout op bij het compileren van QTI toets '%s'."
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
 
 msgid "and"
 msgstr ""
@@ -382,11 +397,11 @@ msgstr "Schakel het item herzieningsscherm in / navigator."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Maakt het mogelijk om naar items binnen deze sectie over te gaan. Vereist de optie voor het beoordelingsscherm."
 
-msgid "End test"
-msgstr "Einde examen"
-
 msgid "End Test"
 msgstr "Eindig toets"
+
+msgid "End test"
+msgstr "Einde examen"
 
 msgid "Enter a blueprint"
 msgstr "Voer een blauwdruk in"
@@ -452,6 +467,9 @@ msgstr "Markeer het huidige item voor herziening"
 
 msgid "Flagged"
 msgstr "Gemarkeerd"
+
+msgid "Flagged for review"
+msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Forceer dat het item wordt beschouwd als informatie en niet wordt meegenomen bij de tellingen voor (niet) beantwoord of gemarkeerde items."
@@ -588,11 +606,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Item sessie controle"
 
-msgid "Items"
-msgstr "Items"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Items"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Items kunnen optioneel worden toegewezen aan een of meer categorieën. "
@@ -606,6 +624,12 @@ msgstr "Item gemarkeerd voor latere herziening"
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr "Items met assessmentItemRef identifiers \"%s\" worden niet geregistreerd in het betreffende CAT-eindpunt."
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "Bijeenhouden"
 
@@ -614,6 +638,12 @@ msgstr "Late inschrijvingen toegestaan"
 
 msgid "Leave a comment"
 msgstr "Laat een opmerking achter"
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
+msgstr ""
 
 msgid "Light yellow on royal blue"
 msgstr "Lichtgeel op koningsblauw"
@@ -651,11 +681,11 @@ msgstr "Beheer rubriek blokken"
 msgid "Manage test properties"
 msgstr "beheer toets eigenschappen"
 
-msgid "Manage Tests"
-msgstr "Beheer toetsen"
-
 msgid "Manage tests"
 msgstr "Beheer examens"
+
+msgid "Manage Tests"
+msgstr "Beheer toetsen"
 
 msgid "Mark for review"
 msgstr "Markeer voor herziening"
@@ -783,6 +813,12 @@ msgstr "Geen"
 msgid "Not all test could be exported"
 msgstr "Niet alle examens konden worden geëxporteerd"
 
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
+
 msgid "Not shuffled, the position remains fixed."
 msgstr "Niet door elkaar gehaald, de posities blijven vast"
 
@@ -815,6 +851,9 @@ msgstr "Toon alleen de onbeantwoorde items"
 
 msgid "Open Calculator"
 msgstr "Open rekenmachine"
+
+msgid "Open Keyboard Shortcuts"
+msgstr ""
 
 msgid "Option A"
 msgstr ""
@@ -891,6 +930,9 @@ msgstr "QTI Examen pakket 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Examen Content Pakket"
 
+msgid "Question"
+msgstr ""
+
 msgid "Reference"
 msgstr "Verwijzing"
 
@@ -948,10 +990,10 @@ msgstr "Puntenteller"
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Notitieboekje"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Notitieboekje"
 
 msgid "Scratchpad"
@@ -1125,6 +1167,9 @@ msgstr "Toets status"
 msgid "Test status and review structure"
 msgstr ""
 
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Kandidaten hulpmiddelen"
 
@@ -1134,11 +1179,11 @@ msgstr "Examens"
 msgid "Text content"
 msgstr "Tekst inhoud"
 
-msgid "Text to Speech"
-msgstr "Tekst naar spraak"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Tekst naar spraak"
 
 msgid "that was being taken."
 msgstr ""
@@ -1305,6 +1350,9 @@ msgstr ""
 msgid "Tool box and flagging for review"
 msgstr ""
 
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr "Totaal score"
 
@@ -1330,6 +1378,9 @@ msgid "Unknown error."
 msgstr "Onbekende fout."
 
 msgid "Unlink to use separated durations"
+msgstr ""
+
+msgid "Unseen"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
@@ -1451,6 +1502,12 @@ msgstr "U heeft te kampen met een langdurig verlies van verbinding. "
 
 msgid "You have %s item(s) marked for review."
 msgstr "U heeft %s item(s) gemarkeerd voor herziening."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr "U hebt %s onbeantwoorde vraag/vragen"
