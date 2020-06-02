@@ -66,6 +66,7 @@ use qtism\runtime\common\State;
 use qtism\runtime\common\Utils;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
+use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\RouteItem;
@@ -1952,15 +1953,17 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         /** @var StorageManager $storage */
         $storage = $this->getServiceLocator()->get(StorageManager::SERVICE_ID);
         $userUri = $request->getDeliveryExecution()->getUserIdentifier();
-
-        if ($request->getSession() === null) {
+        /** @var TestSessionService $testSessionService */
+        $testSessionService = $this->getServiceLocator()->get(TestSessionService::SERVICE_ID);
+        $session = $testSessionService->getTestSession($request->getDeliveryExecution(), false);
+        if ($session === null) {
             $status = $this->deleteExecutionStates(
                 $request->getDeliveryExecution()->getIdentifier(),
                 $userUri,
                 $storage
             );
         } else {
-            $status = $this->deleteExecutionStatesBasedOnSession($request, $storage, $userUri);
+            $status = $this->deleteExecutionStatesBasedOnSession($request, $storage, $userUri, $session);
         }
 
         /** @var ToolsStateStorage $toolsStateStorage */
@@ -2053,12 +2056,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @param DeliveryExecutionDeleteRequest $request
      * @param StorageManager $storage
      * @param $userUri
+     * @param AssessmentTestSession $session
      * @return bool
      * @throws \common_exception_NotFound
      */
-    protected function deleteExecutionStatesBasedOnSession(DeliveryExecutionDeleteRequest $request, StorageManager $storage, $userUri)
+    protected function deleteExecutionStatesBasedOnSession(DeliveryExecutionDeleteRequest $request, StorageManager $storage, $userUri, AssessmentTestSession $session)
     {
-        $itemsRefs = $this->getItemsRefs($request);
+        $itemsRefs = $this->getItemsRefs($request, $session);
         foreach ($itemsRefs as $itemRef) {
             $stateId = $this->buildStorageItemKey(
                 $request->getDeliveryExecution()->getIdentifier(),
@@ -2074,9 +2078,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * @param DeliveryExecutionDeleteRequest $request
+     * @param AssessmentTestSession $session
      * @return array
      */
-    protected function getItemsRefs(DeliveryExecutionDeleteRequest $request)
+    protected function getItemsRefs(DeliveryExecutionDeleteRequest $request, AssessmentTestSession $session)
     {
         try {
             $itemsRefs = (new GetDeliveryExecutionsItems(
@@ -2084,7 +2089,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $this->getServiceLocator()->get(CatService::SERVICE_ID),
                 \tao_models_classes_service_FileStorage::singleton(),
                 $request->getDeliveryExecution(),
-                $request->getSession()
+                $session
             ))->getItemsRefs();
         } catch (\Exception $exception) {
             $itemsRefs = [];

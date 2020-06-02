@@ -3,6 +3,9 @@
 namespace oat\taoQtiTest\test\unit\models\classes\creator;
 
 use core_kernel_classes_Class;
+use core_kernel_classes_Resource as RdfResource;
+use oat\generis\model\data\Ontology;
+use oat\generis\model\data\permission\PermissionHelper;
 use oat\generis\model\data\permission\PermissionInterface;
 use oat\generis\test\MockObject;
 use oat\generis\test\TestCase;
@@ -11,9 +14,9 @@ use oat\oatbox\user\User;
 use oat\tao\model\resources\ListResourceLookup;
 use oat\tao\model\resources\ResourceLookup;
 use oat\taoDacSimple\model\PermissionProvider;
+use oat\taoItems\model\CategoryService;
 use oat\taoQtiTest\models\creator\ListItemLookup;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use oat\generis\model\data\permission\PermissionHelper;
 
 /**
  * This program is free software; you can redistribute it and/or
@@ -40,6 +43,9 @@ class ListItemLookupTest extends TestCase
     /** @var array */
     private $permissions = [];
 
+    /** @var PermissionHelper */
+    private $permissionHelper;
+
     /** @var User|MockObject */
     private $userMock;
 
@@ -55,8 +61,11 @@ class ListItemLookupTest extends TestCase
     /** @var PermissionInterface|MockObject */
     private $permissionProviderMock;
 
-    /** @var PermissionHelper */
-    private $permissionHelper;
+    /** @var CategoryService|MockObject */
+    private $categoryServiceMock;
+
+    /** @var Ontology|MockObject */
+    private $ontologyMock;
 
     /** @var ServiceLocatorInterface */
     private $serviceLocatorMock;
@@ -75,12 +84,14 @@ class ListItemLookupTest extends TestCase
 
     public function initializeTestDoubles(): void
     {
+        $this->permissionHelper       = new PermissionHelper();
         $this->userMock               = $this->createMock(User::class);
         $this->rootMock               = $this->createMock(core_kernel_classes_Class::class);
         $this->sessionServiceMock     = $this->createMock(SessionService::class);
         $this->resourceLookupMock     = $this->createMock(ResourceLookup::class);
         $this->permissionProviderMock = $this->createMock(PermissionProvider::class);
-        $this->permissionHelper       = new PermissionHelper();
+        $this->categoryServiceMock    = $this->createMock(CategoryService::class);
+        $this->ontologyMock           = $this->createMock(Ontology::class);
     }
 
     public function initializeTestDoubleExpectancies(): void
@@ -108,9 +119,11 @@ class ListItemLookupTest extends TestCase
             ->method('get')
             ->willReturnMap(
                 [
+                    [Ontology::SERVICE_ID, $this->ontologyMock],
                     [SessionService::SERVICE_ID, $this->sessionServiceMock],
                     [ListResourceLookup::SERVICE_ID, $this->resourceLookupMock],
                     [PermissionInterface::SERVICE_ID, $this->permissionProviderMock],
+                    [CategoryService::SERVICE_ID, $this->categoryServiceMock],
                     [PermissionHelper::class, $this->permissionHelper],
                 ]
             );
@@ -130,12 +143,25 @@ class ListItemLookupTest extends TestCase
     {
         $this->resources = $resources;
 
-        $nodeIds = [];
+        $nodeIds       = [];
+        $resourceMap   = [];
+        $categoriesMap = [];
         foreach ($resources['nodes'] ?? [] as $node) {
-            if ($node['type'] === 'instance') {
-                $nodeIds[] = $node['uri'];
-            }
+            $nodeIds[] = $node['uri'];
+
+            $resource = $this->createMock(RdfResource::class);
+
+            $resourceMap[]   = [$node['uri'], $resource];
+            $categoriesMap[] = [$resource, $node['categories']];
         }
+
+        $this->ontologyMock
+            ->method('getResource')
+            ->willReturnMap($resourceMap);
+
+        $this->categoryServiceMock
+            ->method('getItemCategories')
+            ->willReturnMap($categoriesMap);
 
         $this->permissionProviderMock
             ->expects(static::once())
@@ -171,8 +197,8 @@ class ListItemLookupTest extends TestCase
                 'expected'    => [
                     'nodes' => [
                         [
-                            'uri'  => 'http://child#1',
-                            'type' => 'instance',
+                            'uri'        => 'http://child#1',
+                            'categories' => ['child1_category'],
                         ],
                     ],
                     'total' => 1,
@@ -180,8 +206,8 @@ class ListItemLookupTest extends TestCase
                 'resources'   => [
                     'nodes' => [
                         [
-                            'uri'  => 'http://child#1',
-                            'type' => 'instance',
+                            'uri'        => 'http://child#1',
+                            'categories' => ['child1_category'],
                         ],
                     ],
                     'total' => 1,
@@ -194,12 +220,8 @@ class ListItemLookupTest extends TestCase
                 'expected'    => [
                     'nodes' => [
                         [
-                            'uri'  => 'http://child#2',
-                            'type' => 'instance',
-                        ],
-                        [
-                            'uri'  => 'http://child#3',
-                            'type' => 'class',
+                            'uri'        => 'http://child#2',
+                            'categories' => ['child2_category'],
                         ],
                     ],
                     'total' => 2,
@@ -207,16 +229,12 @@ class ListItemLookupTest extends TestCase
                 'resources'   => [
                     'nodes' => [
                         [
-                            'uri'  => 'http://child#1',
-                            'type' => 'instance',
+                            'uri'        => 'http://child#1',
+                            'categories' => ['child1_category'],
                         ],
                         [
-                            'uri'  => 'http://child#2',
-                            'type' => 'instance',
-                        ],
-                        [
-                            'uri'  => 'http://child#3',
-                            'type' => 'class',
+                            'uri'        => 'http://child#2',
+                            'categories' => ['child2_category'],
                         ],
                     ],
                     'total' => 3,
