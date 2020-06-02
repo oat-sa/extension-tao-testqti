@@ -35,17 +35,17 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
     /**
      * @inheritDoc
      */
-    public function increase(string $sourceId, int $seconds): TimerAdjustmentMapInterface
+    public function increase(string $sourceId, string $type, int $seconds): TimerAdjustmentMapInterface
     {
-        return $this->put($sourceId, self::ACTION_INCREASE, $seconds);
+        return $this->put($sourceId, $type, self::ACTION_INCREASE, $seconds);
     }
 
     /**
      * @inheritDoc
      */
-    public function decrease(string $sourceId, int $seconds): TimerAdjustmentMapInterface
+    public function decrease(string $sourceId, string $type, int $seconds): TimerAdjustmentMapInterface
     {
-        return $this->put($sourceId, self::ACTION_DECREASE, $seconds);
+        return $this->put($sourceId, $type, self::ACTION_DECREASE, $seconds);
     }
 
     /**
@@ -53,11 +53,25 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
      */
     public function get(string $sourceId): int
     {
+        $adjustmentTime = 0;
         if (!isset($this->map[$sourceId])) {
+            return $adjustmentTime;
+        }
+
+        foreach ($this->map[$sourceId] as $type => $adjustments) {
+            $adjustmentTime += $this->getByType($sourceId, $type);
+        }
+
+        return $adjustmentTime;
+    }
+
+    public function getByType(string $sourceId, string $type): int
+    {
+        if (!isset($this->map[$sourceId][$type])) {
             return 0;
         }
 
-        return $this->map[$sourceId][self::ACTION_INCREASE] - $this->map[$sourceId][self::ACTION_DECREASE];
+        return $this->map[$sourceId][$type][self::ACTION_INCREASE] - $this->map[$sourceId][$type][self::ACTION_DECREASE];
     }
 
     /**
@@ -66,6 +80,13 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
     public function remove(string $sourceId): TimerAdjustmentMapInterface
     {
         unset($this->map[$sourceId]);
+
+        return $this;
+    }
+
+    public function removeForType(string $sourceId, string $type): TimerAdjustmentMapInterface
+    {
+        unset($this->map[$sourceId][$type]);
 
         return $this;
     }
@@ -88,13 +109,13 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
         }
     }
 
-    private function put(string $sourceId, string $action, int $seconds): TimerAdjustmentMapInterface
+    private function put(string $sourceId, string $type, string $action, int $seconds): TimerAdjustmentMapInterface
     {
         if (empty($sourceId) || !$this->isValidAction($action) || !$seconds) {
             throw new \InvalidArgumentException('Provided arguments should not be empty.');
         }
-        $this->ensureEntryInitialized($sourceId);
-        $this->map[$sourceId][$action] += $seconds;
+        $this->ensureEntryInitialized($sourceId, $type);
+        $this->map[$sourceId][$type][$action] += $seconds;
 
         return $this;
     }
@@ -104,13 +125,13 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
         return in_array($action, [self::ACTION_INCREASE, self::ACTION_DECREASE], true);
     }
 
-    private function ensureEntryInitialized(string $sourceId)
+    private function ensureEntryInitialized(string $sourceId, string $type)
     {
-        if (!isset($this->map[$sourceId][self::ACTION_INCREASE])) {
-            $this->map[$sourceId][self::ACTION_INCREASE] = 0;
+        if (!isset($this->map[$sourceId][$type][self::ACTION_INCREASE])) {
+            $this->map[$sourceId][$type][self::ACTION_INCREASE] = 0;
         }
-        if (!isset($this->map[$sourceId][self::ACTION_DECREASE])) {
-            $this->map[$sourceId][self::ACTION_DECREASE] = 0;
+        if (!isset($this->map[$sourceId][$type][self::ACTION_DECREASE])) {
+            $this->map[$sourceId][$type][self::ACTION_DECREASE] = 0;
         }
     }
 }
