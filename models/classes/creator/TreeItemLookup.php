@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\creator;
 use common_exception_Error;
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
+use oat\generis\model\data\permission\PermissionInterface;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\ResourceLookup;
@@ -90,7 +91,7 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
             static function (array $item) use ($resourceService): bool {
                 try {
                     if ($item['type'] === 'instance') {
-                        $resourceService->validatePermission($item['uri'], ['READ']);
+                        $resourceService->validatePermission($item['uri'], [PermissionInterface::RIGHT_READ]);
                     }
                 } catch (ResourceAccessDeniedException $e) {
                     return false;
