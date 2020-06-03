@@ -120,8 +120,7 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
             if ($maximumRemainingTime === false) {
                 continue;
             }
-            $currentAdjustment = $this->getTimer()->getAdjustmentMap()->get($tc->getSource()->getIdentifier());
-            $maximumRemainingTime = $maximumRemainingTime->getSeconds(true) + $currentAdjustment;
+            $maximumRemainingTime = $maximumRemainingTime->getSeconds(true);
             $minRemaining = min($minRemaining, $maximumRemainingTime);
         }
 
