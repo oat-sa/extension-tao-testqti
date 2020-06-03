@@ -2060,12 +2060,12 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('37.10.2');
         }
 
-        $this->skip('37.10.2', '37.11.5');
+        $this->skip('37.10.2', '37.11.7');
 
-        if ($this->isVersion('37.11.5')) {
+        if ($this->isVersion('37.11.7')) {
 
             $this->getLogger()->debug('taoQtiTest update!');
-            $this->setVersion('37.11.6');
+            $this->setVersion('37.11.8');
         }
     }
 }
