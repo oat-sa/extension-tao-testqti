@@ -76,7 +76,7 @@ class AdjustmentMapTest extends TestCase
         $this->assertEquals(0, $this->subject->get('newSourceId'));
     }
 
-    public function testGet_WhenRequested_ThenReturnValueIsCalculatedFromIncreasesAndDecreases(): void
+    public function testGet_WhenRequested_ThenReturnValueIsCalculatedFromIncreasesAndDecreasesOfAllTypes(): void
     {
         $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
         $this->assertEquals(10, $this->subject->get('testSourceId'));
@@ -86,13 +86,40 @@ class AdjustmentMapTest extends TestCase
         $this->assertEquals(-5, $this->subject->get('testSourceId'));
     }
 
-    public function testRemove_WhenRequested_ThenRemovesEntriesForProvidedSource(): void
+    public function testGetByType_ReturnsValuesCalculatedForGIvenType(): void
     {
-        $this->subject->increase('testSourceId1', self::DUMMY_ADJUSTMENT_TYPE, 10);
-        $this->subject->increase('testSourceId2', self::DUMMY_ADJUSTMENT_TYPE, 20);
-        $this->subject->remove('testSourceId1');
-        $this->assertArrayNotHasKey('testSourceId1', $this->subject->toArray());
-        $this->assertArrayHasKey('testSourceId2', $this->subject->toArray());
+        $newAdjustmentType = 'NEW_TYPE';
+        $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->assertEquals(
+            10,
+            $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
+
+        $this->subject->increase('testSourceId', $newAdjustmentType, 10);
+        $this->assertEquals(
+            10,
+            $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
+
+        $this->subject->decrease('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 5);
+        $this->assertEquals(
+            5,
+            $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
+
+        $this->subject->decrease('testSourceId', $newAdjustmentType, 5);
+        $this->assertEquals(
+            5,
+            $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
+    }
+
+    public function testGetByType_ReturnsZeroIfAdjustmentForTypeDoesntExist(): void
+    {
+        $this->assertEquals(
+            0,
+            $this->subject->getByType('newSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
     }
 
     public function testToArray_WhenSerializedToAndFromArray_ThenValuesAreStillTheSame(): void
