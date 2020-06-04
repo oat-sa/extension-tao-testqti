@@ -162,12 +162,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     public function getTestSession(DeliveryExecution $deliveryExecution, $forReadingOnly = false)
     {
         $sessionId = $deliveryExecution->getIdentifier();
-
-        //load session if no such session or access mode changed
-        if (
-            !$this->hasTestSession($sessionId) ||
-            (!$forReadingOnly && self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]->isReadOnly())
-        ) {
+        if (!$this->hasTestSession($sessionId) || $this->accessModeChangedToWrite($forReadingOnly, $sessionId)) {
             $this->loadSession($deliveryExecution, $forReadingOnly);
         }
 
@@ -286,5 +281,17 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         }
 
         return false;
+    }
+
+    /**
+     * @param $forReadingOnly
+     * @param string $sessionId
+     * @return bool
+     */
+    private function accessModeChangedToWrite($forReadingOnly, string $sessionId): bool
+    {
+        return $this->hasTestSession($sessionId)
+            && !$forReadingOnly
+            && self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]->isReadOnly();
     }
 }
