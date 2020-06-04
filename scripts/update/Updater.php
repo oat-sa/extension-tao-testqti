@@ -2061,7 +2061,7 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('37.10.2', '38.1.1');
-        
+
         if ($this->isVersion('38.1.1')) {
             // Register accessibility shortcuts
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -2086,5 +2086,7 @@ class Updater extends \common_ext_ExtensionUpdater
 
             $this->setVersion('38.2.0');
         }
+
+        $this->skip('38.2.0', '38.3.0');
     }
 }
