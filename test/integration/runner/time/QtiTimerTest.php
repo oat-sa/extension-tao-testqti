@@ -45,6 +45,8 @@ use Prophecy\Prophet;
  */
 class QtiTimerTest extends GenerisPhpUnitTestRunner
 {
+    private const DUMMY_ADJUSTMENT_TYPE = 'DUMMY_TYPE';
+
     /**
      * @throws \common_ext_ExtensionException
      */
@@ -525,9 +527,8 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $timer->end($tags, 1459335025.0000);
 
         $extraTime = 20;
-        $consumedTime = 4;
         $timer->setExtraTime($extraTime);
-        $timer->getAdjustmentMap()->increase('itemId-1', 1);
+        $timer->getAdjustmentMap()->increase('itemId-1', self::DUMMY_ADJUSTMENT_TYPE, 1);
 
         $dataStorage = null;
         $storage = $this->getTimeStorage($dataStorage);
@@ -558,7 +559,7 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(1459335025.0000, $timePoints[1]->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
         $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
-        $this->assertEquals(['itemId-1' => ['increase' => 1, 'decrease' => 0]], $adjustmentMap->toArray());
+        $this->assertEquals(['itemId-1' => ['DUMMY_TYPE' => ['increase' => 1, 'decrease' => 0]]], $adjustmentMap->toArray());
     }
 
     public function testLoadInvalidStorageException()
