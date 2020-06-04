@@ -110,17 +110,14 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
 
     private function ensureEntryInitialized(string $sourceId, string $type): void
     {
-        if (!isset($this->map[$sourceId][$type]) || !is_array($this->map[$sourceId][$type])) {
-            $this->map[$sourceId][$type] = [];
-        }
-        $this->ensureEntryActionInitialized($this->map[$sourceId][$type], self::ACTION_INCREASE);
-        $this->ensureEntryActionInitialized($this->map[$sourceId][$type], self::ACTION_DECREASE);
+        $this->ensureEntryActionInitialized($sourceId, $type, self::ACTION_INCREASE);
+        $this->ensureEntryActionInitialized($sourceId, $type, self::ACTION_DECREASE);
     }
 
-    private function ensureEntryActionInitialized(array $entry, string $action): void
+    private function ensureEntryActionInitialized(string $sourceId, string $type, string $action): void
     {
-        if (!isset($entry[$action])) {
-            $entry[$action] = 0;
+        if (!isset($this->map[$sourceId][$type][$action])) {
+            $this->map[$sourceId][$type][$action] = 0;
         }
     }
 }
