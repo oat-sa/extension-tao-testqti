@@ -117,8 +117,13 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      * @param ResultStorageWrapper $resultServer The Result Server where Item and Test Results must be sent to.
      * @param core_kernel_classes_Resource $test The TAO Resource describing the test.
      */
-    public function __construct(AssessmentTest $assessmentTest, AbstractSessionManager $manager, Route $route, ResultStorageWrapper $resultServer, core_kernel_classes_Resource $test)
-    {
+    public function __construct(
+        AssessmentTest $assessmentTest,
+        AbstractSessionManager $manager,
+        Route $route,
+        ResultStorageWrapper $resultServer,
+        core_kernel_classes_Resource $test
+    ) {
         parent::__construct($assessmentTest, $manager, $route);
         $this->setResultServer($resultServer);
         $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
@@ -200,6 +205,14 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     public function isReadOnly()
     {
         return $this->readOnly;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocked()
+    {
+        return ($this->lock instanceof LockInterface) && $this->lock->isAcquired();
     }
 
     /**
@@ -465,7 +478,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     public function jumpTo($position, $allowTimeout = false)
     {
         $sessionMemento = $this->getSessionMemento();
-        parent::jumpTo($position);
+        parent::jumpTo($position, $allowTimeout);
         $this->triggerEventChange($sessionMemento);
     }
 
