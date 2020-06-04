@@ -86,7 +86,7 @@ class AdjustmentMapTest extends TestCase
         $this->assertEquals(-5, $this->subject->get('testSourceId'));
     }
 
-    public function testGetByType_ReturnsValuesCalculatedForGIvenType(): void
+    public function testGetByType_WhenAdjustmentForTypeExist_ThenReturnsValuesCalculated(): void
     {
         $newAdjustmentType = 'NEW_TYPE';
         $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
@@ -114,7 +114,7 @@ class AdjustmentMapTest extends TestCase
         );
     }
 
-    public function testGetByType_ReturnsZeroIfAdjustmentForTypeDoesntExist(): void
+    public function testGetByType_WhenAdjustmentForTypeDoesntExist_ThenReturnsZero(): void
     {
         $this->assertEquals(
             0,
