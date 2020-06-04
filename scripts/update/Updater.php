@@ -2084,7 +2084,7 @@ class Updater extends \common_ext_ExtensionUpdater
 
             $extension->setConfig('testRunner', $config);
 
-            $this->setVersion('37.2.0');
+            $this->setVersion('38.2.0');
         }
     }
 }
