@@ -20,6 +20,7 @@
 
 namespace oat\taoQtiTest\test\unit;
 
+use oat\generis\test\MockObject;
 use oat\generis\test\TestCase;
 use oat\oatbox\mutex\LockService;
 use oat\taoQtiTest\models\TestSessionService;
@@ -47,19 +48,25 @@ use oat\oatbox\service\ServiceManager;
 class TestSessionServiceTest extends TestCase
 {
 
-    public function testGetTestSession()
+    public function testGetTestSessionLoadsNewSessionWhenAccessModeChanged()
     {
         $service = $this->getService();
-        $de = $this->getDeliveryExecutionMock('id', 'userId', 'deliveryId');
-        $session = $service->getTestSession($de, true);
+        $deliveryExecutionMock = $this->getDeliveryExecutionMock('id', 'userId', 'deliveryId');
+        $session = $service->getTestSession($deliveryExecutionMock, true);
+        $sessionStorage = $service->getTestSessionStorage($deliveryExecutionMock);
 
         $this->assertInstanceOf(AssessmentTestSession::class, $session);
         $this->assertEquals('id', $session->getSessionId());
         $this->assertEquals(AssessmentTestSessionState::CLOSED, $session->getState());
         $this->assertTrue($session->isReadOnly());
 
-        $session = $service->getTestSession($de, false);
-        $this->assertFalse($session->isReadOnly());
+        $sessionNotReadOnly = $service->getTestSession($deliveryExecutionMock, false);
+        $this->assertFalse($sessionNotReadOnly->isReadOnly());
+
+        // Check if session and session storage are new object
+        $sessionStorage2 = $service->getTestSessionStorage($deliveryExecutionMock);
+        self::assertNotSame($session, $sessionNotReadOnly, 'Service must return the same session object.');
+        self::assertNotSame($sessionStorage, $sessionStorage2, 'Service must return the same session storage object.');
     }
 
     /**
@@ -181,7 +188,7 @@ class TestSessionServiceTest extends TestCase
      */
     private function getDeliveryExecutionMock($id, $userId, $deliveryId)
     {
-        /** @var DeliveryExecution $mock */
+        /** @var DeliveryExecution|MockObject $mock */
         $mock = $this->getMockBuilder(DeliveryExecution::class)->disableOriginalConstructor()
             ->getMock();
         $mock->method('getIdentifier')->willReturn($id);
