@@ -82,7 +82,6 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
             return $treeData;
         }
 
-        /** @noinspection PhpUnhandledExceptionInspection */
         $readableResourcesMap = $this->getSecureResourceService()->getAllChildren($root);
 
         $treeData[0]['children'] = array_filter(
@@ -108,10 +107,12 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
     private function formatTreeData(array $treeData): array
     {
         foreach ($treeData as &$item) {
-            $item['categories'] = $this->getCategoryService()->getItemCategories(
-                new core_kernel_classes_Resource($item['uri'])
-            );
-            if (isset($item['children'])) {
+            if ($item['type'] === 'instance') {
+                $item['categories'] = $this->getCategoryService()->getItemCategories(
+                    new core_kernel_classes_Resource($item['uri'])
+                );
+            }
+            elseif (isset($item['children'])) {
                 $item['children'] = $this->formatTreeData($item['children']);
             }
         }

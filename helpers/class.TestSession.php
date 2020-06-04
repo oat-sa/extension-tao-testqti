@@ -478,7 +478,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     public function jumpTo($position, $allowTimeout = false)
     {
         $sessionMemento = $this->getSessionMemento();
-        parent::jumpTo($position);
+        parent::jumpTo($position, $allowTimeout);
         $this->triggerEventChange($sessionMemento);
     }
 
