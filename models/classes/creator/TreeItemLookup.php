@@ -24,9 +24,10 @@ namespace oat\taoQtiTest\models\creator;
 use common_exception_Error;
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
+use oat\generis\model\data\permission\PermissionHelper;
+use oat\generis\model\data\permission\PermissionInterface;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\resources\ResourceLookup;
-use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\resources\TreeResourceLookup;
 use oat\taoItems\model\CategoryService;
 
@@ -72,22 +73,32 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
         $data = $this->getTreeResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
 
         return $this->formatTreeData(
-            $this->filterTreeData($itemClass, $data)
+            $this->filterTreeData($data)
         );
     }
 
-    private function filterTreeData(core_kernel_classes_Class $root, array $treeData): array
+    private function filterTreeData(array $treeData): array
     {
         if (empty($treeData) || empty($treeData[0]['children'])) {
             return $treeData;
         }
 
-        $readableResourcesMap = $this->getSecureResourceService()->getAllChildren($root);
+        $nodeIds = [];
+
+        foreach ($treeData[0]['children'] as $child) {
+            if ($child['type'] === 'instance') {
+                $nodeIds[] = $child['uri'];
+            }
+        }
+
+        $accessibleNodes = array_flip(
+            $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ)
+        );
 
         $treeData[0]['children'] = array_filter(
             $treeData[0]['children'],
-            static function (array $item) use ($readableResourcesMap): bool {
-                return $item['type'] !== 'instance' || isset($readableResourcesMap[$item['uri']]);
+            static function (array $item) use ($accessibleNodes): bool {
+                return $item['type'] !== 'instance' || isset($accessibleNodes[$item['uri']]);
             }
         );
 
@@ -120,9 +131,9 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
         return $treeData;
     }
 
-    private function getSecureResourceService(): SecureResourceServiceInterface
+    private function getPermissionHelper(): PermissionHelper
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceLocator()->get(SecureResourceServiceInterface::SERVICE_ID);
+        return $this->getServiceLocator()->get(PermissionHelper::class);
     }
 }
