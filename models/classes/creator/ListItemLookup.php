@@ -22,11 +22,12 @@
 namespace oat\taoQtiTest\models\creator;
 
 use core_kernel_classes_Class;
+use oat\generis\model\data\permission\PermissionHelper;
 use oat\generis\model\data\permission\PermissionInterface;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\resources\ListResourceLookup;
-use oat\generis\model\data\permission\PermissionHelper;
+use oat\taoItems\model\CategoryService;
 
 /**
  * Look up items and format them as a flat list
@@ -38,14 +39,6 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
     use OntologyAwareTrait;
 
     public const SERVICE_ID = 'taoQtiTest/CreatorItems/list';
-
-    /**
-     * Get the ListResourceLookup
-     */
-    protected function getListResourceLookupService()
-    {
-        return $this->getServiceLocator()->get(ListResourceLookup::SERVICE_ID);
-    }
 
     /**
      * Retrieve QTI Items for the given parameters.
@@ -73,23 +66,41 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
             $limit
         );
 
-        $nodeIds = [];
-        foreach ($result['nodes'] as $node) {
-            if ($node['type'] === 'instance') {
-                $nodeIds[] = $node['uri'];
-            }
-        }
+        $nodeIds = array_map(
+            static function (array $node): string {
+                return $node['uri'];
+            },
+            $result['nodes']
+        );
 
         $accessible = $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ);
 
-        foreach ($result['nodes'] as $i => $node) {
-            if ($node['type'] === 'instance' && !in_array($node['uri'], $accessible)) {
+        foreach ($result['nodes'] as $i => &$node) {
+            if (!in_array($node['uri'], $accessible, true)) {
                 unset($result['nodes'][$i]);
                 $result['total']--;
+
+                continue;
             }
+
+            $node['categories'] = $this->getCategoryService()->getItemCategories($this->getResource($node['uri']));
         }
 
         return $result;
+    }
+
+    /**
+     * Get the ListResourceLookup
+     */
+    protected function getListResourceLookupService()
+    {
+        return $this->getServiceLocator()->get(ListResourceLookup::SERVICE_ID);
+    }
+
+    private function getCategoryService(): CategoryService
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(CategoryService::SERVICE_ID);
     }
 
     private function getPermissionHelper(): PermissionHelper
