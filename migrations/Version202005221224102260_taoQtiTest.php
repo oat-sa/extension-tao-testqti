@@ -15,8 +15,6 @@ use oat\oatbox\service\ServiceManagerAwareTrait;
  */
 final class Version202005221224102260_taoQtiTest extends AbstractMigration implements ServiceManagerAwareInterface
 {
-    use ServiceManagerAwareTrait;
-
     public function getDescription(): string
     {
         return 'A failing migration test for extension taoQtiTest (2).';
