@@ -3,10 +3,10 @@
 namespace oat\taoQtiTest\test\unit\models\classes\creator;
 
 use core_kernel_classes_Class;
+use oat\generis\model\data\permission\PermissionHelper;
 use oat\generis\test\MockObject;
 use oat\generis\test\TestCase;
 use oat\tao\model\resources\ResourceLookup;
-use oat\tao\model\resources\SecureResourceService;
 use oat\tao\model\resources\TreeResourceLookup;
 use oat\taoItems\model\CategoryService;
 use oat\taoQtiTest\models\creator\TreeItemLookup;
@@ -46,8 +46,8 @@ class TreeItemLookupTest extends TestCase
     /** @var ResourceLookup|MockObject */
     private $resourceLookupMock;
 
-    /** @var SecureResourceService|MockObject */
-    private $secureResourceServiceMock;
+    /** @var PermissionHelper|MockObject */
+    private $permissionHelper;
 
     /** @var ServiceLocatorInterface */
     private $serviceLocatorMock;
@@ -66,10 +66,10 @@ class TreeItemLookupTest extends TestCase
 
     public function initializeTestDoubles(): void
     {
-        $this->rootMock                  = $this->createMock(core_kernel_classes_Class::class);
-        $this->categoryServiceMock       = $this->createMock(CategoryService::class);
-        $this->resourceLookupMock        = $this->createMock(ResourceLookup::class);
-        $this->secureResourceServiceMock = $this->createPartialMock(SecureResourceService::class, ['getAllChildren']);
+        $this->rootMock = $this->createMock(core_kernel_classes_Class::class);
+        $this->categoryServiceMock = $this->createMock(CategoryService::class);
+        $this->resourceLookupMock = $this->createMock(ResourceLookup::class);
+        $this->permissionHelper = $this->createMock(PermissionHelper::class);
     }
 
     public function initializeTestDoubleExpectancies(): void
@@ -84,34 +84,26 @@ class TreeItemLookupTest extends TestCase
             ->method('getItemCategories')
             ->willReturn([]);
 
-        $this->secureResourceServiceMock
-            ->method('getAllChildren')
-            ->with($this->rootMock)
+        $this->permissionHelper
+            ->method('filterByPermission')
             ->willReturnCallback([$this, 'getReadableResourceMap']);
     }
 
     public function initializeServiceLocator(): void
     {
-        $this->serviceLocatorMock = $this->createMock(ServiceLocatorInterface::class);
-
-        $this->serviceLocatorMock
-            ->method('get')
-            ->willReturnMap(
-                [
-                    [CategoryService::SERVICE_ID, $this->categoryServiceMock],
-                    [TreeResourceLookup::SERVICE_ID, $this->resourceLookupMock],
-                    [SecureResourceService::SERVICE_ID, $this->secureResourceServiceMock],
-                ]
-            );
+        $this->serviceLocatorMock = $this->getServiceLocatorMock(
+            [
+                CategoryService::SERVICE_ID    => $this->categoryServiceMock,
+                TreeResourceLookup::SERVICE_ID => $this->resourceLookupMock,
+                PermissionHelper::class        => $this->permissionHelper,
+            ]
+        );
     }
 
     public function initializeSut(): void
     {
-        $this->sut = $this->createPartialMock(TreeItemLookup::class, ['getServiceLocator']);
-
-        $this->sut
-            ->method('getServiceLocator')
-            ->willReturn($this->serviceLocatorMock);
+        $this->sut = new TreeItemLookup();
+        $this->sut->setServiceLocator($this->serviceLocatorMock);
     }
 
     public function getResources(): array
@@ -133,8 +125,9 @@ class TreeItemLookupTest extends TestCase
             'No restrictions' => [
                 'expected'            => [
                     [
-                        'uri'        => 'http://root',
-                        'children'   => [
+                        'uri'      => 'http://root',
+                        'type'     => 'class',
+                        'children' => [
                             [
                                 'uri'        => 'http://child#1',
                                 'type'       => 'instance',
@@ -146,6 +139,7 @@ class TreeItemLookupTest extends TestCase
                 'resources'           => [
                     [
                         'uri'      => 'http://root',
+                        'type'     => 'class',
                         'children' => [
                             [
                                 'uri'  => 'http://child#1',
@@ -155,22 +149,23 @@ class TreeItemLookupTest extends TestCase
                     ],
                 ],
                 'readableResourceMap' => [
-                    'http://child#1' => true,
+                    'http://child#1',
                 ],
             ],
             'Restrictions'    => [
                 'expected'            => [
                     [
-                        'uri'        => 'http://root',
-                        'children'   => [
+                        'uri'      => 'http://root',
+                        'type'     => 'class',
+                        'children' => [
                             [
                                 'uri'        => 'http://child#2',
                                 'type'       => 'instance',
                                 'categories' => [],
                             ],
                             [
-                                'uri'        => 'http://child#3',
-                                'type'       => 'class',
+                                'uri'  => 'http://child#3',
+                                'type' => 'class',
                             ],
                         ],
                     ],
@@ -178,6 +173,7 @@ class TreeItemLookupTest extends TestCase
                 'resources'           => [
                     [
                         'uri'      => 'http://root',
+                        'type'     => 'class',
                         'children' => [
                             [
                                 'uri'  => 'http://child#1',
@@ -195,7 +191,7 @@ class TreeItemLookupTest extends TestCase
                     ],
                 ],
                 'readableResourceMap' => [
-                    'http://child#2' => true,
+                    'http://child#2',
                 ],
             ],
         ];
@@ -212,7 +208,7 @@ class TreeItemLookupTest extends TestCase
      */
     public function testGetItems(array $expected, array $resources = [], array $readableResourceMap = []): void
     {
-        $this->resources           = $resources;
+        $this->resources = $resources;
         $this->readableResourceMap = $readableResourceMap;
 
         /** @noinspection PhpUnhandledExceptionInspection */
