@@ -105,6 +105,14 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getAdjustmentByType(QtiIdentifiable $source, QtiTimer $timer, ?string $adjustmentType = null): int
+    {
+        return $timer->getAdjustmentMap()->getByType($source->getIdentifier(), $adjustmentType);
+    }
+
+    /**
      * @throws InvalidStorageException
      */
     private function register(string $action, int $seconds, string $type, QtiIdentifiable $source = null): bool
