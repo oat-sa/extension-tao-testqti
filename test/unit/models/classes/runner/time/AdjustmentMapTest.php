@@ -16,103 +16,142 @@
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA ;
  */
+declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\time;
 
+use InvalidArgumentException;
 use oat\generis\test\TestCase;
 use oat\taoQtiTest\models\runner\time\AdjustmentMap;
 
 class AdjustmentMapTest extends TestCase
 {
+    private const DUMMY_ADJUSTMENT_TYPE = 'DUMMY_TYPE';
+
+    private $subject;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->subject = new AdjustmentMap();
+    }
+
     /**
      * @dataProvider increaseParameterValidationDataProvider
      * @param $sourceId
      * @param $action
      * @param $seconds
      */
-    public function testIncrease_WhenParametersAreNotValid_ThenMapIsNotUpdated($sourceId, $seconds)
+    public function testIncrease_WhenParametersAreNotValid_ThenMapIsNotUpdated($sourceId, $seconds): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $map = new AdjustmentMap();
-        $map->increase($sourceId, $seconds);
+        $this->expectException(InvalidArgumentException::class);
+        $this->subject->increase($sourceId, self::DUMMY_ADJUSTMENT_TYPE, $seconds);
     }
 
-    public function testIncrease_WhenValueIsRegisteredForNewSource_ThenEntryIsCorrectlyInitialized()
+    public function testIncrease_WhenValueIsRegisteredForNewSource_ThenEntryIsCorrectlyInitialized(): void
     {
-        $map = new AdjustmentMap();
-        $map->increase('testSourceId', 10);
-        $this->assertEquals(10, $map->toArray()['testSourceId'][AdjustmentMap::ACTION_INCREASE]);
-        $this->assertEquals(0, $map->toArray()['testSourceId'][AdjustmentMap::ACTION_DECREASE]);
+        $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->assertEquals(
+            10,
+            $this->subject->toArray()['testSourceId'][self::DUMMY_ADJUSTMENT_TYPE][AdjustmentMap::ACTION_INCREASE]
+        );
+        $this->assertEquals(
+            0,
+            $this->subject->toArray()['testSourceId'][self::DUMMY_ADJUSTMENT_TYPE][AdjustmentMap::ACTION_DECREASE]
+        );
     }
 
-    public function testIncrease_WhenValueExistsInTheMap_ThenSubsequentValuesAreAdded()
+    public function testIncrease_WhenValueExistsInTheMap_ThenSubsequentValuesAreAdded(): void
     {
-        $map = new AdjustmentMap();
-        $map->increase('testSourceId', 10);
-        $map->increase('testSourceId', 15);
-        $this->assertEquals(25, $map->toArray()['testSourceId'][AdjustmentMap::ACTION_INCREASE]);
+        $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 15);
+        $this->assertEquals(
+            25,
+            $this->subject->toArray()['testSourceId'][self::DUMMY_ADJUSTMENT_TYPE][AdjustmentMap::ACTION_INCREASE]
+        );
     }
 
-    public function testGet_WhenThereIsNoValuePresent_ThenZeroIsReturned()
+    public function testGet_WhenThereIsNoValuePresent_ThenZeroIsReturned(): void
     {
-        $map = new AdjustmentMap();
-        $this->assertEquals(0, $map->get('newSourceId'));
+        $this->assertEquals(0, $this->subject->get('newSourceId'));
     }
 
-    public function testGet_WhenRequested_ThenReturnValueIsCalculatedFromIncreasesAndDecreases()
+    public function testGet_WhenRequested_ThenReturnValueIsCalculatedFromIncreasesAndDecreasesOfAllTypes(): void
     {
-        $map = new AdjustmentMap();
-        $map->increase('testSourceId', 10);
-        $this->assertEquals(10, $map->get('testSourceId'));
-        $map->decrease('testSourceId', 5);
-        $this->assertEquals(5, $map->get('testSourceId'));
-        $map->decrease('testSourceId', 10);
-        $this->assertEquals(-5, $map->get('testSourceId'));
+        $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->assertEquals(10, $this->subject->get('testSourceId'));
+        $this->subject->decrease('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 5);
+        $this->assertEquals(5, $this->subject->get('testSourceId'));
+        $this->subject->decrease('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->assertEquals(-5, $this->subject->get('testSourceId'));
     }
 
-    public function testRemove_WhenRequested_ThenRemovesEntriesForProvidedSource()
+    public function testGetByType_WhenAdjustmentForTypeExist_ThenReturnsValuesCalculated(): void
     {
-        $map = new AdjustmentMap();
-        $map->increase('testSourceId1', 10);
-        $map->increase('testSourceId2', 20);
-        $map->remove('testSourceId1');
-        $this->assertArrayNotHasKey('testSourceId1', $map->toArray());
-        $this->assertArrayHasKey('testSourceId2', $map->toArray());
+        $newAdjustmentType = 'NEW_TYPE';
+        $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->assertEquals(
+            10,
+            $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
+
+        $this->subject->increase('testSourceId', $newAdjustmentType, 10);
+        $this->assertEquals(
+            10,
+            $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
+
+        $this->subject->decrease('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 5);
+        $this->assertEquals(
+            5,
+            $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
+
+        $this->subject->decrease('testSourceId', $newAdjustmentType, 5);
+        $this->assertEquals(
+            5,
+            $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
     }
 
-    public function testToArray_WhenSerializedToAndFromArray_ThenValuesAreStillTheSame()
+    public function testGetByType_WhenAdjustmentForTypeDoesntExist_ThenReturnsZero(): void
     {
-        $map = new AdjustmentMap();
-        $map->increase('testSourceId1', 10);
-        $map->increase('testSourceId2', 20);
-        $data = $map->toArray();
+        $this->assertEquals(
+            0,
+            $this->subject->getByType('newSourceId', self::DUMMY_ADJUSTMENT_TYPE)
+        );
+    }
+
+    public function testToArray_WhenSerializedToAndFromArray_ThenValuesAreStillTheSame(): void
+    {
+        $this->subject->increase('testSourceId1', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->subject->increase('testSourceId2', self::DUMMY_ADJUSTMENT_TYPE, 20);
+        $data = $this->subject->toArray();
         $secondMap = new AdjustmentMap();
         $secondMap->fromArray($data);
-        $this->assertEquals($map->toArray(), $secondMap->toArray());
+        $this->assertEquals($this->subject->toArray(), $secondMap->toArray());
     }
 
-    public function testFromArray_WhenSerializedToAndFromArray_ThenValuesAreStillTheSame()
+    public function testFromArray_WhenSerializedToAndFromArray_ThenValuesAreStillTheSame(): void
     {
-        $map = new AdjustmentMap();
-        $map->increase('testSourceId1', 10);
-        $map->increase('testSourceId2', 20);
-        $data = $map->toArray();
+        $this->subject->increase('testSourceId1', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->subject->increase('testSourceId2', self::DUMMY_ADJUSTMENT_TYPE, 20);
+        $data = $this->subject->toArray();
         $secondMap = new AdjustmentMap();
         $secondMap->fromArray($data);
-        $this->assertEquals($secondMap->toArray(), $map->toArray());
+        $this->assertEquals($secondMap->toArray(), $this->subject->toArray());
     }
 
-    public function testJsonSerialize_WhenEntriesAreEncodedToAndDecodedFromJson_ThenValuesAreTheSame()
+    public function testJsonSerialize_WhenEntriesAreEncodedToAndDecodedFromJson_ThenValuesAreTheSame(): void
     {
-        $map = new AdjustmentMap();
-        $map->increase('testSourceId1', 10);
-        $map->increase('testSourceId2', 20);
-        $encoded = json_encode($map);
-        $data = $map->toArray();
+        $this->subject->increase('testSourceId1', self::DUMMY_ADJUSTMENT_TYPE, 10);
+        $this->subject->increase('testSourceId2', self::DUMMY_ADJUSTMENT_TYPE, 20);
+        $encoded = json_encode($this->subject);
+        $data = $this->subject->toArray();
         $this->assertEquals($data, json_decode($encoded, true));
     }
 
-    public function increaseParameterValidationDataProvider()
+    public function increaseParameterValidationDataProvider(): array
     {
         return [
             ['', 0],

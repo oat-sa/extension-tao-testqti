@@ -43,11 +43,12 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
     public function increase(
         TestSession $testSession,
         int $seconds,
+        string $type = self::TYPE_TIME_ADJUSTMENT,
         QtiIdentifiable $source = null
     ): bool {
         $this->testSession = $testSession;
 
-        return $this->register(self::INCREASE, $seconds, $source);
+        return $this->register(self::INCREASE, $seconds, $type, $source);
     }
 
     /**
@@ -57,6 +58,7 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
     public function decrease(
         TestSession $testSession,
         int $seconds,
+        string $type = self::TYPE_TIME_ADJUSTMENT,
         QtiIdentifiable $source = null
     ): bool {
         $this->testSession = $testSession;
@@ -66,7 +68,7 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
             return false;
         }
 
-        return $this->register(self::DECREASE, $seconds, $source);
+        return $this->register(self::DECREASE, $seconds, $type, $source);
     }
 
     /**
@@ -105,15 +107,15 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
     /**
      * @throws InvalidStorageException
      */
-    private function register(string $action, int $seconds, QtiIdentifiable $source = null): bool
+    private function register(string $action, int $seconds, string $type, QtiIdentifiable $source = null): bool
     {
         if ($source) {
-            $this->putAdjustmentToTheMap($source, $action, $seconds);
+            $this->putAdjustmentToTheMap($source, $type, $action, $seconds);
         } else {
-            $this->putAdjustmentToTheMap($this->testSession->getCurrentAssessmentItemRef(), $action, $seconds);
-            $this->putAdjustmentToTheMap($this->testSession->getCurrentAssessmentSection(), $action, $seconds);
-            $this->putAdjustmentToTheMap($this->testSession->getCurrentTestPart(), $action, $seconds);
-            $this->putAdjustmentToTheMap($this->testSession->getAssessmentTest(), $action, $seconds);
+            $this->putAdjustmentToTheMap($this->testSession->getCurrentAssessmentItemRef(), $type, $action, $seconds);
+            $this->putAdjustmentToTheMap($this->testSession->getCurrentAssessmentSection(), $type, $action, $seconds);
+            $this->putAdjustmentToTheMap($this->testSession->getCurrentTestPart(), $type, $action, $seconds);
+            $this->putAdjustmentToTheMap($this->testSession->getAssessmentTest(), $type, $action, $seconds);
         }
         $this->getTimer()->save();
         $this->getServiceLocator()->get(StorageManager::SERVICE_ID)->persist();
@@ -129,8 +131,7 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
             if ($maximumRemainingTime === false) {
                 continue;
             }
-            $currentAdjustment = $this->getTimer()->getAdjustmentMap()->get($tc->getSource()->getIdentifier());
-            $maximumRemainingTime = $maximumRemainingTime->getSeconds(true) + $currentAdjustment;
+            $maximumRemainingTime = $maximumRemainingTime->getSeconds(true);
             $minRemaining = min($minRemaining, $maximumRemainingTime);
         }
 
@@ -141,16 +142,16 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
         return $requestedSeconds;
     }
 
-    private function putAdjustmentToTheMap(QtiIdentifiable $element, string $action, int $seconds)
+    private function putAdjustmentToTheMap(QtiIdentifiable $element, string $type, string $action, int $seconds)
     {
         if ($element === null || !$element->getTimeLimits() || !$element->getTimeLimits()->hasMaxTime()) {
             return;
         }
 
         if ($action === self::INCREASE) {
-            $this->getTimer()->getAdjustmentMap()->increase($element->getIdentifier(), $seconds);
+            $this->getTimer()->getAdjustmentMap()->increase($element->getIdentifier(), $type, $seconds);
         } elseif ($action === self::DECREASE) {
-            $this->getTimer()->getAdjustmentMap()->decrease($element->getIdentifier(), $seconds);
+            $this->getTimer()->getAdjustmentMap()->decrease($element->getIdentifier(), $type, $seconds);
         }
     }
 
