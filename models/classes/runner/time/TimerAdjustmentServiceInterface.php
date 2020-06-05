@@ -35,16 +35,21 @@ interface TimerAdjustmentServiceInterface
 {
     public const SERVICE_ID = 'taoQtiTest/TimerAdjustment';
 
+    public const TYPE_TIME_ADJUSTMENT = 'timeAdjustment';
+    public const TYPE_EXTENDED_TIME = 'extendedTime';
+
     /**
      * Increases allotted time by supplied amount of seconds
      * @param TestSession $testSession
      * @param int $seconds
+     * @param string $type
      * @param QtiIdentifiable $source
      * @return bool
      */
     public function increase(
         TestSession $testSession,
         int $seconds,
+        string $type,
         QtiIdentifiable $source = null
     ): bool;
 
@@ -52,12 +57,14 @@ interface TimerAdjustmentServiceInterface
      * Decreases allotted time by supplied amount of seconds
      * @param TestSession $testSession
      * @param int $seconds
+     * @param string $type
      * @param QtiIdentifiable $source
      * @return bool
      */
     public function decrease(
         TestSession $testSession,
         int $seconds,
+        string $type,
         QtiIdentifiable $source = null
     ): bool;
 
@@ -71,4 +78,22 @@ interface TimerAdjustmentServiceInterface
         QtiIdentifiable $source,
         QtiTimer $timer
     ): ?QtiDuration;
+
+    /**
+     * Get adjusted seconds
+     * @param QtiIdentifiable $source
+     * @param QtiTimer $qtiTimer
+     * @return int
+     */
+    public function getAdjustment(QtiIdentifiable $source, QtiTimer $qtiTimer): int;
+
+    /**
+     * Get adjusted time by adjustment type in seconds
+     *
+     * @param QtiIdentifiable $source
+     * @param QtiTimer $timer
+     * @param string|null $adjustmentType
+     * @return int
+     */
+    public function getAdjustmentByType(QtiIdentifiable $source, QtiTimer $timer, ?string $adjustmentType = null): int;
 }
