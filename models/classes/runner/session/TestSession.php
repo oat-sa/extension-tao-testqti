@@ -30,6 +30,8 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoTests\models\runner\time\TimePoint;
 use qtism\common\datatypes\Duration;
 use qtism\common\datatypes\QtiDuration;
+use qtism\data\AssessmentSection;
+use qtism\data\TestPart;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -402,19 +404,21 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         $routeItem = $this->getCurrentRouteItem();
         $considerMinTime = $this->mustConsiderMinTime();
 
-        if ($places & AssessmentTestPlace::ASSESSMENT_TEST) {
+        if (($places & AssessmentTestPlace::ASSESSMENT_TEST) && ($routeItem instanceof RouteItem)) {
             $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentTest(), $navigationMode, $considerMinTime, $applyExtraTime);
         }
 
-        if ($places & AssessmentTestPlace::TEST_PART) {
-            $constraints[] = $this->getTimeConstraint($this->getCurrentTestPart(), $navigationMode, $considerMinTime, $applyExtraTime);
+        $currentTestPart = $this->getCurrentTestPart();
+        if (($places & AssessmentTestPlace::TEST_PART) && ($currentTestPart instanceof TestPart)) {
+            $constraints[] = $this->getTimeConstraint($currentTestPart, $navigationMode, $considerMinTime, $applyExtraTime);
         }
 
-        if ($places & AssessmentTestPlace::ASSESSMENT_SECTION) {
-            $constraints[] = $this->getTimeConstraint($this->getCurrentAssessmentSection(), $navigationMode, $considerMinTime, $applyExtraTime);
+        $currentAssessmentSection = $this->getCurrentAssessmentSection();
+        if (($places & AssessmentTestPlace::ASSESSMENT_SECTION) && ($currentAssessmentSection instanceof AssessmentSection)) {
+            $constraints[] = $this->getTimeConstraint($currentAssessmentSection, $navigationMode, $considerMinTime, $applyExtraTime);
         }
 
-        if ($places & AssessmentTestPlace::ASSESSMENT_ITEM) {
+        if (($places & AssessmentTestPlace::ASSESSMENT_ITEM) && ($routeItem instanceof RouteItem)) {
             $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentItemRef(), $navigationMode, $considerMinTime, $applyExtraTime);
         }
 
