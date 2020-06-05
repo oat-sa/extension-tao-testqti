@@ -26,6 +26,7 @@ use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoTests\models\event\TestUpdatedEvent;
+use qtism\common\utils\Format;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
@@ -1082,7 +1083,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $doc->documentElement->setAttribute('title', $test->getLabel());
 
             //generate a valid qti identifier
-            $identifier = tao_helpers_Display::textCleaner($test->getLabel(), '*', 32);
+            $identifier = Format::sanitizeIdentifier($test->getLabel());
             $identifier = str_replace('_', '-', $identifier);
             if (preg_match('/^[0-9]/', $identifier)) {
                 $identifier = '_' . $identifier;
