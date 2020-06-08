@@ -2064,8 +2064,30 @@ class Updater extends \common_ext_ExtensionUpdater
 
         if ($this->isVersion('38.1.1')) {
 
-            $this->getLogger()->debug('taoQtiTest update!');
-            $this->setVersion('38.1.2');
+            // Register accessibility shortcuts
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['next'] = [
+                'trigger' => 'J',
+                'triggerAccessibility' => 'Alt+Shift+N'
+            ];
+
+            $config['shortcuts']['previous'] = [
+                'trigger' => 'K',
+                'triggerAccessibility' => 'Alt+Shift+P'
+            ];
+
+            $config['shortcuts']['jumplinks'] = [
+                'goToQuestion' => 'Alt+Shift+Q',
+                'goToTop' => 'Alt+Shift+T'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('38.2.0');
         }
+
+        $this->skip('38.2.0', '38.4.3');
     }
 }
