@@ -22,10 +22,12 @@ final class Version202005191652362260_taoQtiTest extends AbstractMigration imple
     public function up(Schema $schema): void
     {
         $this->getLogger()->debug("taoQtiTest Migration 1 UP.");
+        $this->write('taoQtiTest Migration 1 UP (from write)!');
     }
 
     public function down(Schema $schema): void
     {
         $this->getLogger()->debug("taoQtiTest Migration 1 DOWN.");
+        $this->write('taoQtiTest Migration 1 DOWN (from write)!');
     }
 }
