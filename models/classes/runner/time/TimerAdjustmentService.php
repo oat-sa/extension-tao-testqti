@@ -83,7 +83,7 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
 
         $maximumTime = clone $maxTime;
         if ($timer !== null) {
-            $adjustmentSeconds = $timer->getAdjustmentMap()->get($source->getIdentifier());
+            $adjustmentSeconds = $this->getAdjustment($source, $timer);
             if ($adjustmentSeconds > 0) {
                 $maximumTime->add(new QtiDuration('PT' . $adjustmentSeconds . 'S'));
             } else {
@@ -91,6 +91,25 @@ class TimerAdjustmentService extends ConfigurableService implements TimerAdjustm
             }
         }
         return $maximumTime;
+    }
+
+    /**
+     * Get adjusted seconds
+     * @param QtiIdentifiable $source
+     * @param QtiTimer $qtiTimer
+     * @return int
+     */
+    public function getAdjustment(QtiIdentifiable $source, QtiTimer $qtiTimer): int
+    {
+        return $qtiTimer->getAdjustmentMap()->get($source->getIdentifier());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAdjustmentByType(QtiIdentifiable $source, QtiTimer $timer, ?string $adjustmentType = null): int
+    {
+        return $timer->getAdjustmentMap()->getByType($source->getIdentifier(), $adjustmentType);
     }
 
     /**
