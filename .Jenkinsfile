@@ -125,4 +125,9 @@ mkdir -p tao/views/locales/en-US/
             }
         }
     }
+    post {
+        always {
+            deleteDir()
+        }
+    }
 }
