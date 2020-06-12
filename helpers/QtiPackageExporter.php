@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\helpers;
 
 use common_Exception;
 use common_exception_Error;
+use common_report_Report;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\tao\helpers\FileHelperService;
@@ -70,7 +71,7 @@ class QtiPackageExporter extends InjectionAwareService
             $this->fileHelperService->createTempDir()
         );
 
-        if ($exportReport->containsError()) {
+        if ($exportReport->getType() === common_report_Report::TYPE_ERROR) {
             throw new common_Exception('QTI Test package export failed.');
         }
 
