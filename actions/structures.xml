@@ -5,7 +5,7 @@
         <sections>
             <section id="manage_tests" name="Manage tests" url="/taoTests/Tests/index">
                 <actions allowClassActions="true">
-                    <action id="test-xml-editor" name="XML Editor"  url="/taoQtiTest/xmlEditor/edit" group="content" context="instance">
+                    <action id="test-xml-editor" name="XML Editor"  url="/taoQtiTest/XmlEditor/edit" group="content" context="instance">
                         <icon id="icon-edit"/>
                     </action>
                 </actions>
