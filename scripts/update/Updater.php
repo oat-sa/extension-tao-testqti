@@ -80,6 +80,7 @@ use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
+use oat\taoQtiTest\scripts\install\RegisterQtiPackageExporter;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
@@ -2088,5 +2089,10 @@ class Updater extends \common_ext_ExtensionUpdater
         }
 
         $this->skip('38.2.0', '38.5.0');
+
+        if ($this->isVersion('38.5.0')) {
+            $this->runExtensionScript(RegisterQtiPackageExporter::class);
+            $this->setVersion('38.6.0');
+        }
     }
 }
