@@ -20,18 +20,19 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+    'lodash',
     'jquery',
     'i18n',
     'core/logger',
     'taoQtiTest/provider/testItems',
     'ui/resource/selector',
     'ui/feedback'
-], function($, __, loggerFactory, testItemProviderFactory, resourceSelector, feedback){
+], function (_, $, __, loggerFactory, testItemProviderFactory, resourceSelectorFactory, feedback) {
     'use strict';
 
-   /**
-    * Create a dedicated logger
-    */
+    /**
+     * Create a dedicated logger
+     */
     var logger = loggerFactory('taoQtiTest/creator/views/item');
 
     /**
@@ -43,82 +44,96 @@ define([
      * Handles errors
      * @param {Error} err
      */
-    var onError = function onError(err){
+    var onError = function onError(err) {
         logger.error(err);
         feedback.error(err.message || __('An error occured while retrieving items'));
     };
 
-   /**
+    /**
      * The ItemView setup items related components
      * @exports taoQtiTest/controller/creator/views/item
      * @param {jQueryElement} $container - where to append the view
      */
-    return function itemView($container){
-
+    return function itemView($container) {
         var selectorConfig = {
-            type : __('items'),
-            selectionMode : resourceSelector.selectionModes.multiple,
-            selectAllPolicy: resourceSelector.selectAllPolicies.visible
+            type: __('items'),
+            selectionMode: resourceSelectorFactory.selectionModes.multiple,
+            selectAllPolicy: resourceSelectorFactory.selectAllPolicies.visible,
+            classUri: 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item',
+            classes: [
+                {
+                    label: 'Item',
+                    uri: 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item',
+                    type: 'class'
+                }
+            ]
         };
 
+        //set up the resource selector with one root class Item in classSelector
+        const resourceSelector = resourceSelectorFactory($container, selectorConfig)
+            .on('render', function () {
+                var self = this;
+                $container.on('itemselected.creator', function () {
+                    self.clearSelection();
+                });
+            })
+            .on('query', function (params) {
+                var self = this;
+
+                //ask the server the item from the component query
+                testItemProvider
+                    .getItems(params)
+                    .then(function (items) {
+                        //and update the item list
+                        self.update(items, params);
+                    })
+                    .catch(onError);
+            })
+            .on('classchange', function (classUri) {
+                var self = this;
+
+                //by changing the class we need to change the
+                //properties filters
+                testItemProvider
+                    .getItemClassProperties(classUri)
+                    .then(function (filters) {
+                        self.updateFilters(filters);
+                    })
+                    .catch(onError);
+            })
+            .on('change', function (values) {
+                /**
+                 * We've got a selection, triggered on the view container
+                 *
+                 * TODO replace jquery events by the eventifier
+                 *
+                 * @event jQuery#itemselect.creator
+                 * @param {Object[]} values - the selection
+                 */
+                $container.trigger('itemselect.creator', [values]);
+            });
+
         //load the classes hierarchy
-        testItemProvider.getItemClasses()
-            .then(function(classes){
+        testItemProvider
+            .getItemClasses()
+            .then(function (classes) {
                 selectorConfig.classes = classes;
                 selectorConfig.classUri = classes[0].uri;
             })
-            .then(function(){
+            .then(function () {
                 //load the class properties
                 return testItemProvider.getItemClassProperties(selectorConfig.classUri);
             })
-            .then(function(filters){
+            .then(function (filters) {
                 //set the filters from the properties
                 selectorConfig.filters = filters;
             })
-            .then(function(){
-                //set up the resource selector
-                resourceSelector($container, selectorConfig)
-                    .on('render', function(){
-                        var self = this;
-                        $container.on('itemselected.creator', function(){
-                            self.clearSelection();
-                        });
-                    })
-                    .on('query', function(params){
-                        var self = this;
-
-                        //ask the server the item from the component query
-                        testItemProvider.getItems(params)
-                            .then(function(items){
-                                //and update the item list
-                                self.update(items, params);
-                            })
-                            .catch(onError);
-                    })
-                    .on('classchange', function(classUri){
-                        var self = this;
-
-                        //by changing the class we need to change the
-                        //properties filters
-                        testItemProvider
-                            .getItemClassProperties(classUri)
-                            .then(function(filters){
-                                self.updateFilters(filters);
-                            })
-                            .catch(onError);
-                    })
-                    .on('change', function(values){
-
-                        /**
-                         * We've got a selection, triggered on the view container
-                         *
-                         * TODO replace jquery events by the eventifier
-                         *
-                         * @event jQuery#itemselect.creator
-                         * @param {Object[]} values - the selection
-                         */
-                        $container.trigger('itemselect.creator', [values]);
-                    });
+            .then(function () {
+                // add classes in classSelector
+                selectorConfig.classes[0].children.forEach(node => {
+                    resourceSelector.addClass(node, 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item');
+                });
+                resourceSelector.updateFilters(selectorConfig.filters);
             })
             .catch(onError);
     };
