@@ -32,18 +32,18 @@ define([
     /**
      * Create a dedicated logger
      */
-    var logger = loggerFactory('taoQtiTest/creator/views/item');
+    const logger = loggerFactory('taoQtiTest/creator/views/item');
 
     /**
      * Let's you access the data
      */
-    var testItemProvider = testItemProviderFactory();
+    const testItemProvider = testItemProviderFactory();
 
     /**
      * Handles errors
      * @param {Error} err
      */
-    var onError = function onError(err) {
+    const onError = function onError(err) {
         logger.error(err);
         feedback.error(err.message || __('An error occured while retrieving items'));
     };
@@ -54,7 +54,7 @@ define([
      * @param {jQueryElement} $container - where to append the view
      */
     return function itemView($container) {
-        var selectorConfig = {
+        const selectorConfig = {
             type: __('items'),
             selectionMode: resourceSelectorFactory.selectionModes.multiple,
             selectAllPolicy: resourceSelectorFactory.selectAllPolicies.visible,
@@ -71,32 +71,27 @@ define([
         //set up the resource selector with one root class Item in classSelector
         const resourceSelector = resourceSelectorFactory($container, selectorConfig)
             .on('render', function () {
-                var self = this;
-                $container.on('itemselected.creator', function () {
-                    self.clearSelection();
+                $container.on('itemselected.creator', () => {
+                    this.clearSelection();
                 });
             })
             .on('query', function (params) {
-                var self = this;
-
                 //ask the server the item from the component query
                 testItemProvider
                     .getItems(params)
-                    .then(function (items) {
+                    .then(items => {
                         //and update the item list
-                        self.update(items, params);
+                        this.update(items, params);
                     })
                     .catch(onError);
             })
             .on('classchange', function (classUri) {
-                var self = this;
-
                 //by changing the class we need to change the
                 //properties filters
                 testItemProvider
                     .getItemClassProperties(classUri)
-                    .then(function (filters) {
-                        self.updateFilters(filters);
+                    .then(filters => {
+                        this.updateFilters(filters);
                     })
                     .catch(onError);
             })
@@ -130,7 +125,7 @@ define([
             .then(function () {
                 // add classes in classSelector
                 selectorConfig.classes[0].children.forEach(node => {
-                    resourceSelector.addClass(node, 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item');
+                    resourceSelector.addClass(node, selectorConfig.classUri);
                 });
                 resourceSelector.updateFilters(selectorConfig.filters);
             })
