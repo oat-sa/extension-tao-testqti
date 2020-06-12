@@ -27,7 +27,6 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\tao\helpers\FileHelperService;
 use oat\tao\model\service\InjectionAwareService;
 use taoQtiTest_models_classes_export_TestExport22 as TestExporter;
-use core_kernel_classes_Resource as RdfResource;
 
 class QtiPackageExporter extends InjectionAwareService
 {
@@ -54,36 +53,40 @@ class QtiPackageExporter extends InjectionAwareService
     }
 
     /**
-     * @param RdfResource $test
+     * @param string $testUri
      *
      * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      */
-    public function exportDeliveryQtiPackage(RdfResource $test)
+    public function exportDeliveryQtiPackage(string $testUri)
     {
         $exportReport = $this->testExporter->export(
             [
             'filename' => self::QTI_PACKAGE_FILENAME,
-            'instances' => $test->getUri(),
-            'uri' => $test->getUri()
+            'instances' => $testUri,
+            'uri' => $testUri
             ],
             $this->fileHelperService->createTempDir()
         );
+
+        if ($exportReport->containsError()) {
+            throw new common_Exception('QTI Test package export failed.');
+        }
 
         return $exportReport->getData();
     }
 
     /**
-     * @param RdfResource $test
+     * @param string $testUri
      * @param string $fileSystemId
      * @param string $filePath
      * @return File
      * @throws common_Exception
      */
-    public function exportQtiTestPackageToFile(RdfResource $test, string $fileSystemId, string $filePath): File
+    public function exportQtiTestPackageToFile(string $testUri, string $fileSystemId, string $filePath): File
     {
-        $result = $this->exportDeliveryQtiPackage($test);
+        $result = $this->exportDeliveryQtiPackage($testUri);
 
         return $this->moveFileToSharedFileSystem($result['path'], $fileSystemId, $filePath);
     }

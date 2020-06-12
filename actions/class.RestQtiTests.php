@@ -66,7 +66,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
             return $this->returnFailure(new common_exception_ResourceNotFound('Resource not found'));
         }
 
-        $qtiPackage = $this->getQtiPackageExporter()->exportDeliveryQtiPackage($test);
+        $qtiPackage = $this->getQtiPackageExporter()->exportDeliveryQtiPackage($test->getUri());
 
         $data[self::PARAM_PACKAGE_NAME] = base64_encode(file_get_contents($qtiPackage['path']));
 
