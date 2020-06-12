@@ -20,14 +20,13 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'lodash',
     'jquery',
     'i18n',
     'core/logger',
     'taoQtiTest/provider/testItems',
     'ui/resource/selector',
     'ui/feedback'
-], function (_, $, __, loggerFactory, testItemProviderFactory, resourceSelectorFactory, feedback) {
+], function ($, __, loggerFactory, testItemProviderFactory, resourceSelectorFactory, feedback) {
     'use strict';
 
     /**
