@@ -252,6 +252,6 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     private function getQtiPackageExporter()
     {
-        return $this->getServiceLocator()->get(QtiPackageExporter::class);
+        return $this->getServiceLocator()->get(QtiPackageExporter::SERVICE_ID);
     }
 }
