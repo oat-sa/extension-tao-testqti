@@ -21,12 +21,13 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\models\classes\runner\time;
 
 use oat\generis\test\MockObject;
+use oat\generis\test\TestCase;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\StorageManager;
+use oat\taoQtiTest\models\runner\time\AdjustmentMap;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
-use oat\generis\test\TestCase;
 use oat\taoTests\models\runner\time\TimerAdjustmentMapInterface;
 use qtism\common\datatypes\Duration;
 use qtism\data\AssessmentItemRef;
@@ -70,6 +71,20 @@ class TimerAdjustmentServiceTest extends TestCase
         ]);
         $this->subject = new TimerAdjustmentService();
         $this->subject->setServiceLocator($serviceLocatorMock);
+    }
+
+    public function testGetAdjustment(): void
+    {
+        $source = $this->createMock(QtiIdentifiable::class);
+        $source->method('getIdentifier')->willReturn('PHPUnitItemId');
+        $qtiTimer = $this->createMock(QtiTimer::class);
+
+        $adjustmentMap = $this->createMock(AdjustmentMap::class);
+        $adjustmentMap->method('get')->willReturn(10);
+        $qtiTimer->method('getAdjustmentMap')->willReturn($adjustmentMap);
+
+        $service = new TimerAdjustmentService();
+        $this->assertSame(10, $service->getAdjustment($source, $qtiTimer));
     }
 
     public function testIncrease_AppliesIncreaseToGivenSource(): void
