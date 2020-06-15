@@ -2100,6 +2100,6 @@ class Updater extends \common_ext_ExtensionUpdater
 
         }
 
-        $this->skip('38.2.0', '38.6.1');
+        $this->skip('38.6.0', '38.6.1');
     }
 }
