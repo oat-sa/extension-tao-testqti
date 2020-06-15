@@ -125,7 +125,7 @@ define([
             .then(function () {
                 // add classes in classSelector
                 selectorConfig.classes[0].children.forEach(node => {
-                    resourceSelector.addClass(node, selectorConfig.classUri);
+                    resourceSelector.addClassNode(node, selectorConfig.classUri);
                 });
                 resourceSelector.updateFilters(selectorConfig.filters);
             })
