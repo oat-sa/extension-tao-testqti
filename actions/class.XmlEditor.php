@@ -30,8 +30,11 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
 
    public function edit() : void
    {
-       $params = $this->getPostParameters();
-       $test = $this->getResource($params['uri']);
+       if (!$this->hasPostParameter('id')) {
+            $this->returnError(__('Missed required parameter \'id\''));
+            return;
+       }
+       $test = $this->getResource($this->getPostParameter('id'));
 
        if ($this->getXmlEditorService()->isLocked()) {
            $this->setData('lockMessage', __('This functionality is blocked. Please contact with your administrator for more details.'));
