@@ -46,6 +46,9 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
         return $this->getTestService()->getDoc($test)->saveToString();
     }
 
+    /**
+     * @return bool
+     */
     public function isLocked(): bool
     {
         return $this->hasOption('is_locked') ? $this->getOption('is_locked') : true;
