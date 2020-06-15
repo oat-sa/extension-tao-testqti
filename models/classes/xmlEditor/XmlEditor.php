@@ -23,18 +23,34 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\xmlEditor;
 
-use core_kernel_classes_Resource;
+use oat\oatbox\service\ConfigurableService;
 use qtism\data\storage\xml\XmlDocument;
+use taoQtiTest_models_classes_QtiTestService;
+use \core_kernel_classes_Resource;
+use taoQtiTest_models_classes_QtiTestServiceException;
 
-interface XmlEditorInterface
+/**
+ * Class XmlEditor
+ * @package oat\taoQtiTest\models\xmlEditor
+ */
+class XmlEditor extends ConfigurableService implements XmlEditorInterface
 {
-    public const SERVICE_ID = 'taoQtiTest/XmlEditor';
-    public const XML_EDITOR_ROLE = 'http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor';
-
     /**
      * @param core_kernel_classes_Resource $test
      * @return XmlDocument
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function getTestXml(core_kernel_classes_Resource $test) : XmlDocument;
+    public function getTestXml(core_kernel_classes_Resource $test) : XmlDocument
+    {
+        return $this->getTestService()->getDoc($test);
+    }
 
+    /**
+     * @return taoQtiTest_models_classes_QtiTestService
+     */
+    public function getTestService() : taoQtiTest_models_classes_QtiTestService
+    {
+        return $this->getServiceLocator()->get(taoQtiTest_models_classes_QtiTestService::class);
+
+    }
 }

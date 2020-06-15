@@ -20,10 +20,33 @@ declare(strict_types=1);
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA ;
  */
 
+use oat\generis\model\OntologyAwareTrait;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
+
 class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
 {
+
+    use OntologyAwareTrait;
+
    public function edit() : void
    {
+       $params = $this->getPostParameters();
+       $test = $this->getResource($params['uri']);
+
+       try {
+           $xmlString = $this->getXmlEditorService()->getTestXml($test)->saveToString();
+       } catch (\Exception $e) {
+           $xmlString = $e->getMessage();
+       }
+       $this->setData('xmlBody', $xmlString);
        $this->setView('XmlEditor/xml_editor.tpl');
+   }
+
+    /**
+     * @return XmlEditorInterface
+     */
+   private function getXmlEditorService() : XmlEditorInterface
+   {
+       return $this->getServiceLocator()->get(XmlEditorInterface::SERVICE_ID);
    }
 }
