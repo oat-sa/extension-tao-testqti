@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\xmlEditor;
 
 use core_kernel_classes_Resource;
-use qtism\data\storage\xml\XmlDocument;
 
 interface XmlEditorInterface
 {
@@ -37,6 +36,13 @@ interface XmlEditorInterface
      * @return string
      */
     public function getTestXml(core_kernel_classes_Resource $test) : string;
+
+    /**
+     * @param core_kernel_classes_Resource $test
+     * @param string $testString
+     * @return bool
+     */
+    public function saveStringTest(core_kernel_classes_Resource $test, string $testString) : bool;
 
     /**
      * @return bool

@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 use oat\generis\model\OntologyAwareTrait;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
+use tao_helpers_form_FormContainer as FormContainer;
 
 class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
 {
@@ -35,18 +36,30 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
             return;
        }
        $test = $this->getResource($this->getPostParameter('id'));
+       $title = __('XML Content');
 
        if ($this->getXmlEditorService()->isLocked()) {
-           $this->setData('lockMessage', __('This functionality is blocked. Please contact with your administrator for more details.'));
-           $this->setData('isLocked', true);
+           $title = __('This functionality is blocked. Please contact with your administrator for more details.');
        } else {
            try {
                $xmlString = $this->getXmlEditorService()->getTestXml($test);
+
+               $formContainer = new taoQtiTest_models_forms_XmlEditForm(
+                   $test,
+                   $xmlString,
+                   [FormContainer::CSRF_PROTECTION_OPTION => true]
+               );
+               $form = $formContainer->getForm();
+               if ($form->isSubmited() && $form->isValid()) {
+                   $this->getXmlEditorService()->saveStringTest($test, $form->getValues()['xmlString']);
+               }
+               $this->setData('form', $form->render());
+
            } catch (\Exception $e) {
-               $xmlString = $e->getMessage();
+               $title = $e->getMessage();
            }
-           $this->setData('xmlBody', $xmlString);
        }
+       $this->setData('formTitle', $title);
        $this->setView('XmlEditor/xml_editor.tpl');
    }
 
