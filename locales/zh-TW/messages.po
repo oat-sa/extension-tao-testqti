@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:56\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-06-14 13:45+0200\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-TW\n"
@@ -16,7 +16,8 @@ msgstr ""
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
 
-msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
+msgid ""
+"A QTI Test must contain at least one QTI Item to be compiled. None found."
 msgstr "沒有找到任何題目。一個QTI考試必須有至少一個QTI項目才能進行編譯。"
 
 msgid "A qti testpackage"
@@ -52,7 +53,9 @@ msgstr "在此處新增所選的題目。"
 msgid "Add the source file"
 msgstr "新增來源檔"
 
-msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
+msgid ""
+"After you complete the section it would be impossible to return to this "
+"section to make changes. Are you sure you want to end the section?"
 msgstr ""
 
 msgid "All"
@@ -73,13 +76,17 @@ msgstr "允許跳過"
 msgid "Allow skipping of the current section."
 msgstr ""
 
-msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
+msgid ""
+"Allow Test-taker to playback media files associated according to APIP "
+"protocol to item content."
 msgstr ""
 
 msgid "Allow the candidate to review his answers."
 msgstr "允許考生復審答案。"
 
-msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
+msgid ""
+"Allow the test-taker to eliminate / strikethrough answers in choice "
+"interactions."
 msgstr ""
 
 msgid "Allow the test-taker to highlight parts of the item text."
@@ -94,7 +101,9 @@ msgstr ""
 msgid "Allow the test-taker to use a basic calculator."
 msgstr ""
 
-msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
+msgid ""
+"Allow the test-taker to use a calculator respecting the order of operations "
+"(BODMAS)."
 msgstr ""
 
 msgid "Allow the test-taker to use a movable magnifier tool."
@@ -130,8 +139,14 @@ msgstr ""
 msgid "An error occurs, please contact your administrator"
 msgstr ""
 
-msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
-msgstr "一個隱藏章節若有隨機順序的父代部分，當顯示章節給考生時，您可以設定它的子章節：1. 是否屬於父代的隨機順序部分； 2. 屬於自己的隨機順序區塊； 3. 與其它子章節混合成為另一個隨機順序部分"
+msgid ""
+"An invisible section with a parent that is subject to shuffling can specify "
+"whether or not its children, which will appear to the candidate as if they "
+"were part of the parent, are shuffled as a block or mixed up with the other "
+"children of the parent section."
+msgstr ""
+"一個隱藏章節若有隨機順序的父代部分，當顯示章節給考生時，您可以設定它的子章節：1. 是否屬於父代的隨機順序部分； 2. 屬於自己的隨機順序區塊； 3. "
+"與其它子章節混合成為另一個隨機順序部分"
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
 msgstr "一個牽涉考試使用的題目無法被讀取或不兼容QTI。"
@@ -144,9 +159,6 @@ msgstr "在編譯QTI考試 '%s' 時出現了一個不明錯誤。"
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "在彙集QTI考試 '%s' 中時出現了一個不明錯誤。"
-
-msgid "and"
-msgstr ""
 
 msgid "and flagged %s of them"
 msgstr ""
@@ -166,31 +178,43 @@ msgstr ""
 msgid "APIP Text To Speech"
 msgstr ""
 
-msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
+msgid ""
+"Are you sure you want to clear your answer and go to the next item? You will "
+"not be able to go back and provide an answer."
 msgstr ""
 
 msgid "Are you sure you want to end the test?"
 msgstr ""
 
-msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
+msgid ""
+"Are you sure you want to go to the next item? You will not be able to go "
+"back and change your answer."
 msgstr ""
 
-msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
+msgid ""
+"Are you sure you want to go to the next item? You will not be able to go "
+"back and provide an answer."
 msgstr ""
 
-msgid "Are you sure you want to go to the next item? You will not be able to go back."
+msgid ""
+"Are you sure you want to go to the next item? You will not be able to go "
+"back."
 msgstr ""
 
 msgid "Area Masking"
 msgstr ""
 
-msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
+msgid ""
+"Associate a blueprint to a section allow you to validate this section "
+"against the specified blueprint."
 msgstr ""
 
 msgid "Associate Blueprint"
 msgstr ""
 
-msgid "At least one mandatory parameter was required but found missing in your request"
+msgid ""
+"At least one mandatory parameter was required but found missing in your "
+"request"
 msgstr ""
 
 msgid "Author"
@@ -215,9 +239,6 @@ msgid "Calculator"
 msgstr ""
 
 msgid "Calculator BODMAS"
-msgstr ""
-
-msgid "Can not playback media file!"
 msgstr ""
 
 msgid "Cancel"
@@ -280,7 +301,9 @@ msgstr ""
 msgid "Contrast"
 msgstr ""
 
-msgid "Controls the contribution of an individual item score to the overall test score."
+msgid ""
+"Controls the contribution of an individual item score to the overall test "
+"score."
 msgstr ""
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
@@ -295,7 +318,8 @@ msgstr ""
 msgid "custom categories"
 msgstr ""
 
-msgid "Custom outcome processing. No changes will be made to the existing rules."
+msgid ""
+"Custom outcome processing. No changes will be made to the existing rules."
 msgstr ""
 
 msgid "Cut score"
@@ -310,7 +334,9 @@ msgstr "停用驗證"
 msgid "Disconnected from server"
 msgstr ""
 
-msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
+msgid ""
+"Display a warning before the test-taker ends a test part and there are still "
+"items left unanswered or marked for review."
 msgstr ""
 
 msgid "Display a warning before the test-taker ends the test part."
@@ -319,7 +345,9 @@ msgstr ""
 msgid "Display a warning before the test-taker ends the test."
 msgstr ""
 
-msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
+msgid ""
+"Display a warning before the test-taker skips the section. Requires the "
+"Section Skipping option."
 msgstr ""
 
 msgid "Display End Test Warning"
@@ -340,10 +368,10 @@ msgstr ""
 msgid "Displays a customisable magnifier"
 msgstr ""
 
-msgid "Do not flag the current item for later review"
+msgid "DO NOT CHANGE THE NAME OF THE FILE."
 msgstr ""
 
-msgid "Do not rename it."
+msgid "Do not flag the current item for later review"
 msgstr ""
 
 msgid "Do not show alert on timeout"
@@ -352,7 +380,7 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-msgid "Download the pupil responses and submit manually."
+msgid "Download the file and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
@@ -379,14 +407,16 @@ msgstr ""
 msgid "Enable the item review screen / navigator."
 msgstr ""
 
-msgid "Enables skipping to items within this section. Requires the review screen option."
-msgstr ""
-
-msgid "End test"
+msgid ""
+"Enables skipping to items within this section. Requires the review screen "
+"option."
 msgstr ""
 
 msgid "End Test"
 msgstr "結束考試"
+
+msgid "End test"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -400,7 +430,8 @@ msgstr "錯誤"
 msgid "Error during file import"
 msgstr "匯入時出現錯誤"
 
-msgid "Error found in the IMS QTI Test:\n"
+msgid ""
+"Error found in the IMS QTI Test:\n"
 "%s"
 msgstr ""
 
@@ -455,7 +486,9 @@ msgstr ""
 msgid "Flagged"
 msgstr ""
 
-msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgid ""
+"Force the item to be considered as informational and not taken into account "
+"in (un)answered / flagged counters."
 msgstr ""
 
 msgid "Go to next item"
@@ -476,7 +509,9 @@ msgstr ""
 msgid "Hide the review screen"
 msgstr ""
 
-msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
+msgid ""
+"Hide the warning automatically displayed when a test-taker exit a timed "
+"section."
 msgstr ""
 
 msgid "Hide Timed Section Warning"
@@ -506,22 +541,29 @@ msgstr "如果為必要，出現(至少一次)在選擇部分。"
 msgid "If required, it must appears at least once in the selection."
 msgstr "如果為必要， 出現(至少一次)在選擇部分。"
 
-msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
+msgid ""
+"If set, it causes the order of the child elements to be randomized, "
+"otherwise it uses the order in which the child elements are defined."
 msgstr "如果設定，它會使子元素的順序隨機化，否則它會使用被定義的子元素的順序。"
 
-msgid "If the candidate can skip the item, without submitting a response (default is true)."
+msgid ""
+"If the candidate can skip the item, without submitting a response (default "
+"is true)."
 msgstr ""
 
-msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
+msgid ""
+"If the category option is set, the score will also be processed per "
+"categories, and each results will take place in the PASS_xxx outcome, where "
+"xxx is the name of the category."
 msgstr ""
 
-msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+msgid ""
+"If the category option is set, the score will also be processed per "
+"categories, and each results will take place in the SCORE_xxx outcome, where "
+"xxx is the name of the category."
 msgstr ""
 
-msgid "If the connection cannot be restored, see option B."
-msgstr ""
-
-msgid "If you need help, please contact our Helpline on 0330 088 4171."
+msgid "If you need help, please contact us."
 msgstr ""
 
 msgid "Import"
@@ -533,16 +575,22 @@ msgstr ""
 msgid "Import QTI TEST into \"%s"
 msgstr ""
 
-msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgid ""
+"IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be "
+"imported."
 msgstr ""
 
-msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
+msgid ""
+"IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully "
+"imported."
 msgstr ""
 
 msgid "IMS QTI Test Package successfully imported."
 msgstr "IMS QTI 考試包已經成功匯入。"
 
-msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
+msgid ""
+"IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully "
+"imported."
 msgstr ""
 
 msgid "In this part of the test navigation is not allowed."
@@ -569,9 +617,6 @@ msgstr ""
 msgid "is not a valid identifier (everything except spaces)"
 msgstr ""
 
-msgid "It is not possible to save your responses while working offline."
-msgstr ""
-
 msgid "Item \"%s\" is completed."
 msgstr ""
 
@@ -590,11 +635,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "題目時域控制"
 
-msgid "Items"
-msgstr "題目"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "題目"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "題目可以選擇性的被分配到一個或多個類別。"
@@ -605,7 +650,9 @@ msgstr "題目編譯"
 msgid "Items marked for later review"
 msgstr ""
 
-msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
+msgid ""
+"Items with assessmentItemRef identifiers \"%s\" are not registered in the "
+"related CAT endpoint."
 msgstr ""
 
 msgid "Keep Together"
@@ -629,7 +676,9 @@ msgstr "直線性"
 msgid "Link durations to activate the guided navigation"
 msgstr ""
 
-msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
+msgid ""
+"Locked duration  : guided navigation. The test transition to the next item "
+"once the duration reaches 0."
 msgstr ""
 
 msgid "Magnifier"
@@ -650,11 +699,11 @@ msgstr "管理指導語區塊"
 msgid "Manage test properties"
 msgstr "管理考試屬性"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "管理考試"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr ""
@@ -692,7 +741,9 @@ msgstr ""
 msgid "Minimum Duration"
 msgstr "最短時限"
 
-msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
+msgid ""
+"Minimum duration : enforces the test taker to stay on the item for the given "
+"duration."
 msgstr ""
 
 msgid "Minimum duration for the test."
@@ -723,9 +774,6 @@ msgid "Move Up"
 msgstr "向上移"
 
 msgid "Moving to the next item without time limit reached message."
-msgstr ""
-
-msgid "name of the pupil"
 msgstr ""
 
 msgid "Navigation"
@@ -782,6 +830,11 @@ msgstr ""
 msgid "Not shuffled, the position remains fixed."
 msgstr "不是隨機順序，該位置保持固定。"
 
+msgid ""
+"Note the name of the child you were assessing. Do not try to re-access the "
+"assessment for that child until it no longer shows as ‘in progress’."
+msgstr ""
+
 msgid "OK"
 msgstr ""
 
@@ -791,7 +844,8 @@ msgstr ""
 msgid "OK & End test"
 msgstr ""
 
-msgid "Once you close this section, you cannot return to it or change your answers."
+msgid ""
+"Once you close this section, you cannot return to it or change your answers."
 msgstr ""
 
 msgid "One or more dependent IMS QTI Items could not be imported."
@@ -806,10 +860,7 @@ msgstr ""
 msgid "Open Calculator"
 msgstr ""
 
-msgid "Option A"
-msgstr ""
-
-msgid "Option B"
+msgid "OR"
 msgstr ""
 
 msgid "or"
@@ -827,7 +878,9 @@ msgstr ""
 msgid "Outcome processing"
 msgstr ""
 
-msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
+msgid ""
+"Package is valid but no tests were found. Make sure that it contains valid "
+"QTI tests."
 msgstr ""
 
 msgid "Part %d"
@@ -842,6 +895,17 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
+msgid ""
+"Please connect the machine to the internet via a cable or move to an area "
+"with better wifi signal."
+msgstr ""
+
+msgid "Please continue waiting while we try to restore the connection."
+msgstr ""
+
+msgid "Please stay on this screen."
+msgstr ""
+
 msgid "Please wait while we try to restore the connection."
 msgstr ""
 
@@ -851,7 +915,7 @@ msgstr ""
 msgid "Previous"
 msgstr "上一個"
 
-msgid "PROCEED & END ASSESSMENT"
+msgid "Proceed & End Test"
 msgstr ""
 
 msgid "Proctor"
@@ -950,7 +1014,10 @@ msgstr ""
 msgid "Section %d of %d"
 msgstr ""
 
-msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgid ""
+"Section level category enables configuring the categories of its composing "
+"items all at once. A category in gray means that all items have that "
+"category. A category in white means that only a few items have that category."
 msgstr ""
 
 msgid "Section Properties"
@@ -977,7 +1044,9 @@ msgstr "傳送"
 msgid "Set outcome identifier the feedback block is related to"
 msgstr ""
 
-msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
+msgid ""
+"Set the cut score (or pass score ratio) associated to the test. It must be a "
+"float between 0 and 1."
 msgstr ""
 
 msgid "Set the rubric block as a feedback block"
@@ -1049,7 +1118,9 @@ msgstr ""
 msgid "Skip to the next section"
 msgstr ""
 
-msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
+msgid ""
+"Some rubric blocks have been updated to reflect the changes in the list of "
+"outcomes."
 msgstr ""
 
 msgid "Speech speed"
@@ -1059,15 +1130,6 @@ msgid "Speed"
 msgstr ""
 
 msgid "Start Test-part"
-msgstr ""
-
-msgid "Step 1: Download the file (see below when available)."
-msgstr ""
-
-msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
-msgstr ""
-
-msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
 msgstr ""
 
 msgid "Stop"
@@ -1121,31 +1183,33 @@ msgstr ""
 msgid "Text to Speech"
 msgstr ""
 
-msgid "that was being taken."
-msgstr ""
-
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "发现 'imsmanifest.xml' 档案未有效存档。"
-
-msgid "the assessment (LCL or Mathematics)"
-msgstr ""
 
 msgid "The assessment has been created but is not already running."
 msgstr ""
 
-msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgid ""
+"The assessment has been suspended by an authorized proctor. If you wish to "
+"resume your assessment, please relaunch it and contact your proctor if "
+"required."
 msgstr ""
 
-msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
+msgid ""
+"The assessment has been suspended. To resume your assessment, please "
+"relaunch it and contact your proctor if required."
 msgstr ""
 
-msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgid ""
+"The assessment has been suspended. To resume your assessment, please "
+"relaunch it."
 msgstr ""
 
 msgid "The assessment has been terminated."
 msgstr ""
 
-msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgid ""
+"The assessment has been terminated. You cannot interact with it anymore."
 msgstr ""
 
 msgid "The assessment is still running."
@@ -1157,10 +1221,18 @@ msgstr ""
 msgid "The connection seems to be back, please proceed"
 msgstr ""
 
-msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
+msgid "The connection seems to be back, please proceed."
+msgstr ""
+
+msgid ""
+"The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest "
+"file could not be resolved."
 msgstr ""
 
 msgid "The download will be available in <strong>%d</strong> seconds"
+msgstr ""
+
+msgid "The file will save into the Downloads folder on your PC."
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
@@ -1172,22 +1244,30 @@ msgstr "該題目引用的標識符。"
 msgid "The identifier of the section."
 msgstr "區域引用的標識符。"
 
-msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
+msgid ""
+"The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already "
+"stored in the Item Bank."
 msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "無法匯入 IMS QTI 考試包。"
 
-msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgid ""
+"The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be "
+"imported."
 msgstr ""
 
-msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
+msgid ""
+"The navigation mode determines the general paths that the candidate may "
+"take. A linear mode restricts the candidate to attempt each item in turn. "
+"Non Linear removes this restriction."
 msgstr "導航模式決定了報考者可採取的一般途徑。線性模式限制了報考者依次嘗試每一個題目。非線性模式移除了這個限制。"
 
 msgid "The number of child elements to be selected."
 msgstr "要被選的子元素數量。"
 
-msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
+msgid ""
+"The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr ""
 
 msgid "The outcomes have been regenerated!"
@@ -1196,10 +1276,14 @@ msgstr ""
 msgid "The principle identifier of the test."
 msgstr "考試的主要標識符。"
 
-msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
+msgid ""
+"The provided archive is invalid. Make sure it is not corrupted and that it "
+"contains an 'imsmanifest.xml' file."
 msgstr "該提供的存檔無效。請確認它沒有被損壞並且它包含了一個 'imsmanifest.xml' 檔案。"
 
-msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
+msgid ""
+"The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None "
+"found."
 msgstr "該QTI考試必須有至少1個QTI題目'%s' 才能進行編譯。沒有找到。"
 
 msgid "The QTI test could not be retrieved correctly."
@@ -1214,20 +1298,35 @@ msgstr "該QTI-XML考試未能被正確寫入。"
 msgid "The reference."
 msgstr "參照"
 
-msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
+msgid ""
+"The resources related to the IMS QTI Test referenced as \"%s\" in the IMS "
+"Manifest file were rolled back."
 msgstr ""
 
-msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
+msgid ""
+"The score will be processed for the entire test. A sum of all SCORE outcomes "
+"will be computed and divided by the sum of MAX SCORE, the result will be "
+"compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will "
+"be set accordingly."
 msgstr ""
 
-msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
+msgid ""
+"The score will be processed for the entire test. A sum of all SCORE outcomes "
+"will be computed, the result will take place in the SCORE_TOTAL outcome."
 msgstr ""
 
 msgid "The section title."
 msgstr "區域標題"
 
-msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
-msgstr "考試提交模式決定考生回應什麼時候被送回服務器處理。在個別(individual)模式中，考生需要各自提交每一個題目，每個回應都會各自被送回服務器處理。在同時(simultaneous)模式中，考生只需要考試沒提交一次，所有的回應是同時在考試沒被送回。"
+msgid ""
+"The submission mode determines when the candidate's responses are submitted "
+"for response processing. A testPart in individual mode requires the "
+"candidate to submit their responses on an item-by-item basis. In "
+"simultaneous mode the candidate's responses are all submitted together at "
+"the end of the testPart."
+msgstr ""
+"考試提交模式決定考生回應什麼時候被送回服務器處理。在個別(individual)模式中，考生需要各自提交每一個題目，每個回應都會各自被送回服務器處理。在同"
+"時(simultaneous)模式中，考生只需要考試沒提交一次，所有的回應是同時在考試沒被送回。"
 
 msgid "The test has been closed/suspended!"
 msgstr ""
@@ -1247,10 +1346,15 @@ msgstr "考試標題。"
 msgid "There is not outcomes!"
 msgstr ""
 
-msgid "This constraint affects the visibility of feedback after the end of the last attempt."
+msgid ""
+"This constraint affects the visibility of feedback after the end of the last "
+"attempt."
 msgstr "考完試以後考生是否可以看得見題目的回饋。"
 
-msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
+msgid ""
+"This constraint controls whether or not the candidate is allowed to provide "
+"a comment on the item during the session. Comments are not part of the "
+"assessed responses."
 msgstr "控制考生是否可以在考試中對題目提供評論。評論不是回應的一部分，也不會被評分。"
 
 msgid "This test has been suspended"
@@ -1265,7 +1369,9 @@ msgstr ""
 msgid "Time limit reached, this part of the test has ended."
 msgstr ""
 
-msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
+msgid ""
+"Time limit reached, this part of the test has ended. However you are allowed "
+"to finish the current item."
 msgstr ""
 
 msgid "Time Limits"
@@ -1284,9 +1390,6 @@ msgid "Toggle start from here mode"
 msgstr ""
 
 msgid "Total score"
-msgstr ""
-
-msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
 
 msgid "Tutor"
@@ -1337,9 +1440,6 @@ msgstr "可見"
 msgid "Volume"
 msgstr ""
 
-msgid "Wait for your connection to come back online."
-msgstr ""
-
 msgid "Warning – You have %s remaining to complete the test."
 msgstr ""
 
@@ -1367,19 +1467,34 @@ msgstr ""
 msgid "Weights"
 msgstr ""
 
-msgid "When selecting child elements each element is normally eligible for selection once only."
+msgid ""
+"When selecting child elements each element is normally eligible for "
+"selection once only."
 msgstr "當選擇子元素時，每個子元素通常都只能被選一次而已。"
 
-msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
+msgid ""
+"When you have a network connection, navigate to the download folder, select "
+"the file and email it to your teacher"
+msgstr ""
+
+msgid ""
+"Whether a candidate's response that is beyond the maximum duration of the "
+"item should still be accepted."
 msgstr "考生的回應如果超出題目時限，項目是否還被接受。"
 
-msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
+msgid ""
+"Whether a candidate's response that is beyond the maximum duration of the "
+"section should still be accepted."
 msgstr "考生的回應如果超出區域時限，區域是否還被接受。"
 
-msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
+msgid ""
+"Whether a candidate's response that is beyond the maximum duration of the "
+"test part should still be accepted."
 msgstr "考生的回應如果超出部分時限，部分是否還被接受。"
 
-msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
+msgid ""
+"Whether a candidate's response that is beyond the maximum duration should "
+"still be accepted."
 msgstr "考生的回應如果超出時限，回應是否還被接受。"
 
 msgid "White on black"
@@ -1412,16 +1527,22 @@ msgstr ""
 msgid "You answered only %s of the %s question(s) in this section"
 msgstr ""
 
-msgid "You are about to go to the next item. Click OK to continue and go to the next item."
+msgid ""
+"You are about to go to the next item. Click OK to continue and go to the "
+"next item."
 msgstr ""
 
-msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
+msgid ""
+"You are about to go to the previous item. Click OK to continue and go to the "
+"previous item."
 msgstr ""
 
-msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgid ""
+"You are about to submit the test. You will not be able to access this test "
+"once submitted. Click OK to continue and submit the test."
 msgstr ""
 
-msgid "You are currently working offline."
+msgid "You are encountering a prolonged connectivity loss."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
@@ -1433,16 +1554,14 @@ msgstr ""
 msgid "You have %s unanswered question(s)"
 msgstr ""
 
-msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
+msgid ""
+"You have %s unanswered question(s) and have %s item(s) marked for review."
 msgstr ""
 
 msgid "You have %s unanswered question(s)."
 msgstr ""
 
 msgid "Your comment…"
-msgstr ""
-
-msgid "Your connection seems to be back, please proceed."
 msgstr ""
 
 msgid "Zoom"
@@ -1453,4 +1572,3 @@ msgstr ""
 
 msgid "Zoom out"
 msgstr ""
-
