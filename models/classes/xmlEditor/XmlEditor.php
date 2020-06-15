@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\xmlEditor;
 
 use oat\oatbox\service\ConfigurableService;
-use qtism\data\storage\xml\XmlDocument;
+use qtism\data\storage\xml\XmlStorageException;
 use taoQtiTest_models_classes_QtiTestService;
 use \core_kernel_classes_Resource;
 use taoQtiTest_models_classes_QtiTestServiceException;
@@ -37,18 +37,24 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
 {
     /**
      * @param core_kernel_classes_Resource $test
-     * @return XmlDocument
+     * @return string
+     * @throws XmlStorageException
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function getTestXml(core_kernel_classes_Resource $test) : XmlDocument
+    public function getTestXml(core_kernel_classes_Resource $test) : string
     {
-        return $this->getTestService()->getDoc($test);
+        return $this->getTestService()->getDoc($test)->saveToString();
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->hasOption('is_locked') ? $this->getOption('is_locked') : true;
     }
 
     /**
      * @return taoQtiTest_models_classes_QtiTestService
      */
-    public function getTestService() : taoQtiTest_models_classes_QtiTestService
+    private function getTestService() : taoQtiTest_models_classes_QtiTestService
     {
         return $this->getServiceLocator()->get(taoQtiTest_models_classes_QtiTestService::class);
 
