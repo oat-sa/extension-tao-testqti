@@ -64,8 +64,7 @@
   },
   "autoload": {
     "psr-4": {
-      "oat\\taoQtiTest\\models\\": "models/classes/",
-      "oat\\taoQtiTest\\models\\forms\\": "models/forms/",
+      "oat\\taoQtiTest\\models\\": "models/",
       "oat\\taoQtiTest\\helpers\\": "helpers",
       "oat\\taoQtiTest\\test\\": "test",
       "oat\\taoQtiTest\\scripts\\": "scripts"
