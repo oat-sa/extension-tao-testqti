@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 class taoQtiTest_models_forms_XmlEditForm extends tao_helpers_form_FormContainer
 {
-    public function __construct(core_kernel_classes_Resource $test, $xmlString, $options = [])
+    public function __construct(core_kernel_classes_Resource $test, string $xmlString, array $options = [])
     {
         parent::__construct(
             [
@@ -34,11 +34,9 @@ class taoQtiTest_models_forms_XmlEditForm extends tao_helpers_form_FormContainer
     }
 
     /**
-     * @return mixed|void
-     * @throws common_Exception
-     * @throws Exception
+     * {@inheritdoc}
      */
-    public function initForm()
+    public function initForm() : void
     {
         $this->form = new tao_helpers_form_xhtml_Form('test_xml_editor_form');
 
@@ -57,10 +55,9 @@ class taoQtiTest_models_forms_XmlEditForm extends tao_helpers_form_FormContainer
     }
 
     /**
-     * @return mixed|void
-     * @throws common_Exception
+     * {@inheritdoc}
      */
-    public function initElements()
+    public function initElements() : void
     {
         $element = tao_helpers_form_FormFactory::getElement('xmlString', 'textarea');
         $element->addAttribute('rows', '20');

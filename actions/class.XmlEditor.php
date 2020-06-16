@@ -26,7 +26,6 @@ use tao_helpers_form_FormContainer as FormContainer;
 
 class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
 {
-
     use OntologyAwareTrait;
 
    public function edit() : void
@@ -57,7 +56,8 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
                $this->setData('form', $form->render());
 
            } catch (\Exception $e) {
-               $title = $e->getMessage();
+               $title = __('Something went wrong...');
+               common_Logger::e($e->getMessage());
            }
        }
        $this->setData('formTitle', $title);

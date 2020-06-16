@@ -40,7 +40,7 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     /**
      * {@inheritdoc}
      */
-    public function saveStringTest(core_kernel_classes_Resource $test, string $testString): bool
+    public function saveStringTest(core_kernel_classes_Resource $test, string $testString) : bool
     {
         $doc = new XmlDocument();
         $doc->loadFromString($testString);
