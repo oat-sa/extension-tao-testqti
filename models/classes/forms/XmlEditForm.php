@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\forms;
 
 use core_kernel_classes_Resource;
+use oat\taoQtiTest\models\validators\XmlSchemaValidator;
 use tao_helpers_form_FormContainer;
 use tao_helpers_form_FormFactory;
 use tao_helpers_form_xhtml_Form;
@@ -52,7 +53,7 @@ class XmlEditForm extends tao_helpers_form_FormContainer
             'element' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div']),
             'error'   => new tao_helpers_form_xhtml_TagWrapper([
                 'tag' => 'div',
-                'cssClass' => 'form-error ui-state-error ui-corner-all hidden'
+                'cssClass' => ' form-error'
             ])
         ]);
 
@@ -71,6 +72,7 @@ class XmlEditForm extends tao_helpers_form_FormContainer
         $element->addAttribute('rows', '20');
         $element->setDescription('XML');
         $element->addValidator(tao_helpers_form_FormFactory::getValidator('NotEmpty'));
+        $element->addValidator(new XmlSchemaValidator());
         $this->getForm()->addElement($element);
 
         $element = tao_helpers_form_FormFactory::getElement('id', 'Hidden');
