@@ -41,7 +41,7 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
      */
     public function isLocked(): bool
     {
-        return $this->hasOption('is_locked') ? $this->getOption('is_locked') : true;
+        return $this->hasOption('is_locked') ? (bool)$this->getOption('is_locked') : true;
     }
 
     private function getTestService() : taoQtiTest_models_classes_QtiTestService
