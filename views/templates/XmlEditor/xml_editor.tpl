@@ -11,3 +11,7 @@ use oat\tao\helpers\Template;
         <?=get_data('form')?>
     </div>
 </div>
+
+<?php
+Template::inc('footer.tpl', 'tao');
+?>

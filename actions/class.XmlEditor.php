@@ -52,6 +52,7 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
                $form = $formContainer->getForm();
                if ($form->isSubmited() && $form->isValid()) {
                    $this->getXmlEditorService()->saveStringTest($test, $form->getValues()['xmlString']);
+                   $this->setData('message', __('Saved'));
                }
                $this->setData('form', $form->render());
 
