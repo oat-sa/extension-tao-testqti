@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\forms;
+namespace oat\taoQtiTest\models\classes\forms;
 
 use core_kernel_classes_Resource;
 use tao_helpers_form_FormContainer;
