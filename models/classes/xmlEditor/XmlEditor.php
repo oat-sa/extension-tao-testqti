@@ -24,8 +24,6 @@ namespace oat\taoQtiTest\models\xmlEditor;
 
 use oat\oatbox\service\ConfigurableService;
 use qtism\data\storage\xml\XmlDocument;
-use qtism\data\storage\xml\XmlStorageException;
-use taoQtiTest_models_classes_QtiTestConverterException;
 use taoQtiTest_models_classes_QtiTestService;
 use \core_kernel_classes_Resource;
 
@@ -40,12 +38,7 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     }
 
     /**
-     * @param core_kernel_classes_Resource $test
-     * @param string $testString
-     * @return bool
-     * @throws XmlStorageException
-     * @throws taoQtiTest_models_classes_QtiTestConverterException
-     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     * {@inheritdoc}
      */
     public function saveStringTest(core_kernel_classes_Resource $test, string $testString): bool
     {
