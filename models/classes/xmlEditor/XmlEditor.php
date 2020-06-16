@@ -17,26 +17,36 @@
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\xmlEditor;
 
-use core_kernel_classes_Resource;
+use oat\oatbox\service\ConfigurableService;
+use taoQtiTest_models_classes_QtiTestService;
+use \core_kernel_classes_Resource;
 
-interface XmlEditorInterface
+class XmlEditor extends ConfigurableService implements XmlEditorInterface
 {
-    public const SERVICE_ID = 'taoQtiTest/XmlEditor';
-    public const XML_EDITOR_ROLE = 'http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor';
-    public const OPTION_XML_EDITOR_LOCK = 'is_locked';
+    /**
+     * {@inheritdoc}
+     */
+    public function getTestXml(core_kernel_classes_Resource $test) : string
+    {
+        return $this->getTestService()->getDoc($test)->saveToString();
+    }
 
     /**
-     * @param core_kernel_classes_Resource $test
-     * @return string
+     * {@inheritdoc}
      */
-    public function getTestXml(core_kernel_classes_Resource $test) : string;
+    public function isLocked(): bool
+    {
+        return $this->hasOption('is_locked') ? (bool)$this->getOption('is_locked') : true;
+    }
 
-    /**
-     * @return bool
-     */
-    public function isLocked() : bool;
+    private function getTestService() : taoQtiTest_models_classes_QtiTestService
+    {
+        return $this->getServiceLocator()->get(taoQtiTest_models_classes_QtiTestService::class);
+
+    }
 }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +18,43 @@ declare(strict_types=1);
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA ;
  */
 
+declare(strict_types=1);
+
+use oat\generis\model\OntologyAwareTrait;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
+
 class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
 {
+
+    use OntologyAwareTrait;
+
    public function edit() : void
    {
+       if (!$this->hasPostParameter('id')) {
+            $this->returnError(__('Missed required parameter \'id\''));
+            return;
+       }
+       $test = $this->getResource($this->getPostParameter('id'));
+
+       if ($this->getXmlEditorService()->isLocked()) {
+           $this->setData('lockMessage', __('This functionality is blocked. Please contact with your administrator for more details.'));
+           $this->setData('isLocked', true);
+       } else {
+           try {
+               $xmlString = $this->getXmlEditorService()->getTestXml($test);
+           } catch (\Exception $e) {
+               $xmlString = $e->getMessage();
+           }
+           $this->setData('xmlBody', $xmlString);
+       }
        $this->setView('XmlEditor/xml_editor.tpl');
+   }
+
+    /**
+     * @return XmlEditorInterface
+     */
+   private function getXmlEditorService() : XmlEditorInterface
+   {
+       return $this->getServiceLocator()->get(XmlEditorInterface::SERVICE_ID);
    }
 }

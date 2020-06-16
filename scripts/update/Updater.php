@@ -79,6 +79,7 @@ use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\TestSessionService;
+use oat\taoQtiTest\models\xmlEditor\XmlEditor;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
@@ -2099,7 +2100,20 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('38.6.0');
 
         }
-
+      
         $this->skip('38.6.0', '38.6.1');
+
+        if ($this->isversion('38.6.1')) {
+
+            $this->getServiceManager()->register(
+                XmlEditorInterface::SERVICE_ID,
+                new XmlEditor([
+                    XmlEditor::OPTION_XML_EDITOR_LOCK => true
+                ])
+            );
+
+            $this->setVersion('38.7.0');
+        }
+
     }
 }
