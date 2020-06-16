@@ -99,29 +99,32 @@ class QtiPackageExporterTest extends TestCase
         $fileSystemId = 'FILE_SYSTEM_ID';
         $filePath = 'FILE_PATH';
 
+        $expectedFileContent =  'EXPORTED_FILE_CONTENT';
         $expectedReport = common_report_Report::createSuccess('FAKE ERROR MESSAGE');
         $expectedReport->setData(['path' => 'FAKE_QTI_PACKAGE_PATH']);
         $this->exporterMock->method('export')
             ->willReturn($expectedReport);
 
         $this->fileHelperServiceMock->method('readFile')
-            ->willReturn('FILE_RESOURCE');
+            ->willReturn($expectedFileContent);
 
         $fileMock = $this->createMock(File::class);
+        $fileMock->expects(self::once())
+            ->method('put')
+            ->with($expectedFileContent);
         $directoryMock = $this->createMock(Directory::class);
-        $directoryMock->method('getFile')
+        $directoryMock->expects(self::once())
+            ->method('getFile')
+            ->with($filePath)
             ->willReturn($fileMock);
 
-        $this->fileSystemServiceMock->method('getDirectory')
+        $this->fileSystemServiceMock
+            ->expects(self::once())
+            ->method('getDirectory')
+            ->with($fileSystemId)
             ->willReturn($directoryMock);
 
-        $result = $this->subject->exportQtiTestPackageToFile($testUri, $fileSystemId, $filePath);
-
-        self::assertInstanceOf(
-            File::class,
-            $result,
-            'Method must return instance of File in case of successful export.'
-        );
+        $this->subject->exportQtiTestPackageToFile($testUri, $fileSystemId, $filePath);
     }
 
     /**

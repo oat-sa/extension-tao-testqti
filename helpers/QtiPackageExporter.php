@@ -60,7 +60,7 @@ class QtiPackageExporter extends InjectionAwareService
      * @throws common_Exception
      * @throws common_exception_Error
      */
-    public function exportDeliveryQtiPackage(string $testUri)
+    public function exportDeliveryQtiPackage(string $testUri): common_report_Report
     {
         $exportReport = $this->testExporter->export(
             [
@@ -75,7 +75,7 @@ class QtiPackageExporter extends InjectionAwareService
             throw new common_Exception('QTI Test package export failed.');
         }
 
-        return $exportReport->getData();
+        return $exportReport;
     }
 
     /**
@@ -87,7 +87,7 @@ class QtiPackageExporter extends InjectionAwareService
      */
     public function exportQtiTestPackageToFile(string $testUri, string $fileSystemId, string $filePath): File
     {
-        $result = $this->exportDeliveryQtiPackage($testUri);
+        $result = $this->exportDeliveryQtiPackage($testUri)->getData();
         if (!isset($result['path']) || !is_string($result['path'])) {
             throw new common_Exception('Export report does not contain path to exported QTI package: ' . json_encode($result));
         }
