@@ -63,6 +63,7 @@ class taoQtiTest_models_forms_XmlEditForm extends tao_helpers_form_FormContainer
     public function initElements()
     {
         $element = tao_helpers_form_FormFactory::getElement('xmlString', 'textarea');
+        $element->addAttribute('rows', '20');
         $element->setDescription('XML');
         $element->addValidator(tao_helpers_form_FormFactory::getValidator('NotEmpty'));
         $this->getForm()->addElement($element);
