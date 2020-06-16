@@ -21,7 +21,7 @@
 declare(strict_types=1);
 
 use oat\generis\model\OntologyAwareTrait;
-use oat\taoQtiTest\models\classes\forms\XmlEditForm;
+use oat\taoQtiTest\models\forms\XmlEditForm;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use tao_helpers_form_FormContainer as FormContainer;
 
