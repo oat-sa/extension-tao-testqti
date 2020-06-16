@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,6 +18,7 @@ declare(strict_types=1);
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
  */
 
+declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\xmlEditor;
 
@@ -29,19 +28,11 @@ use qtism\data\storage\xml\XmlStorageException;
 use taoQtiTest_models_classes_QtiTestConverterException;
 use taoQtiTest_models_classes_QtiTestService;
 use \core_kernel_classes_Resource;
-use taoQtiTest_models_classes_QtiTestServiceException;
 
-/**
- * Class XmlEditor
- * @package oat\taoQtiTest\models\xmlEditor
- */
 class XmlEditor extends ConfigurableService implements XmlEditorInterface
 {
     /**
-     * @param core_kernel_classes_Resource $test
-     * @return string
-     * @throws XmlStorageException
-     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     * {@inheritdoc}
      */
     public function getTestXml(core_kernel_classes_Resource $test) : string
     {
@@ -66,16 +57,13 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isLocked(): bool
     {
-        return $this->hasOption('is_locked') ? $this->getOption('is_locked') : true;
+        return $this->hasOption('is_locked') ? (bool)$this->getOption('is_locked') : true;
     }
 
-    /**
-     * @return taoQtiTest_models_classes_QtiTestService
-     */
     private function getTestService() : taoQtiTest_models_classes_QtiTestService
     {
         return $this->getServiceLocator()->get(taoQtiTest_models_classes_QtiTestService::class);
