@@ -2100,8 +2100,10 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('38.6.0');
 
         }
+      
+        $this->skip('38.6.0', '38.6.1');
 
-        if ($this->isversion('38.6.0')) {
+        if ($this->isversion('38.6.1')) {
 
             $this->getServiceManager()->register(
                 XmlEditorInterface::SERVICE_ID,
@@ -2112,5 +2114,6 @@ class Updater extends \common_ext_ExtensionUpdater
 
             $this->setVersion('38.7.0');
         }
+
     }
 }
