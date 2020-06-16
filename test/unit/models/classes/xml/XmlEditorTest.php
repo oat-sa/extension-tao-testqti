@@ -62,20 +62,75 @@ class XmlEditorTest extends TestCase
     {
         $service = new XmlEditor();
 
-        $xmlMock = '<?xml version="1.0" encoding="UTF-8"?>
-                    <assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="UnitTestQtiItem" title="UnitTestQtiItem" toolName="tao" toolVersion="3.4.0-sprint130" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd">
-                        <testPart identifier="testPart-1" navigationMode="linear" submissionMode="individual">
-                            <itemSessionControl maxAttempts="0" showFeedback="false" allowReview="true" showSolution="false" allowComment="false" allowSkipping="true" validateResponses="false"/>
-                            <assessmentSection identifier="assessmentSection-1" required="true" fixed="false" title="Section 1" visible="true" keepTogether="true"/>
-                        </testPart>
-                    </assessmentTest>';
+        $xmlMock = <<<'EOL'
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="UnitTestQtiItem" title="UnitTestQtiItem" toolName="tao" toolVersion="3.4.0-sprint130" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd">
+    <testPart identifier="testPart-1" navigationMode="linear" submissionMode="individual">
+        <itemSessionControl maxAttempts="0" showFeedback="false" allowReview="true" showSolution="false" allowComment="false" allowSkipping="true" validateResponses="false"/>
+        <assessmentSection identifier="assessmentSection-1" required="true" fixed="false" title="Section 1" visible="true" keepTogether="true"/>
+    </testPart>
+</assessmentTest>
+EOL;
 
-        $expectJsonTest = '{"qti-type":"assessmentTest","identifier":"UnitTestQtiItem","title":"UnitTestQtiItem","toolName":"tao","toolVersion":"3.4.0-sprint130","outcomeDeclarations":[],"testParts":[{"qti-type":"testPart","identifier":"testPart-1","navigationMode":0,"submissionMode":0,"preConditions":[],"branchRules":[],"itemSessionControl":{"qti-type":"itemSessionControl","maxAttempts":0,"showFeedback":false,"allowReview":true,"showSolution":false,"allowComment":false,"validateResponses":false,"allowSkipping":true},"assessmentSections":[{"qti-type":"assessmentSection","title":"Section 1","visible":true,"keepTogether":true,"rubricBlocks":[],"sectionParts":[],"identifier":"assessmentSection-1","required":true,"fixed":false,"preConditions":[],"branchRules":[]}],"testFeedbacks":[]}],"testFeedbacks":[]}';
+        $expectArrayTest = [
+            "qti-type" => "assessmentTest",
+            "identifier" => "UnitTestQtiItem",
+            "title" => "UnitTestQtiItem",
+            "toolName" => "tao",
+            "toolVersion" => "3.4.0-sprint130",
+            "outcomeDeclarations" => [
+            ],
+            "testParts" => [
+                [
+                    "qti-type" => "testPart",
+                    "identifier" => "testPart-1",
+                    "navigationMode" => 0,
+                    "submissionMode" => 0,
+                    "preConditions" => [
+                    ],
+                    "branchRules" => [
+                    ],
+                    "itemSessionControl" => [
+                        "qti-type" => "itemSessionControl",
+                        "maxAttempts" => 0,
+                        "showFeedback" => false,
+                        "allowReview" => true,
+                        "showSolution" => false,
+                        "allowComment" => false,
+                        "validateResponses" => false,
+                        "allowSkipping" => true
+                    ],
+                    "assessmentSections" => [
+                        [
+                            "qti-type" => "assessmentSection",
+                            "title" => "Section 1",
+                            "visible" => true,
+                            "keepTogether" => true,
+                            "rubricBlocks" => [
+                            ],
+                            "sectionParts" => [
+                            ],
+                            "identifier" => "assessmentSection-1",
+                            "required" => true,
+                            "fixed" => false,
+                            "preConditions" => [
+                            ],
+                            "branchRules" => [
+                            ]
+                        ]
+                    ],
+                    "testFeedbacks" => [
+                    ]
+                ]
+            ],
+            "testFeedbacks" => [
+            ]
+        ];
 
         $this->qtiTestServiceMock
             ->expects($this->once())
             ->method('saveJsonTest')
-            ->with($this->testResourceMock, $expectJsonTest);
+            ->with($this->testResourceMock, json_encode($expectArrayTest));
 
         $service->setServiceLocator($this->serviceLocatorMock);
         $service->saveStringTest($this->testResourceMock, $xmlMock);

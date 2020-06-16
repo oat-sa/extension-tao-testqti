@@ -21,6 +21,7 @@
 declare(strict_types=1);
 
 use oat\generis\model\OntologyAwareTrait;
+use oat\taoQtiTest\models\forms\XmlEditForm;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use tao_helpers_form_FormContainer as FormContainer;
 
@@ -43,7 +44,7 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
            try {
                $xmlString = $this->getXmlEditorService()->getTestXml($test);
 
-               $formContainer = new taoQtiTest_models_forms_XmlEditForm(
+               $formContainer = new XmlEditForm(
                    $test,
                    $xmlString,
                    [FormContainer::CSRF_PROTECTION_OPTION => true]
@@ -55,7 +56,7 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
                }
                $this->setData('form', $form->render());
 
-           } catch (\Exception $e) {
+           } catch (Exception $e) {
                $title = __('Something went wrong...');
                common_Logger::e($e->getMessage());
            }

@@ -20,7 +20,15 @@
 
 declare(strict_types=1);
 
-class taoQtiTest_models_forms_XmlEditForm extends tao_helpers_form_FormContainer
+namespace oat\taoQtiTest\models\forms;
+
+use core_kernel_classes_Resource;
+use tao_helpers_form_FormContainer;
+use tao_helpers_form_FormFactory;
+use tao_helpers_form_xhtml_Form;
+use tao_helpers_form_xhtml_TagWrapper;
+
+class XmlEditForm extends tao_helpers_form_FormContainer
 {
     public function __construct(core_kernel_classes_Resource $test, string $xmlString, array $options = [])
     {
@@ -36,7 +44,7 @@ class taoQtiTest_models_forms_XmlEditForm extends tao_helpers_form_FormContainer
     /**
      * {@inheritdoc}
      */
-    public function initForm() : void
+    protected function initForm() : void
     {
         $this->form = new tao_helpers_form_xhtml_Form('test_xml_editor_form');
 
@@ -57,7 +65,7 @@ class taoQtiTest_models_forms_XmlEditForm extends tao_helpers_form_FormContainer
     /**
      * {@inheritdoc}
      */
-    public function initElements() : void
+    protected function initElements() : void
     {
         $element = tao_helpers_form_FormFactory::getElement('xmlString', 'textarea');
         $element->addAttribute('rows', '20');
