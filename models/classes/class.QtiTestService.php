@@ -185,19 +185,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Save the json formated test into the test resource.
      *
      * @param core_kernel_classes_Resource $test
-     * @param string                       $json
+     * @param string $json
      *
+     * @param bool $verifyOnlyNewItems
      * @return bool true if saved
      *
-     * @throws taoQtiTest_models_classes_QtiTestServiceException
      * @throws taoQtiTest_models_classes_QtiTestConverterException
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function saveJsonTest(core_kernel_classes_Resource $test, $json): bool
+    public function saveJsonTest(core_kernel_classes_Resource $test, $json, bool $verifyOnlyNewItems = true): bool
     {
         $saved = false;
 
         if (! empty($json)) {
-            $this->verifyItemPermissions($json);
+            $this->verifyItemPermissions($json, $verifyOnlyNewItems);
 
             $doc = $this->getDoc($test);
 
@@ -249,7 +250,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return false;
     }
 
-      /**
+    /**
      * Save the QTI test : set the items sequence and some options.
      *
      * @param core_kernel_classes_Resource $test A Resource describing a QTI Assessment Test.
@@ -1220,9 +1221,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     /**
      * @param string $json
      *
-     * @throws ResourceAccessDeniedException
+     * @param bool $onlyNewItems
      */
-    private function verifyItemPermissions(string $json): void
+    private function verifyItemPermissions(string $json, bool $onlyNewItems): void
     {
         $array = json_decode($json, true);
 
@@ -1231,7 +1232,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         foreach ($array['testParts'] ?? [] as $testPart) {
             foreach ($testPart['assessmentSections'] ?? [] as $assessmentSection) {
                 foreach ($assessmentSection['sectionParts'] ?? [] as $item) {
-                    if (isset($item['href']) && $item['qti-type'] ?? '' === self::XML_ASSESSMENT_ITEM_REF) {
+                    if (isset($item['href']) && (!$onlyNewItems || isset($item['label'])) && $item['qti-type'] ?? '' === self::XML_ASSESSMENT_ITEM_REF) {
                         $ids[] = $item['href'];
                     }
                 }

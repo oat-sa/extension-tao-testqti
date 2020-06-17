@@ -130,7 +130,7 @@ EOL;
         $this->qtiTestServiceMock
             ->expects($this->once())
             ->method('saveJsonTest')
-            ->with($this->testResourceMock, json_encode($expectArrayTest));
+            ->with($this->testResourceMock, json_encode($expectArrayTest), false);
 
         $service->setServiceLocator($this->serviceLocatorMock);
         $service->saveStringTest($this->testResourceMock, $xmlMock);
