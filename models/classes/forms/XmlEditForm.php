@@ -53,7 +53,7 @@ class XmlEditForm extends tao_helpers_form_FormContainer
             'element' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div']),
             'error'   => new tao_helpers_form_xhtml_TagWrapper([
                 'tag' => 'div',
-                'cssClass' => ' form-error'
+                'cssClass' => 'form-error'
             ])
         ]);
 

@@ -24,15 +24,15 @@ namespace oat\taoQtiTest\models\validators;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use tao_helpers_form_Validator;
+use LibXMLError;
 
 class XmlSchemaValidator extends tao_helpers_form_Validator
 {
 
     /**
-     * @param string $value
-     * @return bool
+     * {@inheritdoc}
      */
-    public function evaluate($value)
+    public function evaluate($value) : bool
     {
         $doc = new XmlDocument();
         try {
@@ -40,7 +40,7 @@ class XmlSchemaValidator extends tao_helpers_form_Validator
         } catch (XmlStorageException $e) {
             $errors = $e->getErrors();
             $message = '';
-            /** @var \LibXMLError $error */
+            /** @var LibXMLError $error */
             foreach ($errors->getArrayCopy() as $error){
                 $message .= $error->message;
             }
@@ -48,17 +48,13 @@ class XmlSchemaValidator extends tao_helpers_form_Validator
             return false;
         }
         return true;
-
     }
 
     /**
-     * Default error message
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    protected function getDefaultMessage()
+    protected function getDefaultMessage() : string
     {
         return __('XML is not valid');
     }
-
 }
