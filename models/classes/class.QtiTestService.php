@@ -1231,7 +1231,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         foreach ($array['testParts'] ?? [] as $testPart) {
             foreach ($testPart['assessmentSections'] ?? [] as $assessmentSection) {
                 foreach ($assessmentSection['sectionParts'] ?? [] as $item) {
-                    if (isset($item['href'], $item['label']) && $item['qti-type'] ?? '' === self::XML_ASSESSMENT_ITEM_REF) {
+                    if (isset($item['href']) && $item['qti-type'] ?? '' === self::XML_ASSESSMENT_ITEM_REF) {
                         $ids[] = $item['href'];
                     }
                 }
