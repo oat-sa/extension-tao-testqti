@@ -41,7 +41,6 @@ use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 
-
 $extpath = __DIR__ . DIRECTORY_SEPARATOR;
 $taopath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
 
