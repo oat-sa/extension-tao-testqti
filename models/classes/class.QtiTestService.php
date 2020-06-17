@@ -197,7 +197,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $saved = false;
 
         if (! empty($json)) {
-            $this->verifyItemPermissions($json);
+            $this->verifyItemPermissions($test, $json);
 
             $doc = $this->getDoc($test);
 
@@ -1218,20 +1218,26 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
+     * @param core_kernel_classes_Resource $oldTest
      * @param string $json
      *
      * @throws ResourceAccessDeniedException
      */
-    private function verifyItemPermissions(string $json): void
+    private function verifyItemPermissions(core_kernel_classes_Resource $oldTest, string $json): void
     {
         $array = json_decode($json, true);
 
         $ids = [];
 
+        $oldItemIds = [];
+        foreach ($this->getTestItems($oldTest) as $item) {
+            $oldItemIds[] = $item->getUri();
+        }
+
         foreach ($array['testParts'] ?? [] as $testPart) {
             foreach ($testPart['assessmentSections'] ?? [] as $assessmentSection) {
                 foreach ($assessmentSection['sectionParts'] ?? [] as $item) {
-                    if (isset($item['href']) && $item['qti-type'] ?? '' === self::XML_ASSESSMENT_ITEM_REF) {
+                    if (isset($item['href']) && !in_array($item['href'], $oldItemIds) && $item['qti-type'] ?? '' === self::XML_ASSESSMENT_ITEM_REF) {
                         $ids[] = $item['href'];
                     }
                 }
