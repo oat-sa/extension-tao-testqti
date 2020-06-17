@@ -39,6 +39,8 @@ use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
+
 
 $extpath = __DIR__ . DIRECTORY_SEPARATOR;
 $taopath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
@@ -109,6 +111,8 @@ return [
         ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'Items']],
         ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
         ['grant', TaoRoles::REST_PUBLISHER, ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
+        ['deny', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']],
+        ['grant', XmlEditorInterface::XML_EDITOR_ROLE, ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']]
     ],
     'constants' => [
         # actions directory
