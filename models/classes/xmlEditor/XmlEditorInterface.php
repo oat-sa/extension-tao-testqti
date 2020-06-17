@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,11 +17,33 @@ declare(strict_types=1);
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
  */
-
+declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\xmlEditor;
 
+use core_kernel_classes_Resource;
+
 interface XmlEditorInterface
 {
+    public const SERVICE_ID = 'taoQtiTest/XmlEditor';
     public const XML_EDITOR_ROLE = 'http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor';
+    public const OPTION_XML_EDITOR_LOCK = 'is_locked';
+
+    /**
+     * @param core_kernel_classes_Resource $test
+     * @return string
+     */
+    public function getTestXml(core_kernel_classes_Resource $test) : string;
+
+    /**
+     * @param core_kernel_classes_Resource $test
+     * @param string $testString
+     * @return bool
+     */
+    public function saveStringTest(core_kernel_classes_Resource $test, string $testString) : bool;
+
+    /**
+     * @return bool
+     */
+    public function isLocked() : bool;
 }
