@@ -21,8 +21,10 @@
 declare(strict_types=1);
 
 use oat\generis\model\OntologyAwareTrait;
+use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\taoQtiTest\models\forms\XmlEditForm;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
+use qtism\data\storage\xml\XmlStorageException;
 use tao_helpers_form_FormContainer as FormContainer;
 
 class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
@@ -36,10 +38,9 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
             return;
        }
        $test = $this->getResource($this->getPostParameter('id'));
-       $title = __('XML Content');
 
        if ($this->getXmlEditorService()->isLocked()) {
-           $title = __('This functionality is blocked. Please contact with your administrator for more details.');
+           $this->setData('errorMessage', __('This functionality is blocked. Please contact with your administrator for more details.'));
        } else {
            try {
                $xmlString = $this->getXmlEditorService()->getTestXml($test);
@@ -54,14 +55,24 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
                    $this->getXmlEditorService()->saveStringTest($test, $form->getValues()['xmlString']);
                    $this->setData('message', __('Saved'));
                }
-               $this->setData('form', $form->render());
-
-           } catch (Exception $e) {
-               $title = __('Something went wrong...');
+           } catch (ResourceAccessDeniedException $e) {
+               $this->setData('errorMessage', $e->getMessage());
+               common_Logger::e($e->getMessage());
+           } catch (XmlStorageException $e) {
+               $errors = $e->getErrors();
+               $message = '';
+               /** @var LibXMLError $error */
+               foreach ($errors->getArrayCopy() as $error){
+                   $message .= $error->message;
+               }
+               $this->setData('errorMessage', $message);
+            }catch (Throwable $e) {
+               $this->setData('errorMessage', __('Something went wrong...'));
                common_Logger::e($e->getMessage());
            }
+           $this->setData('form', $form->render());
+           $this->setData('formTitle', __('XML Content'));
        }
-       $this->setData('formTitle', $title);
        $this->setView('XmlEditor/xml_editor.tpl');
    }
 

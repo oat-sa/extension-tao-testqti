@@ -43,7 +43,7 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     public function saveStringTest(core_kernel_classes_Resource $test, string $testString) : bool
     {
         $doc = new XmlDocument();
-        $doc->loadFromString($testString);
+        $doc->loadFromString($testString, true);
         $converter = new \taoQtiTest_models_classes_QtiTestConverter($doc);
 
         return $this->getTestService()->saveJsonTest($test, $converter->toJson());
