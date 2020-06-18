@@ -2116,9 +2116,9 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('38.7.0');
         }
 
-        $this->skip('38.7.0', '38.12.0');
+        $this->skip('38.7.0', '38.12.2');
 
-        if ($this->isVersion('38.12.0')) {
+        if ($this->isVersion('38.12.2')) {
             $this->runExtensionScript(RegisterQtiPackageExporter::class);
             $this->setVersion('38.13.0');
         }
