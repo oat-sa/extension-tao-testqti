@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\xmlEditor;
 
 use oat\oatbox\service\ConfigurableService;
+use qtism\data\storage\xml\XmlDocument;
 use taoQtiTest_models_classes_QtiTestService;
 use \core_kernel_classes_Resource;
 
@@ -34,6 +35,18 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     public function getTestXml(core_kernel_classes_Resource $test) : string
     {
         return $this->getTestService()->getDoc($test)->saveToString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function saveStringTest(core_kernel_classes_Resource $test, string $testString) : bool
+    {
+        $doc = new XmlDocument();
+        $doc->loadFromString($testString, true);
+        $converter = new \taoQtiTest_models_classes_QtiTestConverter($doc);
+
+        return $this->getTestService()->saveJsonTest($test, $converter->toJson());
     }
 
     /**
