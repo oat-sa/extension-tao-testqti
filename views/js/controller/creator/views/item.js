@@ -48,6 +48,8 @@ define([
         feedback.error(err.message || __('An error occured while retrieving items'));
     };
 
+    const ITEM_URI = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
+
     /**
      * The ItemView setup items related components
      * @exports taoQtiTest/controller/creator/views/item
@@ -58,11 +60,11 @@ define([
             type: __('items'),
             selectionMode: resourceSelectorFactory.selectionModes.multiple,
             selectAllPolicy: resourceSelectorFactory.selectAllPolicies.visible,
-            classUri: 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item',
+            classUri: ITEM_URI,
             classes: [
                 {
                     label: 'Item',
-                    uri: 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item',
+                    uri: ITEM_URI,
                     type: 'class'
                 }
             ]
