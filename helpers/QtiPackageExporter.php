@@ -56,7 +56,7 @@ class QtiPackageExporter extends InjectionAwareService
     /**
      * @param string $testUri
      *
-     * @return array
+     * @return common_report_Report
      * @throws common_Exception
      * @throws common_exception_Error
      */
