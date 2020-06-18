@@ -2122,5 +2122,7 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->runExtensionScript(RegisterQtiPackageExporter::class);
             $this->setVersion('38.13.0');
         }
+
+        $this->skip('38.13.0', '38.14.0');
     }
 }
