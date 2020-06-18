@@ -58,9 +58,10 @@
   },
   "minimum-stability": "dev",
   "require": {
-    "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
+    "ext-dom": "*",
+    "oat-sa/composer-npm-bridge": "^0.3.0",
     "oat-sa/lib-test-cat": "2.3.7",
-    "oat-sa/composer-npm-bridge": "^0.3.0"
+    "oat-sa/oatbox-extension-installer": "~1.1||dev-master"
   },
   "autoload": {
     "psr-4": {
@@ -71,4 +72,3 @@
     }
   }
 }
-
