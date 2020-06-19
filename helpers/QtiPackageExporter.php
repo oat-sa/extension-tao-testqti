@@ -20,40 +20,102 @@
 
 namespace oat\taoQtiTest\helpers;
 
-use League\Flysystem\Util;
-use oat\oatbox\service\ConfigurableService;
+use common_Exception;
+use common_exception_Error;
+use common_report_Report;
+use oat\oatbox\filesystem\File;
+use oat\oatbox\filesystem\FileSystemService;
+use oat\tao\helpers\FileHelperService;
+use oat\tao\model\service\InjectionAwareService;
 use taoQtiTest_models_classes_export_TestExport22 as TestExporter;
-use core_kernel_classes_Resource as RdfResource;
-use tao_helpers_File as FileHelper;
 
-class QtiPackageExporter extends ConfigurableService
+class QtiPackageExporter extends InjectionAwareService
 {
-    /**
-     * @param RdfResource $test
-     *
-     * @return array
-     * @throws \common_Exception
-     * @throws \common_exception_Error
-     */
-    public function exportDeliveryQtiPackage(RdfResource $test)
-    {
-        $exportReport = $this->getTestExporter()->export(
-            [
-            'filename' => Util::normalizePath('qti_package_'),
-            'instances' => $test->getUri(),
-            'uri' => $test->getUri()
-            ],
-            FileHelper::createTempDir()
-        );
+    public const SERVICE_ID = 'taoQtiTest/QtiPackageExporter';
+    public const QTI_PACKAGE_FILENAME = 'qti_test_export';
 
-        return $exportReport->getData();
+    /** @var TestExporter */
+    private $testExporter;
+
+    /** @var FileSystemService */
+    private $fileSystemService;
+
+    /** @var FileHelperService */
+    private $fileHelperService;
+
+    public function __construct(
+        TestExporter $testExporter,
+        FileSystemService $fileSystemService,
+        FileHelperService $fileHelperService
+    ) {
+        $this->testExporter = $testExporter;
+        $this->fileSystemService = $fileSystemService;
+        $this->fileHelperService = $fileHelperService;
     }
 
     /**
-     * @return TestExporter
+     * @param string $testUri
+     *
+     * @return common_report_Report
+     * @throws common_Exception
+     * @throws common_exception_Error
      */
-    protected function getTestExporter()
+    public function exportDeliveryQtiPackage(string $testUri): common_report_Report
     {
-        return new TestExporter();
+        $exportReport = $this->testExporter->export(
+            [
+                'filename' => self::QTI_PACKAGE_FILENAME,
+                'instances' => $testUri,
+                'uri' => $testUri
+            ],
+            $this->fileHelperService->createTempDir()
+        );
+
+        if ($exportReport->getType() === common_report_Report::TYPE_ERROR) {
+            throw new common_Exception('QTI Test package export failed.');
+        }
+
+        $reportData = $exportReport->getData();
+        if (!isset($reportData['path']) || !is_string($reportData['path'])) {
+            throw new common_Exception('Export report does not contain path to exported QTI package: ' . json_encode($reportData));
+        }
+
+        return $exportReport;
+    }
+
+    /**
+     * @param string $testUri
+     * @param string $fileSystemId
+     * @param string $filePath
+     * @return File
+     * @throws common_Exception
+     */
+    public function exportQtiTestPackageToFile(string $testUri, string $fileSystemId, string $filePath): File
+    {
+        $result = $this->exportDeliveryQtiPackage($testUri)->getData();
+
+        return $this->moveFileToSharedFileSystem($result['path'], $fileSystemId, $filePath);
+    }
+
+    /**
+     * @param string $sourceFilePath
+     * @param string $fileSystemId
+     * @param string $destinationFilePath
+     * @return File
+     * @throws common_Exception
+     */
+    private function moveFileToSharedFileSystem(string $sourceFilePath, string $fileSystemId, string $destinationFilePath): File
+    {
+        $source = $this->fileHelperService->readFile($sourceFilePath);
+
+        $file = $this->fileSystemService
+            ->getDirectory($fileSystemId)
+            ->getFile($destinationFilePath);
+        $file->put($source);
+
+        $this->fileHelperService->closeFile($source);
+        $this->fileHelperService->removeFile($sourceFilePath);
+
+        return $file;
     }
 }

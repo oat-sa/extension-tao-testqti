@@ -25,6 +25,7 @@ use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
+use oat\taoQtiTest\scripts\install\RegisterQtiPackageExporter;
 use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
 use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
@@ -54,7 +55,7 @@ return [
     'requires'    => [
         'taoQtiItem' => '>=24.0.0',
         'taoTests'   => '>=14.0.0',
-        'tao'        => '>=42.12.0',
+        'tao'        => '>=44.1.0',
         'generis'    => '>=12.20.0',
         'taoDelivery' => '>=14.10.0',
         'taoItems'   => '>=6.0.0',
@@ -90,7 +91,8 @@ return [
             SetLinearNextItemWarningConfig::class,
             RegisterFrontendPaths::class,
             RegisterTimerStrategyService::class,
-            RegisterTimerAdjustmentService::class
+            RegisterTimerAdjustmentService::class,
+            RegisterQtiPackageExporter::class
         ]
     ],
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
