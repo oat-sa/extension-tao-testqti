@@ -26,20 +26,21 @@ use oat\tao\model\TaoOntology;
 
 $testService = ServiceManager::getServiceManager()->get(taoQtiTest_models_classes_QtiTestService::class);
 $testClass = $testService->getRootClass();
+$samplesDirectory = new DirectoryIterator(__DIR__);
 
-foreach (new DirectoryIterator(__DIR__) as $fileInfo) {
-    if ($fileInfo->isReadable() && $fileInfo->isFile() && 'zip' === $fileInfo->getExtension()) {
-        try {
+try {
+    foreach ($samplesDirectory as $file) {
+        if ($file->isReadable() && $file->isFile() && 'zip' === $file->getExtension()) {
             $report = $testService->importMultipleTests(
                 new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST),
-                $fileInfo->getRealPath()
+                $file->getRealPath()
             );
-        } catch (Throwable $e) {
-            common_Logger::e(
-                'An error occurred while importing QTI Test Example. The system reported the following error: ' . $e->getMessage(
-                )
-            );
-            throw $e;
         }
     }
+} catch (Throwable $e) {
+    common_Logger::e(
+        'An error occurred while importing QTI Test Example. The system reported the following error: ' . $e->getMessage(
+        )
+    );
+    throw $e;
 }
