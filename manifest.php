@@ -38,19 +38,19 @@ $extpath = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 $taopath = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
 
 return [
-    'name'        => 'taoQtiTest',
-    'label'       => 'QTI test model',
+    'name' => 'taoQtiTest',
+    'label' => 'QTI test model',
     'description' => 'TAO QTI test implementation',
-    'license'     => 'GPL-2.0',
-    'version'     => '35.9.0',
-    'author'      => 'Open Assessment Technologies',
-    'requires'    => [
+    'license' => 'GPL-2.0',
+    'version' => '35.9.0.1',
+    'author' => 'Open Assessment Technologies',
+    'requires' => [
         'taoQtiItem' => '>=20.0.2',
-        'taoTests'   => '>=13.2.0',
-        'tao'        => '>=38.5.0',
-        'generis'    => '>=12.5.0',
+        'taoTests' => '>=13.2.0',
+        'tao' => '>=38.5.0',
+        'generis' => '>=12.5.0',
         'taoDelivery' => '>=13.3.0',
-        'taoItems'   => '>=6.0.0',
+        'taoItems' => '>=6.0.0',
     ],
     'models' => [
         'http://www.tao.lu/Ontologies/TAOTest.rdf'
