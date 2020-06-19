@@ -22,7 +22,6 @@ declare(strict_types=1);
  */
 
 use oat\oatbox\service\ServiceManager;
-use oat\tao\model\TaoOntology;
 
 $testService = ServiceManager::getServiceManager()->get(taoQtiTest_models_classes_QtiTestService::class);
 $testClass = $testService->getRootClass();
@@ -31,10 +30,7 @@ $samplesDirectory = new DirectoryIterator(__DIR__);
 try {
     foreach ($samplesDirectory as $file) {
         if ($file->isReadable() && $file->isFile() && 'zip' === $file->getExtension()) {
-            $report = $testService->importMultipleTests(
-                new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST),
-                $file->getRealPath()
-            );
+            $report = $testService->importMultipleTests($testClass, $file->getRealPath());
         }
     }
 } catch (Throwable $e) {
