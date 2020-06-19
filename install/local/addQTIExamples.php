@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,18 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
 
-use oat\tao\model\TaoOntology;
+use oat\oatbox\service\ServiceManager;
 
-$testClass = taoQtiTest_models_classes_QtiTestService::singleton()->getRootClass();
-$file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'qtiv2p1Examples.zip';
+$testService = ServiceManager::getServiceManager()->get(taoQtiTest_models_classes_QtiTestService::class);
+$testClass = $testService->getRootClass();
+$samplesDirectory = new DirectoryIterator(__DIR__);
 
 try {
-    $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests(new core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI), $file);
-} catch (Exception $e) {
-    common_Logger::e('An error occured while importing QTI Test Example. The system reported the following error: ' . $e->getMessage());
+    foreach ($samplesDirectory as $file) {
+        if ($file->isReadable() && $file->isFile() && 'zip' === $file->getExtension()) {
+            $report = $testService->importMultipleTests($testClass, $file->getRealPath());
+        }
+    }
+} catch (Throwable $e) {
+    common_Logger::e(
+        'An error occurred while importing QTI Test Example. The system reported the following error: ' . $e->getMessage(
+        )
+    );
     throw $e;
 }
