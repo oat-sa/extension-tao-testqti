@@ -95,6 +95,10 @@ function(
             var $selectionSelect = $('[name=section-select]', $view);
             var $selectionWithRep = $('[name=section-with-replacement]', $view);
 
+            // sectionModel.selection will be filled by binded values from template section-props.tpl
+            // if sectionModel.selection from server response it has 'qti-type'
+            var isSelectionFromServer = !!(sectionModel.selection && sectionModel.selection['qti-type']);
+
             var switchSelection = function switchSelection(){
                 if($selectionSwitcher.prop('checked') === true){
                     $selectionSelect.incrementer('enable');
@@ -113,7 +117,7 @@ function(
                 }
             });
 
-            $selectionSwitcher.prop('checked', !!sectionModel.selection).trigger('change');
+            $selectionSwitcher.prop('checked', isSelectionFromServer).trigger('change');
 
             //listen for databinder change to update the test part title
             $title =  $('[data-bind=title]', $section);

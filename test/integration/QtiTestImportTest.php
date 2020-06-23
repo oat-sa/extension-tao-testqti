@@ -41,14 +41,14 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
 {
 
     private $dataDir = '';
-    
+
     private $tmpDir = '';
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::initTest();
         $this->dataDir = dirname(__FILE__) . '/data/';
-        
+
         $this->tmpDir = sys_get_temp_dir() . '/' ;
     }
 
@@ -139,9 +139,9 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(1, $value);
     }
 
-    
 
-    
+
+
     /**
      * test import
      *
@@ -160,7 +160,7 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
         $testImport->setServiceLocator($serviceLocatorMock);
 
         $class = new core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI);
-        
+
         $report = $testImport->import($class, $form);
         $this->assertInstanceOf(common_report_Report::class, $report);
 

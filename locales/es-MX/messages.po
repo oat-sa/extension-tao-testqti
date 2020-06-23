@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:51\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:38\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-MX\n"
@@ -12,6 +12,18 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Un Elemento QTI involucrado en la Prueba '%s' QTI no pudo ser compilado."
@@ -144,6 +156,9 @@ msgstr "Ha ocurrido un error desconocido mientras compilaba la prueba '%s' QTI."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Un error desconocido ocurrió durante la compilación de la prueba '%s' QTI."
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
 
 msgid "and"
 msgstr ""
@@ -382,10 +397,10 @@ msgstr "Activar la pantalla de revisión/navegador de ítems."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Permite saltar a otros elementos de esta sección. Requiere la opción Pantalla de revisión."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finalizar prueba"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finalizar prueba"
 
 msgid "Enter a blueprint"
@@ -407,9 +422,6 @@ msgstr "Error encontrado en la prueba IMS QTI :\n"
 
 msgid "Expand the review panel"
 msgstr "Expandir el panel de revisión"
-
-msgid "Export"
-msgstr "Exportar"
 
 msgid "Export failed for the test \"%s"
 msgstr "La exportación falló para la prueba \"%s"
@@ -455,6 +467,9 @@ msgstr "Marcar el ítem actual para revisión posterior"
 
 msgid "Flagged"
 msgstr "Marcado"
+
+msgid "Flagged for review"
+msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Forzar que el ítem se considere informativo y no se tenga en cuenta en los contadores de ítems con/sin respuesta o marcados."
@@ -591,11 +606,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Control de Sesión de Elemento"
 
-msgid "Items"
-msgstr "Elementos"
-
 msgid "items"
 msgstr "ítems"
+
+msgid "Items"
+msgstr "Elementos"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
@@ -609,6 +624,12 @@ msgstr "Ítems marcados para revisión posterior"
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr "Los ítems con identificadores assessmentItemRef \"%s\" no se registran en el punto final CAT relacionado."
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "Mantener junto"
 
@@ -617,6 +638,12 @@ msgstr "Envio tarde permitido"
 
 msgid "Leave a comment"
 msgstr "Dejar un comentario"
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
+msgstr ""
 
 msgid "Light yellow on royal blue"
 msgstr "Amarillo claro sobre azul real"
@@ -644,6 +671,9 @@ msgstr "Aumentar más"
 
 msgid "Magnifying Glass"
 msgstr "Lente de aumento"
+
+msgid "Main navigation"
+msgstr ""
 
 msgid "Manage Rubric Blocks"
 msgstr "Administrar Bloques de Rúbrica"
@@ -741,6 +771,9 @@ msgstr "red"
 msgid "New Rubric Block"
 msgstr "Nuevo Bloque de Rúbrica"
 
+msgid "New section"
+msgstr ""
+
 msgid "New test part"
 msgstr "Nueva parte de prueba"
 
@@ -780,8 +813,17 @@ msgstr "Ninguno"
 msgid "Not all test could be exported"
 msgstr "No se pudo exportar toda la prueba"
 
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
+
 msgid "Not shuffled, the position remains fixed."
 msgstr "No reorganizado, la posición permanece fija."
+
+msgid "Offline"
+msgstr ""
 
 msgid "OK"
 msgstr "Aceptar"
@@ -798,6 +840,9 @@ msgstr "Una vez que cierre esta  sección, no podrá volver a ella ni cambiar s
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Uno o más Elementos IMS QTI dependientes no podían ser importados."
 
+msgid "Online"
+msgstr ""
+
 msgid "Only display the items marked for review"
 msgstr "Mostrar solo los ítems marcados para revisión"
 
@@ -806,6 +851,9 @@ msgstr "Mostrar solo los ítems sin respuesta"
 
 msgid "Open Calculator"
 msgstr "Abrir calculadora"
+
+msgid "Open Keyboard Shortcuts"
+msgstr ""
 
 msgid "Option A"
 msgstr ""
@@ -882,6 +930,9 @@ msgstr "Paquete de prueba QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Paquete con contenido de prueba QTI/APIP"
 
+msgid "Question"
+msgstr ""
+
 msgid "Reference"
 msgstr "Referencia"
 
@@ -896,6 +947,9 @@ msgstr "Eliminar Bloque de Rúbrica"
 
 msgid "Remove Section"
 msgstr "Eliminar Sección"
+
+msgid "Remove Test Part"
+msgstr ""
 
 msgid "Required"
 msgstr "Requerido"
@@ -1101,11 +1155,20 @@ msgstr "Los metadatos de la prueba se exportaron satisfactoriamente."
 msgid "Test Navigation"
 msgstr "Navegación por la prueba"
 
+msgid "Test Part Properties"
+msgstr ""
+
 msgid "Test Saved"
 msgstr "Prueba Guardada"
 
 msgid "Test status"
 msgstr "Estado de la prueba"
+
+msgid "Test status and review structure"
+msgstr ""
+
+msgid "Test Status and Structure"
+msgstr ""
 
 msgid "Test-Taker Tools"
 msgstr "Herramientas de examinado"
@@ -1285,6 +1348,12 @@ msgstr ""
 msgid "Toggle start from here mode"
 msgstr ""
 
+msgid "Tool box and flagging for review"
+msgstr ""
+
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr "Puntaje total"
 
@@ -1311,6 +1380,9 @@ msgstr "Error desconocido."
 
 msgid "Unlink to use separated durations"
 msgstr "Anular enlace para utilizar duraciones independientes"
+
+msgid "Unseen"
+msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Subir un Archivo de Paquete de Prueba QTI 2.1"
@@ -1431,6 +1503,12 @@ msgstr "Usted está encontrando una pérdida de conectividad prolongada. "
 
 msgid "You have %s item(s) marked for review."
 msgstr "Tiene %s ítem(s) marcado(s) para revisión."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr "Tienes %s preguntas sin respuesta"

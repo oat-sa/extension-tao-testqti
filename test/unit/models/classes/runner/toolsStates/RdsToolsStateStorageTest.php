@@ -46,7 +46,7 @@ class RdsToolsStateStorageTest extends ToolsStateStorageTestCase
      * @throws \common_Exception
      * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
      */
-    public function setUp()
+    public function setUp(): void
     {
         $databaseMock = $this->getSqlMock('tools_states');
         $persistence = $databaseMock->getPersistenceById('tools_states');

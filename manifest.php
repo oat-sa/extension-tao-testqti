@@ -19,56 +19,64 @@
  *
  */
 
-use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
+use oat\tao\model\user\TaoRoles;
+use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
+use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
+use oat\taoQtiTest\scripts\install\RegisterQtiPackageExporter;
 use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
 use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
 use oat\taoQtiTest\scripts\install\RegisterTestImporters;
+use oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders;
+use oat\taoQtiTest\scripts\install\RegisterTimerAdjustmentService;
+use oat\taoQtiTest\scripts\install\RegisterTimerStrategyService;
+use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
-use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
-use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
-use oat\taoQtiTest\scripts\install\RegisterTimerStrategyService;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 
-$extpath = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-$taopath = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
+$extpath = __DIR__ . DIRECTORY_SEPARATOR;
+$taopath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
 
 return [
     'name'        => 'taoQtiTest',
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '37.0.0',
+    'version'     => '39.0.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => [
-        'taoQtiItem' => '>=24.0.0',
-        'taoTests'   => '>=13.5.0',
-        'tao'        => '>=42.0.0',
-        'generis'    => '>=12.5.0',
-        'taoDelivery' => '>=13.3.0',
-        'taoItems'   => '>=6.0.0',
+        'taoQtiItem' => '>=26.0.0',
+        'taoTests'   => '>=14.3.0',
+        'tao'        => '>=45.0.0',
+        'generis'    => '>=12.20.0',
+        'taoDelivery' => '>=14.10.0',
+        'taoItems'   => '>=10.9.0',
     ],
     'models' => [
         'http://www.tao.lu/Ontologies/TAOTest.rdf'
     ],
     'install' => [
         'rdf' => [
-            dirname(__FILE__) . '/models/ontology/qtitest.rdf',
-            dirname(__FILE__) . '/models/ontology/taoQtiTestItemRunner.rdf',
-            dirname(__FILE__) . '/models/ontology/qtiCat.rdf',
+            __DIR__ . '/models/ontology/qtitest.rdf',
+            __DIR__ . '/models/ontology/taoQtiTestItemRunner.rdf',
+            __DIR__ . '/models/ontology/qtiCat.rdf',
         ],
         'php'   => [
-            dirname(__FILE__) . '/scripts/install/addQtiTestFolder.php',
-            dirname(__FILE__) . '/scripts/install/addQtiTestAcceptableLatency.php',
-            dirname(__FILE__) . '/scripts/install/addExtraTestRunnerButtons.php',
-            \oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins::class,
-            \oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter::class,
-            \oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem::class,
+            __DIR__ . '/scripts/install/addQtiTestFolder.php',
+            __DIR__ . '/scripts/install/addQtiTestAcceptableLatency.php',
+            __DIR__ . '/scripts/install/addExtraTestRunnerButtons.php',
+            RegisterTestRunnerProviders::class,
+            RegisterTestRunnerPlugins::class,
+            RegisterTestMetadataExporter::class,
+            CreateTestSessionFilesystem::class,
             RegisterQtiFlysystemManager::class,
             RegisterTestImporters::class,
             SetupEventListeners::class,
@@ -82,13 +90,15 @@ return [
             SetUpQueueTasks::class,
             SetLinearNextItemWarningConfig::class,
             RegisterFrontendPaths::class,
-            RegisterTimerStrategyService::class
+            RegisterTimerStrategyService::class,
+            RegisterTimerAdjustmentService::class,
+            RegisterQtiPackageExporter::class
         ]
     ],
     'update' => 'oat\\taoQtiTest\\scripts\\update\\Updater',
     'local' => [
         'php'   => [
-            dirname(__FILE__) . '/install/local/addQTIExamples.php'
+            __DIR__ . '/install/local/addQTIExamples.php'
         ]
     ],
     'managementRole' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole',
@@ -101,28 +111,30 @@ return [
         ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'Creator']],
         ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'Items']],
         ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
-        ['grant', \oat\tao\model\user\TaoRoles::REST_PUBLISHER, ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
+        ['grant', TaoRoles::REST_PUBLISHER, ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
+        ['deny', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']],
+        ['grant', XmlEditorInterface::XML_EDITOR_ROLE, ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']]
     ],
     'constants' => [
         # actions directory
-        "DIR_ACTIONS"           => $extpath . "actions" . DIRECTORY_SEPARATOR,
+        'DIR_ACTIONS'         => $extpath . 'actions' . DIRECTORY_SEPARATOR,
 
         # views directory
-        "DIR_VIEWS"             => $extpath . "views" . DIRECTORY_SEPARATOR,
+        'DIR_VIEWS'           => $extpath . 'views' . DIRECTORY_SEPARATOR,
 
         # default module name
-        'DEFAULT_MODULE_NAME'   => 'Main',
+        'DEFAULT_MODULE_NAME' => 'Main',
 
         #default action name
-        'DEFAULT_ACTION_NAME'   => 'index',
+        'DEFAULT_ACTION_NAME' => 'index',
 
         #BASE PATH: the root path in the file system (usually the document root)
-        'BASE_PATH'             => $extpath,
+        'BASE_PATH'           => $extpath,
 
         #BASE URL (usually the domain root)
         'BASE_URL'              => ROOT_URL . 'taoQtiTest/',
     ],
     'extra' => [
-        'structures' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'actions' . DIRECTORY_SEPARATOR . 'structures.xml',
+        'structures' => __DIR__ . DIRECTORY_SEPARATOR . 'actions' . DIRECTORY_SEPARATOR . 'structures.xml',
     ]
 ];

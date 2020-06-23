@@ -43,10 +43,10 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
      */
     protected $testService = null;
 
-    public function setUp()
+    public function setUp(): void
     {
         common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
-        
+
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();
     }
 
@@ -69,7 +69,7 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
     {
         $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), 'UnitTestQtiItem');
         $this->assertInstanceOf(\core_kernel_classes_Resource::class, $qtiTest);
-        
+
         $this->assertTrue($qtiTest->isInstanceOf(new \core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI)));
         return $qtiTest;
     }
@@ -85,7 +85,7 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
     {
         $this->assertTrue($qtiTest->exists());
     }
-    
+
     /**
      * verify that the test can be cloned
      * @depends testCreateInstance
@@ -98,10 +98,10 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
         $clone = $this->testService->cloneInstance($qtiTest, $this->testService->getRootclass());
         $this->assertInstanceOf(\core_kernel_classes_Resource::class, $clone);
         $this->assertTrue($clone->exists());
-        
+
         return $clone;
     }
-    
+
     /**
      * Test clone content
      * @depends testCreateInstance
@@ -120,7 +120,7 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
         $this->assertNotEquals($origPath, $clonePath);
         $this->assertEquals($origFile->read(), $cloneFile->read());
     }
-        
+
     /**
      * Delete the qtiTest clone
      * @depends testCloneInstance
@@ -160,14 +160,14 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
         $testService = taoTests_models_classes_TestsService::singleton();
         foreach ($report as $rep) {
             $result = $rep->getData();
-           
+
             $this->assertInstanceOf(\core_kernel_classes_Class::class, $result->itemClass);
             $this->assertInstanceOf(\core_kernel_classes_Resource::class, $result->rdfsResource);
             foreach ($result->items as $items) {
                 $this->assertInstanceOf(\core_kernel_classes_Resource::class, $items);
                 $type = current($items->getTypes());
                 $this->assertInstanceOf(\core_kernel_classes_Resource::class, $type);
-                
+
                 $this->assertEquals($result->itemClass->getUri(), $type->getUri());
                 $expectedLabel = ['Unattended Luggage','Associate Things'];
                 $this->assertTrue(in_array($items->getLabel(), $expectedLabel));
@@ -175,7 +175,7 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
             $testService->deleteTest($result->rdfsResource);
         }
     }
-    
+
     /**
      * Verify that test attribute value in xml file will be properly encoded
      * (<b>&amp;</b>, <b>&lt;</b> and <b>&quot;</b> symbols must be encoded)
@@ -185,16 +185,16 @@ class QtiTestServiceTest extends GenerisPhpUnitTestRunner
     public function testCreateContent()
     {
         $attrValue = '"A & B < C"';
-        
+
         $qtiTest = $this->testService->createInstance($this->testService->getRootclass(), $attrValue);
         $xmlFile = $this->testService->getQtiTestFile($qtiTest);
         $this->assertTrue($xmlFile->exists());
-        
+
         $doc = new \DOMDocument();
-        
+
         $this->assertTrue($doc->loadXML($xmlFile->read()));
         $this->assertEquals($attrValue, $doc->documentElement->getAttribute('title'));
-        
+
         $this->testService->deleteTest($qtiTest);
         $this->assertFalse($qtiTest->exists());
     }

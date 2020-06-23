@@ -135,6 +135,24 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => true,
                 'tags' => []
+            ], [
+                'id' => 'jumplinks',
+                'name' => 'Jump links',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/jumplinks/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Provide a jump links to fastest keyboard navigation',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
+            ], [
+                'id' => 'mainLandmark',
+                'name' => 'Main landmark',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/mainLandmark/header',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Landmark header for the test runner main',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
             ]
         ],
         'controls' => [

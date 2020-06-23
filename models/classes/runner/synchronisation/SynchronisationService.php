@@ -18,23 +18,23 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  */
 
+declare(strict_types=1);
+
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
+use common_Exception;
+use common_exception_InconsistentData;
+use common_Logger;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\synchronisation\synchronisationService\ResponseGenerator;
 
 class SynchronisationService extends ConfigurableService
 {
 
-    const SERVICE_ID = 'taoQtiTest/synchronisationService';
-    const ACTIONS_OPTION = 'actions';
-
-    /**
-     * Typical amount of time added on TimePoints to avoid timestamp collisions.
-     * This value will be used to adjust intervals between moves in the synced time line.
-     */
-    const TIMEPOINT_INTERVAL = .001;
+    public const SERVICE_ID = 'taoQtiTest/synchronisationService';
+    public const ACTIONS_OPTION = 'actions';
 
     /**
      * Wrap the process to appropriate action and aggregate results
@@ -42,79 +42,37 @@ class SynchronisationService extends ConfigurableService
      * @param $data
      * @param $serviceContext QtiRunnerServiceContext
      * @return array
-     * @throws
+     * @throws common_exception_InconsistentData
      */
-    public function process($data, $serviceContext)
+    public function process($data, QtiRunnerServiceContext $serviceContext): array
     {
-        if (empty($data)) {
-            throw new \common_exception_InconsistentData('No action to check. Processing action requires data.');
-        }
+        $this->validateSynchronisationData($data);
 
-        // first, extract the actions and build usable instances
-        // also compute the total duration to synchronise
-        $actions = [];
-        $duration = 0;
-        foreach ($data as $entry) {
-            $action = $this->resolve($entry);
-            $actions[] = $action;
+        /** @var ResponseGenerator $responseGenerator */
+        $responseGenerator = $this->getServiceLocator()->get(ResponseGenerator::class);
 
-            if ($action->hasRequestParameter('itemDuration')) {
-                $duration += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
-            }
-        }
-        
-        // determine the start timestamp of the actions:
-        // - check if the total duration of actions to sync is comprised within
-        //   the elapsed time since the last TimePoint.
-        // - otherwise compute the start timestamp from now minus the duration
-        //   (caution! this could introduce inconsistency in the TimeLine as the ranges could be interlaced)
-        $now = microtime(true);
-        $last = $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
-        $elapsed = $now - $last;
-        if ($duration > $elapsed) {
-            \common_Logger::t('Ignoring the last timestamp to take into account the actual duration to sync. Could introduce TimeLine inconsistency!');
-            $last = $now - $duration;
-        }
+        // extract the actions and build usable instances
+        $actions = $responseGenerator->prepareActions($data, $this->getAvailableActions());
 
-        // ensure the actions are in chronological order
-        usort($actions, function ($a, $b) {
-            return $a->getTimestamp() - $b->getTimestamp();
-        });
+        $timeNow = microtime(true);
+        $lastActionTimestamp = $responseGenerator->getLastActionTimestamp($actions, $serviceContext, $timeNow);
 
         $response = [];
-
-        /** @var TestRunnerAction $action */
         foreach ($actions as $action) {
-            try {
-                $serviceContext->setSyncingMode($action->getRequestParameter('offline'));
-                if ($action->hasRequestParameter('itemDuration') && $serviceContext->isSyncingMode()) {
-                    $last += $action->getRequestParameter('itemDuration') + self::TIMEPOINT_INTERVAL;
-                    $action->setTime($last);
-                } else {
-                    $action->setTime($now);
-                }
-
-                $action->setServiceContext($serviceContext);
-                if ($serviceContext instanceof QtiRunnerServiceContext) {
-                }
-                $responseAction = $action->process();
-            } catch (\common_Exception $e) {
-                $responseAction = ['error' => $e->getMessage()];
-                $responseAction['success'] = false;
+            if ($action instanceof TestRunnerAction) {
+                $response[] = $responseGenerator->getActionResponse(
+                    $action,
+                    $timeNow,
+                    $lastActionTimestamp,
+                    $serviceContext
+                );
+            } else {
+                $response[] = $action; // if error happened
             }
-
-            $responseAction['name'] = $action->getName();
-            $responseAction['timestamp'] = $action->getTimeStamp();
-            $responseAction['requestParameters'] = $action->getRequestParameters();
-
-            $response[] = $responseAction;
-
-            if ($responseAction['success'] === false) {
-                break;
-            }
+            // no need to break on the first error as all actions expected to be with a response by the fe part
         }
 
-        $this->getRunnerService()->persist($serviceContext);
+        $this->persistContext($serviceContext);
 
         return $response;
     }
@@ -124,7 +82,7 @@ class SynchronisationService extends ConfigurableService
      *
      * @return array
      */
-    public function getAvailableActions()
+    public function getAvailableActions(): array
     {
         return is_array($this->getOption(self::ACTIONS_OPTION))
             ? $this->getOption(self::ACTIONS_OPTION)
@@ -136,50 +94,34 @@ class SynchronisationService extends ConfigurableService
      *
      * @param array $actions
      */
-    public function setAvailableActions(array $actions = [])
+    public function setAvailableActions(array $actions = []): void
     {
         $this->setOption(self::ACTIONS_OPTION, $actions);
     }
 
-
     /**
-     * Resolve a runner action to synchronize
-     *
      * @param $data
-     * @return TestRunnerAction
-     * @throws \ResolverException
-     * @throws \common_exception_InconsistentData
+     * @throws common_exception_InconsistentData
      */
-    protected function resolve($data)
+    protected function validateSynchronisationData($data): void
     {
-        if (!isset($data['action']) || !isset($data['timestamp']) || !isset($data['parameters']) || !is_array($data['parameters'])) {
-            throw new \common_exception_InconsistentData(
-                'Action parameters have to contain "action", "timestamp" and "parameters" fields.'
-            );
+        if (empty($data)) {
+            throw new common_exception_InconsistentData('No action to check. Processing action requires data.');
         }
-
-        $availableActions = $this->getAvailableActions();
-        $actionName = $data['action'];
-
-        $actionClass = null;
-
-        // Search by key (e.q. key)
-        if (isset($availableActions[$actionName])) {
-            $actionClass = $availableActions[$actionName];
-        }
-
-        if (is_null($actionClass) || !is_a($actionClass, TestRunnerAction::class, true)) {
-            throw new \ResolverException('Action name "' . $actionName . '" could not be resolved.');
-        }
-
-        return $this->getServiceManager()->propagate(new $actionClass($actionName, $data['timestamp'], $data['parameters']));
     }
 
     /**
-     * @return QtiRunnerService
+     * @param QtiRunnerServiceContext $serviceContext
      */
-    protected function getRunnerService()
+    protected function persistContext(QtiRunnerServiceContext $serviceContext): void
     {
-        return $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
+        try {
+            /** @var QtiRunnerService $runnerService */
+            $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
+            $runnerService->persist($serviceContext);
+        } catch (common_Exception $e) {
+            // log the error message but return the data
+            common_Logger::e($e->getMessage());
+        }
     }
 }

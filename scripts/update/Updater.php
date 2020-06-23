@@ -20,75 +20,83 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\libCat\custom\EchoAdaptEngine;
+use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\service\ServiceNotFoundException;
-use oat\tao\model\ClientLibConfigRegistry;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\tao\model\asset\AssetService;
+use oat\tao\model\ClientLibConfigRegistry;
+use oat\tao\model\ClientLibRegistry;
+use oat\tao\model\import\ImportersService;
 use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
+use oat\tao\scripts\update\OntologyUpdater;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\compilation\CompilationService;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\creator\CreatorItems;
+use oat\taoQtiTest\models\export\metadata\TestExporter;
+use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
+use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
+use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoQtiTest\models\PhpCodeCompilationDataService;
+use oat\taoQtiTest\models\QtiTestListenerService;
 use oat\taoQtiTest\models\QtiTestUtils;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
+use oat\taoQtiTest\models\runner\config\DataAccess\Repository\NoopOverriddenOptionsRepository;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
-use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
 use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
 use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
-use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
-use oat\taoQtiTest\models\ExtendedStateService;
-use oat\taoQtiTest\models\QtiTestListenerService;
-use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
-use oat\taoQtiTest\models\export\metadata\TestExporter;
-use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
-use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\TestCategoryPresetRegistry;
-use oat\taoQtiTest\models\TestModelService;
-use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestCategoryRulesGenerator;
+use oat\taoQtiTest\models\TestCategoryRulesService;
+use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
-use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
-use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
+use oat\taoQtiTest\models\xmlEditor\XmlEditor;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
+use oat\taoQtiTest\scripts\install\RegisterQtiPackageExporter;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
-use oat\taoQtiTest\models\PhpCodeCompilationDataService;
-use oat\tao\scripts\update\OntologyUpdater;
-use oat\oatbox\filesystem\FileSystemService;
-use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
-use oat\tao\model\import\ImportersService;
-use oat\taoQtiTest\models\import\QtiTestImporter;
-use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
-use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
-use oat\taoQtiTest\models\cat\CatService;
-use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
-use oat\taoQtiTest\models\compilation\CompilationService;
-use oat\tao\model\ClientLibRegistry;
-use oat\tao\model\asset\AssetService;
 use oat\taoTests\models\runner\time\TimerStrategyInterface;
 
 /**
  *
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @deprecated use migrations instead. See https://github.com/oat-sa/generis/wiki/Tao-Update-Process
  */
 class Updater extends \common_ext_ExtensionUpdater
 {
@@ -1959,9 +1967,9 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('35.6.0');
         }
 
-        $this->skip('35.6.0', '35.10.2.1');
+        $this->skip('35.6.0', '35.10.2.2');
 
-        if ($this->isBetween('35.10.2', '35.10.2.1')) {
+        if ($this->isBetween('35.10.2', '35.10.2.2')) {
             $this->getServiceManager()->register(QtiTestUtils::SERVICE_ID, new QtiTestUtils([]));
             $this->setVersion('35.11.0');
         }
@@ -1985,6 +1993,143 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('36.0.0');
         }
 
-        $this->skip('36.0.0', '37.0.0');
+        $this->skip('36.0.0', '37.0.1');
+
+        if ($this->isVersion('37.0.1')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['dialog']['alert']['focus'] = 'navigable-modal-body';
+            $config['plugins']['dialog']['confirm']['focus'] = 'navigable-modal-body';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('37.0.2');
+        }
+
+        $this->skip('37.0.2', '37.0.4');
+
+        if ($this->isVersion('37.0.4')) {
+            $this->getServiceManager()->register(
+                OverriddenOptionsRepositoryInterface::SERVICE_ID,
+                new NoopOverriddenOptionsRepository()
+            );
+
+            $this->setVersion('37.1.0');
+        }
+
+        $this->skip('37.1.0', '37.2.1');
+
+        if ($this->isVersion('37.2.1')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+              'id' => 'jumplinks',
+              'name' => 'Jump links',
+              'module' => 'taoQtiTest/runner/plugins/content/accessibility/jumplinks/plugin',
+              'bundle' => 'taoQtiTest/loader/testPlugins.min',
+              'description' => 'Provide a jump links to fastest keyboard navigation',
+              'category' => 'content',
+              'active' => false,
+              'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.3.0');
+        }
+
+        $this->skip('37.3.0', '37.4.2');
+
+        if ($this->isversion('37.4.2')) {
+            $this->getServiceManager()->register(
+                TimerAdjustmentServiceInterface::SERVICE_ID,
+                new TimerAdjustmentService()
+            );
+            $this->setVersion('37.5.0');
+        }
+
+        $this->skip('37.5.0', '37.9.3');
+
+        if ($this->isVersion('37.9.3')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'mainLandmark',
+                'name' => 'Main landmark',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/mainLandmark/header',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Landmark header for the test runner main',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.10.2');
+        }
+
+        $this->skip('37.10.2', '38.1.1');
+
+        if ($this->isVersion('38.1.1')) {
+            // Register accessibility shortcuts
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['next'] = [
+                'trigger' => 'J',
+                'triggerAccessibility' => 'Alt+Shift+N'
+            ];
+
+            $config['shortcuts']['previous'] = [
+                'trigger' => 'K',
+                'triggerAccessibility' => 'Alt+Shift+P'
+            ];
+
+            $config['shortcuts']['jumplinks'] = [
+                'goToQuestion' => 'Alt+Shift+Q',
+                'goToTop' => 'Alt+Shift+T'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('38.2.0');
+        }
+
+        $this->skip('38.2.0', '38.5.0');
+
+        if ($this->isVersion('38.5.0')) {
+            OntologyUpdater::syncModels();
+
+            AclProxy::applyRule(new AccessRule('deny', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']));
+            AclProxy::applyRule(new AccessRule('grant', XmlEditorInterface::XML_EDITOR_ROLE, ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']));
+
+            $this->setVersion('38.6.0');
+
+        }
+
+        $this->skip('38.6.0', '38.6.1');
+
+        if ($this->isversion('38.6.1')) {
+
+            $this->getServiceManager()->register(
+                XmlEditorInterface::SERVICE_ID,
+                new XmlEditor([
+                    XmlEditor::OPTION_XML_EDITOR_LOCK => true
+                ])
+            );
+
+            $this->setVersion('38.7.0');
+        }
+
+        $this->skip('38.7.0', '38.12.2');
+
+        if ($this->isVersion('38.12.2')) {
+            $this->runExtensionScript(RegisterQtiPackageExporter::class);
+            $this->setVersion('38.13.0');
+        }
+
+      $this->skip('38.13.0', '38.14.0');
+
+
+        //Updater files are deprecated. Please use migrations.
+        //See: https://github.com/oat-sa/generis/wiki/Tao-Update-Process
+
+        $this->setVersion($this->getExtension()->getManifest()->getVersion());
     }
 }

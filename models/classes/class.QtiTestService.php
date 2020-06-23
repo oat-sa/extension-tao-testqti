@@ -19,11 +19,14 @@
  *
  */
 
+use oat\tao\model\resources\ResourceAccessDeniedException;
+use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoTests\models\event\TestUpdatedEvent;
+use qtism\common\utils\Format;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
@@ -157,21 +160,23 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Get the QTI Test document formated in JSON.
      *
      * @param core_kernel_classes_Resource $test
+     *
      * @return string the json
+     *
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function getJsonTest(core_kernel_classes_Resource $test)
+    public function getJsonTest(core_kernel_classes_Resource $test): string
     {
         $doc = $this->getDoc($test);
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+
         return $converter->toJson();
     }
 
     /**
-     *
-     * @see TestService::setDefaultModel()
+     * @inheritDoc
      */
-    protected function setDefaultModel($test)
+    protected function setDefaultModel($test): void
     {
         $this->setTestModel($test, $this->getResource(self::INSTANCE_TEST_MODEL_QTI));
     }
@@ -180,15 +185,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Save the json formated test into the test resource.
      *
      * @param core_kernel_classes_Resource $test
-     * @param string $json
-     * @return boolean true if saved
+     * @param string                       $json
+     *
+     * @return bool true if saved
+     *
      * @throws taoQtiTest_models_classes_QtiTestServiceException
+     * @throws taoQtiTest_models_classes_QtiTestConverterException
      */
-    public function saveJsonTest(core_kernel_classes_Resource $test, $json)
+    public function saveJsonTest(core_kernel_classes_Resource $test, $json): bool
     {
         $saved = false;
 
         if (! empty($json)) {
+            $this->verifyItemPermissions($test, $json);
+
             $doc = $this->getDoc($test);
 
             $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
@@ -406,12 +416,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
             foreach ($report as $r) {
                 $data = $r->getData();
-                $overwrittenItemsIds = array_keys($data->overwrittenItems);
 
                 // -- Rollback all items.
                 // 1. Simply delete items that were not involved in overwriting.
                 foreach ($data->newItems as $item) {
-                    if (!$item instanceof MetadataGuardianResource && !in_array($item->getUri(), $overwrittenItemsIds)) {
+                    if (
+                        !$item instanceof MetadataGuardianResource
+                        && !array_key_exists($item->getUri(), $data->overwrittenItems)
+                    ) {
                         common_Logger::d("Rollbacking new item '" . $item->getUri() . "'...");
                         @$itemService->deleteResource($item);
                     }
@@ -458,7 +470,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = [])
     {
-
+        /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
         $testClass = $targetClass;
         $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
@@ -546,6 +558,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 $service->importCatSectionIdsToRdfTest($testResource, $testDefinition->getDocumentComponent(), $expectedTestFile);
 
                 if (count($dependencies['items']) > 0) {
+                    // Stores shared files across multiple items to avoid duplicates.
+                    $sharedFiles = [];
+
                     foreach ($dependencies['items'] as $assessmentItemRefId => $qtiDependency) {
                         if ($qtiDependency !== false) {
                             if (Resource::isAssessmentItem($qtiDependency->getType())) {
@@ -577,12 +592,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $folder,
                                             $qtiDependency,
                                             $targetClass,
+                                            $sharedFiles,
                                             $dependencies['dependencies'],
                                             $metadataValues,
-                                            [],
-                                            [],
-                                            [],
-                                            [],
                                             $createdClasses,
                                             $this->useMetadataGuardians,
                                             $this->useMetadataValidators,
@@ -874,33 +886,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
-     * Convenience method that extracts entries of a $path array that correspond
-     * to a given $fileName.
-     *
-     * @param array $paths An array of strings representing absolute paths within a given directory.
-     * @return array $extractedPath The paths that meet the $fileName criterion.
-     */
-    private function filterTestContentDirectory(array $paths, $fileName)
-    {
-        $returnValue = [];
-
-        foreach ($paths as $path) {
-            $pathinfo = pathinfo($path);
-            $pattern = $pathinfo['filename'];
-
-            if (!empty($pathinfo['extension'])) {
-                $pattern .= $pathinfo['extension'];
-            }
-
-            if ($fileName === $pattern) {
-                $returnValue[] = $path;
-            }
-        }
-
-        return $returnValue;
-    }
-
-    /**
      * Get the items from a QTI test document.
      *
      * @param \qtism\data\storage\xml\XmlDocument $doc The QTI XML document to be inspected to retrieve the items.
@@ -966,35 +951,44 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Get root qti test directory or crate if not exists
      *
      * @param core_kernel_classes_Resource $test
-     * @param boolean $createTestFile Whether or not create an empty QTI XML test file. Default is (boolean) true.
+     * @param boolean                      $createTestFile Whether or not create an empty QTI XML test file. Default is
+     *                                                     (boolean) true.
+     *
      * @return Directory
+     *
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
+     * @throws common_exception_InconsistentData
+     * @throws core_kernel_persistence_Exception
      */
     public function getQtiTestDir(core_kernel_classes_Resource $test, $createTestFile = true)
     {
         $testModel = $this->getServiceLocator()->get(TestService::class)->getTestModel($test);
-        if ($testModel->getUri() != self::INSTANCE_TEST_MODEL_QTI) {
+
+        if ($testModel->getUri() !== self::INSTANCE_TEST_MODEL_QTI) {
             throw new taoQtiTest_models_classes_QtiTestServiceException(
                 'The selected test is not a QTI test',
                 taoQtiTest_models_classes_QtiTestServiceException::TEST_READ_ERROR
             );
         }
+
         $dir = $test->getOnePropertyValue($this->getProperty(TestService::PROPERTY_TEST_CONTENT));
 
-        if (!is_null($dir)) {
+        if (null !== $dir) {
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
             return $this->getFileReferenceSerializer()->unserialize($dir);
-        } else {
-            return $this->createContent($test, $createTestFile);
         }
+
+        return $this->createContent($test, $createTestFile);
     }
 
     protected function searchInTestDirectory(Directory $dir)
     {
+        $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE | Directory::ITERATOR_FILE);
+        $files = [];
 
-            $iterator = $dir->getFlyIterator(Directory::ITERATOR_RECURSIVE | Directory::ITERATOR_FILE);
-            $files = [];
-            /**
-             * @var File $file
-             */
+        /**
+         * @var File $file
+         */
         foreach ($iterator as $file) {
             if ($file->getBasename() === self::TAOQTITEST_FILENAME) {
                 $files[] = $file;
@@ -1005,10 +999,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         if (empty($files)) {
             throw new Exception('No QTI-XML test file found.');
         }
-            $file = current($files);
-            $fileName = str_replace($dir->getPrefix() . '/', '', $file->getPrefix());
-            $this->setQtiIndexFile($dir, $fileName);
-            return $file;
+
+        $file = current($files);
+        $fileName = str_replace($dir->getPrefix() . '/', '', $file->getPrefix());
+        $this->setQtiIndexFile($dir, $fileName);
+
+        return $file;
     }
 
     /**
@@ -1087,7 +1083,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $doc->documentElement->setAttribute('title', $test->getLabel());
 
             //generate a valid qti identifier
-            $identifier = tao_helpers_Display::textCleaner($test->getLabel(), '*', 32);
+            $identifier = Format::sanitizeIdentifier($test->getLabel());
             $identifier = str_replace('_', '-', $identifier);
             if (preg_match('/^[0-9]/', $identifier)) {
                 $identifier = '_' . $identifier;
@@ -1182,7 +1178,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     public function getQtiTestAcceptableLatency()
     {
-        $ext = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)
+        $ext = $this->getServiceLocator()->get(common_ext_ExtensionsManager::SERVICE_ID)
             ->getExtensionById('taoQtiTest');
         $latency = $ext->getConfig(self::CONFIG_QTITEST_ACCEPTABLE_LATENCY);
         if (empty($latency)) {
@@ -1214,5 +1210,40 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $this->metadataImporter = $this->getServiceLocator()->get(MetadataService::SERVICE_ID)->getImporter();
         }
         return $this->metadataImporter;
+    }
+
+    private function getSecureResourceService(): SecureResourceServiceInterface
+    {
+        return $this->getServiceLocator()->get(SecureResourceServiceInterface::SERVICE_ID);
+    }
+
+    /**
+     * @param core_kernel_classes_Resource $oldTest
+     * @param string $json
+     *
+     * @throws ResourceAccessDeniedException
+     */
+    private function verifyItemPermissions(core_kernel_classes_Resource $oldTest, string $json): void
+    {
+        $array = json_decode($json, true);
+
+        $ids = [];
+
+        $oldItemIds = [];
+        foreach ($this->getTestItems($oldTest) as $item) {
+            $oldItemIds[] = $item->getUri();
+        }
+
+        foreach ($array['testParts'] ?? [] as $testPart) {
+            foreach ($testPart['assessmentSections'] ?? [] as $assessmentSection) {
+                foreach ($assessmentSection['sectionParts'] ?? [] as $item) {
+                    if (isset($item['href']) && !in_array($item['href'], $oldItemIds) && $item['qti-type'] ?? '' === self::XML_ASSESSMENT_ITEM_REF) {
+                        $ids[] = $item['href'];
+                    }
+                }
+            }
+        }
+
+        $this->getSecureResourceService()->validatePermissions($ids, ['READ']);
     }
 }

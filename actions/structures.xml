@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE structures SYSTEM "../../tao/doc/structures.dtd">
+<structures>
+    <structure id="tests" name="Tests" level="1" group="main">
+        <sections>
+            <section id="manage_tests" name="Manage tests" url="/taoTests/Tests/index">
+                <actions allowClassActions="true">
+                    <action id="test-xml-editor" name="XML Editor"  url="/taoQtiTest/XmlEditor/edit" group="content" context="instance">
+                        <icon id="icon-edit"/>
+                    </action>
+                </actions>
+            </section>
+        </sections>
+    </structure>
+</structures>

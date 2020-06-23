@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:53\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -12,6 +12,18 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTIテスト '%s' 内のQTIアイテムがコンパイルできませんでした。"
@@ -144,6 +156,9 @@ msgstr "QTIテスト'%s'のコンパイル中に未知のエラーが発生し�
 
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "QTIテスト'%s'のコンパイル中に未知のエラーが発生しました。"
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
 
 msgid "and"
 msgstr ""
@@ -382,11 +397,11 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End test"
-msgstr ""
-
 msgid "End Test"
 msgstr "テスト終了"
+
+msgid "End test"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -407,9 +422,6 @@ msgstr "IMSのQTIテスト%sにエラーが見つかりました。\n"
 
 msgid "Expand the review panel"
 msgstr "レビューパネルを開く"
-
-msgid "Export"
-msgstr "エクスポート"
 
 msgid "Export failed for the test \"%s"
 msgstr ""
@@ -455,6 +467,9 @@ msgstr ""
 
 msgid "Flagged"
 msgstr "フラグ付け"
+
+msgid "Flagged for review"
+msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
@@ -591,11 +606,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "Items"
-msgstr "アイテム"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "アイテムはひとつまたは複数のカテゴリーに割り当てることができます。"
@@ -609,6 +624,12 @@ msgstr "後でレビューするためにマークされたアイテム"
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr ""
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "まとめる"
 
@@ -616,6 +637,12 @@ msgid "Late submission allowed"
 msgstr "後での送信を許可"
 
 msgid "Leave a comment"
+msgstr ""
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
 msgstr ""
 
 msgid "Light yellow on royal blue"
@@ -643,6 +670,9 @@ msgid "Magnify more"
 msgstr ""
 
 msgid "Magnifying Glass"
+msgstr ""
+
+msgid "Main navigation"
 msgstr ""
 
 msgid "Manage Rubric Blocks"
@@ -741,6 +771,9 @@ msgstr ""
 msgid "New Rubric Block"
 msgstr "新たなルーブリックブロック"
 
+msgid "New section"
+msgstr ""
+
 msgid "New test part"
 msgstr "新しいテストパート"
 
@@ -780,8 +813,17 @@ msgstr ""
 msgid "Not all test could be exported"
 msgstr ""
 
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
+
 msgid "Not shuffled, the position remains fixed."
 msgstr "シャッフルされません。位置は固定のままです。"
+
+msgid "Offline"
+msgstr ""
 
 msgid "OK"
 msgstr ""
@@ -798,6 +840,9 @@ msgstr ""
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "少なくとも１個のIMS QTI依存アイテムがインポートできませんでした。"
 
+msgid "Online"
+msgstr ""
+
 msgid "Only display the items marked for review"
 msgstr "レビュー対象アイテムのみを表示"
 
@@ -805,6 +850,9 @@ msgid "Only display the unanswered items"
 msgstr "回答していないアイテムのみを表示"
 
 msgid "Open Calculator"
+msgstr ""
+
+msgid "Open Keyboard Shortcuts"
 msgstr ""
 
 msgid "Option A"
@@ -882,6 +930,9 @@ msgstr ""
 msgid "QTI/APIP Test Content Package"
 msgstr ""
 
+msgid "Question"
+msgstr ""
+
 msgid "Reference"
 msgstr "参照"
 
@@ -896,6 +947,9 @@ msgstr "ルーブリックブロックを削除します"
 
 msgid "Remove Section"
 msgstr "セクションを削除します"
+
+msgid "Remove Test Part"
+msgstr ""
 
 msgid "Required"
 msgstr "必須"
@@ -1101,11 +1155,20 @@ msgstr ""
 msgid "Test Navigation"
 msgstr ""
 
+msgid "Test Part Properties"
+msgstr ""
+
 msgid "Test Saved"
 msgstr "テストを保存"
 
 msgid "Test status"
 msgstr "テスト状況"
+
+msgid "Test status and review structure"
+msgstr ""
+
+msgid "Test Status and Structure"
+msgstr ""
 
 msgid "Test-Taker Tools"
 msgstr ""
@@ -1284,6 +1347,12 @@ msgstr ""
 msgid "Toggle start from here mode"
 msgstr ""
 
+msgid "Tool box and flagging for review"
+msgstr ""
+
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr ""
 
@@ -1309,6 +1378,9 @@ msgid "Unknown error."
 msgstr "不明なエラー"
 
 msgid "Unlink to use separated durations"
+msgstr ""
+
+msgid "Unseen"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
@@ -1430,6 +1502,12 @@ msgstr ""
 
 msgid "You have %s item(s) marked for review."
 msgstr "%sのアイテムは確認のためにマークされています"
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr ""

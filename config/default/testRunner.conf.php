@@ -362,7 +362,7 @@ return [
                  * Which button to focus by default
                  * @type string
                  */
-                'focus' => 'ok'
+                'focus' => 'navigable-modal-body'
             ],
             /**
              * Config for confirm dialogs
@@ -373,7 +373,7 @@ return [
                  * Which button to focus by default
                  * @type string
                  */
-                'focus' => 'ok'
+                'focus' => 'navigable-modal-body'
             ]
         ],
 
@@ -584,10 +584,12 @@ return [
             'next' => 'Tab'
         ],
         'next' => [
-            'trigger' => 'J'
+            'trigger' => 'J',
+            'triggerAccessibility' => 'Alt+Shift+N'
         ],
         'previous' => [
-            'trigger' => 'K'
+            'trigger' => 'K',
+            'triggerAccessibility' => 'Alt+Shift+P'
         ],
         'dialog' => [],
         'magnifier' => [
@@ -613,6 +615,10 @@ return [
             'togglePlayback' => 'P',
             'spaceTogglePlayback' => 'Space'
         ],
+        'jumplinks' => [
+            'goToQuestion' => 'Alt+Shift+Q',
+            'goToTop' => 'Alt+Shift+T'
+        ]
     ],
 
     /**

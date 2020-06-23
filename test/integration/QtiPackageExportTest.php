@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\test\integration;
 use Exception;
 use oat\generis\model\data\ModelManager;
 use oat\generis\model\data\Ontology;
+use oat\oatbox\service\ServiceManager;
 use oat\tao\test\integration\RestTestRunner;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
 use Slim\Http\Headers;
@@ -43,11 +44,12 @@ class QtiPackageExportTest extends RestTestRunner
     /** @var ServiceLocatorInterface */
     private $serviceLocatorMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
+
         $this->serviceLocatorMock = $this->getServiceLocatorMock([
-            QtiPackageExporter::class => new QtiPackageExporter(),
+            QtiPackageExporter::SERVICE_ID => ServiceManager::getServiceManager()->get(QtiPackageExporter::SERVICE_ID),
             Ontology::SERVICE_ID => ModelManager::getModel(),
         ]);
     }
@@ -108,7 +110,7 @@ class QtiPackageExportTest extends RestTestRunner
     public function testExportQtiPackage()
     {
         //create test resource based on qti package zip
-        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/multiple_items_with_ms.zip';
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
         //create temporary subclass
         $class = TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter', true));
         //Importing test form zip file into temporary subclass
@@ -157,7 +159,7 @@ class QtiPackageExportTest extends RestTestRunner
 
         //Assert zip content
         $this->assertFileExists($manifestFile);
-        $this->assertCount(15, $itemsInExtractedPath);
+        $this->assertCount(3, $itemsInExtractedPath);
 
         //Clean up
         $class->delete(true);
