@@ -79,7 +79,10 @@ use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
 use oat\taoQtiTest\models\TestSessionService;
+use oat\taoQtiTest\models\xmlEditor\XmlEditor;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
+use oat\taoQtiTest\scripts\install\RegisterQtiPackageExporter;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
@@ -93,6 +96,7 @@ use oat\taoTests\models\runner\time\TimerStrategyInterface;
 /**
  *
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @deprecated use migrations instead. See https://github.com/oat-sa/generis/wiki/Tao-Update-Process
  */
 class Updater extends \common_ext_ExtensionUpdater
 {
@@ -2092,8 +2096,46 @@ class Updater extends \common_ext_ExtensionUpdater
 
         if ($this->isVersion('38.5.0')) {
 
-            $this->getLogger()->debug('taoQtiTest update!');
-            $this->setVersion('38.5.1');
+            OntologyUpdater::syncModels();
+
+            AclProxy::applyRule(new AccessRule('deny', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']));
+            AclProxy::applyRule(new AccessRule('grant', XmlEditorInterface::XML_EDITOR_ROLE, ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']));
+
+            $this->setVersion('38.6.0');
+
         }
+
+        $this->skip('38.6.0', '38.6.1');
+
+        if ($this->isversion('38.6.1')) {
+
+            $this->getServiceManager()->register(
+                XmlEditorInterface::SERVICE_ID,
+                new XmlEditor([
+                    XmlEditor::OPTION_XML_EDITOR_LOCK => true
+                ])
+            );
+
+            $this->setVersion('38.7.0');
+        }
+
+        $this->skip('38.7.0', '38.12.2');
+
+        if ($this->isVersion('38.12.2')) {
+            $this->runExtensionScript(RegisterQtiPackageExporter::class);
+            $this->setVersion('38.13.0');
+        }
+
+        $this->skip('38.13.0', '38.16.0');
+
+        if ($this->isVersion('38.16.0')) {
+            $this->getLogger()->debug('taoQtiTest update!');
+            $this->setVersion('38.16.1');
+        }
+
+        //Updater files are deprecated. Please use migrations.
+        //See: https://github.com/oat-sa/generis/wiki/Tao-Update-Process
+
+        $this->setVersion($this->getExtension()->getManifest()->getVersion());
     }
 }
