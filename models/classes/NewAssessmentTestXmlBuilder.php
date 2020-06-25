@@ -36,7 +36,7 @@ use qtism\data\storage\xml\XmlStorageException;
 use qtism\data\TestPart;
 use qtism\data\TestPartCollection;
 
-class NewAssessmentTestXmlBuiler extends ConfigurableService
+class NewAssessmentTestXmlBuilder extends ConfigurableService
 {
     /**
      * @param string $testIdentifier

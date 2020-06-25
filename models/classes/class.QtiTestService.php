@@ -36,7 +36,7 @@ use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
-use oat\taoQtiTest\models\NewAssessmentTestXmlBuiler;
+use oat\taoQtiTest\models\NewAssessmentTestXmlBuilder;
 use oat\taoTests\models\event\TestUpdatedEvent;
 use qtism\common\utils\Format;
 use qtism\data\AssessmentItemRef;
@@ -1081,8 +1081,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $file = $dir->getFile(self::TAOQTITEST_FILENAME);
 
         if ($createTestFile === true) {
-            /** @var NewAssessmentTestXmlBuiler $xmlBuilder */
-            $xmlBuilder = $this->getServiceLocator()->get(NewAssessmentTestXmlBuiler::class);
+            /** @var NewAssessmentTestXmlBuilder $xmlBuilder */
+            $xmlBuilder = $this->getServiceLocator()->get(NewAssessmentTestXmlBuilder::class);
 
             $testLabel = $test->getLabel();
             $identifier = $this->createTestIdentifier($testLabel);
