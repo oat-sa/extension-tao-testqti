@@ -36,7 +36,7 @@ use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
-use oat\taoQtiTest\models\NewAssessmentTestXmlBuilder;
+use oat\taoQtiTest\models\test\NewAssessmentTestXmlBuilder;
 use oat\taoTests\models\event\TestUpdatedEvent;
 use qtism\common\utils\Format;
 use qtism\data\AssessmentItemRef;

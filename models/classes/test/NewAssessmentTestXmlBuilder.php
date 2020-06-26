@@ -20,12 +20,13 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models;
+namespace oat\taoQtiTest\models\test;
 
 use common_exception_Error;
 use common_ext_ExtensionException;
 use DOMDocument;
 use oat\oatbox\service\ConfigurableService;
+use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\service\ApplicationService;
 use qtism\data\AssessmentSection;
 use qtism\data\AssessmentSectionCollection;
@@ -40,6 +41,8 @@ use qtism\data\TestPartCollection;
 
 class NewAssessmentTestXmlBuilder extends ConfigurableService
 {
+    public const SERVICE_ID = 'taoQtiTest/NewAssessmentTestXmlBuilder';
+
     public const DEFAULT_QTI_VERSION = '2.1';
     public const DEFAULT_ASSESSMENT_SECTION_ID = 'assessmentSection-1';
     public const DEFAULT_ASSESSMENT_SECTION_TITLE = 'assessmentSection-1';
@@ -57,6 +60,8 @@ class NewAssessmentTestXmlBuilder extends ConfigurableService
     public const OPTION_TEST_PART_NAVIGATION_MODE = 'navigation_mode';
     public const OPTION_TEST_PART_SUBMISSION_MODE = 'submission_mode';
 
+    public const OPTION_POSTPROCESSING = 'postprocessing';
+
     /**
      * @param string $testIdentifier
      * @param string $testTitle
@@ -67,6 +72,25 @@ class NewAssessmentTestXmlBuilder extends ConfigurableService
      * @throws common_ext_ExtensionException
      */
     public function build(string $testIdentifier, string $testTitle): string
+    {
+        $test = $this->createTest($testIdentifier, $testTitle);
+
+        $this->extendTest($test);
+
+        $xmlDoc = new XmlDocument($this->getQtiVersion(), $test);
+
+        return $xmlDoc->saveToString();
+    }
+
+    /**
+     * @param string $testIdentifier
+     * @param string $testTitle
+     *
+     * @return AssessmentTest
+     * @throws common_exception_Error
+     * @throws common_ext_ExtensionException
+     */
+    protected function createTest(string $testIdentifier, string $testTitle): AssessmentTest
     {
         $itemSectionControl = new ItemSessionControl();
         $itemSectionControl->setMaxAttempts(0);
@@ -92,9 +116,26 @@ class NewAssessmentTestXmlBuilder extends ConfigurableService
         $test->setToolName('tao');
         $test->setToolVersion($this->getApplicationService()->getPlatformVersion());
 
-        $xmlDoc = new XmlDocument($this->getQtiVersion(), $test);
+        return $test;
+    }
 
-        return $xmlDoc->saveToString();
+    private function extendTest(AssessmentTest $test): void
+    {
+        $postprocessing = $this->getOption(self::OPTION_POSTPROCESSING);
+
+        if (!$postprocessing || !is_array($postprocessing)) {
+            return;
+        }
+
+        foreach ($postprocessing as $p) {
+            try {
+                $service = $this->getServiceLocator()->get($p);
+            } catch (ServiceNotFoundException $e) {
+                $service = new $p();
+            }
+
+            $service->extend($test);
+        }
     }
 
     private function getAssessmentSectionId(): string
