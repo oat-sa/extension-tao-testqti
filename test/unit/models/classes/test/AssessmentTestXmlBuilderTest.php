@@ -26,10 +26,13 @@ namespace oat\taoQtiTest\models\test;
 use common_exception_Error;
 use common_ext_ExtensionException;
 use oat\generis\test\TestCase;
+use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\service\ApplicationService;
+use qtism\data\AssessmentTest;
 use qtism\data\NavigationMode;
 use qtism\data\storage\xml\XmlStorageException;
 use qtism\data\SubmissionMode;
+use RuntimeException;
 use SimpleXMLElement;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -43,9 +46,21 @@ class AssessmentTestXmlBuilderTest extends TestCase
         $appService = $this->createMock(ApplicationService::class);
         $appService->method('getPlatformVersion')->willReturn('test_version');
 
+        $extension = new class extends ConfigurableService implements TestExtensionInterface {
+            public function extend(AssessmentTest $test): void
+            {
+                $test->setTitle('changedTitle');
+            }
+        };
+
+        $badExtension = new class extends ConfigurableService {
+        };
+
         $this->serviceLocator = $this->getServiceLocatorMock(
             [
-                ApplicationService::SERVICE_ID => $appService
+                ApplicationService::SERVICE_ID => $appService,
+                'extension' => $extension,
+                'badExtension' => $badExtension,
             ]
         );
     }
@@ -95,6 +110,44 @@ class AssessmentTestXmlBuilderTest extends TestCase
             $expected[AssessmentTestXmlBuilder::OPTION_TEST_MAX_ATTEMPTS],
             (int)$itemSessionControl['maxAttempts']
         );
+    }
+
+    /**
+     * @throws XmlStorageException
+     * @throws common_exception_Error
+     * @throws common_ext_ExtensionException
+     */
+    public function testExtension(): void
+    {
+        $builder = $this->createBuilder(
+            [
+                AssessmentTestXmlBuilder::OPTION_POSTPROCESSING => ['extension']
+            ]
+        );
+
+        $xml = $builder->build('identifier', 'title');
+
+        $simpleXml = new SimpleXMLElement($xml);
+        $this->assertSame('identifier', (string)$simpleXml->attributes()['identifier']);
+        $this->assertSame('changedTitle', (string)$simpleXml->attributes()['title']);
+    }
+
+    /**
+     * @throws XmlStorageException
+     * @throws common_exception_Error
+     * @throws common_ext_ExtensionException
+     */
+    public function testBadExtension(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $builder = $this->createBuilder(
+            [
+                AssessmentTestXmlBuilder::OPTION_POSTPROCESSING => ['badExtension']
+            ]
+        );
+
+        $builder->build('identifier', 'title');
     }
 
     public function provideData(): array
