@@ -24,7 +24,7 @@ namespace oat\taoQtiTest\models\test;
 
 use qtism\data\AssessmentTest;
 
-interface TestExtenderInterface
+interface TestExtensionInterface
 {
     public function extend(AssessmentTest $test): void;
 }

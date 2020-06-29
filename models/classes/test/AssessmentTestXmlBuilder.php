@@ -38,11 +38,10 @@ use qtism\data\storage\xml\XmlStorageException;
 use qtism\data\SubmissionMode;
 use qtism\data\TestPart;
 use qtism\data\TestPartCollection;
+use RuntimeException;
 
-class NewAssessmentTestXmlBuilder extends ConfigurableService
+class AssessmentTestXmlBuilder extends ConfigurableService implements AssessmentTestXmlBuilderInterface
 {
-    public const SERVICE_ID = 'taoQtiTest/NewAssessmentTestXmlBuilder';
-
     public const DEFAULT_QTI_VERSION = '2.1';
     public const DEFAULT_ASSESSMENT_SECTION_ID = 'assessmentSection-1';
     public const DEFAULT_ASSESSMENT_SECTION_TITLE = 'assessmentSection-1';
@@ -121,20 +120,24 @@ class NewAssessmentTestXmlBuilder extends ConfigurableService
 
     private function extendTest(AssessmentTest $test): void
     {
-        $postprocessing = $this->getOption(self::OPTION_POSTPROCESSING);
+        $testExtensionsClassNames = $this->getOption(self::OPTION_POSTPROCESSING);
 
-        if (!$postprocessing || !is_array($postprocessing)) {
+        if (!$testExtensionsClassNames || !is_array($testExtensionsClassNames)) {
             return;
         }
 
-        foreach ($postprocessing as $p) {
+        foreach ($testExtensionsClassNames as $testExtensionsClassName) {
             try {
-                $service = $this->getServiceLocator()->get($p);
+                $testExtension = $this->getServiceLocator()->get($testExtensionsClassName);
             } catch (ServiceNotFoundException $e) {
-                $service = new $p();
+                $testExtension = new $testExtensionsClassName();
             }
 
-            $service->extend($test);
+            if (!$testExtension instanceof TestExtensionInterface) {
+                throw new RuntimeException('A test extension should inherit ' . TestExtensionInterface::class);
+            }
+
+            $testExtension->extend($test);
         }
     }
 
