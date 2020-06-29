@@ -49,6 +49,7 @@ class AssessmentTestXmlBuilder extends ConfigurableService implements Assessment
     public const DEFAULT_TEST_PART_ID = 'testPart-1';
     public const DEFAULT_TEST_PART_NAVIGATION_MODE = NavigationMode::LINEAR;
     public const DEFAULT_TEST_PART_SUBMISSION_MODE = SubmissionMode::INDIVIDUAL;
+    public const DEFAULT_TEST_MAX_ATTEMPTS = 0;
 
     public const OPTION_QTI_VERSION = 'qti_version';
 
@@ -58,6 +59,7 @@ class AssessmentTestXmlBuilder extends ConfigurableService implements Assessment
     public const OPTION_TEST_PART_ID = 'test_part_id';
     public const OPTION_TEST_PART_NAVIGATION_MODE = 'navigation_mode';
     public const OPTION_TEST_PART_SUBMISSION_MODE = 'submission_mode';
+    public const OPTION_TEST_MAX_ATTEMPTS = 'max_attempts';
 
     public const OPTION_POSTPROCESSING = 'postprocessing';
 
@@ -92,7 +94,7 @@ class AssessmentTestXmlBuilder extends ConfigurableService implements Assessment
     protected function createTest(string $testIdentifier, string $testTitle): AssessmentTest
     {
         $itemSectionControl = new ItemSessionControl();
-        $itemSectionControl->setMaxAttempts(0);
+        $itemSectionControl->setMaxAttempts($this->getMaxAttempts());
 
         $assessmentSection = new AssessmentSection(
             $this->getAssessmentSectionId(),
@@ -169,6 +171,11 @@ class AssessmentTestXmlBuilder extends ConfigurableService implements Assessment
     private function getSubmissionMode(): int
     {
         return $this->getOption(self::OPTION_TEST_PART_SUBMISSION_MODE) ?? self::DEFAULT_TEST_PART_SUBMISSION_MODE;
+    }
+
+    private function getMaxAttempts(): int
+    {
+        return $this->getOption(self::OPTION_TEST_MAX_ATTEMPTS) ?? self::DEFAULT_TEST_MAX_ATTEMPTS;
     }
 
     private function getApplicationService(): ApplicationService
