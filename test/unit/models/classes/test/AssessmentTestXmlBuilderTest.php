@@ -121,7 +121,7 @@ class AssessmentTestXmlBuilderTest extends TestCase
     {
         $builder = $this->createBuilder(
             [
-                AssessmentTestXmlBuilder::OPTION_POSTPROCESSING => ['extension']
+                AssessmentTestXmlBuilder::OPTION_EXTENSIONS => ['extension']
             ]
         );
 
@@ -143,7 +143,7 @@ class AssessmentTestXmlBuilderTest extends TestCase
 
         $builder = $this->createBuilder(
             [
-                AssessmentTestXmlBuilder::OPTION_POSTPROCESSING => ['badExtension']
+                AssessmentTestXmlBuilder::OPTION_EXTENSIONS => ['badExtension']
             ]
         );
 

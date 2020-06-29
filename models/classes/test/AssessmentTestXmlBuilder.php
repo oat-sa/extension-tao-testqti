@@ -61,7 +61,7 @@ class AssessmentTestXmlBuilder extends ConfigurableService implements Assessment
     public const OPTION_TEST_PART_SUBMISSION_MODE = 'submission_mode';
     public const OPTION_TEST_MAX_ATTEMPTS = 'max_attempts';
 
-    public const OPTION_POSTPROCESSING = 'postprocessing';
+    public const OPTION_EXTENSIONS = 'postprocessing';
 
     /**
      * @param string $testIdentifier
@@ -122,7 +122,7 @@ class AssessmentTestXmlBuilder extends ConfigurableService implements Assessment
 
     private function extendTest(AssessmentTest $test): void
     {
-        $testExtensionsClassNames = $this->getOption(self::OPTION_POSTPROCESSING);
+        $testExtensionsClassNames = $this->getOption(self::OPTION_EXTENSIONS);
 
         if (!$testExtensionsClassNames || !is_array($testExtensionsClassNames)) {
             return;
