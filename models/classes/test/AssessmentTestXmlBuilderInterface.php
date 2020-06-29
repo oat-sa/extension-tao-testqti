@@ -24,7 +24,7 @@ namespace oat\taoQtiTest\models\test;
 
 interface AssessmentTestXmlBuilderInterface
 {
-    public const SERVICE_ID = 'taoQtiTest/NewAssessmentTestXmlBuilder';
+    public const SERVICE_ID = 'taoQtiTest/AssessmentTestXmlBuilder';
 
     public function build(string $testIdentifier, string $testTitle): string;
 }

@@ -61,7 +61,7 @@ class AssessmentTestXmlBuilder extends ConfigurableService implements Assessment
     public const OPTION_TEST_PART_SUBMISSION_MODE = 'submission_mode';
     public const OPTION_TEST_MAX_ATTEMPTS = 'max_attempts';
 
-    public const OPTION_EXTENSIONS = 'postprocessing';
+    public const OPTION_EXTENSIONS = 'extensions';
 
     /**
      * @param string $testIdentifier
