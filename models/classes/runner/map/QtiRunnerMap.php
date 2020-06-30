@@ -55,6 +55,16 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      */
     protected $itemHrefIndex;
 
+    /** @var bool */
+    private $isTestPreview;
+
+    public function mapAsTestPreview(): self
+    {
+        $this->isTestPreview = true;
+
+        return $this;
+    }
+
     /**
      * Gets the file that contains the href for the AssessmentItemRef Identifier
      * @param QtiRunnerServiceContext $context
@@ -165,7 +175,6 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
-        $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
         $testDefinition = $context->getTestDefinition();
 
         if ($session->isRunning() !== false) {
@@ -242,7 +251,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     } elseif ($forceTitles) {
                         $label = __($uniqueTitle, $offsetSection + 1);
                     } else {
-                        $itemUri = strstr($itemRef->getHref(), '|', true);
+                        $itemUri = $this->getItemUri($itemRef->getHref());
                         $label = $this->getItemLabel($context, $itemUri, $useTitle);
                     }
 
@@ -258,7 +267,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
                         'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
-                        'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
+                        'flagged' => $this->isItemFlagged($session->getSessionId(), $itemId),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
                         'categories' => array_values($this->getAvailableCategories($itemRef)),
                     ];
@@ -316,7 +325,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                 }
             }
             // fallback in case of the delivery was compiled without the index of item href
-            if ($shouldBuildItemHrefIndex) {
+            if ($shouldBuildItemHrefIndex && !$this->isTestPreview) {
                 \common_Logger::t('Store index of item href into the test state storage');
                 $storage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
                 $storage->storeItemHrefIndex($context->getTestExecutionUri(), $this->itemHrefIndex);
@@ -324,6 +333,27 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
 
         return $map;
+    }
+
+    private function getItemUri(string $itemHef): string
+    {
+        if ($this->isTestPreview) {
+            return $itemHef;
+        }
+
+        return strstr($itemHef, '|', true);
+    }
+
+    private function isItemFlagged(string $sessionId, string $itemId): bool
+    {
+        if ($this->isTestPreview) {
+            return false;
+        }
+
+        /** @var ExtendedStateService $extendedStorage */
+        $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
+
+        return $extendedStorage->getItemFlag($sessionId, $itemId);
     }
 
     /**

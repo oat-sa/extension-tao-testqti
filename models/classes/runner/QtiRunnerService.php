@@ -108,6 +108,28 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     private $dataCache = [];
 
+    /** @var QtiRunnerMap */
+    private $qtiRunnerMap;
+
+    /** @var bool */
+    private $isTestPreview;
+
+    public function mapAsTestPreview(): self
+    {
+        $this->isTestPreview = true;
+
+        return $this;
+    }
+
+    public function getQtiRunnerMap(): QtiRunnerMap
+    {
+        if (!$this->qtiRunnerMap) {
+            $this->qtiRunnerMap = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
+        }
+
+        return $this->qtiRunnerMap;
+    }
+
     /**
      * Get the data folder from a given item definition
      * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
@@ -480,7 +502,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
                 $response['itemPosition'] = $context->getCurrentPosition();
 
                 // The current item flagged state
-                $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
+                $response['itemFlagged'] = $this->isTestPreview ? false : TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
 
                 // The current item answered state
                 $response['itemAnswered'] = $this->isItemCompleted($context, $currentItem, $itemSession);
@@ -562,7 +584,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     public function getTestMap(RunnerServiceContext $context, $partial = false)
     {
         if ($context instanceof QtiRunnerServiceContext) {
-            $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
+            $mapService = $this->getQtiRunnerMap();
 
             if ($partial) {
                 return $mapService->getScopedMap($context, $this->getTestConfig());
@@ -611,8 +633,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      */
     public function getItemHref(RunnerServiceContext $context, $itemRef)
     {
-        $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
-        return $mapService->getItemHref($context, $itemRef);
+        return $this->getQtiRunnerMap()->getItemHref($context, $itemRef);
     }
 
     /**
