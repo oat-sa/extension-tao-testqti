@@ -272,6 +272,10 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'categories' => array_values($this->getAvailableCategories($itemRef)),
                     ];
 
+                    if ($this->isTestPreview) {
+                        $itemInfos['uri'] = $itemUri;
+                    }
+
                     if ($checkInformational) {
                         $itemInfos['informational'] = $isItemInformational;
                     }
