@@ -44,7 +44,7 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
 {
     public const DEFAULT_QTI_VERSION = '2.1';
     public const DEFAULT_ASSESSMENT_SECTION_ID = 'assessmentSection-1';
-    public const DEFAULT_ASSESSMENT_SECTION_TITLE = 'assessmentSection-1';
+    public const DEFAULT_ASSESSMENT_SECTION_TITLE = 'Section 1';
 
     public const DEFAULT_TEST_PART_ID = 'testPart-1';
     public const DEFAULT_TEST_PART_NAVIGATION_MODE = NavigationMode::LINEAR;
@@ -101,6 +101,8 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
             $this->getAssessmentSectionTitle(),
             true
         );
+        $assessmentSection->setRequired(true);
+
         $assessmentSections = new AssessmentSectionCollection([$assessmentSection]);
 
         $testPart = new TestPart(
