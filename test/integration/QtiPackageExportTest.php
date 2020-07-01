@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\test\integration;
 use Exception;
 use oat\generis\model\data\ModelManager;
 use oat\generis\model\data\Ontology;
+use oat\oatbox\service\ServiceManager;
 use oat\tao\test\integration\RestTestRunner;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
 use Slim\Http\Headers;
@@ -46,8 +47,9 @@ class QtiPackageExportTest extends RestTestRunner
     public function setUp(): void
     {
         parent::setUp();
+
         $this->serviceLocatorMock = $this->getServiceLocatorMock([
-            QtiPackageExporter::class => new QtiPackageExporter(),
+            QtiPackageExporter::SERVICE_ID => ServiceManager::getServiceManager()->get(QtiPackageExporter::SERVICE_ID),
             Ontology::SERVICE_ID => ModelManager::getModel(),
         ]);
     }
