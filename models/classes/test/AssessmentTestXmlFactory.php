@@ -40,7 +40,7 @@ use qtism\data\TestPart;
 use qtism\data\TestPartCollection;
 use RuntimeException;
 
-class AssessmentTestXmlBuilder extends ConfigurableService implements AssessmentTestXmlBuilderInterface
+class AssessmentTestXmlFactory extends ConfigurableService implements AssessmentTestXmlFactoryInterface
 {
     public const DEFAULT_QTI_VERSION = '2.1';
     public const DEFAULT_ASSESSMENT_SECTION_ID = 'assessmentSection-1';

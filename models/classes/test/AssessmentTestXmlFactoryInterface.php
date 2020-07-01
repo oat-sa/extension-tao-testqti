@@ -22,9 +22,9 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\test;
 
-interface AssessmentTestXmlBuilderInterface
+interface AssessmentTestXmlFactoryInterface
 {
-    public const SERVICE_ID = 'taoQtiTest/AssessmentTestXmlBuilder';
+    public const SERVICE_ID = 'taoQtiTest/AssessmentTestXmlFactory';
 
     public function build(string $testIdentifier, string $testTitle): string;
 }

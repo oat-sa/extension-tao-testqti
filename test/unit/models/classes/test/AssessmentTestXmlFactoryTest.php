@@ -36,7 +36,7 @@ use RuntimeException;
 use SimpleXMLElement;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class AssessmentTestXmlBuilderTest extends TestCase
+class AssessmentTestXmlFactoryTest extends TestCase
 {
     /** @var ServiceLocatorInterface */
     private $serviceLocator;
@@ -91,15 +91,15 @@ class AssessmentTestXmlBuilderTest extends TestCase
         $testPartAttributes = $simpleXml->testPart->attributes();
 
         $this->assertSame(
-            $expected[AssessmentTestXmlBuilder::OPTION_TEST_PART_ID],
+            $expected[AssessmentTestXmlFactory::OPTION_TEST_PART_ID],
             (string)$testPartAttributes['identifier']
         );
         $this->assertSame(
-            $expected[AssessmentTestXmlBuilder::OPTION_TEST_PART_NAVIGATION_MODE],
+            $expected[AssessmentTestXmlFactory::OPTION_TEST_PART_NAVIGATION_MODE],
             (string)$testPartAttributes['navigationMode']
         );
         $this->assertSame(
-            $expected[AssessmentTestXmlBuilder::OPTION_TEST_PART_SUBMISSION_MODE],
+            $expected[AssessmentTestXmlFactory::OPTION_TEST_PART_SUBMISSION_MODE],
             (string)$testPartAttributes['submissionMode']
         );
 
@@ -107,7 +107,7 @@ class AssessmentTestXmlBuilderTest extends TestCase
         $itemSessionControl = $simpleXml->testPart->itemSessionControl->attributes();
 
         $this->assertSame(
-            $expected[AssessmentTestXmlBuilder::OPTION_TEST_MAX_ATTEMPTS],
+            $expected[AssessmentTestXmlFactory::OPTION_TEST_MAX_ATTEMPTS],
             (int)$itemSessionControl['maxAttempts']
         );
     }
@@ -121,7 +121,7 @@ class AssessmentTestXmlBuilderTest extends TestCase
     {
         $builder = $this->createBuilder(
             [
-                AssessmentTestXmlBuilder::OPTION_EXTENSIONS => ['extension']
+                AssessmentTestXmlFactory::OPTION_EXTENSIONS => ['extension']
             ]
         );
 
@@ -143,7 +143,7 @@ class AssessmentTestXmlBuilderTest extends TestCase
 
         $builder = $this->createBuilder(
             [
-                AssessmentTestXmlBuilder::OPTION_EXTENSIONS => ['badExtension']
+                AssessmentTestXmlFactory::OPTION_EXTENSIONS => ['badExtension']
             ]
         );
 
@@ -156,38 +156,38 @@ class AssessmentTestXmlBuilderTest extends TestCase
             [
                 [],
                 [
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_ID              => AssessmentTestXmlBuilder::DEFAULT_TEST_PART_ID,
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_NAVIGATION_MODE => 'linear',
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_SUBMISSION_MODE => 'individual',
-                    AssessmentTestXmlBuilder::OPTION_ASSESSMENT_SECTION_TITLE  => AssessmentTestXmlBuilder::DEFAULT_ASSESSMENT_SECTION_TITLE,
-                    AssessmentTestXmlBuilder::OPTION_ASSESSMENT_SECTION_ID     => AssessmentTestXmlBuilder::DEFAULT_ASSESSMENT_SECTION_ID,
-                    AssessmentTestXmlBuilder::OPTION_TEST_MAX_ATTEMPTS         => AssessmentTestXmlBuilder::DEFAULT_TEST_MAX_ATTEMPTS,
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_ID              => AssessmentTestXmlFactory::DEFAULT_TEST_PART_ID,
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_NAVIGATION_MODE => 'linear',
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_SUBMISSION_MODE => 'individual',
+                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_TITLE  => AssessmentTestXmlFactory::DEFAULT_ASSESSMENT_SECTION_TITLE,
+                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_ID     => AssessmentTestXmlFactory::DEFAULT_ASSESSMENT_SECTION_ID,
+                    AssessmentTestXmlFactory::OPTION_TEST_MAX_ATTEMPTS         => AssessmentTestXmlFactory::DEFAULT_TEST_MAX_ATTEMPTS,
                 ]
             ],
             [
                 [
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_ID              => 'customTestPartId',
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_NAVIGATION_MODE => NavigationMode::NONLINEAR,
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_SUBMISSION_MODE => SubmissionMode::SIMULTANEOUS,
-                    AssessmentTestXmlBuilder::OPTION_ASSESSMENT_SECTION_TITLE  => 'customSectionTitle',
-                    AssessmentTestXmlBuilder::OPTION_ASSESSMENT_SECTION_ID     => 'customSectionId',
-                    AssessmentTestXmlBuilder::OPTION_TEST_MAX_ATTEMPTS         => 10,
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_ID              => 'customTestPartId',
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_NAVIGATION_MODE => NavigationMode::NONLINEAR,
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_SUBMISSION_MODE => SubmissionMode::SIMULTANEOUS,
+                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_TITLE  => 'customSectionTitle',
+                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_ID     => 'customSectionId',
+                    AssessmentTestXmlFactory::OPTION_TEST_MAX_ATTEMPTS         => 10,
                 ],
                 [
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_ID              => 'customTestPartId',
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_NAVIGATION_MODE => 'nonlinear',
-                    AssessmentTestXmlBuilder::OPTION_TEST_PART_SUBMISSION_MODE => 'simultaneous',
-                    AssessmentTestXmlBuilder::OPTION_ASSESSMENT_SECTION_TITLE  => 'customSectionTitle',
-                    AssessmentTestXmlBuilder::OPTION_ASSESSMENT_SECTION_ID     => 'customSectionId',
-                    AssessmentTestXmlBuilder::OPTION_TEST_MAX_ATTEMPTS         => 10,
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_ID              => 'customTestPartId',
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_NAVIGATION_MODE => 'nonlinear',
+                    AssessmentTestXmlFactory::OPTION_TEST_PART_SUBMISSION_MODE => 'simultaneous',
+                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_TITLE  => 'customSectionTitle',
+                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_ID     => 'customSectionId',
+                    AssessmentTestXmlFactory::OPTION_TEST_MAX_ATTEMPTS         => 10,
                 ]
             ]
         ];
     }
 
-    private function createBuilder(array $params = []): AssessmentTestXmlBuilder
+    private function createBuilder(array $params = []): AssessmentTestXmlFactory
     {
-        $builder = new AssessmentTestXmlBuilder($params);
+        $builder = new AssessmentTestXmlFactory($params);
 
         $builder->setServiceLocator($this->serviceLocator);
 
