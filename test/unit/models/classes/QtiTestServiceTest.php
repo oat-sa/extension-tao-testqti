@@ -43,6 +43,8 @@ XML;
 
     /** @var QtiTestService */
     private $sut;
+    /** @var AssessmentTestXmlFactory */
+    private $xmlFactory;
 
     /**
      * @before
@@ -52,8 +54,11 @@ XML;
         $this->defaultDirectoryMock = $this->createMock(Directory::class);
         $this->fileReferenceSerializerMock = $this->createMock(FileReferenceSerializer::class);
         $this->testContentPropertyMock = $this->createMock(KernelProperty::class);
+        $this->xmlFactory = new AssessmentTestXmlFactory();
 
         $serviceLocator = $this->creteServiceLocatorMock();
+
+        $this->xmlFactory->setServiceLocator($serviceLocator);
 
         $this->sut = $this->createPartialMock(
             QtiTestService::class,
@@ -279,19 +284,13 @@ XML;
 
     private function creteServiceLocatorMock(): ServiceLocatorInterface
     {
-        $xmlFactory = new AssessmentTestXmlFactory();
-
-        $serviceLocator = $this->getServiceLocatorMock(
+        return $this->getServiceLocatorMock(
             [
                 ApplicationService::SERVICE_ID      => $this->createApplicationServiceMock(),
                 FileReferenceSerializer::SERVICE_ID => $this->fileReferenceSerializerMock,
-                AssessmentTestXmlFactory::class => $xmlFactory,
+                AssessmentTestXmlFactory::class     => $this->xmlFactory,
             ]
         );
-
-        $xmlFactory->setServiceLocator($serviceLocator);
-
-        return $serviceLocator;
     }
 
     private function createModelMock(): Ontology
