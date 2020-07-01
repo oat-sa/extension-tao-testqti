@@ -26,5 +26,5 @@ interface AssessmentTestXmlFactoryInterface
 {
     public const SERVICE_ID = 'taoQtiTest/AssessmentTestXmlFactory';
 
-    public function build(string $testIdentifier, string $testTitle): string;
+    public function create(string $testIdentifier, string $testTitle): string;
 }

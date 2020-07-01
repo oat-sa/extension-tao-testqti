@@ -79,7 +79,7 @@ class AssessmentTestXmlFactoryTest extends TestCase
     {
         $builder = $this->createBuilder($options);
 
-        $xml = $builder->build('testId', 'testLabel');
+        $xml = $builder->create('testId', 'testLabel');
 
         $this->assertIsString($xml);
 
@@ -125,7 +125,7 @@ class AssessmentTestXmlFactoryTest extends TestCase
             ]
         );
 
-        $xml = $builder->build('identifier', 'title');
+        $xml = $builder->create('identifier', 'title');
 
         $simpleXml = new SimpleXMLElement($xml);
         $this->assertSame('identifier', (string)$simpleXml->attributes()['identifier']);
@@ -147,7 +147,7 @@ class AssessmentTestXmlFactoryTest extends TestCase
             ]
         );
 
-        $builder->build('identifier', 'title');
+        $builder->create('identifier', 'title');
     }
 
     public function provideData(): array

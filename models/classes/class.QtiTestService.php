@@ -1086,7 +1086,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
             $testLabel = $test->getLabel();
             $identifier = $this->createTestIdentifier($testLabel);
-            $xml = $xmlBuilder->build($identifier, $testLabel);
+            $xml = $xmlBuilder->create($identifier, $testLabel);
 
             if (!$file->write($xml)) {
                 throw new taoQtiTest_models_classes_QtiTestServiceException(

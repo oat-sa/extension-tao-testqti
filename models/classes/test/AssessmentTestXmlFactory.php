@@ -72,7 +72,7 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
      * @throws common_exception_Error
      * @throws common_ext_ExtensionException
      */
-    public function build(string $testIdentifier, string $testTitle): string
+    public function create(string $testIdentifier, string $testTitle): string
     {
         $test = $this->createTest($testIdentifier, $testTitle);
 
