@@ -37,7 +37,8 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/categorySelector',
-    'ui/validator/validators'
+    'ui/validator/validators',
+    'taoQtiTestPreviewer/previewer/adapter/test/qtiTest'
 ], function(
     module,
     $,
@@ -57,7 +58,8 @@ define([
     qtiTestHelper,
     scoringHelper,
     categorySelector,
-    validators
+    validators,
+    previewerFactory
 ){
     'use strict';
 
@@ -105,6 +107,17 @@ define([
                     creatorContext.trigger('creatorclose');
                 }
                 window.history.back();
+            });
+
+            //preview button
+            $('#previewer').on('click', e => {
+                e.preventDefault();
+                const saveUrl = options.routes.save;
+                const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
+                previewerFactory.init(decodeURIComponent(testUri), {
+                    readOnly: false,
+                    fullPage: true
+                });
             });
 
             //set up the ItemView, give it a configured loadItems ref

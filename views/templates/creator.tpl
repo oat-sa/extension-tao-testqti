@@ -26,6 +26,12 @@
                         <?=__('Save')?>
                     </span>
                 </li>
+                <li id="previewer" class="btn-info small">
+                    <span class="li-inner">
+                        <span class="icon-preview"></span>
+                        <?=__('Preview')?>
+                    </span>
+                </li>
             </ul>
         </div>
         <h1><span data-bind="title"></span>
