@@ -19,34 +19,32 @@
  *
  */
 
-use League\Flysystem\FileExistsException;
-use oat\oatbox\filesystem\Directory;
-use oat\oatbox\filesystem\File;
-use oat\oatbox\filesystem\FileSystemService;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
-use oat\taoQtiItem\model\qti\ImportService;
-use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
-use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
-use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiItem\model\qti\Resource;
-use oat\taoQtiItem\model\qti\Service;
-use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
-use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
-use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
-use oat\taoQtiTest\models\NewAssessmentTestXmlBuilder;
 use oat\taoTests\models\event\TestUpdatedEvent;
 use qtism\common\utils\Format;
-use qtism\data\AssessmentItemRef;
+use qtism\data\storage\StorageException;
+use qtism\data\storage\xml\XmlDocument;
+use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
-use qtism\data\storage\StorageException;
-use qtism\data\storage\xml\marshalling\UnmarshallingException;
-use qtism\data\storage\xml\XmlDocument;
-use qtism\data\storage\xml\XmlStorageException;
+use qtism\data\AssessmentItemRef;
+use oat\oatbox\filesystem\FileSystemService;
+use oat\oatbox\filesystem\File;
+use oat\oatbox\filesystem\Directory;
+use oat\taoQtiItem\model\qti\Service;
+use oat\taoQtiItem\model\qti\metadata\MetadataService;
+use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use taoTests_models_classes_TestsService as TestService;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
+use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
+use oat\tao\model\service\ApplicationService;
 
 /**
  * the QTI TestModel service.
@@ -1059,20 +1057,15 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Create the default content directory of a QTI test.
      *
      * @param core_kernel_classes_Resource $test
-     * @param boolean                      $createTestFile  Whether or not create an empty QTI XML test file. Default is (boolean) true.
-     * @param boolean                      $preventOverride Prevent data to be overriden Default is (boolean) true.
-     *
+     * @param boolean $createTestFile Whether or not create an empty QTI XML test file. Default is (boolean) true.
+     * @param boolean $preventOverride Prevent data to be overriden Default is (boolean) true.
      * @return Directory the content directory
-     * @throws FileExistsException
-     * @throws XmlStorageException
-     * @throws common_Exception
-     * @throws common_exception_Error
-     * @throws common_exception_InconsistentData In case of trying to override existing data.
-     * @throws common_ext_ExtensionException
      * @throws taoQtiTest_models_classes_QtiTestServiceException If a runtime error occurs while creating the test content.
+     * @throws \common_exception_InconsistentData In case of trying to override existing data.
      */
     public function createContent(core_kernel_classes_Resource $test, $createTestFile = true, $preventOverride = true)
     {
+
         $dir = $this->getDefaultDir()->getDirectory(md5($test->getUri()));
         if ($dir->exists() && $preventOverride === true) {
             throw new common_exception_InconsistentData('Data directory for test ' . $test->getUri() . ' already exists.');
@@ -1081,18 +1074,28 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $file = $dir->getFile(self::TAOQTITEST_FILENAME);
 
         if ($createTestFile === true) {
-            /** @var NewAssessmentTestXmlBuilder $xmlBuilder */
-            $xmlBuilder = $this->getServiceLocator()->get(NewAssessmentTestXmlBuilder::class);
+            $emptyTestXml = $this->getQtiTestTemplateFileAsString();
 
-            $testLabel = $test->getLabel();
-            $identifier = $this->createTestIdentifier($testLabel);
-            $xml = $xmlBuilder->build($identifier, $testLabel);
+            $doc = new DOMDocument('1.0', 'UTF-8');
+            $doc->loadXML($emptyTestXml);
 
-            if (!$file->write($xml)) {
-                throw new taoQtiTest_models_classes_QtiTestServiceException(
-                    'Unable to write raw QTI Test template.',
-                    taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
-                );
+            // Set the test label as title.
+            $doc->documentElement->setAttribute('title', $test->getLabel());
+
+            //generate a valid qti identifier
+            $identifier = Format::sanitizeIdentifier($test->getLabel());
+            $identifier = str_replace('_', '-', $identifier);
+            if (preg_match('/^[0-9]/', $identifier)) {
+                $identifier = '_' . $identifier;
+            }
+            $doc->documentElement->setAttribute('identifier', $identifier);
+
+            $appService = $this->getServiceLocator()->get(ApplicationService::SERVICE_ID);
+            $doc->documentElement->setAttribute('toolVersion', $appService->getPlatformVersion());
+
+            if (!$file->write($doc->saveXML())) {
+                $msg = "Unable to write raw QTI Test template.";
+                throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
             }
 
             common_Logger::t("Created QTI Test content for test '" . $test->getUri() . "'.");
@@ -1104,26 +1107,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $doc->documentElement->setAttribute('title', $test->getLabel());
 
             if (!$file->update($doc->saveXML())) {
-                $msg = 'Unable to update QTI Test file.';
+                $msg = "Unable to update QTI Test file.";
                 throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
             }
         }
 
         $directory = $this->getFileReferenceSerializer()->serialize($dir);
         $test->editPropertyValues($this->getProperty(TestService::PROPERTY_TEST_CONTENT), $directory);
-
         return $dir;
-    }
-
-    private function createTestIdentifier(string $testLabel): string
-    {
-        $identifier = Format::sanitizeIdentifier($testLabel);
-        $identifier = str_replace('_', '-', $identifier);
-        if (preg_match('/^\d/', $identifier)) {
-            $identifier = '_' . $identifier;
-        }
-
-        return $identifier;
     }
 
     /**
@@ -1198,9 +1189,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
-     *
-     * @deprecated
-     *
      * Get the content of the QTI Test template file as an XML string.
      *
      * @return string|boolean The QTI Test template file content or false if it could not be read.
