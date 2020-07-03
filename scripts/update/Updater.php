@@ -96,6 +96,7 @@ use oat\taoTests\models\runner\time\TimerStrategyInterface;
 /**
  *
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @deprecated use migrations instead. See https://github.com/oat-sa/generis/wiki/Tao-Update-Process
  */
 class Updater extends \common_ext_ExtensionUpdater
 {
@@ -2122,5 +2123,13 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->runExtensionScript(RegisterQtiPackageExporter::class);
             $this->setVersion('38.13.0');
         }
+
+      $this->skip('38.13.0', '38.14.0');
+
+
+        //Updater files are deprecated. Please use migrations.
+        //See: https://github.com/oat-sa/generis/wiki/Tao-Update-Process
+
+        $this->setVersion($this->getExtension()->getManifest()->getVersion());
     }
 }
