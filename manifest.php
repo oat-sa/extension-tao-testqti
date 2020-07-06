@@ -56,9 +56,9 @@ return [
         'taoQtiItem' => '>=24.0.0',
         'taoTests'   => '>=14.0.0',
         'tao'        => '>=44.1.0',
-        'generis'    => '>=12.20.0',
+        'generis'    => '>=12.33.0',
         'taoDelivery' => '>=14.10.0',
-        'taoItems'   => '>=6.0.0',
+        'taoItems'   => '>=10.9.0',
     ],
     'models' => [
         'http://www.tao.lu/Ontologies/TAOTest.rdf'
