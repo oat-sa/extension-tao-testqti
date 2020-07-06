@@ -26,6 +26,7 @@ use oat\oatbox\service\ServiceManager;
 use oat\tao\model\import\ImportHandlerHelperTrait;
 use oat\tao\model\import\TaskParameterProviderInterface;
 use oat\tao\model\upload\UploadService;
+use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiTest\models\event\QtiTestImportEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -73,10 +74,17 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
         try {
             $uploadedFile = $this->fetchUploadedFile($form);
 
+            $itemAssetsReplacement = $this->getItemAssetsReplacement();
+            $cloudFrontificationReport = $itemAssetsReplacement->cloudFrontification($uploadedFile);
+
             // The zip extraction is a long process that can exceed the 30s timeout
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
             $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);
+
+            if ($cloudFrontificationReport) {
+                $report->add($cloudFrontificationReport);
+            }
 
             helpers_TimeOutHelper::reset();
 
@@ -90,5 +98,13 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
         } catch (Exception $e) {
             return common_report_Report::createFailure($e->getMessage());
         }
+    }
+
+    /**
+     * @return ItemAssetsReplacement
+     */
+    private function getItemAssetsReplacement()
+    {
+        return $this->getServiceLocator()->get(ItemAssetsReplacement::SERVICE_ID);
     }
 }

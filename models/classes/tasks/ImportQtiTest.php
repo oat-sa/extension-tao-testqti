@@ -22,12 +22,19 @@
 
 namespace oat\taoQtiTest\models\tasks;
 
+use common_exception_Error;
+use common_exception_MissingParameter;
+use common_ext_ExtensionException;
+use common_report_Report;
+use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\oatbox\task\AbstractTaskAction;
 use oat\oatbox\service\ServiceManager;
+use oat\tao\model\import\ImporterNotFound;
 use oat\tao\model\import\ImportersService;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\tao\model\taskQueue\Task\TaskInterface;
+use oat\taoItems\model\render\ItemAssetsReplacement;
 use \oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**
@@ -49,18 +56,25 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 
     /**
      * @param $params
-     * @throws \common_exception_MissingParameter
-     * @return \common_report_Report
+     * @return common_report_Report
+     * @throws common_exception_Error
+     * @throws common_exception_MissingParameter
+     * @throws common_ext_ExtensionException
+     * @throws InvalidServiceManagerException
+     * @throws ImporterNotFound
      */
     public function __invoke($params)
     {
         if (!isset($params[self::PARAM_FILE])) {
-            throw new \common_exception_MissingParameter('Missing parameter `' . self::PARAM_FILE . '` in ' . self::class);
+            throw new common_exception_MissingParameter('Missing parameter `' . self::PARAM_FILE . '` in ' . self::class);
         }
 
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
+
+        $itemAssetsReplacement = $this->getItemAssetsReplacement();
+        $cloudFrontificationReport = $itemAssetsReplacement->cloudFrontification($file);
 
         /** @var ImportersService $importersService */
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
@@ -68,7 +82,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         /** @var QtiTestImporter $importer */
         $importer = $importersService->getImporter(QtiTestImporter::IMPORTER_ID);
 
-        return $importer->import(
+        $report = $importer->import(
             $file,
             $this->getClass($params),
             isset($params[self::PARAM_ENABLE_GUARDIANS]) ? $params[self::PARAM_ENABLE_GUARDIANS] : true,
@@ -76,6 +90,12 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             isset($params[self::PARAM_ITEM_MUST_EXIST]) ? $params[self::PARAM_ITEM_MUST_EXIST] : false,
             isset($params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN]) ? $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] : false
         );
+
+        if ($cloudFrontificationReport) {
+            $report->add($cloudFrontificationReport);
+        }
+
+        return $report;
     }
 
     /**
@@ -135,5 +155,13 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $class = new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST);
         }
         return $class;
+    }
+
+    /**
+     * @return ItemAssetsReplacement
+     */
+    private function getItemAssetsReplacement()
+    {
+        return $this->getServiceLocator()->get(ItemAssetsReplacement::SERVICE_ID);
     }
 }
