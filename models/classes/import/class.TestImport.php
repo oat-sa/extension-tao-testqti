@@ -75,7 +75,7 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
             $uploadedFile = $this->fetchUploadedFile($form);
 
             $itemAssetsReplacement = $this->getItemAssetsReplacement();
-            $cloudFrontificationReport = $itemAssetsReplacement->cloudFrontification($uploadedFile);
+            $cloudFrontificationReport = $itemAssetsReplacement->replaceResourcesWithCloudfront($uploadedFile);
 
             // The zip extraction is a long process that can exceed the 30s timeout
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);

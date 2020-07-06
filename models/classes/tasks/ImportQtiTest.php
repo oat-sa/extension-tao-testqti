@@ -74,7 +74,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
 
         $itemAssetsReplacement = $this->getItemAssetsReplacement();
-        $cloudFrontificationReport = $itemAssetsReplacement->cloudFrontification($file);
+        $cloudFrontificationReport = $itemAssetsReplacement->replaceResourcesWithCloudfront($file);
 
         /** @var ImportersService $importersService */
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
