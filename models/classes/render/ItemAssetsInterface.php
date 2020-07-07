@@ -20,7 +20,7 @@
  *
  */
 
-namespace oat\taoItems\model\render;
+namespace oat\taoQtiTest\model\render;
 
 use common_report_Report;
 use oat\oatbox\filesystem\File;

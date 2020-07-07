@@ -8,9 +8,9 @@ use common_Exception;
 use Doctrine\DBAL\Schema\Schema;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
-use oat\taoItems\model\render\ItemAssetsInterface;
-use oat\taoItems\model\render\NoneItemAssets;
-use oat\taoItems\model\render\NoneItemReplacement;
+use oat\taoQtiTest\model\render\ItemAssetsInterface;
+use oat\taoQtiTest\model\render\NoneItemAssets;
+
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -20,7 +20,7 @@ final class Version202007062037452260_taoQtiTest extends AbstractMigration
 
     public function getDescription(): string
     {
-        return 'Register ' . NoneItemReplacement::class;
+        return 'Register ' . NoneItemAssets::class;
     }
 
     /**

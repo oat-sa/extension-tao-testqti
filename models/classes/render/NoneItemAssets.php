@@ -20,7 +20,7 @@
  *
  */
 
-namespace oat\taoItems\model\render;
+namespace oat\taoQtiTest\model\render;
 
 use oat\oatbox\service\ConfigurableService;
 
