@@ -64,16 +64,16 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
             $limit
         );
 
+        if (empty($result['nodes'])) {
+            return $result;
+        }
+
         $nodeIds = array_map(
             static function (array $node): string {
                 return $node['uri'];
             },
             $result['nodes']
         );
-
-        if (empty($result['nodes'])) {
-            return $result;
-        }
 
         $accessible = $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ);
 
