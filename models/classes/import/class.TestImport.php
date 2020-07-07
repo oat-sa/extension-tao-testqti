@@ -24,7 +24,7 @@ use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
 use oat\tao\model\import\ImportHandlerHelperTrait;
 use oat\tao\model\import\TaskParameterProviderInterface;
-use oat\taoItems\model\render\ItemAssets;
+use oat\taoItems\model\render\ItemAssetsInterface;
 use oat\taoQtiTest\models\event\QtiTestImportEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -99,10 +99,10 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
     }
 
     /**
-     * @return ItemAssets
+     * @return ItemAssetsInterface
      */
     private function getItemAssets()
     {
-        return $this->getServiceLocator()->get(ItemAssets::SERVICE_ID);
+        return $this->getServiceLocator()->get(ItemAssetsInterface::SERVICE_ID);
     }
 }

@@ -32,7 +32,7 @@ use oat\oatbox\filesystem\File;
  * @author Andrey Niahrou
  * @package taoQtiTest
  */
-interface ItemAssets
+interface ItemAssetsInterface
 {
     const SERVICE_ID = 'taoQtiTest/itemAssets';
 

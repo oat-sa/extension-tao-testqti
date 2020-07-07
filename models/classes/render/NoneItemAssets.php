@@ -31,7 +31,7 @@ use oat\oatbox\service\ConfigurableService;
  * @author Andrey Niahrou
  * @package taoQtiTest
  */
-class NoneItemAssets extends ConfigurableService implements ItemAssets
+class NoneItemAssets extends ConfigurableService implements ItemAssetsInterface
 {
 
     /**

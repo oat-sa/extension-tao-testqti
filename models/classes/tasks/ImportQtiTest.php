@@ -34,7 +34,7 @@ use oat\tao\model\import\ImportersService;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\tao\model\taskQueue\Task\TaskInterface;
-use oat\taoItems\model\render\ItemAssets;
+use oat\taoItems\model\render\ItemAssetsInterface;
 use \oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**
@@ -158,10 +158,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     }
 
     /**
-     * @return ItemAssets
+     * @return ItemAssetsInterface
      */
     private function getItemAssets()
     {
-        return $this->getServiceLocator()->get(ItemAssets::SERVICE_ID);
+        return $this->getServiceLocator()->get(ItemAssetsInterface::SERVICE_ID);
     }
 }
