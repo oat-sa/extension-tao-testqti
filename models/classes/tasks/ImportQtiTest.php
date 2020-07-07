@@ -34,7 +34,7 @@ use oat\tao\model\import\ImportersService;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\tao\model\taskQueue\Task\TaskInterface;
-use oat\taoQtiTest\model\render\ItemAssetsInterface;
+use oat\taoQtiTest\models\render\ItemAssetsInterface;
 use \oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**

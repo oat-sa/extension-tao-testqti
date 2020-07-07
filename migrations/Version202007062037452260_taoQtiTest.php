@@ -8,8 +8,9 @@ use common_Exception;
 use Doctrine\DBAL\Schema\Schema;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
-use oat\taoQtiTest\model\render\ItemAssetsInterface;
-use oat\taoQtiTest\model\render\NoneItemAssets;
+use oat\taoQtiTest\models\render\ItemAssetsInterface;
+use oat\taoQtiTest\models\render\NoneItemAssets;
+use oat\taoQtiTest\models\tasks\ImportQtiTest;
 
 
 /**

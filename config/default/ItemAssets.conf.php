@@ -1,3 +1,3 @@
 <?php
 
-return new \oat\taoQtiTest\model\render\NoneItemAssets();
+return new \oat\taoQtiTest\models\render\NoneItemAssets();
