@@ -34,7 +34,7 @@ use oat\tao\model\import\ImportersService;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\tao\model\taskQueue\Task\TaskInterface;
-use oat\taoItems\model\render\ItemAssetsReplacement;
+use oat\taoItems\model\render\ItemAssets;
 use \oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**
@@ -73,7 +73,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
 
-        $itemAssetsReplacement = $this->getItemAssetsReplacement();
+        $itemAssetsReplacement = $this->getItemAssets();
         $cloudFrontificationReport = $itemAssetsReplacement->replaceResourcesWithCloudfront($file);
 
         /** @var ImportersService $importersService */
@@ -158,10 +158,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     }
 
     /**
-     * @return ItemAssetsReplacement
+     * @return ItemAssets
      */
-    private function getItemAssetsReplacement()
+    private function getItemAssets()
     {
-        return $this->getServiceLocator()->get(ItemAssetsReplacement::SERVICE_ID);
+        return $this->getServiceLocator()->get(ItemAssets::SERVICE_ID);
     }
 }

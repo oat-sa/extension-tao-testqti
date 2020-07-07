@@ -22,11 +22,9 @@
 use oat\oatbox\event\EventManagerAwareTrait;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
-use oat\oatbox\service\ServiceManager;
 use oat\tao\model\import\ImportHandlerHelperTrait;
 use oat\tao\model\import\TaskParameterProviderInterface;
-use oat\tao\model\upload\UploadService;
-use oat\taoItems\model\render\ItemAssetsReplacement;
+use oat\taoItems\model\render\ItemAssets;
 use oat\taoQtiTest\models\event\QtiTestImportEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -74,7 +72,7 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
         try {
             $uploadedFile = $this->fetchUploadedFile($form);
 
-            $itemAssetsReplacement = $this->getItemAssetsReplacement();
+            $itemAssetsReplacement = $this->getItemAssets();
             $cloudFrontificationReport = $itemAssetsReplacement->replaceResourcesWithCloudfront($uploadedFile);
 
             // The zip extraction is a long process that can exceed the 30s timeout
@@ -101,10 +99,10 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
     }
 
     /**
-     * @return ItemAssetsReplacement
+     * @return ItemAssets
      */
-    private function getItemAssetsReplacement()
+    private function getItemAssets()
     {
-        return $this->getServiceLocator()->get(ItemAssetsReplacement::SERVICE_ID);
+        return $this->getServiceLocator()->get(ItemAssets::SERVICE_ID);
     }
 }
