@@ -44,13 +44,11 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
      * Retrieve QTI Items for the given parameters.
      *
      * @param core_kernel_classes_Class $itemClass       the item class
-     * @param array                      $propertyFilters the lookup format
-     * @param int                        $offset          for paging
-     * @param int                        $limit           for paging
+     * @param array                     $propertyFilters the lookup format
+     * @param int                       $offset          for paging
+     * @param int                       $limit           for paging
      *
      * @return array the items
-     *
-     * @throws \common_exception_Error
      */
     public function getItems(
         core_kernel_classes_Class $itemClass,
@@ -72,6 +70,10 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
             },
             $result['nodes']
         );
+
+        if (empty($result['nodes'])) {
+            return $result;
+        }
 
         $accessible = $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ);
 
