@@ -22,23 +22,25 @@
 
 namespace oat\taoQtiTest\models\render;
 
-use oat\oatbox\service\ConfigurableService;
+use common_report_Report;
+use oat\oatbox\filesystem\File;
 
 /**
- * Simple implementation of ItemAssets that do nothing
+ * Interface that define a preprocessing for item assets, CDN Signature, url modification ...
  *
  * @access public
  * @author Andrey Niahrou
  * @package taoQtiTest
  */
-class NoneItemAssets extends ConfigurableService implements ItemAssetsInterface
+interface QtiPackageImportPreprocessing
 {
+    const SERVICE_ID = 'taoQtiTest/QtiPackageImportPreprocessing';
 
     /**
-     * @inheritdoc
+     * Method that allows you to modify links to assets QTI test package to CloudFront before import
+     *
+     * @param File $file
+     * @return common_report_Report|null
      */
-    public function replaceResourcesWithCloudfront($file)
-    {
-        return null;
-    }
+    public function run($file);
 }

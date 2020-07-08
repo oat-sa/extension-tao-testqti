@@ -34,7 +34,7 @@ use oat\tao\model\import\ImportersService;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\tao\model\taskQueue\Task\TaskInterface;
-use oat\taoQtiTest\models\render\ItemAssetsInterface;
+use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use \oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**
@@ -73,8 +73,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
 
-        $itemAssetsReplacement = $this->getItemAssets();
-        $cloudFrontificationReport = $itemAssetsReplacement->replaceResourcesWithCloudfront($file);
+        $qtiPackageImportPreprocessingService = $this->getQtiPackageImportPreprocessing();
+        $preprocessingReport = $qtiPackageImportPreprocessingService->run($file);
 
         /** @var ImportersService $importersService */
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
@@ -91,8 +91,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             isset($params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN]) ? $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] : false
         );
 
-        if ($cloudFrontificationReport) {
-            $report->add($cloudFrontificationReport);
+        if ($preprocessingReport) {
+            $report->add($preprocessingReport);
         }
 
         return $report;
@@ -158,10 +158,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     }
 
     /**
-     * @return ItemAssetsInterface
+     * @return QtiPackageImportPreprocessing
      */
-    private function getItemAssets()
+    private function getQtiPackageImportPreprocessing()
     {
-        return $this->getServiceLocator()->get(ItemAssetsInterface::SERVICE_ID);
+        return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
     }
 }
