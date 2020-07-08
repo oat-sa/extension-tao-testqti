@@ -91,6 +91,10 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
             }
         }
 
+        if (empty($nodeIds)) {
+            return $treeData;
+        }
+
         $accessibleNodes = array_flip(
             $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ)
         );

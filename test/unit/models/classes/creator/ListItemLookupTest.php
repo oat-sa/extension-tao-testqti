@@ -6,14 +6,12 @@ use core_kernel_classes_Class;
 use core_kernel_classes_Resource as RdfResource;
 use oat\generis\model\data\Ontology;
 use oat\generis\model\data\permission\PermissionHelper;
-use oat\generis\model\data\permission\PermissionInterface;
 use oat\generis\test\MockObject;
 use oat\generis\test\TestCase;
 use oat\oatbox\session\SessionService;
 use oat\oatbox\user\User;
 use oat\tao\model\resources\ListResourceLookup;
 use oat\tao\model\resources\ResourceLookup;
-use oat\taoDacSimple\model\PermissionProvider;
 use oat\taoItems\model\CategoryService;
 use oat\taoQtiTest\models\creator\ListItemLookup;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -43,7 +41,7 @@ class ListItemLookupTest extends TestCase
     /** @var array */
     private $permissions = [];
 
-    /** @var PermissionHelper */
+    /** @var PermissionHelper|MockObject */
     private $permissionHelper;
 
     /** @var User|MockObject */
@@ -57,9 +55,6 @@ class ListItemLookupTest extends TestCase
 
     /** @var SessionService|MockObject */
     private $sessionServiceMock;
-
-    /** @var PermissionInterface|MockObject */
-    private $permissionProviderMock;
 
     /** @var CategoryService|MockObject */
     private $categoryServiceMock;
@@ -76,7 +71,6 @@ class ListItemLookupTest extends TestCase
     public function setUp(): void
     {
         $this->initializeTestDoubles();
-        $this->initializeTestDoubleExpectancies();
         $this->initializeServiceLocator();
         $this->initializeSut();
         parent::setUp();
@@ -84,12 +78,11 @@ class ListItemLookupTest extends TestCase
 
     public function initializeTestDoubles(): void
     {
-        $this->permissionHelper       = new PermissionHelper();
+        $this->permissionHelper       = $this->createMock(PermissionHelper::class);
         $this->userMock               = $this->createMock(User::class);
         $this->rootMock               = $this->createMock(core_kernel_classes_Class::class);
         $this->sessionServiceMock     = $this->createMock(SessionService::class);
         $this->resourceLookupMock     = $this->createMock(ResourceLookup::class);
-        $this->permissionProviderMock = $this->createMock(PermissionProvider::class);
         $this->categoryServiceMock    = $this->createMock(CategoryService::class);
         $this->ontologyMock           = $this->createMock(Ontology::class);
     }
@@ -105,10 +98,6 @@ class ListItemLookupTest extends TestCase
         $this->sessionServiceMock
             ->method('getCurrentUser')
             ->willReturn($this->userMock);
-
-        $this->permissionProviderMock
-            ->method('getSupportedRights')
-            ->willReturn(['READ']);
     }
 
     public function initializeServiceLocator(): void
@@ -122,7 +111,6 @@ class ListItemLookupTest extends TestCase
                     [Ontology::SERVICE_ID, $this->ontologyMock],
                     [SessionService::SERVICE_ID, $this->sessionServiceMock],
                     [ListResourceLookup::SERVICE_ID, $this->resourceLookupMock],
-                    [PermissionInterface::SERVICE_ID, $this->permissionProviderMock],
                     [CategoryService::SERVICE_ID, $this->categoryServiceMock],
                     [PermissionHelper::class, $this->permissionHelper],
                 ]
@@ -143,12 +131,9 @@ class ListItemLookupTest extends TestCase
     {
         $this->resources = $resources;
 
-        $nodeIds       = [];
         $resourceMap   = [];
         $categoriesMap = [];
         foreach ($resources['nodes'] ?? [] as $node) {
-            $nodeIds[] = $node['uri'];
-
             $resource = $this->createMock(RdfResource::class);
 
             $resourceMap[]   = [$node['uri'], $resource];
@@ -163,10 +148,8 @@ class ListItemLookupTest extends TestCase
             ->method('getItemCategories')
             ->willReturnMap($categoriesMap);
 
-        $this->permissionProviderMock
-            ->expects(static::once())
-            ->method('getPermissions')
-            ->with($this->userMock, $nodeIds)
+        $this->permissionHelper
+            ->method('filterByPermission')
             ->willReturnCallback([$this, 'getPermissions']);
     }
 
@@ -175,13 +158,9 @@ class ListItemLookupTest extends TestCase
         return $this->resources;
     }
 
-    /** @noinspection PhpUnusedParameterInspection */
-    public function getPermissions(User $user, array $nodeIds): array
+    public function getPermissions(): array
     {
-        return array_replace(
-            array_fill_keys($nodeIds, []),
-            $this->permissions
-        );
+        return $this->permissions;
     }
 
     public function dataProvider(): array
@@ -213,7 +192,7 @@ class ListItemLookupTest extends TestCase
                     'total' => 1,
                 ],
                 'permissions' => [
-                    'http://child#1' => ['READ'],
+                    'http://child#1',
                 ],
             ],
             'Restrictions'    => [
@@ -240,15 +219,13 @@ class ListItemLookupTest extends TestCase
                     'total' => 3,
                 ],
                 'permissions' => [
-                    'http://child#2' => ['READ'],
+                    'http://child#2',
                 ],
             ],
         ];
     }
 
     /**
-     * @noinspection PhpDocMissingThrowsInspection
-     *
      * @dataProvider dataProvider
      *
      * @param array $expected
@@ -260,10 +237,10 @@ class ListItemLookupTest extends TestCase
         array $resources = ['nodes' => [], 'total' => 0],
         array $permissions = []
     ): void {
+        $this->initializeTestDoubleExpectancies();
         $this->setResources($resources);
         $this->permissions = $permissions;
 
-        /** @noinspection PhpUnhandledExceptionInspection */
         $result = $this->sut->getItems($this->rootMock);
 
         if (!empty($result['nodes'])) {
@@ -271,5 +248,21 @@ class ListItemLookupTest extends TestCase
         }
 
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetItemsNoResources(): void
+    {
+        $data = ['nodes' => []];
+
+        $this->resourceLookupMock
+            ->expects(static::once())
+            ->method('getResources')
+            ->willReturn($data);
+
+        $this->permissionHelper
+            ->expects(static::never())
+            ->method('filterByPermission');
+
+        $this->sut->getItems($this->rootMock);
     }
 }
