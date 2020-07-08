@@ -22,6 +22,7 @@
 
 namespace oat\taoQtiTest\models\render;
 
+use oat\oatbox\filesystem\File;
 use oat\oatbox\service\ConfigurableService;
 
 /**
@@ -37,7 +38,7 @@ class NoneQtiPackageImportPreprocessing extends ConfigurableService implements Q
     /**
      * @inheritdoc
      */
-    public function run($file)
+    public function run(File $file)
     {
         return null;
     }
