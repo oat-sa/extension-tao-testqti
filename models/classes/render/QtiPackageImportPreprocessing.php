@@ -42,5 +42,5 @@ interface QtiPackageImportPreprocessing
      * @param File $file
      * @return common_report_Report|null
      */
-    public function run($file);
+    public function run(File $file);
 }
