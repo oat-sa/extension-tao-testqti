@@ -73,8 +73,7 @@ define([
              * @returns {Promise} that resolves with the classes
              */
             getItems : function getItems(params){
-                // force tokenised request
-                return request(config.getItems.url, params, 'GET', {}, true, false);
+                return request(config.getItems.url, params);
             },
 
             /**
