@@ -24,7 +24,7 @@ use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
 use oat\tao\model\import\ImportHandlerHelperTrait;
 use oat\tao\model\import\TaskParameterProviderInterface;
-use oat\taoQtiTest\models\render\ItemAssetsInterface;
+use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\event\QtiTestImportEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -72,16 +72,16 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
         try {
             $uploadedFile = $this->fetchUploadedFile($form);
 
-            $itemAssetsReplacement = $this->getItemAssets();
-            $cloudFrontificationReport = $itemAssetsReplacement->replaceResourcesWithCloudfront($uploadedFile);
+            $qtiPackageImportPreprocessingService = $this->getQtiPackageImportPreprocessing();
+            $preprocessingReport = $qtiPackageImportPreprocessingService->run($uploadedFile);
 
             // The zip extraction is a long process that can exceed the 30s timeout
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
             $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);
 
-            if ($cloudFrontificationReport) {
-                $report->add($cloudFrontificationReport);
+            if ($preprocessingReport) {
+                $report->add($preprocessingReport);
             }
 
             helpers_TimeOutHelper::reset();
@@ -99,10 +99,10 @@ class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_
     }
 
     /**
-     * @return ItemAssetsInterface
+     * @return QtiPackageImportPreprocessing
      */
-    private function getItemAssets()
+    private function getQtiPackageImportPreprocessing()
     {
-        return $this->getServiceLocator()->get(ItemAssetsInterface::SERVICE_ID);
+        return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
     }
 }
