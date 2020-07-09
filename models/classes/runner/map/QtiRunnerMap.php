@@ -496,7 +496,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             if ($option->isEnabled()) {
                 $categoriesMap[$categoryId] = true;
             } else {
-                unset($categoriesMap[$categoryId]);
+                $categoriesMap = $this->removeFuzzyMatchedCategories($categoriesMap, $categoryId);
             }
         }
 
@@ -507,5 +507,19 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->getServiceLocator()->get(OverriddenOptionsRepositoryInterface::SERVICE_ID);
+    }
+
+    private function removeFuzzyMatchedCategories(array $categoriesMap, string $categoryId): array
+    {
+        foreach (array_keys($categoriesMap) as $key) {
+            if (strcasecmp(
+                    preg_replace('/[-_\s]/', '', $key),
+                    preg_replace('/[-_\s]/', '', $categoryId)
+                ) === 0) {
+                unset($categoriesMap[$key]);
+            }
+        }
+
+        return $categoriesMap;
     }
 }
