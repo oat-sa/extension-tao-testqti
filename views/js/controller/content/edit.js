@@ -16,16 +16,10 @@
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
-define([
-    'lodash',
-    'codemirror',
-    'taoQtiTest/controller/content/schema_v2p1',
-    'codemirror/addon/hint/show-hint',
-    'codemirror/addon/hint/xml-hint',
-    'css!codemirror/addon/hint/show-hint',
-    'css!codemirror/lib/codemirror',
-    'codemirror/mode/xml/xml'
-], function (_, CodeMirror, schemaInfo) {
+define(['taoQtiTest/lib/codemirror/xmleditor', 'taoQtiTest/controller/content/schema_imsqti_v2p1'], function (
+    xmlEditor,
+    schemaInfo
+) {
     'use strict';
 
     const Controller = {
@@ -36,52 +30,9 @@ define([
                 return;
             }
 
-            const testEditor = CodeMirror.fromTextArea(textAreaComponent, {
-                mode: 'xml',
-                lineNumbers: true,
-                extraKeys: {
-                    "'<'": completeAfter,
-                    "'/'": completeIfAfterLt,
-                    "' '": completeIfInTag,
-                    "'='": completeIfInTag,
-                    'Shift-Space': 'autocomplete'
-                },
-                hintOptions: { schemaInfo: schemaInfo }
-            });
+            const testEditor = xmlEditor(textAreaComponent, { schemaInfo });
 
-            testEditor.setSize(720, 420);
-            testEditor.on('change', function (cMirror) {
-                textAreaComponent.value = cMirror.getValue();
-            });
-
-            function completeAfter(cm, pred) {
-                const cur = cm.getCursor();
-                if (!pred || pred())
-                    setTimeout(function () {
-                        if (!cm.state.completionActive) cm.showHint({ completeSingle: false });
-                    }, 100);
-                return CodeMirror.Pass;
-            }
-
-            function completeIfAfterLt(cm) {
-                return completeAfter(cm, function () {
-                    const cur = cm.getCursor();
-                    return cm.getRange(CodeMirror.Pos(cur.line, cur.ch - 1), cur) == '<';
-                });
-            }
-
-            function completeIfInTag(cm) {
-                return completeAfter(cm, function () {
-                    const tok = cm.getTokenAt(cm.getCursor());
-                    if (
-                        tok.type == 'string' &&
-                        (!/['"]/.test(tok.string.charAt(tok.string.length - 1)) || tok.string.length == 1)
-                    )
-                        return false;
-                    const inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
-                    return inner.tagName;
-                });
-            }
+            testEditor.setSize('100%', 420);
         }
     };
 
