@@ -94,8 +94,6 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     public function getItems()
     {
         try {
-            $this->validateCsrf();
-
             if (!$this->hasRequestParameter('classUri')) {
                 throw new \InvalidArgumentException('Missing parameter classUri');
             }

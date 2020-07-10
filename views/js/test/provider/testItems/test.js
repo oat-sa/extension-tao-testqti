@@ -99,15 +99,14 @@ define([
         ];
         var returnVal;
 
-        assert.expect(6);
+        assert.expect(5);
 
         $.mockjax({
             url: mockConfig.getItems.url,
             response: function(settings) {
                 assert.equal(settings.url, mockConfig.getItems.url, 'The provider has called the right service');
                 assert.equal(settings.data, params, 'The correct params are in the request data');
-                assert.ok(settings.headers.hasOwnProperty('X-CSRF-Token'), 'A CSRF token is set in the request header');
-                assert.equal(typeof settings.headers['X-CSRF-Token'], 'string', 'The CSRF token is a string');
+                assert.notOk(settings.headers.hasOwnProperty('X-CSRF-Token'), 'No CSRF token is set in the request header');
                 this.responseText = JSON.stringify({ success: true, data: itemList });
             }
         });
