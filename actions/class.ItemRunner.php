@@ -23,7 +23,6 @@ class taoQtiTest_actions_ItemRunner extends AbstractQtiItemRunner
         return [
             'testServiceCallId' => $this->getRequestParameter('QtiTestParentServiceCallId'),
             'testDefinition'    => $this->getRequestParameter('QtiTestDefinition'),
-            'testCompilation'   => $this->getRequestParameter('QtiTestCompilation'),
             'itemDataPath'      => $this->getRequestParameter('itemDataPath')
         ];
     }
