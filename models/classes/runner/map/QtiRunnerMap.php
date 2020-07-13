@@ -509,12 +509,17 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         return $this->getServiceLocator()->get(OverriddenOptionsRepositoryInterface::SERVICE_ID);
     }
 
+    /**
+     * Tool/option activation status in frontend is checked by fuzzy matched categories. This step was added
+     * in order to have the same behavior for tool/option deactivation through overrides
+     */
     private function removeFuzzyMatchedCategories(array $categoriesMap, string $categoryId): array
     {
+        $prefix = QtiRunnerConfig::CATEGORY_OPTION_PREFIX;
         foreach (array_keys($categoriesMap) as $key) {
             if (strcasecmp(
-                    preg_replace('/[-_\s]/', '', $key),
-                    preg_replace('/[-_\s]/', '', $categoryId)
+                    preg_replace('/[-_\s]/', '', str_replace($prefix, '', $key)),
+                    preg_replace('/[-_\s]/', '', str_replace($prefix, '', $categoryId))
                 ) === 0) {
                 unset($categoriesMap[$key]);
             }
