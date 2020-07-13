@@ -44,7 +44,7 @@ module.exports = function(grunt) {
                         name : 'taoQtiTest',
                         default : true,
                         babel : true,
-                        exclude: ['taoQtiTest/controller/content/edit']
+                        excludeNested: ['taoQtiTest/controller/content/edit']
                     }, {
                         name : 'taoQtiTestRunner',
                         entryPoint : 'taoQtiTest/controller/runner/runner',
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
                         dependencies : []
                     }, {
                         name: 'taoQtiTestXMLEditor',
-                        entryPoint: 'taoQtiTest/lib/codemirror/xmleditor',
+                        entryPoint: 'taoQtiTest/controller/content/edit',
                         babel: true
                     }
                 ]}
