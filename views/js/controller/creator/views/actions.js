@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
@@ -97,12 +97,10 @@ function($, propertyView){
             $elements = $('.' + elementClass, $container);
             index = $elements.index($element);
             if (index > 0) {
-                $element.fadeOut(200, function(){
+                $element.fadeOut(200, () => {
                     $element
-                        .insertBefore($('.' + elementClass + ' :eq(' + (index - 1) + ')', $container))
-                        .fadeIn(400, function(){
-                            $container.trigger('change');
-                        });
+                        .insertBefore($(`.${elementClass}:eq(${index - 1})`, $container))
+                        .fadeIn(400, () => $container.trigger('change') );
                 });
             }
         });
@@ -121,12 +119,10 @@ function($, propertyView){
             $elements = $('.' + elementClass, $container);
             index = $elements.index($element);
             if (index < ($elements.length - 1) && $elements.length > 1) {
-                $element.fadeOut(200, function(){
+                $element.fadeOut(200, () => {
                     $element
-                        .insertAfter($('.' + elementClass + ' :eq(' + (index + 1) + ')', $container))
-                        .fadeIn(400, function(){
-                            $container.trigger('change');
-                        });
+                        .insertAfter($(`.${elementClass}:eq(${index + 1})`, $container))
+                        .fadeIn(400, () =>  $container.trigger('change') );
                 });
             }
         });
