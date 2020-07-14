@@ -16,7 +16,7 @@
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
-define(['taoQtiTest/lib/codemirror/xmleditor', 'taoQtiTest/lib/codemirror/schema_imsqti_v2p1'], function (
+define(['taoQtiTest/lib/codemirror/xmlEditor', 'taoQtiTest/lib/codemirror/schema/ims_qti_v2p1', 'css!taoQtiTestCss/xml-editor'], function (
     xmlEditor,
     schemaInfo
 ) {

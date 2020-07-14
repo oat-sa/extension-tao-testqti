@@ -52,7 +52,6 @@ define([
             hintOptions: { schemaInfo }
         });
 
-        testEditor.setSize('100%', 420);
         testEditor.on('change', function (cMirror) {
             textAreaComponent.value = cMirror.getValue();
         });
