@@ -1,3 +1,4 @@
+<?php
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,26 +14,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
- *
- *
+ * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
  */
 
-//@see http://forge.taotesting.com/projects/tao/wiki/Front_js
-define(function () {
-    'use strict';
+use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 
-    return {
-        Creator: {
-            css: 'creator',
-            actions: {
-                index: 'controller/creator/creator'
-            }
-        },
-        XmlEditor: {
-            actions: {
-                edit: 'controller/content/edit'
-            }
-        }
-    };
-});
+return new AssessmentTestXmlFactory();

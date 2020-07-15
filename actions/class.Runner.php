@@ -38,6 +38,9 @@ use oat\taoQtiTest\models\runner\StorageManager;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
 use oat\tao\model\routing\AnnotationReader\security;
+use oat\taoDelivery\model\execution\DeliveryExecutionService;
+use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -118,10 +121,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     protected function getServiceContext()
     {
         if (!$this->serviceContext) {
-            $testDefinition = $this->getRequestParameter('testDefinition');
-            $testCompilation = $this->getRequestParameter('testCompilation');
-
             $testExecution = $this->getSessionId();
+            $execution = $this->getServiceLocator()->get(DeliveryExecutionService::SERVICE_ID)->getDeliveryExecution($testExecution);
+            $delivery = $execution->getDelivery();
+            $container = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID)->getDeliveryContainer($delivery->getUri());
+            if (!$container instanceof QtiTestDeliveryContainer) {
+                throw new common_Exception('Non QTI test container '.get_class($container).' in qti test runner');
+            }
+            $testDefinition = $container->getSourceTest($execution);
+            $testCompilation = $container->getPrivateDirId($execution) . '|' . $container->getPublicDirId($execution);
             $this->serviceContext = $this->getRunnerService()->getServiceContext($testDefinition, $testCompilation, $testExecution);
         }
 

@@ -57,7 +57,7 @@ return [
         'taoTests'   => '>=14.3.0',
         'tao'        => '>=45.0.0',
         'generis'    => '>=12.20.0',
-        'taoDelivery' => '>=14.10.0',
+        'taoDelivery' => '>=14.18.0',
         'taoItems'   => '>=10.9.0',
     ],
     'models' => [
