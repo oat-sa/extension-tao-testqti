@@ -16,7 +16,10 @@
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
-define(['lodash', 'codemirror', 'css!codemirror/lib/codemirror', 'codemirror/mode/xml/xml'], function (_, CodeMirror) {
+define(['taoQtiTest/lib/codemirror/xmlEditor', 'taoQtiTest/lib/codemirror/schemas/ims_qti_v2p1', 'css!taoQtiTestCss/xml-editor'], function (
+    xmlEditor,
+    schemaInfo
+) {
     'use strict';
 
     const Controller = {
@@ -26,15 +29,10 @@ define(['lodash', 'codemirror', 'css!codemirror/lib/codemirror', 'codemirror/mod
             if (textAreaComponent === null) {
                 return;
             }
-            const testEditor = CodeMirror.fromTextArea(textAreaComponent, {
-                mode: 'xml',
-                lineNumbers: true
-            });
 
-            testEditor.setSize(720, 420);
-            testEditor.on('change', function (cMirror) {
-                textAreaComponent.value = cMirror.getValue();
-            });
+            const testEditor = xmlEditor(textAreaComponent, { schemaInfo });
+
+            testEditor.setSize('100%', 420);
         }
     };
 
