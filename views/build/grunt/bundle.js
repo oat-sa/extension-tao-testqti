@@ -43,7 +43,8 @@ module.exports = function(grunt) {
                     bundles : [{
                         name : 'taoQtiTest',
                         default : true,
-                        babel : true
+                        babel : true,
+                        excludeNested: ['taoQtiTest/controller/content/edit']
                     }, {
                         name : 'taoQtiTestRunner',
                         entryPoint : 'taoQtiTest/controller/runner/runner',
@@ -66,8 +67,12 @@ module.exports = function(grunt) {
                             'taoQtiTest/runner/plugins/**/*'
                         ],
                         dependencies : []
-                    }]
-                }
+                    }, {
+                        name: 'taoQtiTestXMLEditor',
+                        entryPoint: 'taoQtiTest/controller/content/edit',
+                        babel: true
+                    }
+                ]}
             }
         }
     });
