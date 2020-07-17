@@ -49,7 +49,11 @@ module.exports = function(grunt) {
                         src : path.join(root, 'scss/test-runner.scss')
                     }, {
                         dest : path.join(root, 'css/new-test-runner.css'),
-                        src : path.join(runnerScssPath, 'new-test-runner.scss')                    },
+                        src : path.join(runnerScssPath, 'new-test-runner.scss')
+                    },{
+                        dest : path.join(root, 'css/xml-editor.css'),
+                        src : path.join(root, 'scss/xml-editor.scss')
+                    },
                 ]
             },
         },

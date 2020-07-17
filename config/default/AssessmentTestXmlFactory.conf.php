@@ -1,3 +1,4 @@
+<?php
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,28 +14,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
  */
 
-define(['taoQtiTest/lib/codemirror/xmlEditor', 'taoQtiTest/lib/codemirror/schemas/ims_qti_v2p1', 'css!taoQtiTestCss/xml-editor'], function (
-    xmlEditor,
-    schemaInfo
-) {
-    'use strict';
+use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 
-    const Controller = {
-        start() {
-            const textAreaComponent = document.getElementById('xmlString');
-
-            if (textAreaComponent === null) {
-                return;
-            }
-
-            const testEditor = xmlEditor(textAreaComponent, { schemaInfo });
-
-            testEditor.setSize('100%', 420);
-        }
-    };
-
-    return Controller;
-});
+return new AssessmentTestXmlFactory();

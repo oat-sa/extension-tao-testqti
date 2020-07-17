@@ -1,3 +1,5 @@
+<?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,27 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ *
+ *
  */
 
-define(['taoQtiTest/lib/codemirror/xmlEditor', 'taoQtiTest/lib/codemirror/schemas/ims_qti_v2p1', 'css!taoQtiTestCss/xml-editor'], function (
-    xmlEditor,
-    schemaInfo
-) {
-    'use strict';
+namespace oat\taoQtiTest\models\render;
 
-    const Controller = {
-        start() {
-            const textAreaComponent = document.getElementById('xmlString');
+use common_report_Report;
+use oat\oatbox\filesystem\File;
 
-            if (textAreaComponent === null) {
-                return;
-            }
+/**
+ * Interface that define a preprocessing for item assets, CDN Signature, url modification ...
+ *
+ * @access public
+ * @author Andrey Niahrou
+ * @package taoQtiTest
+ */
+interface QtiPackageImportPreprocessing
+{
+    const SERVICE_ID = 'taoQtiTest/QtiPackageImportPreprocessing';
 
-            const testEditor = xmlEditor(textAreaComponent, { schemaInfo });
-
-            testEditor.setSize('100%', 420);
-        }
-    };
-
-    return Controller;
-});
+    /**
+     * Method that allows you to modify links to assets QTI test package to CloudFront before import
+     *
+     * @param File $file
+     * @return common_report_Report|null
+     */
+    public function run(File $file);
+}

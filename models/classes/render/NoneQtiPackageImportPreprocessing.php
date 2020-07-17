@@ -1,3 +1,5 @@
+<?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,27 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ *
+ *
  */
 
-define(['taoQtiTest/lib/codemirror/xmlEditor', 'taoQtiTest/lib/codemirror/schemas/ims_qti_v2p1', 'css!taoQtiTestCss/xml-editor'], function (
-    xmlEditor,
-    schemaInfo
-) {
-    'use strict';
+namespace oat\taoQtiTest\models\render;
 
-    const Controller = {
-        start() {
-            const textAreaComponent = document.getElementById('xmlString');
+use oat\oatbox\filesystem\File;
+use oat\oatbox\service\ConfigurableService;
 
-            if (textAreaComponent === null) {
-                return;
-            }
+/**
+ * Simple implementation of QtiPackageImportPreprocessing that do nothing
+ *
+ * @access public
+ * @author Andrey Niahrou
+ * @package taoQtiTest
+ */
+class NoneQtiPackageImportPreprocessing extends ConfigurableService implements QtiPackageImportPreprocessing
+{
 
-            const testEditor = xmlEditor(textAreaComponent, { schemaInfo });
-
-            testEditor.setSize('100%', 420);
-        }
-    };
-
-    return Controller;
-});
+    /**
+     * @inheritdoc
+     */
+    public function run(File $file)
+    {
+        return null;
+    }
+}
