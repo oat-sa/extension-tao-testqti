@@ -20,11 +20,12 @@
 
 namespace oat\taoQtiTest\scripts\install;
 
+use common_report_Report as Report;
+use core_kernel_classes_Property as KernelProperty;
 use oat\generis\model\WidgetRdf;
 use oat\oatbox\extension\InstallAction;
-use oat\tao\model\WidgetDefinitions;
 use oat\taoQtiTest\models\cat\CatService;
-use \common_report_Report as Report;
+use oat\tao\model\WidgetDefinitions;
 
 /**
  * Class ShowQtiAdaptiveSectionIds
@@ -37,9 +38,9 @@ class ShowQtiAdaptiveSectionIds extends InstallAction
 {
     public function __invoke($params)
     {
-        $adaptiveSectionIdsProperty = new \core_kernel_classes_Property(CatService::CAT_ADAPTIVE_IDS_PROPERTY);
-        $widgetProperty = new \core_kernel_classes_Property(WidgetRdf::PROPERTY_WIDGET);
-        $adaptiveSectionIdsProperty->editPropertyValues($widgetProperty, WidgetDefinitions::PROPERTY_JSONOBJECT);
+        $adaptiveSectionIdsProperty = new KernelProperty(CatService::CAT_ADAPTIVE_IDS_PROPERTY);
+        $widgetProperty = new KernelProperty(WidgetRdf::PROPERTY_WIDGET);
+        $adaptiveSectionIdsProperty->editPropertyValues($widgetProperty, WidgetDefinitions::PROPERTY_JSON_OBJECT);
 
         return new Report(Report::TYPE_SUCCESS, 'QTI CAT Adaptive Section IDs are now visible in the GUI.');
     }
