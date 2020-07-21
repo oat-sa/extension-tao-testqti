@@ -25,7 +25,7 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\generis\model\WidgetRdf;
 use oat\oatbox\extension\InstallAction;
 use oat\taoQtiTest\models\cat\CatService;
-use oat\tao\model\WidgetDefinitions;
+use tao_helpers_form_elements_JsonObject as JsonObject;
 
 /**
  * Class ShowQtiAdaptiveSectionIds
@@ -42,7 +42,7 @@ class ShowQtiAdaptiveSectionIds extends InstallAction
     {
         $adaptiveSectionIdsProperty = $this->getProperty(CatService::CAT_ADAPTIVE_IDS_PROPERTY);
         $widgetProperty = $this->getProperty(WidgetRdf::PROPERTY_WIDGET);
-        $adaptiveSectionIdsProperty->editPropertyValues($widgetProperty, WidgetDefinitions::PROPERTY_JSON_OBJECT);
+        $adaptiveSectionIdsProperty->editPropertyValues($widgetProperty, JsonObject::WIDGET_ID);
 
         return new Report(Report::TYPE_SUCCESS, 'QTI CAT Adaptive Section IDs are now visible in the GUI.');
     }
