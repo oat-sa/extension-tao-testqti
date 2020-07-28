@@ -38,7 +38,8 @@ define([
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'ui/validator/validators',
-    'taoQtiTestPreviewer/previewer/adapter/test/qtiTest'
+    'taoQtiTestPreviewer/previewer/adapter/test/qtiTest',
+    'taoQtiTest/controller/creator/helpers/changeTracker'
 ], function(
     module,
     $,
@@ -59,7 +60,8 @@ define([
     scoringHelper,
     categorySelector,
     validators,
-    previewerFactory
+    previewerFactory,
+    changeTracker
 ){
     'use strict';
 
@@ -81,7 +83,7 @@ define([
           * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
           * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
           */
-        start(options){
+        start(options) {
             const $container = $('#test-creator');
             const $saver = $('#saver');
 
@@ -112,12 +114,7 @@ define([
             //preview button
             $('#previewer').on('click', e => {
                 e.preventDefault();
-                const saveUrl = options.routes.save;
-                const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
-                previewerFactory.init(decodeURIComponent(testUri), {
-                    readOnly: false,
-                    fullPage: true
-                });
+                creatorContext.trigger('preview');
             });
 
             //set up the ItemView, give it a configured loadItems ref
@@ -140,7 +137,7 @@ define([
                     'dom2qti' : Dom2QtiEncoder
                 },
                 templates : templates,
-                beforeSave(model){
+                beforeSave(model) {
                     //ensure the qti-type is present
                     qtiTestHelper.addMissingQtiType(model);
 
@@ -193,25 +190,35 @@ define([
                     $(window)
                         .off('resize.qti-test-creator')
                         .on('resize.qti-test-creator', () => itemrefView.resize() );
+
+                    changeTracker($container, creatorContext, $container);
+
+                    creatorContext.on('save', function() {
+                        if(!$saver.hasClass('disabled')){
+                            $saver.attr('disabled', true).addClass('disabled');
+                            binder.save(function() {
+                                $saver.attr('disabled', false).removeClass('disabled');
+                                feedback().success(__('Test Saved'));
+                            }, function() {
+                                $saver.attr('disabled', false).removeClass('disabled');
+                            });
+                        }
+                    });
+
+                    creatorContext.on('preview', function() {
+                        const saveUrl = options.routes.save;
+                        const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
+                        return previewerFactory.init(decodeURIComponent(testUri), {
+                            readOnly: false,
+                            fullPage: true
+                        });
+                    });
                 });
 
             //the save button triggers binder's save action.
             $saver.on('click', function(event){
                 event.preventDefault();
-
-                if(!$saver.hasClass('disabled')){
-                    $saver.attr('disabled', true).addClass('disabled');
-                    binder.save(function(){
-
-                        $saver.attr('disabled', false).removeClass('disabled');
-
-                        feedback().success(__('Test Saved'));
-
-                    }, function(){
-
-                        $saver.attr('disabled', false).removeClass('disabled');
-                    });
-                }
+                creatorContext.trigger('save');
             });
         }
     };
