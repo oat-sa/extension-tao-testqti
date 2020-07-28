@@ -25,16 +25,14 @@ define([
     'i18n',
     'lib/uuid',
     'core/eventifier',
-    'ui/dialog',
-    'taoQtiItem/qtiCreator/helper/saveChanges'
+    'ui/dialog'
 ], function (
     $,
     _,
     __,
     uuid,
     eventifier,
-    dialog,
-    saveChanges
+    dialog
 ) {
     'use strict';
 
@@ -144,8 +142,13 @@ define([
                 testCreator
                     .on(`ready${eventNS} saved${eventNS}`, () => this.init())
                     .before(`exit${eventNS}`, () => this.confirmBefore('exit').then(() => this.uninstall()))
-                    .before(`preview${eventNS}`, () => this.confirmBefore('preview'))
-                    .after(`save${eventNS}`, () => testCreator.setTestModel(this.getSerializedTest()));
+                    .before(`preview`, () => this.confirmBefore('preview').then(() => {
+                        if (!this.hasChanged()) {
+                            return;
+                        }
+                        testCreator.trigger('save')
+                    }))
+                    .after(`save`, () => originalItem = this.getSerializedTest());
 
                 return this;
             },
@@ -209,9 +212,18 @@ define([
                         }],
                         autoRender: true,
                         autoDestroy: true,
-                        onSaveBtn: () => resolve,
-                        onDontsaveBtn: () => reject,
-                        onCancelBtn: () => reject
+                        onSaveBtn: () => {
+                            confirmDlg.hide();
+                            resolve();
+                        },
+                        onDontsaveBtn: () => {
+                            confirmDlg.hide();
+                            reject();
+                        },
+                        onCancelBtn: () => {
+                            confirmDlg.hide();
+                            reject();
+                        }
                     })
                         .on('closed.modal', () => asking = false);
                 });
