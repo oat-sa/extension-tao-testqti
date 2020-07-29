@@ -184,6 +184,7 @@ class QtiTestUtils extends ConfigurableService
                     
                     // And moreover, it sometimes refer the temp directory as Windows\TEMP instead of Windows\Temp.
                     $itemRefCanonicalHref = str_replace('\\TEMP\\', '\\Temp\\', $itemRefCanonicalHref);
+                    $itemResourceCanonicalHref = str_replace('\\TEMP\\', '\\Temp\\', $itemResourceCanonicalHref);
                 }
                 
                 // With some MacOS flavours, the $itemRefCanonicalHref comes out with
