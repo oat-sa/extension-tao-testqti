@@ -40,9 +40,9 @@ define([
      * The messages asking to save
      */
     const messages = {
-        preview: __('The item needs to be saved before it can be previewed'),
-        leave: __('The item has unsaved changes, are you sure you want to leave ?'),
-        exit: __('The item has unsaved changes, would you like to save it ?')
+        preview: __('The test needs to be saved before it can be previewed'),
+        leave: __('The test has unsaved changes, are you sure you want to leave ?'),
+        exit: __('The test has unsaved changes, would you like to save it ?')
     };
 
     /**
@@ -51,7 +51,6 @@ define([
      * @param {testCreator} testCreator
      * @param {String} [wrapperSelector]
      * @returns {changeTracker}
-     * @fires stylechange when the item's style changed
      */
     function changeTrackerFactory(container, testCreator, wrapperSelector = 'body') {
         let changeTracker;
@@ -59,26 +58,11 @@ define([
         // internal namespace for global registered events
         const eventNS = `.ct-${uuid(8, 16)}`;
 
-        // keep the value of the item before changes
-        let originalItem;
-
-        // does the item styles have changed
-        let styleChanges = false;
+        // keep the value of the test before changes
+        let originallTest;
 
         // are we in the middle of the confirm process ?
         let asking = false;
-
-        // take care of the change in item style
-        const onStyleChange = (e, detail) => {
-            if (!detail || !detail.initializing) {
-                styleChanges = true;
-                /**
-                 * Change in item style
-                 * @event stylechange
-                 */
-                changeTracker.trigger('stylechange');
-            }
-        };
 
         /**
          * @typedef {Object} changeTracker
@@ -89,8 +73,7 @@ define([
              * @returns {changeTracker}
              */
             init() {
-                originalItem = this.getSerializedTest();
-                styleChanges = false;
+                originallTest = this.getSerializedTest();
 
                 return this;
             },
@@ -102,11 +85,6 @@ define([
             install() {
                 this.init();
                 asking = false;
-
-                // track style changes
-                $(window.document)
-                    .one('customcssloaded.styleeditor', () => this.init())
-                    .on('stylechange.qti-creator', onStyleChange);
 
                 // add a browser popup to prevent leaving the browser
                 $(window)
@@ -146,7 +124,7 @@ define([
                             testCreator.trigger('save');
                         }
                     }))
-                    .after(`save${eventNS}`, () => originalItem = this.getSerializedTest());
+                    .after(`save${eventNS}`, () => originallTest = this.getSerializedTest());
 
                 return this;
             },
@@ -158,8 +136,7 @@ define([
             uninstall() {
                 // remove all global handlers
                 $(window.document)
-                    .off(eventNS)
-                    .off('stylechange.qti-creator', onStyleChange);
+                    .off(eventNS);
                 $(window).off(eventNS);
                 $(wrapperSelector).off(eventNS);
                 testCreator.off(eventNS);
@@ -217,30 +194,27 @@ define([
                             reject({ cancel: true });
                         }
                     })
-                        .on('closed.modal', () => asking = false);
+                    .on('closed.modal', () => asking = false);
                 });
             },
 
             /**
-             * Does the item have changed?
+             * Does the test have changed?
              * @returns {Boolean}
              */
             hasChanged() {
-                if (styleChanges) {
-                    return true;
-                }
-                const currentItem = this.getSerializedTest();
-                return originalItem !== currentItem || (null === currentItem && null === originalItem);
+                const currentTest = this.getSerializedTest();
+                return originallTest !== currentTest || (null === currentTest && null === originallTest);
             },
 
             /**
-             * Get a string representation of the current item, used for comparison
+             * Get a string representation of the current test, used for comparison
              * @returns {String} the test
              */
             getSerializedTest() {
                 let serialized = '';
                 try {
-                    // create a string from the item content
+                    // create a string from the test content
                     serialized = JSON.stringify(testCreator.getModelOverseer().getModel());
 
                     // sometimes the creator strip spaces between tags, so we do the same
