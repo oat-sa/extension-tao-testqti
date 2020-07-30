@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint133\n"
-"PO-Revision-Date: 2020-07-30T15:10:09\n"
+"Project-Id-Version: TAO 3.4.0-sprint129\n"
+"PO-Revision-Date: 2020-05-22T08:26:48\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -13,7 +13,16 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%s to answer %s"
+msgid "%s hours %s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s hours %s minutes to answer the current question."
+msgstr ""
+
+msgid "%s minutes to answer remaining %s questions."
+msgstr ""
+
+msgid "%s minutes to answer the current question."
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -355,9 +364,6 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr "Nėrodyti įspėjimo pasibaigus laikui"
 
-msgid "Don\'t save"
-msgstr ""
-
 msgid "Download"
 msgstr ""
 
@@ -391,10 +397,10 @@ msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Baigti testą"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Baigti testą"
 
 msgid "Enter a blueprint"
@@ -471,20 +477,8 @@ msgstr "Priversti elementą būti informaciniu ir nebūti atsižvelgtam atsakyt�
 msgid "Go to next item"
 msgstr "Eiti į sekantį elementą"
 
-msgid "Go to the current question"
-msgstr ""
-
 msgid "Go to the next item?"
 msgstr "Eiti į sekantį elementą?"
-
-msgid "Go to the next question"
-msgstr ""
-
-msgid "Go to the previous question"
-msgstr ""
-
-msgid "Go to the top of the page"
-msgstr ""
 
 msgid "Gray on Green"
 msgstr ""
@@ -515,9 +509,6 @@ msgstr "Paryškinti Tekstą"
 
 msgid "Highlighter"
 msgstr "Žymeklis"
-
-msgid "hours"
-msgstr ""
 
 msgid "Html title"
 msgstr "Html pavadinimas"
@@ -615,11 +606,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Elemento Sesijos Valdymas"
 
-msgid "Items"
-msgstr "Elementai"
-
 msgid "items"
 msgstr "elementai"
+
+msgid "Items"
+msgstr "Elementai"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elementai pasirinktinai gali būti paskirti vienai arba daugiau kategorijų."
@@ -642,17 +633,17 @@ msgstr ""
 msgid "Keep Together"
 msgstr "Laikyti Kartu"
 
-msgid "Keyboard Navigation"
-msgstr ""
-
-msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
-msgstr ""
-
 msgid "Late submission allowed"
 msgstr "Vėluojamas pateikimas leidžiamas"
 
 msgid "Leave a comment"
 msgstr "Palikti komentarą"
+
+msgid "Less than one minute to answer remaining %s questions."
+msgstr ""
+
+msgid "Less than one minute to answer the current question."
+msgstr ""
 
 msgid "Light yellow on royal blue"
 msgstr "Šviesiai geltona su karališka mėlyna"
@@ -690,11 +681,10 @@ msgstr "Tvarkyti Rubrikos Blokus"
 msgid "Manage test properties"
 msgstr "Tvarkyti testo savybes"
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr "Tvarkyti testus"
 
-#, tao-public
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Tvarkyti testus"
 
 msgid "Mark for review"
@@ -748,12 +738,6 @@ msgstr "Minimali trukmė šio testo daliai."
 msgid "Minimum duration for this test part."
 msgstr "Minimali trukmė šio testo daliai."
 
-msgid "minutes"
-msgstr ""
-
-msgid "Missed required parameter \'id\"
-msgstr ""
-
 msgid "Missed test package file"
 msgstr "Nesurastas testo paketo failas"
 
@@ -777,9 +761,6 @@ msgstr ""
 
 msgid "Navigation"
 msgstr "Navigacija"
-
-msgid "Navigation shortcuts"
-msgstr ""
 
 msgid "Navigation Warnings"
 msgstr "Navigacijos Įspėjimai"
@@ -913,9 +894,6 @@ msgstr "Prašome patvirtinti, kad jūs norite palikti testą."
 msgid "Please wait while we try to restore the connection."
 msgstr "Prašome palaukti, kol mes bandome atstatyti ryšį."
 
-msgid "Preview"
-msgstr ""
-
 msgid "Preview the covered area"
 msgstr "Peržiūrėti padengtą plotą"
 
@@ -955,20 +933,11 @@ msgstr "QTI/APIP Testo Turinio Paketas"
 msgid "Question"
 msgstr ""
 
-msgid "question"
-msgstr ""
-
-msgid "questions"
-msgstr ""
-
 msgid "Reference"
 msgstr "Šaltinis"
 
 msgid "Regenerate"
 msgstr "Regeneruoti"
-
-msgid "remaining %s %s"
-msgstr ""
 
 msgid "Remove Item Reference"
 msgstr "Šalinti Elemento Šaltinį"
@@ -1012,9 +981,6 @@ msgstr "Rubrikos Blokai"
 msgid "Save"
 msgstr "Išsaugoti"
 
-msgid "Saved"
-msgstr ""
-
 msgid "Scientific Calculator"
 msgstr "Mokslinis skaičiuotuvas"
 
@@ -1032,9 +998,6 @@ msgstr "Juodraštis"
 
 msgid "Scratchpad"
 msgstr "Juodraštis"
-
-msgid "seconds"
-msgstr ""
 
 msgid "Section %d"
 msgstr "Skyrius %d"
@@ -1086,9 +1049,6 @@ msgstr "Nustatyti XHTML-QTI klasę rubrikos blokui."
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr "Nustatyti XHTML-QTI identifikatorių rubrikos blokui."
-
-msgid "SetSynchronisationService successfully configured."
-msgstr ""
 
 msgid "Settings"
 msgstr "Nustatymai"
@@ -1145,9 +1105,6 @@ msgid "Skip to the next section"
 msgstr "Pereiti į kitą skyrių"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
-msgstr ""
-
-msgid "Something went wrong..."
 msgstr ""
 
 msgid "Speech speed"
@@ -1216,7 +1173,6 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr "Testo Laikytojo Įrankiai"
 
-#, tao-public
 msgid "Tests"
 msgstr "Testai"
 
@@ -1264,9 +1220,6 @@ msgstr "Kandidatui neleidžiama pateikti blogus atsakymus."
 
 msgid "The connection seems to be back, please proceed"
 msgstr "Ryšys atrodo, kad atsirado. Prašome tęsti"
-
-msgid "the current question"
-msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "IMS QTI priklausomybė AssessmentItemRef \"%s\" IMS Manifesto faile negalėjo būti išspręsta."
@@ -1349,15 +1302,6 @@ msgstr "Testas buvo pristabdytas, mes negalime prisijungti prie serverio."
 msgid "The test has not been saved."
 msgstr "Testas nebuvo išsaugotas."
 
-msgid "The test has unsaved changes, are you sure you want to leave?"
-msgstr ""
-
-msgid "The test has unsaved changes, would you like to save it?"
-msgstr ""
-
-msgid "The test needs to be saved before it can be previewed."
-msgstr ""
-
 msgid "The test part identifier."
 msgstr "Testo dalies identifikatorius."
 
@@ -1371,9 +1315,6 @@ msgid "This constraint affects the visibility of feedback after the end of the l
 msgstr ""
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
-msgstr ""
-
-msgid "This functionality is blocked. Please contact with your administrator for more details."
 msgstr ""
 
 msgid "This test has been suspended"
@@ -1526,13 +1467,6 @@ msgstr "Su Pakeitimu"
 msgid "Wrong file mime type"
 msgstr "Blogas failo MIME tipas"
 
-msgid "XML Content"
-msgstr ""
-
-#, tao-public
-msgid "XML Editor"
-msgstr ""
-
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "XML klaida eilutės %1$d stulpelyje %2$d \"%3$s\"."
 
@@ -1565,9 +1499,6 @@ msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr "Jūs turite užsitęsusius ryšio trūkčius."
-
-msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
-msgstr ""
 
 msgid "You have %s item(s) marked for review."
 msgstr "Turite %s klausimų(-us) pažymėję patikrinimui."
