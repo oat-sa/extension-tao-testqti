@@ -142,7 +142,7 @@ define([
                     .on(`ready${eventNS} saved${eventNS}`, () => this.init())
                     .before(`exit${eventNS}`, () => this.confirmBefore('exit').then(() => this.uninstall()))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
-                        if (whatToDo.ifWantSave) {
+                        if (whatToDo && whatToDo.ifWantSave) {
                             testCreator.trigger('save');
                         }
                     }))
