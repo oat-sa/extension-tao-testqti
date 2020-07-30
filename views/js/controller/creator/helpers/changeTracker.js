@@ -126,11 +126,10 @@ define([
                             e.preventDefault();
 
                             this.confirmBefore('exit')
-                                .then(() => {
-                                    // @todo improve this:
-                                    // When clicking outside, and accepting the confirm dialog (one way or another),
-                                    // the tracker is disabled, and changes won't be detected anymore. So it could be
-                                    // an issue if the click was not triggering any move.
+                                .then(whatToDo => {
+                                    if (whatToDo.ifWantSave) {
+                                        testCreator.trigger('save');
+                                    }
                                     this.uninstall();
                                     e.target.click();
                                 })
@@ -142,13 +141,14 @@ define([
                 testCreator
                     .on(`ready${eventNS} saved${eventNS}`, () => this.init())
                     .before(`exit${eventNS}`, () => this.confirmBefore('exit').then(() => this.uninstall()))
-                    .before(`preview`, () => this.confirmBefore('preview').then(() => {
-                        if (!this.hasChanged()) {
-                            return;
+                    .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
+                        if (whatToDo.ifWantSave) {
+                            testCreator.trigger('save');
+                        } else {
+                            testCreator.setTestModel(originalItem);
                         }
-                        testCreator.trigger('save')
                     }))
-                    .after(`save`, () => originalItem = this.getSerializedTest());
+                    .after(`save${eventNS}`, () => originalItem = this.getSerializedTest());
 
                 return this;
             },
@@ -212,17 +212,11 @@ define([
                         }],
                         autoRender: true,
                         autoDestroy: true,
-                        onSaveBtn: () => {
-                            confirmDlg.hide();
-                            resolve();
-                        },
-                        onDontsaveBtn: () => {
-                            confirmDlg.hide();
-                            reject();
-                        },
+                        onSaveBtn: () => resolve({ ifWantSave: true }),
+                        onDontsaveBtn: () => resolve({ ifWantSave: false }),
                         onCancelBtn: () => {
                             confirmDlg.hide();
-                            reject();
+                            reject({ cancel: true });
                         }
                     })
                         .on('closed.modal', () => asking = false);

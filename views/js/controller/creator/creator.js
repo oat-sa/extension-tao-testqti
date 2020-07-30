@@ -191,7 +191,7 @@ define([
                         .off('resize.qti-test-creator')
                         .on('resize.qti-test-creator', () => itemrefView.resize() );
 
-                    changeTracker($container, creatorContext);
+                    changeTracker($container.get()[0], creatorContext, '.content-wrap');
 
                     creatorContext.on('save', function() {
                         if(!$saver.hasClass('disabled')){
