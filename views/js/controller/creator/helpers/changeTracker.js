@@ -53,15 +53,15 @@ define([
      * @returns {changeTracker}
      */
     function changeTrackerFactory(container, testCreator, wrapperSelector = 'body') {
-        let changeTracker;
+        const changeTracker;
 
         // internal namespace for global registered events
         const eventNS = `.ct-${uuid(8, 16)}`;
 
         // keep the value of the test before changes
-        let originallTest;
+        let originalTest;
 
-        // are we in the middle of the confirm process ?
+        // are we in the middle of the confirm process?
         let asking = false;
 
         /**
@@ -73,7 +73,7 @@ define([
              * @returns {changeTracker}
              */
             init() {
-                originallTest = this.getSerializedTest();
+                originalTest = this.getSerializedTest();
 
                 return this;
             },
@@ -124,7 +124,7 @@ define([
                             testCreator.trigger('save');
                         }
                     }))
-                    .after(`save${eventNS}`, () => originallTest = this.getSerializedTest());
+                    .after(`save${eventNS}`, () => originalTest = this.getSerializedTest());
 
                 return this;
             },
@@ -204,7 +204,7 @@ define([
              */
             hasChanged() {
                 const currentTest = this.getSerializedTest();
-                return originallTest !== currentTest || (null === currentTest && null === originallTest);
+                return originalTest !== currentTest || (null === currentTest && null === originalTest);
             },
 
             /**
