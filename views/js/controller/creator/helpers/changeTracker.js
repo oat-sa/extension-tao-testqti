@@ -104,9 +104,7 @@ define([
 
                             this.confirmBefore('exit')
                                 .then(whatToDo => {
-                                    if (whatToDo.ifWantSave) {
-                                        testCreator.trigger('save');
-                                    }
+                                    this.ifWantSave(whatToDo);
                                     this.uninstall();
                                     e.target.click();
                                 })
@@ -118,22 +116,28 @@ define([
                 testCreator
                     .on(`ready${eventNS} saved${eventNS}`, this.init)
                     .before(`creatorclose${eventNS}`, () => this.confirmBefore('exit').then(whatToDo => {
-                        if (whatToDo && whatToDo.ifWantSave) {
-                            testCreator.trigger('save');
-                        }
+                        this.ifWantSave(whatToDo);
                         window.history.back();
                         this.uninstall;
                     }))
-                    .before(`exit${eventNS}`, () => this.confirmBefore('exit').then(this.uninstall))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
-                        if (whatToDo && whatToDo.ifWantSave) {
-                            testCreator.trigger('save');
-                        }
+                        this.ifWantSave(whatToDo);
                     }))
                     .after(`save${eventNS}`, () => originalTest = this.getSerializedTest());
 
                 return this;
             },
+
+            /**
+             * Check if we need to trigger save
+             * @fires {save}
+             */
+            ifWantSave(whatToDo) {
+                if (whatToDo && whatToDo.ifWantSave) {
+                    testCreator.trigger('save');
+                }
+            },
+
 
             /**
              * Uninstalls the change tracker, unregisters listeners
