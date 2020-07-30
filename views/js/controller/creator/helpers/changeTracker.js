@@ -40,9 +40,9 @@ define([
      * The messages asking to save
      */
     const messages = {
-        preview: __('The test needs to be saved before it can be previewed'),
-        leave: __('The test has unsaved changes, are you sure you want to leave ?'),
-        exit: __('The test has unsaved changes, would you like to save it ?')
+        preview: __('The test needs to be saved before it can be previewed.'),
+        leave: __('The test has unsaved changes, are you sure you want to leave?'),
+        exit: __('The test has unsaved changes, would you like to save it?')
     };
 
     /**
