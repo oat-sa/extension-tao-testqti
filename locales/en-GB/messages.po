@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint129\n"
-"PO-Revision-Date: 2020-05-22T08:26:36\n"
+"Project-Id-Version: TAO 3.4.0-sprint133\n"
+"PO-Revision-Date: 2020-07-30T15:09:48\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: en-GB\n"
@@ -13,16 +13,7 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%s hours %s minutes to answer remaining %s questions."
-msgstr ""
-
-msgid "%s hours %s minutes to answer the current question."
-msgstr ""
-
-msgid "%s minutes to answer remaining %s questions."
-msgstr ""
-
-msgid "%s minutes to answer the current question."
+msgid "%s to answer %s"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -364,6 +355,9 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr ""
 
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Download"
 msgstr ""
 
@@ -397,10 +391,10 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr ""
 
-msgid "End test"
+msgid "End Test"
 msgstr ""
 
 msgid "Enter a blueprint"
@@ -476,7 +470,19 @@ msgstr ""
 msgid "Go to next item"
 msgstr ""
 
+msgid "Go to the current question"
+msgstr ""
+
 msgid "Go to the next item?"
+msgstr ""
+
+msgid "Go to the next question"
+msgstr ""
+
+msgid "Go to the previous question"
+msgstr ""
+
+msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
@@ -507,6 +513,9 @@ msgid "Highlight Text"
 msgstr ""
 
 msgid "Highlighter"
+msgstr ""
+
+msgid "hours"
 msgstr ""
 
 msgid "Html title"
@@ -605,10 +614,10 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
-msgid "items"
+msgid "Items"
 msgstr ""
 
-msgid "Items"
+msgid "items"
 msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -632,16 +641,16 @@ msgstr ""
 msgid "Keep Together"
 msgstr ""
 
+msgid "Keyboard Navigation"
+msgstr ""
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr ""
+
 msgid "Late submission allowed"
 msgstr ""
 
 msgid "Leave a comment"
-msgstr ""
-
-msgid "Less than one minute to answer remaining %s questions."
-msgstr ""
-
-msgid "Less than one minute to answer the current question."
 msgstr ""
 
 msgid "Light yellow on royal blue"
@@ -680,10 +689,11 @@ msgstr ""
 msgid "Manage test properties"
 msgstr ""
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr ""
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr ""
 
 msgid "Mark for review"
@@ -737,6 +747,12 @@ msgstr ""
 msgid "Minimum duration for this test part."
 msgstr ""
 
+msgid "minutes"
+msgstr ""
+
+msgid "Missed required parameter \'id\"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr ""
 
@@ -759,6 +775,9 @@ msgid "name of the pupil"
 msgstr ""
 
 msgid "Navigation"
+msgstr ""
+
+msgid "Navigation shortcuts"
 msgstr ""
 
 msgid "Navigation Warnings"
@@ -893,6 +912,9 @@ msgstr ""
 msgid "Please wait while we try to restore the connection."
 msgstr ""
 
+msgid "Preview"
+msgstr ""
+
 msgid "Preview the covered area"
 msgstr ""
 
@@ -932,10 +954,19 @@ msgstr ""
 msgid "Question"
 msgstr ""
 
+msgid "question"
+msgstr ""
+
+msgid "questions"
+msgstr ""
+
 msgid "Reference"
 msgstr ""
 
 msgid "Regenerate"
+msgstr ""
+
+msgid "remaining %s %s"
 msgstr ""
 
 msgid "Remove Item Reference"
@@ -980,6 +1011,9 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+msgid "Saved"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr ""
 
@@ -996,6 +1030,9 @@ msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"
+msgstr ""
+
+msgid "seconds"
 msgstr ""
 
 msgid "Section %d"
@@ -1047,6 +1084,9 @@ msgid "Set the XHTML-QTI class of the rubric block."
 msgstr ""
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
+msgstr ""
+
+msgid "SetSynchronisationService successfully configured."
 msgstr ""
 
 msgid "Settings"
@@ -1104,6 +1144,9 @@ msgid "Skip to the next section"
 msgstr ""
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
+msgstr ""
+
+msgid "Something went wrong..."
 msgstr ""
 
 msgid "Speech speed"
@@ -1172,6 +1215,7 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr ""
 
+#, tao-public
 msgid "Tests"
 msgstr ""
 
@@ -1218,6 +1262,9 @@ msgid "The candidate is not allowed to submit invalid responses."
 msgstr ""
 
 msgid "The connection seems to be back, please proceed"
+msgstr ""
+
+msgid "the current question"
 msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
@@ -1301,6 +1348,15 @@ msgstr ""
 msgid "The test has not been saved."
 msgstr ""
 
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr ""
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr ""
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr ""
+
 msgid "The test part identifier."
 msgstr ""
 
@@ -1314,6 +1370,9 @@ msgid "This constraint affects the visibility of feedback after the end of the l
 msgstr ""
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
+msgstr ""
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
 msgstr ""
 
 msgid "This test has been suspended"
@@ -1466,6 +1525,13 @@ msgstr ""
 msgid "Wrong file mime type"
 msgstr ""
 
+msgid "XML Content"
+msgstr ""
+
+#, tao-public
+msgid "XML Editor"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr ""
 
@@ -1497,6 +1563,9 @@ msgid "You are currently working offline."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
+msgstr ""
+
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
 msgstr ""
 
 msgid "You have %s item(s) marked for review."

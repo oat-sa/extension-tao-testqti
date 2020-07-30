@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint129\n"
-"PO-Revision-Date: 2020-05-22T08:26:43\n"
+"Project-Id-Version: TAO 3.4.0-sprint133\n"
+"PO-Revision-Date: 2020-07-30T15:09:57\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -13,16 +13,7 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%s hours %s minutes to answer remaining %s questions."
-msgstr ""
-
-msgid "%s hours %s minutes to answer the current question."
-msgstr ""
-
-msgid "%s minutes to answer remaining %s questions."
-msgstr ""
-
-msgid "%s minutes to answer the current question."
+msgid "%s to answer %s"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -364,6 +355,9 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr "Ne pas afficher d'alerte de temps écoulé"
 
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Download"
 msgstr ""
 
@@ -397,10 +391,10 @@ msgstr "Permet l'écran de passage en revue de l'item / le navigateur."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Permet le saut vers les items à l'intérieur de cette section. Demande l'option revue écran."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finir le test"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finir le test"
 
 msgid "Enter a blueprint"
@@ -477,8 +471,20 @@ msgstr "Forcer l'item à être considéré comme informationnel et non pris en c
 msgid "Go to next item"
 msgstr "Aller à l'item suivant"
 
+msgid "Go to the current question"
+msgstr ""
+
 msgid "Go to the next item?"
 msgstr "Aller à l'item suivant ?"
+
+msgid "Go to the next question"
+msgstr ""
+
+msgid "Go to the previous question"
+msgstr ""
+
+msgid "Go to the top of the page"
+msgstr ""
 
 msgid "Gray on Green"
 msgstr ""
@@ -509,6 +515,9 @@ msgstr "Texte de mise en évidence"
 
 msgid "Highlighter"
 msgstr "Surligneur"
+
+msgid "hours"
+msgstr ""
 
 msgid "Html title"
 msgstr "Titre HTML"
@@ -606,11 +615,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Contrôle de session de l'item"
 
-msgid "items"
-msgstr "articles"
-
 msgid "Items"
 msgstr "Articles"
+
+msgid "items"
+msgstr "articles"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Les items peuvent en option être assignés à une ou plusieurs catégories."
@@ -633,17 +642,17 @@ msgstr ""
 msgid "Keep Together"
 msgstr "Conserver ensemble"
 
+msgid "Keyboard Navigation"
+msgstr ""
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr ""
+
 msgid "Late submission allowed"
 msgstr "Soumission tardive permise"
 
 msgid "Leave a comment"
 msgstr "Laisser un commentaire"
-
-msgid "Less than one minute to answer remaining %s questions."
-msgstr ""
-
-msgid "Less than one minute to answer the current question."
-msgstr ""
 
 msgid "Light yellow on royal blue"
 msgstr "Jaune clair sur bleu royal"
@@ -681,10 +690,11 @@ msgstr "Gérer les blocs de rubrique"
 msgid "Manage test properties"
 msgstr "Gérer les propriétés du test"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Gérer les tests"
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr "Gérer les tests"
 
 msgid "Mark for review"
@@ -738,6 +748,12 @@ msgstr "Durée minimale pour cette section."
 msgid "Minimum duration for this test part."
 msgstr "Durée minimale pour cette partie de test."
 
+msgid "minutes"
+msgstr ""
+
+msgid "Missed required parameter \'id\"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr "Fichier de paquet de test manqué"
 
@@ -761,6 +777,9 @@ msgstr ""
 
 msgid "Navigation"
 msgstr "Navigation"
+
+msgid "Navigation shortcuts"
+msgstr ""
 
 msgid "Navigation Warnings"
 msgstr "Avertissements de navigation"
@@ -894,6 +913,9 @@ msgstr "Veuillez confirmer votre décision de quitter le test."
 msgid "Please wait while we try to restore the connection."
 msgstr "Veuillez attendre pendant que nous essayons de restaurer la connexion."
 
+msgid "Preview"
+msgstr ""
+
 msgid "Preview the covered area"
 msgstr "Prévisualiser la zone couverte"
 
@@ -933,11 +955,20 @@ msgstr "Paquet de contenu de test QTI/APIP"
 msgid "Question"
 msgstr ""
 
+msgid "question"
+msgstr ""
+
+msgid "questions"
+msgstr ""
+
 msgid "Reference"
 msgstr "Référence"
 
 msgid "Regenerate"
 msgstr "Régénérer"
+
+msgid "remaining %s %s"
+msgstr ""
 
 msgid "Remove Item Reference"
 msgstr "Supprimer la référence à l'item"
@@ -981,6 +1012,9 @@ msgstr "Blocs de rubrique"
 msgid "Save"
 msgstr "Enregistrer"
 
+msgid "Saved"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr "Calculatrice scientifique"
 
@@ -998,6 +1032,9 @@ msgstr "Bloc-notes"
 
 msgid "Scratchpad"
 msgstr "Bloc-notes"
+
+msgid "seconds"
+msgstr ""
 
 msgid "Section %d"
 msgstr "Section %d"
@@ -1049,6 +1086,9 @@ msgstr "Indiquer la classe XHTML-QTI du bloc de rubrique"
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr "Indiquer l'identifiant XHTML-QTI du bloc de rubrique"
+
+msgid "SetSynchronisationService successfully configured."
+msgstr ""
 
 msgid "Settings"
 msgstr "Paramètres"
@@ -1106,6 +1146,9 @@ msgstr "Passer à la prochaine section"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr "Certains blocs de rubrique ont été mis à jour pour refléter les changements dans la liste des résultats."
+
+msgid "Something went wrong..."
+msgstr ""
 
 msgid "Speech speed"
 msgstr "Vitesse du discours"
@@ -1173,6 +1216,7 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr "Outils du participant"
 
+#, tao-public
 msgid "Tests"
 msgstr "Tests"
 
@@ -1220,6 +1264,9 @@ msgstr "Le candidat n'a pas la permission de soumettre des réponses invalides."
 
 msgid "The connection seems to be back, please proceed"
 msgstr "La connexion semble refonctionner, veuillez poursuivre."
+
+msgid "the current question"
+msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "La dépendance de l'IMS QTI AssessmentItemRef \"%s\" dans le fichier de manifeste IMS n'a pas pu être résolu."
@@ -1302,6 +1349,15 @@ msgstr "Le test a été mis en pause, nous n'arrivons pas à nous connecter au s
 msgid "The test has not been saved."
 msgstr "Le test n'a pas été enregistré."
 
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr ""
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr ""
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr ""
+
 msgid "The test part identifier."
 msgstr "L'identifiant de partie du test."
 
@@ -1316,6 +1372,9 @@ msgstr "Cette contrainte affecte la visibilité du retour après la fin de la de
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr "Cette contrainte contrôle si la candidat a la permission de fournir un commentaire sur l'item au cours de la session. Les commentaires ne font pas partie des réponses évaluées."
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
+msgstr ""
 
 msgid "This test has been suspended"
 msgstr "Ce test a été suspendu."
@@ -1467,6 +1526,13 @@ msgstr "Avec remplacement"
 msgid "Wrong file mime type"
 msgstr "Mauvais type MIME pour le fichier"
 
+msgid "XML Content"
+msgstr ""
+
+#, tao-public
+msgid "XML Editor"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "Erreur XML à la ligne %1$d, colonne %2$d \"%3$s\"."
 
@@ -1499,6 +1565,9 @@ msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr "Vous rencontrez actuellement une perte de connectivité prolongée."
+
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
+msgstr ""
 
 msgid "You have %s item(s) marked for review."
 msgstr "Vous avez %s item(s) marqués pour la revue."

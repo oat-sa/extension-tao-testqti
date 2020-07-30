@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint129\n"
-"PO-Revision-Date: 2020-05-22T08:26:50\n"
+"Project-Id-Version: TAO 3.4.0-sprint133\n"
+"PO-Revision-Date: 2020-07-30T15:10:15\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -13,16 +13,7 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%s hours %s minutes to answer remaining %s questions."
-msgstr ""
-
-msgid "%s hours %s minutes to answer the current question."
-msgstr ""
-
-msgid "%s minutes to answer remaining %s questions."
-msgstr ""
-
-msgid "%s minutes to answer the current question."
+msgid "%s to answer %s"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -364,6 +355,9 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr "Не отображать оповещение во время ожидания"
 
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Download"
 msgstr "Загрузить"
 
@@ -397,10 +391,10 @@ msgstr "Включить экран пересмотра элемента/нав
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Завершить тест"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Завершить тест"
 
 msgid "Enter a blueprint"
@@ -476,8 +470,20 @@ msgstr "Принудительно пометить элемент как инф
 msgid "Go to next item"
 msgstr "Перейти к следующему элементу"
 
+msgid "Go to the current question"
+msgstr ""
+
 msgid "Go to the next item?"
 msgstr "Перейти к следующему элементу?"
+
+msgid "Go to the next question"
+msgstr ""
+
+msgid "Go to the previous question"
+msgstr ""
+
+msgid "Go to the top of the page"
+msgstr ""
 
 msgid "Gray on Green"
 msgstr ""
@@ -508,6 +514,9 @@ msgstr "Выделенный текст"
 
 msgid "Highlighter"
 msgstr "Инструмент выделения"
+
+msgid "hours"
+msgstr ""
 
 msgid "Html title"
 msgstr "Заголовок HTML"
@@ -605,11 +614,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Контроль за сеансом для элемента"
 
-msgid "items"
-msgstr "элементы"
-
 msgid "Items"
 msgstr "Элементы"
+
+msgid "items"
+msgstr "элементы"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Элементы могут дополнительно назначаться одной или нескольким категориям."
@@ -632,17 +641,17 @@ msgstr ""
 msgid "Keep Together"
 msgstr "Не разрывать"
 
+msgid "Keyboard Navigation"
+msgstr ""
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr ""
+
 msgid "Late submission allowed"
 msgstr "Поздняя отправка разрешена"
 
 msgid "Leave a comment"
 msgstr "Оставить комментарий"
-
-msgid "Less than one minute to answer remaining %s questions."
-msgstr ""
-
-msgid "Less than one minute to answer the current question."
-msgstr ""
 
 msgid "Light yellow on royal blue"
 msgstr "Светло-желтый на ярко-синем"
@@ -680,10 +689,11 @@ msgstr "Управление тематическими блоками"
 msgid "Manage test properties"
 msgstr "Управление свойствами тестов"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Управление тестами"
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr "Управление тестами"
 
 msgid "Mark for review"
@@ -737,6 +747,12 @@ msgstr "Минимальная длительность для данного р
 msgid "Minimum duration for this test part."
 msgstr "Минимальная длительность для этой части теста."
 
+msgid "minutes"
+msgstr ""
+
+msgid "Missed required parameter \'id\"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr "Пропущен файл с пакетом для тестирования"
 
@@ -760,6 +776,9 @@ msgstr ""
 
 msgid "Navigation"
 msgstr "Навигация"
+
+msgid "Navigation shortcuts"
+msgstr ""
 
 msgid "Navigation Warnings"
 msgstr "Предупреждения касательно навигации"
@@ -893,6 +912,9 @@ msgstr "Подтвердите, что желаете покинуть тест.
 msgid "Please wait while we try to restore the connection."
 msgstr "Подождите, мы пытаемся восстановить подключение."
 
+msgid "Preview"
+msgstr ""
+
 msgid "Preview the covered area"
 msgstr "Предварительный просмотр покрываемой области"
 
@@ -932,11 +954,20 @@ msgstr "Пакет содержимого для тестирования QTI/AP
 msgid "Question"
 msgstr ""
 
+msgid "question"
+msgstr ""
+
+msgid "questions"
+msgstr ""
+
 msgid "Reference"
 msgstr "Ссылка"
 
 msgid "Regenerate"
 msgstr "Регенерировать"
+
+msgid "remaining %s %s"
+msgstr ""
 
 msgid "Remove Item Reference"
 msgstr "Удалить ссылку на объект"
@@ -980,6 +1011,9 @@ msgstr "Тематические блоки"
 msgid "Save"
 msgstr "Сохранить"
 
+msgid "Saved"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr "Инженерный калькулятор"
 
@@ -997,6 +1031,9 @@ msgstr "Блокнот"
 
 msgid "Scratchpad"
 msgstr "Блокнот"
+
+msgid "seconds"
+msgstr ""
 
 msgid "Section %d"
 msgstr "Раздел %d"
@@ -1048,6 +1085,9 @@ msgstr "Задать класс XHTML-QTI для тематического бл
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr "Задать идентификатор XHTML-QTI для тематического блока."
+
+msgid "SetSynchronisationService successfully configured."
+msgstr ""
 
 msgid "Settings"
 msgstr "Настройки"
@@ -1105,6 +1145,9 @@ msgstr "Пропустить до следующего раздела"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr "Некоторые тематические блоки были обновлены, они теперь отображают изменения в списке результатов."
+
+msgid "Something went wrong..."
+msgstr ""
 
 msgid "Speech speed"
 msgstr "Скорость речи"
@@ -1172,6 +1215,7 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr "Средства тестируемого"
 
+#, tao-public
 msgid "Tests"
 msgstr "Тесты"
 
@@ -1219,6 +1263,9 @@ msgstr "Кандидату не разрешено отправлять недо
 
 msgid "The connection seems to be back, please proceed"
 msgstr "Похоже, подключение восстановлено, продолжайте"
+
+msgid "the current question"
+msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "Невозможно обработать зависимость для ссылки на элемент оценки IMS QTI «%s» в файле манифеста IMS."
@@ -1301,6 +1348,15 @@ msgstr "Тест приостановлен из-за того, что не уд
 msgid "The test has not been saved."
 msgstr "Тест не был сохранен."
 
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr ""
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr ""
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr ""
+
 msgid "The test part identifier."
 msgstr "Идентификатор части теста."
 
@@ -1315,6 +1371,9 @@ msgstr "Это ограничение влияет на видимость от�
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr "Это ограничение определяет, разрешено ли кандидату оставлять комментарий по поводу элемента во время сеанса. Комментарии не входят в оцениваемую часть ответов."
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
+msgstr ""
 
 msgid "This test has been suspended"
 msgstr "Тест приостановлен"
@@ -1466,6 +1525,13 @@ msgstr "С заменой"
 msgid "Wrong file mime type"
 msgstr "Неправильный формат MIME файла"
 
+msgid "XML Content"
+msgstr ""
+
+#, tao-public
+msgid "XML Editor"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "Ошибка XML, строка %1$d, столбец %2$d, «%3$s»."
 
@@ -1498,6 +1564,9 @@ msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr "Подключение прерывается уже в течение длительного времени."
+
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
+msgstr ""
 
 msgid "You have %s item(s) marked for review."
 msgstr "У вас имеется элементов, помеченных на пересмотр: %s."
