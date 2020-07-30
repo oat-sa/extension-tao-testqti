@@ -117,6 +117,13 @@ define([
 
                 testCreator
                     .on(`ready${eventNS} saved${eventNS}`, this.init)
+                    .before(`creatorclose${eventNS}`, () => this.confirmBefore('exit').then(whatToDo => {
+                        if (whatToDo && whatToDo.ifWantSave) {
+                            testCreator.trigger('save');
+                        }
+                        window.history.back();
+                        this.uninstall;
+                    }))
                     .before(`exit${eventNS}`, () => this.confirmBefore('exit').then(this.uninstall))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
                         if (whatToDo && whatToDo.ifWantSave) {

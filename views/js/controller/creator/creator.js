@@ -108,7 +108,6 @@ define([
                 if (creatorContext) {
                     creatorContext.trigger('creatorclose');
                 }
-                window.history.back();
             });
 
             //preview button
