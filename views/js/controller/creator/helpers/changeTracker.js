@@ -144,8 +144,6 @@ define([
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
                         if (whatToDo.ifWantSave) {
                             testCreator.trigger('save');
-                        } else {
-                            testCreator.setTestModel(originalItem);
                         }
                     }))
                     .after(`save${eventNS}`, () => originalItem = this.getSerializedTest());
