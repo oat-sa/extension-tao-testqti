@@ -195,12 +195,12 @@ define([
 
                     creatorContext.on('save', function() {
                         if(!$saver.hasClass('disabled')){
-                            $saver.attr('disabled', true).addClass('disabled');
+                            $saver.prop('disabled', true).addClass('disabled');
                             binder.save(function() {
-                                $saver.attr('disabled', false).removeClass('disabled');
+                                $saver.prop('disabled', false).removeClass('disabled');
                                 feedback().success(__('Test Saved'));
                             }, function() {
-                                $saver.attr('disabled', false).removeClass('disabled');
+                                $saver.prop('disabled', false).removeClass('disabled');
                             });
                         }
                     });
