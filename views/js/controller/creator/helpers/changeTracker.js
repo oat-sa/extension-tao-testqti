@@ -53,7 +53,6 @@ define([
      * @returns {changeTracker}
      */
     function changeTrackerFactory(container, testCreator, wrapperSelector = 'body') {
-        const changeTracker;
 
         // internal namespace for global registered events
         const eventNS = `.ct-${uuid(8, 16)}`;
@@ -67,7 +66,7 @@ define([
         /**
          * @typedef {Object} changeTracker
          */
-        changeTracker = eventifier({
+        const changeTracker = eventifier({
             /**
              * Initialized the changed state
              * @returns {changeTracker}
