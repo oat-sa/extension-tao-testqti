@@ -94,7 +94,7 @@ define([
                         }
                     })
                     // since we don't know how to prevent history based events, we just stop the handling
-                    .on('popstate', () => this.uninstall());
+                    .on('popstate', this.uninstall);
 
                 // every click outside the authoring
                 $(wrapperSelector)
