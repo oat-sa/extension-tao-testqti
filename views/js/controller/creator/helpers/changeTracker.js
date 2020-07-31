@@ -118,7 +118,7 @@ define([
                     .before(`creatorclose${eventNS}`, () => this.confirmBefore('exit').then(whatToDo => {
                         this.ifWantSave(whatToDo);
                         window.history.back();
-                        this.uninstall;
+                        this.uninstall();
                     }))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
                         this.ifWantSave(whatToDo);
