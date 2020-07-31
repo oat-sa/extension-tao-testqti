@@ -111,10 +111,6 @@ define([
                     creatorContext.trigger('creatorclose');
                 }
             });
-            $back.on('creatorclose', () => {
-                creatorContext.trigger('exit');
-                window.history.back();
-            });
 
             //preview button
             if (!Object.keys(options.labels).length) {
@@ -235,6 +231,11 @@ define([
                                 fullPage: true
                             });
                         }
+                    });
+
+                    creatorContext.on('creatorclose', () => {
+                        creatorContext.trigger('exit');
+                        window.history.back();
                     });
                 });
 
