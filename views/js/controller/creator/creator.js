@@ -87,6 +87,7 @@ define([
             const $container = $('#test-creator');
             const $saver = $('#saver');
             const $previewer = $('#previewer');
+            const $back = $('#authoringBack');
 
             let creatorContext;
             let binder;
@@ -104,11 +105,15 @@ define([
             categorySelector.setPresets(options.categoriesPresets);
 
             //back button
-            $('#authoringBack').on('click', e => {
+            $back.on('click', e => {
                 e.preventDefault();
                 if (creatorContext) {
                     creatorContext.trigger('creatorclose');
                 }
+            });
+            $back.on('creatorclose', () => {
+                creatorContext.trigger('exit');
+                window.history.back();
             });
 
             //preview button

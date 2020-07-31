@@ -117,12 +117,11 @@ define([
                     .on(`ready${eventNS} saved${eventNS}`, () => this.init())
                     .before(`creatorclose${eventNS}`, () => this.confirmBefore('exit').then(whatToDo => {
                         this.ifWantSave(whatToDo);
-                        window.history.back();
-                        this.uninstall();
                     }))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
                         this.ifWantSave(whatToDo);
-                    }));
+                    }))
+                    .before(`exit${eventNS}`, () => this.uninstall());
 
                 return this;
             },
