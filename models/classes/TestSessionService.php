@@ -73,7 +73,8 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      */
     protected function loadSession(DeliveryExecution $deliveryExecution, $forReadingOnly)
     {
-        self::$cache = [];
+        self::invalidateCache();
+
         $session = null;
         $sessionId = $deliveryExecution->getIdentifier();
         try {
@@ -293,5 +294,15 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         return $this->hasTestSession($sessionId)
             && !$forReadingOnly
             && self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION]->isReadOnly();
+    }
+
+    /**
+     * Invalidate Cache.
+     *
+     * Invalidates the Test Session Cache.
+     */
+    public function invalidateCache(): void
+    {
+        self::$cache = [];
     }
 }
