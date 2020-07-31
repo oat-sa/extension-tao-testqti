@@ -74,18 +74,19 @@ define([
 
         routes : {},
 
-         /**
-          * Start the controller, main entry method.
-          * @public
-          * @param {Object} options
-          * @param {Object} options.labels - the list of item's labels to give to the ItemView
-          * @param {Object} options.routes - action's urls
-          * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
-          * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
-          */
+        /**
+         * Start the controller, main entry method.
+         * @public
+         * @param {Object} options
+         * @param {Object} options.labels - the list of item's labels to give to the ItemView
+         * @param {Object} options.routes - action's urls
+         * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
+         * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
+         */
         start(options) {
             const $container = $('#test-creator');
             const $saver = $('#saver');
+            const $previewer = $('#previewer');
 
             let creatorContext;
             let binder;
@@ -111,10 +112,24 @@ define([
             });
 
             //preview button
-            $('#previewer').on('click', e => {
+            if (!Object.keys(options.labels).length) {
+                $previewer.attr('disabled', true).addClass('disabled');
+            }
+            $previewer.on('click', e => {
                 e.preventDefault();
-                creatorContext.trigger('preview');
+                if(!$previewer.hasClass('disabled')) {
+                    creatorContext.trigger('preview');
+                }
             });
+            const isTestContainsItems = () => {
+                if ($container.find('.test-content').find('.itemref').length) {
+                    $previewer.attr('disabled', false).removeClass('disabled');
+                    return true;
+                } else {
+                    $previewer.attr('disabled', true).addClass('disabled');
+                    return false;
+                }
+            };
 
             //set up the ItemView, give it a configured loadItems ref
             itemView($('.test-creator-items .item-selection', $container));
@@ -148,7 +163,7 @@ define([
                         qtiTestHelper.validateModel(model);
                     } catch(err) {
                         $saver.attr('disabled', false).removeClass('disabled');
-                        feedback().error(__('The test has not been saved.') + ` ${err}`);
+                        feedback().error(`${__('The test has not been saved.')} + ${err}`);
                         return false;
                     }
                     return true;
@@ -198,6 +213,8 @@ define([
                             binder.save(function() {
                                 $saver.prop('disabled', false).removeClass('disabled');
                                 feedback().success(__('Test Saved'));
+                                isTestContainsItems();
+                                creatorContext.trigger('saved');
                             }, function() {
                                 $saver.prop('disabled', false).removeClass('disabled');
                             });
@@ -205,12 +222,14 @@ define([
                     });
 
                     creatorContext.on('preview', function() {
-                        const saveUrl = options.routes.save;
-                        const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
-                        return previewerFactory.init(decodeURIComponent(testUri), {
-                            readOnly: false,
-                            fullPage: true
-                        });
+                        if(isTestContainsItems()) {
+                            const saveUrl = options.routes.save;
+                            const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
+                            return previewerFactory.init(decodeURIComponent(testUri), {
+                                readOnly: false,
+                                fullPage: true
+                            });
+                        }
                     });
                 });
 

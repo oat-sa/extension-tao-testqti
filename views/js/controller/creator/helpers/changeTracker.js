@@ -114,7 +114,7 @@ define([
                     });
 
                 testCreator
-                    .on(`ready${eventNS} saved${eventNS}`, this.init)
+                    .on(`ready${eventNS} saved${eventNS}`, () => this.init())
                     .before(`creatorclose${eventNS}`, () => this.confirmBefore('exit').then(whatToDo => {
                         this.ifWantSave(whatToDo);
                         window.history.back();
@@ -122,14 +122,14 @@ define([
                     }))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
                         this.ifWantSave(whatToDo);
-                    }))
-                    .after(`save${eventNS}`, () => originalTest = this.getSerializedTest());
+                    }));
 
                 return this;
             },
 
             /**
              * Check if we need to trigger save
+             * @param {Object} whatToDo
              * @fires {save}
              */
             ifWantSave(whatToDo) {
