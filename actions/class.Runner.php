@@ -349,7 +349,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $itemIdentifier = $this->getRequestParameter('itemDefinition');
 
         try {
-            $this->checkSecurityToken();
             $serviceContext = $this->getServiceContext();
 
             //load item data
@@ -399,8 +398,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
         try {
-            $this->checkSecurityToken();
-
             if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
                 \common_Logger::w("Attempt to disclose the next items without the configuration");
                 throw new \common_exception_Unauthorized();
