@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:52\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:52:50\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: is-IS\n"
@@ -12,6 +12,9 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s - item %p/%c"
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
@@ -140,10 +143,10 @@ msgid "An item involved in the test cannot be written."
 msgstr "Atriði í prófinu sem ekki er hægt að skrifa."
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr "Óþekkt villa kom upp þegar QTI Próf hafði náð '%'."
+msgstr "Óþekkt villa kom upp þegar QTI Próf hafði náð '%s'."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr "Óþekkt villa kom upp þegar QTI próf hafði keyrt '%'."
+msgstr "Óþekkt villa kom upp þegar QTI próf hafði keyrt '%s'."
 
 msgid "and"
 msgstr ""
@@ -440,6 +443,9 @@ msgstr ""
 msgid "Filter"
 msgstr "Sía"
 
+msgid "finished"
+msgstr ""
+
 msgid "Fixed"
 msgstr "Fast"
 
@@ -650,11 +656,11 @@ msgstr "Sýsla fyrirmælablokkir"
 msgid "Manage test properties"
 msgstr "Sýsla með eiginleika prófs"
 
-msgid "Manage tests"
-msgstr ""
-
 msgid "Manage Tests"
 msgstr "Sýsla með próf"
+
+msgid "Manage tests"
+msgstr ""
 
 msgid "Mark for review"
 msgstr ""
@@ -711,6 +717,9 @@ msgid "Missed test package file"
 msgstr ""
 
 msgid "Missing required configuration option %s"
+msgstr ""
+
+msgid "Missing required option %s"
 msgstr ""
 
 msgid "Move"
@@ -1200,7 +1209,7 @@ msgid "The provided archive is invalid. Make sure it is not corrupted and that i
 msgstr "Þetta safn er ógilt.  Gakktu úr skugga um að það sé ekki skemmt og að í því sé 'imsmanifest.xml' skrá."
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr " '%' QTI prófs sem á að setja saman þarf að innihalda að minnsta kosti 1 QTI atriði. Ekkert fannst."
+msgstr " '%s' QTI prófs sem á að setja saman þarf að innihalda að minnsta kosti 1 QTI atriði. Ekkert fannst."
 
 msgid "The QTI test could not be retrieved correctly."
 msgstr "Ekki var hægt að endurheimta QTI prófið á réttan hátt."

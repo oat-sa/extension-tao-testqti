@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:49\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:46:54\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ar-arb\n"
@@ -12,6 +12,9 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s - item %p/%c"
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
@@ -440,6 +443,9 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+msgid "finished"
+msgstr ""
+
 msgid "Fixed"
 msgstr ""
 
@@ -650,10 +656,10 @@ msgstr ""
 msgid "Manage test properties"
 msgstr ""
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr ""
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr ""
 
 msgid "Mark for review"
@@ -711,6 +717,9 @@ msgid "Missed test package file"
 msgstr ""
 
 msgid "Missing required configuration option %s"
+msgstr ""
+
+msgid "Missing required option %s"
 msgstr ""
 
 msgid "Move"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:49\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:47:59\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: da-DK\n"
@@ -13,341 +13,344 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
+msgid "%s - item %p/%c"
+msgstr "%s - item %p/%c"
+
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr ""
+msgstr "Et QTI-item som indgår i QTI-testen '%s' kunne ikke samles."
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr ""
+msgstr "En QTI-test skal indeholde mindst et QTI-item for at blive samlet. Der blev ikke fundet nogen."
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "En QTI-testpakke"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr ""
+msgstr "En fjernressource som der refereres til i QTI-testen '%s' kunne ikke hentes."
 
 msgid "A response to every question in this item is required."
-msgstr ""
+msgstr "Du skal svare på alle spørgsmålene."
 
 msgid "A response to this item is required."
-msgstr ""
+msgstr "Et svar til dette item kræves."
 
 msgid "A valid response to this item is required."
-msgstr ""
+msgstr "Et gyldigt svar til dette item kræves."
 
 msgid "A visible section is one that is identifiable by the candidate."
-msgstr ""
+msgstr "Et synligt afsnit er et som kan identificeres af testtageren."
 
 msgid "Activated"
-msgstr ""
+msgstr "Aktiveret"
 
 msgid "add a new weight"
-msgstr ""
+msgstr "tilføj en ny vægt"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr ""
+msgstr "Tilføj en ZIP-fil som indeholder QTI/APIP-tests og -items"
 
 msgid "Add selected item(s) here."
-msgstr ""
+msgstr "Tilføj de(t) valgte item(s) her."
 
 msgid "Add the source file"
-msgstr ""
+msgstr "Tilføj kildefilen"
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr ""
+msgstr "Efter at du har afsluttet dette afsnit af testen er det ikke muligt et komme tilbage og lave ændringer. Er du sikker på at du vil forlade dette afsnit af testen?"
 
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 msgid "Allow Comment"
-msgstr ""
+msgstr "Tillad kommentar"
 
 msgid "Allow Review"
-msgstr ""
+msgstr "Tillad evaluering"
 
 msgid "Allow Section Skipping"
-msgstr ""
+msgstr "Tillad overspringning af testafsnit"
 
 msgid "Allow Skipping"
-msgstr ""
+msgstr "Tillad overspringning"
 
 msgid "Allow skipping of the current section."
-msgstr ""
+msgstr "Tillad overspringning af dette testafsnit"
 
 msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
 msgstr ""
 
 msgid "Allow the candidate to review his answers."
-msgstr ""
+msgstr "Tillad testtageren at gennemse sine svar."
 
 msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
-msgstr ""
+msgstr "Tillad testtageren at fravælge/gennemstrege svar i valg-interaktioner."
 
 msgid "Allow the test-taker to highlight parts of the item text."
-msgstr ""
+msgstr "Tillad testtageren at markere dele af itemteksten."
 
 msgid "Allow the test-taker to mask and unmask answers in choice interactions."
-msgstr ""
+msgstr "Tillad testtageren at maskere og afmaskere svar i valginteraktioner."
 
 msgid "Allow the test-taker to mask parts of the item with a movable mask."
-msgstr ""
+msgstr "Tillad testtageren at maskere dele af itemmet med en bevægelig maske."
 
 msgid "Allow the test-taker to use a basic calculator."
-msgstr ""
+msgstr "Tillad testtageren at bruge en basal lommeregner."
 
 msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
-msgstr ""
+msgstr "Tillad testtageren at bruge en lommeregner som respekterer rækkefølgen af operatorer (BODMAS)."
 
 msgid "Allow the test-taker to use a movable magnifier tool."
-msgstr ""
+msgstr "Tillad testtageren at bruge et flytbart forstørrelsesglas."
 
 msgid "Allow the test-taker to use a scientific calculator."
-msgstr ""
+msgstr "Tillad testtageren at bruge en videnskabelig lommeregner."
 
 msgid "Allow the test-taker to visually isolate a line of text."
-msgstr ""
+msgstr "TIllad testtageren at visuelt isolere en linje tekst."
 
 msgid "Allows Test-taker to zoom in and out the item content."
-msgstr ""
+msgstr "TIllad testtageren at zoome ind og ud af itemindholdet."
 
 msgid "Also compute the score per categories"
-msgstr ""
+msgstr "Beregn også scoren per kategori"
 
 msgid "An error occured while retrieving items"
-msgstr ""
+msgstr "Der skete en fejl mens items blev hentet"
 
 msgid "An error occurred during results submission. Please retry."
-msgstr ""
+msgstr "En fejl opstod under indsendelse af besvarelse. Prøv venligst igen."
 
 msgid "An error occurred during the test initialization!"
-msgstr ""
+msgstr "Der skete en fejl under testinitialiseringen."
 
 msgid "An error occurred during the test, please content your administrator."
-msgstr ""
+msgstr "Der skete en fejl under testen. Kontakt venligst din testadministrator."
 
 msgid "An error occurred!"
-msgstr ""
+msgstr "Der skete en fejl!"
 
 msgid "An error occurs, please contact your administrator"
-msgstr ""
+msgstr "Der skete en fejl. Kontakt venligst din testadministrator."
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
-msgstr ""
+msgstr "Et usynligt afsnit med en forældre som er genstand for blanding, kan angive om dets børn, som ser ud for testtageren som om de er del af forældren, skal blandes som en blog eller mikses med de andre børn af forældreafsnittet."
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr ""
+msgstr "Et item involveret i en test kan ikke læses eller er ikke QTI-overholdende."
 
 msgid "An item involved in the test cannot be written."
-msgstr ""
+msgstr "Et item involveret i testen kan ikke skrives."
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr ""
+msgstr "En ukendt fejl skete med QTI-testen '%s' blev samlet."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr ""
+msgstr "En ukendt fejl skete med QTI-testen '%s' blev samlet."
 
 msgid "and"
 msgstr ""
 
 msgid "and flagged %s of them"
-msgstr ""
+msgstr "og flagede %s af dem"
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr ""
+msgstr "og du flagede %s item(s) som du kan gennemgå nu"
 
 msgid "Answer Eliminator"
-msgstr ""
+msgstr "Svarfravælger"
 
 msgid "Answer Masking"
-msgstr ""
+msgstr "Svarmaskering"
 
 msgid "Answered"
-msgstr ""
+msgstr "Besvaret"
 
 msgid "APIP Text To Speech"
 msgstr ""
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
-msgstr ""
+msgstr "Er du sikker på at du vil nulstille dine svar og gå til næste item? Du kan ikke gå tilbage senere og give et svar."
 
 msgid "Are you sure you want to end the test?"
-msgstr ""
+msgstr "Er du sikker på at du vil gå til afslutningen af testen?"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
-msgstr ""
+msgstr "Er du sikker på du vil gå til næste item? Du kan ikke senere gå tilbage og ændre dine svar."
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
-msgstr ""
+msgstr "Er du sikker på du vil gå til næste item? Du kan ikke senere gå tilbage og give et svar."
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back."
-msgstr ""
+msgstr "Er du sikker på du vil gå til næste item? Du kan ikke senere gå tilbage."
 
 msgid "Area Masking"
-msgstr ""
+msgstr "Områdemaskering"
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
-msgstr ""
+msgstr "Ved at forbind et blueprint med et tekstafsnit kan du validere dette afsnit med det valgte blueprint."
 
 msgid "Associate Blueprint"
-msgstr ""
+msgstr "Forbind blueprint"
 
 msgid "At least one mandatory parameter was required but found missing in your request"
-msgstr ""
+msgstr "Mindst en obligatorisk parameter var krævet, men manglede i din anmodning"
 
 msgid "Author"
-msgstr ""
+msgstr "Forfatter"
 
 msgid "Auxiliary file not found at location \"%s\"."
-msgstr ""
+msgstr "Hjælpefil blev ikke fundet på placeringen \"%s\"."
 
 msgid "Black on cream"
-msgstr ""
+msgstr "Sort på creamfarve"
 
 msgid "Black on light blue"
-msgstr ""
+msgstr "Sort på lyseblå"
 
 msgid "Black on magenta"
-msgstr ""
+msgstr "Sort på magenta"
 
 msgid "Black on white"
-msgstr ""
+msgstr "Sort på hvid"
 
 msgid "Calculator"
-msgstr ""
+msgstr "Lommeregner"
 
 msgid "Calculator BODMAS"
-msgstr ""
+msgstr "Lommeregner BODMAS"
 
 msgid "Can not playback media file!"
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Annuller"
 
 msgid "Candidate"
-msgstr ""
+msgstr "Testtager"
 
 msgid "Cardinality"
-msgstr ""
+msgstr "Kardinalitet"
 
 msgid "Categories"
-msgstr ""
+msgstr "Kategorier"
 
 msgid "Category score"
-msgstr ""
+msgstr "Kategoriscore"
 
 msgid "Change the current color preset"
-msgstr ""
+msgstr "Ændre den nuværende farveindstilling"
 
 msgid "Class"
-msgstr ""
+msgstr "Mappe"
 
 msgid "Class successfully created."
-msgstr ""
+msgstr "Mappe blev oprettet."
 
 msgid "Clear all active highlights"
-msgstr ""
+msgstr "Nulstil alle aktive markeringer"
 
 msgid "Clear Highlights"
-msgstr ""
+msgstr "Nulstil markeringer"
 
 msgid "Click to speak"
-msgstr ""
+msgstr "Klik for at tale"
 
 msgid "Close"
 msgstr ""
 
 msgid "Close Magnifier"
-msgstr ""
+msgstr "Luk forstørrelsesglas"
 
 msgid "Close the mask"
-msgstr ""
+msgstr "Luk maskering"
 
 msgid "Close this Section"
-msgstr ""
+msgstr "Luk dette testafsnit"
 
 msgid "Collapse the review panel"
-msgstr ""
+msgstr "Fold evalueringspanelet sammen"
 
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 msgid "Completed items"
-msgstr ""
+msgstr "Afsluttede items"
 
 msgid "Connected to server"
-msgstr ""
+msgstr "Tilsluttet til server"
 
 msgid "Contrast"
-msgstr ""
+msgstr "Kontrast"
 
 msgid "Controls the contribution of an individual item score to the overall test score."
-msgstr ""
+msgstr "Kontrollerer bidraget fra en individuel itemscore til den samlede testscore."
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
-msgstr ""
+msgstr "Kontrollerer det maksimale antal forsøg som er tilladt. 0 betyder ubegrænset."
 
 msgid "Covers parts of the item"
-msgstr ""
+msgstr "Dækker dele af itemmet."
 
 msgid "Custom"
-msgstr ""
+msgstr "Brugertilpasset"
 
 msgid "custom categories"
-msgstr ""
+msgstr "brugertilpassede kategorier"
 
 msgid "Custom outcome processing. No changes will be made to the existing rules."
-msgstr ""
+msgstr "Brugeroprettet resultatbehandling. Der sker ikke ændringer på eksisterende regler."
 
 msgid "Cut score"
-msgstr ""
+msgstr "Skillescore (\"cut score\")"
 
 msgid "Cut score (pass ratio)"
-msgstr ""
+msgstr "Skillescore (beståelsesratio)"
 
 msgid "Disable validation"
-msgstr ""
+msgstr "Slå validering fra"
 
 msgid "Disconnected from server"
-msgstr ""
+msgstr "Forbindelsen til server mistet"
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
-msgstr ""
+msgstr "Vis en advarsel før testtageren afslutter en testdel mens der stadig er ubesvarede items eller items mærket til gennemsyn tilbage."
 
 msgid "Display a warning before the test-taker ends the test part."
-msgstr ""
+msgstr "Vis en advarsel før testtageren afslutter testdelen."
 
 msgid "Display a warning before the test-taker ends the test."
-msgstr ""
+msgstr "Vis en advarsel før testtageren afslutter testen."
 
 msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
-msgstr ""
+msgstr "Vis en advarsel før testtageren springer testafsnittet over. Kræver at afsnitoverspringsvalgmuligheden er sat."
 
 msgid "Display End Test Warning"
-msgstr ""
+msgstr "Vis slut på test-advarsel"
 
 msgid "Display Next Part Warning"
-msgstr ""
+msgstr "Vis næste testdel-advarsel"
 
 msgid "Display Next Section Warning"
-msgstr ""
+msgstr "Vis næste testafsnit-advarsel"
 
 msgid "Display Unanswered Warning"
-msgstr ""
+msgstr "Vis ubesvaret-advarsel"
 
 msgid "Displayed label"
-msgstr ""
+msgstr "Vist betegnelse"
 
 msgid "Displays a customisable magnifier"
-msgstr ""
+msgstr "Vis et tilpasbart forstørrelsesglas"
 
 msgid "Do not flag the current item for later review"
-msgstr ""
+msgstr "Flag ikke dette item for senere gennemsyn"
 
 msgid "Do not rename it."
 msgstr ""
 
 msgid "Do not show alert on timeout"
-msgstr ""
+msgstr "Vis ikke en advarsel ved tidsudløb"
 
 msgid "Download"
 msgstr ""
@@ -356,167 +359,171 @@ msgid "Download the pupil responses and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
-msgstr ""
+msgstr "Fravælg valgmuligheder"
 
 msgid "Enable Mark for Review"
-msgstr ""
+msgstr "Slå opmærk for gennemsyn til"
 
 msgid "Enable mark for review of items. Requires the Review Screen option."
-msgstr ""
+msgstr "Slå opmærk for gennemsyn af items til. Kræver at gennemsynsskærm-valgmuligheden er valgt."
 
 msgid "Enable Review Screen"
-msgstr ""
+msgstr "Slå gennemsynsskærm til"
 
 msgid "Enable selection"
-msgstr ""
+msgstr "Slå markering til"
 
 msgid "Enable Skipping Ahead"
-msgstr ""
+msgstr "Slå spring fremad til"
 
 msgid "Enable text to speech"
 msgstr ""
 
 msgid "Enable the item review screen / navigator."
-msgstr ""
+msgstr "Slå itemgennemsynsskærm/navigator til."
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
-msgstr ""
+msgstr "Slå overspring til items inden for testafsnit til. Kræver at gennemsynsskærm-valgmuligheden er valgt."
 
 msgid "End test"
-msgstr ""
+msgstr "Afslut test"
 
 msgid "End Test"
-msgstr ""
+msgstr "Afslut test"
 
 msgid "Enter a blueprint"
-msgstr ""
+msgstr "Indtast et blueprint"
 
 msgid "Enter a custom category"
-msgstr ""
+msgstr "Indtast en brugerdefineret kategori"
 
 msgid "Error"
-msgstr ""
+msgstr "Fejl"
 
 msgid "Error during file import"
-msgstr ""
+msgstr "Fejl under filimport"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr ""
+msgstr "Fejl fundet i IMS QTI-test:\n"
+"%s"
 
 msgid "Expand the review panel"
-msgstr ""
+msgstr "Udfold gennemsynspanelet"
 
 msgid "Export"
-msgstr ""
+msgstr "Eksporter"
 
 msgid "Export failed for the test \"%s"
-msgstr ""
+msgstr "Eksport fejlede for testen \"%s\""
 
 msgid "Export metadata"
-msgstr ""
+msgstr "Eksporter metadata"
 
 msgid "Export QTI 2.1 Test Package"
-msgstr ""
+msgstr "Eksporter QTI 2.1-testpakke"
 
 msgid "Export QTI 2.2 Test Package"
-msgstr ""
+msgstr "Eksporter QTI 2.1-testpakke"
 
 msgid "Export successful for the test \"%s"
-msgstr ""
+msgstr "Eksporterede testen \"%s\""
 
 msgid "Feedback block"
-msgstr ""
+msgstr "Tilbagemeldingsblok"
 
 msgid "File name"
-msgstr ""
+msgstr "Filnavn"
 
 msgid "File not found"
-msgstr ""
+msgstr "Filen blev ikke fundet"
 
 msgid "File not found!"
-msgstr ""
+msgstr "Filen blev ikke fundet"
 
 msgid "Filter"
-msgstr ""
+msgstr "Filtrer"
+
+msgid "finished"
+msgstr "afsluttet"
 
 msgid "Fixed"
-msgstr ""
+msgstr "Fast"
 
 msgid "Fixed position in a shuffled the selection."
-msgstr ""
+msgstr "Fast position i et blandet testafsnit."
 
 msgid "Flag for Review"
-msgstr ""
+msgstr "Flag til gennemsyn"
 
 msgid "Flag the current item for later review"
-msgstr ""
+msgstr "Flag dette item for senere gennemsyn"
 
 msgid "Flagged"
-msgstr ""
+msgstr "Flaget"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
-msgstr ""
+msgstr "Tving itemmet til at blive betragtet som informationelt og ikke taget med i (u)besvarede/flagede tællere."
 
 msgid "Go to next item"
-msgstr ""
+msgstr "Gå til næste item"
 
 msgid "Go to the next item?"
-msgstr ""
+msgstr "Gå til det næste item?"
 
 msgid "Gray on Green"
 msgstr ""
 
 msgid "Gray on green (low contrast option)"
-msgstr ""
+msgstr "Grå på grøn (lav kontrastvalgmulighed)"
 
 msgid "Hide Review"
-msgstr ""
+msgstr "Skjul gennemsynspanel"
 
 msgid "Hide the review screen"
-msgstr ""
+msgstr "Skjul gennemsynsskærmen"
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
-msgstr ""
+msgstr "Gem advarslen der vises automatisk når en testtager forlader et tidsbestemt testafsnit."
 
 msgid "Hide Timed Section Warning"
-msgstr ""
+msgstr "Skjul tidsbestemt testafsnit-advarsel"
 
 msgid "Hide timers"
-msgstr ""
+msgstr "Skjul timere"
 
 msgid "Highlight"
-msgstr ""
+msgstr "Marker"
 
 msgid "Highlight Text"
-msgstr ""
+msgstr "Marker tekst"
 
 msgid "Highlighter"
-msgstr ""
+msgstr "Markering"
 
 msgid "Html title"
-msgstr ""
+msgstr "HTML-titel"
 
 msgid "Identifier"
-msgstr ""
+msgstr "Identifikator"
 
 msgid "If required it must appear (at least once) in the selection."
-msgstr ""
+msgstr "Hvis krævet skal den optræde (mindst en gang) i markeringen."
 
 msgid "If required, it must appears at least once in the selection."
-msgstr ""
+msgstr "Hvis krævet skal den optræde mindst en gang i markeringen."
 
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
-msgstr ""
+msgstr "Hvis valgt, får det rækkefølgen af børneelementer til at være blandet tilfældigt. Ellers bruger den rækkefølgen i hvilken børneelementerne er defineret."
 
 msgid "If the candidate can skip the item, without submitting a response (default is true)."
-msgstr ""
+msgstr "Testtageren kan springe dette item over uden at indsende en besvarelse (standard er valgt)."
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
-msgstr ""
+msgstr "Hvis kategorivalget er sat, vil scoren også blive behandlet per kategori, og hvert resultat vil finde sted i PASS_xxx-udbyttet, hvor xxx er navnet på kategorien."
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
-msgstr ""
+msgstr "Hvis kategorivalget er sat, vil scoren også blive behandlet per kategori, og hvert resultat vil finde sted i SCORE_xxx-udbyttet, hvor xxx er navnet på kategorien."
 
 msgid "If the connection cannot be restored, see option B."
 msgstr ""
@@ -525,286 +532,289 @@ msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
-msgstr ""
+msgstr "Importer"
 
 msgid "Import a QTI/APIP Content Package"
-msgstr ""
+msgstr "Importer en QTI/APIP-indholdspakke"
 
 msgid "Import QTI TEST into \"%s"
-msgstr ""
+msgstr "Importer QTI TEST ind i \"%s\""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr ""
+msgstr "IMS QTI-item betegnet \"%s\" i IMS-manifestfilen kunne ikke importeres."
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr ""
+msgstr "IMS QTI-item betegnet \"%s\" i IMS-manifestfilen blev importeret."
 
 msgid "IMS QTI Test Package successfully imported."
-msgstr ""
+msgstr "IMS QTI-testpakken blev importeret."
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr ""
+msgstr "IMS QTI-item betegnet \"%s\" i IMS-manifestfilen blev importeret."
 
 msgid "In this part of the test navigation is not allowed."
-msgstr ""
+msgstr "I denne del af testen er navigation frem og tilbage ikke tilladt."
 
 msgid "Inconsistency at line %1d:"
-msgstr ""
+msgstr "Inkonsistens på linje %1d:"
 
 msgid "Individual"
-msgstr ""
+msgstr "Individuel"
 
 msgid "Informational Item Usage"
-msgstr ""
+msgstr "Informationel itembrug"
 
 msgid "Internal server error!"
-msgstr ""
+msgstr "Fejl på serveren!"
 
 msgid "is already used in the test."
-msgstr ""
+msgstr "er allerede brugt i denne test."
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr ""
+msgstr "er ikke en gyldig identifikator (bogstaver, tal, underscore, bindestreg, punktummer)"
 
 msgid "is not a valid identifier (everything except spaces)"
-msgstr ""
+msgstr "er ikke en gyldig identifikator (alt på nær mellemrum)"
 
 msgid "It is not possible to save your responses while working offline."
 msgstr ""
 
 msgid "Item \"%s\" is completed."
-msgstr ""
+msgstr "Item \"%s\" er afsluttet."
 
 msgid "Item %d"
-msgstr ""
+msgstr "Item %d"
 
 msgid "Item %d of %d"
-msgstr ""
+msgstr "Item %d af %d"
 
 msgid "Item Reference Properties"
-msgstr ""
+msgstr "Itemreferenceegenskaber"
 
 msgid "Item response identifier does not match current item"
 msgstr ""
 
 msgid "Item Session Control"
-msgstr ""
+msgstr "Itemsessionskontrol"
 
 msgid "Items"
-msgstr ""
+msgstr "Items"
 
 msgid "items"
-msgstr ""
+msgstr "items"
 
 msgid "Items can optionally be assigned to one or more categories."
-msgstr ""
+msgstr "Items kan eventuelt tildeles en eller flere kategorier."
 
 msgid "Items Compilation"
-msgstr ""
+msgstr "Itemsamling"
 
 msgid "Items marked for later review"
-msgstr ""
+msgstr "Items flaget for senere gennemsyn"
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
-msgstr ""
+msgstr "Items med assessmentItemRef-identifikatorer \"%s\" er ikke registreret i det tilhørende CAT-endepunkt."
 
 msgid "Keep Together"
-msgstr ""
+msgstr "Hold sammen"
 
 msgid "Late submission allowed"
-msgstr ""
+msgstr "Sen aflevering tilladt"
 
 msgid "Leave a comment"
-msgstr ""
+msgstr "Efterlad en kommentar"
 
 msgid "Light yellow on royal blue"
-msgstr ""
+msgstr "Lysegul på kongeblå"
 
 msgid "Line Reader"
-msgstr ""
+msgstr "Linjelæser"
 
 msgid "Linear"
-msgstr ""
+msgstr "Lineær"
 
 msgid "Link durations to activate the guided navigation"
-msgstr ""
+msgstr "Forbind varigheder for at aktivere den guidede navigation"
 
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
-msgstr ""
+msgstr "Låst varighed: Guidet navigation. Testen går over til det næste item når varigheden når 0."
 
 msgid "Magnifier"
-msgstr ""
+msgstr "Forstørrelsesglas"
 
 msgid "Magnify less"
-msgstr ""
+msgstr "Forstør mindre"
 
 msgid "Magnify more"
-msgstr ""
+msgstr "Forstør mere"
 
 msgid "Magnifying Glass"
-msgstr ""
+msgstr "Forstørrelsesglas"
 
 msgid "Manage Rubric Blocks"
-msgstr ""
+msgstr "Administrer rubrikblokke"
 
 msgid "Manage test properties"
-msgstr ""
-
-msgid "Manage tests"
-msgstr ""
+msgstr "Administrer testegenskaber"
 
 msgid "Manage Tests"
-msgstr ""
+msgstr "Administrer tests"
+
+msgid "Manage tests"
+msgstr "Administrer tests"
 
 msgid "Mark for review"
-msgstr ""
+msgstr "Marker til gennemsyn"
 
 msgid "Masking"
-msgstr ""
+msgstr "Maskering"
 
 msgid "Match value"
-msgstr ""
+msgstr "Relater værdi"
 
 msgid "Max Attempts"
-msgstr ""
+msgstr "Maksimalt antal forsøg"
 
 msgid "Maximum Duration"
-msgstr ""
+msgstr "Maksimal varighed"
 
 msgid "Maximum duration : the items times out when the duration reaches 0."
-msgstr ""
+msgstr "Maksimal varighed: itemmene løber ud når varigheden når 0."
 
 msgid "Maximum duration for the all test."
-msgstr ""
+msgstr "Maksimal varighed for hele testen."
 
 msgid "Maximum duration for this item."
-msgstr ""
+msgstr "Maksimal varighed for dette item."
 
 msgid "Maximum duration for this section."
-msgstr ""
+msgstr "Maksimal varighed for dette testafsnit."
 
 msgid "Maximum duration for this test part."
-msgstr ""
+msgstr "Maksimal varighed for denne testdel."
 
 msgid "Metadata export is not available for test \"%s."
-msgstr ""
+msgstr "Metadataeksport er ikke tilgængelig for test \"%s."
 
 msgid "Minimum Duration"
-msgstr ""
+msgstr "Mindste varighed"
 
 msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
-msgstr ""
+msgstr "Mindste varighed: Tvinger testtageren til at blive på itemmet i den givne periode."
 
 msgid "Minimum duration for the test."
-msgstr ""
+msgstr "Mindste varighed for testen."
 
 msgid "Minimum duration for this item."
-msgstr ""
+msgstr "Mindste varighed for dette item."
 
 msgid "Minimum duration for this section."
-msgstr ""
+msgstr "Mindste varighed for dette testafsnit."
 
 msgid "Minimum duration for this test part."
-msgstr ""
+msgstr "Mindste varighed for denne testdel."
 
 msgid "Missed test package file"
-msgstr ""
+msgstr "Missede testpakkefilen"
 
 msgid "Missing required configuration option %s"
 msgstr ""
+
+msgid "Missing required option %s"
+msgstr "Mangler krævet indstilling %s"
 
 msgid "Move"
 msgstr ""
 
 msgid "Move Down"
-msgstr ""
+msgstr "Flyt ned"
 
 msgid "Move Up"
-msgstr ""
+msgstr "Flyt op"
 
 msgid "Moving to the next item without time limit reached message."
-msgstr ""
+msgstr "Flytter til det næste item uden tidsgrænse nået-besked."
 
 msgid "name of the pupil"
 msgstr ""
 
 msgid "Navigation"
-msgstr ""
+msgstr "Navigation"
 
 msgid "Navigation Warnings"
-msgstr ""
+msgstr "Navigationsadvarsler"
 
 msgid "network"
-msgstr ""
+msgstr "netværk"
 
 msgid "New Rubric Block"
-msgstr ""
+msgstr "Ny rubrikblok"
 
 msgid "New test part"
-msgstr ""
+msgstr "Ny testdel"
 
 msgid "Next"
-msgstr ""
+msgstr "Næste"
 
 msgid "Next Section"
-msgstr ""
+msgstr "Næste testafsnit"
 
 msgid "No"
-msgstr ""
+msgstr "Nej"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
-msgstr ""
+msgstr "Ingen CAT-maskine er konfigureret for CAT-endepunkt \"%s\"."
 
 msgid "No file found at location \"%s\"."
-msgstr ""
+msgstr "Ingen fil fundet på placering \"%s\"."
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr ""
+msgstr "Ikke flere forsøg tilladt for item \"%s\"."
 
 msgid "no outcome declaration found"
-msgstr ""
+msgstr "ingen resultatdeklaration fundet"
 
 msgid "No outcome processing. Erase the existing rules, if any."
-msgstr ""
+msgstr "Ingen resultatbehandling. Slet de eksisterende regler, hvis der er nogen."
 
 msgid "No reference to any IMS QTI Item found."
-msgstr ""
+msgstr "Ingen reference til nogen IMS QTI-items fundet."
 
 msgid "Non Linear"
-msgstr ""
+msgstr "Ikke-lineær"
 
 msgid "None"
-msgstr ""
+msgstr "Ingen"
 
 msgid "Not all test could be exported"
-msgstr ""
+msgstr "Ikke alle tests kunne eksporteres"
 
 msgid "Not shuffled, the position remains fixed."
-msgstr ""
+msgstr "Ikke blandet. Positionen forbliver fast."
 
 msgid "OK"
-msgstr ""
+msgstr "Ok"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "OK & End test"
-msgstr ""
+msgstr "Ok og afslut test"
 
 msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr ""
+msgstr "Når du lukker dette testafsnit, kan du ikke vende tilbage til det og ændre dine svar."
 
 msgid "One or more dependent IMS QTI Items could not be imported."
-msgstr ""
+msgstr "En eller flere afhængige IMS QTI-items kunne ikke importeres."
 
 msgid "Only display the items marked for review"
-msgstr ""
+msgstr "Vis kun items markeret til gennemsyn"
 
 msgid "Only display the unanswered items"
-msgstr ""
+msgstr "Vis kun ubesvarede items"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "Åbn lommeregner"
 
 msgid "Option A"
 msgstr ""
@@ -816,250 +826,250 @@ msgid "or"
 msgstr ""
 
 msgid "Ordering"
-msgstr ""
+msgstr "Rækkefølge"
 
 msgid "Outcome"
-msgstr ""
+msgstr "Resultat"
 
 msgid "Outcome declarations"
-msgstr ""
+msgstr "Resultatdeklaration"
 
 msgid "Outcome processing"
-msgstr ""
+msgstr "Resultatbehandling"
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
-msgstr ""
+msgstr "Pakken er gyldig, men der blev ikke fundet nogen tests. Sikr dig at den indeholder gyldige QTI-tests."
 
 msgid "Part %d"
-msgstr ""
+msgstr "Del %d"
 
 msgid "Pause"
-msgstr ""
+msgstr "Pause"
 
 msgid "Play"
-msgstr ""
+msgstr "Afspil"
 
 msgid "Please confirm you want to leave the test."
-msgstr ""
+msgstr "Bekræft venligst at du vil forlade testen."
 
 msgid "Please wait while we try to restore the connection."
-msgstr ""
+msgstr "Vent venligst mens vi forsøger at genoprette forbindelsen."
 
 msgid "Preview the covered area"
-msgstr ""
+msgstr "Forhåndsvis det dækkede område"
 
 msgid "Previous"
-msgstr ""
+msgstr "Forrige"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
 msgid "Proctor"
-msgstr ""
+msgstr "Tilsynsførende"
 
 msgid "Properties"
-msgstr ""
+msgstr "Egenskaber"
 
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "QTI 2.1.testafvikler"
 
 msgid "QTI Item Runner"
-msgstr ""
+msgstr "QTI-itemafvikler"
 
 msgid "QTI Test \"%s\" publishing failed."
-msgstr ""
+msgstr "Offentliggørelse af QTI-test \"%s\" mislykkedes."
 
 msgid "QTI Test \"%s\" successfully published."
-msgstr ""
+msgstr "QTI-test \"%s\" blev offentliggjort."
 
 msgid "QTI Test Package 2.1"
-msgstr ""
+msgstr "QTI-testpakke 2.1"
 
 msgid "QTI Test Package 2.2"
-msgstr ""
+msgstr "QTI-testpakke 2.2"
 
 msgid "QTI/APIP Test Content Package"
-msgstr ""
+msgstr "QTI/APIP-testindholdspakke"
 
 msgid "Reference"
-msgstr ""
+msgstr "Reference"
 
 msgid "Regenerate"
-msgstr ""
+msgstr "Genopret"
 
 msgid "Remove Item Reference"
-msgstr ""
+msgstr "Fjern itemreferencen"
 
 msgid "Remove Rubric Block"
-msgstr ""
+msgstr "Fjern rubrikblokken"
 
 msgid "Remove Section"
-msgstr ""
+msgstr "Fjern testafsnit"
 
 msgid "Required"
-msgstr ""
+msgstr "Påkrævet"
 
 msgid "Required field"
-msgstr ""
+msgstr "Påkrævet felt"
 
 msgid "Reset filters"
-msgstr ""
+msgstr "Nulstil filtre"
 
 msgid "Resource(s) successfully exported."
-msgstr ""
+msgstr "Ressource(r) blev eksporteret."
 
 msgid "Review"
-msgstr ""
+msgstr "Gennemse"
 
 msgid "Review my Answers"
-msgstr ""
+msgstr "Gennemse mine svar"
 
 msgid "Rubric Block"
-msgstr ""
+msgstr "Rubrikblok"
 
 msgid "Rubric Block Properties"
-msgstr ""
+msgstr "Rubrikblokegenskaber"
 
 msgid "Rubric Blocks"
-msgstr ""
+msgstr "Rubrikblokke"
 
 msgid "Save"
-msgstr ""
+msgstr "Gem"
 
 msgid "Scientific Calculator"
-msgstr ""
+msgstr "Videnskabelig regnemaskine"
 
 msgid "Scorer"
-msgstr ""
+msgstr "Scorer"
 
 msgid "Scoring"
-msgstr ""
+msgstr "Scoring"
 
 msgid "Scratch pad"
-msgstr ""
+msgstr "Skrabeplade"
 
 msgid "Scratch Pad"
-msgstr ""
+msgstr "Skrabeplade"
 
 msgid "Scratchpad"
-msgstr ""
+msgstr "Skrabeplade"
 
 msgid "Section %d"
-msgstr ""
+msgstr "Testafsnit %d"
 
 msgid "Section %d of %d"
-msgstr ""
+msgstr "Testafsnit %d af %d"
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr ""
+msgstr "Testafsnitniveaukategorier gør det muligt at konfigurere kategorier for alle items på en gang. En kategori i grå betyder at alle items har den kategori. En kategori i hvid betyder at kun få items har den kategori."
 
 msgid "Section Properties"
-msgstr ""
+msgstr "Testafsnitegenskaber"
 
 msgid "Select"
-msgstr ""
+msgstr "Vælg"
 
 msgid "Select a blueprint"
-msgstr ""
+msgstr "Vælg et blueprint"
 
 msgid "Select Items"
-msgstr ""
+msgstr "Vælg items"
 
 msgid "Select the way the responses of your test should be processed"
-msgstr ""
+msgstr "Vælg den måde besvarelserne fra din test skal behandles"
 
 msgid "Selection"
-msgstr ""
+msgstr "Markering"
 
 msgid "Send"
-msgstr ""
+msgstr "Send"
 
 msgid "Set outcome identifier the feedback block is related to"
-msgstr ""
+msgstr "Sæt resultatidentifikatoren som tilbagemeldingsblokken er relateret til"
 
 msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
-msgstr ""
+msgstr "Sæt skillescoren (cut score) (eller beståelsesscore-ratio) forbundet med testen. Det skal være en decimalværdi mellem 0 og 1."
 
 msgid "Set the rubric block as a feedback block"
-msgstr ""
+msgstr "Sæt rubrikblokken somo en tilbagemeldingsblok"
 
 msgid "Set the value of the outcome that will activate the feedback block"
-msgstr ""
+msgstr "Sæt værdien af det resultat som vil aktivere tilbagemeldingsblokken"
 
 msgid "Set the weight identifier used to process the score"
-msgstr ""
+msgstr "Sæt vægtidentifikatoren som bruges til at behandle scoren"
 
 msgid "Set the XHTML-QTI class of the rubric block."
-msgstr ""
+msgstr "Sæt XHTML-QTI-mappen for rubrikblokken."
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
-msgstr ""
+msgstr "Sæt XHTML-QTI-identifikator for rubrikblokken."
 
 msgid "Settings"
-msgstr ""
+msgstr "Indstillinger"
 
 msgid "Show Feedback"
-msgstr ""
+msgstr "Vis tilbagemeldinger"
 
 msgid "Show Review"
-msgstr ""
+msgstr "Vis gennemsyn"
 
 msgid "Show Solution"
-msgstr ""
+msgstr "Vis løsning"
 
 msgid "Show the review screen"
-msgstr ""
+msgstr "Vis gennemsynsskærmen"
 
 msgid "Show the solution once the answer is submitted."
-msgstr ""
+msgstr "Vis løsningen så snart svaret er sendt."
 
 msgid "Show timers"
-msgstr ""
+msgstr "Vis timere"
 
 msgid "Show/Hide the review screen"
-msgstr ""
+msgstr "Vis/skjul gennemsynsskærmen"
 
 msgid "Shuffle"
-msgstr ""
+msgstr "Bland"
 
 msgid "Simultaneous"
-msgstr ""
+msgstr "Samtidig"
 
 msgid "Skip"
-msgstr ""
+msgstr "Spring over"
 
 msgid "Skip &amp; End Test"
-msgstr ""
+msgstr "Spring over og afslut test"
 
 msgid "Skip and end test"
-msgstr ""
+msgstr "Spring over og afslut test"
 
 msgid "Skip and go to the end of the test"
-msgstr ""
+msgstr "Spring over og gå til afslutningen af testen"
 
 msgid "Skip and go to the next item"
-msgstr ""
+msgstr "Spring over og gå til næste item"
 
 msgid "Skip to the end of the test"
-msgstr ""
+msgstr "Spring til afslutningen på testen"
 
 msgid "Skip to the next item"
-msgstr ""
+msgstr "Spring til det næste item"
 
 msgid "Skip to the next section"
-msgstr ""
+msgstr "Spring til næste testafsnit"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
-msgstr ""
+msgstr "Nogle rubrikblokke er blevet opdateret for at afspejle ændringerne i listen af resultater."
 
 msgid "Speech speed"
-msgstr ""
+msgstr "Talehastighed"
 
 msgid "Speed"
 msgstr ""
 
 msgid "Start Test-part"
-msgstr ""
+msgstr "Start testdel"
 
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
@@ -1071,211 +1081,211 @@ msgid "Step 3: Once you have downloaded the file you can close the browser windo
 msgstr ""
 
 msgid "Stop"
-msgstr ""
+msgstr "Stop"
 
 msgid "Submission"
-msgstr ""
+msgstr "Indsendelse"
 
 msgid "Submit and go to the end of the test"
-msgstr ""
+msgstr "Indsend og gå til afslutningen på testen"
 
 msgid "Submit and go to the next item"
-msgstr ""
+msgstr "Indsend og gå til næste item"
 
 msgid "Submit and go to the previous item"
-msgstr ""
+msgstr "Indsend og gå til forrige item"
 
 msgid "technical"
-msgstr ""
+msgstr "teknisk"
 
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 msgid "Test constructor"
-msgstr ""
+msgstr "Testkonstruktør"
 
 msgid "Test metadata successfully exported."
-msgstr ""
+msgstr "Testmetadata blev eksporteret."
 
 msgid "Test Navigation"
-msgstr ""
+msgstr "Testnavigation"
 
 msgid "Test Saved"
-msgstr ""
+msgstr "Test gemt"
 
 msgid "Test status"
-msgstr ""
+msgstr "Teststatus"
 
 msgid "Test-Taker Tools"
-msgstr ""
+msgstr "Testtagerværktøjer"
 
 msgid "Tests"
-msgstr ""
+msgstr "Tests"
 
 msgid "Text content"
-msgstr ""
+msgstr "Tekstindhold"
 
 msgid "Text To Speech"
 msgstr ""
 
 msgid "Text to Speech"
-msgstr ""
+msgstr "Tekst-til-tale"
 
 msgid "that was being taken."
 msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
-msgstr ""
+msgstr "'imsmanifest.xml'-filen som var i arkivet, er ikke gyldig."
 
 msgid "the assessment (LCL or Mathematics)"
 msgstr ""
 
 msgid "The assessment has been created but is not already running."
-msgstr ""
+msgstr "Testen er oprettet, men den afvikles ikke endnu."
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
+msgstr "Testen er suspenderet af en autoriseret tilsynsførende. Hvis du vil genoptage din test, så start den op igen og kontakt om nødvendigt din tilsynsførende."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
+msgstr "Testen er suspenderet. For at genoptage din test, så genstart den og kontakt om nødvendigt din tilsynsførende."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr ""
+msgstr "Testen er blevet suspenderet. For at genoptage testen, så start den op igen."
 
 msgid "The assessment has been terminated."
-msgstr ""
+msgstr "Testen er blevet afsluttet."
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr ""
+msgstr "Testen er blevet afsluttet. Du kan ikke interagere med den længere."
 
 msgid "The assessment is still running."
-msgstr ""
+msgstr "Testen kører stadig."
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr ""
+msgstr "Testtageren har ikke lov at indsende ugyldige besvarelser."
 
 msgid "The connection seems to be back, please proceed"
-msgstr ""
+msgstr "Forbindelsen ser ud til at være tilbage, fortsæt venligst"
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
-msgstr ""
+msgstr "Afhængigheden af IMS QTI AssessmentItemRef \"%s\" i IMS-manifestfilen kunne ikke løses."
 
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr ""
+msgstr "Følgende identifikatorer er ikke unikke på tværs af testen: %s"
 
 msgid "The identifier of the item reference."
-msgstr ""
+msgstr "Identifikatoren for itemreferencen."
 
 msgid "The identifier of the section."
-msgstr ""
+msgstr "Identifikator for testafsnittet."
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr ""
+msgstr "IMS QTI items som refereres til med \"%s\" i IMS-manifestfilen var allerede gemt i itembanken."
 
 msgid "The IMS QTI Test Package could not be imported."
-msgstr ""
+msgstr "IMS QTI-testpakken kunne ikke importeres."
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr ""
+msgstr "IMS QTI-testen som refereres til med \"%s\" i IMS-manifestfilen kunne ikke importeres."
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
-msgstr ""
+msgstr "Navigationstilstanden bestemmer den generelle sti som testtageren skal tage. En lineær tilstand begrænser testtageren til at tage hvert item efter tur. Ikke-lineær fjerner denne begrænsning."
 
 msgid "The number of child elements to be selected."
-msgstr ""
+msgstr "Antallet af børneelementer der skal markeres."
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
-msgstr ""
+msgstr "Resultatet \"%s\" eksisterer ikke, men der refereres til det af en tilbagemeldingsblok!"
 
 msgid "The outcomes have been regenerated!"
-msgstr ""
+msgstr "Resultaterne er blevet genoprettet!"
 
 msgid "The principle identifier of the test."
-msgstr ""
+msgstr "Den primære identifikator for testen."
 
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
-msgstr ""
+msgstr "Det givne arkiv er ugyldigt. Sikr dig at det ikke er i stykker og at det indeholder en 'imsmanifest.xml'-fil."
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr ""
+msgstr "QTI-testen '%s' som skal samles skal indeholde mindst et QTI-item. Ingen blev fundet."
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr ""
+msgstr "QTI-testen kunne ikke indhentes på korrekt vis."
 
 msgid "The QTI Test XML or one of its dependencies is malformed or empty."
-msgstr ""
+msgstr "QTI-test XML eller en af dets afhængige er ikke velformet eller tom."
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr ""
+msgstr "QTI-XML-testen kunne ikke skrives korrekt."
 
 msgid "The reference."
-msgstr ""
+msgstr "Referencen."
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr ""
+msgstr "Ressourcen som er relateret til IMS QTI-testen som der henvises til i \"%s\" i IMS-manifestfilen blev rullet tilbage."
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
-msgstr ""
+msgstr "Scoren bliver behandlet for hele testen. Summen af alle SCORE-resultater bliver beregnet og divideret med summen af MAX SCORE. Resultatet bliver sammenlignet med grænsescoren (cut scoren eller beståelsesratio), og derefter bliver PASS_TOTAL sat i forhold dertil."
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
-msgstr ""
+msgstr "Scoren bliver behandlet for hele testen. En sum for alle SCORE-resultater bliver beregnet. Resultatet bliver placeret i SCORE_TOTAL-resultatet."
 
 msgid "The section title."
-msgstr ""
+msgstr "Testafsnittitlen."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
-msgstr ""
+msgstr "Indsendelsestilstanden bestemmer hvornår testtagerens besvarelse sendes ind til behandling. En testdel i individuel tilstand kræver at testtageren indsender deres svar på en item-for-item-bases. I simultan tilstand, bliver alle testtagerens svar sendt ind sammen ved afslutningen af testdelen."
 
 msgid "The test has been closed/suspended!"
-msgstr ""
+msgstr "Testen er lukket/sat i bero!"
 
 msgid "The test has been paused, we are unable to connect to the server."
-msgstr ""
+msgstr "Testen er sat på pause. Vi er ikke i stand til at forbinde til serveren."
 
 msgid "The test has not been saved."
-msgstr ""
+msgstr "Testen er ikke blevet gemt."
 
 msgid "The test part identifier."
-msgstr ""
+msgstr "Testdel-identifikator."
 
 msgid "The test title."
-msgstr ""
+msgstr "Testtitel"
 
 msgid "There is not outcomes!"
-msgstr ""
+msgstr "Der er ikke nogen resultater!"
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
-msgstr ""
+msgstr "Denne begrænsning har indflydelse på synligheden af tilbagemeldingen efter afslutningen af sidste forsøg."
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
-msgstr ""
+msgstr "Denne begrænsning kontrollerer om testtageren har lov til at give en kommentar til itemmet under sessionen. Kommentarer er ikke en del af den evaluerede besvarelse."
 
 msgid "This test has been suspended"
-msgstr ""
+msgstr "Denne test er blevet suspenderet"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "Denne test er blevet afsluttet"
 
 msgid "Time limit reached for item \"%s\"."
-msgstr ""
+msgstr "Tidsgrænsen er nået for item \"%s\"."
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr ""
+msgstr "TIdsgrænsen er nået. Denne del af testen er afsluttet."
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr ""
+msgstr "TIdsgrænsen er nået. Denne del af testen er afsluttet. Men du kan afslutte det spørgsmål du er i gang med."
 
 msgid "Time Limits"
-msgstr ""
+msgstr "Tidsgrænser"
 
 msgid "Time Remaining"
-msgstr ""
+msgstr "Tilbageværende tid"
 
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgid "Toggle playback"
 msgstr ""
@@ -1284,173 +1294,173 @@ msgid "Toggle start from here mode"
 msgstr ""
 
 msgid "Total score"
-msgstr ""
+msgstr "Total score"
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
 
 msgid "Tutor"
-msgstr ""
+msgstr "Hjælpelærer"
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 msgid "Unanswered"
-msgstr ""
+msgstr "Ubesvaret"
 
 msgid "Unanswered items"
-msgstr ""
+msgstr "Ubesvarede items"
 
 msgid "Unflag for Review"
-msgstr ""
+msgstr "Afmarker for gennemsyn"
 
 msgid "Unknown error."
-msgstr ""
+msgstr "Ukendt fejl"
 
 msgid "Unlink to use separated durations"
-msgstr ""
+msgstr "Ikke i stand til at bruge opdelte varigheder"
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr ""
+msgstr "Upload en QTI 2.1-testpakkefil"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "Brug Ctrl/Meta-tasten eller Lasso for flere valg"
 
 msgid "Validate Responses"
-msgstr ""
+msgstr "Valider besvarelser"
 
 msgid "Value"
-msgstr ""
+msgstr "Værdi"
 
 msgid "Viewed"
-msgstr ""
+msgstr "Set"
 
 msgid "Viewed items"
-msgstr ""
+msgstr "Sete items"
 
 msgid "Views"
-msgstr ""
+msgstr "Visninger"
 
 msgid "Visible"
-msgstr ""
+msgstr "Synlig"
 
 msgid "Volume"
-msgstr ""
+msgstr "Lydstyrke"
 
 msgid "Wait for your connection to come back online."
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr ""
+msgstr "Advarsel - Du har %s tilbage til at afslutte testen."
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr ""
+msgstr "Advarsel - du har %s tilbage til at afslutte itemmet."
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr ""
+msgstr "Advarsel - du har %s tilbage til at afslutte dette testafsnit."
 
 msgid "Warning – You have %s remaining to complete this test part."
-msgstr ""
+msgstr "Advarsel - du har %s tilbage til at afslutte denne testdel."
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr ""
+msgstr "Advarsel - du har %s tilbage til at afslutte denne test."
 
 msgid "We are unable to connect the server to submit your results."
-msgstr ""
+msgstr "Vi kan ikke forbinde til serveren så vi kan ikke indsende dine besvarelser."
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr ""
+msgstr "Vi er ikke i stand til at tilslutte til serveren for at hente det næste item."
 
 msgid "Weight"
-msgstr ""
+msgstr "Vægt"
 
 msgid "Weights"
-msgstr ""
+msgstr "Vægte"
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
-msgstr ""
+msgstr "Når børneelementer vælges, er det normalt kun muligt at vælge et element én gang."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
-msgstr ""
+msgstr "Hvorvidt den del af testtagerens svar der er ud over maksimumtiden, alligevel skal accepteres."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
-msgstr ""
+msgstr "Hvorvidt den del af testtagerens svar der er ud over maksimumtiden for testafsnittet, alligevel skal accepteres."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
-msgstr ""
+msgstr "Hvorvidt den del af testtagerens svar der er ud over maksimumtiden for testdelen, alligevel skal accepteres."
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
-msgstr ""
+msgstr "Hvorvidt den del af testtagerens svar der er ud over maksimumtiden, alligevel skal accepteres."
 
 msgid "White on black"
-msgstr ""
+msgstr "Hvid på sort"
 
 msgid "Who can view the rubric block during the delivery."
-msgstr ""
+msgstr "Hvem kan se rubrikblokken under leverancen."
 
 msgid "With Replacement"
-msgstr ""
+msgstr "Med tilbagelægning"
 
 msgid "Wrong file mime type"
-msgstr ""
+msgstr "Forkert fil-MIME-type"
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
-msgstr ""
+msgstr "XML-fejl på linje %1$d kolonne %2$d \"%3$s\"."
 
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 msgid "You answered all %s question(s)"
-msgstr ""
+msgstr "Du besvarede alle %s spørgsmål/opgaver"
 
 msgid "You answered all %s question(s) in this section"
-msgstr ""
+msgstr "Du besvarede alle %s spørgsmål/opgaver i dette testafsnit"
 
 msgid "You answered all %s question(s) in this test"
-msgstr ""
+msgstr "Du besvarede alle %s spørgsmål/opgaver i denne test"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr ""
+msgstr "Du besvarede kun %s af de %s spørgsmål i dette testafsnit"
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
-msgstr ""
+msgstr "Du er ved at gå til det næste item. Klik OK for at fortsætte og gå til næste item."
 
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
-msgstr ""
+msgstr "Du er ved at gå til det foregående item. Klik OK for at fortsætte og gå til foregående item."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
+msgstr "Du er ved at afsende testen. Du kan ikke tilgå testen efter at den af indsendt. Klik på Ok for at fortsætte og indsende testen."
 
 msgid "You are currently working offline."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr ""
+msgstr "Du oplever et forlænget tab af forbindelse."
 
 msgid "You have %s item(s) marked for review."
-msgstr ""
+msgstr "Du har %s item(s) markeret til gennemsyn."
 
 msgid "You have %s unanswered question(s)"
-msgstr ""
+msgstr "Du har %s ubesvarede spørgsmål"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr ""
+msgstr "Du har %s ubesvarede spørgsmål og %s item(s) mærket til gennemsyn."
 
 msgid "You have %s unanswered question(s)."
-msgstr ""
+msgstr "Du har %s ubesvarede spørgsmål."
 
 msgid "Your comment…"
-msgstr ""
+msgstr "Din kommentar..."
 
 msgid "Your connection seems to be back, please proceed."
 msgstr ""
 
 msgid "Zoom"
-msgstr ""
+msgstr "Zoom"
 
 msgid "Zoom in"
-msgstr ""
+msgstr "Zoom ind"
 
 msgid "Zoom out"
-msgstr ""
+msgstr "Zoom ud"
 
