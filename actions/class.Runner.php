@@ -15,32 +15,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2020 (original work) Open Assessment Technologies SA ;
  */
 
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ *
+ * @noinspection AutoloadingIssuesInspection
  */
 
+use oat\libCat\exception\CatEngineConnectivityException;
+use oat\oatbox\event\EventManager;
+use oat\tao\model\routing\AnnotationReader\security;
+use oat\taoDelivery\model\execution\DeliveryExecutionService;
+use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
-use oat\libCat\exception\CatEngineConnectivityException;
-use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\RunnerToolStates;
 use oat\taoQtiTest\models\runner\StorageManager;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-use oat\taoQtiTest\models\runner\RunnerToolStates;
-use oat\tao\model\routing\AnnotationReader\security;
-use oat\taoDelivery\model\execution\DeliveryExecutionService;
-use oat\taoDelivery\model\RuntimeService;
-use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -63,6 +66,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function __construct()
     {
+        parent::__construct();
+
         // Prevent anything to be cached by the client.
         TestRunnerUtils::noHttpClientCache();
     }
@@ -72,7 +77,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     protected function getStorageManager()
     {
-        return $this->getServiceManager()->get(StorageManager::SERVICE_ID);
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(StorageManager::SERVICE_ID);
     }
 
     /**
@@ -108,9 +114,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         if ($this->hasRequestParameter('testServiceCallId')) {
             return $this->getRequestParameter('testServiceCallId');
-        } else {
-            return $this->getRequestParameter('serviceCallId');
         }
+
+        return $this->getRequestParameter('serviceCallId');
     }
 
     /**
@@ -165,12 +171,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         ];
 
         if ($e) {
-            if ($e instanceof \Exception) {
+            if ($e instanceof Exception) {
                 $response['type'] = 'exception';
                 $response['code'] = $e->getCode();
             }
 
-            if ($e instanceof \common_exception_UserReadableException) {
+            if ($e instanceof common_exception_UserReadableException) {
                 $response['message'] = $e->getUserMessage();
             } else {
                 $response['message'] = __('Internal server error!');
@@ -199,12 +205,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                     $response['type'] = 'TestState';
                     break;
 
-                case $e instanceof \tao_models_classes_FileNotFoundException:
+                case $e instanceof tao_models_classes_FileNotFoundException:
                     $response['type'] = 'FileNotFound';
                     $response['message'] = __('File not found');
                     break;
 
-                case $e instanceof \common_exception_Unauthorized:
+                case $e instanceof common_exception_Unauthorized:
                     $response['code'] = 403;
                     break;
             }
@@ -233,13 +239,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                     $code = 200;
                     break;
 
-                case $e instanceof \common_exception_NotImplemented:
-                case $e instanceof \common_exception_NoImplementation:
-                case $e instanceof \common_exception_Unauthorized:
+                case $e instanceof common_exception_NotImplemented:
+                case $e instanceof common_exception_NoImplementation:
+                case $e instanceof common_exception_Unauthorized:
                     $code = 403;
                     break;
 
-                case $e instanceof \tao_models_classes_FileNotFoundException:
+                case $e instanceof tao_models_classes_FileNotFoundException:
                     $code = 404;
                     break;
             }
@@ -260,7 +266,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->returnJson($this->getInitResponse($serviceContext));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
                 $this->getErrorCode($e)
@@ -361,21 +367,21 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response = [];
                 $response['success'] = false;
 
-                $userIdentifier = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
-                \common_Logger::e("Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'.");
+                $userIdentifier = common_session_SessionManager::getSession()->getUser()->getIdentifier();
+                common_Logger::e("Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'.");
             }
 
             $this->getRunnerService()->startTimer($serviceContext);
         } catch (common_Exception $e) {
-            $userIdentifier = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
+            $userIdentifier = common_session_SessionManager::getSession()->getUser()->getIdentifier();
             $msg = __CLASS__ . "::getItem(): Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'.\n";
             $msg .= "Exception of type '" . get_class($e) . "' was thrown in '" . $e->getFile() . "' l." . $e->getLine() . " with message '" . $e->getMessage() . "'.";
 
-            if ($e instanceof \common_exception_Unauthorized) {
+            if ($e instanceof common_exception_Unauthorized) {
                 // Log as debug as not being authorized is not a "real" system error.
-                \common_Logger::d($msg);
+                common_Logger::d($msg);
             } else {
-                \common_Logger::e($msg);
+                common_Logger::e($msg);
             }
 
             $response = $this->getErrorResponse($e);
@@ -399,8 +405,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
-                \common_Logger::w("Attempt to disclose the next items without the configuration");
-                throw new \common_exception_Unauthorized();
+                common_Logger::w("Attempt to disclose the next items without the configuration");
+                throw new common_exception_Unauthorized();
             }
 
             $response = [];
@@ -618,7 +624,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 }
             }
 
-            \common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
+            common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
 
             $this->getRunnerService()->persist($serviceContext);
 
@@ -648,6 +654,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
+            /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
 
             $this->saveToolStates();
@@ -829,6 +836,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
+            /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $result = $this->getRunnerService()->resume($serviceContext);
 
@@ -875,9 +883,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             if ($this->hasRequestParameter('flag')) {
                 $flag = $this->getRequestParameter('flag');
                 if (is_numeric($flag)) {
-                    $flag = !!(intval($flag));
+                    $flag = (bool)(int)$flag;
                 } else {
-                    $flag = 'false' != strtolower($flag);
+                    $flag = 'false' !== strtolower($flag);
                 }
             } else {
                 $flag = true;
@@ -952,7 +960,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => $stored == $size
             ];
             common_Logger::d("Stored {$stored}/{$size} trace variables");
-            $eventManager = $this->getServiceManager()->get(\oat\oatbox\event\EventManager::SERVICE_ID);
+            $eventManager = $this->getServiceLocator()->get(EventManager::class);
             $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
             $eventManager->trigger($event);
         } catch (common_Exception $e) {
@@ -1019,6 +1027,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     protected function getRunnerService()
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
     }
 
