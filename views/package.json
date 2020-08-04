@@ -9,6 +9,6 @@
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "0.5.0",
-    "@oat-sa/tao-test-runner-qti": "2.14.1"
+    "@oat-sa/tao-test-runner-qti": "oat-sa/tao-test-runner-qti-fe#feature/TBD-46/stop-sending-csrf-tokens-to-get-item-request-handlers"
   }
 }
