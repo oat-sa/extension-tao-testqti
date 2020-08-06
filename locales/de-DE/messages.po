@@ -251,7 +251,7 @@ msgid "Category score"
 msgstr ""
 
 msgid "Change the current color preset"
-msgstr ""
+msgstr "Kontrast verändern"
 
 msgid "Class"
 msgstr ""
@@ -260,7 +260,7 @@ msgid "Class successfully created."
 msgstr ""
 
 msgid "Clear all active highlights"
-msgstr ""
+msgstr "Markierung aufheben"
 
 msgid "Clear Highlights"
 msgstr ""
@@ -287,7 +287,7 @@ msgid "Comment"
 msgstr "Kommentar"
 
 msgid "Completed items"
-msgstr "Abgeschlossene Elemente"
+msgstr "Beantwortete Fragen"
 
 msgid "Connected to server"
 msgstr ""
@@ -356,7 +356,7 @@ msgid "Displays a customisable magnifier"
 msgstr ""
 
 msgid "Do not flag the current item for later review"
-msgstr ""
+msgstr "Kennzeichnung zur späteren Überprüfung aufheben"
 
 msgid "Do not rename it."
 msgstr ""
@@ -401,7 +401,7 @@ msgid "End Test"
 msgstr "Test beenden"
 
 msgid "End test"
-msgstr ""
+msgstr "Test beenden"
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -463,10 +463,10 @@ msgid "Flag for Review"
 msgstr ""
 
 msgid "Flag the current item for later review"
-msgstr ""
+msgstr "Zur späteren Überprüfung kennzeichnen"
 
 msgid "Flagged"
-msgstr "Markiert"
+msgstr "Zu überprüfen"
 
 msgid "Flagged for review"
 msgstr ""
@@ -490,7 +490,7 @@ msgid "Hide Review"
 msgstr ""
 
 msgid "Hide the review screen"
-msgstr ""
+msgstr "Inhalt ausblenden"
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
 msgstr ""
@@ -499,13 +499,13 @@ msgid "Hide Timed Section Warning"
 msgstr ""
 
 msgid "Hide timers"
-msgstr ""
+msgstr "Verfügbare Zeit ausblenden"
 
 msgid "Highlight"
 msgstr ""
 
 msgid "Highlight Text"
-msgstr ""
+msgstr "Text markieren"
 
 msgid "Highlighter"
 msgstr ""
@@ -619,7 +619,7 @@ msgid "Items Compilation"
 msgstr "Element-Zusammenstellung"
 
 msgid "Items marked for later review"
-msgstr "Elemente markiert für spätere Bewertung"
+msgstr "Zur späteren Überprüfung gekennzeichnete Fragen"
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr ""
@@ -844,10 +844,10 @@ msgid "Online"
 msgstr ""
 
 msgid "Only display the items marked for review"
-msgstr "Nur die Elemente anzeigen, die für Bewertung markiert sind"
+msgstr "Nur die zur späteren Überprüfung gekennzeichneten Fragen aneigen"
 
 msgid "Only display the unanswered items"
-msgstr "Nur die unbeantworteten Elemente anzeigen"
+msgstr "Nur die unbeantworteten Fragen anzeigen"
 
 msgid "Open Calculator"
 msgstr ""
@@ -898,7 +898,7 @@ msgid "Preview the covered area"
 msgstr ""
 
 msgid "Previous"
-msgstr "Vorherige"
+msgstr "Zurück"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
@@ -1063,13 +1063,13 @@ msgid "Show Solution"
 msgstr "Lösung anzeigen"
 
 msgid "Show the review screen"
-msgstr ""
+msgstr "Inhalt anzeigen"
 
 msgid "Show the solution once the answer is submitted."
 msgstr "Lösung nach Einreichen der Antwort anzeigen."
 
 msgid "Show timers"
-msgstr ""
+msgstr "Verfügbare Zeit anzeigen"
 
 msgid "Show/Hide the review screen"
 msgstr "Zeige/Verberge die Vorschau"
@@ -1132,13 +1132,13 @@ msgid "Submission"
 msgstr "Eingabe"
 
 msgid "Submit and go to the end of the test"
-msgstr "Einreichen und zum Ende des Tests gehen"
+msgstr "Test beenden"
 
 msgid "Submit and go to the next item"
-msgstr "Einreichen und zum nächsten Element gehen"
+msgstr "Zur nächsten Seite wechseln"
 
 msgid "Submit and go to the previous item"
-msgstr "Einreichen und zum vorhergehenden Element gehen"
+msgstr "Zur vorherigen Seite zurückkehren"
 
 msgid "technical"
 msgstr ""
@@ -1162,7 +1162,7 @@ msgid "Test Saved"
 msgstr "Test gespeichert"
 
 msgid "Test status"
-msgstr "Teststatus"
+msgstr "Statut des Tests"
 
 msgid "Test status and review structure"
 msgstr ""
@@ -1369,7 +1369,7 @@ msgid "Unanswered"
 msgstr "Unbeantwortet"
 
 msgid "Unanswered items"
-msgstr "Unbeantwortete Elemente"
+msgstr "Nicht beantwortete Fragen"
 
 msgid "Unflag for Review"
 msgstr ""
@@ -1396,10 +1396,10 @@ msgid "Value"
 msgstr ""
 
 msgid "Viewed"
-msgstr "Angesehen"
+msgstr "Angesehene Seiten"
 
 msgid "Viewed items"
-msgstr "Angesehene Elemente"
+msgstr "Angesehene Seiten"
 
 msgid "Views"
 msgstr "Ansichten"
@@ -1528,8 +1528,8 @@ msgid "Zoom"
 msgstr ""
 
 msgid "Zoom in"
-msgstr ""
+msgstr "Heranzoomen"
 
 msgid "Zoom out"
-msgstr ""
+msgstr "Herauszoomen"
 

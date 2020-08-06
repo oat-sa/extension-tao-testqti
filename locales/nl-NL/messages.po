@@ -251,7 +251,7 @@ msgid "Category score"
 msgstr "Categorie score"
 
 msgid "Change the current color preset"
-msgstr "Verande het huidige kleurenschema"
+msgstr "Verander het kleurcontrast"
 
 msgid "Class"
 msgstr "Klasse"
@@ -260,7 +260,7 @@ msgid "Class successfully created."
 msgstr "Klasse met succes gecreëerd."
 
 msgid "Clear all active highlights"
-msgstr "Verwijder alle markeringen"
+msgstr "Verwijder alle tekstmarkeringen"
 
 msgid "Clear Highlights"
 msgstr "Markering verwijderen"
@@ -287,7 +287,7 @@ msgid "Comment"
 msgstr "Commentaar"
 
 msgid "Completed items"
-msgstr "Voltooide items"
+msgstr "Beantwoorde vragen"
 
 msgid "Connected to server"
 msgstr "Verbonden met server"
@@ -356,7 +356,7 @@ msgid "Displays a customisable magnifier"
 msgstr "Toont een aanpasbare vergroting"
 
 msgid "Do not flag the current item for later review"
-msgstr "Markeer het huidige item niet voor latere herziening"
+msgstr "Volg deze vraag niet meer op"
 
 msgid "Do not rename it."
 msgstr ""
@@ -401,7 +401,7 @@ msgid "End Test"
 msgstr "Eindig toets"
 
 msgid "End test"
-msgstr "Einde examen"
+msgstr "Test beëindigen"
 
 msgid "Enter a blueprint"
 msgstr "Voer een blauwdruk in"
@@ -463,10 +463,10 @@ msgid "Flag for Review"
 msgstr "Markeer voor herziening"
 
 msgid "Flag the current item for later review"
-msgstr "Markeer het huidige item voor herziening"
+msgstr "Volg deze vraag op"
 
 msgid "Flagged"
-msgstr "Gemarkeerd"
+msgstr "Op te volgen"
 
 msgid "Flagged for review"
 msgstr ""
@@ -490,7 +490,7 @@ msgid "Hide Review"
 msgstr "Verberg herziening"
 
 msgid "Hide the review screen"
-msgstr "Verberg het herzieningsscherm"
+msgstr "Verberg het overzichtsscherm"
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
 msgstr "Verwijder de automatisch getoonde waarschuwing voor wanneer een kandidaat een getimede sectie verlaat."
@@ -499,7 +499,7 @@ msgid "Hide Timed Section Warning"
 msgstr "Verberg de getimede sectie waarschuwing"
 
 msgid "Hide timers"
-msgstr "Verberg timers"
+msgstr "Verberg resterende tijd"
 
 msgid "Highlight"
 msgstr "Markeer"
@@ -619,7 +619,7 @@ msgid "Items Compilation"
 msgstr "Item compilatie"
 
 msgid "Items marked for later review"
-msgstr "Item gemarkeerd voor latere herziening"
+msgstr "Op te volgen vragen"
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr "Items met assessmentItemRef identifiers \"%s\" worden niet geregistreerd in het betreffende CAT-eindpunt."
@@ -847,7 +847,7 @@ msgid "Only display the items marked for review"
 msgstr "Toon alleen de items gemarkeerd voor herziening."
 
 msgid "Only display the unanswered items"
-msgstr "Toon alleen de onbeantwoorde items"
+msgstr "Toon enkel de op te volgen vragen"
 
 msgid "Open Calculator"
 msgstr "Open rekenmachine"
@@ -958,7 +958,7 @@ msgid "Required field"
 msgstr "Verplicht veld"
 
 msgid "Reset filters"
-msgstr "Filters resetten"
+msgstr "Filter resetten"
 
 msgid "Resource(s) successfully exported."
 msgstr "Resource(s) met succes geëxporteerd."
@@ -1063,13 +1063,13 @@ msgid "Show Solution"
 msgstr "Oplossing tonen"
 
 msgid "Show the review screen"
-msgstr "Toon het beoordelingsscherm"
+msgstr "Toon het overzichtsscherm"
 
 msgid "Show the solution once the answer is submitted."
 msgstr "Laat de oplossing zien nadat het antwoord is verzonden."
 
 msgid "Show timers"
-msgstr "Toon timers"
+msgstr "Toon resterende tijd"
 
 msgid "Show/Hide the review screen"
 msgstr "Toon/verberg het voorbeeld scherm"
@@ -1132,13 +1132,13 @@ msgid "Submission"
 msgstr "Bevestiging"
 
 msgid "Submit and go to the end of the test"
-msgstr "Bevestig en ga naar het eind van de toets"
+msgstr "Beëindig de test"
 
 msgid "Submit and go to the next item"
-msgstr "Bevestig en ga naar het volgende item "
+msgstr "Ga naar de volgende pagina"
 
 msgid "Submit and go to the previous item"
-msgstr "Bevestig en ga naar het vorige item"
+msgstr "Ga naar de vorige pagina"
 
 msgid "technical"
 msgstr "technisch"
@@ -1162,7 +1162,7 @@ msgid "Test Saved"
 msgstr "Toets opgeslagen"
 
 msgid "Test status"
-msgstr "Toets status"
+msgstr "Status van de test"
 
 msgid "Test status and review structure"
 msgstr ""
@@ -1369,7 +1369,7 @@ msgid "Unanswered"
 msgstr "Onbeantwoord"
 
 msgid "Unanswered items"
-msgstr "Onbeantwoorde items"
+msgstr "Onbeantwoorde vragen"
 
 msgid "Unflag for Review"
 msgstr "Markeer voor herziening opheffen"
@@ -1399,7 +1399,7 @@ msgid "Viewed"
 msgstr "Bekeken"
 
 msgid "Viewed items"
-msgstr "Bekeken items"
+msgstr "Bekeken pagina's"
 
 msgid "Views"
 msgstr "Weergaven"
