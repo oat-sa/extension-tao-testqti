@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:54\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:56:26\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -13,25 +13,25 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Parent Service Call ID"
-msgstr "Идентификатор сервисного вызова родительской организации тестирования QTI"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Parent Service Call ID"
-msgstr "Идентификатор сервисного вызова родительской организации тестирования QTI"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Item Runner"
-msgstr "Лицо, проходящее элемент теста QTI"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
-msgstr "Вставка элемента в тест QTI и его запуск. Эта служба инициализирует API и контексты TAO"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Item Runner"
-msgstr "Лицо, проходящее элемент теста QTI"
+msgstr ""
 

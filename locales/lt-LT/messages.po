@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:53\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:54:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -12,6 +12,9 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s - item %p/%c"
+msgstr "%s - elementas %p/%c"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTI Elementas dalyvaujantis QTI Teste '%s' negali būti surinktas."
@@ -29,10 +32,10 @@ msgid "A response to every question in this item is required."
 msgstr "Atsakymas kiekvienam klausimui šitam elementui yra privalomas!"
 
 msgid "A response to this item is required."
-msgstr "Turite pateikti bent vieną atsakymą."
+msgstr "Atsakymas šiame elemente yra privalomas."
 
 msgid "A valid response to this item is required."
-msgstr "Pasitikrinkite ar teisingai įvedėte atsakymą."
+msgstr "Teisingas atsakymas šiame elemente yra privalomas."
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Matomas skyrius yra kandidatui atpažįstamas."
@@ -47,7 +50,7 @@ msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Pridėti ZIP failą turintį QTI/APIP testus ir elementus"
 
 msgid "Add selected item(s) here."
-msgstr "Įkelkite pažymėtus klausimus šioje vietoje"
+msgstr "Pridėti pasirinktus elementus čia."
 
 msgid "Add the source file"
 msgstr "Pridėti šaltinio failą."
@@ -326,19 +329,19 @@ msgid "Display End Test Warning"
 msgstr "Rodyti Testo Baigimo Įspėjimą"
 
 msgid "Display Next Part Warning"
-msgstr "Įspėti, kad pereinama į kitą testo dalį"
+msgstr "Rodyti perspėjimą, pereinant į kitą testo dalį"
 
 msgid "Display Next Section Warning"
-msgstr "Įspėti, kad pereinama į kitą testo dalies skyrių"
+msgstr "Rodyti perspėjimą, pereinant į kitą testo dalies skyrių"
 
 msgid "Display Unanswered Warning"
 msgstr "Rodyti Neatsakytų Klausimų Įspėjimą"
 
 msgid "Displayed label"
-msgstr "Rodomas pavadinimas"
+msgstr "Rodyti pavadinimą"
 
 msgid "Displays a customisable magnifier"
-msgstr "Didinimo įrankis"
+msgstr "Rodo valdomą didintuvą"
 
 msgid "Do not flag the current item for later review"
 msgstr "Nežymėti šio elemento vėlesnei apžvalgai"
@@ -441,6 +444,9 @@ msgstr "Failas nerastas!"
 msgid "Filter"
 msgstr "Filtras"
 
+msgid "finished"
+msgstr "atlikta"
+
 msgid "Fixed"
 msgstr "Pastovus"
 
@@ -448,10 +454,10 @@ msgid "Fixed position in a shuffled the selection."
 msgstr "Pastovi vieta maišant pasirinkimus."
 
 msgid "Flag for Review"
-msgstr "Pažymėti"
+msgstr "Pažymėti Apžvalgai"
 
 msgid "Flag the current item for later review"
-msgstr "Pažymėti dabartinį klausimą vėlesniam peržiūrėjimui"
+msgstr "Pažymėti dabartinį elementą vėlesnei apžvalgai"
 
 msgid "Flagged"
 msgstr "Pažymėta"
@@ -472,7 +478,7 @@ msgid "Gray on green (low contrast option)"
 msgstr "Pilka su žalia (mažo kontrasto pasirinkimas)"
 
 msgid "Hide Review"
-msgstr "Slėpti apžvalgą"
+msgstr "Slėpti Apžvalgą"
 
 msgid "Hide the review screen"
 msgstr "Slėpti apžvalgos ekraną"
@@ -484,7 +490,7 @@ msgid "Hide Timed Section Warning"
 msgstr "Slėpti Laiko Skyriaus Įspėjimą"
 
 msgid "Hide timers"
-msgstr "Slėpti laiką"
+msgstr "Slėpti laikmačius"
 
 msgid "Highlight"
 msgstr "Paryškinti"
@@ -577,10 +583,10 @@ msgid "Item \"%s\" is completed."
 msgstr "Elementas \"%s\" yra atliktas."
 
 msgid "Item %d"
-msgstr "Klausimas %d"
+msgstr "Elementas %d"
 
 msgid "Item %d of %d"
-msgstr "%d/%d"
+msgstr "Elememtas %d iš %d"
 
 msgid "Item Reference Properties"
 msgstr "Elemento Šaltinio Savybės"
@@ -643,7 +649,7 @@ msgid "Magnify more"
 msgstr "Didinti daugiau"
 
 msgid "Magnifying Glass"
-msgstr "Didinimas"
+msgstr "Didinamasis Stiklas"
 
 msgid "Manage Rubric Blocks"
 msgstr "Tvarkyti Rubrikos Blokus"
@@ -651,10 +657,10 @@ msgstr "Tvarkyti Rubrikos Blokus"
 msgid "Manage test properties"
 msgstr "Tvarkyti testo savybes"
 
-msgid "Manage tests"
-msgstr "Tvarkyti testus"
-
 msgid "Manage Tests"
+msgstr "Tvarkyti Testus"
+
+msgid "Manage tests"
 msgstr "Tvarkyti testus"
 
 msgid "Mark for review"
@@ -679,10 +685,10 @@ msgid "Maximum duration for the all test."
 msgstr "Maksimali trukmė visam testui."
 
 msgid "Maximum duration for this item."
-msgstr "Maksimali trukmė šio testo daliai."
+msgstr "Maksimali trukmė šiam elementui."
 
 msgid "Maximum duration for this section."
-msgstr "Maksimali trukmė šio testo daliai."
+msgstr "Maksimali trukmė šiam skyriui."
 
 msgid "Maximum duration for this test part."
 msgstr "Maksimali trukmė šio testo daliai."
@@ -700,10 +706,10 @@ msgid "Minimum duration for the test."
 msgstr "Minimali trukmė testui."
 
 msgid "Minimum duration for this item."
-msgstr "Minimali trukmė testui."
+msgstr "Minimali trukmė šiam elementui."
 
 msgid "Minimum duration for this section."
-msgstr "Minimali trukmė šio testo daliai."
+msgstr "Minimali trukmė šiam skyriui."
 
 msgid "Minimum duration for this test part."
 msgstr "Minimali trukmė šio testo daliai."
@@ -713,6 +719,9 @@ msgstr "Nesurastas testo paketo failas"
 
 msgid "Missing required configuration option %s"
 msgstr ""
+
+msgid "Missing required option %s"
+msgstr "Trūksta reikalingos opcijos %s"
 
 msgid "Move"
 msgstr ""
@@ -1015,7 +1024,7 @@ msgid "Show the solution once the answer is submitted."
 msgstr "Rodyti sprendimą, kai atsakymas yra pateiktas."
 
 msgid "Show timers"
-msgstr "Rodyti laiką"
+msgstr "Rodyti laikmačius"
 
 msgid "Show/Hide the review screen"
 msgstr "Rodyti/Slėpti apžvalgos ekraną"
@@ -1027,7 +1036,7 @@ msgid "Simultaneous"
 msgstr "Vienalaikis"
 
 msgid "Skip"
-msgstr "Panaikinti atsakymą"
+msgstr "Praleisti"
 
 msgid "Skip &amp; End Test"
 msgstr "Praleisti &amp; Baigti testą"
@@ -1045,7 +1054,7 @@ msgid "Skip to the end of the test"
 msgstr "Praleisti iki testo pabaigos"
 
 msgid "Skip to the next item"
-msgstr "Panaikinkite atsakymą ir pereikite į kitą klausimą"
+msgstr "Pereikite į kitą klausimą"
 
 msgid "Skip to the next section"
 msgstr "Pereiti į kitą skyrių"
@@ -1084,7 +1093,7 @@ msgid "Submit and go to the next item"
 msgstr "Pateikite atsakymą ir pereikite į kitą klausimą"
 
 msgid "Submit and go to the previous item"
-msgstr "Pateikite atsakymą ir grįžkite į ankstesnį klausimo"
+msgstr "Pateiktite šio klausimo atsakymą ir grįžkite prie ankstesnio klausimo"
 
 msgid "technical"
 msgstr "techninis"
@@ -1264,7 +1273,7 @@ msgid "Time limit reached for item \"%s\"."
 msgstr "Laiko limitas pasiektas \"%s\" elementui."
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr "Testo atlikimo laikas baigėsi."
+msgstr "Pasiektas laiko limitas. Ši testo dalis baigėsi."
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
 msgstr "Laiko limitas pasiektas, ši testo dalis pabaigta. Tačiau, jums galima atlikti dabartinį elementą."
@@ -1297,13 +1306,13 @@ msgid "Type"
 msgstr "Tipas"
 
 msgid "Unanswered"
-msgstr "Neatsakyta"
+msgstr "Neatsakytas"
 
 msgid "Unanswered items"
 msgstr "Neatsakyti elementai"
 
 msgid "Unflag for Review"
-msgstr "Atžymėti"
+msgstr "Atžymėti Apžvalgai"
 
 msgid "Unknown error."
 msgstr "Nežinoma klaida."
@@ -1345,10 +1354,10 @@ msgid "Warning – You have %s remaining to complete the test."
 msgstr "Įspėjimas – Jums liko %s testui atlikti."
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr "Įspėjimas – Jums liko %s testui atlikti."
+msgstr "Įspėjimas – Jums likę %s kad užbaigtumėte šį elementą."
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr "Įspėjimas – Jums liko %s šiai testui daliai atlikti."
+msgstr "Įspėjimas – Jums likę %s, kad užbaigtumėte šį skyrių."
 
 msgid "Warning – You have %s remaining to complete this test part."
 msgstr "Įspėjimas – Jums liko %s šiai testui daliai atlikti."
@@ -1360,7 +1369,7 @@ msgid "We are unable to connect the server to submit your results."
 msgstr "Mes negalime prisijungti prie serverio, kad įkelti jūsų rezultatus."
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr "Neįmanoma susisiekti su serveriu ir atsiųsti kitą klausimą."
+msgstr "Neįmanoma susisiekti su serveriu ir atsiųsti kitą elementą."
 
 msgid "Weight"
 msgstr "Svoris"
@@ -1405,7 +1414,7 @@ msgid "You answered all %s question(s)"
 msgstr "Jūs atsakėti į visus %s klausimus."
 
 msgid "You answered all %s question(s) in this section"
-msgstr "Jūs atsakėte į visus %s klausimus šiame teste"
+msgstr "Jūs atsakėte į visus %s klausimus šiame skyriuje"
 
 msgid "You answered all %s question(s) in this test"
 msgstr "Jūs atsakėte į visus %s klausimus šiame teste"
@@ -1429,16 +1438,16 @@ msgid "You are encountering a prolonged connectivity loss. "
 msgstr "Jūs turite užsitęsusius ryšio trūkčius."
 
 msgid "You have %s item(s) marked for review."
-msgstr "Turite %s klausimų(-us) pažymėję patikrinimui."
+msgstr "Jūs turite %s elementą(-us) pažymėtus peržiūrai."
 
 msgid "You have %s unanswered question(s)"
-msgstr "Liko neatsakyti %s klausimai(-ų)."
+msgstr "Jūs turite %s neatsakytus klausimus"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
 msgstr "Jūs turite %s neatsakytus klausimą(-us) ir turite %s elementą(-us) pažymėtus peržiūrai."
 
 msgid "You have %s unanswered question(s)."
-msgstr "Liko neatsakyti %s klausimai(-ų)."
+msgstr "Jūs turite %s neatsakytus klausimus"
 
 msgid "Your comment…"
 msgstr "Tavo komentaras..."

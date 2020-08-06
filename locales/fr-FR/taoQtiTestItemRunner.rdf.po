@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:52\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:51:13\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -28,7 +28,7 @@ msgstr "QTI Test Item Runner"
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
-msgstr "Imbriquer et exécuter un item dans un test QTI. Ce service lance les API et contextes TAO."
+msgstr "Intègre et lance un item dans un test QTI. Ce service initialise les APIs TAO et les contextes."
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"

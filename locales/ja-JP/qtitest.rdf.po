@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:53\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:53:24\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -38,12 +38,12 @@ msgstr "QTIテストコンパイル"
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation Uri"
-msgstr "QTIテストURI"
+msgstr "QTIテストコンパイルURI"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI test runner"
-msgstr "QTIテストランナー"
+msgstr "QTI テストランナー"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:49\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:47:59\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: da-DK\n"
@@ -18,7 +18,7 @@ msgstr "QTI 2.1 Test Driver"
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
-msgstr ""
+msgstr "Driver og konfigurations-/forfatterværktøj som implementerer testgrænsefladen for at afvikle test der overholder QTI 2.1-standarden"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
@@ -28,7 +28,7 @@ msgstr "QTI Test Definition"
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Definition Uri"
-msgstr ""
+msgstr "QTI testdefinitions-URI"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
@@ -38,7 +38,7 @@ msgstr "QTI Test Compilation"
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation Uri"
-msgstr ""
+msgstr "QTI testsamlingsURI"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
@@ -48,7 +48,7 @@ msgstr "QTI test runner"
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.1 test"
-msgstr ""
+msgstr "afvikler en QTI 2.1-test"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"

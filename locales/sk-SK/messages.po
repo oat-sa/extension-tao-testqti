@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint120\n"
-"PO-Revision-Date: 2020-01-31T09:37:55\n"
+"Project-Id-Version: TAO 3.4.0-sprint121\n"
+"PO-Revision-Date: 2020-08-03T09:56:43\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk-SK\n"
@@ -13,41 +13,44 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
+msgid "%s - item %p/%c"
+msgstr "%s - položka %p/%c"
+
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr ""
+msgstr "Položka QTI zapojená do testu QTI '%s' sa nepodarilo zostaviť."
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr ""
+msgstr "Test QTI musí obsahovať aspoň jednu položku QTI, ktorá sa má zostaviť. Nenašli sa žiadne."
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "Testovací balík qti"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr ""
+msgstr "Diaľkový prostriedok, na ktorý sa odkazuje v teste QTI '%s', nebolo možné načítať."
 
 msgid "A response to every question in this item is required."
 msgstr ""
 
 msgid "A response to this item is required."
-msgstr ""
+msgstr "Odpoveď na túto položku je potrebná."
 
 msgid "A valid response to this item is required."
 msgstr ""
 
 msgid "A visible section is one that is identifiable by the candidate."
-msgstr ""
+msgstr "Viditeľná časť je tá, ktorú môže kandidát identifikovať."
 
 msgid "Activated"
-msgstr ""
+msgstr "Aktivované"
 
 msgid "add a new weight"
-msgstr ""
+msgstr "pridať novú váhu"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr ""
+msgstr "Pridajte súbor zip obsahujúci QTI/APIP testy a položky"
 
 msgid "Add selected item(s) here."
-msgstr ""
+msgstr "Tu môžete pridať vybrané položky."
 
 msgid "Add the source file"
 msgstr ""
@@ -440,6 +443,9 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+msgid "finished"
+msgstr ""
+
 msgid "Fixed"
 msgstr ""
 
@@ -650,10 +656,10 @@ msgstr ""
 msgid "Manage test properties"
 msgstr ""
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr ""
 
-msgid "Manage Tests"
+msgid "Manage tests"
 msgstr ""
 
 msgid "Mark for review"
@@ -711,6 +717,9 @@ msgid "Missed test package file"
 msgstr ""
 
 msgid "Missing required configuration option %s"
+msgstr ""
+
+msgid "Missing required option %s"
 msgstr ""
 
 msgid "Move"
