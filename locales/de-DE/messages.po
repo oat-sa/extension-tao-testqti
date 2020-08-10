@@ -844,7 +844,7 @@ msgid "Online"
 msgstr ""
 
 msgid "Only display the items marked for review"
-msgstr "Nur die zur späteren Überprüfung gekennzeichneten Fragen aneigen"
+msgstr "Nur die zur späteren Überprüfung gekennzeichneten Fragen anzeigen"
 
 msgid "Only display the unanswered items"
 msgstr "Nur die unbeantworteten Fragen anzeigen"
