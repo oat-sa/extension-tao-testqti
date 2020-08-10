@@ -844,10 +844,10 @@ msgid "Online"
 msgstr ""
 
 msgid "Only display the items marked for review"
-msgstr "Toon alleen de items gemarkeerd voor herziening."
+msgstr "Toon enkel de op te volgen vragen"
 
 msgid "Only display the unanswered items"
-msgstr "Toon enkel de op te volgen vragen"
+msgstr "Toon enkel de onbeantwoorde vragen"
 
 msgid "Open Calculator"
 msgstr "Open rekenmachine"
