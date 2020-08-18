@@ -460,6 +460,20 @@ class taoQtiTest_models_classes_QtiTestConverter
             'qtism\\data\\rules\\',
             'qtism\\data\\state\\'
         ];
+
+        $operatorClassesPostfix = [
+            'and',
+            'or',
+            'custom',
+            'math',
+            'or',
+            'stats'
+        ];
+
+        if (in_array(mb_strtolower($name), $operatorClassesPostfix)) {
+            $name .= 'Operator';
+        }
+
         foreach ($namespaces as $namespace) { // this could be cached
             $className = $namespace . ucfirst($name);
             if (class_exists($className, true)) {
