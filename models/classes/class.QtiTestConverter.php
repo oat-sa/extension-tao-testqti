@@ -41,6 +41,13 @@ use qtism\data\View;
  */
 class taoQtiTest_models_classes_QtiTestConverter
 {
+    static $operatorClassesPostfix = [
+        'and',
+        'custom',
+        'math',
+        'or',
+        'stats'
+    ];
 
     /**
      * The instance of the XmlDocument that represents the QTI Test.
@@ -461,15 +468,7 @@ class taoQtiTest_models_classes_QtiTestConverter
             'qtism\\data\\state\\'
         ];
 
-        $operatorClassesPostfix = [
-            'and',
-            'custom',
-            'math',
-            'or',
-            'stats'
-        ];
-
-        if (in_array(mb_strtolower($name), $operatorClassesPostfix)) {
+        if (in_array(mb_strtolower($name), self::$operatorClassesPostfix)) {
             $name .= 'Operator';
         }
 
