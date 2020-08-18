@@ -463,7 +463,6 @@ class taoQtiTest_models_classes_QtiTestConverter
 
         $operatorClassesPostfix = [
             'and',
-            'or',
             'custom',
             'math',
             'or',
