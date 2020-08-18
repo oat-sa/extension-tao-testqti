@@ -41,6 +41,12 @@ use qtism\data\View;
  */
 class taoQtiTest_models_classes_QtiTestConverter
 {
+
+    /**
+     * operators for which qtsm classes are postfix
+     *
+     * @var array $operatorClassesOperatorPostfix
+     */
     static $operatorClassesPostfix = [
         'and',
         'custom',
