@@ -120,16 +120,16 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
     public function testLookupClass()
     {
         $class = new ReflectionClass(taoQtiTest_models_classes_QtiTestConverter::class);
-        $method = $class->getMethod('lookupClass');
-        $method->setAccessible(true);
+        $lookupClassMethod = $class->getMethod('lookupClass');
+        $lookupClassMethod->setAccessible(true);
 
         $doc = new XmlDocument('2.1');
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
 
-        $result = $method->invoke($converter, 'or');
+        $result = $lookupClassMethod->invoke($converter, 'or');
         $this->assertEquals($result, 'qtism\data\expressions\operators\OrOperator');
 
-        $result = $method->invoke($converter, 'lt');
+        $result = $lookupClassMethod->invoke($converter, 'lt');
         $this->assertEquals($result, 'qtism\data\expressions\operators\Lt');
     }
 }
