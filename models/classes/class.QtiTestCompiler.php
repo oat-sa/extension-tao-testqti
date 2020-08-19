@@ -60,6 +60,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     const ADAPTIVE_PLACEHOLDER_CATEGORY = 'x-tao-qti-adaptive-placeholder';
 
     const COMPILATION_INFO_FILENAME = 'compilation-info.json';
+
+    const QTI_COMPILATION_VERSION_2_2 = '2.2';
+
     /**
      * The list of mime types of files that are accepted to be put
      * into the public compilation directory.
@@ -476,7 +479,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $resolver = new taoQtiTest_helpers_ItemResolver(Service::singleton());
         $originalDoc = $testService->getDoc($test);
 
-        $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $resolver, $resolver);
+        $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $resolver, $resolver, self::QTI_COMPILATION_VERSION_2_2);
         common_Logger::t("QTI Test XML transformed in a compact version.");
 
         return $compiledDoc;
