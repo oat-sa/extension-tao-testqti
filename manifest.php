@@ -50,10 +50,10 @@ return [
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '39.6.1',
+    'version'     => '39.7.0',
     'author'      => 'Open Assessment Technologies',
     'requires'    => [
-        'taoQtiItem' => '>=24.0.0',
+        'taoQtiItem' => '>=25.8.0',
         'taoTests'   => '>=14.0.0',
         'tao'        => '>=45.0.0',
         'generis'    => '>=12.20.0',
