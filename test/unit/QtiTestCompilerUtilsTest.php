@@ -22,8 +22,8 @@
 namespace oat\taoQtiTest\test\unit;
 
 use oat\generis\test\TestCase;
-use \taoQtiTest_helpers_TestCompilerUtils;
-use \qtism\data\storage\xml\XmlDocument;
+use qtism\data\storage\xml\XmlDocument;
+use taoQtiTest_helpers_TestCompilerUtils;
 
 /**
  * This test case focuses on testing the TestCompilerUtils helper.
@@ -34,12 +34,11 @@ use \qtism\data\storage\xml\XmlDocument;
  */
 class QtiTestCompilerUtilsTest extends TestCase
 {
-    
-    public static function samplesDir()
+    public static function samplesDir($version)
     {
-        return dirname(__FILE__) . '/../samples/xml/compiler/meta/';
+        return __DIR__ . '/../samples/xml/compiler/meta/compact_' . $version . '/';
     }
-    
+
     /**
      *
      * @dataProvider metaProvider
@@ -50,21 +49,30 @@ class QtiTestCompilerUtilsTest extends TestCase
     {
         $xml = new XmlDocument();
         $xml->load($testFile);
-        
+
         $this->assertEquals($expectedMeta, taoQtiTest_helpers_TestCompilerUtils::testMeta($xml->getDocumentComponent()));
     }
-    
+
     public function metaProvider()
     {
-        return [
-            [self::samplesDir() . 'linear_nopreconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-            [self::samplesDir() . 'linear_preconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => true]],
-            [self::samplesDir() . 'linear_nopreconditions_branchrules.xml', ['branchRules' => true, 'preConditions' => false]],
-            [self::samplesDir() . 'linear_preconditions_branchrules.xml', ['branchRules' => true, 'preConditions' => true]],
-            [self::samplesDir() . 'nonlinear_nopreconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-            [self::samplesDir() . 'nonlinear_nopreconditions_branchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-            [self::samplesDir() . 'nonlinear_preconditions_branchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-            [self::samplesDir() . 'nonlinear_preconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-        ];
+        $versions = ['v1p0', 'v2p1', 'v2p2'];
+        $sets = [];
+
+        foreach ($versions as $version) {
+            $sets = array_merge($sets,
+                [
+                    [self::samplesDir($version) . 'linear_nopreconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
+                    [self::samplesDir($version) . 'linear_preconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => true]],
+                    [self::samplesDir($version) . 'linear_nopreconditions_branchrules.xml', ['branchRules' => true, 'preConditions' => false]],
+                    [self::samplesDir($version) . 'linear_preconditions_branchrules.xml', ['branchRules' => true, 'preConditions' => true]],
+                    [self::samplesDir($version) . 'nonlinear_nopreconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
+                    [self::samplesDir($version) . 'nonlinear_nopreconditions_branchrules.xml', ['branchRules' => false, 'preConditions' => false]],
+                    [self::samplesDir($version) . 'nonlinear_preconditions_branchrules.xml', ['branchRules' => false, 'preConditions' => false]],
+                    [self::samplesDir($version) . 'nonlinear_preconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
+                ]
+            );
+        }
+
+        return $sets;
     }
 }
