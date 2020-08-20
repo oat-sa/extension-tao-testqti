@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\test\integration;
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
+use ReflectionClass;
 use \taoQtiTest_models_classes_QtiTestConverter;
 
 /**
@@ -114,5 +115,21 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
         ;
         
         $this->assertEquals($result, $expected);
+    }
+
+    public function testLookupClass()
+    {
+        $class = new ReflectionClass(taoQtiTest_models_classes_QtiTestConverter::class);
+        $lookupClassMethod = $class->getMethod('lookupClass');
+        $lookupClassMethod->setAccessible(true);
+
+        $doc = new XmlDocument('2.1');
+        $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+
+        $result = $lookupClassMethod->invoke($converter, 'or');
+        $this->assertEquals($result, 'qtism\data\expressions\operators\OrOperator');
+
+        $result = $lookupClassMethod->invoke($converter, 'lt');
+        $this->assertEquals($result, 'qtism\data\expressions\operators\Lt');
     }
 }
