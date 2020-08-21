@@ -43,6 +43,19 @@ class taoQtiTest_models_classes_QtiTestConverter
 {
 
     /**
+     * operators for which qtsm classes are postfix
+     *
+     * @var array $operatorClassesOperatorPostfix
+     */
+    static $operatorClassesPostfix = [
+        'and',
+        'custom',
+        'math',
+        'or',
+        'stats'
+    ];
+
+    /**
      * The instance of the XmlDocument that represents the QTI Test.
      *
      * This is the pivotal class.
@@ -460,6 +473,11 @@ class taoQtiTest_models_classes_QtiTestConverter
             'qtism\\data\\rules\\',
             'qtism\\data\\state\\'
         ];
+
+        if (in_array(mb_strtolower($name), self::$operatorClassesPostfix)) {
+            $name .= 'Operator';
+        }
+
         foreach ($namespaces as $namespace) { // this could be cached
             $className = $namespace . ucfirst($name);
             if (class_exists($className, true)) {
