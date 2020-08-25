@@ -20,6 +20,7 @@
  */
 
 use oat\tao\model\user\TaoRoles;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
@@ -40,7 +41,6 @@ use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
-use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 
 $extpath = __DIR__ . DIRECTORY_SEPARATOR;
 $taopath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
@@ -50,14 +50,14 @@ return [
     'label'       => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license'     => 'GPL-2.0',
-    'version'     => '38.18.0',
+    'version'     => '39.6.3',
     'author'      => 'Open Assessment Technologies',
     'requires'    => [
         'taoQtiItem' => '>=24.0.0',
         'taoTests'   => '>=14.0.0',
-        'tao'        => '>=44.1.0',
+        'tao'        => '>=45.0.0',
         'generis'    => '>=12.20.0',
-        'taoDelivery' => '>=14.10.0',
+        'taoDelivery' => '>=14.18.0',
         'taoItems'   => '>=6.0.0',
     ],
     'models' => [

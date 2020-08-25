@@ -76,6 +76,7 @@ use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use qtism\data\AssessmentItemRef;
 use qtism\runtime\tests\SessionManager;
 use oat\libCat\result\ResultVariable;
+use League\Flysystem\FileNotFoundException;
 
 /**
  * Class QtiRunnerService
@@ -167,11 +168,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             $this->dataCache[$cacheKey] = $jsonContent;
             return $this->dataCache[$cacheKey];
-        } catch (\FileNotFoundException $e) {
-            throw new \tao_models_classes_FileNotFoundException(
-                $path . ' for item reference ' . $itemRef
-            );
-        } catch (\League\Flysystem\FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             throw new \tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
             );
@@ -195,7 +192,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         // create a service context based on the provided URI
         // initialize the test session and related objects
         $serviceContext = new QtiRunnerServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri);
-        $serviceContext->setServiceManager($this->getServiceManager());
+        $this->propagate($serviceContext);
         $serviceContext->setTestConfig($this->getTestConfig());
         $serviceContext->setUserUri($userUri);
 
@@ -913,7 +910,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
                     // Send results to TAO Results.
                     $resultTransmitter = new \taoQtiCommon_helpers_ResultTransmitter($context->getSessionManager()->getResultServer());
-                    $outcomeVariables = [];
 
                     $hrefParts = explode('|', $assessmentItem->getHref());
                     $sessionId = $context->getTestSession()->getSessionId();

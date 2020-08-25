@@ -58,7 +58,6 @@ class TreeItemLookupTest extends TestCase
     public function setUp(): void
     {
         $this->initializeTestDoubles();
-        $this->initializeTestDoubleExpectancies();
         $this->initializeServiceLocator();
         $this->initializeSut();
         parent::setUp();
@@ -208,6 +207,8 @@ class TreeItemLookupTest extends TestCase
      */
     public function testGetItems(array $expected, array $resources = [], array $readableResourceMap = []): void
     {
+        $this->initializeTestDoubleExpectancies();
+
         $this->resources = $resources;
         $this->readableResourceMap = $readableResourceMap;
 
@@ -219,5 +220,31 @@ class TreeItemLookupTest extends TestCase
         }
 
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetItemsNoResources(): void
+    {
+        $data = [
+            [
+                'type' => 'class',
+                'children' => [
+                    [
+                        'type' => 'class'
+                    ]
+                ]
+            ]
+        ];
+
+        $this->resourceLookupMock
+            ->expects(static::once())
+            ->method('getResources')
+            ->willReturn($data);
+
+        $this->permissionHelper
+            ->expects(static::never())
+            ->method('filterByPermission');
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $this->sut->getItems($this->rootMock);
     }
 }

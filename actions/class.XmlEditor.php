@@ -73,7 +73,8 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
            $this->setData('form', $form->render());
            $this->setData('formTitle', __('XML Content'));
        }
-       $this->setView('XmlEditor/xml_editor.tpl');
+
+       $this->setView('xml_editor.tpl');
    }
 
     /**

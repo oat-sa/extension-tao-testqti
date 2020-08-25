@@ -13,6 +13,7 @@ use oat\generis\test\TestCase;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\tao\model\service\ApplicationService;
+use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use qtism\common\utils\Format;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -21,15 +22,11 @@ class QtiTestServiceTest extends TestCase
 {
     private const TEST_TEMPLATE = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
-<assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd"
-    identifier="{testId}" title="{testTitle}" toolName="tao" toolVersion="{taoVersion}">
-    <testPart navigationMode="linear" submissionMode="individual" identifier="testPart-1">
-        <itemSessionControl maxAttempts="0"/>
-        <assessmentSection identifier="assessmentSection-1" title="Section 1" visible="true" required="true">
-        </assessmentSection>
-    </testPart>
+<assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="{testId}" title="{testTitle}" toolName="tao" toolVersion="{taoVersion}" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd">
+  <testPart identifier="testPart-1" navigationMode="linear" submissionMode="individual">
+    <itemSessionControl maxAttempts="0" showFeedback="false" allowReview="true" showSolution="false" allowComment="false" allowSkipping="true" validateResponses="false"/>
+    <assessmentSection identifier="assessmentSection-1" required="true" fixed="false" title="Section 1" visible="true" keepTogether="true"/>
+  </testPart>
 </assessmentTest>
 XML;
 
@@ -46,17 +43,22 @@ XML;
 
     /** @var QtiTestService */
     private $sut;
+    /** @var AssessmentTestXmlFactory */
+    private $xmlFactory;
 
     /**
      * @before
      */
     public function init(): void
     {
-        $this->defaultDirectoryMock        = $this->createMock(Directory::class);
+        $this->defaultDirectoryMock = $this->createMock(Directory::class);
         $this->fileReferenceSerializerMock = $this->createMock(FileReferenceSerializer::class);
-        $this->testContentPropertyMock     = $this->createMock(KernelProperty::class);
+        $this->testContentPropertyMock = $this->createMock(KernelProperty::class);
+        $this->xmlFactory = new AssessmentTestXmlFactory();
 
         $serviceLocator = $this->creteServiceLocatorMock();
+
+        $this->xmlFactory->setServiceLocator($serviceLocator);
 
         $this->sut = $this->createPartialMock(
             QtiTestService::class,
@@ -66,10 +68,6 @@ XML;
         $this->sut
             ->method('getDefaultDir')
             ->willReturn($this->defaultDirectoryMock);
-
-        $this->sut
-            ->method('getQtiTestTemplateFileAsString')
-            ->willReturn(self::TEST_TEMPLATE);
 
         $this->sut
             ->method('getServiceManager')
@@ -83,7 +81,7 @@ XML;
 
     public function testCreateContent(): void
     {
-        $test = $this->createTestMock('https://example.com', '0_label-with_sømę-exötïč_charæctêrß');
+        $test = $this->createTestMock('https://example.com', '0label-with_sømę-exötïč_charæctêrß');
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->assertSame(
@@ -286,17 +284,13 @@ XML;
 
     private function creteServiceLocatorMock(): ServiceLocatorInterface
     {
-        $serviceLocatorMock = $this->createMock(ServiceLocatorInterface::class);
-        $serviceLocatorMock
-            ->method('get')
-            ->willReturnMap(
-                [
-                    [ApplicationService::SERVICE_ID, $this->createApplicationServiceMock()],
-                    [FileReferenceSerializer::SERVICE_ID, $this->fileReferenceSerializerMock],
-                ]
-            );
-
-        return $serviceLocatorMock;
+        return $this->getServiceLocatorMock(
+            [
+                ApplicationService::SERVICE_ID      => $this->createApplicationServiceMock(),
+                FileReferenceSerializer::SERVICE_ID => $this->fileReferenceSerializerMock,
+                AssessmentTestXmlFactory::class     => $this->xmlFactory,
+            ]
+        );
     }
 
     private function createModelMock(): Ontology
