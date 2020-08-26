@@ -254,7 +254,7 @@ define([
                                     fullPage: true
                                 });
                             } else {
-                                feedback().error('Test Preview is not installed, please contact to your administrator.');
+                                feedback().error('Test Preview is not installed, please contact your administrator.');
                             }
                         }
                     });
