@@ -22,11 +22,9 @@ define([
     'module',
     'jquery',
     'lodash',
-    'context',
     'helpers',
     'i18n',
     'ui/feedback',
-    'core/providerLoader',
     'core/databindcontroller',
     'taoQtiTest/controller/creator/qtiTestCreator',
     'taoQtiTest/controller/creator/views/item',
@@ -41,16 +39,15 @@ define([
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'ui/validator/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
+    'taoTests/previewer/factory',
     'core/logger'
 ], function(
     module,
     $,
     _,
-    context,
     helpers,
     __,
     feedback,
-    providerLoaderFactory,
     DataBindController,
     qtiTestCreatorFactory,
     itemView,
@@ -65,28 +62,12 @@ define([
     categorySelector,
     validators,
     changeTracker,
+    previewerFactory,
     loggerFactory
 ){
     'use strict';
     const logger = loggerFactory('taoQtiTest/controller/creator');
-    let previewerFactory = null;
 
-    providerLoaderFactory()
-        .addList({
-            previewers: {
-                id: 'qtiTests',
-                module: 'taoQtiTestPreviewer/previewer/adapter/test/qtiTest',
-                bundle: 'taoQtiTestPreviewer/loader/qtiPreviewer.min',
-                category: 'previewers'
-            }
-        })
-        .load(context.bundle)
-        .then(function (providers) {
-            previewerFactory = providers[0];
-        })
-        .catch(err => {
-            logger.error(err);
-        });
     /**
      * The test creator controller is the main entry point
      * and orchestrates data retrieval and view/components loading.
@@ -248,14 +229,18 @@ define([
                         if(isTestContainsItems()) {
                             const saveUrl = options.routes.save;
                             const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
-                            if (previewerFactory) {
-                                return previewerFactory.init(decodeURIComponent(testUri), {
+                            return previewerFactory(
+                                'qtiTest',
+                                decodeURIComponent(testUri),
+                                {
                                     readOnly: false,
                                     fullPage: true
-                                });
-                            } else {
-                                feedback().error('Test Preview is not installed, please contact your administrator.');
-                            }
+                                }
+                            )
+                            .catch(err => {
+                                logger.error(err);
+                                feedback().error('Test Preview is not installed, please contact to your administrator.');
+                            });
                         }
                     });
 
