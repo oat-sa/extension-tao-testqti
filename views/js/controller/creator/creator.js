@@ -38,8 +38,9 @@ define([
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'ui/validator/validators',
-    'taoQtiTestPreviewer/previewer/adapter/test/qtiTest',
-    'taoQtiTest/controller/creator/helpers/changeTracker'
+    'taoQtiTest/controller/creator/helpers/changeTracker',
+    'taoTests/previewer/factory',
+    'core/logger'
 ], function(
     module,
     $,
@@ -60,10 +61,12 @@ define([
     scoringHelper,
     categorySelector,
     validators,
+    changeTracker,
     previewerFactory,
-    changeTracker
+    loggerFactory
 ){
     'use strict';
+    const logger = loggerFactory('taoQtiTest/controller/creator');
 
     /**
      * The test creator controller is the main entry point
@@ -226,9 +229,17 @@ define([
                         if(isTestContainsItems()) {
                             const saveUrl = options.routes.save;
                             const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
-                            return previewerFactory.init(decodeURIComponent(testUri), {
-                                readOnly: false,
-                                fullPage: true
+                            return previewerFactory(
+                                'qtiTest', // TODO - move to BE configuration
+                                decodeURIComponent(testUri),
+                                {
+                                    readOnly: false,
+                                    fullPage: true
+                                }
+                            )
+                            .catch(err => {
+                                logger.error(err);
+                                feedback().error(__('Test Preview is not installed, please contact to your administrator.'));
                             });
                         }
                     });
