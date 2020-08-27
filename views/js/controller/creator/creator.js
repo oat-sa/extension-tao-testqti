@@ -230,7 +230,7 @@ define([
                             const saveUrl = options.routes.save;
                             const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
                             return previewerFactory(
-                                'qtiTest',
+                                'qtiTest', // TODO - move to BE configuration
                                 decodeURIComponent(testUri),
                                 {
                                     readOnly: false,
@@ -239,7 +239,7 @@ define([
                             )
                             .catch(err => {
                                 logger.error(err);
-                                feedback().error('Test Preview is not installed, please contact to your administrator.');
+                                feedback().error(__('Test Preview is not installed, please contact to your administrator.'));
                             });
                         }
                     });
