@@ -38,7 +38,7 @@ class NoneQtiPackageImportPreprocessing extends ConfigurableService implements Q
     /**
      * @inheritdoc
      */
-    public function run(File $file)
+    public function run($file)
     {
         return null;
     }
