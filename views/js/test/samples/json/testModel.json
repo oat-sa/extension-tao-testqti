@@ -1,0 +1,573 @@
+{
+  "qti-type": "assessmentTest",
+  "identifier": "Test-4",
+  "title": "QTI Interactions",
+  "toolName": "tao",
+  "toolVersion": "3.3.0-RC02",
+  "outcomeDeclarations": [],
+  "timeLimits": { "qti-type": "timeLimits", "allowLateSubmission": false },
+  "testParts": [
+    {
+      "qti-type": "testPart",
+      "identifier": "testPart-1",
+      "navigationMode": 1,
+      "submissionMode": 0,
+      "preConditions": [],
+      "branchRules": [],
+      "itemSessionControl": {
+        "qti-type": "itemSessionControl",
+        "maxAttempts": 0,
+        "showFeedback": false,
+        "allowReview": true,
+        "showSolution": false,
+        "allowComment": false,
+        "validateResponses": false,
+        "allowSkipping": true
+      },
+      "timeLimits": { "qti-type": "timeLimits", "allowLateSubmission": false },
+      "assessmentSections": [
+        {
+          "qti-type": "assessmentSection",
+          "title": "Overview",
+          "visible": true,
+          "keepTogether": true,
+          "rubricBlocks": [],
+          "sectionParts": [
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc68292b4c9804290e0bfdce94b34752",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-2",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 0,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc682ec0ca1804290b3aaf4878bbe7e5",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-3",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 1,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc683595c6e80429da2da13b852e20fc",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-4",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 2,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc68398d875804299d8bb7333362f153",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter",
+                "x-tao-option-lineReader"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-5",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "timeLimits": {
+                "qti-type": "timeLimits",
+                "allowLateSubmission": false
+              },
+              "index": 3,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc683e31ef580429becc5c5b76097afc",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter",
+                "x-tao-option-lineReader"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-6",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "timeLimits": {
+                "qti-type": "timeLimits",
+                "allowLateSubmission": false
+              },
+              "index": 4,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc6841b4469804292ace0274d22c7302",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-calculator",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-7",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "timeLimits": {
+                "qti-type": "timeLimits",
+                "allowLateSubmission": false
+              },
+              "index": 5,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc68459afcf804296106240e3760d7f4",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-8",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 6,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc6849192fd8042907f00547915cb921",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-16",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 7,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc684c88e998042903b107b3c4a82f31",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-9",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 8,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc68510953b80429e42426a865c349a7",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-10",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 9,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc6855c570b8042912cbba91380d9f9d",
+              "categories": [
+                "x-tao-option-highlighter",
+                "x-tao-option-markReview",
+                "x-tao-option-reviewScreen"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-11",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 10,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc6859767ca804298e00b32accb4d9c2",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-17",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 11,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc685f72afc80429f818dc830ee37f60",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-14",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 12,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc68640eef5804293e3b98f63657d028",
+              "categories": [
+                "x-tao-option-highlighter",
+                "x-tao-option-markReview",
+                "x-tao-option-reviewScreen"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-18",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 13,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc686847b2e804294c4e338e5607d9a7",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-13",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 14,
+              "isLinear": false
+            },
+            {
+              "qti-type": "assessmentItemRef",
+              "href": "http://bosa/bosa.rdf#i5efc686c9f0b68042903f0353eaf3af657",
+              "categories": [
+                "x-tao-option-reviewScreen",
+                "x-tao-option-markReview",
+                "x-tao-option-highlighter"
+              ],
+              "variableMappings": [],
+              "weights": [],
+              "templateDefaults": [],
+              "identifier": "item-15",
+              "required": false,
+              "fixed": false,
+              "preConditions": [],
+              "branchRules": [],
+              "itemSessionControl": {
+                "qti-type": "itemSessionControl",
+                "maxAttempts": 0,
+                "showFeedback": false,
+                "allowReview": true,
+                "showSolution": false,
+                "allowComment": false,
+                "validateResponses": false,
+                "allowSkipping": true
+              },
+              "index": 15,
+              "isLinear": false
+            }
+          ],
+          "identifier": "assessmentSection-1",
+          "required": true,
+          "fixed": false,
+          "preConditions": [],
+          "branchRules": [],
+          "itemSessionControl": {
+            "qti-type": "itemSessionControl",
+            "maxAttempts": 0,
+            "showFeedback": false,
+            "allowReview": true,
+            "showSolution": false,
+            "allowComment": false,
+            "validateResponses": false,
+            "allowSkipping": true
+          },
+          "timeLimits": {
+            "qti-type": "timeLimits",
+            "allowLateSubmission": false
+          },
+          "index": 0
+        }
+      ],
+      "testFeedbacks": [],
+      "index": 0
+    }
+  ],
+  "outcomeProcessing": { "qti-type": "outcomeProcessing", "outcomeRules": [] },
+  "testFeedbacks": [],
+  "scoring": {
+    "modes": {
+      "none": {
+        "key": "none",
+        "label": "None",
+        "description": "No outcome processing. Erase the existing rules, if any."
+      },
+      "custom": {
+        "key": "custom",
+        "label": "Custom",
+        "description": "Custom outcome processing. No changes will be made to the existing rules."
+      },
+      "total": {
+        "key": "total",
+        "label": "Total score",
+        "description": "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome. If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+      },
+      "cut": {
+        "key": "cut",
+        "label": "Cut score",
+        "description": "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly. If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
+      }
+    },
+    "scoreIdentifier": "SCORE",
+    "weightIdentifier": "",
+    "cutScore": 0.5,
+    "categoryScore": false,
+    "outcomeProcessing": "none"
+  }
+}
