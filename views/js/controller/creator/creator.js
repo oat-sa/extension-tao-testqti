@@ -37,7 +37,10 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/categorySelector',
-    'ui/validator/validators'
+    'ui/validator/validators',
+    'taoQtiTest/controller/creator/helpers/changeTracker',
+    'taoTests/previewer/factory',
+    'core/logger'
 ], function(
     module,
     $,
@@ -57,9 +60,13 @@ define([
     qtiTestHelper,
     scoringHelper,
     categorySelector,
-    validators
+    validators,
+    changeTracker,
+    previewerFactory,
+    loggerFactory
 ){
     'use strict';
+    const logger = loggerFactory('taoQtiTest/controller/creator');
 
     /**
      * The test creator controller is the main entry point
@@ -70,18 +77,20 @@ define([
 
         routes : {},
 
-         /**
-          * Start the controller, main entry method.
-          * @public
-          * @param {Object} options
-          * @param {Object} options.labels - the list of item's labels to give to the ItemView
-          * @param {Object} options.routes - action's urls
-          * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
-          * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
-          */
-        start(options){
+        /**
+         * Start the controller, main entry method.
+         * @public
+         * @param {Object} options
+         * @param {Object} options.labels - the list of item's labels to give to the ItemView
+         * @param {Object} options.routes - action's urls
+         * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
+         * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
+         */
+        start(options) {
             const $container = $('#test-creator');
             const $saver = $('#saver');
+            const $previewer = $('#previewer');
+            const $back = $('#authoringBack');
 
             let creatorContext;
             let binder;
@@ -99,13 +108,32 @@ define([
             categorySelector.setPresets(options.categoriesPresets);
 
             //back button
-            $('#authoringBack').on('click', e => {
+            $back.on('click', e => {
                 e.preventDefault();
                 if (creatorContext) {
                     creatorContext.trigger('creatorclose');
                 }
-                window.history.back();
             });
+
+            //preview button
+            if (!Object.keys(options.labels).length) {
+                $previewer.attr('disabled', true).addClass('disabled');
+            }
+            $previewer.on('click', e => {
+                e.preventDefault();
+                if(!$previewer.hasClass('disabled')) {
+                    creatorContext.trigger('preview');
+                }
+            });
+            const isTestContainsItems = () => {
+                if ($container.find('.test-content').find('.itemref').length) {
+                    $previewer.attr('disabled', false).removeClass('disabled');
+                    return true;
+                } else {
+                    $previewer.attr('disabled', true).addClass('disabled');
+                    return false;
+                }
+            };
 
             //set up the ItemView, give it a configured loadItems ref
             itemView($('.test-creator-items .item-selection', $container));
@@ -127,7 +155,7 @@ define([
                     'dom2qti' : Dom2QtiEncoder
                 },
                 templates : templates,
-                beforeSave(model){
+                beforeSave(model) {
                     //ensure the qti-type is present
                     qtiTestHelper.addMissingQtiType(model);
 
@@ -139,7 +167,7 @@ define([
                         qtiTestHelper.validateModel(model);
                     } catch(err) {
                         $saver.attr('disabled', false).removeClass('disabled');
-                        feedback().error(__('The test has not been saved.') + ` ${err}`);
+                        feedback().error(`${__('The test has not been saved.')} + ${err}`);
                         return false;
                     }
                     return true;
@@ -180,25 +208,52 @@ define([
                     $(window)
                         .off('resize.qti-test-creator')
                         .on('resize.qti-test-creator', () => itemrefView.resize() );
+
+                    changeTracker($container.get()[0], creatorContext, '.content-wrap');
+
+                    creatorContext.on('save', function() {
+                        if(!$saver.hasClass('disabled')){
+                            $saver.prop('disabled', true).addClass('disabled');
+                            binder.save(function() {
+                                $saver.prop('disabled', false).removeClass('disabled');
+                                feedback().success(__('Test Saved'));
+                                isTestContainsItems();
+                                creatorContext.trigger('saved');
+                            }, function() {
+                                $saver.prop('disabled', false).removeClass('disabled');
+                            });
+                        }
+                    });
+
+                    creatorContext.on('preview', function() {
+                        if(isTestContainsItems()) {
+                            const saveUrl = options.routes.save;
+                            const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
+                            return previewerFactory(
+                                'qtiTest', // TODO - move to BE configuration
+                                decodeURIComponent(testUri),
+                                {
+                                    readOnly: false,
+                                    fullPage: true
+                                }
+                            )
+                            .catch(err => {
+                                logger.error(err);
+                                feedback().error(__('Test Preview is not installed, please contact to your administrator.'));
+                            });
+                        }
+                    });
+
+                    creatorContext.on('creatorclose', () => {
+                        creatorContext.trigger('exit');
+                        window.history.back();
+                    });
                 });
 
             //the save button triggers binder's save action.
             $saver.on('click', function(event){
                 event.preventDefault();
-
-                if(!$saver.hasClass('disabled')){
-                    $saver.attr('disabled', true).addClass('disabled');
-                    binder.save(function(){
-
-                        $saver.attr('disabled', false).removeClass('disabled');
-
-                        feedback().success(__('Test Saved'));
-
-                    }, function(){
-
-                        $saver.attr('disabled', false).removeClass('disabled');
-                    });
-                }
+                creatorContext.trigger('save');
             });
         }
     };

@@ -54,7 +54,7 @@ return [
     'author'      => 'Open Assessment Technologies',
     'requires'    => [
         'taoQtiItem' => '>=24.0.0',
-        'taoTests'   => '>=14.0.0',
+        'taoTests'   => '>=14.3.0',
         'tao'        => '>=45.0.0',
         'generis'    => '>=12.20.0',
         'taoDelivery' => '>=14.18.0',
