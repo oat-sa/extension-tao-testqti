@@ -39,8 +39,8 @@ interface QtiPackageImportPreprocessing
     /**
      * Method that allows you to modify links to assets QTI test package to CloudFront before import
      *
-     * @param File $file
+     * @param File|string $file
      * @return common_report_Report|null
      */
-    public function run(File $file);
+    public function run($file);
 }

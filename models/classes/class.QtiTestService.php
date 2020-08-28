@@ -36,6 +36,7 @@ use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
+use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoTests\models\event\TestUpdatedEvent;
 use qtism\common\utils\Format;
@@ -329,10 +330,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     /**
      * Import a QTI Test Package containing one or more QTI Test definitions.
+     *
      * @param core_kernel_classes_Class $targetClass The Target RDFS class where you want the Test Resources to be created.
-     * @param string $file The path to the IMS archive you want to import tests from.
+     * @param string|File $file The path to the IMS archive you want to import tests from.
      * @return common_report_Report An import report.
-     * @throws common_exception_Unauthorized
+     * @throws common_exception
+     * @throws common_exception_Error
+     * @throws common_exception_FileSystemError
      */
     public function importMultipleTests(core_kernel_classes_Class $targetClass, $file)
     {
@@ -342,6 +346,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $validPackage = false;
         $validManifest = false;
         $testsFound = false;
+
+        $qtiPackageImportPreprocessingService = $this->getQtiPackageImportPreprocessing();
+        $preprocessingReport = $qtiPackageImportPreprocessingService->run($file);
+
+        if ($preprocessingReport) {
+            $report->add($preprocessingReport);
+        }
 
         // Validate the given IMS Package itself (ZIP integrity, presence of an 'imsmanifest.xml' file.
         $invalidArchiveMsg = __("The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file.");
@@ -1257,5 +1268,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         $this->getSecureResourceService()->validatePermissions($ids, ['READ']);
+    }
+
+    /**
+     * @return QtiPackageImportPreprocessing
+     */
+    private function getQtiPackageImportPreprocessing()
+    {
+        return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
     }
 }

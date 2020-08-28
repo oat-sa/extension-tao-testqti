@@ -73,9 +73,6 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 
         $file = $this->getFileReferenceSerializer()->unserializeFile($params['file']);
 
-        $qtiPackageImportPreprocessingService = $this->getQtiPackageImportPreprocessing();
-        $preprocessingReport = $qtiPackageImportPreprocessingService->run($file);
-
         /** @var ImportersService $importersService */
         $importersService = $this->getServiceManager()->get(ImportersService::SERVICE_ID);
 
@@ -90,10 +87,6 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             isset($params[self::PARAM_ITEM_MUST_EXIST]) ? $params[self::PARAM_ITEM_MUST_EXIST] : false,
             isset($params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN]) ? $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] : false
         );
-
-        if ($preprocessingReport) {
-            $report->add($preprocessingReport);
-        }
 
         return $report;
     }
@@ -155,13 +148,5 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $class = new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST);
         }
         return $class;
-    }
-
-    /**
-     * @return QtiPackageImportPreprocessing
-     */
-    private function getQtiPackageImportPreprocessing()
-    {
-        return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
     }
 }
