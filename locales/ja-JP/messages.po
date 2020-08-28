@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint129\n"
-"PO-Revision-Date: 2020-05-22T08:26:47\n"
+"Project-Id-Version: TAO 3.4.0-sprint136\n"
+"PO-Revision-Date: 2020-08-28T09:29:28\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -13,16 +13,16 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-msgid "%s hours %s minutes to answer remaining %s questions."
+msgid "%s loaded"
 msgstr ""
 
-msgid "%s hours %s minutes to answer the current question."
+msgid "%s to answer %s"
 msgstr ""
 
-msgid "%s minutes to answer remaining %s questions."
+msgid "(Visual) Clear all active highlights"
 msgstr ""
 
-msgid "%s minutes to answer the current question."
+msgid "(Visual) Highlight Text"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -238,6 +238,9 @@ msgstr ""
 msgid "Cancel"
 msgstr "キャンセル"
 
+msgid "CANCEL"
+msgstr ""
+
 msgid "Candidate"
 msgstr "受験者"
 
@@ -290,6 +293,9 @@ msgid "Completed items"
 msgstr "完了したアイテム"
 
 msgid "Connected to server"
+msgstr ""
+
+msgid "CONTINUE TO THE NEXT SECTION"
 msgstr ""
 
 msgid "Contrast"
@@ -362,6 +368,9 @@ msgid "Do not rename it."
 msgstr ""
 
 msgid "Do not show alert on timeout"
+msgstr ""
+
+msgid "Don\'t save"
 msgstr ""
 
 msgid "Download"
@@ -477,7 +486,19 @@ msgstr ""
 msgid "Go to next item"
 msgstr ""
 
+msgid "Go to the current question"
+msgstr ""
+
 msgid "Go to the next item?"
+msgstr ""
+
+msgid "Go to the next question"
+msgstr ""
+
+msgid "Go to the previous question"
+msgstr ""
+
+msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
@@ -508,6 +529,9 @@ msgid "Highlight Text"
 msgstr ""
 
 msgid "Highlighter"
+msgstr ""
+
+msgid "hours"
 msgstr ""
 
 msgid "Html title"
@@ -606,11 +630,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "アイテム"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "アイテムはひとつまたは複数のカテゴリーに割り当てることができます。"
@@ -633,16 +657,16 @@ msgstr ""
 msgid "Keep Together"
 msgstr "まとめる"
 
+msgid "Keyboard Navigation"
+msgstr ""
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr ""
+
 msgid "Late submission allowed"
 msgstr "後での送信を許可"
 
 msgid "Leave a comment"
-msgstr ""
-
-msgid "Less than one minute to answer remaining %s questions."
-msgstr ""
-
-msgid "Less than one minute to answer the current question."
 msgstr ""
 
 msgid "Light yellow on royal blue"
@@ -681,6 +705,7 @@ msgstr "ルーブリックブロックの管理"
 msgid "Manage test properties"
 msgstr "テストプロパティの管理"
 
+#, tao-public
 msgid "Manage tests"
 msgstr ""
 
@@ -738,6 +763,12 @@ msgstr "このセクション最小時間"
 msgid "Minimum duration for this test part."
 msgstr "このテストパートの最小時間"
 
+msgid "minutes"
+msgstr ""
+
+msgid "Missed required parameter \'id\"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr ""
 
@@ -761,6 +792,9 @@ msgstr ""
 
 msgid "Navigation"
 msgstr "ナビゲーション"
+
+msgid "Navigation shortcuts"
+msgstr ""
 
 msgid "Navigation Warnings"
 msgstr ""
@@ -882,6 +916,9 @@ msgstr "パッケージは有効ですがテストがありません。有効な
 msgid "Part %d"
 msgstr "パート%d"
 
+msgid "Passage"
+msgstr ""
+
 msgid "Pause"
 msgstr ""
 
@@ -892,6 +929,9 @@ msgid "Please confirm you want to leave the test."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
+msgstr ""
+
+msgid "Preview"
 msgstr ""
 
 msgid "Preview the covered area"
@@ -930,13 +970,22 @@ msgstr ""
 msgid "QTI/APIP Test Content Package"
 msgstr ""
 
+msgid "question"
+msgstr ""
+
 msgid "Question"
+msgstr ""
+
+msgid "questions"
 msgstr ""
 
 msgid "Reference"
 msgstr "参照"
 
 msgid "Regenerate"
+msgstr ""
+
+msgid "remaining %s %s"
 msgstr ""
 
 msgid "Remove Item Reference"
@@ -981,6 +1030,9 @@ msgstr "ルーブリックブロック"
 msgid "Save"
 msgstr "保存"
 
+msgid "Saved"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr ""
 
@@ -997,6 +1049,9 @@ msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"
+msgstr ""
+
+msgid "seconds"
 msgstr ""
 
 msgid "Section %d"
@@ -1048,6 +1103,9 @@ msgid "Set the XHTML-QTI class of the rubric block."
 msgstr ""
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
+msgstr ""
+
+msgid "SetSynchronisationService successfully configured."
 msgstr ""
 
 msgid "Settings"
@@ -1107,6 +1165,9 @@ msgstr "次のセクションにスキップ"
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Something went wrong..."
+msgstr ""
+
 msgid "Speech speed"
 msgstr ""
 
@@ -1140,6 +1201,12 @@ msgstr "提出して次の問題に移動"
 msgid "Submit and go to the previous item"
 msgstr "提出して前の問題に移動"
 
+msgid "SUBMIT THE TEST"
+msgstr ""
+
+msgid "SUBMIT THIS PART"
+msgstr ""
+
 msgid "technical"
 msgstr ""
 
@@ -1158,6 +1225,9 @@ msgstr ""
 msgid "Test Part Properties"
 msgstr ""
 
+msgid "Test Preview is not installed, please contact to your administrator."
+msgstr ""
+
 msgid "Test Saved"
 msgstr "テストを保存"
 
@@ -1173,16 +1243,17 @@ msgstr ""
 msgid "Test-Taker Tools"
 msgstr ""
 
+#, tao-public
 msgid "Tests"
 msgstr ""
 
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1219,6 +1290,9 @@ msgid "The candidate is not allowed to submit invalid responses."
 msgstr ""
 
 msgid "The connection seems to be back, please proceed"
+msgstr ""
+
+msgid "the current question"
 msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
@@ -1302,11 +1376,35 @@ msgstr ""
 msgid "The test has not been saved."
 msgstr ""
 
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr ""
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr ""
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr ""
+
 msgid "The test part identifier."
 msgstr "テストパート識別子"
 
 msgid "The test title."
 msgstr "テストタイトル"
+
+msgid "The time limit has been reached for this part of the test."
+msgstr ""
+
+msgid "There are %s unanswered questions"
+msgstr ""
+
+msgid "There are %s unanswered questions in this part of the test"
+msgstr ""
+
+msgid "There is %s unanswered question"
+msgstr ""
+
+msgid "There is %s unanswered question in this part of the test"
+msgstr ""
 
 msgid "There is not outcomes!"
 msgstr ""
@@ -1316,6 +1414,9 @@ msgstr "この制限は、最後の試行の終わり後のフィードバック
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr "この制限は、受験者がセッション中にアイテムに対するコメントを行えるかどうかを制御します。なお、コメントは採点対象ではありません。"
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
+msgstr ""
 
 msgid "This test has been suspended"
 msgstr "テストは一時中断されました。"
@@ -1467,13 +1568,20 @@ msgstr "置換"
 msgid "Wrong file mime type"
 msgstr ""
 
+msgid "XML Content"
+msgstr ""
+
+#, tao-public
+msgid "XML Editor"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""
 
 msgid "Yes"
 msgstr "はい"
 
-msgid "You answered all %s question(s)"
+msgid "You answered %s of %s question(s) for this section of the test"
 msgstr ""
 
 msgid "You answered all %s question(s) in this section"
@@ -1491,13 +1599,25 @@ msgstr ""
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
 msgstr ""
 
+msgid "You are about to leave this section."
+msgstr ""
+
+msgid "You are about to submit the test."
+msgstr ""
+
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgstr ""
+
+msgid "You are about to submit this test part."
 msgstr ""
 
 msgid "You are currently working offline."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
+msgstr ""
+
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
@@ -1517,6 +1637,12 @@ msgstr "%sの未回答問題と、確認のためにマークされた%sのア�
 
 msgid "You have %s unanswered question(s)."
 msgstr "%sの未回答問題があります"
+
+msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgstr ""
+
+msgid "You will not be able to return to this test after you submit your answers."
+msgstr ""
 
 msgid "Your comment…"
 msgstr "あなたのコメント..."
