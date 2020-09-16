@@ -76,11 +76,22 @@ define([
             partial;
 
         if(isValidSectionModel(model)){
+            var itemCount = 0;
+
             categories = _.map(model.sectionParts, function (itemRef){
-                if(itemRef['qti-type'] === 'assessmentItemRef' && _.isArray(itemRef.categories)){
+                if(itemRef['qti-type'] === 'assessmentItemRef' && ++itemCount && _.isArray(itemRef.categories)){
                     return _.compact(itemRef.categories);
                 }
             });
+
+            if (!itemCount) {
+                return {
+                    all: model.categories,
+                    propagated: model.categories,
+                    partial: []
+                }
+            }
+
             //array of categories
             arrays = _.values(categories);
             union = _.union.apply(null, arrays);
