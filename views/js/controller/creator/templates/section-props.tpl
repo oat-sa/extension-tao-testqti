@@ -7,7 +7,7 @@
             <label for="section-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
         </div>
         <div class="col-6">
-            <input type="text" name="section-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable;" />
+            <input type="text" id="section-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable;" />
         </div>
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -23,7 +23,7 @@
             <label for="section-title">{{__ 'Title'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
         </div>
         <div class="col-6">
-            <input type="text" name="section-title" data-bind="title" data-validate="$notEmpty" />
+            <input type="text" id="section-title" data-bind="title" data-validate="$notEmpty" />
         </div>
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -121,7 +121,7 @@
         </div>
 
         <div class="col-6">
-            <input type="text" name="section-blueprint" />
+            <input type="text" id="section-blueprint" />
         </div>
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -138,7 +138,7 @@
                 <label for="category-custom">{{__ 'Categories'}}</label>
             </div>
             <div class="col-6">
-                <input type="text" name="category-custom"/>
+                <input type="text" id="category-custom" name="category-custom"/>
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -176,7 +176,7 @@
                 <label for="section-select">{{__ 'Select'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
             </div>
             <div class="col-6">
-                <input name="section-select" type="text" data-increment="1" data-min="0" value="0" data-bind="selection.select"  data-bind-encoder="number" />
+                <input id="section-select" name="section-select" type="text" data-increment="1" data-min="0" value="0" data-bind="selection.select"  data-bind-encoder="number" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -242,7 +242,7 @@
                 <label for="section-max-attempts">{{__ 'Max Attempts'}}</label>
             </div>
             <div class="col-6">
-                <input name="section-max-attempts" type="text" data-increment="1" data-min="0" value="0" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
+                <input id="section-max-attempts" type="text" data-increment="1" data-min="0" value="0" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -402,7 +402,7 @@
                 <label for="section-max-time">{{__ 'Maximum Duration'}}</label>
             </div>
             <div class="col-6 duration-group">
-                <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
+                <input type="text" id="section-max-time" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
