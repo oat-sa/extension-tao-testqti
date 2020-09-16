@@ -242,7 +242,7 @@
                 <label for="section-max-attempts">{{__ 'Max Attempts'}}</label>
             </div>
             <div class="col-6">
-                <input name="section-max-attempts" type="text" data-increment="1" data-min="0" value="1" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
+                <input name="section-max-attempts" type="text" data-increment="1" data-min="0" value="0" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
