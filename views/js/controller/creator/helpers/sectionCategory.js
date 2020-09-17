@@ -57,6 +57,9 @@ define([
         //the categories that are not in the current categories collection should be added to the children
         toAdd = _.difference(selected, currentCategories.propagated);
 
+        model.categories = _.difference(model.categories, toRemove);
+        model.categories = model.categories.concat(toAdd);
+
         //process the modification
         addCategories(model, toAdd);
         removeCategories(model, toRemove);
