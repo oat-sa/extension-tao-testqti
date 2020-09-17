@@ -153,7 +153,7 @@ function($, _, __, hider, feedback, defaults, actions, testPartView, templates, 
                     var testPartIndex = $('.testpart').length;
                     cb({
                         'qti-type' : 'testPart',
-                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'testPart'),
+                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'testPart', defaults().partIdPrefix),
                         index  : testPartIndex,
                         navigationMode : defaults().navigationMode,
                         submissionMode : 0,
