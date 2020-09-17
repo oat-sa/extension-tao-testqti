@@ -27,10 +27,32 @@ namespace oat\taoQtiTest\models\test\Template;
 use InvalidArgumentException;
 use oat\tao\model\ClientLibConfigRegistry;
 use qtism\data\NavigationMode;
+use qtism\data\SubmissionMode;
 
 class DefaultConfigurationRegistry extends ClientLibConfigRegistry
 {
     public const ID = 'taoQtiTest/controller/creator/config/defaults';
+
+    public function setPartIdPrefix(string $partIdPrefix): self
+    {
+        $this->register(self::ID, compact('partIdPrefix'));
+
+        return $this;
+    }
+
+    public function setSectionIdPrefix(string $sectionIdPrefix): self
+    {
+        $this->register(self::ID, compact('sectionIdPrefix'));
+
+        return $this;
+    }
+
+    public function setSectionTitlePrefix(string $sectionTitlePrefix): self
+    {
+        $this->register(self::ID, compact('sectionTitlePrefix'));
+
+        return $this;
+    }
 
     public function setCategories(array $categories): self
     {
@@ -54,7 +76,31 @@ class DefaultConfigurationRegistry extends ClientLibConfigRegistry
             );
         }
 
-        $this->register(self::ID, ['navigationMode' => $navigationMode]);
+        $this->register(self::ID, compact('navigationMode'));
+
+        return $this;
+    }
+
+    public function setSubmissionMode(int $submissionMode): self
+    {
+        if (!in_array($submissionMode, SubmissionMode::asArray(), true)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Expected one of the following values %s, %d given.',
+                    implode(', ', SubmissionMode::asArray()),
+                    $submissionMode
+                )
+            );
+        }
+
+        $this->register(self::ID, compact('submissionMode'));
+
+        return $this;
+    }
+
+    public function setMaxAttempts(int $maxAttempts): self
+    {
+        $this->register(self::ID, compact('maxAttempts'));
 
         return $this;
     }

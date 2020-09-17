@@ -28,18 +28,29 @@ use common_report_Report as Report;
 use oat\oatbox\extension\script\ScriptAction;
 use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
 use qtism\data\NavigationMode;
+use qtism\data\SubmissionMode;
 use ReflectionMethod;
 
 class SetupDefaultTemplateConfiguration extends ScriptAction
 {
-    public const CATEGORIES      = 'categories';
-    public const NAVIGATION_MODE = 'navigationMode';
+    public const PART_ID_PREFIX       = 'partIdPrefix';
+    public const SECTION_ID_PREFIX    = 'sectionIdPrefix';
+    public const SECTION_TITLE_PREFIX = 'sectionTitlePrefix';
+    public const CATEGORIES           = 'categories';
+    public const NAVIGATION_MODE      = 'navigationMode';
+    public const SUBMISSION_MODE      = 'submissionMode';
+    public const MAX_ATTEMPTS         = 'maxAttempts';
 
     private const ARRAY_VALUE_DELIMITER = ',';
 
     private const OPTION_DEFAULT_VALUES = [
-        self::CATEGORIES      => '',
-        self::NAVIGATION_MODE => NavigationMode::LINEAR,
+        self::PART_ID_PREFIX       => 'testPart',
+        self::SECTION_ID_PREFIX    => 'assessmentSection',
+        self::SECTION_TITLE_PREFIX => 'Section',
+        self::CATEGORIES           => '',
+        self::NAVIGATION_MODE      => NavigationMode::LINEAR,
+        self::SUBMISSION_MODE      => SubmissionMode::INDIVIDUAL,
+        self::MAX_ATTEMPTS         => 0,
     ];
 
     protected function provideUsage()
@@ -54,7 +65,31 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
     protected function provideOptions(): array
     {
         return [
-            self::CATEGORIES      => [
+            self::PART_ID_PREFIX       => [
+                'prefix'      => 'pi',
+                'longPrefix'  => self::PART_ID_PREFIX,
+                'description' => sprintf(
+                    'Test part ID prefix, "%s" by default',
+                    self::OPTION_DEFAULT_VALUES[self::PART_ID_PREFIX]
+                ),
+            ],
+            self::SECTION_ID_PREFIX    => [
+                'prefix'      => 'si',
+                'longPrefix'  => self::SECTION_ID_PREFIX,
+                'description' => sprintf(
+                    'Test section ID prefix, "%s" by default',
+                    self::OPTION_DEFAULT_VALUES[self::SECTION_ID_PREFIX]
+                ),
+            ],
+            self::SECTION_TITLE_PREFIX => [
+                'prefix'      => 'st',
+                'longPrefix'  => self::SECTION_TITLE_PREFIX,
+                'description' => sprintf(
+                    'Test section title prefix, "%s" by default',
+                    self::OPTION_DEFAULT_VALUES[self::SECTION_TITLE_PREFIX]
+                ),
+            ],
+            self::CATEGORIES           => [
                 'prefix'      => 'c',
                 'longPrefix'  => self::CATEGORIES,
                 'description' => sprintf(
@@ -63,8 +98,8 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
                     self::OPTION_DEFAULT_VALUES[self::CATEGORIES]
                 ),
             ],
-            self::NAVIGATION_MODE => [
-                'prefix'      => 'n',
+            self::NAVIGATION_MODE      => [
+                'prefix'      => 'nm',
                 'longPrefix'  => self::NAVIGATION_MODE,
                 'description' => sprintf(
                     'Test part navigation mode, %s, %d by default',
@@ -79,6 +114,32 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
                         )
                     ),
                     self::OPTION_DEFAULT_VALUES[self::NAVIGATION_MODE]
+                ),
+            ],
+            self::SUBMISSION_MODE      => [
+                'prefix'      => 'sm',
+                'longPrefix'  => self::SUBMISSION_MODE,
+                'description' => sprintf(
+                    'Test part submission mode, %s, %d by default',
+                    implode(
+                        ', ',
+                        array_map(
+                            static function (string $submissionModeLabel, int $submissionModeValue): string {
+                                return "$submissionModeValue – $submissionModeLabel";
+                            },
+                            array_keys(SubmissionMode::asArray()),
+                            SubmissionMode::asArray()
+                        )
+                    ),
+                    self::OPTION_DEFAULT_VALUES[self::SUBMISSION_MODE]
+                ),
+            ],
+            self::MAX_ATTEMPTS         => [
+                'prefix'      => 'm',
+                'longPrefix'  => self::MAX_ATTEMPTS,
+                'description' => sprintf(
+                    'Test element max attempts, %d by default',
+                    self::OPTION_DEFAULT_VALUES[self::MAX_ATTEMPTS]
                 ),
             ],
         ];
@@ -131,7 +192,7 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
                 sprintf(
                     "Applied the following configuration to `%s`\n%s",
                     DefaultConfigurationRegistry::class,
-                    json_encode($setValues)
+                    json_encode($setValues, JSON_PRETTY_PRINT)
                 )
             )
             : Report::createFailure(
