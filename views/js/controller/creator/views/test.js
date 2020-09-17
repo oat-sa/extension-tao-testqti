@@ -101,7 +101,7 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
             function updateOutcomes() {
                 var $panel = $('.outcome-declarations', $view);
 
-                $panel.html(templates.outcomes(modelOverseer.getOutcomesList()));
+                $panel.html(templates.outcomes({outcomes: modelOverseer.getOutcomesList()}));
             }
 
             $('[name=test-outcome-processing]', $view).select2({

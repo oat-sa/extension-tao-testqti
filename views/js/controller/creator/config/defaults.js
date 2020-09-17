@@ -27,5 +27,5 @@ define([
 ) {
     'use strict';
 
-    return (config = {}) => _.defaults(config, module.config())
+    return (config = {}) => _.defaults({}, module.config(), config);
 });
