@@ -18,5 +18,12 @@
  */
 
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
+use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
 
-return new AssessmentTestXmlFactory();
+return new AssessmentTestXmlFactory(
+    [
+        'configurationRegistry' => [
+            'class' => DefaultConfigurationRegistry::class,
+        ],
+    ]
+);

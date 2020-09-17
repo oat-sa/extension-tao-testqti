@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\test\Template;
 
+use DomainException;
 use InvalidArgumentException;
 use oat\tao\model\ClientLibConfigRegistry;
 use qtism\data\NavigationMode;
@@ -35,33 +36,53 @@ class DefaultConfigurationRegistry extends ClientLibConfigRegistry
 
     public function setPartIdPrefix(string $partIdPrefix): self
     {
-        $this->register(self::ID, compact('partIdPrefix'));
+        $this->register(static::ID, compact('partIdPrefix'));
 
         return $this;
+    }
+
+    public function getPartIdPrefix(): string
+    {
+        return $this->getConfigurationValue(__FUNCTION__);
     }
 
     public function setSectionIdPrefix(string $sectionIdPrefix): self
     {
-        $this->register(self::ID, compact('sectionIdPrefix'));
+        $this->register(static::ID, compact('sectionIdPrefix'));
 
         return $this;
+    }
+
+    public function getSectionIdPrefix(): string
+    {
+        return $this->getConfigurationValue(__FUNCTION__);
     }
 
     public function setSectionTitlePrefix(string $sectionTitlePrefix): self
     {
-        $this->register(self::ID, compact('sectionTitlePrefix'));
+        $this->register(static::ID, compact('sectionTitlePrefix'));
 
         return $this;
     }
 
+    public function getSectionTitlePrefix(): string
+    {
+        return $this->getConfigurationValue(__FUNCTION__);
+    }
+
     public function setCategories(array $categories): self
     {
-        $configuration = $this->get(self::ID);
+        $configuration = $this->get(static::ID);
         $configuration['categories'] = $categories;
 
-        $this->set(self::ID, $configuration);
+        $this->set(static::ID, $configuration);
 
         return $this;
+    }
+
+    public function getCategories(): array
+    {
+        return $this->getConfigurationValue(__FUNCTION__);
     }
 
     public function setNavigationMode(int $navigationMode): self
@@ -76,9 +97,14 @@ class DefaultConfigurationRegistry extends ClientLibConfigRegistry
             );
         }
 
-        $this->register(self::ID, compact('navigationMode'));
+        $this->register(static::ID, compact('navigationMode'));
 
         return $this;
+    }
+
+    public function getNavigationMode(): int
+    {
+        return $this->getConfigurationValue(__FUNCTION__);
     }
 
     public function setSubmissionMode(int $submissionMode): self
@@ -93,15 +119,40 @@ class DefaultConfigurationRegistry extends ClientLibConfigRegistry
             );
         }
 
-        $this->register(self::ID, compact('submissionMode'));
+        $this->register(static::ID, compact('submissionMode'));
 
         return $this;
     }
 
+    public function getSubmissionMode(): int
+    {
+        return $this->getConfigurationValue(__FUNCTION__);
+    }
+
     public function setMaxAttempts(int $maxAttempts): self
     {
-        $this->register(self::ID, compact('maxAttempts'));
+        $this->register(static::ID, compact('maxAttempts'));
 
         return $this;
+    }
+
+    public function getMaxAttempts(): int
+    {
+        return $this->getConfigurationValue(__FUNCTION__);
+    }
+
+    private function getConfigurationValue(string $getter)
+    {
+        $configurationKey = lcfirst(substr($getter, 3));
+
+        $configuration = $this->get(static::ID);
+
+        if (!isset($configuration[$configurationKey])) {
+            throw new DomainException(
+                sprintf('%s::%s value was requested, but not defined.', static::class, $configurationKey)
+            );
+        }
+
+        return $configuration[$configurationKey];
     }
 }
