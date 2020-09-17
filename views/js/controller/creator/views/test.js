@@ -156,7 +156,7 @@ function($, _, __, hider, feedback, defaults, actions, testPartView, templates, 
                         identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'testPart', defaults().partIdPrefix),
                         index  : testPartIndex,
                         navigationMode : defaults().navigationMode,
-                        submissionMode : 0,
+                        submissionMode : defaults().submissionMode,
                         assessmentSections : [{
                             'qti-type' : 'assessmentSection',
                             identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', defaults().sectionIdPrefix),

@@ -63,12 +63,24 @@
             </div>
             <div class="col-6">
                 <label>
-                    <input type="radio" name="testpart-submission-mode" value="0" checked="checked" data-bind="submissionMode" data-bind-encoder="number" />
+                    <input
+                            type="radio"
+                            name="testpart-submission-mode"
+                            {{#equal submissionMode 0}}checked{{/equal}}
+                            value="0"
+                            data-bind="submissionMode"
+                            data-bind-encoder="number"
+                    />
                     <span class="icon-radio"></span>
                     {{__ 'Individual'}}
                 </label>
                 <label>
-                    <input type="radio" name="testpart-submission-mode" value="1"  />
+                    <input
+                            type="radio"
+                            name="testpart-submission-mode"
+                            {{#equal submissionMode 1}}checked{{/equal}}
+                            value="1"
+                    />
                     <span class="icon-radio"></span>
                     {{__ 'Simultaneous'}}
                 </label>
