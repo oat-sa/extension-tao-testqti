@@ -159,8 +159,8 @@ function($, _, __, hider, feedback, defaults, actions, testPartView, templates, 
                         submissionMode : 0,
                         assessmentSections : [{
                             'qti-type' : 'assessmentSection',
-                            identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'section'),
-                            title : 'Section 1',
+                            identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', defaults().sectionIdPrefix),
+                            title : `${defaults().sectionTitlePrefix} 1`,
                             index : 0,
                             sectionParts : []
                         }]
