@@ -24,7 +24,9 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\test\Template;
 
+use InvalidArgumentException;
 use oat\tao\model\ClientLibConfigRegistry;
+use qtism\data\NavigationMode;
 
 class DefaultConfigurationRegistry extends ClientLibConfigRegistry
 {
@@ -32,12 +34,27 @@ class DefaultConfigurationRegistry extends ClientLibConfigRegistry
 
     public function setCategories(array $categories): self
     {
-        $this->register(
-            self::ID,
-            [
-                'categories' => $categories,
-            ]
-        );
+        $configuration = $this->get(self::ID);
+        $configuration['categories'] = $categories;
+
+        $this->set(self::ID, $configuration);
+
+        return $this;
+    }
+
+    public function setNavigationMode(int $navigationMode): self
+    {
+        if (!in_array($navigationMode, NavigationMode::asArray(), true)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Expected one of the following values %s, %d given.',
+                    implode(', ', NavigationMode::asArray()),
+                    $navigationMode
+                )
+            );
+        }
+
+        $this->register(self::ID, ['navigationMode' => $navigationMode]);
 
         return $this;
     }

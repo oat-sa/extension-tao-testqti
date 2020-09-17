@@ -27,16 +27,19 @@ namespace oat\taoQtiTest\scripts\install;
 use common_report_Report as Report;
 use oat\oatbox\extension\script\ScriptAction;
 use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
+use qtism\data\NavigationMode;
 use ReflectionMethod;
 
 class SetupDefaultTemplateConfiguration extends ScriptAction
 {
-    public const CATEGORIES = 'categories';
+    public const CATEGORIES      = 'categories';
+    public const NAVIGATION_MODE = 'navigationMode';
 
     private const ARRAY_VALUE_DELIMITER = ',';
 
     private const OPTION_DEFAULT_VALUES = [
-        self::CATEGORIES => '',
+        self::CATEGORIES      => '',
+        self::NAVIGATION_MODE => NavigationMode::LINEAR,
     ];
 
     protected function provideUsage()
@@ -51,13 +54,31 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
     protected function provideOptions(): array
     {
         return [
-            self::CATEGORIES => [
+            self::CATEGORIES      => [
                 'prefix'      => 'c',
                 'longPrefix'  => self::CATEGORIES,
                 'description' => sprintf(
                     'Test item categories separated by "%s", "%s" by default',
                     self::ARRAY_VALUE_DELIMITER,
                     self::OPTION_DEFAULT_VALUES[self::CATEGORIES]
+                ),
+            ],
+            self::NAVIGATION_MODE => [
+                'prefix'      => 'n',
+                'longPrefix'  => self::NAVIGATION_MODE,
+                'description' => sprintf(
+                    'Test part navigation mode, %s, %d by default',
+                    implode(
+                        ', ',
+                        array_map(
+                            static function (string $navigationModeLabel, int $navigationModeValue): string {
+                                return "$navigationModeValue – $navigationModeLabel";
+                            },
+                            array_keys(NavigationMode::asArray()),
+                            NavigationMode::asArray()
+                        )
+                    ),
+                    self::OPTION_DEFAULT_VALUES[self::NAVIGATION_MODE]
                 ),
             ],
         ];

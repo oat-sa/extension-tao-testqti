@@ -26,12 +26,24 @@
             </div>
             <div class="col-6">
                 <label>
-                    <input type="radio" name="testpart-navigation-mode" value="0" checked="checked" data-bind="navigationMode" data-bind-encoder="number" />
+                    <input
+                            type="radio"
+                            name="testpart-navigation-mode"
+                            {{#equal navigationMode 0}}checked{{/equal}}
+                            value="0"
+                            data-bind="navigationMode"
+                            data-bind-encoder="number"
+                    />
                     <span class="icon-radio"></span>
                     {{__ 'Linear'}}
                 </label>
                 <label>
-                    <input type="radio" name="testpart-navigation-mode" value="1"  />
+                    <input
+                            type="radio"
+                            name="testpart-navigation-mode"
+                            {{#equal navigationMode 1}}checked{{/equal}}
+                            value="1"
+                    />
                     <span class="icon-radio"></span>
                     {{__ 'Non Linear'}}
                 </label>
