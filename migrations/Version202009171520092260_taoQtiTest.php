@@ -119,11 +119,7 @@ final class Version202009171520092260_taoQtiTest extends AbstractMigration
             DefaultConfigurationRegistry::getRegistry()->get(DefaultConfigurationRegistry::ID)
             as $configurationKey => $value
         ) {
-            if (!isset($registryConfigurationToFactoryOptionsMap[$configurationKey])) {
-                continue;
-            }
-
-            $option = $registryConfigurationToFactoryOptionsMap[$configurationKey];
+            $option = $registryConfigurationToFactoryOptionsMap[$configurationKey] ?? null;
 
             if (isset(self::TRIMMABLE_OPTION_VALUE_POSTFIXES[$option])) {
                 $value .= self::TRIMMABLE_OPTION_VALUE_POSTFIXES[$option];
@@ -131,6 +127,8 @@ final class Version202009171520092260_taoQtiTest extends AbstractMigration
 
             $options[$option] = $value;
         }
+
+        unset($options[null]);
 
         $this->addReport(
             Report::createSuccess(
