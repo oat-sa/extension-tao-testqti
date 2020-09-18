@@ -148,22 +148,32 @@ final class Version202009171520092260_taoQtiTest extends AbstractMigration
         $parameters = [];
 
         foreach ($options as $option => $value) {
-            if (!isset(self::FACTORY_OPTIONS_TO_REGISTRY_CONFIGURATION_MAP[$option])) {
-                continue;
-            }
-
-            $parameter = self::FACTORY_OPTIONS_TO_REGISTRY_CONFIGURATION_MAP[$option];
+            $parameter = self::FACTORY_OPTIONS_TO_REGISTRY_CONFIGURATION_MAP[$option] ?? null;
 
             if (isset(self::TRIMMABLE_OPTION_VALUE_POSTFIXES[$option])) {
                 $value = substr($value, 0, -2);
             }
 
-            $parameters[] = "--$parameter";
-            $parameters[] = (string)$value;
+            $parameters[$parameter] = $value;
         }
 
         $this->addReport(
-            $this->propagate(new SetupDefaultTemplateConfiguration())($parameters)
+            $this->propagate(new SetupDefaultTemplateConfiguration())(
+                $this->transformScriptActionParameters($parameters))
         );
+    }
+
+    private function transformScriptActionParameters(array $parameters): array
+    {
+        unset($parameters[null]);
+
+        $result = [];
+
+        foreach ($parameters as $parameter => $value) {
+            $result[] = "--$parameter";
+            $result[] = (string)$value;
+        }
+
+        return $result;
     }
 }
