@@ -103,16 +103,7 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
                 'longPrefix'  => self::NAVIGATION_MODE,
                 'description' => sprintf(
                     'Test part navigation mode, %s, %d by default',
-                    implode(
-                        ', ',
-                        array_map(
-                            static function (string $navigationModeLabel, int $navigationModeValue): string {
-                                return "$navigationModeValue – $navigationModeLabel";
-                            },
-                            array_keys(NavigationMode::asArray()),
-                            NavigationMode::asArray()
-                        )
-                    ),
+                    $this->createEnumerableOptionDescription(NavigationMode::asArray()),
                     self::OPTION_DEFAULT_VALUES[self::NAVIGATION_MODE]
                 ),
             ],
@@ -121,16 +112,7 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
                 'longPrefix'  => self::SUBMISSION_MODE,
                 'description' => sprintf(
                     'Test part submission mode, %s, %d by default',
-                    implode(
-                        ', ',
-                        array_map(
-                            static function (string $submissionModeLabel, int $submissionModeValue): string {
-                                return "$submissionModeValue – $submissionModeLabel";
-                            },
-                            array_keys(SubmissionMode::asArray()),
-                            SubmissionMode::asArray()
-                        )
-                    ),
+                    $this->createEnumerableOptionDescription(SubmissionMode::asArray()),
                     self::OPTION_DEFAULT_VALUES[self::SUBMISSION_MODE]
                 ),
             ],
@@ -222,5 +204,18 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
         }
 
         return (string)$firstArgument->getType();
+    }
+
+    private function createEnumerableOptionDescription(array $values): string {
+        return implode(
+            ', ',
+            array_map(
+                static function (int $value, string $label): string {
+                    return "$value – $label";
+                },
+                $values,
+                array_keys($values)
+            )
+        );
     }
 }
