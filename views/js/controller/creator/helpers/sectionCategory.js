@@ -71,48 +71,39 @@ define([
      * @param {object} model
      * @returns {object}
      */
-    function getCategories(model){
+    function getCategories(model) {
         var categories,
             arrays,
             union,
             propagated,
-            partial;
+            partial,
+            itemCount = 0;
 
-        if(isValidSectionModel(model)){
-            var itemCount = 0;
-
-            categories = _.map(model.sectionParts, function (itemRef){
-                if(itemRef['qti-type'] === 'assessmentItemRef' && ++itemCount && _.isArray(itemRef.categories)){
-                    return _.compact(itemRef.categories);
-                }
-            });
-
-            if (!itemCount) {
-                return {
-                    all: model.categories,
-                    propagated: model.categories,
-                    partial: []
-                }
-            }
-
-            //array of categories
-            arrays = _.values(categories);
-            union = _.union.apply(null, arrays);
-
-            //categories that are common to all itemRef
-            propagated = _.intersection.apply(null, arrays);
-
-            //the categories that are only partially covered on the section level : complementary of "propagated"
-            partial = _.difference(union, propagated);
-
-            return {
-                all : union.sort(),
-                propagated : propagated.sort(),
-                partial : partial.sort()
-            };
-        }else{
-            errorHandler.throw(_ns, 'invalid tool config format');
+        if (!isValidSectionModel(model)) {
+            return errorHandler.throw(_ns, 'invalid tool config format');
         }
+
+        categories = _.map(model.sectionParts, function (itemRef){
+            if(itemRef['qti-type'] === 'assessmentItemRef' && ++itemCount && _.isArray(itemRef.categories)){
+                return _.compact(itemRef.categories);
+            }
+        });
+
+        if (!itemCount) {
+            return createCategories(model.categories, model.categories);
+        }
+
+        //array of categories
+        arrays = _.values(categories);
+        union = _.union.apply(null, arrays);
+
+        //categories that are common to all itemRef
+        propagated = _.intersection.apply(null, arrays);
+
+        //the categories that are only partially covered on the section level : complementary of "propagated"
+        partial = _.difference(union, propagated);
+
+        return createCategories(union, propagated, partial);
     }
 
     /**
@@ -154,6 +145,16 @@ define([
         }else{
             errorHandler.throw(_ns, 'invalid tool config format');
         }
+    }
+
+    function createCategories(all = [], propagated = [], partial = []) {
+        return _.mapValues({
+            all: all,
+            propagated: propagated,
+            partial: partial
+        }, function (categories) {
+            return categories.sort();
+        });
     }
 
     return {
