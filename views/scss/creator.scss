@@ -361,7 +361,9 @@
                 }
             }
 
-
+            .actions .tlb-group {
+                min-width: 126px;
+            }
         }
 
         .sections {
@@ -380,6 +382,9 @@
 
             &:last-child{
                 margin-bottom: 0;
+            }
+            .actions .tlb-group {
+                min-width: 157px;
             }
         }
 
