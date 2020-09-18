@@ -159,27 +159,9 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
         foreach (self::OPTION_DEFAULT_VALUES as $optionName => $defaultValue) {
             $value = $this->getOption($optionName) ?? $defaultValue;
 
-            if (null === $value) {
-                continue;
-            }
-
             $method = [$registry, 'set' . ucfirst($optionName)];
 
-            if (!is_callable($method)) {
-                continue;
-            }
-
-            $type = $this->getArgumentType($method);
-
-            if ('array' === $type) {
-                $value = $value ? explode(',', $value) : [];
-            } else {
-                settype($value, $type);
-            }
-
-            $method($value);
-
-            $setValues[$optionName] = $value;
+            $setValues[$optionName] = $this->setRegistryValue($method, $value);
         }
 
         return $this->createReport($setValues);
@@ -187,6 +169,13 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
 
     private function createReport(array $setValues): Report
     {
+        $setValues = array_filter(
+            $setValues,
+            static function ($value): bool {
+                return null !== $value;
+            }
+        );
+
         return $setValues
             ? Report::createSuccess(
                 sprintf(
@@ -198,6 +187,25 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
             : Report::createFailure(
                 sprintf('No values set to `%s`', DefaultConfigurationRegistry::class)
             );
+    }
+
+    private function setRegistryValue(array $method, $value)
+    {
+        if (!is_callable($method)) {
+            return null;
+        }
+
+        $type = $this->getArgumentType($method);
+
+        if ('array' === $type) {
+            $value = $value ? explode(',', $value) : [];
+        } else {
+            settype($value, $type);
+        }
+
+        $method($value);
+
+        return $value;
     }
 
     private function getArgumentType(array $method): string
