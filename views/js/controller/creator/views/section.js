@@ -24,6 +24,7 @@ define([
     'lodash',
     'uri',
     'i18n',
+    'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/itemref',
     'taoQtiTest/controller/creator/views/rubricblock',
@@ -38,6 +39,7 @@ function(
     _,
     uri,
     __,
+    defaults,
     actions,
     itemRefView,
     rubricBlockView,
@@ -55,7 +57,7 @@ function(
      * @param {Object} creatorContext
      * @param {Object} sectionModel - the data model to bind to the test section
      * @param {Object} partModel - the parent data model to inherit
-     * @param {jQueryElement} $section - the section to set up
+     * @param {jQuery} $section - the section to set up
      */
     function setUp (creatorContext, sectionModel, partModel, $section) {
 
@@ -66,6 +68,9 @@ function(
         // set item session control to use test part options if section level isn't set
         if (!sectionModel.itemSessionControl) {
             sectionModel.itemSessionControl = {};
+        }
+        if (!sectionModel.categories) {
+            sectionModel.categories = defaults().categories;
         }
         _.defaults(sectionModel.itemSessionControl, partModel.itemSessionControl);
 
@@ -245,7 +250,7 @@ function(
 
         /**
          * Add a new item ref to the section
-         * @param {jQueryElement} $refList - the element to add the item to
+         * @param {jQuery} $refList - the element to add the item to
          * @param {Number} [index] - the position of the item to add
          * @param {Object} [itemData] - the data to bind to the new item ref
          */
@@ -331,7 +336,7 @@ function(
         /**
          * Set up the category property
          * @private
-         * @param {jQueryElement} $view - the $view object containing the $select
+         * @param {jQuery} $view - the $view object containing the $select
          * @fires modelOverseer#category-change
          */
         function categoriesProperty($view){
@@ -360,7 +365,7 @@ function(
         /**
          * Set up the Blueprint property
          * @private
-         * @param {jQueryElement} $view - the $view object containing the $select
+         * @param {jQuery} $view - the $view object containing the $select
          */
         function blueprintProperty($view){
             var $select = $('[name=section-blueprint]', $view);
