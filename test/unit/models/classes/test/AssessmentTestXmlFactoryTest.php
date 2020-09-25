@@ -22,12 +22,15 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\test;
 
-
 use common_exception_Error;
 use common_ext_ExtensionException;
 use oat\generis\test\TestCase;
 use oat\oatbox\service\ConfigurableService;
+use oat\oatbox\service\exception\InvalidService;
+use oat\oatbox\service\exception\InvalidServiceManagerException;
+use oat\oatbox\service\ServiceManager;
 use oat\tao\model\service\ApplicationService;
+use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
 use qtism\data\AssessmentTest;
 use qtism\data\NavigationMode;
 use qtism\data\storage\xml\XmlStorageException;
@@ -41,8 +44,31 @@ class AssessmentTestXmlFactoryTest extends TestCase
     /** @var ServiceLocatorInterface */
     private $serviceLocator;
 
+    /** @var DefaultConfigurationRegistry */
+    private $xmlTemplateOptionRegistry;
+
+    /** @var array */
+    private $xmlTemplateRegistryOptions = [
+        'partIdPrefix'       => 'testPart',
+        'sectionIdPrefix'    => 'assessmentSection',
+        'sectionTitlePrefix' => 'Section',
+        'categories'         => [],
+        'navigationMode'     => 0,
+        'submissionMode'     => 0,
+        'maxAttempts'        => 0,
+    ];
+
     protected function setUp(): void
     {
+        $this->xmlTemplateOptionRegistry = $this->createPartialMock(DefaultConfigurationRegistry::class, ['getMap']);
+        $this->xmlTemplateOptionRegistry
+            ->method('getMap')
+            ->willReturnCallback(
+                function (): array {
+                    return [DefaultConfigurationRegistry::ID => $this->xmlTemplateRegistryOptions];
+                }
+            );
+
         $appService = $this->createMock(ApplicationService::class);
         $appService->method('getPlatformVersion')->willReturn('test_version');
 
@@ -56,58 +82,91 @@ class AssessmentTestXmlFactoryTest extends TestCase
         $badExtension = new class extends ConfigurableService {
         };
 
-        $this->serviceLocator = $this->getServiceLocatorMock(
-            [
-                ApplicationService::SERVICE_ID => $appService,
-                'extension' => $extension,
-                'badExtension' => $badExtension,
-            ]
-        );
+        $this->serviceLocator = $this->createMock(ServiceManager::class);
+
+        $this->serviceLocator
+            ->method('get')
+            ->willReturnMap(
+                [
+                    [ApplicationService::SERVICE_ID, $appService],
+                    ['extension', $extension],
+                    ['badExtension', $badExtension],
+                    [DefaultConfigurationRegistry::class, $this->xmlTemplateOptionRegistry],
+                ]
+            );
+
+        $this->xmlTemplateOptionRegistry->setServiceLocator($this->serviceLocator);
     }
 
     /**
      * @dataProvider provideData
      *
-     * @param array $options
-     * @param array $expected
+     * @param array  $options
+     * @param string $expectedTestPartId
+     * @param string $expectedNavigationMode
+     * @param string $expectedSubmissionMode
+     * @param string $expectedSectionTitle
+     * @param string $expectedSectionId
+     * @param int    $expectedMaxAttempts
      *
+     * @throws InvalidService
+     * @throws InvalidServiceManagerException
      * @throws XmlStorageException
      * @throws common_exception_Error
      * @throws common_ext_ExtensionException
      */
-    public function testBuild(array $options, array $expected): void
-    {
-        $builder = $this->createBuilder($options);
+    public function testBuild(
+        array $options,
+        string $expectedTestPartId,
+        string $expectedNavigationMode,
+        string $expectedSubmissionMode,
+        string $expectedSectionTitle,
+        string $expectedSectionId,
+        int $expectedMaxAttempts
+    ): void {
+        $this->xmlTemplateRegistryOptions = $options;
+
+        $builder = $this->createBuilder();
 
         $xml = $builder->create('testId', 'testLabel');
 
-        $this->assertIsString($xml);
+        static::assertIsString($xml);
 
         $simpleXml = new SimpleXMLElement($xml);
-        $this->assertSame('testId', (string)$simpleXml->attributes()['identifier']);
-        $this->assertSame('testLabel', (string)$simpleXml->attributes()['title']);
+        static::assertSame('testId', (string)$simpleXml->attributes()['identifier']);
+        static::assertSame('testLabel', (string)$simpleXml->attributes()['title']);
 
         /** @noinspection PhpUndefinedFieldInspection */
         $testPartAttributes = $simpleXml->testPart->attributes();
 
-        $this->assertSame(
-            $expected[AssessmentTestXmlFactory::OPTION_TEST_PART_ID],
+        static::assertSame(
+            $expectedTestPartId,
             (string)$testPartAttributes['identifier']
         );
-        $this->assertSame(
-            $expected[AssessmentTestXmlFactory::OPTION_TEST_PART_NAVIGATION_MODE],
+        static::assertSame(
+            $expectedNavigationMode,
             (string)$testPartAttributes['navigationMode']
         );
-        $this->assertSame(
-            $expected[AssessmentTestXmlFactory::OPTION_TEST_PART_SUBMISSION_MODE],
+        static::assertSame(
+            $expectedSubmissionMode,
             (string)$testPartAttributes['submissionMode']
+        );
+
+        $assessmentSectionAttributes = $simpleXml->testPart->assessmentSection->attributes();
+        static::assertSame(
+            $expectedSectionId,
+            (string)$assessmentSectionAttributes['identifier']
+        );
+        static::assertSame(
+            $expectedSectionTitle,
+            (string)$assessmentSectionAttributes['title']
         );
 
         /** @noinspection PhpUndefinedFieldInspection */
         $itemSessionControl = $simpleXml->testPart->itemSessionControl->attributes();
 
-        $this->assertSame(
-            $expected[AssessmentTestXmlFactory::OPTION_TEST_MAX_ATTEMPTS],
+        static::assertSame(
+            $expectedMaxAttempts,
             (int)$itemSessionControl['maxAttempts']
         );
     }
@@ -121,15 +180,15 @@ class AssessmentTestXmlFactoryTest extends TestCase
     {
         $builder = $this->createBuilder(
             [
-                AssessmentTestXmlFactory::OPTION_EXTENSIONS => ['extension']
+                AssessmentTestXmlFactory::OPTION_EXTENSIONS => ['extension'],
             ]
         );
 
         $xml = $builder->create('identifier', 'title');
 
         $simpleXml = new SimpleXMLElement($xml);
-        $this->assertSame('identifier', (string)$simpleXml->attributes()['identifier']);
-        $this->assertSame('changedTitle', (string)$simpleXml->attributes()['title']);
+        static::assertSame('identifier', (string)$simpleXml->attributes()['identifier']);
+        static::assertSame('changedTitle', (string)$simpleXml->attributes()['title']);
     }
 
     /**
@@ -143,7 +202,7 @@ class AssessmentTestXmlFactoryTest extends TestCase
 
         $builder = $this->createBuilder(
             [
-                AssessmentTestXmlFactory::OPTION_EXTENSIONS => ['badExtension']
+                AssessmentTestXmlFactory::OPTION_EXTENSIONS => ['badExtension'],
             ]
         );
 
@@ -154,40 +213,35 @@ class AssessmentTestXmlFactoryTest extends TestCase
     {
         return [
             [
-                [],
                 [
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_ID              => AssessmentTestXmlFactory::DEFAULT_TEST_PART_ID,
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_NAVIGATION_MODE => 'linear',
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_SUBMISSION_MODE => 'individual',
-                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_TITLE  => AssessmentTestXmlFactory::DEFAULT_ASSESSMENT_SECTION_TITLE,
-                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_ID     => AssessmentTestXmlFactory::DEFAULT_ASSESSMENT_SECTION_ID,
-                    AssessmentTestXmlFactory::OPTION_TEST_MAX_ATTEMPTS         => AssessmentTestXmlFactory::DEFAULT_TEST_MAX_ATTEMPTS,
-                ]
-            ],
-            [
-                [
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_ID              => 'customTestPartId',
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_NAVIGATION_MODE => NavigationMode::NONLINEAR,
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_SUBMISSION_MODE => SubmissionMode::SIMULTANEOUS,
-                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_TITLE  => 'customSectionTitle',
-                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_ID     => 'customSectionId',
-                    AssessmentTestXmlFactory::OPTION_TEST_MAX_ATTEMPTS         => 10,
+                    'partIdPrefix'       => 'customTestPart',
+                    'sectionIdPrefix'    => 'customSectionId',
+                    'sectionTitlePrefix' => 'customSectionTitle',
+                    'categories'         => [],
+                    'navigationMode'     => NavigationMode::NONLINEAR,
+                    'submissionMode'     => SubmissionMode::SIMULTANEOUS,
+                    'maxAttempts'        => 10,
                 ],
-                [
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_ID              => 'customTestPartId',
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_NAVIGATION_MODE => 'nonlinear',
-                    AssessmentTestXmlFactory::OPTION_TEST_PART_SUBMISSION_MODE => 'simultaneous',
-                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_TITLE  => 'customSectionTitle',
-                    AssessmentTestXmlFactory::OPTION_ASSESSMENT_SECTION_ID     => 'customSectionId',
-                    AssessmentTestXmlFactory::OPTION_TEST_MAX_ATTEMPTS         => 10,
-                ]
-            ]
+                'customTestPart-1',
+                'nonlinear',
+                'simultaneous',
+                'customSectionTitle 1',
+                'customSectionId-1',
+                10,
+            ],
         ];
     }
 
-    private function createBuilder(array $params = []): AssessmentTestXmlFactory
+    private function createBuilder(array $options = []): AssessmentTestXmlFactory
     {
-        $builder = new AssessmentTestXmlFactory($params);
+        $builder = new AssessmentTestXmlFactory(
+            array_replace(
+                [
+                    AssessmentTestXmlFactory::OPTION_CONFIGURATION_REGISTRY => $this->xmlTemplateOptionRegistry,
+                ],
+                $options
+            )
+        );
 
         $builder->setServiceLocator($this->serviceLocator);
 

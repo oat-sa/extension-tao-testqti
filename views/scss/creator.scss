@@ -277,7 +277,8 @@
                 position: absolute;
                 right: 0;
                 top: 0;
-                display: inline-block;
+                display: inline-table;
+                width: auto;
                 max-width: 300px;
                 height: 39px;
                 z-index: 100;

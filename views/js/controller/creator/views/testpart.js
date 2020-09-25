@@ -21,11 +21,12 @@
  */
 define([
     'jquery', 'lodash',
+    'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/section',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest'],
-function($, _, actions, sectionView, templates, qtiTestHelper){
+function($, _, defaults, actions, sectionView, templates, qtiTestHelper){
     'use strict';
 
     /**
@@ -33,12 +34,11 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
      *
      * @param {Object} creatorContext
      * @param {Object} partModel - the data model to bind to the test part
-     * @param {jQueryElement} $testPart - the testpart container to set up
+     * @param {jQuery} $testPart - the testpart container to set up
      */
     function setUp (creatorContext, partModel, $testPart){
         var $actionContainer = $('h1', $testPart);
         var modelOverseer = creatorContext.getModelOverseer();
-        var config = modelOverseer.getConfig();
 
         //run setup methods
         actions.properties($actionContainer, 'testpart', partModel, propHandler);
@@ -112,8 +112,8 @@ function($, _, actions, sectionView, templates, qtiTestHelper){
                     var sectionIndex = $('.section', $testPart).length;
                     cb({
                         'qti-type' : 'assessmentSection',
-                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection'),
-                        title : 'Section ' + (sectionIndex + 1),
+                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', defaults().sectionIdPrefix),
+                        title : `${defaults().sectionTitlePrefix} ${sectionIndex + 1}`,
                         index : 0,
                         sectionParts : []
                     });
