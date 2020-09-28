@@ -50,9 +50,9 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     const SESSION_PROPERTY_STORAGE = 'storage';
     const SESSION_PROPERTY_COMPILATION = 'compilation';
 
-    /** 
+    /**
      * Cache to store session instances
-     * @var array 
+     * @var array
      */
     protected static $cache = [];
 
@@ -65,6 +65,8 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      */
     protected function loadSession(DeliveryExecution $deliveryExecution, $withCache = true)
     {
+        self::invalidateCache();
+        
         $session = null;
         $sessionId = $deliveryExecution->getIdentifier();
         try {
@@ -174,16 +176,16 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     
     /**
      * Get a test session data by identifier.
-     * 
+     *
      * Get a session by $sessionId. In case it was previously registered using the TestSessionService::registerTestSession method,
      * an array with the following keys will be returned:
-     * 
+     *
      * * 'session': A qtism AssessmentTestSession object.
      * * 'storage': A taoQtiTest_helpers_TestSessionStorage.
      * * 'context': A RunnerServiceContext object (if not provided at TestSessionService::registerTestSession call time, it contains null).
-     * 
+     *
      * In case of no such session is found for $sessionId, false is returned.
-     * 
+     *
      * @param string $sessionId
      * @return false|array
      */
@@ -269,5 +271,15 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
         }
 
         return false;
+    }
+    
+    /**
+     * Invalidate Cache.
+     *
+     * Invalidates the Test Session Cache.
+     */
+    public function invalidateCache(): void
+    {
+        self::$cache = [];
     }
 }
