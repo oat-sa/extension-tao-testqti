@@ -38,12 +38,12 @@ msgstr "QTIテストコンパイル"
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation Uri"
-msgstr "QTIテストURI"
+msgstr "QTIテストコンパイルURI"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI test runner"
-msgstr "QTIテストランナー"
+msgstr "QTI テストランナー"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
