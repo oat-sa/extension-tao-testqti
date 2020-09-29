@@ -20,12 +20,13 @@
  */
 define([
     'jquery', 'lodash', 'i18n', 'ui/hider', 'ui/feedback',
+    'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/testpart',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest'
 ],
-function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHelper){
+function($, _, __, hider, feedback, defaults, actions, testPartView, templates, qtiTestHelper){
     'use strict';
 
     /**
@@ -101,7 +102,7 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
             function updateOutcomes() {
                 var $panel = $('.outcome-declarations', $view);
 
-                $panel.html(templates.outcomes(modelOverseer.getOutcomesList()));
+                $panel.html(templates.outcomes({outcomes: modelOverseer.getOutcomesList()}));
             }
 
             $('[name=test-outcome-processing]', $view).select2({
@@ -152,14 +153,14 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
                     var testPartIndex = $('.testpart').length;
                     cb({
                         'qti-type' : 'testPart',
-                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'testPart'),
+                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'testPart', defaults().partIdPrefix),
                         index  : testPartIndex,
-                        navigationMode : 0,
-                        submissionMode : 0,
+                        navigationMode : defaults().navigationMode,
+                        submissionMode : defaults().submissionMode,
                         assessmentSections : [{
                             'qti-type' : 'assessmentSection',
-                            identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'section'),
-                            title : 'Section 1',
+                            identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', defaults().sectionIdPrefix),
+                            title : `${defaults().sectionTitlePrefix} 1`,
                             index : 0,
                             sectionParts : []
                         }]

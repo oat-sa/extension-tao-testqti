@@ -101,7 +101,7 @@ define([
 
                 // add preset checkboxes
                 $presetsContainer.append(
-                    presetsTpl(allPresets)
+                    presetsTpl({presetGroups: allPresets})
                 );
 
                 $presetsContainer.on('click', function(e) {

@@ -1,4 +1,3 @@
-<?php
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,15 +14,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
+ *
+ * @author Sergei Mikhailov <sergei.mikhailov@taotesting.com>
  */
 
-use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
-use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
+define([
+    'lodash',
+    'module',
+], function(
+    _,
+    module
+) {
+    'use strict';
 
-return new AssessmentTestXmlFactory(
-    [
-        'configurationRegistry' => [
-            'class' => DefaultConfigurationRegistry::class,
-        ],
-    ]
-);
+    return (config = {}) => _.defaults({}, module.config(), config);
+});

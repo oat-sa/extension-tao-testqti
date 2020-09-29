@@ -26,48 +26,36 @@ use common_exception_Error;
 use common_ext_ExtensionException;
 use DOMDocument;
 use oat\oatbox\service\ConfigurableService;
+use oat\oatbox\service\exception\InvalidService;
+use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\service\ApplicationService;
+use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
 use qtism\data\AssessmentSection;
 use qtism\data\AssessmentSectionCollection;
 use qtism\data\AssessmentTest;
 use qtism\data\ItemSessionControl;
-use qtism\data\NavigationMode;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
-use qtism\data\SubmissionMode;
 use qtism\data\TestPart;
 use qtism\data\TestPartCollection;
 use RuntimeException;
 
 class AssessmentTestXmlFactory extends ConfigurableService implements AssessmentTestXmlFactoryInterface
 {
-    public const DEFAULT_QTI_VERSION = '2.1';
-    public const DEFAULT_ASSESSMENT_SECTION_ID = 'assessmentSection-1';
-    public const DEFAULT_ASSESSMENT_SECTION_TITLE = 'Section 1';
+    public const OPTION_QTI_VERSION            = 'qti_version';
+    public const OPTION_EXTENSIONS             = 'extensions';
+    public const OPTION_CONFIGURATION_REGISTRY = 'configurationRegistry';
 
-    public const DEFAULT_TEST_PART_ID = 'testPart-1';
-    public const DEFAULT_TEST_PART_NAVIGATION_MODE = NavigationMode::LINEAR;
-    public const DEFAULT_TEST_PART_SUBMISSION_MODE = SubmissionMode::INDIVIDUAL;
-    public const DEFAULT_TEST_MAX_ATTEMPTS = 0;
-
-    public const OPTION_QTI_VERSION = 'qti_version';
-
-    public const OPTION_ASSESSMENT_SECTION_ID = 'assessment_section_id';
-    public const OPTION_ASSESSMENT_SECTION_TITLE = 'assessment_section_title';
-
-    public const OPTION_TEST_PART_ID = 'test_part_id';
-    public const OPTION_TEST_PART_NAVIGATION_MODE = 'navigation_mode';
-    public const OPTION_TEST_PART_SUBMISSION_MODE = 'submission_mode';
-    public const OPTION_TEST_MAX_ATTEMPTS = 'max_attempts';
-
-    public const OPTION_EXTENSIONS = 'extensions';
+    private const DEFAULT_QTI_VERSION = '2.1';
 
     /**
      * @param string $testIdentifier
      * @param string $testTitle
      *
      * @return DOMDocument
+     * @throws InvalidService
+     * @throws InvalidServiceManagerException
      * @throws XmlStorageException
      * @throws common_exception_Error
      * @throws common_ext_ExtensionException
@@ -88,13 +76,15 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
      * @param string $testTitle
      *
      * @return AssessmentTest
+     * @throws InvalidService
+     * @throws InvalidServiceManagerException
      * @throws common_exception_Error
      * @throws common_ext_ExtensionException
      */
     protected function createTest(string $testIdentifier, string $testTitle): AssessmentTest
     {
         $itemSectionControl = new ItemSessionControl();
-        $itemSectionControl->setMaxAttempts($this->getMaxAttempts());
+        $itemSectionControl->setMaxAttempts($this->getConfigurationRegistry()->getMaxAttempts());
 
         $assessmentSection = new AssessmentSection(
             $this->getAssessmentSectionId(),
@@ -108,8 +98,8 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
         $testPart = new TestPart(
             $this->getTestPartId(),
             $assessmentSections,
-            $this->getNavigationMode(),
-            $this->getSubmissionMode()
+            $this->getConfigurationRegistry()->getNavigationMode(),
+            $this->getConfigurationRegistry()->getSubmissionMode()
         );
 
         $testPart->setItemSessionControl($itemSectionControl);
@@ -145,14 +135,26 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
         }
     }
 
+    /**
+     * @return string
+     *
+     * @throws InvalidService
+     * @throws InvalidServiceManagerException
+     */
     private function getAssessmentSectionId(): string
     {
-        return $this->getOption(self::OPTION_ASSESSMENT_SECTION_ID) ?? self::DEFAULT_ASSESSMENT_SECTION_ID;
+        return "{$this->getConfigurationRegistry()->getSectionIdPrefix()}-1";
     }
 
+    /**
+     * @return string
+     *
+     * @throws InvalidService
+     * @throws InvalidServiceManagerException
+     */
     private function getAssessmentSectionTitle(): string
     {
-        return $this->getOption(self::OPTION_ASSESSMENT_SECTION_TITLE) ?? self::DEFAULT_ASSESSMENT_SECTION_TITLE;
+        return "{$this->getConfigurationRegistry()->getSectionTitlePrefix()} 1";
     }
 
     private function getQtiVersion(): string
@@ -160,29 +162,31 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
         return $this->getOption(self::OPTION_QTI_VERSION) ?? self::DEFAULT_QTI_VERSION;
     }
 
+    /**
+     * @return string
+     *
+     * @throws InvalidService
+     * @throws InvalidServiceManagerException
+     */
     private function getTestPartId(): string
     {
-        return $this->getOption(self::OPTION_TEST_PART_ID) ?? self::DEFAULT_TEST_PART_ID;
-    }
-
-    private function getNavigationMode(): int
-    {
-        return $this->getOption(self::OPTION_TEST_PART_NAVIGATION_MODE) ?? self::DEFAULT_TEST_PART_NAVIGATION_MODE;
-    }
-
-    private function getSubmissionMode(): int
-    {
-        return $this->getOption(self::OPTION_TEST_PART_SUBMISSION_MODE) ?? self::DEFAULT_TEST_PART_SUBMISSION_MODE;
-    }
-
-    private function getMaxAttempts(): int
-    {
-        return $this->getOption(self::OPTION_TEST_MAX_ATTEMPTS) ?? self::DEFAULT_TEST_MAX_ATTEMPTS;
+        return "{$this->getConfigurationRegistry()->getPartIdPrefix()}-1";
     }
 
     private function getApplicationService(): ApplicationService
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->getServiceLocator()->get(ApplicationService::SERVICE_ID);
+    }
+
+    /**
+     * @return DefaultConfigurationRegistry
+     *
+     * @throws InvalidService
+     * @throws InvalidServiceManagerException
+     */
+    private function getConfigurationRegistry(): DefaultConfigurationRegistry
+    {
+        return $this->getSubService(self::OPTION_CONFIGURATION_REGISTRY, DefaultConfigurationRegistry::class);
     }
 }
