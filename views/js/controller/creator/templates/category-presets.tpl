@@ -1,5 +1,4 @@
-{{#each this}}
-
+{{#each presetGroups}}
 <h4 class="toggler closed" data-toggle="~ .category-preset-group-{{groupId}}">{{groupLabel}}</h4>
 
 <div class="category-preset-group-{{groupId}} toggled">
@@ -7,7 +6,12 @@
     <div class="grid-row pseudo-label-box category-preset" data-qti-category="{{qtiCategory}}">
         <div class="col-1">
             <label>
-                <input type="checkbox" name="category-preset-{{id}}" value="{{qtiCategory}}"/>
+                <input
+                        type="checkbox"
+                        name="category-preset-{{id}}"
+                        value="{{qtiCategory}}"
+                        {{#includes ../../categories qtiCategory}}checked{{/includes}}
+                />
                 <span class="icon-checkbox"></span>
             </label>
         </div>

@@ -9,7 +9,7 @@
                 <label for="testpart-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
             </div>
             <div class="col-6">
-                <input type="text" name="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable;" />
+                <input type="text" id="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable;" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -26,12 +26,24 @@
             </div>
             <div class="col-6">
                 <label>
-                    <input type="radio" name="testpart-navigation-mode" value="0" checked="checked" data-bind="navigationMode" data-bind-encoder="number" />
+                    <input
+                            type="radio"
+                            name="testpart-navigation-mode"
+                            {{#equal navigationMode 0}}checked{{/equal}}
+                            value="0"
+                            data-bind="navigationMode"
+                            data-bind-encoder="number"
+                    />
                     <span class="icon-radio"></span>
                     {{__ 'Linear'}}
                 </label>
                 <label>
-                    <input type="radio" name="testpart-navigation-mode" value="1"  />
+                    <input
+                            type="radio"
+                            name="testpart-navigation-mode"
+                            {{#equal navigationMode 1}}checked{{/equal}}
+                            value="1"
+                    />
                     <span class="icon-radio"></span>
                     {{__ 'Non Linear'}}
                 </label>
@@ -51,12 +63,24 @@
             </div>
             <div class="col-6">
                 <label>
-                    <input type="radio" name="testpart-submission-mode" value="0" checked="checked" data-bind="submissionMode" data-bind-encoder="number" />
+                    <input
+                            type="radio"
+                            name="testpart-submission-mode"
+                            {{#equal submissionMode 0}}checked{{/equal}}
+                            value="0"
+                            data-bind="submissionMode"
+                            data-bind-encoder="number"
+                    />
                     <span class="icon-radio"></span>
                     {{__ 'Individual'}}
                 </label>
                 <label>
-                    <input type="radio" name="testpart-submission-mode" value="1"  />
+                    <input
+                            type="radio"
+                            name="testpart-submission-mode"
+                            {{#equal submissionMode 1}}checked{{/equal}}
+                            value="1"
+                    />
                     <span class="icon-radio"></span>
                     {{__ 'Simultaneous'}}
                 </label>
@@ -81,7 +105,15 @@
                     <label for="testpart-max-attempts">{{__ 'Max Attempts'}}</label>
                 </div>
                 <div class="col-6">
-                    <input name="testpart-max-attempts" type="text" data-increment="1" data-min="0" value="1" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
+                    <input
+                            id="testpart-max-attempts"
+                            type="text"
+                            data-increment="1"
+                            data-min="0"
+                            value="{{maxAttempts}}"
+                            data-bind="itemSessionControl.maxAttempts"
+                            data-bind-encoder="number"
+                    />
                 </div>
                 <div class="col-1 help">
                     <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -99,7 +131,7 @@
                 <div class="col-6">
                     <label>
                         <input type="checkbox" name="testpart-show-feedback" value="true" data-bind="itemSessionControl.showFeedback" data-bind-encoder="boolean" />
-                        <span class="icon-checkbox" />
+                        <span class="icon-checkbox"></span>
                     </label>
                 </div>
                 <div class="col-1 help">
@@ -160,7 +192,7 @@
                 <div class="col-6">
                     <label>
                         <input type="checkbox" name="testpart-allow-comment" value="true" data-bind="itemSessionControl.allowComment" data-bind-encoder="boolean" />
-                        <span class="icon-checkbox" />
+                        <span class="icon-checkbox"></span>
                     </label>
                 </div>
                 <div class="col-1 help">
@@ -179,7 +211,7 @@
                 <div class="col-6">
                     <label>
                         <input type="checkbox" name="testpart-allow-skipping" value="true" checked="checked"  data-bind="itemSessionControl.allowSkipping" data-bind-encoder="boolean"   />
-                        <span class="icon-checkbox" />
+                        <span class="icon-checkbox"></span>
                     </label>
                 </div>
                 <div class="col-1 help">
@@ -198,7 +230,7 @@
                 <div class="col-6">
                     <label>
                         <input type="checkbox" name="testpart-validate-responses" value="true"  data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean"  />
-                        <span class="icon-checkbox" />
+                        <span class="icon-checkbox"></span>
                     </label>
                 </div>
                 <div class="col-1 help">
@@ -240,7 +272,7 @@
                     <label for="testpart-max-time">{{__ 'Maximum Duration'}}</label>
                 </div>
                 <div class="col-6 duration-group">
-                    <input type="text" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
+                    <input type="text" id="testpart-max-time" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
                 </div>
                 <div class="col-1 help">
                     <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -258,7 +290,7 @@
                 <div class="col-6">
                     <label>
                         <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
-                        <span class="icon-checkbox" />
+                        <span class="icon-checkbox"></span>
                     </label>
                 </div>
                 <div class="col-1 help">

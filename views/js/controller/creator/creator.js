@@ -230,7 +230,7 @@ define([
                             const saveUrl = options.routes.save;
                             const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
                             return previewerFactory(
-                                'qtiTest', // TODO - move to BE configuration
+                                module.config().provider,
                                 decodeURIComponent(testUri),
                                 {
                                     readOnly: false,

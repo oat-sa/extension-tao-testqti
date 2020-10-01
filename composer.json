@@ -61,7 +61,8 @@
     "ext-dom": "*",
     "oat-sa/composer-npm-bridge": "^0.3.0",
     "oat-sa/lib-test-cat": "2.3.7",
-    "oat-sa/oatbox-extension-installer": "~1.1||dev-master"
+    "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
+    "qtism/qtism": "~0"
   },
   "autoload": {
     "psr-4": {

@@ -277,7 +277,8 @@
                 position: absolute;
                 right: 0;
                 top: 0;
-                display: inline-block;
+                display: inline-table;
+                width: auto;
                 max-width: 300px;
                 height: 39px;
                 z-index: 100;
@@ -361,7 +362,9 @@
                 }
             }
 
-
+            .actions .tlb-group {
+                min-width: 126px;
+            }
         }
 
         .sections {
@@ -380,6 +383,9 @@
 
             &:last-child{
                 margin-bottom: 0;
+            }
+            .actions .tlb-group {
+                min-width: 157px;
             }
         }
 
@@ -448,14 +454,19 @@
                     color: $uiGeneralContentBorder;
                 }
                 & > li {
-                   position: relative;
-                   height: 39px;
-                   line-height: 39px;
-                   padding: 2px ;
-                   clear: both;
-                   &:nth-child(even){
-                        background-color: $uiClickableDefaultBg;
-                   }
+                    position: relative;
+                    height: 39px;
+                    line-height: 39px;
+                    padding: 2px ;
+                    clear: both;
+                    &:nth-child(even){
+                         background-color: $uiClickableDefaultBg;
+                    }
+                    .actions {
+                        .tlb-group {
+                            min-width: 124px;
+                        }
+                    }
                 }
             }
             .itemref-placeholder {
@@ -655,7 +666,7 @@
         }
         .locker {
             position: absolute;
-            border: solid 1px $websiteBorder; 
+            border: solid 1px $websiteBorder;
             border-left-color: transparent;
             @include border-radius(4);
             top: 14px;
@@ -666,7 +677,7 @@
         }
 
         button {
-            background-color: $uiClickableDefaultBg; 
+            background-color: $uiClickableDefaultBg;
             position: absolute;
             z-index: 450;
             padding: 0;

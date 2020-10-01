@@ -1,4 +1,5 @@
 define([
+    'taoQtiTest/controller/creator/config/defaults',
     'tpl!taoQtiTest/controller/creator/templates/testpart',
     'tpl!taoQtiTest/controller/creator/templates/section',
     'tpl!taoQtiTest/controller/creator/templates/rubricblock',
@@ -13,6 +14,7 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/category-presets'
 ],
 function(
+    defaults,
     testPart,
     section,
     rubricBlock,
@@ -28,24 +30,26 @@ function(
 ){
     'use strict';
 
+    const applyTemplateConfiguration = (template) => (config) => template(defaults(config));
+
     /**
      * Expose all the templates used by the test creator
      * @exports taoQtiTest/controller/creator/templates/index
      */
     return {
-        'testpart'      : testPart,
-        'section'       : section,
-        'itemref'       : itemRef,
-        'rubricblock'   : rubricBlock,
-        'outcomes'      : outcomes,
-        'properties'    : {
-            'test'      : testProps,
-            'testpart'  : testPartProps,
-            'section'   : sectionProps,
-            'itemref'   : itemRefProps,
-            'itemrefweight'     : itemRefPropsWeight,
-            'rubricblock'       : rubricBlockProps,
-            'categorypresets'  : categoryPresets
+        testpart    : applyTemplateConfiguration(testPart),
+        section     : applyTemplateConfiguration(section),
+        itemref     : applyTemplateConfiguration(itemRef),
+        rubricblock : applyTemplateConfiguration(rubricBlock),
+        outcomes    : applyTemplateConfiguration(outcomes),
+        properties  : {
+            test            : applyTemplateConfiguration(testProps),
+            testpart        : applyTemplateConfiguration(testPartProps),
+            section         : applyTemplateConfiguration(sectionProps),
+            itemref         : applyTemplateConfiguration(itemRefProps),
+            itemrefweight   : applyTemplateConfiguration(itemRefPropsWeight),
+            rubricblock     : applyTemplateConfiguration(rubricBlockProps),
+            categorypresets : applyTemplateConfiguration(categoryPresets)
         }
     };
 });
