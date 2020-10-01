@@ -22,8 +22,6 @@
 namespace oat\taoQtiTest\models\creator;
 
 use core_kernel_classes_Class;
-use oat\generis\model\data\permission\PermissionHelper;
-use oat\generis\model\data\permission\PermissionInterface;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\resources\ListResourceLookup;
@@ -75,10 +73,8 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
             $result['nodes']
         );
 
-        $accessible = $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ);
-
         foreach ($result['nodes'] as $i => &$node) {
-            if (!in_array($node['uri'], $accessible, true)) {
+            if (!in_array($node['uri'], $nodeIds, true)) {
                 unset($result['nodes'][$i]);
                 $result['total']--;
 
@@ -103,11 +99,5 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->getServiceLocator()->get(CategoryService::SERVICE_ID);
-    }
-
-    private function getPermissionHelper(): PermissionHelper
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceLocator()->get(PermissionHelper::class);
     }
 }
