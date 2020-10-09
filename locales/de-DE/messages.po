@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:09\n"
+"Project-Id-Version: TAO 3.4.0-sprint138\n"
+"PO-Revision-Date: 2020-10-02T07:47:45\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -214,17 +214,17 @@ msgstr "Autor"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Hilfsdatei konnte unter dem angegebenen Pfad \"%s\" nicht gefunden werden."
 
-msgid "Black on cream"
-msgstr ""
+msgid "Black on Cream"
+msgstr "Schwarz auf Beige"
 
-msgid "Black on light blue"
-msgstr ""
+msgid "Black on Light Blue"
+msgstr "Schwarz auf Hellblau"
 
-msgid "Black on magenta"
-msgstr ""
+msgid "Black on Light Magenta"
+msgstr "Schwarz auf Violett"
 
-msgid "Black on white"
-msgstr ""
+msgid "Black on White"
+msgstr "Schwarz auf Weiß"
 
 msgid "Calculator"
 msgstr ""
@@ -235,11 +235,11 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
-msgstr "Abbrechen"
-
 msgid "CANCEL"
 msgstr ""
+
+msgid "Cancel"
+msgstr "Abbrechen"
 
 msgid "Candidate"
 msgstr "Kandidat"
@@ -502,10 +502,7 @@ msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
-msgstr ""
-
-msgid "Gray on green (low contrast option)"
-msgstr ""
+msgstr "Grau auf Grün"
 
 msgid "Hide Review"
 msgstr ""
@@ -630,11 +627,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Element-Sitzungskontrolle"
 
-msgid "Items"
-msgstr "Elemente"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Elemente"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elemente können manuell zu einer oder mehreren Kategorien hinzugefügt werden."
@@ -667,9 +664,6 @@ msgid "Late submission allowed"
 msgstr "Spätere Bereitstellung erlaubt"
 
 msgid "Leave a comment"
-msgstr ""
-
-msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -705,12 +699,12 @@ msgstr "Rubrik-Blöcke verwalten"
 msgid "Manage test properties"
 msgstr "Test-Eigenschaften verwalten"
 
+msgid "Manage Tests"
+msgstr "Tests verwalten"
+
 #, tao-public
 msgid "Manage tests"
 msgstr ""
-
-msgid "Manage Tests"
-msgstr "Tests verwalten"
 
 msgid "Mark for review"
 msgstr "Zur Bewertung markieren"
@@ -859,11 +853,11 @@ msgstr "Nicht gemischt, die Position bleibt festgelegt."
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
-msgstr ""
-
 msgid "Ok"
 msgstr "OK"
+
+msgid "OK"
+msgstr ""
 
 msgid "OK & End test"
 msgstr ""
@@ -1042,10 +1036,10 @@ msgstr "Punktezähler"
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1195,6 +1189,9 @@ msgstr "Eingabe"
 msgid "Submit and go to the end of the test"
 msgstr "Test beenden"
 
+msgid "Submit and go to the item %s"
+msgstr ""
+
 msgid "Submit and go to the next item"
 msgstr "Zur nächsten Seite wechseln"
 
@@ -1250,10 +1247,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1556,8 +1553,11 @@ msgstr "Soll die Antwort eines Kandidaten, der die maximale Dauer des Tests übe
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Soll die Antwort eines Kandidaten, der die maximale Dauer überschritten hat, trotzdem akzeptiert werden?"
 
-msgid "White on black"
-msgstr ""
+msgid "White on Black"
+msgstr "Weiß auf Schwarz"
+
+msgid "White on Blue (TAO standard theme)"
+msgstr "Weiß auf Blau (Standard)"
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Wer den Rubrik-Block während der Bereitstellung sehen kann."
@@ -1577,6 +1577,9 @@ msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "XML Fehler in Zeile %1$d Spalte %2$d \"%3$s\"."
+
+msgid "Yellow on Blue"
+msgstr "Gelb auf Blau"
 
 msgid "Yes"
 msgstr "Ja"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:32\n"
+"Project-Id-Version: TAO 3.4.0-sprint138\n"
+"PO-Revision-Date: 2020-10-02T07:55:33\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -214,17 +214,17 @@ msgstr "Constructeur"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Hulp bestand niet gevonden op locatie \"%s\"."
 
-msgid "Black on cream"
-msgstr ""
+msgid "Black on Cream"
+msgstr "Zwart op Crème"
 
-msgid "Black on light blue"
-msgstr "Zwart op lichtblauw"
+msgid "Black on Light Blue"
+msgstr "Zwart op Lichtblauw"
 
-msgid "Black on magenta"
-msgstr "Zwart op magenta"
+msgid "Black on Light Magenta"
+msgstr "Zwart op Paars"
 
-msgid "Black on white"
-msgstr "Zwart op wit"
+msgid "Black on White"
+msgstr "Zwart op Wit"
 
 msgid "Calculator"
 msgstr "Rekenmachine"
@@ -235,11 +235,11 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
-msgstr "Annuleren"
-
 msgid "CANCEL"
 msgstr ""
+
+msgid "Cancel"
+msgstr "Annuleren"
 
 msgid "Candidate"
 msgstr "Kandidaat"
@@ -502,10 +502,7 @@ msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
-msgstr ""
-
-msgid "Gray on green (low contrast option)"
-msgstr "Grijs op groen (lage contrast optie)"
+msgstr "Grijs op Groen"
 
 msgid "Hide Review"
 msgstr "Verberg herziening"
@@ -630,11 +627,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Item sessie controle"
 
-msgid "Items"
-msgstr "Items"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Items"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Items kunnen optioneel worden toegewezen aan een of meer categorieën. "
@@ -669,9 +666,6 @@ msgstr "Late inschrijvingen toegestaan"
 msgid "Leave a comment"
 msgstr "Laat een opmerking achter"
 
-msgid "Light yellow on royal blue"
-msgstr "Lichtgeel op koningsblauw"
-
 msgid "Line Reader"
 msgstr "Regel lezer"
 
@@ -705,12 +699,12 @@ msgstr "Beheer rubriek blokken"
 msgid "Manage test properties"
 msgstr "beheer toets eigenschappen"
 
+msgid "Manage Tests"
+msgstr "Beheer toetsen"
+
 #, tao-public
 msgid "Manage tests"
 msgstr "Beheer examens"
-
-msgid "Manage Tests"
-msgstr "Beheer toetsen"
 
 msgid "Mark for review"
 msgstr "Markeer voor herziening"
@@ -859,11 +853,11 @@ msgstr "Niet door elkaar gehaald, de posities blijven vast"
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
-msgstr "OK"
-
 msgid "Ok"
 msgstr "Ok"
+
+msgid "OK"
+msgstr "OK"
 
 msgid "OK & End test"
 msgstr "OK & beëindig test"
@@ -1042,10 +1036,10 @@ msgstr "Puntenteller"
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Notitieboekje"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Notitieboekje"
 
 msgid "Scratchpad"
@@ -1195,6 +1189,9 @@ msgstr "Bevestiging"
 msgid "Submit and go to the end of the test"
 msgstr "Beëindig de test"
 
+msgid "Submit and go to the item %s"
+msgstr ""
+
 msgid "Submit and go to the next item"
 msgstr "Ga naar de volgende pagina"
 
@@ -1250,11 +1247,11 @@ msgstr "Examens"
 msgid "Text content"
 msgstr "Tekst inhoud"
 
-msgid "Text to Speech"
-msgstr "Tekst naar spraak"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Tekst naar spraak"
 
 msgid "that was being taken."
 msgstr ""
@@ -1556,8 +1553,11 @@ msgstr "Of een antwoord van een kandidaat met een langere duur dan het maximum v
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Of een antwoord van een kandidaat met een langere duur dan het maximum nog steeds wordt geaccepteerd."
 
-msgid "White on black"
-msgstr "Wit op zwart"
+msgid "White on Black"
+msgstr "Wit op Zwart"
+
+msgid "White on Blue (TAO standard theme)"
+msgstr "Wit op Blauw (Standaard)"
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Wie kan rubriek blokken zien tijdens de levering."
@@ -1577,6 +1577,9 @@ msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "XML fout op regel %1$d kolom %2$d \"%3$s\"."
+
+msgid "Yellow on Blue"
+msgstr "Geel op Blauw"
 
 msgid "Yes"
 msgstr "Ja"
