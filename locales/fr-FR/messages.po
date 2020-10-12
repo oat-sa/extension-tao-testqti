@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:21\n"
+"Project-Id-Version: TAO 3.4.0-sprint138\n"
+"PO-Revision-Date: 2020-10-02T07:53:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -214,17 +214,17 @@ msgstr "Auteur"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Fichier auxiliaire non trouvé à l'emplacement \"%s\"."
 
-msgid "Black on cream"
-msgstr "Noir sur crème"
+msgid "Black on Cream"
+msgstr "Noir sur Crème"
 
-msgid "Black on light blue"
-msgstr "Noir sur bleu clair"
+msgid "Black on Light Blue"
+msgstr "Noir sur Bleu Clair"
 
-msgid "Black on magenta"
-msgstr "Noir sur magenta"
+msgid "Black on Light Magenta"
+msgstr "Noir sur Mauve"
 
-msgid "Black on white"
-msgstr "Noir et blanc"
+msgid "Black on White"
+msgstr "Noir sur Blanc"
 
 msgid "Calculator"
 msgstr "Calculatrice"
@@ -235,11 +235,11 @@ msgstr "Calculatrice BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
-msgstr "Annuler"
-
 msgid "CANCEL"
 msgstr ""
+
+msgid "Cancel"
+msgstr "Annuler"
 
 msgid "Candidate"
 msgstr "Candidat"
@@ -502,10 +502,7 @@ msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
-msgstr ""
-
-msgid "Gray on green (low contrast option)"
-msgstr "Gris sur vert (option de contraste faible)"
+msgstr "Gris sur Vert"
 
 msgid "Hide Review"
 msgstr "Cacher la revue"
@@ -630,11 +627,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Contrôle de session de l'item"
 
-msgid "Items"
-msgstr "Articles"
-
 msgid "items"
 msgstr "articles"
+
+msgid "Items"
+msgstr "Articles"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Les items peuvent en option être assignés à une ou plusieurs catégories."
@@ -669,9 +666,6 @@ msgstr "Soumission tardive permise"
 msgid "Leave a comment"
 msgstr "Laisser un commentaire"
 
-msgid "Light yellow on royal blue"
-msgstr "Jaune clair sur bleu royal"
-
 msgid "Line Reader"
 msgstr "Lecteur de ligne"
 
@@ -705,11 +699,11 @@ msgstr "Gérer les blocs de rubrique"
 msgid "Manage test properties"
 msgstr "Gérer les propriétés du test"
 
-#, tao-public
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Gérer les tests"
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr "Gérer les tests"
 
 msgid "Mark for review"
@@ -859,10 +853,10 @@ msgstr "Pas mélangé, la position reste fixée."
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr "OK"
 
-msgid "Ok"
+msgid "OK"
 msgstr "OK"
 
 msgid "OK & End test"
@@ -1042,10 +1036,10 @@ msgstr "Marqueur"
 msgid "Scoring"
 msgstr "Notation"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Bloc-notes"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Bloc-notes"
 
 msgid "Scratchpad"
@@ -1195,6 +1189,9 @@ msgstr "Envoi"
 msgid "Submit and go to the end of the test"
 msgstr "Envoyer et finir le test"
 
+msgid "Submit and go to the item %s"
+msgstr ""
+
 msgid "Submit and go to the next item"
 msgstr "Envoyer et aller à l'item suivant"
 
@@ -1250,11 +1247,11 @@ msgstr "Tests"
 msgid "Text content"
 msgstr "Contenu du texte"
 
-msgid "Text to Speech"
-msgstr "Synthèse vocale"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Synthèse vocale"
 
 msgid "that was being taken."
 msgstr ""
@@ -1556,8 +1553,11 @@ msgstr "Que la réponse d'un candidat faite au-delà de la durée maximale de la
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Que la réponse d'un candidat faite au-delà de la durée maximale puisse être acceptée."
 
-msgid "White on black"
-msgstr "Blanc sur noir"
+msgid "White on Black"
+msgstr "Blanc sur Noir"
+
+msgid "White on Blue (TAO standard theme)"
+msgstr "Blanc sur Bleu (standard)"
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Qui peut voir le bloc de rubrique pendant la passation."
@@ -1577,6 +1577,9 @@ msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "Erreur XML à la ligne %1$d, colonne %2$d \"%3$s\"."
+
+msgid "Yellow on Blue"
+msgstr "Jaune sur Bleu"
 
 msgid "Yes"
 msgstr "Oui"
