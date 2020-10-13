@@ -21,6 +21,7 @@
 
 namespace oat\taoQtiTest\models\creator;
 
+use common_exception_Error;
 use core_kernel_classes_Class;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
@@ -35,6 +36,7 @@ use oat\taoItems\model\CategoryService;
 class ListItemLookup extends ConfigurableService implements ItemLookup
 {
     use OntologyAwareTrait;
+    use PermissionLookupTrait;
 
     public const SERVICE_ID = 'taoQtiTest/CreatorItems/list';
 
@@ -47,6 +49,7 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
      * @param int                       $limit           for paging
      *
      * @return array the items
+     * @throws common_exception_Error
      */
     public function getItems(
         core_kernel_classes_Class $itemClass,
@@ -83,7 +86,9 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
 
             $node['categories'] = $this->getCategoryService()->getItemCategories($this->getResource($node['uri']));
         }
+        unset($node);
 
+        $result['nodes'] = $this->fillPermissions($result['nodes']);
         return $result;
     }
 

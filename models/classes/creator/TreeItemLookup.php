@@ -42,6 +42,8 @@ use oat\taoItems\model\CategoryService;
  */
 class TreeItemLookup extends ConfigurableService implements ItemLookup
 {
+    use PermissionLookupTrait;
+
     public const SERVICE_ID = 'taoQtiTest/CreatorItems/tree';
 
     public function getCategoryService(): CategoryService
@@ -76,7 +78,9 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
     ): array
     {
         $data = $this->getTreeResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
-        return $this->formatTreeData($data);
+        $nodes =  $this->formatTreeData($data);
+        $nodes = $this->fillPermissions($nodes);
+        return $nodes;
     }
 
     /**
@@ -101,37 +105,6 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
                 $item['children'] = $this->formatTreeData($item['children']);
             }
         }
-
-        $treeData['permissions'] = $this->getPermissions($treeData);
         return $treeData;
-    }
-
-    /**
-     * @param array $resources
-     * @return array
-     * @throws common_exception_Error
-     */
-    private function getPermissions(array $resources): array
-    {
-        //retrieve resources permissions
-        $user = $this->getSession() ? $this->getSession()->getUser() : null;
-        return $user ? $this->getResourceService()->getResourcesPermissions($user, $resources) : [];
-    }
-
-    /**
-     * @return common_session_AnonymousSession|common_session_Session|null
-     * @throws common_exception_Error
-     */
-    private function getSession(): common_session_Session
-    {
-        return common_Session_SessionManager::getSession();
-    }
-
-    /**
-     * @return ResourceService|object
-     */
-    protected function getResourceService(): ResourceService
-    {
-        return $this->getServiceLocator()->get(ResourceService::SERVICE_ID);
     }
 }
