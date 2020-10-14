@@ -22,16 +22,10 @@
 namespace oat\taoQtiTest\models\creator;
 
 use common_exception_Error;
-use common_session_AnonymousSession;
-use common_session_Session;
-use common_Session_SessionManager;
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
-use oat\generis\model\data\permission\PermissionHelper;
-use oat\generis\model\data\permission\PermissionInterface;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\resources\ResourceLookup;
-use oat\tao\model\resources\ResourceService;
 use oat\tao\model\resources\TreeResourceLookup;
 use oat\taoItems\model\CategoryService;
 

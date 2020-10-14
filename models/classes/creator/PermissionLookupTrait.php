@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\models\creator;
 use common_exception_Error;
 use common_session_AnonymousSession;
 use common_session_Session;
-use common_session_SessionManager;
+use oat\oatbox\session\SessionService;
 use oat\tao\model\resources\ResourceService;
 
 trait PermissionLookupTrait
@@ -53,8 +53,8 @@ trait PermissionLookupTrait
                         if (array_key_exists('children', $node)) {
                             $node['children'] = $self->fillPermissions($node['children']);
                         }
-                        if (array_key_exists('uri', $node) && isset($rules[$node['uri']])) {
-                            $node['accessMode'] = $self->getAccessMode($rules[$node['uri']], $rights);
+                        if (array_key_exists('uri', $node)) {
+                            $node['accessMode'] = $self->getAccessMode($rules, $rights, $node['uri']);
                         }
                     }
 
@@ -67,13 +67,19 @@ trait PermissionLookupTrait
 
     /**
      * partial|denied|allowed
-     * @param array $itemRules
+     * @param array $rules
      * @param array $supportedRights
+     * @param string $uri
      * @return string
      */
-    private function getAccessMode(array $itemRules, array $supportedRights): string
+    private function getAccessMode(array $rules, array $supportedRights, string $uri): string
     {
-        if (count($supportedRights) === 0 || $itemRules == $supportedRights) {
+        $itemRules = array_key_exists($uri, $rules) ? $rules[$uri] : [];
+        if (
+            count($supportedRights) === 0
+            || $itemRules == $supportedRights
+            || (in_array('GRANT', $itemRules, true))
+        ) {
             return 'allowed';
         }
 
@@ -87,7 +93,6 @@ trait PermissionLookupTrait
     /**
      * @param array $resources
      * @return array
-     * @throws common_exception_Error
      */
     private function getPermissions(array $resources): array
     {
@@ -103,11 +108,10 @@ trait PermissionLookupTrait
 
     /**
      * @return common_session_AnonymousSession|common_session_Session|null
-     * @throws common_exception_Error
      */
     private function getSession(): common_session_Session
     {
-        return common_Session_SessionManager::getSession();
+        return $this->getServiceLocator()->get(SessionService::SERVICE_ID)->getCurrentSession();
     }
 
     /**

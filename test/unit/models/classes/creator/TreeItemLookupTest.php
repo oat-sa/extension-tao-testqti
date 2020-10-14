@@ -1,17 +1,4 @@
-<?php declare(strict_types=1);
-
-namespace oat\taoQtiTest\test\unit\models\classes\creator;
-
-use core_kernel_classes_Class;
-use oat\generis\model\data\permission\PermissionHelper;
-use oat\generis\test\MockObject;
-use oat\generis\test\TestCase;
-use oat\tao\model\resources\ResourceLookup;
-use oat\tao\model\resources\TreeResourceLookup;
-use oat\taoItems\model\CategoryService;
-use oat\taoQtiTest\models\creator\TreeItemLookup;
-use Zend\ServiceManager\ServiceLocatorInterface;
-
+<?php
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,13 +16,26 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
  */
+declare(strict_types=1);
+
+namespace oat\taoQtiTest\test\unit\models\classes\creator;
+
+use common_session_AnonymousSession;
+use core_kernel_classes_Class;
+use oat\generis\test\MockObject;
+use oat\generis\test\TestCase;
+use oat\oatbox\session\SessionService;
+use oat\tao\model\resources\ResourceLookup;
+use oat\tao\model\resources\ResourceService;
+use oat\tao\model\resources\TreeResourceLookup;
+use oat\taoItems\model\CategoryService;
+use oat\taoQtiTest\models\creator\TreeItemLookup;
+use Zend\ServiceManager\ServiceLocatorInterface;
+
 class TreeItemLookupTest extends TestCase
 {
     /** @var array */
     private $resources = [];
-
-    /** @var array */
-    private $readableResourceMap = [];
 
     /** @var core_kernel_classes_Class */
     private $rootMock;
@@ -46,14 +46,20 @@ class TreeItemLookupTest extends TestCase
     /** @var ResourceLookup|MockObject */
     private $resourceLookupMock;
 
-    /** @var PermissionHelper|MockObject */
-    private $permissionHelper;
-
     /** @var ServiceLocatorInterface */
     private $serviceLocatorMock;
 
     /** @var TreeItemLookup */
     private $sut;
+
+    /** @var ResourceService|MockObject */
+    private $resourceServiceMock;
+
+    /** @var SessionService|MockObject */
+    private $sessionServiceMock;
+
+    /** @var array */
+    private $permissions;
 
     public function setUp(): void
     {
@@ -68,7 +74,8 @@ class TreeItemLookupTest extends TestCase
         $this->rootMock = $this->createMock(core_kernel_classes_Class::class);
         $this->categoryServiceMock = $this->createMock(CategoryService::class);
         $this->resourceLookupMock = $this->createMock(ResourceLookup::class);
-        $this->permissionHelper = $this->createMock(PermissionHelper::class);
+        $this->resourceServiceMock = $this->createMock(ResourceService::class);
+        $this->sessionServiceMock     = $this->createMock(SessionService::class);
     }
 
     public function initializeTestDoubleExpectancies(): void
@@ -83,9 +90,24 @@ class TreeItemLookupTest extends TestCase
             ->method('getItemCategories')
             ->willReturn([]);
 
-        $this->permissionHelper
-            ->method('filterByPermission')
-            ->willReturnCallback([$this, 'getReadableResourceMap']);
+        $sessionMock = new common_session_AnonymousSession();
+        $this->sessionServiceMock
+            ->method('getCurrentSession')
+            ->willReturn($sessionMock);
+
+        $self = $this;
+        $this->resourceServiceMock
+            ->method('getResourcesPermissions')
+            ->willReturnCallback(static function($user, $resources) use ($self) {
+                $data = [];
+                foreach ($self->permissions as $uri) {
+                    $data[$uri] = ['GRANT'];
+                }
+                return [
+                    'supportedRights' => ['GRANT', 'WRITE', 'READ'],
+                    'data' => $data,
+                ];
+            });
     }
 
     public function initializeServiceLocator(): void
@@ -94,7 +116,8 @@ class TreeItemLookupTest extends TestCase
             [
                 CategoryService::SERVICE_ID    => $this->categoryServiceMock,
                 TreeResourceLookup::SERVICE_ID => $this->resourceLookupMock,
-                PermissionHelper::class        => $this->permissionHelper,
+                ResourceService::SERVICE_ID => $this->resourceServiceMock,
+                SessionService::SERVICE_ID => $this->sessionServiceMock,
             ]
         );
     }
@@ -110,11 +133,6 @@ class TreeItemLookupTest extends TestCase
         return $this->resources;
     }
 
-    public function getReadableResourceMap(): array
-    {
-        return $this->readableResourceMap;
-    }
-
     public function dataProvider(): array
     {
         return [
@@ -126,11 +144,13 @@ class TreeItemLookupTest extends TestCase
                     [
                         'uri'      => 'http://root',
                         'type'     => 'class',
+                        'accessMode' => 'allowed',
                         'children' => [
                             [
                                 'uri'        => 'http://child#1',
                                 'type'       => 'instance',
                                 'categories' => [],
+                                'accessMode' => 'allowed',
                             ],
                         ],
                     ],
@@ -149,6 +169,7 @@ class TreeItemLookupTest extends TestCase
                 ],
                 'readableResourceMap' => [
                     'http://child#1',
+                    'http://root'
                 ],
             ],
             'Restrictions'    => [
@@ -156,15 +177,24 @@ class TreeItemLookupTest extends TestCase
                     [
                         'uri'      => 'http://root',
                         'type'     => 'class',
+                        'accessMode' => 'denied',
                         'children' => [
+                            [
+                                'uri'  => 'http://child#1',
+                                'type' => 'instance',
+                                'accessMode' => 'denied',
+                                'categories' => [],
+                            ],
                             [
                                 'uri'        => 'http://child#2',
                                 'type'       => 'instance',
                                 'categories' => [],
+                                'accessMode' => 'allowed'
                             ],
                             [
                                 'uri'  => 'http://child#3',
                                 'type' => 'class',
+                                'accessMode' => 'denied',
                             ],
                         ],
                     ],
@@ -210,7 +240,7 @@ class TreeItemLookupTest extends TestCase
         $this->initializeTestDoubleExpectancies();
 
         $this->resources = $resources;
-        $this->readableResourceMap = $readableResourceMap;
+        $this->permissions = $readableResourceMap;
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $result = $this->sut->getItems($this->rootMock);
@@ -219,11 +249,14 @@ class TreeItemLookupTest extends TestCase
             $result[0]['children'] = array_values($result[0]['children']);
         }
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function testGetItemsNoResources(): void
     {
+        $this->initializeTestDoubleExpectancies();
+        $this->permissions = [];
+
         $data = [
             [
                 'type' => 'class',
@@ -239,10 +272,6 @@ class TreeItemLookupTest extends TestCase
             ->expects(static::once())
             ->method('getResources')
             ->willReturn($data);
-
-        $this->permissionHelper
-            ->expects(static::never())
-            ->method('filterByPermission');
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->sut->getItems($this->rootMock);
