@@ -58,7 +58,7 @@ return [
     'requires' => [
         'taoQtiItem' => '>=24.0.0',
         'taoTests' => '>=14.3.0',
-        'tao' => '>=45.0.0',
+        'tao' => '>=46.1.1',
         'generis' => '>=12.20.0',
         'taoDelivery' => '>=14.18.0',
         'taoItems' => '>=6.0.0',
