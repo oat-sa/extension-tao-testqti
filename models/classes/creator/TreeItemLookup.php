@@ -24,8 +24,6 @@ namespace oat\taoQtiTest\models\creator;
 use common_exception_Error;
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
-use oat\generis\model\data\permission\PermissionHelper;
-use oat\generis\model\data\permission\PermissionInterface;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\resources\ResourceLookup;
 use oat\tao\model\resources\TreeResourceLookup;
@@ -38,6 +36,8 @@ use oat\taoItems\model\CategoryService;
  */
 class TreeItemLookup extends ConfigurableService implements ItemLookup
 {
+    use PermissionLookupTrait;
+
     public const SERVICE_ID = 'taoQtiTest/CreatorItems/tree';
 
     public function getCategoryService(): CategoryService
@@ -69,44 +69,12 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
         array $propertyFilters = [],
         $offset = 0,
         $limit = 30
-    ): array {
-        $data = $this->getTreeResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
-
-        return $this->formatTreeData(
-            $this->filterTreeData($data)
-        );
-    }
-
-    private function filterTreeData(array $treeData): array
+    ): array
     {
-        if (empty($treeData) || empty($treeData[0]['children'])) {
-            return $treeData;
-        }
-
-        $nodeIds = [];
-
-        foreach ($treeData[0]['children'] as $child) {
-            if ($child['type'] === 'instance') {
-                $nodeIds[] = $child['uri'];
-            }
-        }
-
-        if (empty($nodeIds)) {
-            return $treeData;
-        }
-
-        $accessibleNodes = array_flip(
-            $this->getPermissionHelper()->filterByPermission($nodeIds, PermissionInterface::RIGHT_READ)
-        );
-
-        $treeData[0]['children'] = array_filter(
-            $treeData[0]['children'],
-            static function (array $item) use ($accessibleNodes): bool {
-                return $item['type'] !== 'instance' || isset($accessibleNodes[$item['uri']]);
-            }
-        );
-
-        return $treeData;
+        $data = $this->getTreeResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
+        $nodes =  $this->formatTreeData($data);
+        $nodes = $this->fillPermissions($nodes);
+        return $nodes;
     }
 
     /**
@@ -131,13 +99,6 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
                 $item['children'] = $this->formatTreeData($item['children']);
             }
         }
-
         return $treeData;
-    }
-
-    private function getPermissionHelper(): PermissionHelper
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceLocator()->get(PermissionHelper::class);
     }
 }
