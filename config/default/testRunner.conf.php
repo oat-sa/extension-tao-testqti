@@ -662,6 +662,7 @@ return [
 
     /**
      * If 'default-validate-response' is true, by default system requires a mandatory response
+     * The value is just default and can be overridden by a QTI test / section / item setting
      * @type boolean
      */
     'default-validate-response' => true,
