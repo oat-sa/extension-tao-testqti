@@ -162,7 +162,8 @@ trait RunnerParamParserTrait
                 ? json_decode($this->getRequestParameter('itemResponse'), true)
                 : null;
 
-            if ($serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemDefinition) {
+            $currentAssessmentItemRef = $serviceContext->getCurrentAssessmentItemRef();
+            if ($currentAssessmentItemRef && $serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemDefinition) {
                 throw new QtiRunnerItemResponseException(__('Item response identifier does not match current item'));
             }
 

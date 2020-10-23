@@ -44,6 +44,7 @@ use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
@@ -431,6 +432,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $catEngine;
     }
 
+    /**
+     * @return AssessmentTestSession
+     * @throws \common_exception_Error
+     */
     public function getTestSession()
     {
         if (!$this->testSession) {
@@ -652,7 +657,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      *
      * This method returns the current AssessmentItemRef object depending on the test $context.
      *
-     * @return \qtism\data\ExtendedAssessmentItemRef
+     * @return \qtism\data\ExtendedAssessmentItemRef|false
      */
     public function getCurrentAssessmentItemRef()
     {
