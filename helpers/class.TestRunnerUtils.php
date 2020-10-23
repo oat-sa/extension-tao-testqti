@@ -69,7 +69,7 @@ class taoQtiTest_helpers_TestRunnerUtils
      * Get the runtime config
      * @return array the configuration
      */
-    protected static function getRuntimeConfig()
+    private static function getRuntimeConfig()
     {
         $extension = self::getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
         return $extension->getConfig('testRunner');
