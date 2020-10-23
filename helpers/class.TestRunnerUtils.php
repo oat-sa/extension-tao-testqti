@@ -66,6 +66,16 @@ class taoQtiTest_helpers_TestRunnerUtils
     }
 
     /**
+     * Get the runtime config
+     * @return array the configuration
+     */
+    protected static function getRuntimeConfig()
+    {
+        $extension = self::getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        return $extension->getConfig('testRunner');
+    }
+
+    /**
      * Get the ServiceCall object representing how to call the current Assessment Item to be
      * presented to a candidate in a given Assessment Test $session.
      *
@@ -277,7 +287,9 @@ class taoQtiTest_helpers_TestRunnerUtils
      */
     public static function doesAllowSkipping(AssessmentTestSession $session)
     {
-        $doesAllowSkipping = true;
+        $runtimeConfig = self::getRuntimeConfig();
+        $doesAllowSkipping = isset($runtimeConfig['validate-response']) ? $runtimeConfig['validate-response'] : true;
+
         $submissionMode = $session->getCurrentSubmissionMode();
 
         $routeItem = $session->getRoute()->current();

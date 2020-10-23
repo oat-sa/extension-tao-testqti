@@ -660,4 +660,10 @@ return [
      */
     'enable-linear-next-item-warning-checkbox' => true,
 
+    /**
+     * If 'validate-response' is true, system requires a mandatory response
+     * @type boolean
+     */
+    'validate-response' => true,
+
 ];
