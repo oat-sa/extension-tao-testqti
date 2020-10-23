@@ -14,7 +14,7 @@ final class Version202010231329012260_taoQtiTest extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return "set option 'validate-response'";
+        return "set option 'default-validate-response'";
     }
 
     public function up(Schema $schema): void

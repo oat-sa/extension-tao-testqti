@@ -661,7 +661,7 @@ return [
     'enable-linear-next-item-warning-checkbox' => true,
 
     /**
-     * If 'validate-response' is true, by default system requires a mandatory response
+     * If 'default-validate-response' is true, by default system requires a mandatory response
      * @type boolean
      */
     'default-validate-response' => true,
