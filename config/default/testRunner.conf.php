@@ -664,6 +664,6 @@ return [
      * If 'validate-response' is true, system requires a mandatory response
      * @type boolean
      */
-    'validate-response' => true,
+    'default-validate-response' => true,
 
 ];

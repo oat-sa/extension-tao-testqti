@@ -288,7 +288,7 @@ class taoQtiTest_helpers_TestRunnerUtils
     public static function doesAllowSkipping(AssessmentTestSession $session)
     {
         $runtimeConfig = self::getRuntimeConfig();
-        $doesAllowSkipping = isset($runtimeConfig['validate-response']) ? $runtimeConfig['validate-response'] : true;
+        $doesAllowSkipping = isset($runtimeConfig['default-validate-response']) ? $runtimeConfig['default-validate-response'] : true;
 
         $submissionMode = $session->getCurrentSubmissionMode();
 

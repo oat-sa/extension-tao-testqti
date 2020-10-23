@@ -12,7 +12,6 @@ use oat\tao\scripts\tools\migrations\AbstractMigration;
  */
 final class Version202010231329012260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return "set option 'validate-response'";
@@ -22,7 +21,7 @@ final class Version202010231329012260_taoQtiTest extends AbstractMigration
     {
         $extension = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
         $config = $extension->getConfig('testRunner');
-        $config['validate-response'] = true;
+        $config['default-validate-response'] = true;
         $extension->setConfig('testRunner', $config);
     }
 
@@ -31,7 +30,7 @@ final class Version202010231329012260_taoQtiTest extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $extension = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
         $config = $extension->getConfig('testRunner');
-        unset($config['validate-response']);
+        unset($config['default-validate-response']);
         $extension->setConfig('testRunner', $config);
     }
 }
