@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:31\n"
+"Project-Id-Version: TAO 3.4.0-sprint139\n"
+"PO-Revision-Date: 2020-10-23T11:29:58\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s loaded"
-msgstr ""
 
 msgid "%s to answer %s"
 msgstr ""
@@ -214,17 +211,17 @@ msgstr "Autorius"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Būtinas failas nebuvo rastas \"%s\" vietoje."
 
-msgid "Black on cream"
-msgstr "Juoda su kremine"
+msgid "Black on Cream"
+msgstr ""
 
-msgid "Black on light blue"
-msgstr "Juoda su žydra"
+msgid "Black on Light Blue"
+msgstr ""
 
-msgid "Black on magenta"
-msgstr "Juoda su rausvai raudona"
+msgid "Black on Light Magenta"
+msgstr ""
 
-msgid "Black on white"
-msgstr "Juoda su balta"
+msgid "Black on White"
+msgstr ""
 
 msgid "Calculator"
 msgstr "Skaičiuotuvas"
@@ -406,10 +403,10 @@ msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Baigti testą"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Baigti testą"
 
 msgid "Enter a blueprint"
@@ -503,9 +500,6 @@ msgstr ""
 
 msgid "Gray on Green"
 msgstr ""
-
-msgid "Gray on green (low contrast option)"
-msgstr "Pilka su žalia (mažo kontrasto pasirinkimas)"
 
 msgid "Hide Review"
 msgstr "Slėpti apžvalgą"
@@ -621,6 +615,9 @@ msgstr "Klausimas %d"
 msgid "Item %d of %d"
 msgstr "%d/%d"
 
+msgid "Item %s loaded"
+msgstr ""
+
 msgid "Item Reference Properties"
 msgstr "Elemento Šaltinio Savybės"
 
@@ -668,9 +665,6 @@ msgstr "Vėluojamas pateikimas leidžiamas"
 
 msgid "Leave a comment"
 msgstr "Palikti komentarą"
-
-msgid "Light yellow on royal blue"
-msgstr "Šviesiai geltona su karališka mėlyna"
 
 msgid "Line Reader"
 msgstr "Linijos Skaitytuvas"
@@ -859,10 +853,10 @@ msgstr "Nemaišoma, vieta išlieka pastovi."
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr "Gerai"
 
-msgid "Ok"
+msgid "OK"
 msgstr "Gerai"
 
 msgid "OK & End test"
@@ -1194,6 +1188,9 @@ msgstr "Pateikimas"
 
 msgid "Submit and go to the end of the test"
 msgstr "Pateikti ir eiti į testo pabaigą"
+
+msgid "Submit and go to the item %s"
+msgstr ""
 
 msgid "Submit and go to the next item"
 msgstr "Pateikite atsakymą ir pereikite į kitą klausimą"
@@ -1556,8 +1553,11 @@ msgstr ""
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Nesvarbu, ar kandidato atsakymas, kuris yra daugiau negu maksimali trukmė, galėtų būti priimta."
 
-msgid "White on black"
-msgstr "Balta su juoda"
+msgid "White on Black"
+msgstr ""
+
+msgid "White on Blue (TAO standard theme)"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Kas gali peržiūrėti rubrikos bloką per pateiktį."
@@ -1577,6 +1577,9 @@ msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "XML klaida eilutės %1$d stulpelyje %2$d \"%3$s\"."
+
+msgid "Yellow on Blue"
+msgstr ""
 
 msgid "Yes"
 msgstr "Taip"

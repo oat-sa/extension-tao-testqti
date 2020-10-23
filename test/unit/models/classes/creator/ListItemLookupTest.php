@@ -2,16 +2,18 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\creator;
 
+use common_exception_Error;
+use common_session_AnonymousSession;
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource as RdfResource;
 use oat\generis\model\data\Ontology;
-use oat\generis\model\data\permission\PermissionHelper;
 use oat\generis\test\MockObject;
 use oat\generis\test\TestCase;
 use oat\oatbox\session\SessionService;
 use oat\oatbox\user\User;
 use oat\tao\model\resources\ListResourceLookup;
 use oat\tao\model\resources\ResourceLookup;
+use oat\tao\model\resources\ResourceService;
 use oat\taoItems\model\CategoryService;
 use oat\taoQtiTest\models\creator\ListItemLookup;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -38,12 +40,6 @@ class ListItemLookupTest extends TestCase
     /** @var array */
     private $resources = [];
 
-    /** @var array */
-    private $permissions = [];
-
-    /** @var PermissionHelper|MockObject */
-    private $permissionHelper;
-
     /** @var User|MockObject */
     private $userMock;
 
@@ -68,6 +64,14 @@ class ListItemLookupTest extends TestCase
     /** @var ListItemLookup */
     private $sut;
 
+    /** @var ResourceService|MockObject */
+    private $resourceServiceMock;
+
+    /**
+     * @var array
+     */
+    private $permissions;
+
     public function setUp(): void
     {
         $this->initializeTestDoubles();
@@ -78,13 +82,13 @@ class ListItemLookupTest extends TestCase
 
     public function initializeTestDoubles(): void
     {
-        $this->permissionHelper       = $this->createMock(PermissionHelper::class);
         $this->userMock               = $this->createMock(User::class);
         $this->rootMock               = $this->createMock(core_kernel_classes_Class::class);
         $this->sessionServiceMock     = $this->createMock(SessionService::class);
         $this->resourceLookupMock     = $this->createMock(ResourceLookup::class);
         $this->categoryServiceMock    = $this->createMock(CategoryService::class);
         $this->ontologyMock           = $this->createMock(Ontology::class);
+        $this->resourceServiceMock = $this->createMock(ResourceService::class);
     }
 
     public function initializeTestDoubleExpectancies(): void
@@ -98,33 +102,42 @@ class ListItemLookupTest extends TestCase
         $this->sessionServiceMock
             ->method('getCurrentUser')
             ->willReturn($this->userMock);
+
+        $sessionMock = new common_session_AnonymousSession();
+        $this->sessionServiceMock
+            ->method('getCurrentSession')
+            ->willReturn($sessionMock);
+
+        $self = $this;
+        $this->resourceServiceMock
+            ->method('getResourcesPermissions')
+            ->willReturnCallback(static function($user, $resources) use ($self) {
+                $data = [];
+                foreach ($self->permissions as $uri) {
+                    $data[$uri] = ['GRANT'];
+                }
+                return [
+                    'supportedRights' => ['GRANT', 'WRITE', 'READ'],
+                    'data' => $data,
+                ];
+            });
     }
 
     public function initializeServiceLocator(): void
     {
-        $this->serviceLocatorMock = $this->createMock(ServiceLocatorInterface::class);
-
-        $this->serviceLocatorMock
-            ->method('get')
-            ->willReturnMap(
-                [
-                    [Ontology::SERVICE_ID, $this->ontologyMock],
-                    [SessionService::SERVICE_ID, $this->sessionServiceMock],
-                    [ListResourceLookup::SERVICE_ID, $this->resourceLookupMock],
-                    [CategoryService::SERVICE_ID, $this->categoryServiceMock],
-                    [PermissionHelper::class, $this->permissionHelper],
-                ]
-            );
-        $this->permissionHelper->setServiceLocator($this->serviceLocatorMock);
+        $this->serviceLocatorMock = $this->getServiceLocatorMock([
+            Ontology::SERVICE_ID => $this->ontologyMock,
+            SessionService::SERVICE_ID => $this->sessionServiceMock,
+            ListResourceLookup::SERVICE_ID => $this->resourceLookupMock,
+            CategoryService::SERVICE_ID => $this->categoryServiceMock,
+            ResourceService::SERVICE_ID => $this->resourceServiceMock,
+        ]);
     }
 
     public function initializeSut(): void
     {
-        $this->sut = $this->createPartialMock(ListItemLookup::class, ['getServiceLocator']);
-
-        $this->sut
-            ->method('getServiceLocator')
-            ->willReturn($this->serviceLocatorMock);
+        $this->sut = new ListItemLookup();
+        $this->sut->setServiceLocator($this->serviceLocatorMock);
     }
 
     public function setResources(array $resources): void
@@ -147,20 +160,11 @@ class ListItemLookupTest extends TestCase
         $this->categoryServiceMock
             ->method('getItemCategories')
             ->willReturnMap($categoriesMap);
-
-        $this->permissionHelper
-            ->method('filterByPermission')
-            ->willReturnCallback([$this, 'getPermissions']);
     }
 
     public function getResources(): array
     {
         return $this->resources;
-    }
-
-    public function getPermissions(): array
-    {
-        return $this->permissions;
     }
 
     public function dataProvider(): array
@@ -178,6 +182,7 @@ class ListItemLookupTest extends TestCase
                         [
                             'uri'        => 'http://child#1',
                             'categories' => ['child1_category'],
+                            'accessMode' => 'allowed',
                         ],
                     ],
                     'total' => 1,
@@ -199,8 +204,14 @@ class ListItemLookupTest extends TestCase
                 'expected'    => [
                     'nodes' => [
                         [
+                            'uri'        => 'http://child#1',
+                            'categories' => ['child1_category'],
+                            'accessMode' => 'denied',
+                        ],
+                        [
                             'uri'        => 'http://child#2',
                             'categories' => ['child2_category'],
+                            'accessMode' => 'allowed'
                         ],
                     ],
                     'total' => 2,
@@ -216,7 +227,7 @@ class ListItemLookupTest extends TestCase
                             'categories' => ['child2_category'],
                         ],
                     ],
-                    'total' => 3,
+                    'total' => 2,
                 ],
                 'permissions' => [
                     'http://child#2',
@@ -231,6 +242,7 @@ class ListItemLookupTest extends TestCase
      * @param array $expected
      * @param array $resources
      * @param array $permissions
+     * @throws common_exception_Error
      */
     public function testGetItems(
         array $expected,
@@ -247,9 +259,12 @@ class ListItemLookupTest extends TestCase
             $result['nodes'] = array_values($result['nodes']);
         }
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
+    /**
+     * @throws common_exception_Error
+     */
     public function testGetItemsNoResources(): void
     {
         $data = ['nodes' => []];
@@ -258,10 +273,6 @@ class ListItemLookupTest extends TestCase
             ->expects(static::once())
             ->method('getResources')
             ->willReturn($data);
-
-        $this->permissionHelper
-            ->expects(static::never())
-            ->method('filterByPermission');
 
         $this->sut->getItems($this->rootMock);
     }

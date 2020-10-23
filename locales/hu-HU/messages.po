@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:22\n"
+"Project-Id-Version: TAO 3.4.0-sprint139\n"
+"PO-Revision-Date: 2020-10-23T11:29:45\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: hu-HU\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s loaded"
-msgstr ""
 
 msgid "%s to answer %s"
 msgstr ""
@@ -214,16 +211,16 @@ msgstr ""
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr ""
 
-msgid "Black on cream"
+msgid "Black on Cream"
 msgstr ""
 
-msgid "Black on light blue"
+msgid "Black on Light Blue"
 msgstr ""
 
-msgid "Black on magenta"
+msgid "Black on Light Magenta"
 msgstr ""
 
-msgid "Black on white"
+msgid "Black on White"
 msgstr ""
 
 msgid "Calculator"
@@ -406,10 +403,10 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr ""
 
-msgid "End test"
+msgid "End Test"
 msgstr ""
 
 msgid "Enter a blueprint"
@@ -501,9 +498,6 @@ msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
-msgstr ""
-
-msgid "Gray on green (low contrast option)"
 msgstr ""
 
 msgid "Hide Review"
@@ -620,6 +614,9 @@ msgstr ""
 msgid "Item %d of %d"
 msgstr ""
 
+msgid "Item %s loaded"
+msgstr ""
+
 msgid "Item Reference Properties"
 msgstr ""
 
@@ -666,9 +663,6 @@ msgid "Late submission allowed"
 msgstr ""
 
 msgid "Leave a comment"
-msgstr ""
-
-msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -858,10 +852,10 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr ""
 
-msgid "Ok"
+msgid "OK"
 msgstr ""
 
 msgid "OK & End test"
@@ -1192,6 +1186,9 @@ msgid "Submission"
 msgstr ""
 
 msgid "Submit and go to the end of the test"
+msgstr ""
+
+msgid "Submit and go to the item %s"
 msgstr ""
 
 msgid "Submit and go to the next item"
@@ -1555,7 +1552,10 @@ msgstr ""
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr ""
 
-msgid "White on black"
+msgid "White on Black"
+msgstr ""
+
+msgid "White on Blue (TAO standard theme)"
 msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
@@ -1575,6 +1575,9 @@ msgid "XML Editor"
 msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
+msgstr ""
+
+msgid "Yellow on Blue"
 msgstr ""
 
 msgid "Yes"

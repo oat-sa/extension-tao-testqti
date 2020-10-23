@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint138\n"
-"PO-Revision-Date: 2020-10-02T07:47:45\n"
+"Project-Id-Version: TAO 3.4.0-sprint139\n"
+"PO-Revision-Date: 2020-10-23T11:29:24\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s loaded"
-msgstr ""
 
 msgid "%s to answer %s"
 msgstr ""
@@ -235,11 +232,11 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr ""
-
 msgid "Cancel"
 msgstr "Abbrechen"
+
+msgid "CANCEL"
+msgstr ""
 
 msgid "Candidate"
 msgstr "Kandidat"
@@ -406,10 +403,10 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr "Test beenden"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Test beenden"
 
 msgid "Enter a blueprint"
@@ -618,6 +615,9 @@ msgstr ""
 msgid "Item %d of %d"
 msgstr "Element %d von %d"
 
+msgid "Item %s loaded"
+msgstr ""
+
 msgid "Item Reference Properties"
 msgstr "Element Referenz-Eigenschaften"
 
@@ -627,11 +627,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Element-Sitzungskontrolle"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Elemente"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elemente können manuell zu einer oder mehreren Kategorien hinzugefügt werden."
@@ -699,12 +699,12 @@ msgstr "Rubrik-Blöcke verwalten"
 msgid "Manage test properties"
 msgstr "Test-Eigenschaften verwalten"
 
-msgid "Manage Tests"
-msgstr "Tests verwalten"
-
 #, tao-public
 msgid "Manage tests"
 msgstr ""
+
+msgid "Manage Tests"
+msgstr "Tests verwalten"
 
 msgid "Mark for review"
 msgstr "Zur Bewertung markieren"
@@ -1036,10 +1036,10 @@ msgstr "Punktezähler"
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1247,10 +1247,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."

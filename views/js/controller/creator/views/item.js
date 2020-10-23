@@ -45,7 +45,7 @@ define([
      */
     const onError = function onError(err) {
         logger.error(err);
-        feedback.error(err.message || __('An error occured while retrieving items'));
+        feedback().error(err.message || __('An error occured while retrieving items'));
     };
 
     const ITEM_URI = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';

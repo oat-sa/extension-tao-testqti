@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:36\n"
+"Project-Id-Version: TAO 3.4.0-sprint139\n"
+"PO-Revision-Date: 2020-10-23T11:30:08\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s loaded"
-msgstr ""
 
 msgid "%s to answer %s"
 msgstr ""
@@ -214,17 +211,17 @@ msgstr "Автор"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "По расположению «%s» не найден вспомогательный файл."
 
-msgid "Black on cream"
-msgstr "Черный на кремовом"
+msgid "Black on Cream"
+msgstr ""
 
-msgid "Black on light blue"
-msgstr "Черный на голубом"
+msgid "Black on Light Blue"
+msgstr ""
 
-msgid "Black on magenta"
-msgstr "Черный на пурпурном"
+msgid "Black on Light Magenta"
+msgstr ""
 
-msgid "Black on white"
-msgstr "Черный на белом"
+msgid "Black on White"
+msgstr ""
 
 msgid "Calculator"
 msgstr "Калькулятор"
@@ -406,10 +403,10 @@ msgstr "Включить экран пересмотра элемента/нав
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Завершить тест"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Завершить тест"
 
 msgid "Enter a blueprint"
@@ -502,9 +499,6 @@ msgstr ""
 
 msgid "Gray on Green"
 msgstr ""
-
-msgid "Gray on green (low contrast option)"
-msgstr "Серый на зеленом (опция низкого контраста)"
 
 msgid "Hide Review"
 msgstr "Скрыть панель просмотра"
@@ -620,6 +614,9 @@ msgstr "Элемент %d"
 msgid "Item %d of %d"
 msgstr "Элемент %d из %d"
 
+msgid "Item %s loaded"
+msgstr ""
+
 msgid "Item Reference Properties"
 msgstr "Свойства ссылки на элемент"
 
@@ -667,9 +664,6 @@ msgstr "Поздняя отправка разрешена"
 
 msgid "Leave a comment"
 msgstr "Оставить комментарий"
-
-msgid "Light yellow on royal blue"
-msgstr "Светло-желтый на ярко-синем"
 
 msgid "Line Reader"
 msgstr "Построчное чтение"
@@ -858,10 +852,10 @@ msgstr "Не перемешано, позиция остается фиксир�
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr "OK"
 
-msgid "Ok"
+msgid "OK"
 msgstr "OK"
 
 msgid "OK & End test"
@@ -1193,6 +1187,9 @@ msgstr "Отправка"
 
 msgid "Submit and go to the end of the test"
 msgstr "Отправить и перейти в конец теста"
+
+msgid "Submit and go to the item %s"
+msgstr ""
 
 msgid "Submit and go to the next item"
 msgstr "Отправить и перейти к следующему элементу"
@@ -1555,8 +1552,11 @@ msgstr "Определяет, может ли приниматься ответ 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Определяет, может ли приниматься ответ кандидата, по которому превышена максимальная длительность."
 
-msgid "White on black"
-msgstr "Белый на черном"
+msgid "White on Black"
+msgstr ""
+
+msgid "White on Blue (TAO standard theme)"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Определяет, кто может просматривать тематический блок во время выдачи."
@@ -1576,6 +1576,9 @@ msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "Ошибка XML, строка %1$d, столбец %2$d, «%3$s»."
+
+msgid "Yellow on Blue"
+msgstr ""
 
 msgid "Yes"
 msgstr "Да"
