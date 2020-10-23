@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:15\n"
+"Project-Id-Version: TAO 3.4.0-sprint139\n"
+"PO-Revision-Date: 2020-10-23T11:29:33\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-ES\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s loaded"
-msgstr ""
 
 msgid "%s to answer %s"
 msgstr ""
@@ -214,17 +211,17 @@ msgstr "Autor"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "Archivo auxiliar no encontrado en la ubicación \"%s\"."
 
-msgid "Black on cream"
-msgstr "Negro sobre crema"
+msgid "Black on Cream"
+msgstr ""
 
-msgid "Black on light blue"
-msgstr "Negro sobre azul celeste"
+msgid "Black on Light Blue"
+msgstr ""
 
-msgid "Black on magenta"
-msgstr "Negro sobre magenta"
+msgid "Black on Light Magenta"
+msgstr ""
 
-msgid "Black on white"
-msgstr "Negro sobre blanco"
+msgid "Black on White"
+msgstr ""
 
 msgid "Calculator"
 msgstr "Calculadora"
@@ -406,10 +403,10 @@ msgstr "Activar la pantalla de revisión/navegador de ítems."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finalizar prueba"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finalizar prueba"
 
 msgid "Enter a blueprint"
@@ -503,9 +500,6 @@ msgstr ""
 
 msgid "Gray on Green"
 msgstr ""
-
-msgid "Gray on green (low contrast option)"
-msgstr "Gris sobre verde (opcion de bajo contraste)"
 
 msgid "Hide Review"
 msgstr "Esconder revisión"
@@ -621,6 +615,9 @@ msgstr "Ítem %d"
 msgid "Item %d of %d"
 msgstr "Ítem %d de %d"
 
+msgid "Item %s loaded"
+msgstr ""
+
 msgid "Item Reference Properties"
 msgstr "Elemento Referencia Propiedades"
 
@@ -668,9 +665,6 @@ msgstr "Envio tarde permitido"
 
 msgid "Leave a comment"
 msgstr ""
-
-msgid "Light yellow on royal blue"
-msgstr "Amarillo claro sobre azul real"
 
 msgid "Line Reader"
 msgstr "Lector de línea"
@@ -859,11 +853,11 @@ msgstr "No barajada, la posición permanece fija."
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
-msgstr ""
-
 msgid "Ok"
 msgstr "Aceptar"
+
+msgid "OK"
+msgstr ""
 
 msgid "OK & End test"
 msgstr "OK y finalizar prueba"
@@ -1194,6 +1188,9 @@ msgstr "Envío"
 
 msgid "Submit and go to the end of the test"
 msgstr "Enviar e ir al final de la prueba"
+
+msgid "Submit and go to the item %s"
+msgstr ""
 
 msgid "Submit and go to the next item"
 msgstr "Enviar e ir al elemento siguiente"
@@ -1557,8 +1554,11 @@ msgstr "Si la respuesta de un candidato que ha superado la duración máxima de 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Si la respuesta de un candidato que ha superado la duración máxima aún debe ser aceptada."
 
-msgid "White on black"
-msgstr "Blanco sobre negro"
+msgid "White on Black"
+msgstr ""
+
+msgid "White on Blue (TAO standard theme)"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Quién puede ver el bloque rúbrica durante la entrega."
@@ -1578,6 +1578,9 @@ msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "XML error en la linea %1$d columna %2$d \"%3$s\"."
+
+msgid "Yellow on Blue"
+msgstr ""
 
 msgid "Yes"
 msgstr "Sí"

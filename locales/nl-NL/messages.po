@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint138\n"
-"PO-Revision-Date: 2020-10-02T07:55:33\n"
+"Project-Id-Version: TAO 3.4.0-sprint139\n"
+"PO-Revision-Date: 2020-10-23T11:30:01\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s loaded"
-msgstr ""
 
 msgid "%s to answer %s"
 msgstr ""
@@ -235,11 +232,11 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr ""
-
 msgid "Cancel"
 msgstr "Annuleren"
+
+msgid "CANCEL"
+msgstr ""
 
 msgid "Candidate"
 msgstr "Kandidaat"
@@ -406,11 +403,11 @@ msgstr "Schakel het item herzieningsscherm in / navigator."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Maakt het mogelijk om naar items binnen deze sectie over te gaan. Vereist de optie voor het beoordelingsscherm."
 
-msgid "End Test"
-msgstr "Eindig toets"
-
 msgid "End test"
 msgstr "Test beëindigen"
+
+msgid "End Test"
+msgstr "Eindig toets"
 
 msgid "Enter a blueprint"
 msgstr "Voer een blauwdruk in"
@@ -618,6 +615,9 @@ msgstr "Item %d"
 msgid "Item %d of %d"
 msgstr "Item %d van %d"
 
+msgid "Item %s loaded"
+msgstr ""
+
 msgid "Item Reference Properties"
 msgstr "Item referentie eigenschappen"
 
@@ -627,11 +627,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Item sessie controle"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Items"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Items kunnen optioneel worden toegewezen aan een of meer categorieën. "
@@ -699,12 +699,12 @@ msgstr "Beheer rubriek blokken"
 msgid "Manage test properties"
 msgstr "beheer toets eigenschappen"
 
-msgid "Manage Tests"
-msgstr "Beheer toetsen"
-
 #, tao-public
 msgid "Manage tests"
 msgstr "Beheer examens"
+
+msgid "Manage Tests"
+msgstr "Beheer toetsen"
 
 msgid "Mark for review"
 msgstr "Markeer voor herziening"
@@ -1036,10 +1036,10 @@ msgstr "Puntenteller"
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Notitieboekje"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Notitieboekje"
 
 msgid "Scratchpad"
@@ -1247,11 +1247,11 @@ msgstr "Examens"
 msgid "Text content"
 msgstr "Tekst inhoud"
 
-msgid "Text To Speech"
-msgstr ""
-
 msgid "Text to Speech"
 msgstr "Tekst naar spraak"
+
+msgid "Text To Speech"
+msgstr ""
 
 msgid "that was being taken."
 msgstr ""

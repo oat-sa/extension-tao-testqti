@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint138\n"
-"PO-Revision-Date: 2020-10-02T07:53:22\n"
+"Project-Id-Version: TAO 3.4.0-sprint139\n"
+"PO-Revision-Date: 2020-10-23T11:29:42\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-FR\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s loaded"
-msgstr ""
 
 msgid "%s to answer %s"
 msgstr ""
@@ -235,11 +232,11 @@ msgstr "Calculatrice BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr ""
-
 msgid "Cancel"
 msgstr "Annuler"
+
+msgid "CANCEL"
+msgstr ""
 
 msgid "Candidate"
 msgstr "Candidat"
@@ -406,10 +403,10 @@ msgstr "Permet l'écran de passage en revue de l'item / le navigateur."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Permet le saut vers les items à l'intérieur de cette section. Demande l'option revue écran."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finir le test"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finir le test"
 
 msgid "Enter a blueprint"
@@ -618,6 +615,9 @@ msgstr "Item %d"
 msgid "Item %d of %d"
 msgstr "Item %d sur %d"
 
+msgid "Item %s loaded"
+msgstr ""
+
 msgid "Item Reference Properties"
 msgstr "Propriétés de référence de l'item"
 
@@ -627,11 +627,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Contrôle de session de l'item"
 
-msgid "items"
-msgstr "articles"
-
 msgid "Items"
 msgstr "Articles"
+
+msgid "items"
+msgstr "articles"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Les items peuvent en option être assignés à une ou plusieurs catégories."
@@ -699,11 +699,11 @@ msgstr "Gérer les blocs de rubrique"
 msgid "Manage test properties"
 msgstr "Gérer les propriétés du test"
 
-msgid "Manage Tests"
-msgstr "Gérer les tests"
-
 #, tao-public
 msgid "Manage tests"
+msgstr "Gérer les tests"
+
+msgid "Manage Tests"
 msgstr "Gérer les tests"
 
 msgid "Mark for review"
@@ -1036,10 +1036,10 @@ msgstr "Marqueur"
 msgid "Scoring"
 msgstr "Notation"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Bloc-notes"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Bloc-notes"
 
 msgid "Scratchpad"
@@ -1247,11 +1247,11 @@ msgstr "Tests"
 msgid "Text content"
 msgstr "Contenu du texte"
 
-msgid "Text To Speech"
-msgstr ""
-
 msgid "Text to Speech"
 msgstr "Synthèse vocale"
+
+msgid "Text To Speech"
+msgstr ""
 
 msgid "that was being taken."
 msgstr ""

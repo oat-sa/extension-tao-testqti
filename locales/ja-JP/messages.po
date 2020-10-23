@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:28\n"
+"Project-Id-Version: TAO 3.4.0-sprint139\n"
+"PO-Revision-Date: 2020-10-23T11:29:54\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-
-msgid "%s loaded"
-msgstr ""
 
 msgid "%s to answer %s"
 msgstr ""
@@ -214,16 +211,16 @@ msgstr "作成者"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "ロケーション\"%s\"に関連ファイルが見つかりませんでした。"
 
-msgid "Black on cream"
+msgid "Black on Cream"
 msgstr ""
 
-msgid "Black on light blue"
+msgid "Black on Light Blue"
 msgstr ""
 
-msgid "Black on magenta"
+msgid "Black on Light Magenta"
 msgstr ""
 
-msgid "Black on white"
+msgid "Black on White"
 msgstr ""
 
 msgid "Calculator"
@@ -406,11 +403,11 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End Test"
-msgstr "テスト終了"
-
 msgid "End test"
 msgstr ""
+
+msgid "End Test"
+msgstr "テスト終了"
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -502,9 +499,6 @@ msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
-msgstr ""
-
-msgid "Gray on green (low contrast option)"
 msgstr ""
 
 msgid "Hide Review"
@@ -621,6 +615,9 @@ msgstr ""
 msgid "Item %d of %d"
 msgstr "%dのアイテム %d"
 
+msgid "Item %s loaded"
+msgstr ""
+
 msgid "Item Reference Properties"
 msgstr "アイテム参照プロパティ"
 
@@ -667,9 +664,6 @@ msgid "Late submission allowed"
 msgstr "後での送信を許可"
 
 msgid "Leave a comment"
-msgstr ""
-
-msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -859,11 +853,11 @@ msgstr "シャッフルされません。位置は固定のままです。"
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
-msgstr ""
-
 msgid "Ok"
 msgstr "OK"
+
+msgid "OK"
+msgstr ""
 
 msgid "OK & End test"
 msgstr ""
@@ -1194,6 +1188,9 @@ msgstr "提出"
 
 msgid "Submit and go to the end of the test"
 msgstr "提出し、試験終了画面に移動します"
+
+msgid "Submit and go to the item %s"
+msgstr ""
 
 msgid "Submit and go to the next item"
 msgstr "提出して次の問題に移動"
@@ -1556,7 +1553,10 @@ msgstr "受験者の回答でテストで設定された制限時間を超えて
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "受験者の回答で設定された制限時間を超えてもそれを許可する。"
 
-msgid "White on black"
+msgid "White on Black"
+msgstr ""
+
+msgid "White on Blue (TAO standard theme)"
 msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
@@ -1577,6 +1577,9 @@ msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""
+
+msgid "Yellow on Blue"
+msgstr ""
 
 msgid "Yes"
 msgstr "はい"
