@@ -153,6 +153,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => false,
                 'tags' => [ ]
+            ], [
+                'id' => 'itemScrolling',
+                'name' => 'Item Scrolling',
+                'module' => 'taoQtiTest/runner/plugins/content/itemScrolling/itemScrolling',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Add behavior from enable/disable scrolling option',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ ]
             ]
         ],
         'controls' => [
