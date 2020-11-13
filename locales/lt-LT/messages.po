@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:31\n"
+"Project-Id-Version: TAO 3.4.0-sprint137\n"
+"PO-Revision-Date: 2020-11-13T10:59:08\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -406,10 +406,10 @@ msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Baigti testą"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Baigti testą"
 
 msgid "Enter a blueprint"
@@ -859,10 +859,10 @@ msgstr "Nemaišoma, vieta išlieka pastovi."
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr "Gerai"
 
-msgid "Ok"
+msgid "OK"
 msgstr "Gerai"
 
 msgid "OK & End test"
@@ -970,10 +970,10 @@ msgstr "QTI Testo Paketas 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Testo Turinio Paketas"
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
 msgid "questions"
@@ -1042,10 +1042,10 @@ msgstr "Verintojas"
 msgid "Scoring"
 msgstr "Įvertinimas"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Juodraštis"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Juodraštis"
 
 msgid "Scratchpad"
@@ -1195,6 +1195,9 @@ msgstr "Pateikimas"
 msgid "Submit and go to the end of the test"
 msgstr "Pateikti ir eiti į testo pabaigą"
 
+msgid "Submit and go to the item %s"
+msgstr ""
+
 msgid "Submit and go to the next item"
 msgstr "Pateikite atsakymą ir pereikite į kitą klausimą"
 
@@ -1250,11 +1253,11 @@ msgstr "Testai"
 msgid "Text content"
 msgstr "Teksto turinys"
 
-msgid "Text to Speech"
-msgstr "Tekstas Balsu"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Tekstas Balsu"
 
 msgid "that was being taken."
 msgstr ""

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint136\n"
-"PO-Revision-Date: 2020-08-28T09:29:36\n"
+"Project-Id-Version: TAO 3.4.0-sprint137\n"
+"PO-Revision-Date: 2020-11-13T11:00:55\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -406,10 +406,10 @@ msgstr "Включить экран пересмотра элемента/нав
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Завершить тест"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Завершить тест"
 
 msgid "Enter a blueprint"
@@ -858,10 +858,10 @@ msgstr "Не перемешано, позиция остается фиксир�
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr "OK"
 
-msgid "Ok"
+msgid "OK"
 msgstr "OK"
 
 msgid "OK & End test"
@@ -969,10 +969,10 @@ msgstr "Пакет для тестирования QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Пакет содержимого для тестирования QTI/APIP"
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
 msgid "questions"
@@ -1041,10 +1041,10 @@ msgstr "Счетчик баллов"
 msgid "Scoring"
 msgstr "Выставление баллов"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Блокнот"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Блокнот"
 
 msgid "Scratchpad"
@@ -1194,6 +1194,9 @@ msgstr "Отправка"
 msgid "Submit and go to the end of the test"
 msgstr "Отправить и перейти в конец теста"
 
+msgid "Submit and go to the item %s"
+msgstr ""
+
 msgid "Submit and go to the next item"
 msgstr "Отправить и перейти к следующему элементу"
 
@@ -1249,11 +1252,11 @@ msgstr "Тесты"
 msgid "Text content"
 msgstr "Текстовое содержимое"
 
-msgid "Text to Speech"
-msgstr "Текст в речь"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Текст в речь"
 
 msgid "that was being taken."
 msgstr ""
