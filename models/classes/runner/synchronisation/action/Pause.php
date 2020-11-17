@@ -49,7 +49,9 @@ class Pause extends TestRunnerAction
             $serviceContext = $this->getServiceContext();
 
             $this->saveToolStates();
-
+            if ($this->shouldTimerStopOnPause()) {
+                $this->endItemTimer($this->getTime());
+            }
             if ($this->getRequestParameter('offline') === true) {
                 $this->setOffline();
             }
@@ -64,5 +66,17 @@ class Pause extends TestRunnerAction
         }
 
         return $response;
+    }
+
+    private function shouldTimerStopOnPause(): bool
+    {
+        $isTerminated = $this->getRunnerService()->isTerminated($this->getServiceContext());
+        if (!$isTerminated) {
+            $timerTarget = $this->getRunnerService()->getTestConfig()->getConfigValue('timer.target');
+            if ($timerTarget === 'client') {
+                return  true;
+            }
+        }
+        return false;
     }
 }
