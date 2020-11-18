@@ -53,7 +53,7 @@ return [
     'label' => 'QTI test model',
     'description' => 'TAO QTI test implementation',
     'license' => 'GPL-2.0',
-    'version' => '40.2.4',
+    'version' => '40.2.5',
     'author' => 'Open Assessment Technologies',
     'requires' => [
         'taoQtiItem' => '>=24.0.0',
