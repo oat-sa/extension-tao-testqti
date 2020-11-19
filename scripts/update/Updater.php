@@ -1938,5 +1938,20 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         $this->skip('34.12.0.2', '34.12.0.15');
+
+        if ($this->isVersion('34.12.0.15')) {
+            $pluginRegistry = PluginRegistry::getRegistry();
+            $pluginRegistry->register(TestPlugin::fromArray([
+                'id' => 'pauseOnError',
+                'name' => 'Reacts to errors',
+                'module' => 'taoQtiTest/runner/plugins/controls/connectivity/pauseOnError',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'When an error occurs, lets the user pause the test or reload the page',
+                'category' => 'controls',
+                'active' => false,
+                'tags' => [ 'core', 'technical' ]
+            ]));
+            $this->setVersion('34.12.0.16');
+        }
     }
 }
