@@ -175,6 +175,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'active' => true,
                 'tags' => [ 'core', 'technical' ]
             ], [
+                'id' => 'pauseOnError',
+                'name' => 'Reacts to errors',
+                'module' => 'taoQtiTest/runner/plugins/controls/connectivity/pauseOnError',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'When an error occurs, lets the user pause the test or reload the page',
+                'category' => 'controls',
+                'active' => false,
+                'tags' => [ 'core', 'technical' ]
+            ], [
                 'id' => 'testState',
                 'name' => 'Test state',
                 'module' => 'taoQtiTest/runner/plugins/controls/testState/testState',
