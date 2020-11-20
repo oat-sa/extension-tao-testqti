@@ -7,12 +7,14 @@ use Exception;
 use oat\generis\test\TestCase;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\ItemOfflineEvent;
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\generis\test\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCountMatcher;
 
 class PauseTest extends TestCase
 {
@@ -28,6 +30,11 @@ class PauseTest extends TestCase
     /** @var EventManager|MockObject */
     private $eventManager;
 
+    /**
+     * @var RunnerConfig|MockObject
+     */
+    private $testConfigMock;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,24 +43,28 @@ class PauseTest extends TestCase
         $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->testSession = $this->createMock(TestSession::class);
         $this->eventManager = $this->createMock(EventManager::class);
+        $this->testConfigMock = $this->createMock(RunnerConfig::class);
 
         $this->qtiRunnerService
             ->method('getServiceContext')
             ->willReturn($this->qtiRunnerServiceContext);
+        $this->qtiRunnerService
+            ->method('getTestConfig')
+            ->willReturn($this->testConfigMock);
 
         $this->qtiRunnerServiceContext
             ->method('getTestSession')
             ->willReturn($this->testSession);
     }
 
-    public function testValidationExceptionIfRequestParametersAreMissing()
+    public function testValidationExceptionIfRequestParametersAreMissing(): void
     {
         $this->expectException(common_exception_InconsistentData::class);
         $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId');
         $this->createSubjectWithParameters(['missing parameters'])->process();
     }
 
-    public function testUnsuccessfulResponse()
+    public function testUnsuccessfulResponse(): void
     {
         $this->qtiRunnerService
             ->method('pause')
@@ -67,7 +78,7 @@ class PauseTest extends TestCase
         ], $this->createSubjectWithParameters($this->getRequiredRequestParameters())->process());
     }
 
-    public function testSuccessfulResponse()
+    public function testSuccessfulResponse(): void
     {
         $this->qtiRunnerService
             ->method('pause')
@@ -78,7 +89,7 @@ class PauseTest extends TestCase
         ], $this->createSubjectWithParameters($this->getRequiredRequestParameters())->process());
     }
 
-    public function testItTriggersItemOfflineEvent()
+    public function testItTriggersItemOfflineEvent(): void
     {
         $requestParameters = [
                 'offline' => true,
@@ -98,7 +109,7 @@ class PauseTest extends TestCase
         $this->createSubjectWithParameters($requestParameters)->process();
     }
 
-    public function testItSavesToolStates()
+    public function testItSavesToolStates(): void
     {
         $rawToolStates = [
             ['testTool1' => 'testStatus1'],
@@ -127,11 +138,44 @@ class PauseTest extends TestCase
     }
 
     /**
+     * @param bool $testTerminated
+     * @param string $timerTarget
+     * @param $itemDuration
+     * @param callable $expectedCalls
+     *
+     * @dataProvider dataProviderTestPause_WhenRequired_EndItemTimer
+     */
+    public function testPause_WhenRequired_EndItemTimer(
+        bool $testTerminated,
+        string $timerTarget,
+        $itemDuration,
+        InvokedCountMatcher $expectedCalls
+    ): void {
+        $this->testConfigMock
+            ->method('getConfigValue')
+            ->with('timer.target')
+            ->willReturn($timerTarget);
+
+        $this->qtiRunnerService
+            ->method('isTerminated')
+            ->willReturn($testTerminated);
+
+        $this->qtiRunnerService
+            ->expects($expectedCalls)
+            ->method('endTimer');
+
+        $requestParameters = $this->getRequiredRequestParameters();
+        $requestParameters["itemDuration"] = $itemDuration;
+
+        $this->createSubjectWithParameters($requestParameters)->process();
+    }
+
+    /**
      * @param array $requestParameters
      *
      * @return Pause
      */
-    private function createSubjectWithParameters($requestParameters = [])
+    private function createSubjectWithParameters($requestParameters = []): Pause
     {
         $subject = new Pause('test', microtime(), $requestParameters);
 
@@ -159,6 +203,48 @@ class PauseTest extends TestCase
             'testDefinition' => $testDefinition,
             'testCompilation' => $testCompilation,
             'serviceCallId' => $serviceCallId,
+        ];
+    }
+
+    public function dataProviderTestPause_WhenRequired_EndItemTimer(): array
+    {
+        return [
+            'Test terminated - target client' => [
+                'testTerminated' => true,
+                'timerTarget' => 'client',
+                'itemDuration' => null,
+                'expectedCalls' => self::never()
+            ],
+            'Test terminated - target server' => [
+                'testTerminated' => true,
+                'timerTarget' => 'server',
+                'itemDuration' => null,
+                'expectedCalls' => self::never()
+            ],
+            'Test not terminated - target client - empty duration' => [
+                'testTerminated' => false,
+                'timerTarget' => 'client',
+                'itemDuration' => null,
+                'expectedCalls' => self::never()
+            ],
+            'Test not terminated - target client - not empty duration' => [
+                'testTerminated' => false,
+                'timerTarget' => 'client',
+                'itemDuration' => 100,
+                'expectedCalls' => self::once()
+            ],
+            'Test not terminated - target server - empty duration' => [
+                'testTerminated' => false,
+                'timerTarget' => 'server',
+                'itemDuration' => null,
+                'expectedCalls' => self::never()
+            ],
+            'Test not terminated - target server - not empty duration' => [
+                'testTerminated' => false,
+                'timerTarget' => 'server',
+                'itemDuration' => 100,
+                'expectedCalls' => self::never()
+            ]
         ];
     }
 }
