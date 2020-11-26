@@ -237,11 +237,6 @@ class MoveTest extends TestCase
 
         $subject->setTime($expectedTime);
 
-        $this->testSession
-            ->expects($this->once())
-            ->method('initItemTimer')
-            ->with($expectedTime);
-
         $this->qtiRunnerService
             ->expects($this->once())
             ->method('move')
