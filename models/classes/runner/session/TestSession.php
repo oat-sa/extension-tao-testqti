@@ -190,18 +190,6 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     }
 
     /**
-     * Initializes the timer for the current item in the TestSession
-     *
-     * @param $timestamp
-     * @deprecated Need to use startItemTimer() method
-     * @throws \oat\taoTests\models\runner\time\InvalidDataException
-     */
-    public function initItemTimer($timestamp = null)
-    {
-        $this->startItemTimer($timestamp);
-    }
-
-    /**
      * Starts the timer for the current item in the TestSession
      *
      * @param $timestamp
