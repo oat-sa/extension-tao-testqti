@@ -295,7 +295,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             $session->resume();
         }
 
-        $session->startItemTimer();
+        $session->initItemTimer();
         if ($session->isTimeout() === false) {
             TestRunnerUtils::beginCandidateInteraction($session);
         }

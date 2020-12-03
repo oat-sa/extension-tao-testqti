@@ -190,6 +190,24 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     }
 
     /**
+     * Initializes the timer for the current item in the TestSession
+     *
+     * @param $timestamp
+     * @throws \oat\taoTests\models\runner\time\InvalidDataException
+     */
+    public function initItemTimer($timestamp = null)
+    {
+        if (is_null($timestamp)) {
+            $timestamp = microtime(true);
+        }
+
+        // try to close existing time range if any, in order to be sure the test will start or restart a new range.
+        // if the range is already closed, a message will be added to the log
+        $tags = $this->getItemTags($this->getCurrentRouteItem());
+        $this->getTimer()->start($tags, $timestamp)->save();
+    }
+
+    /**
      * Starts the timer for the current item in the TestSession
      *
      * @param $timestamp

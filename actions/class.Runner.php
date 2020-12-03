@@ -608,6 +608,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->saveItemResponses(false);
             $this->saveToolStates();
 
+            $serviceContext->getTestSession()->initItemTimer();
             $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
 
             $response = [

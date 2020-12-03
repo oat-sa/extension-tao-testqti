@@ -75,6 +75,7 @@ class Move extends TestRunnerAction
                 $this->setOffline();
             }
 
+            $serviceContext->getTestSession()->initItemTimer($this->getTime());
             $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
 
             $response = [
