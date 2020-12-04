@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint139\n"
-"PO-Revision-Date: 2020-10-23T11:29:35\n"
+"Project-Id-Version: TAO 3.4.0-sprint142\n"
+"PO-Revision-Date: 2020-12-04T10:26:06\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-MX\n"
@@ -853,10 +853,10 @@ msgstr "No reorganizado, la posición permanece fija."
 msgid "Offline"
 msgstr ""
 
-msgid "Ok"
+msgid "OK"
 msgstr "Aceptar"
 
-msgid "OK"
+msgid "Ok"
 msgstr "Aceptar"
 
 msgid "OK & End test"
@@ -916,11 +916,17 @@ msgstr ""
 msgid "Pause"
 msgstr "Pausar"
 
+msgid "Pause the test"
+msgstr ""
+
 msgid "Play"
 msgstr "Reproducir"
 
 msgid "Please confirm you want to leave the test."
 msgstr "Confirme que desea abandonar la prueba."
+
+msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
+msgstr ""
 
 msgid "Please wait while we try to restore the connection."
 msgstr "Por favor espere mientras intenta restablecer la conexión."
@@ -964,10 +970,10 @@ msgstr "Paquete de prueba QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Paquete con contenido de prueba QTI/APIP"
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
 msgid "questions"
@@ -978,6 +984,9 @@ msgstr "Referencia"
 
 msgid "Regenerate"
 msgstr "Regenerar"
+
+msgid "Reload the page"
+msgstr ""
 
 msgid "remaining %s %s"
 msgstr ""
@@ -1159,6 +1168,9 @@ msgstr "Saltar a la siguiente sección"
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr "Algunos bloques de rúbrica se actualizaron para reflejar los cambios de la lista de resultados."
 
+msgid "Something unexpected happened."
+msgstr ""
+
 msgid "Something went wrong..."
 msgstr ""
 
@@ -1247,11 +1259,11 @@ msgstr "Pruebas"
 msgid "Text content"
 msgstr "Contenido del texto"
 
-msgid "Text to Speech"
-msgstr "Texto para habla"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Texto para habla"
 
 msgid "that was being taken."
 msgstr ""
