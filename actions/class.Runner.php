@@ -26,7 +26,9 @@
 
 use oat\libCat\exception\CatEngineConnectivityException;
 use oat\oatbox\event\EventManager;
+use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\routing\AnnotationReader\security;
+use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
@@ -128,11 +130,16 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         if (!$this->serviceContext) {
             $testExecution = $this->getSessionId();
+            /** @var DeliveryExecution $execution */
             $execution = $this->getServiceLocator()->get(DeliveryExecutionService::SERVICE_ID)->getDeliveryExecution($testExecution);
+            $userIdentifier = common_session_SessionManager::getSession()->getUser()->getIdentifier();
+            if ($execution->getUserIdentifier() !== $userIdentifier) {
+                throw new common_exception_Unauthorized($execution->getUserIdentifier());
+            }
             $delivery = $execution->getDelivery();
             $container = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID)->getDeliveryContainer($delivery->getUri());
             if (!$container instanceof QtiTestDeliveryContainer) {
-                throw new common_Exception('Non QTI test container '.get_class($container).' in qti test runner');
+                throw new common_Exception('Non QTI test container ' . get_class($container) . ' in qti test runner');
             }
             $testDefinition = $container->getSourceTest($execution);
             $testCompilation = $container->getPrivateDirId($execution) . '|' . $container->getPublicDirId($execution);
@@ -259,12 +266,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function init()
     {
-        /** @var QtiRunnerServiceContext $serviceContext */
-        $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
-
         $this->checkSecurityToken();
 
         try {
+            /** @var QtiRunnerServiceContext $serviceContext */
+            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $this->returnJson($this->getInitResponse($serviceContext));
         } catch (Exception $e) {
             $this->returnJson(
