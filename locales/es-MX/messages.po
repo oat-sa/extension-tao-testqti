@@ -236,7 +236,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 msgid "CANCEL"
-msgstr ""
+msgstr "Cancelar"
 
 msgid "Candidate"
 msgstr "Candidato"
