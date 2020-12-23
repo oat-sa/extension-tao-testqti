@@ -26,9 +26,7 @@
 
 use oat\libCat\exception\CatEngineConnectivityException;
 use oat\oatbox\event\EventManager;
-use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\routing\AnnotationReader\security;
-use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
@@ -46,6 +44,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
 use oat\taoQtiTest\models\runner\StorageManager;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
+use oat\oatbox\session\SessionService;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -130,14 +129,18 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         if (!$this->serviceContext) {
             $testExecution = $this->getSessionId();
-            /** @var DeliveryExecution $execution */
-            $execution = $this->getServiceLocator()->get(DeliveryExecutionService::SERVICE_ID)->getDeliveryExecution($testExecution);
-            $userIdentifier = common_session_SessionManager::getSession()->getUser()->getIdentifier();
-            if ($execution->getUserIdentifier() !== $userIdentifier) {
+            $execution = $this->getDeliveryExecutionService()->getDeliveryExecution($testExecution);
+            if (!$execution) {
+                throw new common_exception_ResourceNotFound();
+            }
+
+            $currentUser = $this->getSessionService()->getCurrentUser();
+            if (!$currentUser || $execution->getUserIdentifier() !== $currentUser->getIdentifier()) {
                 throw new common_exception_Unauthorized($execution->getUserIdentifier());
             }
+
             $delivery = $execution->getDelivery();
-            $container = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID)->getDeliveryContainer($delivery->getUri());
+            $container = $this->getRuntimeService()->getDeliveryContainer($delivery->getUri());
             if (!$container instanceof QtiTestDeliveryContainer) {
                 throw new common_Exception('Non QTI test container ' . get_class($container) . ' in qti test runner');
             }
@@ -1130,5 +1133,29 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             'toolStates' => $this->getToolStates(),
             'lastStoreId' => $this->getClientStoreId($serviceContext),
         ];
+    }
+
+    /**
+     * @return SessionService
+     */
+    private function getSessionService()
+    {
+        return $this->getServiceLocator()->get(SessionService::class);
+    }
+
+    /**
+     * @return DeliveryExecutionService
+     */
+    private function getDeliveryExecutionService()
+    {
+        return $this->getServiceLocator()->get(DeliveryExecutionService::SERVICE_ID);
+    }
+
+    /**
+     * @return RuntimeService
+     */
+    private function getRuntimeService()
+    {
+        return $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
     }
 }
