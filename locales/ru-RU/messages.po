@@ -1201,7 +1201,7 @@ msgid "Submit and go to the end of the test"
 msgstr "Отправить и перейти в конец теста"
 
 msgid "Submit and go to the item %s"
-msgstr ""
+msgstr "Отправить и перейти к элементу %s"
 
 msgid "Submit and go to the next item"
 msgstr "Отправить и перейти к следующему элементу"
