@@ -1202,7 +1202,7 @@ msgid "Submit and go to the end of the test"
 msgstr "Envoyer et finir le test"
 
 msgid "Submit and go to the item %s"
-msgstr ""
+msgstr "Soumettre et aller à la rubrique %s"
 
 msgid "Submit and go to the next item"
 msgstr "Envoyer et aller à l'item suivant"
