@@ -1135,26 +1135,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         ];
     }
 
-    /**
-     * @return SessionService
-     */
-    private function getSessionService()
+    private function getSessionService(): SessionService
     {
         return $this->getServiceLocator()->get(SessionService::class);
     }
 
-    /**
-     * @return DeliveryExecutionService
-     */
-    private function getDeliveryExecutionService()
+    private function getDeliveryExecutionService(): DeliveryExecutionService
     {
         return $this->getServiceLocator()->get(DeliveryExecutionService::SERVICE_ID);
     }
 
-    /**
-     * @return RuntimeService
-     */
-    private function getRuntimeService()
+    private function getRuntimeService(): RuntimeService
     {
         return $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
     }
