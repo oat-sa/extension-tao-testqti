@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint139\n"
-"PO-Revision-Date: 2020-10-23T11:30:17\n"
+"Project-Id-Version: TAO 3.4.0-sprint142\n"
+"PO-Revision-Date: 2020-12-04T10:26:37\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-CN\n"
@@ -852,10 +852,10 @@ msgstr "不是随机顺序，该位置保持固定。"
 msgid "Offline"
 msgstr ""
 
-msgid "Ok"
+msgid "OK"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr ""
 
 msgid "OK & End test"
@@ -915,10 +915,16 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
+msgid "Pause the test"
+msgstr ""
+
 msgid "Play"
 msgstr ""
 
 msgid "Please confirm you want to leave the test."
+msgstr ""
+
+msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
@@ -963,10 +969,10 @@ msgstr ""
 msgid "QTI/APIP Test Content Package"
 msgstr ""
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
 msgid "questions"
@@ -976,6 +982,9 @@ msgid "Reference"
 msgstr "参照"
 
 msgid "Regenerate"
+msgstr ""
+
+msgid "Reload the page"
 msgstr ""
 
 msgid "remaining %s %s"
@@ -1158,6 +1167,9 @@ msgstr ""
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Something unexpected happened."
+msgstr ""
+
 msgid "Something went wrong..."
 msgstr ""
 
@@ -1246,10 +1258,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
 msgid "that was being taken."
