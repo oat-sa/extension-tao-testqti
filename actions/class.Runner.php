@@ -276,6 +276,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $this->returnJson($this->getInitResponse($serviceContext));
         } catch (Exception $e) {
+            common_Logger::e($e->getMessage());
             $this->returnJson(
                 $this->getErrorResponse($e),
                 $this->getErrorCode($e)
@@ -301,6 +302,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => true,
             ];
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -324,6 +326,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => true,
             ];
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -347,6 +350,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => true,
             ];
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -428,6 +432,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['success'] = true;
             }
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -584,6 +589,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->getRunnerService()->persist($serviceContext);
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -643,6 +649,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $this->getRunnerService()->startTimer($serviceContext);
             }
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -693,6 +700,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $this->getRunnerService()->startTimer($serviceContext);
             }
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -783,6 +791,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->getRunnerService()->persist($serviceContext);
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -829,6 +838,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => $this->getRunnerService()->pause($serviceContext),
             ];
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -864,6 +874,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->getRunnerService()->persist($serviceContext);
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -906,6 +917,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => true,
             ];
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -931,6 +943,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => $result,
             ];
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -973,6 +986,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
             $eventManager->trigger($event);
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
@@ -1024,6 +1038,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 'success' => true,
             ];
         } catch (common_Exception $e) {
+            common_Logger::e($e->getMessage());
             $response = $this->getErrorResponse($e);
             $code = $this->getErrorCode($e);
         }
