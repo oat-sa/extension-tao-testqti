@@ -236,7 +236,7 @@ msgid "Cancel"
 msgstr "Отмена"
 
 msgid "CANCEL"
-msgstr ""
+msgstr "Отмена"
 
 msgid "Candidate"
 msgstr "Кандидат"
@@ -1201,7 +1201,7 @@ msgid "Submit and go to the end of the test"
 msgstr "Отправить и перейти в конец теста"
 
 msgid "Submit and go to the item %s"
-msgstr ""
+msgstr "Отправить и перейти к элементу %s"
 
 msgid "Submit and go to the next item"
 msgstr "Отправить и перейти к следующему элементу"
@@ -1400,19 +1400,19 @@ msgid "The test title."
 msgstr "Название теста."
 
 msgid "The time limit has been reached for this part of the test."
-msgstr ""
+msgstr "Время установленное для данной части теста истекло."
 
 msgid "There are %s unanswered questions"
-msgstr ""
+msgstr "У вас осталось %s неотвеченных вопросов"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr ""
+msgstr "У вас осталось %s неотвеченных вопросов для данной части теста"
 
 msgid "There is %s unanswered question"
-msgstr ""
+msgstr "У вас остался %s неотвеченный вопрос"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr ""
+msgstr "У вас остался %s неотвеченный вопрос для данной части теста"
 
 msgid "There is not outcomes!"
 msgstr "Нет результатов!"

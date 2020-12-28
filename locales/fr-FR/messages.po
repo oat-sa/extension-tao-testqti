@@ -236,7 +236,7 @@ msgid "Cancel"
 msgstr "Annuler"
 
 msgid "CANCEL"
-msgstr ""
+msgstr "Annuler"
 
 msgid "Candidate"
 msgstr "Candidat"
@@ -1202,7 +1202,7 @@ msgid "Submit and go to the end of the test"
 msgstr "Envoyer et finir le test"
 
 msgid "Submit and go to the item %s"
-msgstr ""
+msgstr "Soumettre et aller à la rubrique %s"
 
 msgid "Submit and go to the next item"
 msgstr "Envoyer et aller à l'item suivant"
@@ -1401,19 +1401,19 @@ msgid "The test title."
 msgstr "Le titre du test."
 
 msgid "The time limit has been reached for this part of the test."
-msgstr ""
+msgstr "La limite de temps a été atteinte pour cette partie du test."
 
 msgid "There are %s unanswered questions"
-msgstr ""
+msgstr "Il y a %s questions sans réponse"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr ""
+msgstr "Il y a %s questions sans réponse dans cette partie du test"
 
 msgid "There is %s unanswered question"
-msgstr ""
+msgstr "Il y a %s question sans réponse"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr ""
+msgstr "Il y a %s question sans réponse dans cette partie du test"
 
 msgid "There is not outcomes!"
 msgstr "Il n'y a pas de résultat !"
