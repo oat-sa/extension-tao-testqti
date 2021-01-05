@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint142\n"
-"PO-Revision-Date: 2020-12-04T10:26:25\n"
+"Project-Id-Version: TAO 3.4.0-sprint143\n"
+"PO-Revision-Date: 2021-01-05T16:22:44\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -232,11 +232,11 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
-msgstr "Annuleren"
-
 msgid "CANCEL"
 msgstr ""
+
+msgid "Cancel"
+msgstr "Annuleren"
 
 msgid "Candidate"
 msgstr "Kandidaat"
@@ -264,6 +264,9 @@ msgstr "Verwijder alle tekstmarkeringen"
 
 msgid "Clear Highlights"
 msgstr "Markering verwijderen"
+
+msgid "Click OK to continue"
+msgstr ""
 
 msgid "Click to speak"
 msgstr "Klik om te spreken"
@@ -627,11 +630,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Item sessie controle"
 
-msgid "Items"
-msgstr "Items"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Items"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Items kunnen optioneel worden toegewezen aan een of meer categorieën. "
@@ -970,10 +973,10 @@ msgstr "QTI Examen pakket 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Examen Content Pakket"
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
 msgid "questions"
@@ -1259,11 +1262,11 @@ msgstr "Examens"
 msgid "Text content"
 msgstr "Tekst inhoud"
 
-msgid "Text To Speech"
-msgstr ""
-
 msgid "Text to Speech"
 msgstr "Tekst naar spraak"
+
+msgid "Text To Speech"
+msgstr ""
 
 msgid "that was being taken."
 msgstr ""

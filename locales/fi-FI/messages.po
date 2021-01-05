@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint142\n"
-"PO-Revision-Date: 2020-12-04T10:26:07\n"
+"Project-Id-Version: TAO 3.4.0-sprint143\n"
+"PO-Revision-Date: 2021-01-05T16:22:12\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fi-FI\n"
@@ -232,10 +232,10 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
+msgid "CANCEL"
 msgstr ""
 
-msgid "CANCEL"
+msgid "Cancel"
 msgstr ""
 
 msgid "Candidate"
@@ -263,6 +263,9 @@ msgid "Clear all active highlights"
 msgstr ""
 
 msgid "Clear Highlights"
+msgstr ""
+
+msgid "Click OK to continue"
 msgstr ""
 
 msgid "Click to speak"
@@ -626,10 +629,10 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
-msgid "Items"
+msgid "items"
 msgstr ""
 
-msgid "items"
+msgid "Items"
 msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -969,10 +972,10 @@ msgstr ""
 msgid "QTI/APIP Test Content Package"
 msgstr ""
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
 msgid "questions"
@@ -1258,10 +1261,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."

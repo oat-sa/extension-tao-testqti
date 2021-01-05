@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint142\n"
-"PO-Revision-Date: 2020-12-04T10:26:06\n"
+"Project-Id-Version: TAO 3.4.0-sprint143\n"
+"PO-Revision-Date: 2021-01-05T16:22:09\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-MX\n"
@@ -232,11 +232,11 @@ msgstr "Calculadora BODMAS"
 msgid "Can not playback media file!"
 msgstr "No se puede reproducir el archivo multimedia!"
 
-msgid "Cancel"
-msgstr "Cancelar"
-
 msgid "CANCEL"
 msgstr "CANCELAR"
+
+msgid "Cancel"
+msgstr "Cancelar"
 
 msgid "Candidate"
 msgstr "Candidato"
@@ -264,6 +264,9 @@ msgstr "Borrar todos los resaltados activos"
 
 msgid "Clear Highlights"
 msgstr "Borrar resaltados"
+
+msgid "Click OK to continue"
+msgstr "Haga clic en \"OK\" para continuar"
 
 msgid "Click to speak"
 msgstr "Haga clic para hablar"
@@ -627,11 +630,11 @@ msgstr "El identificador de respuesta del elemento no coincide con el elemento a
 msgid "Item Session Control"
 msgstr "Control de Sesión de Elemento"
 
-msgid "Items"
-msgstr "Elementos"
-
 msgid "items"
 msgstr "elementos"
+
+msgid "Items"
+msgstr "Elementos"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
@@ -760,8 +763,8 @@ msgstr "Minima duración para esta parte de la prueba."
 msgid "minutes"
 msgstr "minutos"
 
-msgid "Missed required parameter \'id\'"
-msgstr "Se omitió el parámetro requerido \'id\'"
+msgid "Missed required parameter \'id\"
+msgstr ""
 
 msgid "Missed test package file"
 msgstr "Se omitió el archivo de paquete de la prueba"
@@ -970,11 +973,11 @@ msgstr "Paquete de prueba QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Paquete con contenido de prueba QTI/APIP"
 
-msgid "Question"
-msgstr "Pregunta"
-
 msgid "question"
 msgstr "pregunta"
+
+msgid "Question"
+msgstr "Pregunta"
 
 msgid "questions"
 msgstr "preguntas"
@@ -1259,11 +1262,11 @@ msgstr "Pruebas"
 msgid "Text content"
 msgstr "Contenido del texto"
 
-msgid "Text To Speech"
-msgstr "Texto A Voz"
-
 msgid "Text to Speech"
 msgstr "Texto a Voz"
+
+msgid "Text To Speech"
+msgstr "Texto A Voz"
 
 msgid "that was being taken."
 msgstr "que estaba siendo tomada."
@@ -1674,3 +1677,4 @@ msgstr "Acercar"
 
 msgid "Zoom out"
 msgstr "Alejar"
+
