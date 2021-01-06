@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint142\n"
-"PO-Revision-Date: 2020-12-04T10:26:06\n"
+"Project-Id-Version: TAO 3.4.0-sprint143\n"
+"PO-Revision-Date: 2021-01-06T14:55:39\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-MX\n"
@@ -232,11 +232,11 @@ msgstr "Calculadora BODMAS"
 msgid "Can not playback media file!"
 msgstr "No se puede reproducir el archivo multimedia!"
 
-msgid "Cancel"
-msgstr "Cancelar"
-
 msgid "CANCEL"
 msgstr "CANCELAR"
+
+msgid "Cancel"
+msgstr "Cancelar"
 
 msgid "Candidate"
 msgstr "Candidato"
@@ -264,6 +264,9 @@ msgstr "Borrar todos los resaltados activos"
 
 msgid "Clear Highlights"
 msgstr "Borrar resaltados"
+
+msgid "Click \"%s\" to continue"
+msgstr "Haga clic en \"%s\" para continuar"
 
 msgid "Click to speak"
 msgstr "Haga clic para hablar"
@@ -627,11 +630,11 @@ msgstr "El identificador de respuesta del elemento no coincide con el elemento a
 msgid "Item Session Control"
 msgstr "Control de Sesión de Elemento"
 
-msgid "Items"
-msgstr "Elementos"
-
 msgid "items"
 msgstr "elementos"
+
+msgid "Items"
+msgstr "Elementos"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
@@ -760,7 +763,7 @@ msgstr "Minima duración para esta parte de la prueba."
 msgid "minutes"
 msgstr "minutos"
 
-msgid "Missed required parameter \'id\'"
+msgid "Missed required parameter \'id\"
 msgstr "Se omitió el parámetro requerido \'id\'"
 
 msgid "Missed test package file"
@@ -970,11 +973,11 @@ msgstr "Paquete de prueba QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Paquete con contenido de prueba QTI/APIP"
 
-msgid "Question"
-msgstr "Pregunta"
-
 msgid "question"
 msgstr "pregunta"
+
+msgid "Question"
+msgstr "Pregunta"
 
 msgid "questions"
 msgstr "preguntas"
@@ -1259,11 +1262,11 @@ msgstr "Pruebas"
 msgid "Text content"
 msgstr "Contenido del texto"
 
-msgid "Text To Speech"
-msgstr "Texto A Voz"
-
 msgid "Text to Speech"
 msgstr "Texto a Voz"
+
+msgid "Text To Speech"
+msgstr "Texto A Voz"
 
 msgid "that was being taken."
 msgstr "que estaba siendo tomada."
@@ -1408,13 +1411,13 @@ msgid "There are %s unanswered questions"
 msgstr "Hay %s preguntas sin responder"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr "Hay % preguntas sin responder en esta parte de la prueba"
+msgstr "Hay %s preguntas sin responder en esta parte de la prueba"
 
 msgid "There is %s unanswered question"
 msgstr "Hay %s pregunta sin responder"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr "Hay % pregunta sin responder en esta parte de la prueba"
+msgstr "Hay %s pregunta sin responder en esta parte de la prueba"
 
 msgid "There is not outcomes!"
 msgstr "No hay ningún resultado."
@@ -1654,11 +1657,8 @@ msgstr "Tiene %s pregunta(s) sin respuesta y %s ítem(s) marcado(s) para revisi�
 msgid "You have %s unanswered question(s)."
 msgstr "Tiene %s pregunta(s) sin respuesta."
 
-msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "No podrás acceder a esta prueba una vez que la hayas enviado. Haga clic en OK para continuar y enviar la prueba."
-
-msgid "You will not be able to return to this test after you submit your answers."
-msgstr "No podrá volver a esta prueba después de presentar sus respuestas."
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
+msgstr "No podrás acceder a esta prueba una vez que la hayas enviado. Haga clic en \"%s\" para continuar y enviar la prueba."
 
 msgid "Your comment…"
 msgstr "Su comentario…"
@@ -1674,3 +1674,4 @@ msgstr "Acercar"
 
 msgid "Zoom out"
 msgstr "Alejar"
+

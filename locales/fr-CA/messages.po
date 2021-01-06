@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint142\n"
-"PO-Revision-Date: 2020-12-04T10:26:09\n"
+"Project-Id-Version: TAO 3.4.0-sprint143\n"
+"PO-Revision-Date: 2021-01-06T14:56:24\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-CA\n"
@@ -232,11 +232,11 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
-msgstr "Annuler"
-
 msgid "CANCEL"
 msgstr ""
+
+msgid "Cancel"
+msgstr "Annuler"
 
 msgid "Candidate"
 msgstr "Candidat"
@@ -263,6 +263,9 @@ msgid "Clear all active highlights"
 msgstr ""
 
 msgid "Clear Highlights"
+msgstr ""
+
+msgid "Click \"%s\" to continue"
 msgstr ""
 
 msgid "Click to speak"
@@ -626,11 +629,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
-msgid "Items"
-msgstr "Éléments"
-
 msgid "items"
 msgstr ""
+
+msgid "Items"
+msgstr "Éléments"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr ""
@@ -969,10 +972,10 @@ msgstr ""
 msgid "QTI/APIP Test Content Package"
 msgstr ""
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
 msgid "questions"
@@ -1258,10 +1261,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1652,10 +1655,7 @@ msgstr "Vous avez %s question(s) non répondues et avez %s élément(s) marqués
 msgid "You have %s unanswered question(s)."
 msgstr "Vous avez %s question(s) non répondues."
 
-msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
-
-msgid "You will not be able to return to this test after you submit your answers."
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
 msgstr ""
 
 msgid "Your comment…"

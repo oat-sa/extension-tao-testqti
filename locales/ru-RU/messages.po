@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint142\n"
-"PO-Revision-Date: 2020-12-04T10:26:30\n"
+"Project-Id-Version: TAO 3.4.0-sprint143\n"
+"PO-Revision-Date: 2021-01-06T15:00:54\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -232,10 +232,10 @@ msgstr "Калькулятор BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
+msgid "CANCEL"
 msgstr "Отмена"
 
-msgid "CANCEL"
+msgid "Cancel"
 msgstr "Отмена"
 
 msgid "Candidate"
@@ -264,6 +264,9 @@ msgstr "Очистить все активное выделение"
 
 msgid "Clear Highlights"
 msgstr "Очистить выделение"
+
+msgid "Click \"%s\" to continue"
+msgstr "Нажмите \"%s\", чтобы продолжить"
 
 msgid "Click to speak"
 msgstr "Нажмите, чтобы говорить"
@@ -626,11 +629,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Контроль за сеансом для элемента"
 
-msgid "Items"
-msgstr "Элементы"
-
 msgid "items"
 msgstr "элементы"
+
+msgid "Items"
+msgstr "Элементы"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Элементы могут дополнительно назначаться одной или нескольким категориям."
@@ -969,10 +972,10 @@ msgstr "Пакет для тестирования QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Пакет содержимого для тестирования QTI/APIP"
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
 msgid "questions"
@@ -1258,11 +1261,11 @@ msgstr "Тесты"
 msgid "Text content"
 msgstr "Текстовое содержимое"
 
-msgid "Text To Speech"
-msgstr ""
-
 msgid "Text to Speech"
 msgstr "Текст в речь"
+
+msgid "Text To Speech"
+msgstr ""
 
 msgid "that was being taken."
 msgstr ""
@@ -1620,7 +1623,7 @@ msgid "You are about to submit the test."
 msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "Вы собираетесь отправить тест. После отправки вы уже не будете иметь доступ к этому тесту. Нажмите OK, чтобы продолжить и отправить тест."
+msgstr "Вы собираетесь отправить тест. После отправки вы уже не будете иметь доступ к этому тесту. Нажмите \"Отправить\", чтобы продолжить и отправить тест."
 
 msgid "You are about to submit this test part."
 msgstr ""
@@ -1652,11 +1655,8 @@ msgstr "У вас имеется вопросов без ответов: %s; э�
 msgid "You have %s unanswered question(s)."
 msgstr "У вас имеется вопросов без ответов: %s."
 
-msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
-
-msgid "You will not be able to return to this test after you submit your answers."
-msgstr ""
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
+msgstr "После отправки вы уже не будете иметь доступ к этому тесту. Нажмите \"%s\", чтобы продолжить и отправить тест."
 
 msgid "Your comment…"
 msgstr "Ваш комментарий…"
