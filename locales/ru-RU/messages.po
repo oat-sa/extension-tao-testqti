@@ -1656,7 +1656,7 @@ msgid "You have %s unanswered question(s)."
 msgstr "У вас имеется вопросов без ответов: %s."
 
 msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
+msgstr "После отправки вы уже не будете иметь доступ к этому тесту. Нажмите OK, чтобы продолжить и отправить тест."
 
 msgid "You will not be able to return to this test after you submit your answers."
 msgstr ""
