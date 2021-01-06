@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.4.0-sprint143\n"
-"PO-Revision-Date: 2021-01-05T16:22:54\n"
+"PO-Revision-Date: 2021-01-06T15:00:54\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -265,8 +265,8 @@ msgstr "Очистить все активное выделение"
 msgid "Clear Highlights"
 msgstr "Очистить выделение"
 
-msgid "Click OK to continue"
-msgstr "Нажмите OK, чтобы продолжить"
+msgid "Click \"%s\" to continue"
+msgstr "Нажмите \"%s\", чтобы продолжить"
 
 msgid "Click to speak"
 msgstr "Нажмите, чтобы говорить"
@@ -1655,11 +1655,8 @@ msgstr "У вас имеется вопросов без ответов: %s; э�
 msgid "You have %s unanswered question(s)."
 msgstr "У вас имеется вопросов без ответов: %s."
 
-msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "После отправки вы уже не будете иметь доступ к этому тесту. Нажмите OK, чтобы продолжить и отправить тест."
-
-msgid "You will not be able to return to this test after you submit your answers."
-msgstr ""
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
+msgstr "После отправки вы уже не будете иметь доступ к этому тесту. Нажмите \"%s\", чтобы продолжить и отправить тест."
 
 msgid "Your comment…"
 msgstr "Ваш комментарий…"

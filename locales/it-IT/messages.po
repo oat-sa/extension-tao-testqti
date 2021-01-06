@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.4.0-sprint143\n"
-"PO-Revision-Date: 2021-01-05T16:22:32\n"
+"PO-Revision-Date: 2021-01-06T14:58:17\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -265,7 +265,7 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
-msgid "Click OK to continue"
+msgid "Click \"%s\" to continue"
 msgstr ""
 
 msgid "Click to speak"
@@ -1655,10 +1655,7 @@ msgstr "Grazie"
 msgid "You have %s unanswered question(s)."
 msgstr "Grazie"
 
-msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
-
-msgid "You will not be able to return to this test after you submit your answers."
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
 msgstr ""
 
 msgid "Your comment…"

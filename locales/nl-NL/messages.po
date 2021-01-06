@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.4.0-sprint143\n"
-"PO-Revision-Date: 2021-01-05T16:22:44\n"
+"PO-Revision-Date: 2021-01-06T14:59:46\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -265,7 +265,7 @@ msgstr "Verwijder alle tekstmarkeringen"
 msgid "Clear Highlights"
 msgstr "Markering verwijderen"
 
-msgid "Click OK to continue"
+msgid "Click \"%s\" to continue"
 msgstr ""
 
 msgid "Click to speak"
@@ -1656,10 +1656,7 @@ msgstr "U heeft %s onbeantwoorde vra(a)g(en) en %s items gemarkeerd voor herzien
 msgid "You have %s unanswered question(s)."
 msgstr "U heeft %s onbeantwoorde vra(a)g(en)."
 
-msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
-
-msgid "You will not be able to return to this test after you submit your answers."
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
 msgstr ""
 
 msgid "Your comment…"
