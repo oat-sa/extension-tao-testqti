@@ -1623,7 +1623,7 @@ msgid "You are about to submit the test."
 msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "Вы собираетесь отправить тест. После отправки вы уже не будете иметь доступ к этому тесту. Нажмите OK, чтобы продолжить и отправить тест."
+msgstr "Вы собираетесь отправить тест. После отправки вы уже не будете иметь доступ к этому тесту. Нажмите \"Отправить\", чтобы продолжить и отправить тест."
 
 msgid "You are about to submit this test part."
 msgstr ""
