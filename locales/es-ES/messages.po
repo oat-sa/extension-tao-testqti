@@ -1411,13 +1411,13 @@ msgid "There are %s unanswered questions"
 msgstr "Hay %s preguntas sin responder"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr "Hay % preguntas sin responder en esta parte de la prueba"
+msgstr "Hay %s preguntas sin responder en esta parte de la prueba"
 
 msgid "There is %s unanswered question"
 msgstr "Hay %s pregunta sin responder"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr "Hay % pregunta sin responder en esta parte de la prueba"
+msgstr "Hay %s pregunta sin responder en esta parte de la prueba"
 
 msgid "There is not outcomes!"
 msgstr "No hay ningún resultado."
