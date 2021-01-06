@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint142\n"
-"PO-Revision-Date: 2020-12-04T10:26:23\n"
+"Project-Id-Version: TAO 3.4.0-sprint143\n"
+"PO-Revision-Date: 2021-01-06T14:59:24\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -232,11 +232,11 @@ msgstr "Skaičiuotuvas BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
-msgstr "Atšaukti"
-
 msgid "CANCEL"
 msgstr ""
+
+msgid "Cancel"
+msgstr "Atšaukti"
 
 msgid "Candidate"
 msgstr "Kandidatas"
@@ -264,6 +264,9 @@ msgstr "Pašalinti visus aktyvius paryškinimus."
 
 msgid "Clear Highlights"
 msgstr "Pašalinti Paryškinimus."
+
+msgid "Click \"%s\" to continue"
+msgstr ""
 
 msgid "Click to speak"
 msgstr "Spausti kad kalbėti"
@@ -627,11 +630,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Elemento Sesijos Valdymas"
 
-msgid "Items"
-msgstr "Elementai"
-
 msgid "items"
 msgstr "elementai"
+
+msgid "Items"
+msgstr "Elementai"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elementai pasirinktinai gali būti paskirti vienai arba daugiau kategorijų."
@@ -970,10 +973,10 @@ msgstr "QTI Testo Paketas 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Testo Turinio Paketas"
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
 msgid "questions"
@@ -1259,11 +1262,11 @@ msgstr "Testai"
 msgid "Text content"
 msgstr "Teksto turinys"
 
-msgid "Text To Speech"
-msgstr ""
-
 msgid "Text to Speech"
 msgstr "Tekstas Balsu"
+
+msgid "Text To Speech"
+msgstr ""
 
 msgid "that was being taken."
 msgstr ""
@@ -1653,10 +1656,7 @@ msgstr "Jūs turite %s neatsakytus klausimą(-us) ir turite %s elementą(-us) pa
 msgid "You have %s unanswered question(s)."
 msgstr "Liko neatsakyti %s klausimai(-ų)."
 
-msgid "You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
-
-msgid "You will not be able to return to this test after you submit your answers."
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
 msgstr ""
 
 msgid "Your comment…"
