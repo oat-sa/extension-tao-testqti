@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint143\n"
-"PO-Revision-Date: 2021-01-06T15:02:46\n"
+"Project-Id-Version: TAO 3.4.0-sprint146\n"
+"PO-Revision-Date: 2021-01-20T12:36:11\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: zh-SG\n"
@@ -1635,6 +1635,9 @@ msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
 
 msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
+msgstr ""
+
+msgid "You flagged %s item(s) that you can review now"
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
