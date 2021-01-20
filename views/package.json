@@ -9,6 +9,6 @@
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "0.5.0",
-    "@oat-sa/tao-test-runner-qti": "github:oat-sa/tao-test-runner-qti-fe#fix/TR-422/announce-flagged-items-in-the-end-test-warning"
+    "@oat-sa/tao-test-runner-qti": "2.18.3"
   }
 }
