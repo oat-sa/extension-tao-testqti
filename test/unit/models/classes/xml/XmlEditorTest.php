@@ -8,6 +8,7 @@ use oat\taoQtiTest\models\xmlEditor\XmlEditor;
 use PHPUnit\Framework\MockObject\MockObject;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
+use SplObjectStorage;
 use taoQtiTest_models_classes_QtiTestConverterException;
 use \taoQtiTest_models_classes_QtiTestService;
 use taoQtiTest_models_classes_QtiTestServiceException;
@@ -116,15 +117,18 @@ EOL;
                             "preConditions" => [
                             ],
                             "branchRules" => [
-                            ]
+                            ],
+                            "observers" => new SplObjectStorage(),
                         ]
                     ],
                     "testFeedbacks" => [
-                    ]
+                    ],
+                    "observers" => new SplObjectStorage(),
                 ]
             ],
             "testFeedbacks" => [
-            ]
+            ],
+            "observers" => new SplObjectStorage(),
         ];
 
         $this->qtiTestServiceMock
