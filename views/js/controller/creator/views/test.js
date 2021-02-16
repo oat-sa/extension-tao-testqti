@@ -162,7 +162,8 @@ function($, _, __, hider, feedback, defaults, actions, testPartView, templates, 
                             identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', defaults().sectionIdPrefix),
                             title : `${defaults().sectionTitlePrefix} 1`,
                             index : 0,
-                            sectionParts : []
+                            sectionParts : [],
+                            visible: true
                         }]
                     });
                 }
