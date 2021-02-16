@@ -115,7 +115,8 @@ function($, _, defaults, actions, sectionView, templates, qtiTestHelper){
                         identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', defaults().sectionIdPrefix),
                         title : `${defaults().sectionTitlePrefix} ${sectionIndex + 1}`,
                         index : 0,
-                        sectionParts : []
+                        sectionParts : [],
+                        visible: true
                     });
                 }
             });
