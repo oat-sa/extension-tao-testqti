@@ -170,6 +170,22 @@ class PauseTest extends TestCase
         $this->createSubjectWithParameters($requestParameters)->process();
     }
 
+    public function testSaveItemStateIfNeeded(): void {
+        $this->qtiRunnerService
+            ->method('isTerminated')
+            ->willReturn(false);
+
+        $this->qtiRunnerService
+            ->expects($this->once())
+            ->method('setItemState');
+
+        $requestParameters = $this->getRequiredRequestParameters();
+        $requestParameters["itemDefinition"] = 'item';
+        $requestParameters["itemState"] = '[]';
+
+        $this->createSubjectWithParameters($requestParameters)->process();
+    }
+
     /**
      * @param array $requestParameters
      *
