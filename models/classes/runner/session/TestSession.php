@@ -28,7 +28,6 @@ use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoTests\models\runner\time\TimePoint;
-use qtism\common\datatypes\Duration;
 use qtism\common\datatypes\QtiDuration;
 use qtism\data\AssessmentSection;
 use qtism\data\TestPart;
@@ -273,7 +272,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Gets the timer duration for a particular identifier
      * @param string|array $identifier
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function getTimerDuration($identifier, $target = 0)
@@ -301,7 +300,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     /**
      * Gets the total duration for the current item in the TestSession
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function computeItemTime($target = 0)
@@ -313,7 +312,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     /**
      * Gets the total duration for the current section in the TestSession
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function computeSectionTime($target = 0)
@@ -327,7 +326,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     /**
      * Gets the total duration for the current test part in the TestSession
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function computeTestPartTime($target = 0)
@@ -340,7 +339,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     /**
      * Gets the total duration for the whole assessment test
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function computeTestTime($target = 0)

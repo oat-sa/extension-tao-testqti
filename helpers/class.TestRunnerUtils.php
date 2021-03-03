@@ -21,6 +21,7 @@
 
 use oat\taoQtiTest\models\runner\RunnerService;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
+use qtism\common\datatypes\QtiDuration;
 use qtism\data\NavigationMode;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\Container;
@@ -1268,7 +1269,7 @@ class taoQtiTest_helpers_TestRunnerUtils
 
     /**
      * Gets the amount of seconds with the microseconds as fractional part from a Duration instance.
-     * @param \qtism\common\datatypes\Duration $duration
+     * @param QtiDuration $duration
      * @return float|null
      */
     public static function getDurationWithMicroseconds($duration)
