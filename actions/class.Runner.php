@@ -821,7 +821,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $serviceContext = $this->getServiceContext();
 
-            $isTerminated = $this->getRunnerService()->isTerminated($serviceContext);
+            $isTerminated = (bool) $this->getRunnerService()->isTerminated($serviceContext);
 
             if (!$isTerminated) {
                 $this->saveItemState();

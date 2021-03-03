@@ -50,7 +50,7 @@ class Pause extends TestRunnerAction
 
             $this->saveToolStates();
 
-            $isTerminated = $this->getRunnerService()->isTerminated($serviceContext);
+            $isTerminated = (bool) $this->getRunnerService()->isTerminated($serviceContext);
 
             if (!$isTerminated) {
                 $this->saveItemState();
