@@ -171,6 +171,30 @@ class PauseTest extends TestCase
     }
 
     /**
+     * @dataProvider dataProviderTestSaveItemStateIfNeeded
+     */
+    public function testSaveItemStateIfNeeded(
+        bool $testTerminated,
+        $itemDefinition,
+        $itemState,
+        InvokedCountMatcher $expectedCalls
+    ): void {
+        $this->qtiRunnerService
+            ->method('isTerminated')
+            ->willReturn($testTerminated);
+
+        $this->qtiRunnerService
+            ->expects($expectedCalls)
+            ->method('setItemState');
+
+        $requestParameters = $this->getRequiredRequestParameters();
+        $requestParameters["itemDefinition"] = $itemDefinition;
+        $requestParameters["itemState"] = $itemState;
+
+        $this->createSubjectWithParameters($requestParameters)->process();
+    }
+
+    /**
      * @param array $requestParameters
      *
      * @return Pause
@@ -244,6 +268,36 @@ class PauseTest extends TestCase
                 'timerTarget' => 'server',
                 'itemDuration' => 100,
                 'expectedCalls' => self::never()
+            ]
+        ];
+    }
+
+    public function dataProviderTestSaveItemStateIfNeeded(): array
+    {
+        return [
+            'Test terminated' => [
+                'testTerminated' => true,
+                'itemDefinition' => 'item',
+                'itemState' => '[]',
+                'expectedCalls' => self::never()
+            ],
+            'Test not terminated - itemState provided' => [
+                'testTerminated' => false,
+                'itemDefinition' => false,
+                'itemState' => '[]',
+                'expectedCalls' => self::never()
+            ],
+            'Test not terminated - itemDefinition provided' => [
+                'testTerminated' => false,
+                'itemDefinition' => 'item',
+                'itemState' => false,
+                'expectedCalls' => self::never()
+            ],
+            'Test not terminated - itemDefinition and itemState provided' => [
+                'testTerminated' => false,
+                'itemDefinition' => 'item',
+                'itemState' => '[]',
+                'expectedCalls' => self::once()
             ]
         ];
     }

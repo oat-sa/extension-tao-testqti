@@ -29,7 +29,7 @@ use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
 use oat\taoTests\models\runner\time\TimerAdjustmentMapInterface;
-use qtism\common\datatypes\Duration;
+use qtism\common\datatypes\QtiDuration;
 use qtism\data\AssessmentItemRef;
 use qtism\data\AssessmentTest;
 use qtism\data\QtiIdentifiable;
@@ -245,7 +245,7 @@ class TimerAdjustmentServiceTest extends TestCase
      */
     private function mockTimeConstraint(string $sourceId, int $maximumRemainingTime): QtiTimeConstraint
     {
-        $durationMock = $this->createMock(Duration::class);
+        $durationMock = $this->createMock(QtiDuration::class);
         $durationMock->method('getSeconds')
             ->willReturn($maximumRemainingTime);
 
