@@ -140,7 +140,7 @@ class ResponseGenerator extends ConfigurableService
     public function getActionResponse(
         TestRunnerAction $action,
         float $now,
-        float $last,
+        float &$last,
         QtiRunnerServiceContext $serviceContext
     ): array
     {
