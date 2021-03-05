@@ -265,6 +265,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             }
         }
         $this->getTimer()->getConsumedExtraTime($tags, $maxTime);
+        $this->updateCurrentDurationCache();
         $timer->save();
     }
 
@@ -273,7 +274,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * @param string|array $identifier
      * @param int $target
      * @return QtiDuration
-     * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
+     * @throws \oat\taoTests\models\runner\time\TimeException
      */
     public function getTimerDuration($identifier, $target = 0)
     {
@@ -281,6 +282,23 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             $target = $this->getTimerTarget();
         }
 
+        $durationKey = $this->getDurationKey($identifier, $target);
+
+        if (!isset($this->durationCache[$durationKey])) {
+            $this->updateDurationCache($identifier, $target);
+        }
+
+        return $this->durationCache[$durationKey];
+    }
+
+    /**
+     * Gets the timer duration key for a particular identifier
+     * @param string|array $identifier
+     * @param int $target
+     * @return string
+     */
+    protected function getDurationKey($identifier, int $target): string
+    {
         $durationKey = $target . '-';
         if (is_array($identifier)) {
             sort($identifier);
@@ -289,12 +307,44 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             $durationKey .= $identifier;
         }
 
-        if (!isset($this->durationCache[$durationKey])) {
-            $duration = round($this->getTimer()->compute($identifier, $target), 6);
-            $this->durationCache[$durationKey] = new QtiDuration('PT' . $duration . 'S');
-        }
+        return $durationKey;
+    }
 
-        return $this->durationCache[$durationKey];
+    /**
+     * Updates the duration cache for a particular identifier
+     * @param string|array $identifier
+     * @param int $target
+     * @return float
+     * @throws \oat\taoTests\models\runner\time\TimeException
+     */
+    protected function updateDurationCache($identifier, int $target): float
+    {
+        $duration = round($this->getTimer()->compute($identifier, $target), 6);
+        $durationKey = $this->getDurationKey($identifier, $target);
+
+        $this->durationCache[$durationKey] = new QtiDuration('PT' . $duration . 'S');
+
+        return $duration;
+    }
+
+    /**
+     * Updates the duration cache for all identifiers from the current context
+     * @throws \oat\taoTests\models\runner\time\TimeException
+     */
+    protected function updateCurrentDurationCache()
+    {
+        $target = $this->getTimerTarget();
+        $routeItem = $this->getCurrentRouteItem();
+        $sources = [
+            $routeItem->getAssessmentTest(),
+            $this->getCurrentTestPart(),
+            $this->getCurrentAssessmentSection(),
+            $routeItem->getAssessmentItemRef(),
+        ];
+
+        foreach ($sources as $source) {
+            $this->updateDurationCache($source->getIdentifier(), $target);
+        }
     }
 
     /**
