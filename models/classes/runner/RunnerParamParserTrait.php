@@ -116,7 +116,7 @@ trait RunnerParamParserTrait
      */
     protected function endItemTimer($timestamp = null)
     {
-        if ($this->getRequestParameter('itemDuration')) {
+        if ($this->hasRequestParameter('itemDuration')) {
             $serviceContext    = $this->getServiceContext();
             $itemDuration      = $this->getRequestParameter('itemDuration');
             return $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $timestamp);
