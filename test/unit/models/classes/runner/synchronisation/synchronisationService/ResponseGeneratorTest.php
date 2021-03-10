@@ -185,7 +185,8 @@ class ResponseGeneratorTest extends TestCase
 
         $serviceContext = $this->createMock(QtiRunnerServiceContext::class);
 
-        $response = $responseGenerator->getActionResponse($action, 1, 2, $serviceContext);
+        $last = 2;
+        $response = $responseGenerator->getActionResponse($action, 1, $last, $serviceContext);
         $this->assertSame([
             0 => 'returned response',
             'name' => null,
@@ -213,7 +214,8 @@ class ResponseGeneratorTest extends TestCase
         $serviceContext = $this->createMock(QtiRunnerServiceContext::class);
         $serviceContext->method('isSyncingMode')->willReturn(true);
 
-        $response = $responseGenerator->getActionResponse($action, 1, 2, $serviceContext);
+        $last = 2;
+        $response = $responseGenerator->getActionResponse($action, 1, $last, $serviceContext);
         $this->assertSame([
             0 => 'returned response',
             'name' => 'name',
@@ -234,7 +236,9 @@ class ResponseGeneratorTest extends TestCase
 
         $serviceContext = $this->createMock(QtiRunnerServiceContext::class);
         $serviceContext->method('setSyncingMode')->willThrowException(new common_Exception('PHPUnit exception'));
-        $response = $responseGenerator->getActionResponse($action, 1, 2, $serviceContext);
+
+        $last = 2;
+        $response = $responseGenerator->getActionResponse($action, 1, $last, $serviceContext);
         $this->assertSame([
             'error' => 'PHPUnit exception',
             'success' => false,
