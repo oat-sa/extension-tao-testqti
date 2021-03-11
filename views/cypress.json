@@ -6,5 +6,6 @@
     "fixturesFolder": "cypress/fixtures",
     "supportFile": "cypress/support",
     "pluginsFile": "cypress/plugins",
-    "testFiles": "**/*.spec.js"
+    "testFiles": "**/*.spec.js",  
+    "integrationFolder": "cypress/tests"
 }
