@@ -21,9 +21,12 @@ describe('Test', () => {
     const testName = 'Lorem ipsum dolar sit amet name';
 
     beforeEach(() => {
-        cy.fixture('urls').as('urls');
+        cy.fixture('urls').as('urls').then(urls => {
+            const username = Cypress.env('adminUser');
+            const password = Cypress.env('adminPass');
 
-        cy.login();
+            cy.login({ url: urls.login, username, password });
+        });
     });
 
     it('should reach the tests page', function () {
@@ -138,9 +141,5 @@ describe('Test', () => {
             });
 
         cy.contains(testDirectoryName).should('not.exist');
-    });
-
-    afterEach(() => {
-        cy.logout();
     });
 });
