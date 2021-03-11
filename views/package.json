@@ -13,6 +13,7 @@
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "0.8.1",
-    "@oat-sa/tao-test-runner-qti": "2.20.0"
+    "@oat-sa/tao-test-runner-qti": "2.20.0",
+    "@oat-sa-private/e2e-runner": "github:oat-sa/e2e-runner#feature/TRN-605/e2e-core-setup"
   }
 }
