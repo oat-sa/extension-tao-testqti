@@ -1,0 +1,6 @@
+{
+    "login": "/tao/Main/login",
+    "index": "/tao/Main/index",
+    "root": "/",
+    "tests": "/tao/Main/index?structure=tests&ext=taoTests&section=manage_tests"
+}

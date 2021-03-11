@@ -6,6 +6,10 @@
     "type": "git",
     "url": "https://github.com/oat-sa/extension-tao-testqti.git"
   },
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
+  },
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "0.8.1",
