@@ -31,6 +31,10 @@ REST API
 E2E testing
 ===========
 
+### Configuraation
+
+Create your own `cypress.json` and `cypress.env.json` files in the views directory. You can rename sample `cypress.json.sample` and `cypress.env.json.sample`, respectively.
+
 [E2E core](https://github.com/oat-sa/e2e-runner/pull/1) should be installed before running tests
 
 If you want to run test in headless mode, you should call `npm run cy:run` and `npm run cy:open` otherwise.
