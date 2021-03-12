@@ -7,3 +7,10 @@ var/
 phpunit.xml
 node_modules
 .idea
+
+# cypress config
+
+cypress/videos/
+cypress/screenshots/
+cypress.json
+cypress.env.json

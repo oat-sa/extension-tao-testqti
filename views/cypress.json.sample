@@ -1,5 +1,5 @@
 {
-    "baseUrl": "https://tao-authoring-1.docker.localhost",
+    "baseUrl": "https://tao.docker.localhost",
     "screenshotsFolder": "cypress/screenshots",
     "video": false,
     "videosFolder": "cypress/videos",
