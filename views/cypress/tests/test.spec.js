@@ -21,18 +21,17 @@ describe('Test', () => {
     const testName = 'Lorem ipsum dolar sit amet name';
 
     beforeEach(() => {
-        cy.fixture('urls').as('urls').then(urls => {
-            const username = Cypress.env('adminUser');
-            const password = Cypress.env('adminPass');
-
-            cy.login({ url: urls.login, username, password });
-        });
+        cy.loginAsAdmin();
+        cy.fixture('tests-locators').as('testsLocators');
     });
 
     it('should reach the tests page', function () {
         cy.visit(this.urls.root);
 
-        cy.contains('Tests').click();
+        cy.get('.main-menu')
+            .within(() => {
+                cy.contains('Tests').click();
+            });
         cy.url().should('include', this.urls.tests);
     });
 
@@ -48,7 +47,7 @@ describe('Test', () => {
             });
         cy.get('form button[type="submit"]').click();
 
-        cy.get('#tree-manage_tests')
+        cy.get(this.testsLocators.tree)
             .within(() => {
                 cy.contains(testDirectoryName);
             });
@@ -72,7 +71,7 @@ describe('Test', () => {
             });
         cy.get('form button[type="submit"]').click();
 
-        cy.get('#tree-manage_tests')
+        cy.get(this.testsLocators.tree)
             .within(() => {
                 cy.contains(testName).click();
             });
@@ -85,7 +84,7 @@ describe('Test', () => {
     });
 
     it('should update test', function() {
-        cy.get('#tree-manage_tests')
+        cy.get(this.testsLocators.tree)
             .within(() => {
                 cy.contains(testName).click();
             });
@@ -112,7 +111,7 @@ describe('Test', () => {
         cy.contains('Test properties');
 
         cy.contains('Test Saved').should('not.exist');
-        cy.get('ul.content-action-bar')
+        cy.get('.content-action-bar')
             .within(() => {
                 cy.contains('Authoring').click();
             });
@@ -129,7 +128,7 @@ describe('Test', () => {
     it('should remove class', function () {
         cy.visit(this.urls.tests);
 
-        cy.get('#tree-manage_tests')
+        cy.get(this.testsLocators.tree)
             .within(() => {
                 cy.contains(testDirectoryName).click();
             });
@@ -137,7 +136,7 @@ describe('Test', () => {
         cy.contains('Delete').click();
         cy.get('.preview-modal-feedback.opened')
             .within(() => {
-                cy.contains('Ok').click();
+                cy.contains('button', 'Ok').click();
             });
 
         cy.contains(testDirectoryName).should('not.exist');
