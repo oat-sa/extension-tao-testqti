@@ -334,11 +334,33 @@
                 height: 35px;
 
             }
+
+            & .testpart-adder {
+                height: 18px;
+                border: none;
+                background: none;
+                color: #206C9E;
+                text-shadow: none;
+
+                & .icon-add {
+                    padding-right: 1px;
+                    font-size: 16px;
+                }
+            }
         }
 
         .testpart-content {
-            & > button{
-                margin-left: 10px;
+            & > button {
+                height: 18px;
+                border: none;
+                background: none;
+                color: #206C9E;
+                text-shadow: none;
+
+                & .icon-add {
+                    padding-right: 1px;
+                    font-size: 16px;
+                }
             }
         }
 
