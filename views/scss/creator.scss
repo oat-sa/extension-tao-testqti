@@ -2,17 +2,17 @@
 
 
 @mixin respond-to($media : medium)  {
-  $break-small : 1024px;
-  $break-wide  : 1280px;
-  @if $media == small {
-    @media only screen and (max-width: $break-small) { @content; }
-  }
-  @else if $media == medium {
-    @media only screen and (min-width: $break-small + 1) and (max-width: $break-wide) { @content; }
-  }
-  @else if $media == wide {
-    @media only screen and (min-width: $break-wide + 1) { @content; }
-  }
+    $break-small : 1024px;
+    $break-wide  : 1280px;
+    @if $media == small {
+        @media only screen and (max-width: $break-small) { @content; }
+    }
+    @else if $media == medium {
+        @media only screen and (min-width: $break-small + 1) and (max-width: $break-wide) { @content; }
+    }
+    @else if $media == wide {
+        @media only screen and (min-width: $break-wide + 1) { @content; }
+    }
 }
 
 @mixin responsive($key, $small, $medium, $wide){
@@ -65,23 +65,23 @@
                 @include font-size(12);
 
                 [class^="icon-"], [class*=" icon-"] {
-                   display: block;
-                   @include font-size(20);
-                   color: $darkBrown;
+                    display: block;
+                    @include font-size(20);
+                    color: $darkBrown;
                 }
 
                 &:hover {
-                   cursor: pointer;
-                   color: $textHighlight;
-                   background-color: $logoRed;
-                   [class^="icon-"], [class*=" icon-"] {
-                       cursor: pointer;
-                       color: $textHighlight;
-                       background-color: $logoRed;
-                   }
+                    cursor: pointer;
+                    color: $textHighlight;
+                    background-color: $logoRed;
+                    [class^="icon-"], [class*=" icon-"] {
+                        cursor: pointer;
+                        color: $textHighlight;
+                        background-color: $logoRed;
+                    }
                 }
                 &.disabled {
-                   background-color: inherit;
+                    background-color: inherit;
                     [class^="icon-"], [class*=" icon-"]{
                         background-color: inherit;
                         cursor: not-allowed;
@@ -297,14 +297,14 @@
         }
 
         & > h1 {
-           position: relative;
-           background-color: $uiClickableDefaultBg;
-           height: 30px;
-           padding: 4px 60px 3px 48px ;
-           margin-bottom: 0;
-           margin-top : 1px;
-           @include font-size(16);
-           font-weight: bold;
+            position: relative;
+            background-color: $uiClickableDefaultBg;
+            height: 30px;
+            padding: 4px 60px 3px 48px ;
+            margin-bottom: 0;
+            margin-top : 1px;
+            @include font-size(16);
+            font-weight: bold;
             &:before {
                 @include tao-icon-setup;
                 @include icon-test;
@@ -326,7 +326,7 @@
 
 
         .test-content {
-            padding: 0 0 0 10px;
+            padding: 0 16px;
             height: calc(100% - 65px);
             overflow-y : auto;
             h1, h2 {
@@ -344,24 +344,32 @@
 
         .testpart {
             color: $textColor;
-            border-left: solid 5px $testPartColor;
-            padding: 0 5px;
+            border: solid 1px #8d949e;
+            border-radius: 4px;
+            padding-bottom: 16px;
             margin: 10px 0;
 
             & > h1 {
                 background-color: whiten($testPartColor, 0.2);
-                padding: 0 5px;
+                padding: 8px 8px 0 16px;
                 margin-right: 5px;
                 margin-top: 0;
+                @include font-size(16);
                 color: $textHighlight;
+                height: 44px;
+                width: 100%;
                 @include border-radius;
+
                 & > .toggler {
                     position: absolute;
                     right: 15px;
                     color: $textHighlight;
                 }
-            }
 
+                & .actions {
+                    margin-top: 4px;
+                }
+            }
             .actions .tlb-group {
                 min-width: 126px;
             }
@@ -378,7 +386,8 @@
             margin: 10px 0 10px 10px;
 
             & > h2 {
-                color: blacken($sectionColor, 0.4);
+                @include font-size(16);
+                font-weight: bold;
             }
 
             &:last-child{
@@ -403,8 +412,8 @@
                 clear: both;
                 padding-left: 25px;
                 & > li, .rubricblock-content {
-                   position: relative;
-                   clear: both;
+                    position: relative;
+                    clear: both;
                 }
                 & > li {
                     padding: 4px;
@@ -460,7 +469,7 @@
                     padding: 2px ;
                     clear: both;
                     &:nth-child(even){
-                         background-color: $uiClickableDefaultBg;
+                        background-color: $uiClickableDefaultBg;
                     }
                     .actions {
                         .tlb-group {
