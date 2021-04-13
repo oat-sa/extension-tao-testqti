@@ -97,6 +97,23 @@ define([
         return normalizedNodes[normalized] || normalized;
     }
 
+    var entityMap = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '/': '&#x2F;',
+        '`': '&#x60;',
+        '=': '&#x3D;'
+    };
+
+    function escapeHtml (string) {
+        return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+            return entityMap[s];
+        });
+    }
+
     /**
      * This encoder is used to transform DOM to JSON QTI and JSON QTI to DOM.
      * It works now for the rubricBlocks components.
@@ -147,7 +164,7 @@ define([
                 if (elt.nodeType === 3) {
                     if (!_.isEmpty($.trim(elt.nodeValue))) {
                         result.push(qtiElementHelper.create('textRun', {
-                            'content': elt.nodeValue,
+                            'content': escapeHtml(elt.nodeValue),
                             'xmlBase': ''
                         }));
                     }
@@ -155,22 +172,22 @@ define([
                     nodeName = normalizeNodeName(elt.nodeName);
 
                     object = _.merge(qtiElementHelper.create(nodeName, {
-                        'id': '',
-                        'class': '',
-                        'xmlBase': '',
-                        'lang': '',
-                        'label': ''
-                    }),
-                    _.transform(elt.attributes, function (acc, value) {
-                        var attrName = normalizeNodeName(value.nodeName);
-                        if (attrName) {
-                            if (typedAttributes[nodeName] && typedAttributes[nodeName][attrName]) {
-                                acc[attrName] = baseType.getValue(typedAttributes[nodeName][attrName], value.nodeValue);
-                            } else {
-                                acc[attrName] = value.nodeValue;
+                            'id': '',
+                            'class': '',
+                            'xmlBase': '',
+                            'lang': '',
+                            'label': ''
+                        }),
+                        _.transform(elt.attributes, function (acc, value) {
+                            var attrName = normalizeNodeName(value.nodeName);
+                            if (attrName) {
+                                if (typedAttributes[nodeName] && typedAttributes[nodeName][attrName]) {
+                                    acc[attrName] = baseType.getValue(typedAttributes[nodeName][attrName], value.nodeValue);
+                                } else {
+                                    acc[attrName] = value.nodeValue;
+                                }
                             }
-                        }
-                    }));
+                        }));
                     if (elt.childNodes.length > 0) {
                         object.content = self.decode(elt.childNodes);
                     }
