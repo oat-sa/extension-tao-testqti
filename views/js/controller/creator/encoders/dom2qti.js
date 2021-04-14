@@ -31,7 +31,7 @@ define([
      * A mapping of QTI-XML node and attributes names in order to keep the camel case form
      * @type {Object}
      */
-    var normalizedNodes = {
+    const normalizedNodes = {
         feedbackblock: 'feedbackBlock',
         outcomeidentifier: 'outcomeIdentifier',
         showhide: 'showHide',
@@ -44,7 +44,7 @@ define([
      * Some Nodes have attributes that needs typing during decoding.
      * @type {Object}
      */
-    var typedAttributes = {
+    const typedAttributes = {
         printedVariable: {
             identifier:       baseType.getConstantByName('identifier'),
             powerForm:        baseType.getConstantByName('boolean'),
@@ -93,25 +93,27 @@ define([
      * @returns {String}
      */
     function normalizeNodeName(nodeName) {
-        var normalized = (nodeName) ? nodeName.toLocaleLowerCase() : '';
+        const normalized = (nodeName) ? nodeName.toLocaleLowerCase() : '';
         return normalizedNodes[normalized] || normalized;
     }
 
-    var entityMap = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;',
-        '/': '&#x2F;',
-        '`': '&#x60;',
-        '=': '&#x3D;'
-    };
-
+    /**
+     * Escapes HTML/XML symbols
+     * @param {String} string
+     * @returns {String}
+     */
     function escapeHtml (string) {
-        return String(string).replace(/[&<>"'`=\/]/g, function (s) {
-            return entityMap[s];
-        });
+        const htmlMap = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;',
+            '`': '&#x60;',
+            '=': '&#x3D;'
+        };
+        return String(string).replace(/[&<>"'`=\/]/g,  s => htmlMap[s]);
     }
 
     /**
@@ -127,7 +129,7 @@ define([
          * @returns {String}
          */
         encode: function (modelValue) {
-            var self = this,
+            let self = this,
                 startTag;
 
             if (_.isArray(modelValue)) {
@@ -154,13 +156,13 @@ define([
          * @returns {Array}
          */
         decode: function (nodeValue) {
-            var self = this;
-            var $nodeValue = (nodeValue instanceof $) ? nodeValue : $(nodeValue);
-            var result = [];
-            var nodeName;
+            const self = this;
+            const $nodeValue = (nodeValue instanceof $) ? nodeValue : $(nodeValue);
+            const result = [];
+            let nodeName;
 
             _.forEach($nodeValue, function (elt) {
-                var object;
+                let object;
                 if (elt.nodeType === 3) {
                     if (!_.isEmpty($.trim(elt.nodeValue))) {
                         result.push(qtiElementHelper.create('textRun', {
@@ -179,7 +181,7 @@ define([
                             'label': ''
                         }),
                         _.transform(elt.attributes, function (acc, value) {
-                            var attrName = normalizeNodeName(value.nodeName);
+                            const attrName = normalizeNodeName(value.nodeName);
                             if (attrName) {
                                 if (typedAttributes[nodeName] && typedAttributes[nodeName][attrName]) {
                                     acc[attrName] = baseType.getValue(typedAttributes[nodeName][attrName], value.nodeValue);
