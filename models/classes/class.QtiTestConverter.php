@@ -286,7 +286,12 @@ class taoQtiTest_models_classes_QtiTestConverter
                             $this->arrayToComponent($value, $component, true);
                         } else {
                             $assignableValue = $this->componentValue($value, $class);
-                            if (! is_null($assignableValue)) {
+
+                            if ($assignableValue !== null) {
+                                if (is_string($assignableValue) && $key === 'content') {
+                                    $assignableValue = $this->removeScriptTags($assignableValue);
+                                }
+
                                 $this->setValue($component, $properties[$key], $assignableValue);
                             }
                         }
@@ -309,6 +314,11 @@ class taoQtiTest_models_classes_QtiTestConverter
                 return $component;
             }
         }
+    }
+
+    private function removeScriptTags(string $value): string
+    {
+        return preg_replace('/<*script[^>]*>.*<\/script[^>]*>*/is', '', $value);
     }
 
     /**
