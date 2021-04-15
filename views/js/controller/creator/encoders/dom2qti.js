@@ -23,8 +23,9 @@ define([
     'jquery',
     'lodash',
     'taoQtiTest/controller/creator/helpers/qtiElement',
-    'taoQtiTest/controller/creator/helpers/baseType'
-], function ($, _, qtiElementHelper, baseType) {
+    'taoQtiTest/controller/creator/helpers/baseType',
+    'lib/dompurify/purify'
+], function ($, _, qtiElementHelper, baseType, DOMPurify) {
     'use strict';
 
     /**
@@ -98,25 +99,6 @@ define([
     }
 
     /**
-     * Escapes HTML/XML symbols
-     * @param {String} string
-     * @returns {String}
-     */
-    function escapeHtml (string) {
-        const htmlMap = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;',
-            '/': '&#x2F;',
-            '`': '&#x60;',
-            '=': '&#x3D;'
-        };
-        return String(string).replace(/[&<>"'`=\/]/g,  s => htmlMap[s]);
-    }
-
-    /**
      * This encoder is used to transform DOM to JSON QTI and JSON QTI to DOM.
      * It works now for the rubricBlocks components.
      * @exports creator/encoders/dom2qti
@@ -166,7 +148,9 @@ define([
                 if (elt.nodeType === 3) {
                     if (!_.isEmpty($.trim(elt.nodeValue))) {
                         result.push(qtiElementHelper.create('textRun', {
-                            'content': escapeHtml(elt.nodeValue),
+                            'content': DOMPurify.sanitize(elt.nodeValue, {
+                                FORBID_TAGS: ['script']
+                            }),
                             'xmlBase': ''
                         }));
                     }
