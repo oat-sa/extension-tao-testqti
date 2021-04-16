@@ -148,9 +148,7 @@ define([
                 if (elt.nodeType === 3) {
                     if (!_.isEmpty($.trim(elt.nodeValue))) {
                         result.push(qtiElementHelper.create('textRun', {
-                            'content': DOMPurify.sanitize(elt.nodeValue, {
-                                FORBID_TAGS: ['script']
-                            }),
+                            'content': DOMPurify.sanitize(elt.nodeValue),
                             'xmlBase': ''
                         }));
                     }
