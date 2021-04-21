@@ -22,6 +22,7 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponent;
 use qtism\data\QtiComponentCollection;
 use qtism\common\datatypes\QtiDuration;
+use oat\taoQtiTest\helpers\QtiTestSanitizer;
 use qtism\common\collections\IntegerCollection;
 use qtism\common\collections\StringCollection;
 use qtism\data\ViewCollection;
@@ -289,7 +290,7 @@ class taoQtiTest_models_classes_QtiTestConverter
 
                             if ($assignableValue !== null) {
                                 if (is_string($assignableValue) && $key === 'content') {
-                                    $assignableValue = $this->removeScriptTags($assignableValue);
+                                    $assignableValue = QtiTestSanitizer::sanitizeContent($assignableValue);
                                 }
 
                                 $this->setValue($component, $properties[$key], $assignableValue);
@@ -316,27 +317,26 @@ class taoQtiTest_models_classes_QtiTestConverter
         }
     }
 
-    private function removeScriptTags(string $value): string
-    {
-        return preg_replace('/<*script[^>]*>.*<\/script[^>]*>*/is', '', $value);
-    }
-
     /**
      * Get the value according to it's type and class.
      *
      * @param mixed $value
-     * @param object $class
-     * @return \qtism\common\datatypes\QtiDuration
+     * @param object|null $class
+     * @return QtiDuration|QtiComponentCollection|mixed|null
      */
     private function componentValue($value, $class)
     {
-        if (! is_null($class)) {
-            if (is_array($value)) {
-                return $this->createComponentCollection(new ReflectionClass($class->name), $value);
-            } elseif ($class->name === 'qtism\common\datatypes\QtiDuration') {
-                return new qtism\common\datatypes\QtiDuration('PT' . $value . 'S');
-            }
+        if ($class === null) {
+            return $value;
         }
+
+        if (is_array($value)) {
+            return $this->createComponentCollection(new ReflectionClass($class->name), $value);
+        }
+        if ($class->name === QtiDuration::class) {
+            return new QtiDuration('PT' . $value . 'S');
+        }
+
         return $value;
     }
 
