@@ -47,6 +47,10 @@ class QtiTestSanitizerTest extends TestCase
                 'expected' => '',
             ],
             [
+                'content' => '&lt;script&gt;alert(123);&lt;/script&gt;',
+                'expected' => '',
+            ],
+            [
                 'content' => '<script>' . PHP_EOL . 'alert(123);' . PHP_EOL . '</script>',
                 'expected' => '',
             ],
@@ -56,15 +60,19 @@ class QtiTestSanitizerTest extends TestCase
             ],
             [
                 'content' => '<div>content</div>',
-                'expected' => '&lt;div&gt;content&lt;/div&gt;',
+                'expected' => '<div>content</div>',
             ],
             [
                 'content' => '<div>content<script>alert(123);</script></div>',
-                'expected' => '&lt;div&gt;content&lt;/div&gt;',
+                'expected' => '<div>content</div>',
             ],
             [
                 'content' => '<div onload="alert(123);">content</div>',
-                'expected' => '&lt;div onload=&quot;alert(123);&quot;&gt;content&lt;/div&gt;',
+                'expected' => '<div>content</div>',
+            ],
+            [
+                'content' => '<div onload=&quot;alert(123);&quot;>content</div>',
+                'expected' => '<div>content</div>',
             ],
         ];
     }
