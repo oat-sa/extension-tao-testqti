@@ -26,7 +26,7 @@ use tao_helpers_Display as Display;
 
 class QtiTestSanitizer
 {
-    public static function sanitizeContent(string $content): string
+    public function sanitizeContent(string $content): string
     {
         return Display::sanitizeXssHtml(htmlspecialchars_decode($content));
     }

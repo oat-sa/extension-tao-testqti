@@ -27,12 +27,20 @@ use oat\taoQtiTest\helpers\QtiTestSanitizer;
 
 class QtiTestSanitizerTest extends TestCase
 {
+    /** @var QtiTestSanitizer */
+    private $subject;
+
+    protected function setUp(): void
+    {
+        $this->subject = new QtiTestSanitizer();
+    }
+
     /**
      * @dataProvider sanitizeContentProvider
      */
     public function testSanitizeContent(string $content, string $expected): void
     {
-        $this->assertEquals($expected, QtiTestSanitizer::sanitizeContent($content));
+        $this->assertEquals($expected, $this->subject->sanitizeContent($content));
     }
 
     public function sanitizeContentProvider(): array
