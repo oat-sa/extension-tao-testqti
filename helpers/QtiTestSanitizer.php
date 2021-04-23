@@ -22,16 +22,12 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\helpers;
 
+use tao_helpers_Display as Display;
+
 class QtiTestSanitizer
 {
     public static function sanitizeContent(string $content): string
     {
-        $content = preg_replace(
-            '/<script[^>]*>.*<\/script>/is',
-            '',
-            htmlspecialchars_decode($content)
-        );
-
-        return htmlspecialchars($content);
+        return Display::sanitizeXssHtml(htmlspecialchars_decode($content));
     }
 }
