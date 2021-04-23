@@ -65,14 +65,16 @@ class taoQtiTest_models_classes_QtiTestConverter
      */
     private $doc;
 
+    /** @var QtiTestSanitizer */
+    private $qtiTestSanitizer;
+
     /**
      * Instantiate the converter using a QTITest document.
-     *
-     * @param \qtism\data\storage\xml\XmlDocument $doc
      */
-    public function __construct(XmlDocument $doc)
+    public function __construct(XmlDocument $doc, QtiTestSanitizer $qtiTestSanitizer = null)
     {
         $this->doc = $doc;
+        $this->qtiTestSanitizer = $qtiTestSanitizer ?? new QtiTestSanitizer();
     }
 
     /**
@@ -290,7 +292,7 @@ class taoQtiTest_models_classes_QtiTestConverter
 
                             if ($assignableValue !== null) {
                                 if (is_string($assignableValue) && $key === 'content') {
-                                    $assignableValue = QtiTestSanitizer::sanitizeContent($assignableValue);
+                                    $assignableValue = $this->qtiTestSanitizer->sanitizeContent($assignableValue);
                                 }
 
                                 $this->setValue($component, $properties[$key], $assignableValue);
