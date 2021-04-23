@@ -22,6 +22,7 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponent;
 use qtism\data\QtiComponentCollection;
 use qtism\common\datatypes\QtiDuration;
+use oat\taoQtiTest\helpers\QtiTestSanitizer;
 use qtism\common\collections\IntegerCollection;
 use qtism\common\collections\StringCollection;
 use qtism\data\ViewCollection;
@@ -64,14 +65,16 @@ class taoQtiTest_models_classes_QtiTestConverter
      */
     private $doc;
 
+    /** @var QtiTestSanitizer */
+    private $qtiTestSanitizer;
+
     /**
      * Instantiate the converter using a QTITest document.
-     *
-     * @param \qtism\data\storage\xml\XmlDocument $doc
      */
-    public function __construct(XmlDocument $doc)
+    public function __construct(XmlDocument $doc, QtiTestSanitizer $qtiTestSanitizer = null)
     {
         $this->doc = $doc;
+        $this->qtiTestSanitizer = $qtiTestSanitizer ?? new QtiTestSanitizer();
     }
 
     /**
@@ -286,7 +289,12 @@ class taoQtiTest_models_classes_QtiTestConverter
                             $this->arrayToComponent($value, $component, true);
                         } else {
                             $assignableValue = $this->componentValue($value, $class);
-                            if (! is_null($assignableValue)) {
+
+                            if ($assignableValue !== null) {
+                                if (is_string($assignableValue) && $key === 'content') {
+                                    $assignableValue = $this->qtiTestSanitizer->sanitizeContent($assignableValue);
+                                }
+
                                 $this->setValue($component, $properties[$key], $assignableValue);
                             }
                         }
@@ -315,18 +323,22 @@ class taoQtiTest_models_classes_QtiTestConverter
      * Get the value according to it's type and class.
      *
      * @param mixed $value
-     * @param object $class
-     * @return \qtism\common\datatypes\QtiDuration
+     * @param object|null $class
+     * @return QtiDuration|QtiComponentCollection|mixed|null
      */
     private function componentValue($value, $class)
     {
-        if (! is_null($class)) {
-            if (is_array($value)) {
-                return $this->createComponentCollection(new ReflectionClass($class->name), $value);
-            } elseif ($class->name === 'qtism\common\datatypes\QtiDuration') {
-                return new qtism\common\datatypes\QtiDuration('PT' . $value . 'S');
-            }
+        if ($class === null) {
+            return $value;
         }
+
+        if (is_array($value)) {
+            return $this->createComponentCollection(new ReflectionClass($class->name), $value);
+        }
+        if ($class->name === QtiDuration::class) {
+            return new QtiDuration('PT' . $value . 'S');
+        }
+
         return $value;
     }
 
