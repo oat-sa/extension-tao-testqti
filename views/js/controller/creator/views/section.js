@@ -132,8 +132,9 @@ function(
                 }
             });
 
-            $section.parents('.testpart').on('deleted.deleter', removePropHandler);
-            $section.on('deleted.deleter', removePropHandler);
+            // deleted.deleter event fires only on the parent nodes (testparts, sections, etc)
+            // Since it "bubles" we can subsctibe only to the highest parent node
+            $section.parents('.testparts').on('deleted.deleter', removePropHandler);
 
             //section level category configuration
             categoriesProperty($view);
@@ -142,8 +143,20 @@ function(
                 blueprintProperty($view);
             }
 
-            function removePropHandler(){
-                if(propView !== null){
+            function removePropHandler(e, $deletedNode) {
+                const validIds = [
+                    $section.parents('.testpart').attr('id'),
+                    $section.attr('id')
+                ];
+
+                const deletedNodeId = $deletedNode.attr('id');
+                // We have to check id of a deleted node, because
+                // 1. Event fires after child node was deleted, but e.stopPropagation doesn't help
+                // because currentTarget is always document
+                // 2. We have to subscribe to the parent node and it's posiible that another section was removed even from another testpart
+                // Subscription to the .sections selector event won't help because sections element might contain several children.
+
+                if (propView !== null && validIds.includes(deletedNodeId)){
                     propView.destroy();
                 }
             }
