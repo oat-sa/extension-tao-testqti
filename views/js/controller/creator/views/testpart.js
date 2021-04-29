@@ -71,8 +71,8 @@ function($, _, defaults, actions, sectionView, templates, qtiTestHelper){
             });
 
             //destroy it when it's testpart is removed
-            $testPart.on('delete', function(){
-                if(propView !== null){
+            $testPart.parents('.testparts').on('deleted.deleter', function(e, $deletedNode) {
+                if ((propView !== null) && ($deletedNode.attr('id') === $testPart.attr('id'))) {
                     propView.destroy();
                 }
             });
