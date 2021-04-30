@@ -257,9 +257,15 @@ function(
          * @param {propView} propView - the view object
          */
         function propHandler (propView) {
+            const removePropHandler = function removePropHandler(e, $deletedNode){
+                const validIds = [
+                    $itemRef.attr('id'),
+                    $itemRef.parents('.section').attr('id'),
+                    $itemRef.parents('.testpart').attr('id')
+                ];
+                const deletedNodeId = $deletedNode.attr('id');
 
-            var removePropHandler = function removePropHandler(){
-                if(propView !== null){
+                if (propView !== null && validIds.includes(deletedNodeId)) {
                     propView.destroy();
                 }
             };
@@ -268,9 +274,7 @@ function(
             weightsProperty(propView);
             timeLimitsProperty(propView);
 
-            $itemRef.parents('.testpart').on('delete', removePropHandler);
-            $itemRef.parents('.section').on('delete', removePropHandler);
-            $itemRef.on('delete', removePropHandler);
+            $itemRef.parents('.testparts').on('deleted.deleter', removePropHandler);
         }
     }
 
