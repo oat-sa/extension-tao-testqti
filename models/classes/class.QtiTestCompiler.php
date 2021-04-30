@@ -477,6 +477,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
         $originalDoc = $testService->getDoc($test);
 
         $compiledDoc = XmlCompactDocument::createFromXmlAssessmentTestDocument($originalDoc, $resolver, $resolver);
+        $this->getQtiTestFileCleaner()->cleanAfterCompilation($compiledDoc, $resolver);
         common_Logger::t("QTI Test XML transformed in a compact version.");
 
         return $compiledDoc;
@@ -1096,5 +1097,10 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     protected function useCssScoping()
     {
         return $this->settingCssScope;
+    }
+
+    protected function getQtiTestFileCleaner(): QtiTestFileCleaner
+    {
+        return $this->getServiceLocator()->get(\oat\taoQtiTest\models\QtiTestFileCleaner::SERVICE_ID);
     }
 }

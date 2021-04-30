@@ -60,15 +60,19 @@ class QtiPackageExporter extends InjectionAwareService
      * @throws common_Exception
      * @throws common_exception_Error
      */
-    public function exportDeliveryQtiPackage(string $testUri): common_report_Report
+    public function exportDeliveryQtiPackage(string $testUri, ?string $pathToTempDir = null): common_report_Report
     {
+        if (null === $pathToTempDir) {
+            $pathToTempDir = $this->fileHelperService->createTempDir();
+        }
+
         $exportReport = $this->testExporter->export(
             [
                 'filename' => self::QTI_PACKAGE_FILENAME,
                 'instances' => $testUri,
                 'uri' => $testUri
             ],
-            $this->fileHelperService->createTempDir()
+            $pathToTempDir
         );
 
         if ($exportReport->getType() === common_report_Report::TYPE_ERROR) {
@@ -92,9 +96,14 @@ class QtiPackageExporter extends InjectionAwareService
      */
     public function exportQtiTestPackageToFile(string $testUri, string $fileSystemId, string $filePath): File
     {
-        $result = $this->exportDeliveryQtiPackage($testUri)->getData();
+        $pathToTempDir = $this->fileHelperService->createTempDir();
+        $result = $this->exportDeliveryQtiPackage($testUri, $pathToTempDir)->getData();
 
-        return $this->moveFileToSharedFileSystem($result['path'], $fileSystemId, $filePath);
+        $file = $this->moveFileToSharedFileSystem($result['path'], $fileSystemId, $filePath);
+
+        $this->fileHelperService->removeDirectory($pathToTempDir);
+
+        return $file;
     }
 
     /**
