@@ -82,6 +82,7 @@ define([
          */
         start(config) {
             let exitReason;
+            let testRunner;
             const $container = $('.runner');
 
             const logger = loggerFactory('controller/runner', {
@@ -98,6 +99,9 @@ define([
              * @param {String} [level] - error level
              */
             const exit = function exit(reason, level){
+                if (reason && testRunner.getState('preventReasonablePageReload')) {
+                    return;
+                }
                 let url = config.options.exitUrl;
                 const params = {};
                 if (reason) {
@@ -201,7 +205,8 @@ define([
                     }, 'Start test runner');
 
                     //instantiate the QtiTestRunner
-                    runner(config.provider.runner, results.plugins, testRunnerConfig)
+                    testRunner = runner(config.provider.runner, results.plugins, testRunnerConfig)
+                    testRunner
                         .on('error', onError)
                         .on('warning', onWarning)
                         .on('ready', function () {
