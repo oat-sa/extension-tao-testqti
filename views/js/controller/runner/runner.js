@@ -99,9 +99,6 @@ define([
              * @param {String} [level] - error level
              */
             const exit = function exit(reason, level){
-                if (reason && testRunner.getState('preventReasonablePageReload')) {
-                    return;
-                }
                 let url = config.options.exitUrl;
                 const params = {};
                 if (reason) {
@@ -205,8 +202,7 @@ define([
                     }, 'Start test runner');
 
                     //instantiate the QtiTestRunner
-                    testRunner = runner(config.provider.runner, results.plugins, testRunnerConfig)
-                    testRunner
+                    runner(config.provider.runner, results.plugins, testRunnerConfig)
                         .on('error', onError)
                         .on('warning', onWarning)
                         .on('ready', function () {
