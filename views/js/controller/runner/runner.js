@@ -82,7 +82,6 @@ define([
          */
         start(config) {
             let exitReason;
-            let testRunner;
             const $container = $('.runner');
 
             const logger = loggerFactory('controller/runner', {
