@@ -36,15 +36,19 @@ use oat\generis\model\OntologyAwareTrait;
 class taoQtiTest_helpers_ItemResolver implements Resolver
 {
     use OntologyAwareTrait;
-    
+
     /**
      * @var Service
      */
     private $service;
-    
+
+    /** @var array */
+    private $tmpFiles;
+
     public function __construct(Service $itemService)
     {
         $this->service = $itemService;
+        $this->tmpFiles = [];
     }
     /**
      * Resolve the given TAO Item URI in the path to
@@ -61,11 +65,11 @@ class taoQtiTest_helpers_ItemResolver implements Resolver
             $msg = "The QTI Item with URI '${url}' cannot be found.";
             throw new ResolutionException($msg);
         }
-        
+
         // The item is retrieved from the database.
         // We can try to reach the QTI-XML file by detecting
         // where it is supposed to be located.
-        
+
         // strip xinclude, we don't need that at the moment.
         $raw = $this->service->getXmlByRdfItem($this->getResource($url));
         $dom = new DOMDocument();
@@ -76,7 +80,18 @@ class taoQtiTest_helpers_ItemResolver implements Resolver
 
         $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';
         file_put_contents($tmpfile, $dom->saveXML());
-        
+
+        $this->tmpFiles[] = $tmpfile;
+
         return $tmpfile;
+    }
+
+    public function __destruct()
+    {
+        foreach ($this->tmpFiles as $tmpFile) {
+            if (file_exists($tmpFile) && is_writable($tmpFile)) {
+                unlink($tmpFile);
+            }
+        }
     }
 }
