@@ -20,7 +20,6 @@
  *
  */
 
-use oat\taoQtiItem\helpers\QtiFile;
 use qtism\common\ResolutionException;
 use qtism\common\Resolver;
 use oat\taoQtiItem\model\qti\Service;
@@ -42,7 +41,7 @@ class taoQtiTest_helpers_ItemResolver implements Resolver
      */
     private $service;
 
-    /** @var array */
+    /** @var string[] */
     private $tmpFiles;
 
     public function __construct(Service $itemService)
@@ -50,6 +49,7 @@ class taoQtiTest_helpers_ItemResolver implements Resolver
         $this->service = $itemService;
         $this->tmpFiles = [];
     }
+
     /**
      * Resolve the given TAO Item URI in the path to
      * the related QTI-XML file.
