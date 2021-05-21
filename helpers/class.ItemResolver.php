@@ -42,12 +42,11 @@ class taoQtiTest_helpers_ItemResolver implements Resolver
     private $service;
 
     /** @var string[] */
-    private $tmpFiles;
+    private $tmpFiles = [];
 
     public function __construct(Service $itemService)
     {
         $this->service = $itemService;
-        $this->tmpFiles = [];
     }
 
     /**
@@ -89,7 +88,7 @@ class taoQtiTest_helpers_ItemResolver implements Resolver
     public function __destruct()
     {
         foreach ($this->tmpFiles as $tmpFile) {
-            if (file_exists($tmpFile) && is_writable($tmpFile)) {
+            if (is_writable($tmpFile)) {
                 unlink($tmpFile);
             }
         }
