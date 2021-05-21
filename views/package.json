@@ -9,6 +9,6 @@
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "0.8.1",
-    "@oat-sa/tao-test-runner-qti": "2.20.5"
+    "@oat-sa/tao-test-runner-qti": "2.20.7"
   }
 }
