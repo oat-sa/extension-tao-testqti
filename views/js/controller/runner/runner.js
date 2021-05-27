@@ -32,6 +32,7 @@ define([
     'layout/loading-bar',
     'ui/feedback',
     'util/url',
+    'util/locale',
     'taoTests/runner/providerLoader',
     'taoTests/runner/runner',
     'css!taoQtiTestCss/new-test-runner'
@@ -46,6 +47,7 @@ define([
     loadingBar,
     feedback,
     urlUtil,
+    locale,
     providerLoader,
     runner
 ) {
@@ -88,6 +90,9 @@ define([
                 serviceCallId : config.serviceCallId,
                 plugins : config && config.providers && Object.keys(config.providers.plugins)
             });
+
+            const rtl = [ ... locale.getConfig().rtl || [] ].includes(context.locale);
+            $('.delivery-scope').toggleClass('rtl', rtl);
 
             let preventFeedback = false;
             let errorFeedback = null;
