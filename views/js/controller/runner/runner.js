@@ -91,8 +91,7 @@ define([
                 plugins : config && config.providers && Object.keys(config.providers.plugins)
             });
 
-            const rtl = [ ... locale.getConfig().rtl || [] ].includes(context.locale);
-            $('.delivery-scope').toggleClass('rtl', rtl);
+            $('.delivery-scope').attr({dir: locale.getLanguageDirection(context.locale)});
 
             let preventFeedback = false;
             let errorFeedback = null;
