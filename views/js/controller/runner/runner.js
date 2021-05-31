@@ -91,8 +91,6 @@ define([
                 plugins : config && config.providers && Object.keys(config.providers.plugins)
             });
 
-            $('.delivery-scope').attr({dir: locale.getLanguageDirection(context.locale)});
-
             let preventFeedback = false;
             let errorFeedback = null;
 
@@ -173,6 +171,9 @@ define([
             const moduleConfig = module.config();
 
             loadingBar.start();
+
+            // adding attr for RTL languages
+            $('.delivery-scope').attr({dir: locale.getLanguageDirection(context.locale)});
 
             // verify required config
             if ( ! requiredOptions.every( option => typeof config[option] !== 'undefined') ) {
