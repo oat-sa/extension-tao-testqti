@@ -243,6 +243,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         \common_Logger::d("Persisting QTI Assessment Test Session '${sessionId}'...");
         $context->getStorage()->persist($testSession);
         if ($this->isTerminated($context)) {
+            /** @var StorageManager $serviceService */
+            $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
+            $serviceService->persist();
+
             $userId = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
             $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
             $eventManager->trigger(new AfterAssessmentTestSessionClosedEvent($testSession, $userId));
