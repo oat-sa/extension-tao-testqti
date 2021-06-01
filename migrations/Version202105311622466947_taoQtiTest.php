@@ -38,8 +38,10 @@ final class Version202105311622466947_taoQtiTest extends AbstractMigration
 
         // add config
         $extension = $this->getExtension();
-        $config = $extension->getConfig('QtiTestListenerService')->getOptions();
-        $config[QtiTestListenerService::OPTION_ARCHIVE_ENABLED] = true;
+
+        /** @var QtiTestListenerService $config */
+        $config = $extension->getConfig('QtiTestListenerService');
+        $config->setOption(QtiTestListenerService::OPTION_ARCHIVE_ENABLED, true);
         $extension->setConfig('QtiTestListenerService', $config);
     }
 
@@ -57,10 +59,13 @@ final class Version202105311622466947_taoQtiTest extends AbstractMigration
 
         // remove config
         $extension = $this->getExtension();
-        $config = $extension->getConfig('QtiTestListenerService')->getOptions();
 
-        if (array_key_exists(QtiTestListenerService::OPTION_ARCHIVE_ENABLED, $config)) {
-            unset($config[QtiTestListenerService::OPTION_ARCHIVE_ENABLED]);
+        /** @var QtiTestListenerService $config */
+        $config = $extension->getConfig('QtiTestListenerService');
+        $options = $config->getOptions();
+        if (array_key_exists(QtiTestListenerService::OPTION_ARCHIVE_ENABLED, $options)) {
+            unset($options[QtiTestListenerService::OPTION_ARCHIVE_ENABLED]);
+            $config->setOptions($options);
         }
 
         $extension->setConfig('QtiTestListenerService', $config);
