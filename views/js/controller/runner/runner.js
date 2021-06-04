@@ -32,6 +32,7 @@ define([
     'layout/loading-bar',
     'ui/feedback',
     'util/url',
+    'util/locale',
     'taoTests/runner/providerLoader',
     'taoTests/runner/runner',
     'css!taoQtiTestCss/new-test-runner'
@@ -46,6 +47,7 @@ define([
     loadingBar,
     feedback,
     urlUtil,
+    locale,
     providerLoader,
     runner
 ) {
@@ -169,6 +171,9 @@ define([
             const moduleConfig = module.config();
 
             loadingBar.start();
+
+            // adding attr for RTL languages
+            $('.delivery-scope').attr({dir: locale.getLanguageDirection(context.locale)});
 
             // verify required config
             if ( ! requiredOptions.every( option => typeof config[option] !== 'undefined') ) {
