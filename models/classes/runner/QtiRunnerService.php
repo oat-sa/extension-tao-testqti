@@ -1516,7 +1516,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
             case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
                 while (!$session->getRoute()->isLast()) {
                     $this->autoSkipWithDefaultResponse($context, 'item', null);
-                    //$this->persist($context);
                 }
 
                 \common_Logger::i('TIMEOUT: closing the assessment test session');
@@ -1525,6 +1524,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
             case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
                 if ($isLinear) {
+                    while (!$session->getRoute()->isLastOfTestPart()) {
+                        $this->autoSkipWithDefaultResponse($context, 'item', null);
+                    }
+
                     \common_Logger::i('TIMEOUT: moving to the next test part');
                     $session->moveNextTestPart();
                 } else {
