@@ -1139,7 +1139,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
      * @return boolean
      * @throws \common_Exception
      */
-    public function autoSkip(RunnerServiceContext $context, $scope, $ref)
+    public function autoSkipWithDefaultResponse(RunnerServiceContext $context, $scope, $ref)
     {
         return $this->move($context, 'autoSkip', $scope, $ref);
     }
@@ -1515,7 +1515,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         switch ($timeOutException->getCode()) {
             case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
                 while (!$session->getRoute()->isLast()) {
-                    $this->autoSkip($context, 'item', null);
+                    $this->autoSkipWithDefaultResponse($context, 'item', null);
                     //$this->persist($context);
                 }
 
