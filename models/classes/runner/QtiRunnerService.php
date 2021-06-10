@@ -1133,6 +1133,18 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
     }
 
     /**
+     * @param RunnerServiceContext $context
+     * @param $scope
+     * @param $ref
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function autoSkip(RunnerServiceContext $context, $scope, $ref)
+    {
+        return $this->move($context, 'autoSkip', $scope, $ref);
+    }
+
+    /**
      * Handles a test timeout
      * @param RunnerServiceContext $context
      * @param $scope
@@ -1502,6 +1514,11 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $isLinear = $session->getCurrentNavigationMode() === NavigationMode::LINEAR;
         switch ($timeOutException->getCode()) {
             case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
+                while (!$session->getRoute()->isLast()) {
+                    $this->autoSkip($context, 'item', null);
+                    //$this->persist($context);
+                }
+
                 \common_Logger::i('TIMEOUT: closing the assessment test session');
                 $session->endTestSession();
                 break;

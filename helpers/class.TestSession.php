@@ -530,14 +530,16 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     /**
      * Skip the current item.
      *
+     * @param bool $allowUntouchedItems whether to allow skipping items in state INITIAL (not ever seen yet by the TT)
+     *
      * @throws AssessmentTestSessionException If the test session is not running or it is the last route item of the testPart but the SIMULTANEOUS submission mode is in force and not all responses were provided.
      * @qtism-test-interaction
      * @qtism-test-duration-update
      */
-    public function skip()
+    public function skip($allowUntouchedItems = false)
     {
         $sessionMemento = $this->getSessionMemento();
-        parent::skip();
+        parent::skip($allowUntouchedItems);
         $this->triggerEventChange($sessionMemento);
     }
 
