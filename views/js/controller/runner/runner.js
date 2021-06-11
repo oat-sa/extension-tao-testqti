@@ -228,7 +228,7 @@ define([
 
                         //FIXME this event should not be triggered on the test runner
                         .on('disablefeedbackalerts', function() {
-                            if (errorFeedback) {menuItemSelector
+                            if (errorFeedback) {
                                 errorFeedback.close();
                             }
                             preventFeedback = true;
