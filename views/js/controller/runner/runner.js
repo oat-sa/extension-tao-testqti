@@ -174,11 +174,6 @@ define([
 
             // adding attr for RTL languages
             $('.delivery-scope').attr({dir: locale.getLanguageDirection(context.locale)});
-            // tune classes to remove page header RTL artifacts
-            const menuItemSelector = '.delivery-scope[dir=rtl] .settings-menu li';
-            $(menuItemSelector).addClass('sep-before');
-            $(`${menuItemSelector}:visible:last`).removeClass('sep-before');
-
 
             // verify required config
             if ( ! requiredOptions.every( option => typeof config[option] !== 'undefined') ) {
@@ -233,7 +228,7 @@ define([
 
                         //FIXME this event should not be triggered on the test runner
                         .on('disablefeedbackalerts', function() {
-                            if (errorFeedback) {
+                            if (errorFeedback) {menuItemSelector
                                 errorFeedback.close();
                             }
                             preventFeedback = true;
