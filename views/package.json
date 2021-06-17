@@ -9,6 +9,6 @@
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "0.8.1",
-    "@oat-sa/tao-test-runner-qti": "github:oat-sa/tao-test-runner-qti-fe#fix/tr-888/right-to-left-review-panel"
+    "@oat-sa/tao-test-runner-qti": "2.22.0"
   }
 }
