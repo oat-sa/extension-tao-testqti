@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint146\n"
-"PO-Revision-Date: 2021-01-20T12:36:00\n"
+"Project-Id-Version: TAO 3.4.0-sprint155\n"
+"PO-Revision-Date: 2021-06-02T12:04:32\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-DE\n"
@@ -932,7 +932,7 @@ msgid "Please try reloading the page or pause the test. If you pause, you will b
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
-msgstr ""
+msgstr "Haben Sie bitte einen Moment, wir versuchen die Verbindung wiederherzustellen."
 
 msgid "Preview"
 msgstr ""
@@ -1633,7 +1633,7 @@ msgid "You are currently working offline."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr ""
+msgstr "Die Verbindung ist seit längerer Zeit unterbrochen. Klicken Sie, um neu zu laden."
 
 msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
 msgstr ""
