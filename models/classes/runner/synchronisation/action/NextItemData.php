@@ -85,6 +85,7 @@ class NextItemData extends TestRunnerAction
         $itemRef = $this->getRunnerService()->getItemHref($serviceContext, $itemIdentifier);
         $itemData = $this->getRunnerService()->getItemData($serviceContext, $itemRef);
         $baseUrl = $this->getRunnerService()->getItemPublicUrl($serviceContext, $itemRef);
+        $portableElements = $this->getRunnerService()->getItemPortableElements($serviceContext, $itemRef);
 
         $itemState = $this->getRunnerService()->getItemState($serviceContext, $itemIdentifier);
         if ($itemState === null || !count($itemState)) {
@@ -96,6 +97,7 @@ class NextItemData extends TestRunnerAction
             'itemData' => $itemData,
             'itemState' => $itemState,
             'itemIdentifier' => $itemIdentifier,
+            'portableElements' => $portableElements
         ];
     }
 
