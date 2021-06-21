@@ -424,51 +424,68 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         if ($report->containsError() === true && $validPackage === true && $validManifest === true && $testsFound === true) {
-            // We consider a test package as an atomic component, we then rollback it.
-            $itemService = $this->getServiceLocator()->get(taoItems_models_classes_ItemsService::class);
-
-            foreach ($report as $r) {
-                $data = $r->getData();
-
-                // -- Rollback all items.
-                // 1. Simply delete items that were not involved in overwriting.
-                foreach ($data->newItems as $item) {
-                    if (
-                        !$item instanceof MetadataGuardianResource
-                        && !array_key_exists($item->getUri(), $data->overwrittenItems)
-                    ) {
-                        common_Logger::d("Rollbacking new item '" . $item->getUri() . "'...");
-                        @$itemService->deleteResource($item);
-                    }
-                }
-
-                // 2. Restore overwritten item contents.
-                foreach ($data->overwrittenItems as $overwrittenItemId => $backupName) {
-                    common_Logger::d("Restoring content for item '${overwrittenItemId}'...");
-                    @Service::singleton()->restoreContentByRdfItem(new core_kernel_classes_Resource($overwrittenItemId), $backupName);
-                }
-
-                // Delete all created classes (by registered class lookups).
-                foreach ($data->createdClasses as $createdClass) {
-                    @$createdClass->delete();
-                }
-
-                // Delete the target Item RDFS class.
-                common_Logger::t("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
-                @$data->itemClass->delete();
-
-                // Delete test definition.
-                common_Logger::t("Rollbacking test '" . $data->rdfsResource->getLabel() . "...");
-                @$this->deleteTest($data->rdfsResource);
-
-                if (count($data->newItems) > 0) {
-                    $msg = __("The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back.", $data->manifestResource->getIdentifier());
-                    $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, $msg));
-                }
-            }
+            $this->clearRelatedResources($report);
         }
 
         return $report;
+    }
+
+    /**
+     * @param common_report_Report $report
+     *
+     * @throws common_exception_Error
+     * @throws common_exception_FileSystemError
+     */
+    public function clearRelatedResources(common_report_Report $report): void
+    {
+        // We consider a test package as an atomic component, we then rollback it.
+        $itemService = $this->getServiceLocator()->get(taoItems_models_classes_ItemsService::class);
+
+        foreach ($report as $r) {
+            $data = $r->getData();
+
+            // -- Rollback all items.
+            // 1. Simply delete items that were not involved in overwriting.
+            foreach ($data->newItems as $item) {
+                if (
+                    !$item instanceof MetadataGuardianResource
+                    && !array_key_exists($item->getUri(), $data->overwrittenItems)
+                ) {
+                    common_Logger::d("Rollbacking new item '" . $item->getUri() . "'...");
+                    @$itemService->deleteResource($item);
+                }
+            }
+
+            // 2. Restore overwritten item contents.
+            foreach ($data->overwrittenItems as $overwrittenItemId => $backupName) {
+                common_Logger::d("Restoring content for item '${overwrittenItemId}'...");
+                @Service::singleton()->restoreContentByRdfItem(
+                    new core_kernel_classes_Resource($overwrittenItemId),
+                    $backupName
+                );
+            }
+
+            // Delete all created classes (by registered class lookups).
+            foreach ($data->createdClasses as $createdClass) {
+                @$createdClass->delete();
+            }
+
+            // Delete the target Item RDFS class.
+            common_Logger::t("Rollbacking Items target RDFS class '" . $data->itemClass->getLabel() . "'...");
+            @$data->itemClass->delete();
+
+            // Delete test definition.
+            common_Logger::t("Rollbacking test '" . $data->rdfsResource->getLabel() . "...");
+            @$this->deleteTest($data->rdfsResource);
+
+            if (count($data->newItems) > 0) {
+                $msg = __(
+                    "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back.",
+                    $data->manifestResource->getIdentifier()
+                );
+                $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, $msg));
+            }
+        }
     }
 
     /**
