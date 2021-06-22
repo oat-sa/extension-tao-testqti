@@ -110,6 +110,7 @@
                             type="text"
                             data-increment="1"
                             data-min="0"
+                            data-max="151"
                             value="{{maxAttempts}}"
                             data-bind="itemSessionControl.maxAttempts"
                             data-bind-encoder="number"

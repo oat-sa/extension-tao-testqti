@@ -132,7 +132,16 @@
                 <label for="itemref-max-attempts">{{__ 'Max Attempts'}}</label>
             </div>
             <div class="col-6">
-                <input name="itemref-max-attempts" type="text" data-increment="1" data-min="0" value="{{maxAttempts}}" data-bind="itemSessionControl.maxAttempts" data-bind-encoder="number" />
+                <input
+                        name="itemref-max-attempts"
+                        type="text"
+                        data-increment="1"
+                        data-min="0"
+                        data-max="151"
+                        value="{{maxAttempts}}"
+                        data-bind="itemSessionControl.maxAttempts"
+                        data-bind-encoder="number"
+                />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
