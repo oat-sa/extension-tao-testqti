@@ -1503,7 +1503,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         switch ($timeOutException->getCode()) {
             case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
                 \common_Logger::i('TIMEOUT: closing the assessment test session');
-                $session->endTestSession();
+                $session->moveThroughAndEndTestSession();
                 break;
 
             case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
