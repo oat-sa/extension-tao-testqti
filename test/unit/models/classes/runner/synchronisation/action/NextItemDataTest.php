@@ -74,6 +74,7 @@ class NextItemDataTest extends TestCase
                     'itemData' => null,
                     'itemState' => new stdClass(),
                     'itemIdentifier' => 'expectedItemDefinition',
+                    'portableElements' => null,
                 ]
             ],
             'success' => true,
@@ -112,12 +113,14 @@ class NextItemDataTest extends TestCase
                     'itemData' => null,
                     'itemState' => $state1,
                     'itemIdentifier' => $itemId1,
+                    'portableElements' => null,
                 ],
                 [
                     'baseUrl' => null,
                     'itemData' => null,
                     'itemState' => $storedState2,
                     'itemIdentifier' => $itemId2,
+                    'portableElements' => null,
                 ],
             ]
         ], $subject->process());
