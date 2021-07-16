@@ -17,12 +17,54 @@
  */
 
 /**
+ * Gets the DOM selector for a type of interaction
+ * @param {String} type
+ * @returns {string}
+ */
+export function getInteractionSelector(type) {
+    return `[data-qti-class="${type}"]`;
+}
+
+/**
+ * A list o DOM selector by interaction types
+ * @type {Object}
+ */
+export const interactions = {
+    choiceInteraction: getInteractionSelector('choiceInteraction'),
+    inlineChoiceInteraction: getInteractionSelector('inlineChoiceInteraction'),
+    extendedTextInteraction: getInteractionSelector('extendedTextInteraction'),
+    textEntryInteraction: getInteractionSelector('textEntryInteraction'),
+    matchInteraction: getInteractionSelector('matchInteraction'),
+};
+
+/**
+ * Expects a given number of a type of interaction
+ * @param {String} type
+ * @param {Number} number
+ */
+export function expectInteractions(type, number) {
+    cy.get(getInteractionSelector(type)).should('have.length', number);
+}
+
+/**
+ * Expects a given number of choices for one interaction
+ * @param {Number} interactionIndex - The index of the targeted choiceInteraction
+ * @param {Number} number
+ */
+export function expectChoices(interactionIndex, number) {
+    cy.get(getInteractionSelector('choiceInteraction'))
+        .eq(interactionIndex)
+        .find('li.qti-choice')
+        .should('have.length', number);
+}
+
+/**
  * Toggles the value of a choice in a choiceInteraction
  * @param {Number} interactionIndex - The index of the targeted choiceInteraction
  * @param {Number} choiceIndex - The index of the choice inside the targeted choiceInteraction
  */
 export function toggleChoice(interactionIndex, choiceIndex) {
-    cy.get('.qti-choiceInteraction')
+    cy.get(getInteractionSelector('choiceInteraction'))
         .eq(interactionIndex)
         .find('li.qti-choice .label-box')
         .eq(choiceIndex)
@@ -36,7 +78,7 @@ export function toggleChoice(interactionIndex, choiceIndex) {
  * @param {Boolean} isChecked - The expected state
  */
 export function expectChoiceChecked(interactionIndex, choiceIndex, isChecked) {
-    cy.get('.qti-choiceInteraction')
+    cy.get(getInteractionSelector('choiceInteraction'))
         .eq(interactionIndex)
         .find('li.qti-choice input')
         .eq(choiceIndex)
@@ -50,7 +92,7 @@ export function expectChoiceChecked(interactionIndex, choiceIndex, isChecked) {
  * @param {Number} columnIndex - The index of the column inside the targeted matchInteraction
  */
 export function toggleMatchChoice(interactionIndex, rowIndex, columnIndex) {
-    cy.get('.qti-matchInteraction')
+    cy.get(getInteractionSelector('matchInteraction'))
         .eq(interactionIndex)
         .find('tbody tr')
         .eq(rowIndex)
@@ -67,7 +109,7 @@ export function toggleMatchChoice(interactionIndex, rowIndex, columnIndex) {
  * @param {Boolean} isChecked - The expected state
  */
 export function expectMatchChoiceChecked(interactionIndex, rowIndex, columnIndex, isChecked) {
-    cy.get('.qti-matchInteraction')
+    cy.get(getInteractionSelector('matchInteraction'))
         .eq(interactionIndex)
         .find('tbody tr')
         .eq(rowIndex)

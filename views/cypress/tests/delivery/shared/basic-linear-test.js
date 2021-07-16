@@ -18,6 +18,9 @@
 
 import { goToNextItem, endTest } from '../../utils/navigation.js'
 import {
+    interactions,
+    expectInteractions,
+    expectChoices,
     toggleChoice,
     expectChoiceChecked,
     toggleMatchChoice,
@@ -27,12 +30,13 @@ import {
 export function basicLinearTestSpecs() {
     it('displays the first item with choices', () => {
         cy.get('.qti-item').within(() => {
-            cy.get('.qti-choiceInteraction').should('have.length', 2);
-            cy.get('.qti-inlineChoiceInteraction').should('have.length', 2);
+            expectInteractions('choiceInteraction', 2);
+            expectInteractions('inlineChoiceInteraction', 1);
 
-            cy.get('[data-identifier="choice_1"]').parents('.qti-choiceInteraction').find('li').should('have.length', 4);
-            cy.get('[data-identifier="choice_5"]').parents('.qti-choiceInteraction').find('li').should('have.length', 4);
-            cy.get('.qti-choiceInteraction input').should('not.be.checked');
+            expectChoices(0, 4);
+            expectChoices(1, 4);
+
+            cy.get(interactions.choiceInteraction).find('input').should('not.be.checked');
         });
     });
 
@@ -74,22 +78,24 @@ export function basicLinearTestSpecs() {
 
     it('displays the second item with text entries', () => {
         cy.get('.qti-item').within(() => {
-            cy.get('.qti-extendedTextInteraction .text-container').should('have.length', 1);
-            cy.get('.qti-extendedTextInteraction .text-container').should('have.value', '');
+            expectInteractions('extendedTextInteraction', 1);
+            expectInteractions('textEntryInteraction', 1);
 
-            cy.get('.qti-textEntryInteraction').should('have.length', 1);
-            cy.get('.qti-textEntryInteraction').should('have.value', '');
+            cy.get(interactions.extendedTextInteraction).find('.text-container').should('have.value', '');
+            cy.get(interactions.textEntryInteraction).should('have.value', '');
         });
     });
 
     it('can type a text', () => {
         const fixtureText = 'This is a text';
 
-        cy.get('.qti-extendedTextInteraction .text-container').type(fixtureText);
-        cy.get('.qti-extendedTextInteraction .text-container').should('have.value', fixtureText);
+        cy.get(interactions.extendedTextInteraction).within(() => {
+            cy.get('.text-container').type(fixtureText);
+            cy.get('.text-container').should('have.value', fixtureText);
+        });
 
-        cy.get('.qti-textEntryInteraction').type(fixtureText);
-        cy.get('.qti-textEntryInteraction').should('have.value', fixtureText);
+        cy.get(interactions.textEntryInteraction).type(fixtureText);
+        cy.get(interactions.textEntryInteraction).should('have.value', fixtureText);
     });
 
     it('can move to the next item', () => {
@@ -98,11 +104,14 @@ export function basicLinearTestSpecs() {
 
     it('displays the third item with match choices', () => {
         cy.get('.qti-item').within(() => {
-            cy.get('.qti-matchInteraction').should('have.length', 1);
-            cy.get('.qti-matchInteraction').find('input').should('have.length', 8);
-            cy.get('.qti-matchInteraction').find('input').should('not.be.checked');
-            cy.get('.qti-matchInteraction').find('.instruction-container .feedback-success').should('have.length', 1);
-            cy.get('.qti-matchInteraction').find('.instruction-container .feedback-warning').should('have.length', 0);
+            expectInteractions('matchInteraction', 1);
+
+            cy.get(interactions.matchInteraction).within(() => {
+                cy.get('input').should('have.length', 8);
+                cy.get('input').should('not.be.checked');
+                cy.get('.instruction-container .feedback-success').should('have.length', 1);
+                cy.get('.instruction-container .feedback-warning').should('have.length', 0);
+            });
         });
     });
 
@@ -112,12 +121,12 @@ export function basicLinearTestSpecs() {
         toggleMatchChoice(0, 2, 1);
         toggleMatchChoice(0, 3, 0);
 
-        cy.get('.qti-matchInteraction').find('.instruction-container .feedback-success').should('have.length', 1);
+        cy.get(interactions.matchInteraction).find('.instruction-container .feedback-success').should('have.length', 1);
 
         toggleMatchChoice(0, 2, 0);
         toggleMatchChoice(0, 3, 1);
 
-        cy.get('.qti-matchInteraction').find('.instruction-container .feedback-warning').should('have.length', 1);
+        cy.get(interactions.matchInteraction).find('.instruction-container .feedback-warning').should('have.length', 1);
 
         expectMatchChoiceChecked(0, 0, 0, true);
         expectMatchChoiceChecked(0, 0, 1, false);
