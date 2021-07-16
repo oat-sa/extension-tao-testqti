@@ -1,6 +1,6 @@
 # E2E testing
 
-Please refer to the readme file placed at `tao/views/cypress` for generic info about E2E. This file is aimed at describing the E2E for the extension taoQtiTest.
+Please refer to the readme file placed at `tao/views/cypress` for generic info about E2E. This file is aimed at describing the E2E for the extension `taoQtiTest`.
 
 Development of end-to-end tests in TAO is based on the principle of storing the test specs in each relevant extension, while the common and shared features with respect to TAO are stored in `tao-core`. The base engine as well as the very common features are supplied through the dependency `@oat-sa/e2e-runner`.
 
@@ -40,7 +40,9 @@ Create `envs/env*.json` file and set it in the `tao/views/cypress.json`:
 }
 ```
 
-For taoQtiTest, the following additional config can be added in any `env*.json` file:
+> **Note:** The base configuration as described in the `tao-core` extension should be done first.
+
+For `taoQtiTest`, the following additional config can be added in any `env*.json` file:
 ```json
 {
     "testTakerUser": "e2e_test_taker",
@@ -56,9 +58,10 @@ The sample file `taoQtiTest/views/cypress/env/env.sample` contains an example.
 ### Environment setup
 In order to have the E2E tests working properly, it is needed to follow these instructions:
 - Any test packages from the folder `taoQtiTest/views/cypress/fixtures/testPackages` must be imported in TAO, usually within the namespace `E2E`.
-- A specific test taker group must be created to give access to the tests, usually name `E2E`
+- A specific test taker group must be created to give access to the tests, usually named `E2E`
 - A specific test taker must be created, usually named `e2e_test_taker`, and added to the `E2E` group.
 - All the E2E related tests must be published and assigned to the group `E2E`, or any group you created for this purpose
+- The env file must contain the username and password for the E2E test taker (`testTakerUser` and `testTakerPass`).
 - The env file must contain the `deliveryIds` property, filled with the list of test names. The example given above should give a good idea of what needs to be set. Usually the names listed in it should be ok, unless the deliveries have been renamed.
 
 ## Commands
