@@ -1,0 +1,8 @@
+{
+    "testPackages": [
+        {
+            "key": "basicLinearTest",
+            "package": "basic-linear-test.zip"
+        }
+    ]
+}
