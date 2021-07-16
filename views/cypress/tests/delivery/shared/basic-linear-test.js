@@ -25,13 +25,15 @@ import {
 } from '../../utils/interactions.js'
 
 export function basicLinearTestSpecs() {
-    it('displays first item with choices', () => {
-        cy.get('.qti-choiceInteraction').should('have.length', 2);
-        cy.get('.qti-inlineChoiceInteraction').should('have.length', 2);
+    it('displays the first item with choices', () => {
+        cy.get('.qti-item').within(() => {
+            cy.get('.qti-choiceInteraction').should('have.length', 2);
+            cy.get('.qti-inlineChoiceInteraction').should('have.length', 2);
 
-        cy.get('[data-identifier="choice_1"]').parents('.qti-choiceInteraction').find('li').should('have.length', 4);
-        cy.get('[data-identifier="choice_5"]').parents('.qti-choiceInteraction').find('li').should('have.length', 4);
-        cy.get('.qti-choiceInteraction input').should('not.be.checked');
+            cy.get('[data-identifier="choice_1"]').parents('.qti-choiceInteraction').find('li').should('have.length', 4);
+            cy.get('[data-identifier="choice_5"]').parents('.qti-choiceInteraction').find('li').should('have.length', 4);
+            cy.get('.qti-choiceInteraction input').should('not.be.checked');
+        });
     });
 
     it('can select multiple choices', () => {
@@ -66,34 +68,45 @@ export function basicLinearTestSpecs() {
         cy.get('.qti-inlineChoiceInteraction-dropdown').should('not.be.visible');
     });
 
-    it('can move to the next', () => {
+    it('can move to the next item', () => {
         goToNextItem();
+    });
+
+    it('displays the second item with text entries', () => {
+        cy.get('.qti-item').within(() => {
+            cy.get('.qti-extendedTextInteraction .text-container').should('have.length', 1);
+            cy.get('.qti-extendedTextInteraction .text-container').should('have.value', '');
+
+            cy.get('.qti-textEntryInteraction').should('have.length', 1);
+            cy.get('.qti-textEntryInteraction').should('have.value', '');
+        });
     });
 
     it('can type a text', () => {
         const fixtureText = 'This is a text';
 
-        cy.get('.qti-extendedTextInteraction .text-container').should('have.length', 1);
         cy.get('.qti-extendedTextInteraction .text-container').type(fixtureText);
         cy.get('.qti-extendedTextInteraction .text-container').should('have.value', fixtureText);
 
-        cy.get('.qti-textEntryInteraction').should('have.length', 1);
         cy.get('.qti-textEntryInteraction').type(fixtureText);
         cy.get('.qti-textEntryInteraction').should('have.value', fixtureText);
     });
 
-    it('can move to the next', () => {
+    it('can move to the next item', () => {
         goToNextItem();
     });
 
-    it('item with gap match', () => {
-        cy.get('.qti-matchInteraction').should('have.length', 1);
-        cy.get('.qti-matchInteraction').find('input').should('have.length', 8);
-        cy.get('.qti-matchInteraction').find('input').should('not.be.checked');
-        cy.get('.qti-matchInteraction').find('.instruction-container .feedback-success').should('have.length', 1);
-        cy.get('.qti-matchInteraction').find('.instruction-container .feedback-warning').should('have.length', 0);
+    it('displays the third item with match choices', () => {
+        cy.get('.qti-item').within(() => {
+            cy.get('.qti-matchInteraction').should('have.length', 1);
+            cy.get('.qti-matchInteraction').find('input').should('have.length', 8);
+            cy.get('.qti-matchInteraction').find('input').should('not.be.checked');
+            cy.get('.qti-matchInteraction').find('.instruction-container .feedback-success').should('have.length', 1);
+            cy.get('.qti-matchInteraction').find('.instruction-container .feedback-warning').should('have.length', 0);
+        });
+    });
 
-
+    it('can select match choices', () => {
         toggleMatchChoice(0, 0, 0);
         toggleMatchChoice(0, 1, 1);
         toggleMatchChoice(0, 2, 1);
@@ -116,7 +129,7 @@ export function basicLinearTestSpecs() {
         expectMatchChoiceChecked(0, 3, 1, false);
     });
 
-    it('can move to the next', () => {
+    it('can move to the next item', () => {
         goToNextItem();
     });
 
