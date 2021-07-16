@@ -37,20 +37,50 @@ export function goToIndexPage() {
 }
 
 /**
- * Launch a test from the index page
- * @param {String} deliveryKey
+ * Redirects to the index page by clicking the home button
  */
-export function launchDelivery(deliveryKey) {
+export function goToHome() {
+    cy.get('.loading-bar').should('not.be.visible');
+
+    cy.get('[data-control="home"] a').click();
+
+    cy.location().should(location => {
+        expect(`${location.origin}${location.pathname}`).to.equal(getFullUrl(urls.index));
+    });
+}
+
+/**
+ * Launches a test from the index page, with respect to the given selector
+ * @param {String} selector - The DOM Selector targeting the entry points
+ * @param {String} deliveryKey - The name of the delivery to start, as displayed in the list
+ */
+function startDelivery(selector, deliveryKey) {
     const deliveryName = Cypress.env('deliveryIds')[deliveryKey];
 
-    cy.get('.entry-point-all-deliveries').contains(deliveryName).within($el => {
-        const launchUrl = $el.parents('.entry-point-all-deliveries').data('launch_url');
+    cy.get(selector).contains(deliveryName).within($el => {
+        const launchUrl = $el.parents(selector).data('launch_url');
         cy.visit(launchUrl);
     });
 
     cy.location().should(location => {
         expect(`${location.origin}${location.pathname}`).to.equal(getFullUrl(urls.execution));
     });
+}
+
+/**
+ * Launches a test from the index page
+ * @param {String} deliveryKey - The name of the delivery to start, as displayed in the list
+ */
+export function launchDelivery(deliveryKey) {
+    startDelivery('.entry-point-all-deliveries', deliveryKey);
+}
+
+/**
+ * Resumes a test from the index page
+ * @param {String} deliveryKey - The name of the delivery to start, as displayed in the list
+ */
+export function resumeDelivery(deliveryKey) {
+    startDelivery('.entry-point-started-deliveries', deliveryKey);
 }
 
 /**

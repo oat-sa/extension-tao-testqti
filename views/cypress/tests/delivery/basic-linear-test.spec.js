@@ -27,7 +27,14 @@
  */
 
 import { basicLinearTestSpecs } from './shared/basic-linear-test';
-import { checkReturnPage, goToIndexPage, launchDelivery, loginAsTestTaker } from "../utils/delivery.js";
+import {
+    loginAsTestTaker,
+    goToIndexPage,
+    goToHome,
+    launchDelivery,
+    resumeDelivery,
+    checkReturnPage
+} from "../utils/delivery.js";
 
 describe('Regular launch of the basic linear test with 4 items', () => {
     const deliveryKey = 'basicLinearTest';
@@ -43,6 +50,14 @@ describe('Regular launch of the basic linear test with 4 items', () => {
 
         it('successfully launches the test', () => {
             launchDelivery(deliveryKey);
+        });
+
+        it('successfully return to the home page', () => {
+            goToHome();
+        });
+
+        it('successfully resumes the test', () => {
+            resumeDelivery(deliveryKey);
         });
     });
 
