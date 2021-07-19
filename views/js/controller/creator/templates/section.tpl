@@ -40,7 +40,7 @@
             <span class="title">{{__ 'Items'}}</span>
         </h3>
         <ol class="itemrefs decimal clearfix" data-bind-each="sectionParts" data-bind-tmpl="itemref" data-bind-filter="isItemRef" data-msg="{{__ 'Add selected item(s) here.'}}"></ol>
-        <div class="itemref-placeholder" data-testid="add-items-to-section">
+        <div class="itemref-placeholder" data-testid="add-items">
             {{__ 'Add selected item(s) here.'}}
         </div>
     </div>
