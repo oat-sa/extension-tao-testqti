@@ -39,7 +39,9 @@ use qtism\runtime\tests\AssessmentTestSession;
 class QtiTestListenerService extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/QtiTestListenerService';
-    
+
+    const OPTION_ARCHIVE_ENABLED = 'archive-enabled';
+
     const OPTION_ARCHIVE_EXCLUDE = 'archive-exclude';
     
     /**
@@ -123,6 +125,11 @@ class QtiTestListenerService extends ConfigurableService
      */
     public function archiveState(AfterAssessmentTestSessionClosedEvent $event)
     {
+        if (!$this->getOption(self::OPTION_ARCHIVE_ENABLED)) {
+            \common_Logger::d('Item State archive is not enabled');
+            return;
+        }
+
         $archivingExclusions = $this->getOption(self::OPTION_ARCHIVE_EXCLUDE);
 
         $session = $event->getSession();
