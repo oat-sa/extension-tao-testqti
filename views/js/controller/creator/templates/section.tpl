@@ -9,14 +9,14 @@
                         <span class="tlb-bar">
                             <span class="tlb-start"></span>
                             <span class="tlb-group">
-                                <a href="#" class="tlb-button-off rub-toggler" title="{{__ 'Manage Rubric Blocks'}}" data-toggle="#rublocks-{{identifier}}" ><span class="icon-rubric"></span></a>
+                                <a href="#" class="tlb-button-off rub-toggler" title="{{__ 'Manage Rubric Blocks'}}" data-toggle="#rublocks-{{identifier}}" data-testid="manage-rubric-blocks"><span class="icon-rubric"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Section Properties'}}"><span class="icon-settings"></span></a>
+                                <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Section Properties'}}" data-testid="section-properties"><span class="icon-settings"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off move-up disabled" title="{{__ 'Move Up'}}"><span class="icon-up"></span></a>
-                                <a href="#" class="tlb-button-off move-down disabled" title="{{__ 'Move Down'}}"><span class="icon-down"></span></a>
+                                <a href="#" class="tlb-button-off move-up disabled" title="{{__ 'Move Up'}}" data-testid="move-up-section"><span class="icon-up"></span></a>
+                                <a href="#" class="tlb-button-off move-down disabled" title="{{__ 'Move Down'}}" data-testid="move-down-section"><span class="icon-down"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off disabled" title="{{__ 'Remove Section'}}" data-delete=":parent .section"><span class="icon-bin"></span></a>
+                                <a href="#" class="tlb-button-off disabled" title="{{__ 'Remove Section'}}" data-delete=":parent .section" data-testid="remove-section"><span class="icon-bin"></span></a>
                             </span>
                             <span class="tlb-end"></span>
                         </span>
@@ -31,7 +31,7 @@
             <span class="title">{{__ 'Rubric Blocks'}}</span>
         </h3>
         <ol class="rubricblocks decimal" data-bind-each="rubricBlocks" data-bind-tmpl="rubricblock"></ol>
-        <button class="btn-info small rublock-adder">
+        <button class="btn-info small rublock-adder" data-testid="add-rubric-block">
             <span class="icon-add"></span>{{__ 'New Rubric Block'}}
         </button>
     </div>
@@ -40,7 +40,7 @@
             <span class="title">{{__ 'Items'}}</span>
         </h3>
         <ol class="itemrefs decimal clearfix" data-bind-each="sectionParts" data-bind-tmpl="itemref" data-bind-filter="isItemRef" data-msg="{{__ 'Add selected item(s) here.'}}"></ol>
-        <div class="itemref-placeholder">
+        <div class="itemref-placeholder" data-testid="add-items-to-section">
             {{__ 'Add selected item(s) here.'}}
         </div>
     </div>
