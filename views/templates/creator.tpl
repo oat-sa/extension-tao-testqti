@@ -4,7 +4,7 @@
     <section class="test-creator-sidebar test-creator-area test-creator-items">
         <div class="action-bar plain content-action-bar horizontal-action-bar">
             <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
-                <li id="authoringBack" class="btn-info small">
+                <li id="authoringBack" class="btn-info small" data-testid="manage-tests">
                     <span class="li-inner">
                     <span class="icon-left"></span>
                         <?= __('Manage Tests') ?>
@@ -20,13 +20,13 @@
     <section class="test-creator-test test-creator-area test-creator-content">
         <div class="action-bar plain content-action-bar horizontal-action-bar">
             <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
-                <li id="saver" class="btn-info small">
+                <li id="saver" class="btn-info small" data-testid="save-test">
                     <span class="li-inner">
                         <span class="icon-save"></span>
                         <?=__('Save')?>
                     </span>
                 </li>
-                <li id="previewer" class="btn-info small">
+                <li id="previewer" class="btn-info small" data-testid="preview-test">
                     <span class="li-inner">
                         <span class="icon-preview"></span>
                         <?=__('Preview')?>
@@ -42,7 +42,7 @@
                             <span class="test-actions tlb-bar">
                                 <span class="tlb-start"></span>
                                 <span class="tlb-group">
-                                    <a href="#" class="tlb-button-off property-toggler" title="<?=__('Manage test properties')?>">
+                                    <a href="#" class="tlb-button-off property-toggler" title="<?=__('Manage test properties')?>" data-testid="test-properties">
                                         <span class="icon-settings"></span>
                                     </a>
                                 </span>
@@ -55,7 +55,7 @@
         </h1>
         <div class="test-content">
             <div class="testparts" data-bind-each="testParts" data-bind-tmpl="testpart"> </div>
-            <button class="btn-info small testpart-adder">
+            <button class="btn-info small testpart-adder" data-testid="add-test-part">
                 <span class="icon-add"></span><?=__('New test part')?>
             </button>
         </div>
