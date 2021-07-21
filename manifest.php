@@ -24,6 +24,7 @@ use oat\taoQtiTest\scripts\update\Updater;
 use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
+use oat\taoQtiTest\scripts\install\DisableBRSinTestAuthoring;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
 use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
@@ -98,6 +99,7 @@ return [
             RegisterQtiPackageExporter::class,
             SetupProvider::class,
             SetupDefaultTemplateConfiguration::class,
+            DisableBRSinTestAuthoring::class
         ],
     ],
     'update' => Updater::class,
