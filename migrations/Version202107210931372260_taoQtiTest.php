@@ -31,7 +31,6 @@ final class Version202107210931372260_taoQtiTest extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->propagate(new DisableBRSinTestAuthoring())([]);
     }
 
@@ -44,7 +43,6 @@ final class Version202107210931372260_taoQtiTest extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
          /** @var ExtensionsManager $extensionManager */
          $extensionManager = $this->getServiceManager()->get(ExtensionsManager::SERVICE_ID);
          $extension = $extensionManager->getExtensionById('tao');
