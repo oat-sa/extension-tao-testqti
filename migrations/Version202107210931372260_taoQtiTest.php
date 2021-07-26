@@ -18,9 +18,6 @@ use oat\oatbox\service\exception\InvalidServiceManagerException;
 final class Version202107210931372260_taoQtiTest extends AbstractMigration
 {
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return 'Disable feature flag BRS (search by metadata) within Test Authoring';
