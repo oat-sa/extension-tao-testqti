@@ -26,9 +26,6 @@ final class Version202107210931372260_taoQtiTest extends AbstractMigration
         return 'Disable feature flag BRS (search by metadata) within Test Authoring';
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function up(Schema $schema): void
     {
         $this->propagate(new DisableBRSinTestAuthoring())([]);
