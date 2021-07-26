@@ -51,6 +51,5 @@ final class Version202107210931372260_taoQtiTest extends AbstractMigration
          unset($config['taoQtiTest/controller/creator/views/item']);
  
          $extension->setConfig('client_lib_config_registry', $config);
-
     }
 }
