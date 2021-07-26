@@ -35,8 +35,6 @@ final class Version202107210931372260_taoQtiTest extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws Error
      * @throws InvalidServiceManagerException
      * @throws ExtensionException
