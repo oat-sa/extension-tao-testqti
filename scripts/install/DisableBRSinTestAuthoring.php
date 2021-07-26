@@ -42,7 +42,7 @@ class DisableBRSinTestAuthoring extends InstallAction
      * @throws InvalidServiceManagerException
      * @throws ExtensionException
      */
-    public function __invoke($params)
+    public function __invoke($params): void
     {
         /** @var ExtensionsManager $extensionManager */
         $extensionManager = $this->getServiceManager()->get(ExtensionsManager::SERVICE_ID);
