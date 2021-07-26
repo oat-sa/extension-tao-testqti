@@ -36,8 +36,6 @@ use oat\oatbox\service\exception\InvalidServiceManagerException;
 class DisableBRSinTestAuthoring extends InstallAction
 {
     /**
-     * @param array $params
-     *
      * @throws Error
      * @throws InvalidServiceManagerException
      * @throws ExtensionException
