@@ -20,13 +20,14 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
+    'module',
     'jquery',
     'i18n',
     'core/logger',
     'taoQtiTest/provider/testItems',
     'ui/resource/selector',
     'ui/feedback'
-], function ($, __, loggerFactory, testItemProviderFactory, resourceSelectorFactory, feedback) {
+], function (module, $, __, loggerFactory, testItemProviderFactory, resourceSelectorFactory, feedback) {
     'use strict';
 
     /**
@@ -56,6 +57,7 @@ define([
      * @param {jQueryElement} $container - where to append the view
      */
     return function itemView($container) {
+        const filters = module.config().BRS || false; // feature flag BRS (search by metadata) in Test Authoring
         const selectorConfig = {
             type: __('items'),
             selectionMode: resourceSelectorFactory.selectionModes.multiple,
@@ -67,7 +69,8 @@ define([
                     uri: ITEM_URI,
                     type: 'class'
                 }
-            ]
+            ],
+            filters
         };
 
         //set up the resource selector with one root class Item in classSelector
