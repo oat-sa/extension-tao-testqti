@@ -27,6 +27,7 @@ use oat\oatbox\PhpSerializeStateless;
 use oat\oatbox\service\ServiceManager;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\taoQtiTest\models\event\QtiTestExportEvent;
+use oat\taoQtiTest\models\export\exception\ZipPackageCreationFailedException;
 
 /**
  * Export Handler for QTI tests.
@@ -109,7 +110,9 @@ class taoQtiTest_models_classes_export_TestExport implements tao_models_classes_
             $report->add($subReport);
         }
 
-        $zip->close();
+        if (!$zip->close()) {
+            throw new ZipPackageCreationFailedException('Failed to create zip package');
+        }
 
         if (!isset($formValues['uri']) && !isset($formValues['classUri'])) {
             $report->add(Report::createFailure('Export failed. Key uri nor classUri in formValues are not defined'));
