@@ -59,7 +59,7 @@
   "minimum-stability": "dev",
   "require": {
     "ext-dom": "*",
-    "oat-sa/composer-npm-bridge": "^0.4.0",
+    "oat-sa/composer-npm-bridge": "^0.3.0",
     "oat-sa/lib-test-cat": "2.3.7",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master"
   },
