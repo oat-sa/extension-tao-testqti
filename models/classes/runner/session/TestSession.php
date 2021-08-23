@@ -204,7 +204,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         // try to close existing time range if any, in order to be sure the test will start or restart a new range.
         // if the range is already closed, a message will be added to the log
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->start($tags, $timestamp)->save();
+        $this->getTimer()->end($tags, $timestamp)->save();
     }
 
     /**
