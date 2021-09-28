@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
 use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
+use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\QtiTestListenerService;
 
@@ -37,5 +38,6 @@ class SetupEventListeners extends InstallAction
     {
         $this->registerEvent(DeliveryExecutionState::class, [QtiTestListenerService::SERVICE_ID, 'executionStateChanged']);
         $this->registerEvent(QtiTestStateChangeEvent::class, [QtiTestListenerService::SERVICE_ID, 'sessionStateChanged']);
+        $this->registerEvent(AfterAssessmentTestSessionClosedEvent::class, [QtiTestListenerService::SERVICE_ID, 'archiveState']);
     }
 }

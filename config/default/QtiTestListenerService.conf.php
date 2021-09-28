@@ -20,6 +20,7 @@
 
 return new oat\taoQtiTest\models\QtiTestListenerService(
     [
-        oat\taoQtiTest\models\QtiTestListenerService::OPTION_ARCHIVE_EXCLUDE => []
+        oat\taoQtiTest\models\QtiTestListenerService::OPTION_ARCHIVE_EXCLUDE => [],
+        oat\taoQtiTest\models\QtiTestListenerService::OPTION_ARCHIVE_ENABLED => true
     ]
 );
