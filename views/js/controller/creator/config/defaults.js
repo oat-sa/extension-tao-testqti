@@ -27,5 +27,30 @@ define([
 ) {
     'use strict';
 
-    return (config = {}) => _.defaults({}, module.config(), config);
+    const featureFlags = {
+        item: {
+            itemSessionControl: {
+                showFeedback: false,
+                allowComment: false,
+                allowSkipping: false
+            },
+            timeLimits: false
+        },
+        section: {
+            itemSessionControl: {
+                showFeedback: false,
+                allowComment: false,
+                allowSkipping: false
+            },
+            timeLimits: false
+        },
+        testPart: {
+            itemSessionControl: false,
+            timeLimits: false
+        },
+        test: {
+            timeLimits: false
+        }
+    };
+    return (config = {}) => _.defaults({}, module.config(), config, featureFlags);
 });

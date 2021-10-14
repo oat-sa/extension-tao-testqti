@@ -204,7 +204,11 @@ define([
      */
     categorySelectorFactory.setPresets = function setPresets(presets) {
         if (_.isArray(presets)) {
-            allPresets = presets;
+            // here we can hide Navigation Warnings = presets[1]
+            // and filter Test-Taker Tools = presets[2]
+            allPresets = [presets[0]];
+            presets[2].presets = [presets[2].presets[0]];
+            allPresets.push(presets[2]);
             allQtiCategoriesPresets = extractCategoriesFromPresets();
         }
     };

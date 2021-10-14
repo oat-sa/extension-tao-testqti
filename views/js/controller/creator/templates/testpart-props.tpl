@@ -95,7 +95,7 @@
 
         <h4 class="toggler closed" data-toggle="~ .testpart-item-session-control">{{__ 'Item Session Control'}}</h4>
 
-
+{{#if testPart.itemSessionControl}}
 <!-- assessmentTest/testPart/itemSessionControl -->
         <div class="testpart-item-session-control toggled">
 
@@ -243,7 +243,8 @@
             </div>
 
         </div>
-
+{{/if}}
+{{#if testPart.timeLimits}}
         <h4 class="toggler closed" data-toggle="~ .testpart-time-limits">{{__ 'Time Limits'}}</h4>
 
 <!-- assessmentTest/testPart/timeLimits/minTime -->
@@ -302,5 +303,6 @@
                 </div>
             </div>
         </div>
+{{/if}}
     </form>
 </div>

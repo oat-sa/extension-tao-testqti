@@ -150,7 +150,7 @@
                 </div>
             </div>
         </div>
-
+{{#if item.itemSessionControl.showFeedback}}
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/showFeedback -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -169,7 +169,7 @@
                 </div>
             </div>
         </div>
-
+{{/if}}
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/allowReview -->
         <div class="grid-row pseudo-label-box">
@@ -211,7 +211,7 @@
             </div>
         </div>
 --}}
-
+{{#if item.itemSessionControl.allowComment}}
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/allowComment -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -230,7 +230,8 @@
                 </div>
             </div>
         </div>
-
+{{/if}}
+{{#if item.itemSessionControl.allowSkipping}}
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/allowSkipping -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -249,7 +250,7 @@
                 </div>
             </div>
         </div>
-
+{{/if}}
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/validateResponses -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -270,7 +271,7 @@
         </div>
 
     </div>
-
+{{#if item.timeLimits}}
     <h4 class="toggler closed" data-toggle="~ .itemref-time-limits">{{__ 'Time Limits'}}</h4>
 
 <!-- assessmentTest/timeLimits -->
@@ -358,4 +359,5 @@
             </div>
         </div>
     </div>
+{{/if}}
 </div>
