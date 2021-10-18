@@ -16,7 +16,7 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { getFullUrl } from '../../../../../tao/views/cypress/utils/helpers.js';
+import { getFullUrl } from '../../../../tao/views/cypress/utils/helpers.js';
 import urls from "./urls";
 
 /**
@@ -90,4 +90,14 @@ export function checkReturnPage() {
     cy.location().should(location => {
         expect(`${location.origin}${location.pathname}`).to.equal(getFullUrl(urls.index));
     });
+}
+
+/**
+ * Logs in as a test taker and launches a test from the index page
+ * @param {String} deliveryKey - The name of the delivery to start, as displayed in the list
+ */
+export function loginAndLaunchDelivery(deliveryKey) {
+    loginAsTestTaker();
+    goToIndexPage();
+    launchDelivery(deliveryKey);
 }

@@ -17,30 +17,65 @@
  */
 
 /**
- * Navigates in the given direction by using one the navigation controls
- * @param {String } direction
+ * Base query selector for navigation buttons
+ * @param {String} direction
+ * @returns {String}
  */
-export function navigate(direction) {
-    cy.get(`[data-control="move-${direction}"]`).click();
+function baseNavSelector(direction) {
+    return `[data-control="${direction}"]`;
+}
+
+/**
+ * Clicks the navigation control button
+ * @param {String} button selector
+ */
+ function navigate(selector) {
+    cy.get(selector).click();
+}
+
+/**
+ * Query selectors for navigation buttons
+ * @type {Object<String, String>}
+ */
+export const navigationSelectors = {
+    goToNextItem: baseNavSelector('move-forward'),
+    goToPreviousItem: baseNavSelector('move-backward'),
+    skipToNextItem: baseNavSelector('skip'),
+    endTest: baseNavSelector('move-end'),
+    skipAndEndTest: baseNavSelector('skip-end')
 }
 
 /**
  * Navigates to the next item
  */
 export function goToNextItem() {
-    navigate('forward');
+    navigate(navigationSelectors.goToNextItem);
 }
 
 /**
  * Navigates to the previous item
  */
 export function goToPreviousItem() {
-    navigate('backward');
+    navigate(navigationSelectors.goToPreviousItem);
 }
 
 /**
  * Ends the test from the last item
  */
 export function endTest() {
-    navigate('end');
+    navigate(navigationSelectors.endTest);
 }
+
+/**
+ * Skips to the next item
+ */
+ export function skipToNextItem() {
+    navigate(navigationSelectors.skipToNextItem);
+}
+
+/**
+ * Ends the test skipping the last item
+ */
+ export function skipAndEndTest() {
+    navigate(navigationSelectors.skipAndEndTest);
+ }
