@@ -27,9 +27,9 @@ function baseNavSelector(direction) {
 
 /**
  * Clicks the navigation control button
- * @param {String} button selector
+ * @param {String} selector
  */
- function navigate(selector) {
+function navigate(selector) {
     cy.get(selector).click();
 }
 
@@ -43,7 +43,7 @@ export const navigationSelectors = {
     skipToNextItem: baseNavSelector('skip'),
     endTest: baseNavSelector('move-end'),
     skipAndEndTest: baseNavSelector('skip-end')
-}
+};
 
 /**
  * Navigates to the next item
@@ -69,13 +69,13 @@ export function endTest() {
 /**
  * Skips to the next item
  */
- export function skipToNextItem() {
+export function skipToNextItem() {
     navigate(navigationSelectors.skipToNextItem);
 }
 
 /**
  * Ends the test skipping the last item
  */
- export function skipAndEndTest() {
+export function skipAndEndTest() {
     navigate(navigationSelectors.skipAndEndTest);
- }
+}

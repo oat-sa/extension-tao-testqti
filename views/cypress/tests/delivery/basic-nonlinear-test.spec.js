@@ -27,10 +27,7 @@
  */
 
 import { basicNonLinearFirstLaunchSpecs, basicNonLinearSecondLaunchSpecs } from './shared/basic-nonlinear-test';
-import {
-    loginAndLaunchDelivery,
-    checkReturnPage
-} from "../utils/delivery.js";
+import { loginAndLaunchDelivery, checkReturnPage } from '../utils/delivery.js';
 
 describe('Basic non-linear test navigation', () => {
     const deliveryKey = 'basicNonLinearTest';

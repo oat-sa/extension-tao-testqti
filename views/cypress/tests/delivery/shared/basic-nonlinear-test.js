@@ -16,14 +16,21 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { goToNextItem, goToPreviousItem, endTest, skipToNextItem, skipAndEndTest, navigationSelectors } from '../../utils/navigation.js'
+import {
+    goToNextItem,
+    goToPreviousItem,
+    endTest,
+    skipToNextItem,
+    skipAndEndTest,
+    navigationSelectors
+} from '../../utils/navigation.js';
 import {
     interactions,
     expectInteractions,
     expectChoices,
     toggleChoice,
     expectChoiceChecked
-} from '../../utils/interactions.js'
+} from '../../utils/interactions.js';
 
 function expectNavigationButton(selector, exists) {
     cy.get('.navi-box-list').within(() => {
@@ -77,7 +84,7 @@ export function basicNonLinearFirstLaunchSpecs() {
     });
 
     it('displays the second item, with previous/next/skip buttons', () => {
-         //check that second item is loaded
+        //check that second item is loaded
         cy.get('.qti-item').within(() => {
             expectInteractions('textEntryInteraction', 1);
             cy.get(interactions.textEntryInteraction).should('have.value', '');
@@ -182,7 +189,7 @@ export function basicNonLinearSecondLaunchSpecs() {
     });
 
     it('displays the second item', () => {
-         //check that second item is loaded
+        //check that second item is loaded
         cy.get('.qti-item').within(() => {
             expectInteractions('textEntryInteraction', 1);
         });
@@ -225,4 +232,4 @@ export function basicNonLinearSecondLaunchSpecs() {
         //only clicks skip-end button: successful completion must be checked by the following test cases
         skipAndEndTest();
     });
- }
+}
