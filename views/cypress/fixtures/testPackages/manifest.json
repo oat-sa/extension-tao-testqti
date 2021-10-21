@@ -3,6 +3,10 @@
         {
             "key": "basicLinearTest",
             "package": "basic-linear-test.zip"
+        },
+        {
+            "key": "basicNonLinearTest",
+            "package": "basic-nonlinear-test.zip"
         }
     ]
 }

@@ -91,3 +91,13 @@ export function checkReturnPage() {
         expect(`${location.origin}${location.pathname}`).to.equal(getFullUrl(urls.index));
     });
 }
+
+/**
+ * Logs in as a test taker and launches a test from the index page
+ * @param {String} deliveryKey - The name of the delivery to start, as displayed in the list
+ */
+export function loginAndLaunchDelivery(deliveryKey) {
+    loginAsTestTaker();
+    goToIndexPage();
+    launchDelivery(deliveryKey);
+}
