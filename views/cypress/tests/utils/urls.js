@@ -22,5 +22,7 @@
  */
 export default {
     index: '/taoDelivery/DeliveryServer/index',
-    execution: '/taoDelivery/DeliveryServer/runDeliveryExecution'
+    execution: '/taoDelivery/DeliveryServer/runDeliveryExecution',
+    tests: '/tao/Main/index?structure=tests&ext=taoTests&section=manage_tests',
+    testAuthoring: '/tao/Main/index?structure=tests&ext=taoTests&section=authoring'
 };
