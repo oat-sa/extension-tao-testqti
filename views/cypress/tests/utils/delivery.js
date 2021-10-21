@@ -16,7 +16,7 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { getFullUrl } from '../../../../tao/views/cypress/utils/helpers.js';
+import { getFullUrl } from '../../../../../tao/views/cypress/utils/helpers.js';
 import urls from "./urls";
 
 /**
