@@ -7,6 +7,10 @@
         {
             "key": "basicNonLinearTest",
             "package": "basic-nonlinear-test.zip"
+        },
+        {
+            "key": "studentToolTest",
+            "package": "student_tool_test.zip"
         }
     ]
 }
