@@ -16,7 +16,7 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { endTest, goToNextItem } from '../../utils/navigation.js';
+import { endTest, goToNextItem, skipAndEndTest } from '../../utils/navigation.js';
 import {
     expectInteractions,
     expectChoices,
@@ -48,281 +48,285 @@ export function studentToolTest () {
         cy.get('@calc').find('a[title="Close"]').as('closer');
     }
 
-    after(() => {
-        //only clicks end button: successful completion must be checked by the following test cases
-        endTest();
-    });
+    // describe('Calculator/Answer masking/Answer elimination', () => {
+    //     before(() => {
+    //         expectInteractions('choiceInteraction', 1);
+    //         expectChoices(0, 4);
+    //     });
+    //
+    //     after(() => {
+    //         goToNextItem();
+    //     });
+    //
+    //     describe('Calculator tool', () => {
+    //         after(() => {
+    //             closeTool(toolName.calculator);
+    //         });
+    //
+    //         it('opens/closes', function() {
+    //             openTool(toolName.calculator);
+    //             createCalculatorAlias();
+    //             cy.get('@calc').find('.calcDisplay').as('display');
+    //             cy.get('@calc').should('be.visible');
+    //             closeTool(toolName.calculator);
+    //             cy.get('@calc').should('not.be.visible');
+    //             openTool(toolName.calculator);
+    //             cy.get('@calc').should('be.visible');
+    //             // click close => hide
+    //             cy.get('@closer').click();
+    //             cy.get('@calc').should('not.be.visible');
+    //         });
+    //
+    //         it('calculates', function() {
+    //             openTool(toolName.calculator);
+    //             createCalculatorAlias();
+    //             cy.get('@calc').find('.calcDisplay').as('display');
+    //             // 2 + 2 => 4
+    //             cy.get('@calc').find('[data-key="2"]').click();
+    //             cy.get('@calc').find('[data-key="+"]').click();
+    //             cy.get('@calc').find('[data-key="2"]').click();
+    //             cy.get('@calc').find('[data-key="="]').click();
+    //             cy.get('@display').should('have.value', '4');
+    //             // clear
+    //             cy.get('@calc').find('[data-key="C"]').click();
+    //             cy.get('@display').should('have.value', '0');
+    //         });
+    //     });
+    //
+    //     describe('Answer masking tool', function() {
+    //         after(() => {
+    //             closeTool(toolName.mask);
+    //         });
+    //
+    //         it('turns on/off', function() {
+    //             expectInteractions('choiceInteraction', 1);
+    //             expectChoices(0, 4);
+    //             openTool(toolName.mask);
+    //             cy.get('.qti-choice.masked').should('have.length', 4);
+    //             cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
+    //             closeTool(toolName.mask);
+    //             cy.get('.qti-choice.masked').should('have.length', 0);
+    //             cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 0);
+    //         });
+    //
+    //         it('controls single choice mask', function() {
+    //             openTool(toolName.mask);
+    //             // unmask first choice
+    //             cy.get('.qti-choice.masked:eq(0) .answer-mask-toggle').as('toggle1');
+    //             cy.get('@toggle1').click();
+    //             cy.get('.qti-choice.masked').should('have.length', 3);
+    //             cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 3);
+    //             // remask first choice
+    //             cy.get('@toggle1').click();
+    //             cy.get('.qti-choice.masked').should('have.length', 4);
+    //             cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
+    //             // see if choice is really covered (not clickable)
+    //             cy.get('.pseudo-label-box').then(($el1) => {
+    //                 cy.get('.answer-mask.masked').should(($el2) => {
+    //                     expect($el2.width()).to.be.closeTo($el1.width(), 20);
+    //                 });
+    //             });
+    //         });
+    //     });
+    //
+    //     describe('Answer elimination tool', function() {
+    //         it('turns on/off', function() {
+    //             openTool(toolName.eliminator);
+    //             cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('be.visible');
+    //             closeTool(toolName.eliminator);
+    //             expectChoices(0, 4);
+    //             cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('not.be.visible');
+    //         });
+    //
+    //         it('eliminates single choice', function() {
+    //             openTool(toolName.eliminator);
+    //             cy.get('.qti-choice').its(0).within(() => {
+    //                 cy.get('[data-eliminable="trigger"]').as('firstTrigger');
+    //                 // eliminate first choice
+    //                 cy.get('@firstTrigger').click();
+    //                 cy.get('.pseudo-label-box input:disabled').should('exist');
+    //                 // un-eliminate first choice
+    //                 cy.get('@firstTrigger').click();
+    //                 cy.get('.pseudo-label-box input:disabled').should('not.exist');
+    //             });
+    //             toggleChoice(0, 0);
+    //             expectChoiceChecked(0, 0, true);
+    //         });
+    //     });
+    // });
 
-    describe('Calculator/Answer masking/Answer elimination', () => {
-        before(() => {
-            expectInteractions('choiceInteraction', 1);
-            expectChoices(0, 4);
-        });
-
-        after(() => {
-            goToNextItem();
-        });
-
-        describe('Calculator tool', () => {
-            after(() => {
-                closeTool(toolName.calculator);
-            });
-
-            it('opens/closes', function() {
-                openTool(toolName.calculator);
-                createCalculatorAlias();
-                cy.get('@calc').find('.calcDisplay').as('display');
-                cy.get('@calc').should('be.visible');
-                closeTool(toolName.calculator);
-                cy.get('@calc').should('not.be.visible');
-                openTool(toolName.calculator);
-                cy.get('@calc').should('be.visible');
-                // click close => hide
-                cy.get('@closer').click();
-                cy.get('@calc').should('not.be.visible');
-            });
-
-            it('calculates', function() {
-                openTool(toolName.calculator);
-                createCalculatorAlias();
-                cy.get('@calc').find('.calcDisplay').as('display');
-                // 2 + 2 => 4
-                cy.get('@calc').find('[data-key="2"]').click();
-                cy.get('@calc').find('[data-key="+"]').click();
-                cy.get('@calc').find('[data-key="2"]').click();
-                cy.get('@calc').find('[data-key="="]').click();
-                cy.get('@display').should('have.value', '4');
-                // clear
-                cy.get('@calc').find('[data-key="C"]').click();
-                cy.get('@display').should('have.value', '0');
-            });
-        });
-
-        describe('Answer masking tool', function() {
-            after(() => {
-                closeTool(toolName.mask);
-            });
-
-            it('turns on/off', function() {
-                expectInteractions('choiceInteraction', 1);
-                expectChoices(0, 4);
-                openTool(toolName.mask);
-                cy.get('.qti-choice.masked').should('have.length', 4);
-                cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
-                closeTool(toolName.mask);
-                cy.get('.qti-choice.masked').should('have.length', 0);
-                cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 0);
-            });
-
-            it('controls single choice mask', function() {
-                openTool(toolName.mask);
-                // unmask first choice
-                cy.get('.qti-choice.masked:eq(0) .answer-mask-toggle').as('toggle1');
-                cy.get('@toggle1').click();
-                cy.get('.qti-choice.masked').should('have.length', 3);
-                cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 3);
-                // remask first choice
-                cy.get('@toggle1').click();
-                cy.get('.qti-choice.masked').should('have.length', 4);
-                cy.get('.qti-choice.masked .answer-mask.masked').should('have.length', 4);
-                // see if choice is really covered (not clickable)
-                cy.get('.pseudo-label-box').then(($el1) => {
-                    cy.get('.answer-mask.masked').should(($el2) => {
-                        expect($el2.width()).to.be.closeTo($el1.width(), 20);
-                    });
-                });
-            });
-        });
-
-        describe('Answer elimination tool', function() {
-            it('turns on/off', function() {
-                openTool(toolName.eliminator);
-                cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('be.visible');
-                closeTool(toolName.eliminator);
-                expectChoices(0, 4);
-                cy.get('.qti-choice [data-eliminable="container"]').should('have.length', 4).and('not.be.visible');
-            });
-
-            it('eliminates single choice', function() {
-                openTool(toolName.eliminator);
-                cy.get('.qti-choice').its(0).within(() => {
-                    cy.get('[data-eliminable="trigger"]').as('firstTrigger');
-                    // eliminate first choice
-                    cy.get('@firstTrigger').click();
-                    cy.get('.pseudo-label-box input:disabled').should('exist');
-                    // un-eliminate first choice
-                    cy.get('@firstTrigger').click();
-                    cy.get('.pseudo-label-box input:disabled').should('not.exist');
-                });
-                toggleChoice(0, 0);
-                expectChoiceChecked(0, 0, true);
-            });
-        });
-    });
-
-    describe('Calculator BODMAS/Area masking/Highlighter/Line reader', () => {
-        after(() => {
-            cy.get('.qti-extendedTextInteraction textarea').type('x');
-            goToNextItem();
-        });
-        before(() => {
-            expectInteractions('extendedTextInteraction', 1);
-            expectInteractions('textEntryInteraction', 1);
-        });
-        describe('Calculator BODMAS tool', () => {
-            after(() => {
-                closeTool(toolName.calculator);
-            });
-
-            it('calculates', function() {
-                openTool(toolName.calculator);
-                createCalculatorAlias();
-                cy.get('@calc').find('.calculator-screen').as('display');
-                cy.get('@calc').should('be.visible');
-                cy.get('@display').find('.term[data-value=0]').should('be.visible');
-
-                // (1 + 2) * 3 => 9
-                cy.get('@calc').find('[data-param="LPAR"]').click();
-                cy.get('@calc').find('[data-param="NUM1"]').click();
-                cy.get('@calc').find('[data-param="ADD"]').click();
-                cy.get('@calc').find('[data-param="NUM2"]').click();
-                cy.get('@calc').find('[data-param="RPAR"]').click();
-                cy.get('@calc').find('[data-param="MUL"]').click();
-                cy.get('@calc').find('[data-param="NUM3"]').click();
-                cy.get('@calc').find('[data-command="execute"]').click();
-                cy.get('@display').find('.term[data-value=9]').should('be.visible');
-                // clear
-                cy.get('@calc').find('[data-command="clear"]').click();
-                cy.get('@display').find('.term[data-value=0]').should('be.visible');
-            });
-        });
-
-        describe('Area mask tool', function() {
-            function openMaskTool () {
-                cy.get('.tools-box-list [data-control=area-masking] a').click();
-            }
-
-            function closeAreaMaskTool () {
-                cy.get('@areaMask').last().find('.controls .close').click();
-            }
-
-            function createAliases () {
-                cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
-                cy.get('@areaMaskContainer').find('.mask').as('areaMask');
-                cy.get('@areaMask').should('be.visible');
-                cy.get('@areaMask').find('.inner').as('inner');
-                cy.get('@areaMask').find('.controls .view').as('viewer');
-            }
-
-            it('launches/destroys', function() {
-                openMaskTool();
-                createAliases();
-                cy.get('@areaMaskContainer').should('exist');
-                closeAreaMaskTool();
-                cy.get('@areaMaskContainer').should('not.exist');
-            });
-
-            it('unhides content', function() {
-                openMaskTool();
-                createAliases();
-                // look through
-                cy.get('@viewer').click();
-                cy.get('@areaMaskContainer').should('have.class', 'previewing');
-                cy.get('@inner').should('have.css', 'opacity', '0.15');
-                // un-look through
-                // the component uses a default delay of 3000ms before restoring the mask
-                cy.wait(3000);
-                cy.get('@areaMaskContainer').should('not.have.class', 'previewing');
-                cy.get('@inner').should('have.css', 'opacity', '1');
-                closeAreaMaskTool();
-            });
-
-            it('can have multiple instances', function() {
-                // add multiple instances (max 5)
-                for (let i = 0; i < 6; i++) {
-                    openMaskTool();
-                }
-                createAliases();
-                cy.get('@areaMask').should('have.length', 5);
-                // clean up
-                for (let i = 0; i < 5; i++) {
-                    closeAreaMaskTool();
-                }
-                cy.get('.mask-container').should('not.exist');
-            });
-        });
-
-        describe('Highlighter tool', () => {
-            function highlight () {
-                cy.get('.tools-box-list [data-control=highlight-trigger] a').click();
-            }
-
-            function clearHighlights () {
-                cy.get('.tools-box-list [data-control=highlight-clear] a').click();
-            }
-
-            function selectRange (subject) {
-                cy.wrap(subject).find('p').its(0).trigger('mousedown').then(($el) => {
-                    const el = $el[0];
-                    const document = el.ownerDocument;
-                    const range = document.createRange();
-                    range.selectNodeContents(el);
-                    document.getSelection().removeAllRanges(range);
-                    document.getSelection().addRange(range);
-                }).trigger('mouseup');
-
-                cy.document().trigger('selectionchange');
-            }
-
-            it('highlights (selection first)', function() {
-                cy.get('.qti-item').within(($item) => {
-                    selectRange($item);
-                });
-                highlight();
-                cy.get('.qti-itemBody .txt-user-highlight').contains('lorem').and('has.css', 'background-color', 'rgb(255, 255, 0)');
-                clearHighlights();
-                cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
-            });
-
-            it('highlights (tool first)', function() {
-                highlight();
-                //selectText
-                cy.get('.qti-item').within(($item) => {
-                    selectRange($item);
-                });
-                cy.get('.qti-itemBody .txt-user-highlight').contains('Lorem').and('has.css', 'background-color', 'rgb(255, 255, 0)');
-                clearHighlights();
-                cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
-            });
-        });
-
-        describe('Line reader tool', () => {
-            function createAliases () {
-                cy.get('.line-reader-mask').as('maskParts').should('have.length', 8).and('be.visible');
-                cy.get('.line-reader-overlay').as('overlay').should('be.visible');
-                cy.get('.line-reader-overlay .icon').as('outerDrag').should('be.visible');
-                cy.get('.line-reader-inner-drag').as('innerDrag').should('be.visible');
-                cy.get('.line-reader-closer').as('closer').should('be.visible');
-            }
-
-            it('opens/closes', function() {
-                openTool(toolName.lineReader);
-                createAliases();
-                cy.get('@maskParts').should('be.visible');
-                closeTool(toolName.lineReader);
-                cy.get('@maskParts').should('not.be.visible');
-                openTool(toolName.lineReader);
-                cy.get('@maskParts').should('be.visible');
-                cy.get('@closer').click();
-                cy.get('@maskParts').should('not.be.visible');
-            });
-        });
-    });
+    // describe('Calculator BODMAS/Area masking/Highlighter/Line reader', () => {
+    //     after(() => {
+    //         cy.get('.qti-extendedTextInteraction textarea').type('x');
+    //         goToNextItem();
+    //     });
+    //     before(() => {
+    //         expectInteractions('extendedTextInteraction', 1);
+    //         expectInteractions('textEntryInteraction', 1);
+    //     });
+    //     describe('Calculator BODMAS tool', () => {
+    //         after(() => {
+    //             closeTool(toolName.calculator);
+    //         });
+    //
+    //         it('calculates', function() {
+    //             openTool(toolName.calculator);
+    //             createCalculatorAlias();
+    //             cy.get('@calc').find('.calculator-screen').as('display');
+    //             cy.get('@calc').should('be.visible');
+    //             cy.get('@display').find('.term[data-value=0]').should('be.visible');
+    //
+    //             // (1 + 2) * 3 => 9
+    //             cy.get('@calc').find('[data-param="LPAR"]').click();
+    //             cy.get('@calc').find('[data-param="NUM1"]').click();
+    //             cy.get('@calc').find('[data-param="ADD"]').click();
+    //             cy.get('@calc').find('[data-param="NUM2"]').click();
+    //             cy.get('@calc').find('[data-param="RPAR"]').click();
+    //             cy.get('@calc').find('[data-param="MUL"]').click();
+    //             cy.get('@calc').find('[data-param="NUM3"]').click();
+    //             cy.get('@calc').find('[data-command="execute"]').click();
+    //             cy.get('@display').find('.term[data-value=9]').should('be.visible');
+    //             // clear
+    //             cy.get('@calc').find('[data-command="clear"]').click();
+    //             cy.get('@display').find('.term[data-value=0]').should('be.visible');
+    //         });
+    //     });
+    //
+    //     describe('Area mask tool', function() {
+    //         function openMaskTool () {
+    //             cy.get('.tools-box-list [data-control=area-masking] a').click();
+    //         }
+    //
+    //         function closeAreaMaskTool () {
+    //             cy.get('@areaMask').last().find('.controls .close').click();
+    //         }
+    //
+    //         function createAliases () {
+    //             cy.get('.test-runner-scope .mask-container').as('areaMaskContainer');
+    //             cy.get('@areaMaskContainer').find('.mask').as('areaMask');
+    //             cy.get('@areaMask').should('be.visible');
+    //             cy.get('@areaMask').find('.inner').as('inner');
+    //             cy.get('@areaMask').find('.controls .view').as('viewer');
+    //         }
+    //
+    //         it('launches/destroys', function() {
+    //             openMaskTool();
+    //             createAliases();
+    //             cy.get('@areaMaskContainer').should('exist');
+    //             closeAreaMaskTool();
+    //             cy.get('@areaMaskContainer').should('not.exist');
+    //         });
+    //
+    //         it('unhides content', function() {
+    //             openMaskTool();
+    //             createAliases();
+    //             // look through
+    //             cy.get('@viewer').click();
+    //             cy.get('@areaMaskContainer').should('have.class', 'previewing');
+    //             cy.get('@inner').should('have.css', 'opacity', '0.15');
+    //             // un-look through
+    //             // the component uses a default delay of 3000ms before restoring the mask
+    //             cy.wait(3000);
+    //             cy.get('@areaMaskContainer').should('not.have.class', 'previewing');
+    //             cy.get('@inner').should('have.css', 'opacity', '1');
+    //             closeAreaMaskTool();
+    //         });
+    //
+    //         it('can have multiple instances', function() {
+    //             // add multiple instances (max 5)
+    //             for (let i = 0; i < 6; i++) {
+    //                 openMaskTool();
+    //             }
+    //             createAliases();
+    //             cy.get('@areaMask').should('have.length', 5);
+    //             // clean up
+    //             for (let i = 0; i < 5; i++) {
+    //                 closeAreaMaskTool();
+    //             }
+    //             cy.get('.mask-container').should('not.exist');
+    //         });
+    //     });
+    //
+    //     describe('Highlighter tool', () => {
+    //         function highlight () {
+    //             cy.get('.tools-box-list [data-control=highlight-trigger] a').click();
+    //         }
+    //
+    //         function clearHighlights () {
+    //             cy.get('.tools-box-list [data-control=highlight-clear] a').click();
+    //         }
+    //
+    //         function selectRange (subject) {
+    //             cy.wrap(subject).find('p').its(0).trigger('mousedown').then(($el) => {
+    //                 const el = $el[0];
+    //                 const document = el.ownerDocument;
+    //                 const range = document.createRange();
+    //                 range.selectNodeContents(el);
+    //                 document.getSelection().removeAllRanges(range);
+    //                 document.getSelection().addRange(range);
+    //             }).trigger('mouseup');
+    //
+    //             cy.document().trigger('selectionchange');
+    //         }
+    //
+    //         it('highlights (selection first)', function() {
+    //             cy.get('.qti-item').within(($item) => {
+    //                 selectRange($item);
+    //             });
+    //             highlight();
+    //             cy.get('.qti-itemBody .txt-user-highlight').contains('lorem').and('has.css', 'background-color', 'rgb(255, 255, 0)');
+    //             clearHighlights();
+    //             cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
+    //         });
+    //
+    //         it('highlights (tool first)', function() {
+    //             highlight();
+    //             //selectText
+    //             cy.get('.qti-item').within(($item) => {
+    //                 selectRange($item);
+    //             });
+    //             cy.get('.qti-itemBody .txt-user-highlight').contains('Lorem').and('has.css', 'background-color', 'rgb(255, 255, 0)');
+    //             clearHighlights();
+    //             cy.get('.qti-itemBody').should('not.contain', 'span.txt-user-highlight');
+    //         });
+    //     });
+    //
+    //     describe('Line reader tool', () => {
+    //         function createAliases () {
+    //             cy.get('.line-reader-mask').as('maskParts').should('have.length', 8).and('be.visible');
+    //             cy.get('.line-reader-overlay').as('overlay').should('be.visible');
+    //             cy.get('.line-reader-overlay .icon').as('outerDrag').should('be.visible');
+    //             cy.get('.line-reader-inner-drag').as('innerDrag').should('be.visible');
+    //             cy.get('.line-reader-closer').as('closer').should('be.visible');
+    //         }
+    //
+    //         it('opens/closes', function() {
+    //             openTool(toolName.lineReader);
+    //             createAliases();
+    //             cy.get('@maskParts').should('be.visible');
+    //             closeTool(toolName.lineReader);
+    //             cy.get('@maskParts').should('not.be.visible');
+    //             openTool(toolName.lineReader);
+    //             cy.get('@maskParts').should('be.visible');
+    //             cy.get('@closer').click();
+    //             cy.get('@maskParts').should('not.be.visible');
+    //         });
+    //     });
+    // });
 
     describe('Scientific calculator/Zoom/Magnifier', () => {
         before(() => {
+            toggleChoice(0, 0); // debug
+            goToNextItem(); // debug
+            cy.get(".qti-extendedTextInteraction textarea").type("x"); // debug
+            goToNextItem(); // debug
             expectInteractions('extendedTextInteraction', 1);
             expectInteractions('textEntryInteraction', 1);
+        });
+
+        after(() => {
+            //only clicks end button: successful completion must be checked by the following test cases
+            cy.get('[data-control="move-end"]').first().click();
         });
 
         describe('Scientific calculator tool', () => {
@@ -406,7 +410,7 @@ export function studentToolTest () {
             });
         });
 
-        //Note: the magnifier is tested last, because it duplicates the DOM and can break other tests
+        // Note: the magnifier is tested last, because it duplicates the DOM and can break other tests
         describe('Magnifier tool', function() {
             function creatAliases () {
                 cy.get('.runner > .magnifier-container').as('magnifierContainer');
