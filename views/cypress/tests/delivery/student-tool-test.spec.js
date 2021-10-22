@@ -16,15 +16,12 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { studentToolTest } from "./shared/studen-tool-state";
-import { checkReturnPage, loginAndLaunchDelivery } from "../utils/delivery.js";
+import { studentToolTest } from './shared/studen-tool-state';
+import { checkReturnPage, loginAndLaunchDelivery } from '../utils/delivery.js';
 
-describe("Basic behavior of student tools", () => {
-  before(() => {
-    loginAndLaunchDelivery("studentToolTest");
-  });
-  after(() => {
-    // checkReturnPage();
-  });
-  studentToolTest();
+describe('Basic behavior of student tools', () => {
+    before(() => {
+        loginAndLaunchDelivery('studentToolTest');
+    });
+    studentToolTest();
 });
