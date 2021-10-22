@@ -16,15 +16,12 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { goToNextItem, endTest } from '../../utils/navigation.js';
+import { goToNextItem } from '../../utils/navigation.js';
 import {
-    interactions,
     expectInteractions,
     expectChoices,
     toggleChoice,
     expectChoiceChecked,
-    toggleMatchChoice,
-    expectMatchChoiceChecked,
 } from '../../utils/interactions.js';
 
 const toolName = Object.freeze({

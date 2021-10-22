@@ -17,7 +17,7 @@
  */
 
 import { studentToolTest } from './shared/studen-tool-state';
-import { checkReturnPage, loginAndLaunchDelivery } from '../utils/delivery.js';
+import { loginAndLaunchDelivery } from '../utils/delivery.js';
 
 describe('Basic behavior of student tools', () => {
     before(() => {
