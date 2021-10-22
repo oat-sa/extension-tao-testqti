@@ -16,7 +16,7 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { studentToolTest } from './shared/studen-tool-test.js';
+import { studentToolTest } from './shared/student-tool-test.js';
 import { loginAndLaunchDelivery } from '../utils/delivery.js';
 
 describe('Basic behavior of student tools', () => {
