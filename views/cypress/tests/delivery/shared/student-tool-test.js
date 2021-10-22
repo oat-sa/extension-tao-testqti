@@ -16,7 +16,7 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { goToNextItem } from '../../utils/navigation.js';
+import { endTest, goToNextItem } from '../../utils/navigation.js';
 import {
     expectInteractions,
     expectChoices,
@@ -47,6 +47,11 @@ export function studentToolTest () {
         cy.get('@calcContainer').find('.dynamic-component-container').as('calc');
         cy.get('@calc').find('a[title="Close"]').as('closer');
     }
+
+    after(() => {
+        //only clicks end button: successful completion must be checked by the following test cases
+        endTest();
+    });
 
     describe('Calculator/Answer masking/Answer elimination', () => {
         before(() => {
@@ -140,7 +145,7 @@ export function studentToolTest () {
 
             it('eliminates single choice', function() {
                 openTool(toolName.eliminator);
-                cy.get('.qti-choice').its(0).within(($firsChoice) => {
+                cy.get('.qti-choice').its(0).within(() => {
                     cy.get('[data-eliminable="trigger"]').as('firstTrigger');
                     // eliminate first choice
                     cy.get('@firstTrigger').click();
@@ -256,10 +261,9 @@ export function studentToolTest () {
                 cy.get('.tools-box-list [data-control=highlight-clear] a').click();
             }
 
-            function selectRange (subject, startIndex, endIndex) {
+            function selectRange (subject) {
                 cy.wrap(subject).find('p').its(0).trigger('mousedown').then(($el) => {
                     const el = $el[0];
-                    console.log(el);
                     const document = el.ownerDocument;
                     const range = document.createRange();
                     range.selectNodeContents(el);

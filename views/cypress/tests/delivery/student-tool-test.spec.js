@@ -17,11 +17,16 @@
  */
 
 import { studentToolTest } from './shared/student-tool-test.js';
-import { loginAndLaunchDelivery } from '../utils/delivery.js';
+import { checkReturnPage, loginAndLaunchDelivery } from '../utils/delivery.js';
 
 describe('Basic behavior of student tools', () => {
     before(() => {
         loginAndLaunchDelivery('studentToolTest');
     });
+
+    after(() => {
+        checkReturnPage();
+    });
+
     studentToolTest();
 });
