@@ -211,7 +211,15 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allow Test-taker to playback media files associated according to APIP protocol to item content.'),
                     'order'         => 900,
                     'pluginId'      => 'apiptts'
-                ])
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'textToSpeach',
+                    'label'         => __('Text To Speech'),
+                    'qtiCategory'   => 'x-tao-option-tts',
+                    'description'   => __('Accessibility tool that enables Test Taker to have the item content read aloud.'),
+                    'order'         => 950,
+                    'featureFlag'   => 'enable-read-aloud-text-to-speach'
+                ]),
             ]
         );
 

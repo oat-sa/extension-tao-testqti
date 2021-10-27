@@ -660,4 +660,10 @@ return [
      */
     'enable-linear-next-item-warning-checkbox' => true,
 
+    /**
+     * If 'enable-read-aloud-text-to-speach' is true, the Test Authoring Test Taker Tools panel on Sections and Items
+     * contains a checkbox to enable Text-To-Speech Tool on test. Note:This is not the APIP Text To Speech tool.
+     * @type boolean
+     */
+    'enable-read-aloud-text-to-speach' => false,
 ];
