@@ -213,12 +213,12 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'pluginId'      => 'apiptts'
                 ]),
                 TestCategoryPreset::fromArray([
-                    'id'            => 'textToSpeach',
+                    'id'            => 'textToSpeech',
                     'label'         => __('Text To Speech'),
                     'qtiCategory'   => 'x-tao-option-tts',
                     'description'   => __('Accessibility tool that enables Test Taker to have the item content read aloud.'),
                     'order'         => 950,
-                    'featureFlag'   => 'enable-read-aloud-text-to-speach'
+                    'featureFlag'   => 'enable-read-aloud-text-to-speech'
                 ]),
             ]
         );
