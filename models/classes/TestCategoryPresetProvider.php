@@ -185,7 +185,7 @@ class TestCategoryPresetProvider extends ConfigurableService
     {
         $flag = $preset->getFeatureFlag();
 
-        return !$flag || (isset($config[$flag]) && $config[$flag] === true) ?? false;
+        return !$flag || !isset($config[$flag]) || $config[$flag];
     }
 
     private function loadPresetFromProviders(): void
