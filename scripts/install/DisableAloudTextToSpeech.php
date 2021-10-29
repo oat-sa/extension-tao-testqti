@@ -18,6 +18,8 @@
  * Copyright (c) 2021 (original work) Open Assessment Technologies SA;
  */
 
+declare(strict_types=1);
+
 namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
@@ -30,10 +32,14 @@ class DisableAloudTextToSpeech extends InstallAction
      */
     public function __invoke($params)
     {
-        $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById(
+            'taoQtiTest'
+        );
         $config = $extension->getConfig('testRunner');
         $config['enable-read-aloud-text-to-speech'] = false;
         $extension->setConfig('testRunner', $config);
-        return \common_report_Report::createSuccess('Disabling read-aloud-text-to-speech. Configuration of taoQtiTest (testRunner.conf) was successfully updated');
+        return \common_report_Report::createSuccess(
+            'Disabling read-aloud-text-to-speech. Configuration of taoQtiTest (testRunner.conf) was successfully updated'
+        );
     }
 }
