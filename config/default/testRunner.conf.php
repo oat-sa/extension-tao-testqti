@@ -389,6 +389,12 @@ return [
              */
             'contentNavigatorType' => 'default'
         ],
+        /**
+         * The plugin renders review panel for test taker
+         */
+        'review' => [
+            'reviewLayout' => 'fizzy'
+        ]
     ],
 
     /**
