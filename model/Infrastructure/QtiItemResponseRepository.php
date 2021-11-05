@@ -32,7 +32,6 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
-
 class QtiItemResponseRepository implements ItemResponseRepositoryInterface
 {
     /** @var QtiRunnerService */
