@@ -20,9 +20,9 @@
  */
 
 use oat\tao\model\user\TaoRoles;
-use oat\taoQtiTest\scripts\update\Updater;
-use oat\taoQtiTest\scripts\install\SetupProvider;
+use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
+use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\DisableBRSinTestAuthoring;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
@@ -45,6 +45,7 @@ use oat\taoQtiTest\scripts\install\SetupDefaultTemplateConfiguration;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
+use oat\taoQtiTest\scripts\update\Updater;
 
 $extpath = __DIR__ . DIRECTORY_SEPARATOR;
 $taopath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
@@ -134,5 +135,8 @@ return [
     ],
     'extra' => [
         'structures' => __DIR__ . DIRECTORY_SEPARATOR . 'actions' . DIRECTORY_SEPARATOR . 'structures.xml',
+    ],
+    'containerServiceProviders' => [
+        TestQtiServiceProvider::class,
     ],
 ];
