@@ -598,12 +598,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $moveCommand = new MoveCommand(
                 $this->getServiceContext(),
-                $this->getToolStatesFromRequest(),
                 $this->hasRequestParameter('start')
             );
 
             $this->setNavigationContextToCommand($moveCommand);
             $this->setItemContextToCommand($moveCommand);
+            $this->setToolsStateContextToCommand($moveCommand);
 
             /** @var MoveService $moveService */
             $moveService = $this->getPsrContainer()->get(MoveService::class);
@@ -1175,5 +1175,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getItemDuration(),
             $this->getItemResponse()
         );
+    }
+
+    private function setToolsStateContextToCommand(object $command): void
+    {
+        $command->setToolsState($this->getToolStatesFromRequest());
     }
 }

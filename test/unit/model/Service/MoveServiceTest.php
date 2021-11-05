@@ -35,7 +35,6 @@ use oat\taoQtiTest\models\runner\RunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use PHPUnit\Framework\MockObject\MockObject;
-use qtism\data\ExtendedAssessmentItemRef;
 
 class MoveServiceTest extends TestCase
 {
@@ -164,7 +163,7 @@ class MoveServiceTest extends TestCase
 
     private function createCommand(bool $hastStartTimer = false): MoveCommand
     {
-        $command = new MoveCommand($this->serviceContext, null, $hastStartTimer);
+        $command = new MoveCommand($this->serviceContext, $hastStartTimer);
 
         $command->setNavigationContext('next', 'item', null);
 

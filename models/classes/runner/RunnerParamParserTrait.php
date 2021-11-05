@@ -222,6 +222,11 @@ trait RunnerParamParserTrait
         );
     }
 
+    protected function setToolsStateToCommand(object $command): void
+    {
+        $command->setToolsState($this->getToolStatesFromRequest());
+    }
+
     private function getItemDuration(): ?float
     {
         if (!$this->hasRequestParameter('itemDuration')) {

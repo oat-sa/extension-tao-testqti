@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Service;
 
+use oat\taoQtiTest\model\Domain\Model\ItemResponse;
+
 trait ItemContextAwareTrait
 {
     /** @var string */
@@ -50,23 +52,13 @@ trait ItemContextAwareTrait
         $this->itemResponse = $itemResponse;
     }
 
-    public function getItemDefinition(): string
+    public function getItemResponse(): ItemResponse
     {
-        return $this->itemDefinition;
-    }
-
-    public function getItemDuration(): ?float
-    {
-        return $this->itemDuration;
-    }
-
-    public function getItemState(): ?array
-    {
-        return $this->itemState;
-    }
-
-    public function getItemResponse(): ?array
-    {
-        return $this->itemResponse;
+        return new ItemResponse(
+            $this->itemDefinition,
+            $this->itemState,
+            $this->itemResponse,
+            $this->itemDuration
+        );
     }
 }

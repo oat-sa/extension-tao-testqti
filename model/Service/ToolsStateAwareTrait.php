@@ -24,35 +24,20 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Service;
 
-use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\model\Domain\Model\ToolsState;
 
-final class MoveCommand
+trait ToolsStateAwareTrait
 {
-    use ItemContextAwareTrait;
-    use NavigationContextAwareTrait;
-    use ToolsStateAwareTrait;
+    /** @var array|null */
+    private $toolsState = null;
 
-    /** @var QtiRunnerServiceContext */
-    private $serviceContext;
-
-    /** @var bool */
-    private $hasStartTimer;
-
-    public function __construct(
-        QtiRunnerServiceContext $serviceContext,
-        bool $hasStartTimer
-    ) {
-        $this->serviceContext = $serviceContext;
-        $this->hasStartTimer = $hasStartTimer;
+    public function setToolsState(?array $toolsState): void
+    {
+        $this->toolsState = $toolsState;
     }
 
-    public function getServiceContext(): QtiRunnerServiceContext
+    public function getToolsState(): ToolsState
     {
-        return $this->serviceContext;
-    }
-
-    public function hasStartTimer(): bool
-    {
-        return $this->hasStartTimer;
+        return new ToolsState($this->toolsState);
     }
 }

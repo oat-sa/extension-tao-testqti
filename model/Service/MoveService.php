@@ -56,8 +56,8 @@ class MoveService
     {
         $serviceContext = $command->getServiceContext();
 
-        $this->saveItemResponse($command);
-        $this->saveToolsState($command);
+        $this->itemResponseRepository->save($command->getItemResponse(), $serviceContext);
+        $this->toolsStateRepository->save($command->getToolsState(), $serviceContext);
 
         $serviceContext->getTestSession()->initItemTimer();
 
@@ -87,26 +87,6 @@ class MoveService
         return ActionResponse::success(
             $this->runnerService->getTestContext($serviceContext),
             $testMap
-        );
-    }
-
-    private function saveItemResponse(MoveCommand $command): void
-    {
-        $itemResponse = new ItemResponse(
-            $command->getItemDefinition(),
-            $command->getItemState(),
-            $command->getItemResponse(),
-            $command->getItemDuration()
-        );
-
-        $this->itemResponseRepository->save($itemResponse, $command->getServiceContext());
-    }
-
-    private function saveToolsState(MoveCommand $command): void
-    {
-        $this->toolsStateRepository->save(
-            new ToolsState($command->getToolStates()),
-            $command->getServiceContext()
         );
     }
 }
