@@ -29,13 +29,13 @@ final class ActionResponse
     /** @var bool */
     private $isSuccess = false;
 
-    /** @var array */
+    /** @var array|null */
     private $testContext;
 
-    /** @var ?array */
+    /** @var array|null */
     private $testMap;
 
-    /** @var ?array */
+    /** @var array|null */
     private $error;
 
     private function __construct()
@@ -47,7 +47,7 @@ final class ActionResponse
         return new self();
     }
 
-    public static function success(array $testContext, ?array $testMap = null): self
+    public static function success(?array $testContext = null, ?array $testMap = null): self
     {
         $response = new self();
 
