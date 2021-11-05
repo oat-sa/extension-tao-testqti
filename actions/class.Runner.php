@@ -1147,7 +1147,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         return (array)json_decode($params['itemState'], true);
     }
 
-    protected function getItemResponse()
+    private function getItemResponse(): ?array
     {
         $params = $this->getRequest()->getRawParameters();
 
@@ -1158,7 +1158,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         return (array)json_decode($params['itemResponse'], true);
     }
 
-    protected function setNavigationContextToCommand(object $command): void
+    private function setNavigationContextToCommand(object $command): void
     {
         $command->setNavigationContext(
             $this->getRequestParameter('direction'),
@@ -1167,7 +1167,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         );
     }
 
-    protected function setItemContextToCommand(object $command): void
+    private function setItemContextToCommand(object $command): void
     {
         $command->setItemContext(
             $this->getRequestParameter('itemDefinition'),
