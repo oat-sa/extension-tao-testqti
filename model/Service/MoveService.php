@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Service;
 
+use common_Exception;
 use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsState;
@@ -52,6 +53,9 @@ class MoveService
         $this->toolsStateRepository = $toolsStateRepository;
     }
 
+    /**
+     * @throws common_Exception
+     */
     public function __invoke(MoveCommand $command): ActionResponse
     {
         $serviceContext = $command->getServiceContext();
