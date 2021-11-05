@@ -202,4 +202,54 @@ trait RunnerParamParserTrait
         $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
         return $mapService->getItemHref($serviceContext, $itemIdentifier);
     }
+
+    protected function setNavigationContextToCommand(object $command): void
+    {
+        $command->setNavigationContext(
+            $this->getRequestParameter('direction'),
+            $this->getRequestParameter('scope'),
+            $this->getRequestParameter('ref')
+        );
+    }
+
+    protected function setItemContextToCommand(object $command): void
+    {
+        $command->setItemContext(
+            $this->getRequestParameter('itemDefinition'),
+            $this->getItemState(),
+            $this->getItemDuration(),
+            $this->getItemResponse()
+        );
+    }
+
+    private function getItemDuration(): ?float
+    {
+        if (!$this->hasRequestParameter('itemDuration')) {
+            return null;
+        }
+
+        return (float)$this->getRequestParameter('itemDuration');
+    }
+
+    private function getItemState(): ?array
+    {
+        $itemState = $this->getRequestParameter('itemState');
+
+        if (empty($itemState)) {
+            return null;
+        }
+
+        return (array)json_decode($itemState, true);
+    }
+
+    private function getItemResponse(): ?array
+    {
+        $itemResponse = $this->getRequestParameter('itemResponse');
+
+        if (empty($itemResponse)) {
+            return null;
+        }
+
+        return (array)json_decode($itemResponse, true);
+    }
 }

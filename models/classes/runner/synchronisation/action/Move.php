@@ -25,6 +25,8 @@ use common_exception_Error;
 use common_exception_InconsistentData;
 use common_Logger;
 use Exception;
+use oat\taoQtiTest\model\Service\MoveCommand;
+use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
@@ -52,58 +54,35 @@ class Move extends TestRunnerAction
     {
         $this->validate();
 
-        $ref = ($this->getRequestParameter('ref') === false) ? null : $this->getRequestParameter('ref');
-        $direction = $this->getRequestParameter('direction');
-        $scope = $this->getRequestParameter('scope');
-        $start = ($this->getRequestParameter('start') !== false);
-
         try {
-            /** @var QtiRunnerServiceContext $serviceContext */
-            $serviceContext = $this->getServiceContext();
-
-            $this->saveToolStates();
-
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getTime());
-                $this->saveItemState();
-            }
-            $this->initServiceContext();
-
-            $this->saveItemResponses(false);
-
             if ($this->getRequestParameter('offline') === true) {
                 $this->setOffline();
             }
 
-            $serviceContext->getTestSession()->initItemTimer($this->getTime());
-            $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
+            $serviceContext = $this->getServiceContext();
 
-            $response = [
-                'success' => $result,
-            ];
+            $moveCommand = new MoveCommand(
+                $this->getServiceContext(),
+                $this->getToolStatesFromRequest(),
+                $this->hasRequestParameter('start')
+            );
 
-            if ($result) {
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
+            $this->setNavigationContextToCommand($moveCommand);
+            $this->setItemContextToCommand($moveCommand);
 
-                if ($serviceContext->containsAdaptive()) {
-                    // Force map update.
-                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
-                }
-            }
+            /** @var MoveService $moveService */
+            $moveService = $this->getServiceLocator()->get(MoveService::class);
+
+            $response = $moveService($moveCommand);
 
             common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
 
-            if ($start === true) {
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
-            }
+            return $response->toArray();
         } catch (Exception $e) {
             common_Logger::e($e->getMessage());
-            $response = $this->getErrorResponse($e);
-        }
 
-        return $response;
+            return $this->getErrorResponse($e);
+        }
     }
 
     /**
@@ -111,7 +90,7 @@ class Move extends TestRunnerAction
      *
      * @return array
      */
-    protected function getRequiredFields()
+    protected function getRequiredFields(): array
     {
         return array_merge(parent::getRequiredFields(), ['direction', 'scope']);
     }
