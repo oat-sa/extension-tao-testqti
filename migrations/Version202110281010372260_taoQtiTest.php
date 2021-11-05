@@ -24,7 +24,7 @@ final class Version202110281010372260_taoQtiTest extends AbstractMigration
         $this->addReport(
             $this->propagate(
                 new DisableAloudTextToSpeech()
-            )()
+            )([])
         );
     }
 
