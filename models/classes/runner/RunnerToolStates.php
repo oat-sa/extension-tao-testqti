@@ -57,6 +57,23 @@ trait RunnerToolStates
      */
     abstract public function getServiceContext();
 
+    protected function getToolStatesFromRequest(): ?array
+    {
+        if (!$this->hasRequestParameter('toolStates')) {
+            return null;
+        }
+
+        // since the parameter content is a JSON string
+        // we need to load it using the raw mode
+        $rawToolStates = $this->getRawRequestParameter('toolStates');
+
+        if (empty($rawToolStates)) {
+            return null;
+        }
+
+        return (array)json_decode($rawToolStates, true);
+    }
+
     /**
      * Save the tool state if some are found in the current request
      *
