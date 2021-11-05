@@ -284,4 +284,23 @@ interface RunnerService extends DeliveryExecutionDelete
      * @return mixed
      */
     public function getItemMetadataElements($itemRef);
+
+    /**
+     * Starts the timer for the current item in the TestSession
+     * @param RunnerServiceContext $context
+     * @param float|null $timestamp allow to start the timer at a specific time, or use current when it's null
+     * @return bool
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function startTimer(RunnerServiceContext $context, ?float $timestamp = null): bool;
+
+    /**
+     * Ends the timer for the current item in the TestSession
+     * @param RunnerServiceContext $context
+     * @param float|null $duration The client side duration to adjust the timer
+     * @param float|null $timestamp allow to end the timer at a specific time, or use current when it's null
+     * @return bool
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function endTimer(RunnerServiceContext $context, ?float $duration = null, ?float $timestamp = null): bool;
 }

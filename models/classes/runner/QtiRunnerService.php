@@ -86,7 +86,7 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
  *
  * @package oat\taoQtiTest\models
  */
-class QtiRunnerService extends ConfigurableService implements RunnerService
+class QtiRunnerService extends ConfigurableService implements PersistableRunnerServiceInterface, RunnerService
 {
     public const SERVICE_ID = 'taoQtiTest/QtiRunnerService';
 
@@ -233,16 +233,16 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Persists the AssessmentTestSession into binary data.
-     * @param QtiRunnerServiceContext $context
+     * @param QtiRunnerServiceContext $serviceContext
      */
-    public function persist(QtiRunnerServiceContext $context)
+    public function persist(RunnerServiceContext $serviceContext): void
     {
-        $testSession = $context->getTestSession();
+        $testSession = $serviceContext->getTestSession();
         $sessionId = $testSession->getSessionId();
 
         \common_Logger::d("Persisting QTI Assessment Test Session '${sessionId}'...");
-        $context->getStorage()->persist($testSession);
-        if ($this->isTerminated($context)) {
+        $serviceContext->getStorage()->persist($testSession);
+        if ($this->isTerminated($serviceContext)) {
             /** @var StorageManager $storageManager */
             $storageManager = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
             $storageManager->persist();
@@ -1798,13 +1798,12 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Starts the timer for the current item in the TestSession
-     *
      * @param RunnerServiceContext $context
-     * @param float $timestamp allow to start the timer at a specific time, or use current when it's null
+     * @param float|null $timestamp allow to start the timer at a specific time, or use current when it's null
      * @return bool
      * @throws \common_exception_InvalidArgumentType
      */
-    public function startTimer(RunnerServiceContext $context, $timestamp = null)
+    public function startTimer(RunnerServiceContext $context, ?float $timestamp = null): bool
     {
         if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
@@ -1827,14 +1826,13 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     /**
      * Ends the timer for the current item in the TestSession
-     *
      * @param RunnerServiceContext $context
-     * @param float $duration The client side duration to adjust the timer
-     * @param float $timestamp allow to end the timer at a specific time, or use current when it's null
+     * @param float|null $duration The client side duration to adjust the timer
+     * @param float|null $timestamp allow to end the timer at a specific time, or use current when it's null
      * @return bool
      * @throws \common_exception_InvalidArgumentType
      */
-    public function endTimer(RunnerServiceContext $context, $duration = null, $timestamp = null)
+    public function endTimer(RunnerServiceContext $context, ?float $duration = null, ?float $timestamp = null): bool
     {
         if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
