@@ -25,6 +25,8 @@ use common_exception_Error;
 use common_exception_InconsistentData;
 use common_Logger;
 use Exception;
+use oat\taoQtiTest\model\Service\ExitTestCommand;
+use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
@@ -53,27 +55,22 @@ class ExitTest extends TestRunnerAction
         $this->validate();
 
         try {
-            /** @var QtiRunnerServiceContext $serviceContext */
-            $serviceContext = $this->getServiceContext();
+            $command = new ExitTestCommand($this->getServiceContext());
 
-            $this->saveToolStates();
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getTime());
-                $this->saveItemState();
-            }
+            /** @var ExitTestService $exitTest */
+            $exitTest = $this->getServiceLocator()->get(ExitTestService::class);
 
-            $this->initServiceContext();
-            $this->saveItemResponses();
+            $response = $exitTest($command);
 
-            $response = [
-                'success' => $this->getRunnerService()->exitTest($serviceContext),
-            ];
+            return $response->toArray();
         } catch (Exception $e) {
             common_Logger::e($e->getMessage());
-            $response = $this->getErrorResponse($e);
-        }
 
-        return $response;
+            return $this->getErrorResponse($e);
+        }
     }
 }

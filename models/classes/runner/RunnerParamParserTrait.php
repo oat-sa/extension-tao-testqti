@@ -222,7 +222,7 @@ trait RunnerParamParserTrait
         );
     }
 
-    protected function setToolsStateToCommand(object $command): void
+    protected function setToolsStateContextToCommand(object $command): void
     {
         $command->setToolsState($this->getToolStatesFromRequest());
     }

@@ -29,6 +29,7 @@ use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
+use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -61,6 +62,17 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
 
         $services
             ->set(MoveService::class, MoveService::class)
+            ->public()
+            ->args(
+                [
+                    service(QtiRunnerService::SERVICE_ID),
+                    service(ItemResponseRepositoryInterface::class),
+                    service(ToolsStateRepositoryInterface::class),
+                ]
+            );
+
+        $services
+            ->set(ExitTestService::class, ExitTestService::class)
             ->public()
             ->args(
                 [

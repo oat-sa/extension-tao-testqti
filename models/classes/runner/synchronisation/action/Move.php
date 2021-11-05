@@ -68,7 +68,7 @@ class Move extends TestRunnerAction
 
             $this->setNavigationContextToCommand($moveCommand);
             $this->setItemContextToCommand($moveCommand);
-            $this->setToolsStateToCommand($moveCommand);
+            $this->setToolsStateContextToCommand($moveCommand);
 
             /** @var MoveService $moveService */
             $moveService = $this->getServiceLocator()->get(MoveService::class);

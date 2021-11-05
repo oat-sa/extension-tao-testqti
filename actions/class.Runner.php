@@ -29,6 +29,8 @@ use oat\oatbox\event\EventManager;
 use oat\tao\model\routing\AnnotationReader\security;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiTest\model\Service\ExitTestCommand;
+use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\MoveCommand;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
@@ -732,33 +734,27 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function exitTest()
     {
-        $code = 200;
-
         try {
             $this->validateSecurityToken();
-            $serviceContext = $this->getServiceContext();
 
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer();
-                $this->saveItemState();
-            }
+            $command = new ExitTestCommand($this->getServiceContext());
 
-            $this->getRunnerService()->initServiceContext($serviceContext);
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            $this->saveItemResponses();
-            $this->saveToolStates();
+            /** @var ExitTestService $exitTest */
+            $exitTest = $this->getPsrContainer()->get(ExitTestService::class);
 
-            $response = [
-                'success' => $this->getRunnerService()->exitTest($serviceContext),
-            ];
+            $response = $exitTest($command);
 
-            $this->getRunnerService()->persist($serviceContext);
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getErrorCode($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
