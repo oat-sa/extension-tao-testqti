@@ -65,4 +65,9 @@ final class ItemResponse
     {
         return $this->duration;
     }
+
+    public function removeDuration(): void
+    {
+        $this->duration = null;
+    }
 }
