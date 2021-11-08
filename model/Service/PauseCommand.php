@@ -26,7 +26,7 @@ namespace oat\taoQtiTest\model\Service;
 
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
-class PauseCommand
+final class PauseCommand
 {
     use ItemContextAwareTrait;
 
