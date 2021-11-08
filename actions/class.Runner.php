@@ -33,6 +33,8 @@ use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\MoveCommand;
 use oat\taoQtiTest\model\Service\MoveService;
+use oat\taoQtiTest\model\Service\PauseCommand;
+use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\event\TraceVariableStored;
@@ -779,34 +781,25 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function pause()
     {
-        $code = 200;
-
         try {
             $this->validateSecurityToken();
 
-            $serviceContext = $this->getServiceContext();
+            $command = new PauseCommand($this->getServiceContext());
 
-            $isTerminated = (bool) $this->getRunnerService()->isTerminated($serviceContext);
+            $this->setItemContextToCommand($command);
 
-            if (!$isTerminated) {
-                $this->saveItemState();
-            }
+            /** @var PauseService $pause */
+            $pause = $this->getPsrContainer()->get(PauseService::class);
 
-            if ($this->shouldTimerStopOnPause($isTerminated)) {
-                $this->endItemTimer();
-            }
+            $response = $pause($command);
 
-            $serviceContext = $this->getRunnerService()->initServiceContext($serviceContext);
-
-            $response = [
-                'success' => $this->getRunnerService()->pause($serviceContext),
-            ];
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getErrorCode($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**

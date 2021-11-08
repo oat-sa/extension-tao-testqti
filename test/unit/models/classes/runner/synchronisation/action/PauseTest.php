@@ -6,299 +6,128 @@ use common_exception_InconsistentData;
 use Exception;
 use oat\generis\test\TestCase;
 use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\model\Service\ActionResponse;
+use oat\taoQtiTest\model\Service\ExitTestService;
+use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\models\event\ItemOfflineEvent;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoQtiTest\models\runner\synchronisation\action\ExitTest;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\generis\test\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCountMatcher;
 
 class PauseTest extends TestCase
 {
-    /** @var QtiRunnerService|MockObject */
-    private $qtiRunnerService;
+    /** @var QtiRunnerService|\PHPUnit\Framework\MockObject\MockObject */
+    private $runnerService;
 
     /** @var QtiRunnerServiceContext|MockObject */
-    private $qtiRunnerServiceContext;
+    private $serviceContext;
 
     /** @var TestSession|MockObject */
     private $testSession;
 
-    /** @var EventManager|MockObject */
-    private $eventManager;
-
-    /**
-     * @var RunnerConfig|MockObject
-     */
-    private $testConfigMock;
+    /** @var PauseService|MockObject */
+    private $pauseService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->qtiRunnerService = $this->createMock(QtiRunnerService::class);
-        $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
+        $this->pauseService = $this->createMock(PauseService::class);
+        $this->runnerService = $this->createMock(QtiRunnerService::class);
+        $this->serviceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->testSession = $this->createMock(TestSession::class);
-        $this->eventManager = $this->createMock(EventManager::class);
-        $this->testConfigMock = $this->createMock(RunnerConfig::class);
 
-        $this->qtiRunnerService
+        $this->runnerService
             ->method('getServiceContext')
-            ->willReturn($this->qtiRunnerServiceContext);
-        $this->qtiRunnerService
-            ->method('getTestConfig')
-            ->willReturn($this->testConfigMock);
+            ->willReturn($this->serviceContext);
 
-        $this->qtiRunnerServiceContext
+        $this->serviceContext
             ->method('getTestSession')
             ->willReturn($this->testSession);
     }
 
-    public function testValidationExceptionIfRequestParametersAreMissing(): void
+    public function testReturnsSuccessfulResponse(): void
+    {
+        $expectedActionResponse = ActionResponse::success();
+        $this->expectActionResponse($expectedActionResponse);
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedActionResponse->toArray(), $subject->process());
+    }
+
+    public function testReturnsUnsuccessfulResponseWhenServiceReturnsEmptyResponse(): void
+    {
+        $this->expectActionResponse(ActionResponse::empty());
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals(['success' => false], $subject->process());
+    }
+
+    public function testReturnsErrorResponseWhenServiceThrows(): void
+    {
+        $this->expectServiceThrows(new Exception('Error message', 100));
+
+        $expectedResponse = [
+            'success' => false,
+            'type' => 'exception',
+            'code' => 100,
+            'message' => 'An error occurred!',
+        ];
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedResponse, $subject->process());
+    }
+
+    public function testThrowsWhenValidationFails(): void
     {
         $this->expectException(common_exception_InconsistentData::class);
         $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId');
-        $this->createSubjectWithParameters(['missing parameters'])->process();
+
+        $this->createSubject(['missing parameters'])
+            ->process();
     }
 
-    public function testUnsuccessfulResponse(): void
-    {
-        $this->qtiRunnerService
-            ->method('pause')
-            ->willThrowException(new Exception('oops'));
-
-        $this->assertEquals([
-            'success' => false,
-            'type' => 'exception',
-            'code' => 0,
-            'message' => 'An error occurred!',
-        ], $this->createSubjectWithParameters($this->getRequiredRequestParameters())->process());
-    }
-
-    public function testSuccessfulResponse(): void
-    {
-        $this->qtiRunnerService
-            ->method('pause')
-            ->willReturn(true);
-
-        $this->assertEquals([
-            'success' => true,
-        ], $this->createSubjectWithParameters($this->getRequiredRequestParameters())->process());
-    }
-
-    public function testItTriggersItemOfflineEvent(): void
-    {
-        $requestParameters = [
-                'offline' => true,
-                'itemDefinition' => 'expectedItemDefinition',
-            ] + $this->getRequiredRequestParameters();
-
-        $this->eventManager
-            ->expects($this->once())
-            ->method('trigger')
-            ->willReturnCallback(
-                function (ItemOfflineEvent $itemOfflineEvent) {
-                    return $itemOfflineEvent->getName() === 'expectedItemDefinition'
-                        && $itemOfflineEvent->getSession() === $this->testSession;
-                }
-            );
-
-        $this->createSubjectWithParameters($requestParameters)->process();
-    }
-
-    public function testItSavesToolStates(): void
-    {
-        $rawToolStates = [
-            ['testTool1' => 'testStatus1'],
-            ['testTool2' => 'testStatus2'],
-        ];
-
-        $requestParameters = $this->getRequiredRequestParameters();
-        $requestParameters['toolStates'] = json_encode($rawToolStates);
-
-        $expectedToolStates = [
-            json_encode(['testTool1' => 'testStatus1']),
-            json_encode(['testTool2' => 'testStatus2']),
-        ];
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('setToolsStates')
-            ->willReturnCallback(
-                function (RunnerServiceContext $runnerServiceContext, $toolStates) use ($expectedToolStates) {
-                    return $runnerServiceContext === $this->qtiRunnerServiceContext
-                        && $toolStates === $expectedToolStates;
-                }
-            );
-
-        $this->createSubjectWithParameters($requestParameters)->process();
-    }
-
-    /**
-     * @param bool $testTerminated
-     * @param string $timerTarget
-     * @param $itemDuration
-     * @param callable $expectedCalls
-     *
-     * @dataProvider dataProviderTestPause_WhenRequired_EndItemTimer
-     */
-    public function testPause_WhenRequired_EndItemTimer(
-        bool $testTerminated,
-        string $timerTarget,
-        $itemDuration,
-        InvokedCountMatcher $expectedCalls
-    ): void {
-        $this->testConfigMock
-            ->method('getConfigValue')
-            ->with('timer.target')
-            ->willReturn($timerTarget);
-
-        $this->qtiRunnerService
-            ->method('isTerminated')
-            ->willReturn($testTerminated);
-
-        $this->qtiRunnerService
-            ->expects($expectedCalls)
-            ->method('endTimer');
-
-        $requestParameters = $this->getRequiredRequestParameters();
-        $requestParameters["itemDuration"] = $itemDuration;
-
-        $this->createSubjectWithParameters($requestParameters)->process();
-    }
-
-    /**
-     * @dataProvider dataProviderTestSaveItemStateIfNeeded
-     */
-    public function testSaveItemStateIfNeeded(
-        bool $testTerminated,
-        $itemDefinition,
-        $itemState,
-        InvokedCountMatcher $expectedCalls
-    ): void {
-        $this->qtiRunnerService
-            ->method('isTerminated')
-            ->willReturn($testTerminated);
-
-        $this->qtiRunnerService
-            ->expects($expectedCalls)
-            ->method('setItemState');
-
-        $requestParameters = $this->getRequiredRequestParameters();
-        $requestParameters["itemDefinition"] = $itemDefinition;
-        $requestParameters["itemState"] = $itemState;
-
-        $this->createSubjectWithParameters($requestParameters)->process();
-    }
-
-    /**
-     * @param array $requestParameters
-     *
-     * @return Pause
-     */
-    private function createSubjectWithParameters($requestParameters = []): Pause
+    private function createSubject(array $requestParameters = []): Pause
     {
         $subject = new Pause('test', microtime(), $requestParameters);
 
         $services = [
-            QtiRunnerService::SERVICE_ID => $this->qtiRunnerService,
-            EventManager::SERVICE_ID => $this->eventManager,
+            QtiRunnerService::SERVICE_ID => $this->runnerService,
+            PauseService::class => $this->pauseService
         ];
 
         return $subject->setServiceLocator($this->getServiceLocatorMock($services));
     }
 
-    /**
-     * @param mixed $testDefinition
-     * @param mixed $testCompilation
-     * @param mixed $serviceCallId
-     *
-     * @return array
-     */
-    private function getRequiredRequestParameters(
-        $testDefinition = null,
-        $testCompilation = null,
-        $serviceCallId = null
-    ) {
+    private function getRequiredRequestParameters(): array
+    {
         return [
-            'testDefinition' => $testDefinition,
-            'testCompilation' => $testCompilation,
-            'serviceCallId' => $serviceCallId,
+            'testDefinition' => null,
+            'testCompilation' => null,
+            'serviceCallId' => null,
         ];
     }
 
-    public function dataProviderTestPause_WhenRequired_EndItemTimer(): array
+    private function expectActionResponse(ActionResponse $actionResponse): void
     {
-        return [
-            'Test terminated - target client' => [
-                'testTerminated' => true,
-                'timerTarget' => 'client',
-                'itemDuration' => null,
-                'expectedCalls' => self::never()
-            ],
-            'Test terminated - target server' => [
-                'testTerminated' => true,
-                'timerTarget' => 'server',
-                'itemDuration' => null,
-                'expectedCalls' => self::never()
-            ],
-            'Test not terminated - target client - empty duration' => [
-                'testTerminated' => false,
-                'timerTarget' => 'client',
-                'itemDuration' => null,
-                'expectedCalls' => self::never()
-            ],
-            'Test not terminated - target client - not empty duration' => [
-                'testTerminated' => false,
-                'timerTarget' => 'client',
-                'itemDuration' => 100,
-                'expectedCalls' => self::once()
-            ],
-            'Test not terminated - target server - empty duration' => [
-                'testTerminated' => false,
-                'timerTarget' => 'server',
-                'itemDuration' => null,
-                'expectedCalls' => self::never()
-            ],
-            'Test not terminated - target server - not empty duration' => [
-                'testTerminated' => false,
-                'timerTarget' => 'server',
-                'itemDuration' => 100,
-                'expectedCalls' => self::never()
-            ]
-        ];
+        $this->pauseService
+            ->method('__invoke')
+            ->willReturn($actionResponse);
     }
 
-    public function dataProviderTestSaveItemStateIfNeeded(): array
+    private function expectServiceThrows(Exception $exception)
     {
-        return [
-            'Test terminated' => [
-                'testTerminated' => true,
-                'itemDefinition' => 'item',
-                'itemState' => '[]',
-                'expectedCalls' => self::never()
-            ],
-            'Test not terminated - itemState provided' => [
-                'testTerminated' => false,
-                'itemDefinition' => false,
-                'itemState' => '[]',
-                'expectedCalls' => self::never()
-            ],
-            'Test not terminated - itemDefinition provided' => [
-                'testTerminated' => false,
-                'itemDefinition' => 'item',
-                'itemState' => false,
-                'expectedCalls' => self::never()
-            ],
-            'Test not terminated - itemDefinition and itemState provided' => [
-                'testTerminated' => false,
-                'itemDefinition' => 'item',
-                'itemState' => '[]',
-                'expectedCalls' => self::once()
-            ]
-        ];
+        $this->pauseService
+            ->method('__invoke')
+            ->willThrowException($exception);
     }
 }
