@@ -35,6 +35,8 @@ use oat\taoQtiTest\model\Service\MoveCommand;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\model\Service\PauseCommand;
 use oat\taoQtiTest\model\Service\PauseService;
+use oat\taoQtiTest\model\Service\SkipCommand;
+use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\event\TraceVariableStored;
@@ -630,49 +632,30 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function skip()
     {
-        $code = 200;
-
-        $ref               = $this->getRequestParameter('ref');
-        $scope             = $this->getRequestParameter('scope');
-        $start             = $this->hasRequestParameter('start');
-
         try {
             $this->validateSecurityToken();
-            /** @var QtiRunnerServiceContext $serviceContext */
-            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
 
-            $this->saveToolStates();
+            $command = new SkipCommand(
+                $this->getServiceContext(),
+                $this->hasRequestParameter('start')
+            );
 
-            $this->endItemTimer();
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            $result = $this->getRunnerService()->skip($serviceContext, $scope, $ref);
+            /** @var SkipService $skip */
+            $skip = $this->getPsrContainer()->get(SkipService::class);
 
-            $response = [
-                'success' => $result,
-            ];
+            $response = $skip($command);
 
-            if ($result) {
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-
-                if ($serviceContext->containsAdaptive()) {
-                    // Force map update.
-                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
-                }
-            }
-
-            $this->getRunnerService()->persist($serviceContext);
-
-            if ($start == true) {
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext);
-            }
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getErrorCode($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -1150,7 +1133,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     private function setNavigationContextToCommand(object $command): void
     {
         $command->setNavigationContext(
-            $this->getRequestParameter('direction'),
+            $this->getRequestParameter('direction') ?? '',
             $this->getRequestParameter('scope'),
             $this->getRequestParameter('ref')
         );
