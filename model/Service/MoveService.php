@@ -25,9 +25,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
-use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
-use oat\taoQtiTest\model\Domain\Model\ToolsState;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
 use oat\taoQtiTest\models\runner\PersistableRunnerServiceInterface;
 use oat\taoQtiTest\models\runner\RunnerService;
