@@ -318,4 +318,21 @@ interface RunnerService extends DeliveryExecutionDelete
      * @throws \common_exception_InvalidArgumentType
      */
     public function endTimer(RunnerServiceContext $context, ?float $duration = null, ?float $timestamp = null): bool;
+
+    /**
+     * Stores trace variable related to an item, a test or a section
+     *
+     * @param RunnerServiceContext $context
+     * @param string|null $itemUri
+     * @param string $variableIdentifier
+     * @param string $variableValue
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function storeTraceVariable(
+        RunnerServiceContext $context,
+        ?string $itemUri,
+        string $variableIdentifier,
+        string $variableValue
+    ): bool;
 }

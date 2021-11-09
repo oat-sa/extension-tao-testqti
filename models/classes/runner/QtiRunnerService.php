@@ -1575,16 +1575,22 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Stores trace variable related to an item, a test or a section
      *
      * @param RunnerServiceContext $context
-     * @param $itemUri
-     * @param $variableIdentifier
-     * @param $variableValue
+     * @param string|null $itemUri
+     * @param string $variableIdentifier
+     * @param string $variableValue
      * @return boolean
      * @throws \common_Exception
      */
-    public function storeTraceVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
-    {
+    public function storeTraceVariable(
+        RunnerServiceContext $context,
+        ?string $itemUri,
+        string $variableIdentifier,
+        string $variableValue
+    ): bool {
         $this->assertQtiRunnerServiceContext($context);
+
         $metaVariable = $this->getTraceVariable($variableIdentifier, $variableValue);
+
         return $this->storeVariable($context, $itemUri, $metaVariable);
     }
 
