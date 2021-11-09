@@ -35,8 +35,11 @@ final class ActionResponse
     /** @var array|null */
     private $testMap;
 
-    /** @var array|null */
-    private $error;
+    /** @var array */
+    private $error = [];
+
+    /** @var array */
+    private $extraAttributes = [];
 
     private function __construct()
     {
@@ -72,25 +75,33 @@ final class ActionResponse
         return $response;
     }
 
+    public function withAttribute(string $name, $value): self
+    {
+        $response = clone $this;
+
+        $response->extraAttributes[$name] = $value;
+
+        return $response;
+    }
+
     public function toArray(): array
     {
-        if ($this->isSuccess) {
-            return array_filter(
-                [
-                    'success' => $this->isSuccess,
-                    'testContext' => $this->testContext,
-                    'testMap' => $this->testMap
-                ]
-            );
-        }
+        $payload = array_merge(
+            [
+                'success' => $this->isSuccess,
+                'testContext' => $this->testContext,
+                'testMap' => $this->testMap,
+            ],
+            $this->error,
+            $this->extraAttributes
+        );
 
-        if ($this->error === null) {
-            return ['success' => $this->isSuccess];
-        }
-
-        return array_merge(
-            ['success' => $this->isSuccess],
-            $this->error
+        return array_filter(
+            $payload,
+            function ($value): bool
+            {
+                return $value !== null;
+            }
         );
     }
 }
