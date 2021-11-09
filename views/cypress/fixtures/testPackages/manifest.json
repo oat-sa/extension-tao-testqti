@@ -10,7 +10,7 @@
         },
         {
             "key": "studentToolTest",
-            "package": "student_tool_test.zip"
+            "package": "student-tool-test.zip"
         }
     ]
 }
