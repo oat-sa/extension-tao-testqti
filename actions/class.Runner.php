@@ -31,6 +31,8 @@ use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
+use oat\taoQtiTest\model\Service\ListItemsQuery;
+use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\model\Service\MoveCommand;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\model\Service\PauseCommand;
@@ -417,34 +419,30 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function getNextItemData()
     {
-        $code = 200;
+        $itemIdentifiers = $this->getRequestParameter('itemDefinition');
 
-        $itemIdentifier = $this->getRequestParameter('itemDefinition');
-        if (!is_array($itemIdentifier)) {
-            $itemIdentifier = [$itemIdentifier];
+        if (!is_array($itemIdentifiers)) {
+            $itemIdentifiers = [$itemIdentifiers];
         }
 
         try {
-            if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
-                common_Logger::w("Attempt to disclose the next items without the configuration");
-                throw new common_exception_Unauthorized();
-            }
+            $query = new ListItemsQuery(
+                $this->getServiceContext(),
+                $itemIdentifiers
+            );
 
-            $response = [];
-            foreach ($itemIdentifier as $itemId) {
-                //load item data
-                $response['items'][] = $this->getItemData($itemId);
-            }
+            /** @var ListItemsService $listItems */
+            $listItems = $this->getPsrContainer()->get(ListItemsService::class);
 
-            if (isset($response['items'])) {
-                $response['success'] = true;
-            }
+            $response = $listItems($query);
+
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getErrorCode($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**

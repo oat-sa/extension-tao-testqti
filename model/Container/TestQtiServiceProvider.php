@@ -25,11 +25,13 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Container;
 
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
+use oat\oatbox\log\LoggerService;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
 use oat\taoQtiTest\model\Service\ExitTestService;
+use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\model\Service\SkipService;
@@ -60,6 +62,16 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
             ->args(
                 [
                     service(QtiRunnerService::SERVICE_ID)
+                ]
+            );
+
+        $services
+            ->set(ListItemsService::class, ListItemsService::class)
+            ->public()
+            ->args(
+                [
+                    service(QtiRunnerService::SERVICE_ID),
+                    service(LoggerService::SERVICE_ID)
                 ]
             );
 
