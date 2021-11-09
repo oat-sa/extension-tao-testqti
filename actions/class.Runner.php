@@ -37,6 +37,8 @@ use oat\taoQtiTest\model\Service\PauseCommand;
 use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\model\Service\SkipCommand;
 use oat\taoQtiTest\model\Service\SkipService;
+use oat\taoQtiTest\model\Service\TimeoutCommand;
+use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\event\TraceVariableStored;
@@ -663,55 +665,31 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function timeout()
     {
-        $code = 200;
-
-        $ref   = $this->getRequestParameter('ref');
-        $scope = $this->getRequestParameter('scope');
-        $start = $this->hasRequestParameter('start');
-        $late = $this->hasRequestParameter('late');
-
         try {
             $this->validateSecurityToken();
-            $serviceContext = $this->getServiceContext();
 
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer();
-                $this->saveItemState();
-            }
+            $command = new TimeoutCommand(
+                $this->getServiceContext(),
+                $this->hasRequestParameter('start'),
+                $this->hasRequestParameter('late')
+            );
 
-            $this->getRunnerService()->initServiceContext($serviceContext);
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            $this->saveItemResponses();
-            $this->saveToolStates();
+            /** @var TimeoutService $timeout */
+            $timeout = $this->getPsrContainer()->get(TimeoutService::class);
 
-            $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref, $late);
+            $response = $timeout($command);
 
-            $response = [
-                'success' => $result,
-            ];
-
-            if ($result) {
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-
-                if ($serviceContext->containsAdaptive()) {
-                    // Force map update.
-                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
-                }
-            }
-
-            $this->getRunnerService()->persist($serviceContext);
-
-            if ($start == true) {
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext);
-            }
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getErrorCode($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**

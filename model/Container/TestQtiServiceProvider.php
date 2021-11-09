@@ -33,6 +33,7 @@ use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\model\Service\SkipService;
+use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -96,6 +97,17 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
 
         $services
             ->set(SkipService::class, SkipService::class)
+            ->public()
+            ->args(
+                [
+                    service(QtiRunnerService::SERVICE_ID),
+                    service(ItemResponseRepositoryInterface::class),
+                    service(ToolsStateRepositoryInterface::class),
+                ]
+            );
+
+        $services
+            ->set(TimeoutService::class, TimeoutService::class)
             ->public()
             ->args(
                 [

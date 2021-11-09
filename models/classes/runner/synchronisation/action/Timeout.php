@@ -20,17 +20,12 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
-use common_Exception;
-use common_exception_Error;
-use common_exception_InconsistentData;
+use common_exception_InconsistentData as InconsistentData;
 use Exception;
+use oat\taoQtiTest\model\Service\TimeoutCommand;
+use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
-/**
- * Timeout item into the test context.
- *
- * @package oat\taoQtiTest\models\runner\synchronisation\action
- */
 class Timeout extends TestRunnerAction
 {
     /**
@@ -43,68 +38,39 @@ class Timeout extends TestRunnerAction
      * Start next timer.
      *
      * @return array
-     * @throws common_Exception
-     * @throws common_exception_Error
-     * @throws common_exception_InconsistentData
+     * @throws InconsistentData
      */
     public function process()
     {
         $this->validate();
 
-        $ref = $this->getRequestParameter('ref') ?: null;
-        $scope = $this->getRequestParameter('scope');
-        $start = ($this->getRequestParameter('start') !== false);
-
         try {
-            $serviceContext = $this->getServiceContext();
-
-            $this->saveToolStates();
-
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getTime());
-                $this->saveItemState();
-            }
-
-            $this->initServiceContext();
-
-            $this->saveItemResponses();
-
             if ($this->getRequestParameter('offline') === true) {
                 $this->setOffline();
             }
 
-            $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref);
+            $command = new TimeoutCommand(
+                $this->getServiceContext(),
+                $this->hasRequestParameter('start'),
+                $this->hasRequestParameter('late')
+            );
 
-            $response = [
-                'success' => $result,
-            ];
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            if ($result) {
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-                if ($serviceContext->containsAdaptive()) {
-                    // Force map update.
-                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
-                }
-            }
+            /** @var TimeoutService $timeout */
+            $timeout = $this->getServiceLocator()->get(TimeoutService::class);
 
-            if ($start == true) {
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
-            }
+            $response = $timeout($command);
+
+            return $response->toArray();
         } catch (Exception $e) {
-            $response = $this->getErrorResponse($e);
+            return $this->getErrorResponse($e);
         }
-
-        return $response;
     }
 
-    /**
-     * Scope is a required fields.
-     *
-     * @return array
-     */
-    protected function getRequiredFields()
+    protected function getRequiredFields(): array
     {
         return array_merge(parent::getRequiredFields(), ['scope']);
     }
