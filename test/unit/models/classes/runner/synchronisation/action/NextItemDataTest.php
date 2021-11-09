@@ -7,24 +7,18 @@ use Exception;
 use oat\generis\test\TestCase;
 use oat\taoQtiTest\model\Service\ActionResponse;
 use oat\taoQtiTest\model\Service\ListItemsService;
-use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
 use PHPUnit\Framework\MockObject\MockObject;
-use stdClass;
 
 class NextItemDataTest extends TestCase
 {
     /** @var QtiRunnerService|MockObject */
-    private $qtiRunnerService;
+    private $runnerService;
 
     /** @var QtiRunnerServiceContext|MockObject */
-    private $qtiRunnerServiceContext;
-
-    /** @var TestSession|MockObject */
-    private $testSession;
+    private $runnerServiceContext;
 
     /** @var ListItemsService|MockObject */
     private $listItemsService;
@@ -34,12 +28,12 @@ class NextItemDataTest extends TestCase
         parent::setUp();
 
         $this->listItemsService = $this->createMock(ListItemsService::class);
-        $this->qtiRunnerService = $this->createMock(QtiRunnerService::class);
-        $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
+        $this->runnerService = $this->createMock(QtiRunnerService::class);
+        $this->runnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
 
-        $this->qtiRunnerService
+        $this->runnerService
             ->method('getServiceContext')
-            ->willReturn($this->qtiRunnerServiceContext);
+            ->willReturn($this->runnerServiceContext);
     }
 
     public function testReturnsSuccessfulResponse(): void
@@ -91,7 +85,7 @@ class NextItemDataTest extends TestCase
         $subject = new NextItemData('test', microtime(), $requestParameters);
 
         $services = [
-            QtiRunnerService::SERVICE_ID => $this->qtiRunnerService,
+            QtiRunnerService::SERVICE_ID => $this->runnerService,
             ListItemsService::class => $this->listItemsService
         ];
 

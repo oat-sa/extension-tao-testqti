@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Container;
 
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
+use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
@@ -35,6 +36,7 @@ use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\model\Service\SkipService;
+use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -115,6 +117,16 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(QtiRunnerService::SERVICE_ID),
                     service(ItemResponseRepositoryInterface::class),
                     service(ToolsStateRepositoryInterface::class),
+                ]
+            );
+
+        $services
+            ->set(StoreTraceVariablesService::class, StoreTraceVariablesService::class)
+            ->public()
+            ->args(
+                [
+                    service(QtiRunnerService::SERVICE_ID),
+                    service(EventManager::SERVICE_ID),
                 ]
             );
 

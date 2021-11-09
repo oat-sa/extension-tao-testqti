@@ -26,6 +26,8 @@ use common_exception_InconsistentData;
 use common_Logger;
 use Exception;
 use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\model\Service\StoreTraceVariablesCommand;
+use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
@@ -50,49 +52,32 @@ class StoreTraceData extends TestRunnerAction
     {
         $this->validate();
 
-        $itemRef = $this->hasRequestParameter('itemDefinition')
-            ? $this->getItemRef($this->getRequestParameter('itemDefinition'))
-            : null;
-
-        $traceData = json_decode(html_entity_decode($this->getRequestParameter('traceData')), true);
-
         try {
-            $serviceContext = $this->getServiceContext();
-            $stored = 0;
-            $size = count($traceData);
+            $traceVariables = json_decode(
+                html_entity_decode($this->getRequestParameter('traceData')),
+                true
+            );
 
-            foreach ($traceData as $variableIdentifier => $variableValue) {
-                if (
-                    $this
-                    ->getRunnerService()
-                    ->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue)
-                ) {
-                    $stored++;
-                }
-            }
+            $command = new StoreTraceVariablesCommand(
+                $this->getServiceContext(),
+                $traceVariables,
+                $this->getRequestParameter('itemDefinition') ?: null
+            );
 
-            $response = [
-                'success' => $stored == $size
-            ];
+            /** @var StoreTraceVariablesService $storeTraceVariables */
+            $storeTraceVariables = $this->getServiceLocator()->get(StoreTraceVariablesService::class);
 
-            common_Logger::d('Stored "' . $stored . '/' . $size . '" trace variables');
-            /** @var EventManager $eventManager */
-            $eventManager = $this->getServiceLocator()->get(EventManager::SERVICE_ID);
-            $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
-            $eventManager->trigger($event);
+            $response = $storeTraceVariables($command);
+
+            common_Logger::d('Stored ' . count($traceVariables) . ' trace variables');
+
+            return $response->toArray();
         } catch (Exception $e) {
-            $response = $this->getErrorResponse($e);
+            return $this->getErrorResponse($e);
         }
-
-        return $response;
     }
 
-    /**
-     * traceData field is required.
-     *
-     * @return array
-     */
-    protected function getRequiredFields()
+    protected function getRequiredFields(): array
     {
         return array_merge(parent::getRequiredFields(), ['traceData']);
     }
