@@ -277,13 +277,28 @@ interface RunnerService extends DeliveryExecutionDelete
      */
     public function getItemPortableElements(RunnerServiceContext $context, $itemRef);
 
-
     /**
      * Get the list of metadata elements used in the item
      * @param $itemRef
      * @return mixed
      */
     public function getItemMetadataElements($itemRef);
+
+    /**
+     * Gets AssessmentItemRef's Href by AssessmentItemRef Identifier.
+     * @param RunnerServiceContext $context
+     * @param string $itemRef
+     * @return string
+     */
+    public function getItemHref(RunnerServiceContext $context, string $itemRef): string;
+
+    /**
+     * Get the base url to the item public directory
+     * @param RunnerServiceContext $context
+     * @param string $itemRef
+     * @return string
+     */
+    public function getItemPublicUrl(RunnerServiceContext $context, string $itemRef): string;
 
     /**
      * Starts the timer for the current item in the TestSession

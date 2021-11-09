@@ -614,10 +614,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param string $itemRef
      * @return string
      */
-    public function getItemHref(RunnerServiceContext $context, $itemRef)
+    public function getItemHref(RunnerServiceContext $context, string $itemRef): string
     {
         $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
-        return $mapService->getItemHref($context, $itemRef);
+        return (string)$mapService->getItemHref($context, $itemRef);
     }
 
     /**
@@ -1402,13 +1402,13 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     /**
      * Get the base url to the item public directory
      * @param RunnerServiceContext $context
-     * @param $itemRef
+     * @param string $itemRef
      * @return string
      * @throws \common_Exception
      * @throws \common_exception_Error
      * @throws \common_exception_InvalidArgumentType
      */
-    public function getItemPublicUrl(RunnerServiceContext $context, $itemRef)
+    public function getItemPublicUrl(RunnerServiceContext $context, string $itemRef): string
     {
         if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
