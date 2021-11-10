@@ -71,7 +71,7 @@ class Move extends TestRunnerAction
             $this->setToolsStateContextToCommand($moveCommand);
 
             /** @var MoveService $moveService */
-            $moveService = $this->getServiceLocator()->get(MoveService::class);
+            $moveService = $this->getPsrContainer()->get(MoveService::class);
 
             $response = $moveService($moveCommand);
 

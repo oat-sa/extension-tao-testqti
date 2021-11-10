@@ -67,7 +67,7 @@ class Skip extends TestRunnerAction
             $this->setToolsStateContextToCommand($command);
 
             /** @var SkipService $skip */
-            $skip = $this->getServiceLocator()->get(SkipService::class);
+            $skip = $this->getPsrContainer()->get(SkipService::class);
 
             $response = $skip($command);
 

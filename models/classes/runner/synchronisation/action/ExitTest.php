@@ -62,7 +62,7 @@ class ExitTest extends TestRunnerAction
             $this->setToolsStateContextToCommand($command);
 
             /** @var ExitTestService $exitTest */
-            $exitTest = $this->getServiceLocator()->get(ExitTestService::class);
+            $exitTest = $this->getPsrContainer()->get(ExitTestService::class);
 
             $response = $exitTest($command);
 

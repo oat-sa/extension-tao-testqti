@@ -65,7 +65,7 @@ class StoreTraceData extends TestRunnerAction
             );
 
             /** @var StoreTraceVariablesService $storeTraceVariables */
-            $storeTraceVariables = $this->getServiceLocator()->get(StoreTraceVariablesService::class);
+            $storeTraceVariables = $this->getPsrContainer()->get(StoreTraceVariablesService::class);
 
             $response = $storeTraceVariables($command);
 

@@ -60,7 +60,7 @@ class Timeout extends TestRunnerAction
             $this->setToolsStateContextToCommand($command);
 
             /** @var TimeoutService $timeout */
-            $timeout = $this->getServiceLocator()->get(TimeoutService::class);
+            $timeout = $this->getPsrContainer()->get(TimeoutService::class);
 
             $response = $timeout($command);
 

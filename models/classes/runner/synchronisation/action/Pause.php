@@ -59,7 +59,7 @@ class Pause extends TestRunnerAction
             $this->setItemContextToCommand($command);
 
             /** @var PauseService $pause */
-            $pause = $this->getServiceLocator()->get(PauseService::class);
+            $pause = $this->getPsrContainer()->get(PauseService::class);
 
             $response = $pause($command);
 

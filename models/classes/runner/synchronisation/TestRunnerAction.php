@@ -20,16 +20,16 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
+use Laminas\ServiceManager\ServiceLocatorAwareInterface;
+use Laminas\ServiceManager\ServiceLocatorAwareTrait;
 use oat\oatbox\event\EventManager;
-use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\event\ItemOfflineEvent;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\RunnerParamParserTrait;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class TestRunnerAction
@@ -256,4 +256,8 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
 
         return $response;
     }
-}
+
+    protected function getPsrContainer(): ContainerInterface
+    {
+        return $this->getServiceLocator()->getContainer();
+    }}

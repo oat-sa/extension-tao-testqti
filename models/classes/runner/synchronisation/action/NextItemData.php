@@ -56,7 +56,7 @@ class NextItemData extends TestRunnerAction
             );
 
             /** @var ListItemsService $listItems */
-            $listItems = $this->getServiceLocator()->get(ListItemsService::class);
+            $listItems = $this->getPsrContainer()->get(ListItemsService::class);
 
             $response = $listItems($query);
 
