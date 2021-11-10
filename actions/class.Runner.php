@@ -25,7 +25,6 @@
  */
 
 use oat\libCat\exception\CatEngineConnectivityException;
-use oat\oatbox\event\EventManager;
 use oat\tao\model\routing\AnnotationReader\security;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
@@ -45,7 +44,6 @@ use oat\taoQtiTest\model\Service\TimeoutCommand;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
-use oat\taoQtiTest\models\event\TraceVariableStored;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
@@ -115,8 +113,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getStorageManager()->persist();
         } catch (common_Exception $e) {
             $data = $this->getErrorResponse($e);
-            $httpStatus = $this->getErrorCode($e);
+            $httpStatus = $this->getStatusCodeFromException($e);
         }
+
+        // Applies status code to the response object
+        $this->response = $this->getPsrResponse()
+            ->withStatus($httpStatus);
 
         return parent::returnJson($data, $httpStatus);
     }
@@ -173,12 +175,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @throws common_exception_Unauthorized
      * @throws common_ext_ExtensionException
      */
-    protected function validateSecurityToken()
+    protected function validateSecurityToken(): void
     {
         $config = $this->getRunnerService()->getTestConfig()->getConfigValue('security');
-        if (isset($config['csrfToken']) && $config['csrfToken'] === true) {
-            $this->validateCsrf();
+
+        $isCsrfValidationRequired = (bool)($config['csrfToken'] ?? false);
+
+        if (!$isCsrfValidationRequired) {
+            return;
         }
+
+        $this->validateCsrf();
     }
 
     /**
@@ -247,36 +254,27 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Gets an HTTP response code
-     * @param Exception [$e] Optional exception from which extract the error context
-     * @return int
      */
-    protected function getErrorCode($e = null)
+    protected function getStatusCodeFromException(Exception $exception): int
     {
-        $code = 200;
-        if ($e) {
-            $code = 500;
+        switch (get_class($exception)) {
+            case CatEngineConnectivityException::class:
+            case CatEngineNotFoundException::class:
+            case QtiRunnerEmptyResponsesException::class:
+            case QtiRunnerClosedException::class:
+            case QtiRunnerPausedException::class:
+                return 200;
 
-            switch (true) {
-                case $e instanceof CatEngineConnectivityException:
-                case $e instanceof CatEngineNotFoundException:
-                case $e instanceof QtiRunnerEmptyResponsesException:
-                case $e instanceof QtiRunnerClosedException:
-                case $e instanceof QtiRunnerPausedException:
-                    $code = 200;
-                    break;
+            case common_exception_NotImplemented::class:
+            case common_exception_NoImplementation::class:
+            case common_exception_Unauthorized::class:
+                return 403;
 
-                case $e instanceof common_exception_NotImplemented:
-                case $e instanceof common_exception_NoImplementation:
-                case $e instanceof common_exception_Unauthorized:
-                    $code = 403;
-                    break;
-
-                case $e instanceof tao_models_classes_FileNotFoundException:
-                    $code = 404;
-                    break;
-            }
+            case tao_models_classes_FileNotFoundException::class:
+                return 404;
         }
-        return $code;
+
+        return 500;
     }
 
     /**
@@ -294,7 +292,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -318,7 +316,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -341,7 +339,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -364,7 +362,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -410,7 +408,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -442,7 +440,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (common_Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -590,7 +588,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->persist($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -624,7 +622,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (common_Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -655,7 +653,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (common_Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -687,7 +685,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (common_Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -715,7 +713,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (common_Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -756,10 +754,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $this->returnJson(
-                $this->getErrorResponse($e),
-                $this->getErrorCode($e)
-            );
+            $this->createErrorResponseFromException($e);
         }
     }
 
@@ -792,7 +787,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->persist($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -834,7 +829,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -859,7 +854,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -895,7 +890,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (common_Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -945,7 +940,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -1123,5 +1118,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     private function setToolsStateContextToCommand(object $command): void
     {
         $command->setToolsState($this->getToolStatesFromRequest());
+    }
+
+    private function createErrorResponseFromException(Exception $exception): void
+    {
+        $this->returnJson(
+            $this->getErrorResponse($exception),
+            $this->getStatusCodeFromException($exception)
+        );
     }
 }
