@@ -36,9 +36,6 @@ final class ActionResponse
     private $testMap;
 
     /** @var array */
-    private $error = [];
-
-    /** @var array */
     private $extraAttributes = [];
 
     private function __construct()
@@ -61,20 +58,6 @@ final class ActionResponse
         return $response;
     }
 
-    public static function error(string $type, string $message, string $code): self
-    {
-        $response = new self();
-
-        $response->isSuccess = false;
-        $response->error = [
-            'type' => $type,
-            'message' => $message,
-            'code' => $code
-        ];
-
-        return $response;
-    }
-
     public function withAttribute(string $name, $value): self
     {
         $response = clone $this;
@@ -92,7 +75,6 @@ final class ActionResponse
                 'testContext' => $this->testContext,
                 'testMap' => $this->testMap,
             ],
-            $this->error,
             $this->extraAttributes
         );
 
