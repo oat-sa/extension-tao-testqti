@@ -98,8 +98,7 @@ final class ActionResponse
 
         return array_filter(
             $payload,
-            function ($value): bool
-            {
+            function ($value): bool {
                 return $value !== null;
             }
         );
