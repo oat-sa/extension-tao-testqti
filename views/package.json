@@ -9,6 +9,6 @@
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "0.8.1",
-    "@oat-sa/tao-test-runner-qti": "2.23.4-2"
+    "@oat-sa/tao-test-runner-qti": "github:oat-sa/tao-test-runner-qti-fe#hotfix/TR-2400/highlighter-tool-missing-enable-listener"
   }
 }
