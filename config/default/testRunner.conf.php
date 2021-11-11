@@ -391,9 +391,12 @@ return [
         ],
         /**
          * The plugin renders review panel for test taker
+         * - `default`: the regular layout
+         * - `fizzy`: simplified layout aligned with NextGen styling
+         * @type string
          */
         'review' => [
-            'reviewLayout' => 'fizzy'
+            'reviewLayout' => 'default'
         ]
     ],
 
