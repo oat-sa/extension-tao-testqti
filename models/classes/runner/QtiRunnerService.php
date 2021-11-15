@@ -38,7 +38,6 @@ use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\RuntimeService;
-use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
 use oat\taoQtiItem\model\portableElement\exception\PortableModelMissing;
 use oat\taoQtiItem\model\portableElement\PortableElementService;
@@ -52,6 +51,7 @@ use oat\taoQtiTest\models\event\TestInitEvent;
 use oat\taoQtiTest\models\event\TestTimeoutEvent;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\taoQtiTest\models\render\ContentPostprocessorService;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
@@ -161,18 +161,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
         try {
             $content = $directory->read($lang . DIRECTORY_SEPARATOR . $path);
-            /** @var ItemAssetsReplacement $assetService */
-            $assetService = $this->getServiceManager()->get(ItemAssetsReplacement::SERVICE_ID);
-            $jsonContent = json_decode($content, true);
-            $jsonAssets = [];
-            if (isset($jsonContent['assets'])) {
-                foreach ($jsonContent['assets'] as $type => $assets) {
-                    foreach ($assets as $key => $asset) {
-                        $jsonAssets[$type][$key] = $assetService->postProcessAssets($asset);
-                    }
-                }
-                $jsonContent["assets"] = $jsonAssets;
-            }
+            $jsonContent = $this->getPostProcessingService()->postProcessContent(json_decode($content, true));
 
             $this->dataCache[$cacheKey] = $jsonContent;
             return $this->dataCache[$cacheKey];
@@ -2131,5 +2120,10 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         $themeService = $this->getServiceLocator()->get(ThemeService::SERVICE_ID);
 
         return $themeService->getTheme()->getId();
+    }
+
+    private function getPostProcessingService(): ContentPostprocessorService
+    {
+        return $this->getServiceLocator()->get(ContentPostprocessorService::class);
     }
 }
