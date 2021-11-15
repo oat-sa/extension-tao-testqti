@@ -368,7 +368,7 @@
                 margin-top: 0;
                 color: $textHighlight;
                 font-weight: bold;
-                @include border-radius;
+                border-radius: 2px 2px 0 0;
                 & > .toggler {
                     position: absolute;
                     right: 15px;
@@ -392,7 +392,7 @@
         .section {
             color: $textColor;
             border-left: solid 5px $sectionColor;
-            padding: 0 5px 0 15px;
+            padding: 0 5px 20px 15px;
             margin: 10px 16px 10px 16px;
 
             & > h2 {
