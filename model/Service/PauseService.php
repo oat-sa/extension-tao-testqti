@@ -51,7 +51,6 @@ class PauseService
         $this->saveItemResponse($command, $serviceContext);
 
         $this->runnerService->check($serviceContext);
-
         $serviceContext->init();
 
         $result = $this->runnerService->pause($serviceContext);

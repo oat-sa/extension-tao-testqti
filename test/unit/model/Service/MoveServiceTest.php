@@ -30,6 +30,7 @@ use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
 use oat\taoQtiTest\model\Service\ActionResponse;
 use oat\taoQtiTest\model\Service\MoveCommand;
 use oat\taoQtiTest\model\Service\MoveService;
+use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
@@ -106,6 +107,14 @@ class MoveServiceTest extends TestCase
         $this->executeAction();
     }
 
+    public function testInitializesServiceContextBeforeMoving(): void
+    {
+        $this->serviceContext->expects($this->once())
+            ->method('init');
+
+        $this->executeAction();
+    }
+
     public function testReturnsTestMapWhenTestIsAdaptive(): void
     {
         $this->serviceContext->method('containsAdaptive')
@@ -145,6 +154,22 @@ class MoveServiceTest extends TestCase
         $response = $this->executeAction();
 
         $this->assertEquals($expectedResponse->toArray(), $response->toArray());
+    }
+
+    public function testPersistsServiceContextForPersistableRunnerService(): void
+    {
+        $persistableRunnerService = $this->createMock(QtiRunnerService::class);
+
+        $persistableRunnerService->expects($this->once())
+            ->method('persist');
+
+        $move = new MoveService(
+            $persistableRunnerService,
+            $this->itemResponseRepository,
+            $this->toolsStateRepository
+        );
+
+        $move($this->createCommand());
     }
 
     private function expectTestContext(array $testContext): void

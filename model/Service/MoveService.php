@@ -61,6 +61,9 @@ class MoveService
         $this->itemResponseRepository->save($command->getItemResponse(), $serviceContext);
         $this->toolsStateRepository->save($command->getToolsState(), $serviceContext);
 
+        $this->runnerService->check($serviceContext);
+        $serviceContext->init();
+
         $serviceContext->getTestSession()->initItemTimer();
 
         $result = $this->runnerService->move(
