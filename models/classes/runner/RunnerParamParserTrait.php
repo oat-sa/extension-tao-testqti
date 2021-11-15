@@ -214,6 +214,10 @@ trait RunnerParamParserTrait
 
     protected function setItemContextToCommand(object $command): void
     {
+        if (empty($this->getRequestParameter('itemDefinition'))) {
+            return;
+        }
+
         $command->setItemContext(
             $this->getRequestParameter('itemDefinition'),
             $this->getItemState(),

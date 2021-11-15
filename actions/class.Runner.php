@@ -1107,6 +1107,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     private function setItemContextToCommand(object $command): void
     {
+        if (empty($this->getRequestParameter('itemDefinition'))) {
+            return;
+        }
+
         $command->setItemContext(
             $this->getRequestParameter('itemDefinition'),
             $this->getItemState(),
