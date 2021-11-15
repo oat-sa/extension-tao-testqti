@@ -325,7 +325,7 @@ interface RunnerService extends DeliveryExecutionDelete
      * @param RunnerServiceContext $context
      * @param string|null $itemUri
      * @param string $variableIdentifier
-     * @param string $variableValue
+     * @param mixed $variableValue
      * @return boolean
      * @throws \common_Exception
      */
@@ -333,6 +333,6 @@ interface RunnerService extends DeliveryExecutionDelete
         RunnerServiceContext $context,
         ?string $itemUri,
         string $variableIdentifier,
-        string $variableValue
+        $variableValue
     ): bool;
 }

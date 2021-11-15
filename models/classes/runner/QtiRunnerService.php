@@ -1577,7 +1577,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param string|null $itemUri
      * @param string $variableIdentifier
-     * @param string $variableValue
+     * @param mixed $variableValue
      * @return boolean
      * @throws \common_Exception
      */
@@ -1585,7 +1585,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         RunnerServiceContext $context,
         ?string $itemUri,
         string $variableIdentifier,
-        string $variableValue
+        $variableValue
     ): bool {
         $this->assertQtiRunnerServiceContext($context);
 

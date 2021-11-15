@@ -52,7 +52,7 @@ class StoreTraceVariablesService
             $this->runnerService->storeTraceVariable(
                 $serviceContext,
                 $itemRef,
-                $variableIdentifier,
+                (string)$variableIdentifier,
                 $variableValue
             );
         }
