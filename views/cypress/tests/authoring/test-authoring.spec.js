@@ -73,7 +73,8 @@ describe('Test authoring', () => {
                 selectors.deleteClass,
                 selectors.deleteConfirm,
                 className,
-                selectors.deleteTestUrl
+                selectors.deleteTestUrl,
+                false
             );
         });
     });
