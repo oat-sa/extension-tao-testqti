@@ -44,11 +44,12 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
 
     public function save(ItemResponse $itemResponse, RunnerServiceContext $serviceContext): void
     {
-        if (!$this->runnerService->isTerminated($serviceContext)) {
-            $this->endItemTimer($itemResponse, $serviceContext);
-            $this->saveItemState($itemResponse, $serviceContext);
+        if ($this->runnerService->isTerminated($serviceContext)) {
+            return;
         }
 
+        $this->endItemTimer($itemResponse, $serviceContext);
+        $this->saveItemState($itemResponse, $serviceContext);
         $this->saveItemResponses($itemResponse, $serviceContext);
     }
 
@@ -95,7 +96,10 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             return;
         }
 
-        if ($serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemResponse->getItemIdentifier()) {
+        if (
+            $serviceContext->getCurrentAssessmentItemRef() === false
+            || $serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemResponse->getItemIdentifier()
+        ) {
             throw new QtiRunnerItemResponseException(__('Item response identifier does not match current item'));
         }
 
