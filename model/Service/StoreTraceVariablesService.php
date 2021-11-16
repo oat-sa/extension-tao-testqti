@@ -24,9 +24,12 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Service;
 
+use Exception;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use oat\taoQtiTest\models\runner\RunnerService;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use Psr\Log\LoggerInterface;
 
 class StoreTraceVariablesService
 {
@@ -36,10 +39,14 @@ class StoreTraceVariablesService
     /** @var EventManager */
     private $eventManager;
 
-    public function __construct(RunnerService $runnerService, EventManager $eventManager)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(RunnerService $runnerService, EventManager $eventManager, LoggerInterface $logger)
     {
         $this->runnerService = $runnerService;
         $this->eventManager = $eventManager;
+        $this->logger = $logger;
     }
 
     public function __invoke(StoreTraceVariablesCommand $command): ActionResponse
@@ -48,19 +55,23 @@ class StoreTraceVariablesService
 
         $itemRef = $this->getItemRef($command);
 
+        $storedVariables = [];
         foreach ($command->getTraceVariables() as $variableIdentifier => $variableValue) {
-            $this->runnerService->storeTraceVariable(
-                $serviceContext,
-                $itemRef,
-                (string)$variableIdentifier,
-                $variableValue
-            );
+            $stored = $this->saveTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue);
+
+            if ($stored) {
+                $storedVariables[$variableIdentifier] = $variableValue;
+            }
+        }
+
+        if (empty($storedVariables)) {
+            return ActionResponse::success();
         }
 
         $this->eventManager->trigger(
             new TraceVariableStored(
                 $serviceContext->getTestSession()->getSessionId(),
-                $command->getTraceVariables()
+                $storedVariables
             )
         );
 
@@ -73,9 +84,38 @@ class StoreTraceVariablesService
             return null;
         }
 
-        return $this->runnerService->getItemHref(
+        $itemRef = $this->runnerService->getItemHref(
             $command->getServiceContext(),
             $command->getItemIdentifier()
         );
+
+        $parts = explode('|', $itemRef);
+
+        return $parts[0] ?? $itemRef;
+    }
+
+    private function saveTraceVariable(
+        RunnerServiceContext $serviceContext,
+        ?string $itemRef,
+        string $variableIdentifier,
+        $variableValue
+    ): bool {
+        try {
+            $this->runnerService->storeTraceVariable(
+                $serviceContext,
+                $itemRef,
+                $variableIdentifier,
+                $variableValue
+            );
+
+
+            return true;
+        } catch (Exception $exception) {
+            $this->logger->warning(
+                sprintf('Failed to store trace variable "%s": %s', $variableIdentifier, $exception->getMessage())
+            );
+        }
+
+        return false;
     }
 }

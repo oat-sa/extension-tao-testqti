@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\model\Service;
 
+use Exception;
 use oat\generis\test\TestCase;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\model\Service\ActionResponse;
@@ -34,6 +35,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerService;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 
 class StoreTraceVariablesServiceTest extends TestCase
 {
@@ -49,6 +51,9 @@ class StoreTraceVariablesServiceTest extends TestCase
     /** @var EventManager|MockObject */
     private $eventManager;
 
+    /** @var LoggerInterface|MockObject */
+    private $logger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -56,6 +61,7 @@ class StoreTraceVariablesServiceTest extends TestCase
         $this->runnerService = $this->createMock(RunnerService::class);
         $this->serviceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->eventManager = $this->createMock(EventManager::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $testSession = $this->createMock(TestSession::class);
 
@@ -65,7 +71,8 @@ class StoreTraceVariablesServiceTest extends TestCase
 
         $this->subject = new StoreTraceVariablesService(
             $this->runnerService,
-            $this->eventManager
+            $this->eventManager,
+            $this->logger
         );
     }
 
@@ -89,9 +96,7 @@ class StoreTraceVariablesServiceTest extends TestCase
 
     public function testStoresTraceVariablesInItem(): void
     {
-        $this->runnerService->method('getItemHref')
-            ->with($this->serviceContext, 'item-1')
-            ->willReturn('#item-1');
+        $this->expectItemHref('item-1', '#item-1');
 
         $this->runnerService->expects($this->exactly(2))
             ->method('storeTraceVariable')
@@ -120,7 +125,58 @@ class StoreTraceVariablesServiceTest extends TestCase
                 $this->isInstanceOf(TraceVariableStored::class)
             );
 
-        $this->executeAction();
+        $command = $this->createCommand(['varA' => '10', 'varB' => '20']);
+
+        $this->executeAction($command);
+    }
+
+    public function testDoesNotTriggerTraceVariableStoredEventWhenNoVariablesWereStored(): void
+    {
+        $this->eventManager->expects($this->never())
+            ->method('trigger');
+
+        $this->runnerService->method('storeTraceVariable')
+            ->willThrowException(new Exception('Error!'));
+
+        $command = $this->createCommand(['varA' => '10', 'varB' => '20']);
+
+        $this->executeAction($command);
+    }
+
+    public function testParsesItemHrefWithMultipleLevels(): void
+    {
+        $this->expectItemHref('item-1', 'http://test.com#item-1|http://test.com#test-1');
+
+        $this->runnerService->expects($this->exactly(2))
+            ->method('storeTraceVariable')
+            ->withConsecutive(
+                [$this->serviceContext, 'http://test.com#item-1', 'varA', '10'],
+                [$this->serviceContext, 'http://test.com#item-1', 'varB', '20']
+            );
+
+        $expectedResponse = ActionResponse::success();
+
+        $command = $this->createCommand(
+            ['varA' => '10', 'varB' => '20'],
+            'item-1'
+        );
+
+        $response = $this->executeAction($command);
+
+        $this->assertEquals($expectedResponse->toArray(), $response->toArray());
+    }
+
+    public function testCreatesLogWhenStoreTraceVariableMethodThrows(): void
+    {
+        $this->runnerService->method('storeTraceVariable')
+            ->willThrowException(new Exception('Error!'));
+
+        $this->logger->expects($this->once())
+            ->method('warning');
+
+        $command = $this->createCommand(['varA' => '10']);
+
+        $this->executeAction($command);
     }
 
     private function createCommand(array $traceVariables = [], ?string $itemIdentifier = null): StoreTraceVariablesCommand
@@ -135,5 +191,12 @@ class StoreTraceVariablesServiceTest extends TestCase
         }
 
         return $this->subject->__invoke($command);
+    }
+
+    private function expectItemHref(string $itemIdentifier, string $itemHref): void
+    {
+        $this->runnerService->method('getItemHref')
+            ->with($this->serviceContext, $itemIdentifier)
+            ->willReturn($itemHref);
     }
 }

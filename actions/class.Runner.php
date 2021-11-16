@@ -255,9 +255,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         return $response;
     }
 
-    /**
-     * Gets an HTTP response code
-     */
     protected function getStatusCodeFromException(Exception $exception): int
     {
         switch (get_class($exception)) {

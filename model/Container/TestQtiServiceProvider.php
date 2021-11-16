@@ -127,6 +127,7 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                 [
                     service(QtiRunnerService::SERVICE_ID),
                     service(EventManager::SERVICE_ID),
+                    service(LoggerService::SERVICE_ID),
                 ]
             );
 
