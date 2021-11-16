@@ -51,7 +51,7 @@ use oat\taoQtiTest\models\event\TestInitEvent;
 use oat\taoQtiTest\models\event\TestTimeoutEvent;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
-use oat\taoQtiTest\models\render\ContentPostprocessorService;
+use oat\taoQtiTest\models\render\UpdateItemContentReferencesService;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
@@ -161,7 +161,7 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         }
         try {
             $content = $directory->read($lang . DIRECTORY_SEPARATOR . $path);
-            $jsonContent = $this->getPostProcessingService()->postProcessContent(json_decode($content, true));
+            $jsonContent = $this->getUpdateItemContentReferencesService()->__invoke(json_decode($content, true));
 
             $this->dataCache[$cacheKey] = $jsonContent;
             return $this->dataCache[$cacheKey];
@@ -2122,8 +2122,8 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
         return $themeService->getTheme()->getId();
     }
 
-    private function getPostProcessingService(): ContentPostprocessorService
+    private function getUpdateItemContentReferencesService(): UpdateItemContentReferencesService
     {
-        return $this->getServiceLocator()->get(ContentPostprocessorService::class);
+        return $this->getPsrContainer()->get(UpdateItemContentReferencesService::class);
     }
 }

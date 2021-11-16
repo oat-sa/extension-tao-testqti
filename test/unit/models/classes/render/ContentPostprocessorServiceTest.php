@@ -23,33 +23,44 @@ namespace oat\taoQtiTest\test\unit\models\classes\render;
 
 use oat\generis\test\TestCase;
 use oat\taoItems\model\render\ItemAssetsReplacement;
-use oat\taoQtiTest\models\render\ContentPostprocessorService;
+use oat\taoQtiTest\models\render\UpdateItemContentReferencesService;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ContentPostprocessorServiceTest extends TestCase
 {
     private $serviceLocator;
+    /**
+     * @var UpdateItemContentReferencesService
+     */
+    private $sut;
+    /**
+     * @var ItemAssetsReplacement|MockObject
+     */
+    private $itemAssetReplacement;
 
     public function setUp(): void
     {
-        $itemAssetReplacement = $this->createMock(ItemAssetsReplacement::class);
+        $this->itemAssetReplacement = $this->createMock(ItemAssetsReplacement::class);
+
         $this->serviceLocator = $this->getServiceLocatorMock(
             [
-                ItemAssetsReplacement::SERVICE_ID => $itemAssetReplacement,
+                ItemAssetsReplacement::SERVICE_ID => $this->itemAssetReplacement,
             ]
         );
+
+        $this->sut = new UpdateItemContentReferencesService();
+        $this->sut->setServiceManager($this->serviceLocator);
     }
 
     public function testPostProcessContent()
     {
-        $subject = new ContentPostprocessorService();
+        $input = ['assets' => [['src' => 'asset.png'], ['src' => 'asset2.png']]];
 
-        $subject->setServiceManager($this->serviceLocator);
+        $this->itemAssetReplacement
+            ->expects($this->exactly(2))
+            ->method('postProcessAssets')
+            ->willReturnArgument(0);
 
-        $this->serviceLocator->getContainer()->get(ItemAssetsReplacement::SERVICE_ID)->expects(
-            $this->exactly(2)
-        )->method(
-            'postProcessAssets'
-        );
-        $subject->postProcessContent(['assets' => [['src' => 'asset.png'], ['src' => 'asset2.png']]]);
+        $this->assertSame($input, $this->sut->__invoke($input));
     }
 }
