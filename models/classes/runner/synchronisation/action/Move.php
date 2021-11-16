@@ -28,7 +28,6 @@ use Exception;
 use oat\taoQtiTest\model\Service\MoveCommand;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
-use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
 /**
  * Move forward or back item into the test context.
@@ -45,12 +44,11 @@ class Move extends TestRunnerAction
      * Save item response and wrap the move to runner service.
      * Start next timer.
      *
-     * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 

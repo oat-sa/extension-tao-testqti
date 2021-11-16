@@ -20,13 +20,11 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
+use Exception;
 use oat\taoQtiTest\model\Service\ListItemsQuery;
 use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
-/**
- * @package oat\taoQtiTest\models\runner\synchronisation\action
- */
 class NextItemData extends TestRunnerAction
 {
     /**
@@ -37,7 +35,7 @@ class NextItemData extends TestRunnerAction
      *
      * @return array
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 
@@ -61,7 +59,7 @@ class NextItemData extends TestRunnerAction
             $response = $listItems($query);
 
             return $response->toArray();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->getErrorResponse($e);
         }
     }

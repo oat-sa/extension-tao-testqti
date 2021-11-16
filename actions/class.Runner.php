@@ -30,10 +30,12 @@ use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
+use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
 use oat\taoQtiTest\model\Service\ListItemsQuery;
 use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\model\Service\MoveCommand;
 use oat\taoQtiTest\model\Service\MoveService;
+use oat\taoQtiTest\model\Service\NavigationContextAwareInterface;
 use oat\taoQtiTest\model\Service\PauseCommand;
 use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\model\Service\SkipCommand;
@@ -42,6 +44,7 @@ use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesCommand;
 use oat\taoQtiTest\model\Service\TimeoutCommand;
 use oat\taoQtiTest\model\Service\TimeoutService;
+use oat\taoQtiTest\model\Service\ToolsStateAwareInterface;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
@@ -1096,7 +1099,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         return (array)json_decode($params['itemResponse'], true);
     }
 
-    private function setNavigationContextToCommand(object $command): void
+    private function setNavigationContextToCommand(NavigationContextAwareInterface $command): void
     {
         $command->setNavigationContext(
             $this->getRequestParameter('direction') ?? '',
@@ -1105,7 +1108,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         );
     }
 
-    private function setItemContextToCommand(object $command): void
+    private function setItemContextToCommand(ItemContextAwareInterface $command): void
     {
         if (empty($this->getRequestParameter('itemDefinition'))) {
             return;
@@ -1119,7 +1122,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         );
     }
 
-    private function setToolsStateContextToCommand(object $command): void
+    private function setToolsStateContextToCommand(ToolsStateAwareInterface $command): void
     {
         $command->setToolsState($this->getToolStatesFromRequest());
     }

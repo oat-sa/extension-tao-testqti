@@ -26,7 +26,7 @@ namespace oat\taoQtiTest\model\Service;
 
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
-final class ExitTestCommand
+final class ExitTestCommand implements ItemContextAwareInterface, NavigationContextAwareInterface, ToolsStateAwareInterface
 {
     use ItemContextAwareTrait;
     use NavigationContextAwareTrait;

@@ -28,11 +28,6 @@ use oat\taoQtiTest\model\Service\SkipCommand;
 use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
-/**
- * Skip item into the test context.
- *
- * @package oat\taoQtiTest\models\runner\synchronisation\action
- */
 class Skip extends TestRunnerAction
 {
     /**
@@ -43,12 +38,11 @@ class Skip extends TestRunnerAction
      * Wrap the skip to runner service.
      * Start next timer.
      *
-     * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 

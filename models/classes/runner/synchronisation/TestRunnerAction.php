@@ -56,12 +56,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     /** @var array Parameters of the current action */
     protected $parameters;
 
-    /**
-     * Main method to process the action
-     *
-     * @return mixed
-     */
-    abstract public function process();
+    abstract public function process(): array;
 
     /**
      * Method to set a trace variable telling that the item was offline
@@ -260,4 +255,5 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     protected function getPsrContainer(): ContainerInterface
     {
         return $this->getServiceLocator()->getContainer();
-    }}
+    }
+}

@@ -25,15 +25,10 @@ use common_exception_Error;
 use common_exception_InconsistentData;
 use common_Logger;
 use Exception;
-use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesCommand;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
-use oat\taoQtiTest\models\event\TraceVariableStored;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
-/**
- * @package oat\taoQtiTest\models\runner\synchronisation\action
- */
 class StoreTraceData extends TestRunnerAction
 {
     /**
@@ -43,12 +38,11 @@ class StoreTraceData extends TestRunnerAction
      * Store trace data through runner service.
      * Trigger TraceVariableStored event.
      *
-     * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 

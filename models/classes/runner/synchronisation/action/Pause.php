@@ -24,28 +24,20 @@ use common_Exception;
 use common_exception_Error;
 use common_exception_InconsistentData;
 use Exception;
-use oat\taoQtiTest\model\Service\MoveCommand;
-use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\model\Service\PauseCommand;
 use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
-/**
- * Pause the test
- *
- * @package oat\taoQtiTest\models\runner\synchronisation\action
- */
 class Pause extends TestRunnerAction
 {
     /**
      * Process the pause action.
      *
-     * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 

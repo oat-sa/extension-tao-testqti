@@ -24,35 +24,7 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Service;
 
-use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-
-final class SkipCommand implements ItemContextAwareInterface, NavigationContextAwareInterface, ToolsStateAwareInterface
+interface ToolsStateAwareInterface
 {
-    use ItemContextAwareTrait;
-    use NavigationContextAwareTrait;
-    use ToolsStateAwareTrait;
-
-    /** @var QtiRunnerServiceContext */
-    private $serviceContext;
-
-    /** @var bool */
-    private $hasStartTimer;
-
-    public function __construct(
-        QtiRunnerServiceContext $serviceContext,
-        bool $hasStartTimer
-    ) {
-        $this->serviceContext = $serviceContext;
-        $this->hasStartTimer = $hasStartTimer;
-    }
-
-    public function getServiceContext(): QtiRunnerServiceContext
-    {
-        return $this->serviceContext;
-    }
-
-    public function hasStartTimer(): bool
-    {
-        return $this->hasStartTimer;
-    }
+    public function setToolsState(?array $toolsState): void;
 }

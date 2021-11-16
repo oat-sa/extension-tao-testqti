@@ -37,10 +37,9 @@ class Timeout extends TestRunnerAction
      * Persist service context.
      * Start next timer.
      *
-     * @return array
      * @throws InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 

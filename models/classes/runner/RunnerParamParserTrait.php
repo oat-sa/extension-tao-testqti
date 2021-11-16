@@ -20,6 +20,9 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
+use oat\taoQtiTest\model\Service\NavigationContextAwareInterface;
+use oat\taoQtiTest\model\Service\ToolsStateAwareInterface;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
@@ -203,7 +206,7 @@ trait RunnerParamParserTrait
         return $mapService->getItemHref($serviceContext, $itemIdentifier);
     }
 
-    protected function setNavigationContextToCommand(object $command): void
+    protected function setNavigationContextToCommand(NavigationContextAwareInterface $command): void
     {
         $command->setNavigationContext(
             $this->getRequestParameter('direction'),
@@ -212,7 +215,7 @@ trait RunnerParamParserTrait
         );
     }
 
-    protected function setItemContextToCommand(object $command): void
+    protected function setItemContextToCommand(ItemContextAwareInterface $command): void
     {
         if (empty($this->getRequestParameter('itemDefinition'))) {
             return;
@@ -226,7 +229,7 @@ trait RunnerParamParserTrait
         );
     }
 
-    protected function setToolsStateContextToCommand(object $command): void
+    protected function setToolsStateContextToCommand(ToolsStateAwareInterface $command): void
     {
         $command->setToolsState($this->getToolStatesFromRequest());
     }

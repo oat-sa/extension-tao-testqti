@@ -5,20 +5,13 @@ namespace oat\taoQtiTest\test\unit\models\classes\runner\synchronisation\action;
 use common_exception_InconsistentData;
 use Exception;
 use oat\generis\test\TestCase;
-use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\model\Service\ActionResponse;
-use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\PauseService;
-use oat\taoQtiTest\models\event\ItemOfflineEvent;
-use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
-use oat\taoQtiTest\models\runner\synchronisation\action\ExitTest;
 use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\generis\test\MockObject;
-use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCountMatcher;
 
 class PauseTest extends TestCase
 {
