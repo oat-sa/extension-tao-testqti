@@ -42,14 +42,7 @@ class ContentPostprocessorServiceTest extends TestCase
     {
         $this->itemAssetReplacement = $this->createMock(ItemAssetsReplacement::class);
 
-        $this->serviceLocator = $this->getServiceLocatorMock(
-            [
-                ItemAssetsReplacement::SERVICE_ID => $this->itemAssetReplacement,
-            ]
-        );
-
-        $this->sut = new UpdateItemContentReferencesService();
-        $this->sut->setServiceManager($this->serviceLocator);
+        $this->sut = new UpdateItemContentReferencesService($this->itemAssetReplacement);
     }
 
     public function testPostProcessContent()

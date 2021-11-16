@@ -21,37 +21,26 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\render;
 
+use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\taoItems\model\render\ItemAssetsReplacement;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-class UpdateItemContentReferencesService
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
+
+class ItemsReferencesServiceProvider implements ContainerServiceProviderInterface
 {
-    /**
-     * @var ItemAssetsReplacement
-     */
-    private $itemAssetsReplacement;
-
-    public function __construct(ItemAssetsReplacement $itemAssetsReplacement)
+    public function __invoke(ContainerConfigurator $configurator): void
     {
-        $this->itemAssetsReplacement = $itemAssetsReplacement;
+        $services = $configurator->services();
+
+        $services
+            ->set(UpdateItemContentReferencesService::class, UpdateItemContentReferencesService::class)
+            ->public()
+            ->args(
+                [
+                    service(ItemAssetsReplacement::SERVICE_ID),
+                ]
+            );
     }
 
-    public function __invoke(array $itemContent): array
-    {
-
-        $jsonAssets = [];
-
-        if (empty($itemContent['assets'])) {
-            return $itemContent;
-        }
-
-        foreach ($itemContent['assets'] as $type => $assets) {
-            foreach ($assets as $key => $asset) {
-                $jsonAssets[$type][$key] = $this->itemAssetsReplacement->postProcessAssets($asset);
-            }
-        }
-
-        $itemContent['assets'] = $jsonAssets;
-
-        return $itemContent;
-    }
 }
