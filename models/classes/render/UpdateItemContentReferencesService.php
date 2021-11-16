@@ -24,21 +24,26 @@ namespace oat\taoQtiTest\models\render;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoItems\model\render\ItemAssetsReplacement;
 
-class ContentPostprocessorService extends ConfigurableService
+class UpdateItemContentReferencesService extends ConfigurableService
 {
-    public function postProcessContent(array $jsonContent): array
+    public function __invoke(array $itemContent): array
     {
         $assetService = $this->getAssetsPostprocessor();
         $jsonAssets = [];
-        if (isset($jsonContent['assets'])) {
-            foreach ($jsonContent['assets'] as $type => $assets) {
-                foreach ($assets as $key => $asset) {
-                    $jsonAssets[$type][$key] = $assetService->postProcessAssets($asset);
-                }
-            }
-            $jsonContent['assets'] = $jsonAssets;
+
+        if (empty($itemContent['assets'])) {
+            return $itemContent;
         }
-        return $jsonContent;
+
+        foreach ($itemContent['assets'] as $type => $assets) {
+            foreach ($assets as $key => $asset) {
+                $jsonAssets[$type][$key] = $assetService->postProcessAssets($asset);
+            }
+        }
+
+        $itemContent['assets'] = $jsonAssets;
+
+        return $itemContent;
     }
 
     private function getAssetsPostprocessor(): ItemAssetsReplacement
