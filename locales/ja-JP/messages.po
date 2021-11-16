@@ -29,10 +29,10 @@ msgid "A response to every question in this item is required."
 msgstr "すべての問いに答えてください。"
 
 msgid "A response to this item is required."
-msgstr "この問題に解答してください"
+msgstr "この問いに回答してください"
 
 msgid "A valid response to this item is required."
-msgstr "この問題に解答してください"
+msgstr "この問いに回答してください"
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "ビジブルセクションは受検者が識別できるものです。"
@@ -557,10 +557,10 @@ msgid "is already used in the test."
 msgstr "既にテストで使用されています"
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr "有効な識別子（英数字、下線、ダッシュ、ドット）ではありません"
+msgstr "有効な識別子（英数字、下線、ダッシュ、ドット）にしてください"
 
 msgid "is not a valid identifier (everything except spaces)"
-msgstr "有効な識別子（空白スペース以外）ではありません"
+msgstr "有効な識別子（空白スペース以外）にしてください"
 
 msgid "Item \"%s\" is completed."
 msgstr "アイテム \"%s\" は完了しました"
@@ -752,7 +752,7 @@ msgid "no outcome declaration found"
 msgstr "結果変数の宣言なし"
 
 msgid "No outcome processing. Erase the existing rules, if any."
-msgstr "結果処理がおこなわれません。既存のルールがあればそれを削除します。"
+msgstr "結果処理を行いません。既存のルールがあればそれを削除します。"
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "QTIアイテムのリファレンスが見つかりませんでした。"
@@ -1094,7 +1094,7 @@ msgid "Test Saved"
 msgstr "テストを保存しました"
 
 msgid "Test status"
-msgstr "テストステータス"
+msgstr "解答状況"
 
 msgid "Test-Taker Tools"
 msgstr "サポートツール"
@@ -1406,7 +1406,7 @@ msgid "You are about to go to the previous item. Click OK to continue and go to 
 msgstr "前の問題に戻ろうとしています。前の問題に戻る場合は「OK」をクリックしてください。"
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "テストを送信提出しようとしています。一度送信したテストには再度アクセスできません。よろしければOK をクリックしてテストを送信提出してください。"
+msgstr "テストを終了しようとしています。一度終了したテストには再びアクセスすることはできません よろしければOK をクリックしてテストを終了してください。"
 
 msgid "You are encountering a prolonged connectivity loss."
 msgstr "長時間の接続障害が発生しています"
