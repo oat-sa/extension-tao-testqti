@@ -40,16 +40,21 @@ trait ItemContextAwareTrait
     /** @var array|null */
     private $itemResponse = null;
 
+    /** @var float|null */
+    private $timestamp;
+
     public function setItemContext(
         string $itemDefinition,
         ?array $itemState,
         ?float $itemDuration,
-        ?array $itemResponse
+        ?array $itemResponse,
+        ?float $timestamp = null
     ): void {
         $this->itemDefinition = $itemDefinition;
         $this->itemState = $itemState;
         $this->itemDuration = $itemDuration;
         $this->itemResponse = $itemResponse;
+        $this->timestamp = $timestamp;
     }
 
     public function getItemResponse(): ItemResponse
@@ -58,7 +63,8 @@ trait ItemContextAwareTrait
             $this->itemDefinition,
             $this->itemState,
             $this->itemResponse,
-            $this->itemDuration
+            $this->itemDuration,
+            $this->timestamp
         );
     }
 }

@@ -225,7 +225,8 @@ trait RunnerParamParserTrait
             $this->getRequestParameter('itemDefinition'),
             $this->getItemState(),
             $this->getItemDuration(),
-            $this->getItemResponse()
+            $this->getItemResponse(),
+            $this->getTime()
         );
     }
 

@@ -30,6 +30,7 @@ interface ItemContextAwareInterface
         string $itemDefinition,
         ?array $itemState,
         ?float $itemDuration,
-        ?array $itemResponse
+        ?array $itemResponse,
+        ?float $timestamp = null
     ): void;
 }

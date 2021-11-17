@@ -38,12 +38,21 @@ final class ItemResponse
     /** @var float|null */
     private $duration;
 
-    public function __construct(string $itemIdentifier, ?array $state, ?array $response, ?float $duration)
-    {
+    /** @var float|null */
+    private $timestamp;
+
+    public function __construct(
+        string $itemIdentifier,
+        ?array $state,
+        ?array $response,
+        ?float $duration,
+        ?float $timestamp = null
+    ) {
         $this->itemIdentifier = $itemIdentifier;
         $this->state = $state;
         $this->response = $response;
         $this->duration = $duration;
+        $this->timestamp = $timestamp;
     }
 
     public function getItemIdentifier(): string
@@ -64,6 +73,11 @@ final class ItemResponse
     public function getDuration(): ?float
     {
         return $this->duration;
+    }
+
+    public function getTimestamp(): ?float
+    {
+        return $this->timestamp;
     }
 
     public function removeDuration(): void

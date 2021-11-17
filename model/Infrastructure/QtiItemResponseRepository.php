@@ -61,7 +61,8 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
 
         $this->runnerService->endTimer(
             $serviceContext,
-            $itemResponse->getDuration()
+            $itemResponse->getDuration(),
+            $itemResponse->getTimestamp()
         );
     }
 
