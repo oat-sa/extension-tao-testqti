@@ -21,6 +21,7 @@
 
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
+use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
@@ -137,6 +138,7 @@ return [
         'structures' => __DIR__ . DIRECTORY_SEPARATOR . 'actions' . DIRECTORY_SEPARATOR . 'structures.xml',
     ],
     'containerServiceProviders' => [
+        ItemsReferencesServiceProvider::class,
         TestQtiServiceProvider::class,
     ],
 ];
