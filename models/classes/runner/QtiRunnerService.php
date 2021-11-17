@@ -2124,6 +2124,6 @@ class QtiRunnerService extends ConfigurableService implements RunnerService
 
     private function getUpdateItemContentReferencesService(): UpdateItemContentReferencesService
     {
-        return $this->getPsrContainer()->get(UpdateItemContentReferencesService::class);
+        return $this->getServiceLocator()->getContainer()->get(UpdateItemContentReferencesService::class);
     }
 }
