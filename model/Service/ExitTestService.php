@@ -59,7 +59,6 @@ class ExitTestService
         $serviceContext = $command->getServiceContext();
 
         $this->runnerService->check($serviceContext);
-
         $serviceContext->init();
 
         $this->itemResponseRepository->save($command->getItemResponse(), $serviceContext);

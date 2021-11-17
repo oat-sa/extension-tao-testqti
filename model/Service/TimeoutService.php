@@ -67,12 +67,12 @@ class TimeoutService
             $command->isLateSubmissionAllowed()
         );
 
-        if ($this->runnerService instanceof PersistableRunnerServiceInterface) {
-            $this->runnerService->persist($serviceContext);
+        if ($command->hasStartTimer()) {
+            $this->runnerService->startTimer($serviceContext, $command->getTimestamp());
         }
 
-        if ($command->hasStartTimer()) {
-            $this->runnerService->startTimer($serviceContext);
+        if ($this->runnerService instanceof PersistableRunnerServiceInterface) {
+            $this->runnerService->persist($serviceContext);
         }
 
         if ($result === false) {

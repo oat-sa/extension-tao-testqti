@@ -64,7 +64,7 @@ class MoveService
         $this->runnerService->check($serviceContext);
         $serviceContext->init();
 
-        $serviceContext->getTestSession()->initItemTimer();
+        $serviceContext->getTestSession()->initItemTimer($command->getTimestamp());
 
         $result = $this->runnerService->move(
             $serviceContext,
@@ -73,12 +73,12 @@ class MoveService
             $command->getRef()
         );
 
-        if ($this->runnerService instanceof PersistableRunnerServiceInterface) {
-            $this->runnerService->persist($serviceContext);
+        if ($command->hasStartTimer()) {
+            $this->runnerService->startTimer($serviceContext, $command->getTimestamp());
         }
 
-        if ($command->hasStartTimer()) {
-            $this->runnerService->startTimer($serviceContext);
+        if ($this->runnerService instanceof PersistableRunnerServiceInterface) {
+            $this->runnerService->persist($serviceContext);
         }
 
         if ($result === false) {

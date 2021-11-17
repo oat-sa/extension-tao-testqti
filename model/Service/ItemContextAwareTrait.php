@@ -67,4 +67,9 @@ trait ItemContextAwareTrait
             $this->timestamp
         );
     }
+
+    public function getTimestamp(): ?float
+    {
+        return $this->timestamp;
+    }
 }
