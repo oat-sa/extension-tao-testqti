@@ -391,12 +391,20 @@ return [
         ],
         /**
          * The plugin renders review panel for test taker
-         * - `default`: the regular layout
-         * - `fizzy`: simplified layout aligned with NextGen styling
-         * @type string
          */
         'review' => [
-            'reviewLayout' => 'default'
+            /**
+             * Review panel layouts for test taker
+             * - `default`: the regular layout
+             * - `fizzy`: simplified layout aligned with NextGen styling
+             * @type string
+             */
+            'reviewLayout' => 'default',
+            /**
+             * Display section titles or not
+             * @type boolean
+             */
+            'displaySectionTitles' => true
         ]
     ],
 
