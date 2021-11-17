@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint117\n"
-"PO-Revision-Date: 2020-09-22T16:02:16\n"
+"Project-Id-Version: TAO 2021.10\n"
+"PO-Revision-Date: 2021-11-17T13:23:39\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -12,6 +12,15 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s to answer %s"
+msgstr ""
+
+msgid "(Visual) Clear all active highlights"
+msgstr ""
+
+msgid "(Visual) Highlight Text"
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTIテスト '%s' 内のQTIアイテムがコンパイルできませんでした。"
@@ -36,6 +45,9 @@ msgstr "この問いに回答してください"
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "ビジブルセクションは受検者が識別できるものです。"
+
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
 
 msgid "Activated"
 msgstr "フィードバック有効"
@@ -145,6 +157,12 @@ msgstr "QTIテスト'%s'のコンパイル中に不明なエラーが発生し�
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "QTIテスト'%s'のコンパイル中に不明なエラーが発生しました。"
 
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
+
+msgid "and"
+msgstr ""
+
 msgid "and flagged %s of them"
 msgstr "%s にフラグを立てました。"
 
@@ -196,23 +214,29 @@ msgstr "作成者"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "ロケーション\"%s\"にAuxiliaryファイルが見つかりませんでした。"
 
-msgid "Black on cream"
-msgstr "クリーム地に黒文字"
+msgid "Black on Cream"
+msgstr ""
 
-msgid "Black on light blue"
-msgstr "明るい青地に黒文字"
+msgid "Black on Light Blue"
+msgstr ""
 
-msgid "Black on magenta"
-msgstr "赤地に黒文字"
+msgid "Black on Light Magenta"
+msgstr ""
 
-msgid "Black on white"
-msgstr "白地に黒文字"
+msgid "Black on White"
+msgstr ""
 
 msgid "Calculator"
 msgstr "電卓"
 
 msgid "Calculator BODMAS"
 msgstr "電卓（BODMAS）"
+
+msgid "Can not playback media file!"
+msgstr ""
+
+msgid "CANCEL"
+msgstr ""
 
 msgid "Cancel"
 msgstr "キャンセル"
@@ -244,6 +268,9 @@ msgstr "すべてのラインマーカをクリア"
 msgid "Clear Highlights"
 msgstr "ラインマーカをクリア"
 
+msgid "Click \"%s\" to continue"
+msgstr ""
+
 msgid "Click to speak"
 msgstr "クリックして話してください"
 
@@ -270,6 +297,9 @@ msgstr "完了したアイテム"
 
 msgid "Connected to server"
 msgstr "サーバに接続しました"
+
+msgid "CONTINUE TO THE NEXT SECTION"
+msgstr ""
 
 msgid "Contrast"
 msgstr "コントラスト"
@@ -334,20 +364,23 @@ msgstr "ラベル表示"
 msgid "Displays a customisable magnifier"
 msgstr "カスタマイズ拡大レンズを表示"
 
-msgid "DO NOT CHANGE THE NAME OF THE FILE."
-msgstr "ファイル名を変更しないでください"
-
 msgid "Do not flag the current item for later review"
 msgstr "現在のアイテムに見直しフラグを外す"
+
+msgid "Do not rename it."
+msgstr ""
 
 msgid "Do not show alert on timeout"
 msgstr "タイムアウト警告を非表示"
 
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Download"
 msgstr "ダウンロード"
 
-msgid "Download the file and submit manually."
-msgstr "ダウンロードして手動で提出してください。"
+msgid "Download the pupil responses and submit manually."
+msgstr ""
 
 msgid "Eliminate choices"
 msgstr "選択肢の消去"
@@ -376,10 +409,10 @@ msgstr "受検者にレビュースクリーン（問題一覧・解答状況画
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "このセクション内のスキップを有効にします。レビュースクリーン設定が必要です。"
 
-msgid "End Test"
+msgid "End test"
 msgstr "テスト終了"
 
-msgid "End test"
+msgid "End Test"
 msgstr "テスト終了"
 
 msgid "Enter a blueprint"
@@ -398,13 +431,9 @@ msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "QTIテストにエラーが見つかりました:\n"
 "%s"
-""
 
 msgid "Expand the review panel"
 msgstr "レビューパネルを開く"
-
-msgid "Export"
-msgstr "エクスポート"
 
 msgid "Export failed for the test \"%s"
 msgstr "テスト \"%s のエクスポート失敗"
@@ -451,20 +480,32 @@ msgstr "このアイテムの見直しフラグ"
 msgid "Flagged"
 msgstr "見直しマーク"
 
+msgid "Flagged for review"
+msgstr ""
+
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "インフォメーションのためのアイテムと見なし、解答・未解答や見直しマークのカウントに反映されません。"
 
 msgid "Go to next item"
 msgstr "次へ進む"
 
+msgid "Go to the current question"
+msgstr ""
+
 msgid "Go to the next item?"
 msgstr "次へ進みますか？"
 
+msgid "Go to the next question"
+msgstr ""
+
+msgid "Go to the previous question"
+msgstr ""
+
+msgid "Go to the top of the page"
+msgstr ""
+
 msgid "Gray on Green"
 msgstr "グリーン地にグレイ"
-
-msgid "Gray on green (low contrast option)"
-msgstr "グリーン地にグレイ文字（低コントラスト）"
 
 msgid "Hide Review"
 msgstr "一覧を隠す"
@@ -490,6 +531,9 @@ msgstr "ハイライトテキスト"
 msgid "Highlighter"
 msgstr "ラインマーカー"
 
+msgid "hours"
+msgstr ""
+
 msgid "Html title"
 msgstr "HTMLタイトル"
 
@@ -514,8 +558,11 @@ msgstr "さらにカテゴリスコアが設定されている場合、スコア
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
 msgstr "さらにカテゴリスコアが設定されている場合、スコアはカテゴリごとに集計され、「SCORE_xxx」として結果表示されます。（「xxx」はカテゴリ名）"
 
-msgid "If you need help, please contact us."
-msgstr "お困りの際は、お問い合わせください。"
+msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you need help, please contact our Helpline on 0330 088 4171."
+msgstr ""
 
 msgid "Import"
 msgstr "インポート"
@@ -562,6 +609,9 @@ msgstr "有効な識別子（英数字、下線、ダッシュ、ドット）に
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "有効な識別子（空白スペース以外）にしてください"
 
+msgid "It is not possible to save your responses while working offline."
+msgstr ""
+
 msgid "Item \"%s\" is completed."
 msgstr "アイテム \"%s\" は完了しました"
 
@@ -570,6 +620,9 @@ msgstr "アイテム %d"
 
 msgid "Item %d of %d"
 msgstr "問題：%d／%d"
+
+msgid "Item %s loaded"
+msgstr ""
 
 msgid "Item Reference Properties"
 msgstr "アイテム参照プロパティ"
@@ -580,10 +633,10 @@ msgstr "アイテム・レスポンス識別子が現在のアイテムと一致
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "items"
+msgid "Items"
 msgstr "アイテム"
 
-msgid "Items"
+msgid "items"
 msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -598,17 +651,26 @@ msgstr "見直しマークされた問題"
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr "assessmentItemRef識別子　\"%s\"　のアイテムは，関連するCATエンドポイントに登録されていません。"
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "まとめる"
+
+msgid "Keyboard Navigation"
+msgstr ""
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr ""
 
 msgid "Late submission allowed"
 msgstr "タイムアウト後の提出許可"
 
 msgid "Leave a comment"
 msgstr "コメントを残す"
-
-msgid "Light yellow on royal blue"
-msgstr "ロイヤルブルーにライトイエロー"
 
 msgid "Line Reader"
 msgstr "リーディングトラッカー"
@@ -634,16 +696,20 @@ msgstr "拡大"
 msgid "Magnifying Glass"
 msgstr "拡大鏡"
 
+msgid "Main navigation"
+msgstr ""
+
 msgid "Manage Rubric Blocks"
 msgstr "ルーブリックブロックの管理"
 
 msgid "Manage test properties"
 msgstr "テスト管理"
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr "テスト管理"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "テスト管理"
 
 msgid "Mark for review"
@@ -697,6 +763,12 @@ msgstr "このセクション最小時間"
 msgid "Minimum duration for this test part."
 msgstr "このテストパートの最小時間"
 
+msgid "minutes"
+msgstr ""
+
+msgid "Missed required parameter \'id\"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr "見つからないテストパッケージファイル"
 
@@ -715,8 +787,14 @@ msgstr "上へ"
 msgid "Moving to the next item without time limit reached message."
 msgstr "制限時間アラートを表示しないで次のアイテムに移動します"
 
+msgid "name of the pupil"
+msgstr ""
+
 msgid "Navigation"
 msgstr "ナビゲーション"
+
+msgid "Navigation shortcuts"
+msgstr ""
 
 msgid "Navigation Warnings"
 msgstr "ナビゲーション警告"
@@ -726,6 +804,9 @@ msgstr "ネットワーク"
 
 msgid "New Rubric Block"
 msgstr "新規ルーブリックブロック"
+
+msgid "New section"
+msgstr ""
 
 msgid "New test part"
 msgstr "新規テストパート"
@@ -766,11 +847,17 @@ msgstr "なし"
 msgid "Not all test could be exported"
 msgstr "すべてのテストはエクスポートできませんでした"
 
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
+
 msgid "Not shuffled, the position remains fixed."
 msgstr "チェックを入れるとシャッフルされずに，提示順はこの位置で維持されます。"
 
-msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
-msgstr "あなたが評価していた子供の名前を書き留めてください。 「実施中」と表示されなくなるまで、その子供の評価に再度アクセスしないでください。"
+msgid "Offline"
+msgstr ""
 
 msgid "OK"
 msgstr "OK"
@@ -787,6 +874,9 @@ msgstr "このセクションを閉じると、そのセクションに戻った
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "少なくとも１個のQTI依存アイテムがインポートできませんでした。"
 
+msgid "Online"
+msgstr ""
+
 msgid "Only display the items marked for review"
 msgstr "見直しマークの問題のみ表示"
 
@@ -796,8 +886,14 @@ msgstr "未解答の問題のみ表示"
 msgid "Open Calculator"
 msgstr "電卓を開く"
 
-msgid "OR"
-msgstr "OR"
+msgid "Open Keyboard Shortcuts"
+msgstr ""
+
+msgid "Option A"
+msgstr ""
+
+msgid "Option B"
+msgstr ""
 
 msgid "or"
 msgstr "or"
@@ -820,8 +916,14 @@ msgstr "パッケージは有効ですがテストがありません。有効な
 msgid "Part %d"
 msgstr "パート%d"
 
+msgid "Passage"
+msgstr ""
+
 msgid "Pause"
 msgstr "一時停止"
+
+msgid "Pause the test"
+msgstr ""
 
 msgid "Play"
 msgstr "再生"
@@ -829,17 +931,14 @@ msgstr "再生"
 msgid "Please confirm you want to leave the test."
 msgstr "テストを終了してよろしいですか？"
 
-msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
-msgstr "ケーブルでインターネットに接続するか、Wi-Fiの電波が良い場所に移動してください"
-
-msgid "Please continue waiting while we try to restore the connection."
-msgstr "接続の復旧を試みています。しばらくお待ちください"
-
-msgid "Please stay on this screen."
-msgstr "この画面でお待ちください"
+msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
+msgstr ""
 
 msgid "Please wait while we try to restore the connection."
 msgstr "接続を回復中です。しばらくお待ちください。"
+
+msgid "Preview"
+msgstr ""
 
 msgid "Preview the covered area"
 msgstr "カバーエリアをプレビュー"
@@ -847,8 +946,8 @@ msgstr "カバーエリアをプレビュー"
 msgid "Previous"
 msgstr "前"
 
-msgid "Proceed & End Test"
-msgstr "テストの進行と終了"
+msgid "PROCEED & END ASSESSMENT"
+msgstr ""
 
 msgid "Proctor"
 msgstr "試験監督"
@@ -877,11 +976,26 @@ msgstr "QTI Test Package 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Test Content Package"
 
+msgid "question"
+msgstr ""
+
+msgid "Question"
+msgstr ""
+
+msgid "questions"
+msgstr ""
+
 msgid "Reference"
 msgstr "参照"
 
 msgid "Regenerate"
 msgstr "再生成"
+
+msgid "Reload the page"
+msgstr ""
+
+msgid "remaining %s %s"
+msgstr ""
 
 msgid "Remove Item Reference"
 msgstr "アイテム参照削除"
@@ -891,6 +1005,9 @@ msgstr "ルーブリックブロック削除"
 
 msgid "Remove Section"
 msgstr "セクション削除"
+
+msgid "Remove Test Part"
+msgstr ""
 
 msgid "Required"
 msgstr "必須"
@@ -922,6 +1039,9 @@ msgstr "ルーブリックブロック"
 msgid "Save"
 msgstr "保存"
 
+msgid "Saved"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr "関数電卓"
 
@@ -939,6 +1059,9 @@ msgstr "スクラッチパッド"
 
 msgid "Scratchpad"
 msgstr "スクラッチパッド"
+
+msgid "seconds"
+msgstr ""
 
 msgid "Section %d"
 msgstr "セクション %d"
@@ -1051,6 +1174,12 @@ msgstr "次のセクションにスキップします"
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr "結果リストの変更に伴い、一部のルーブリックブロックを更新しました"
 
+msgid "Something unexpected happened."
+msgstr ""
+
+msgid "Something went wrong..."
+msgstr ""
+
 msgid "Speech speed"
 msgstr "話す速さ"
 
@@ -1059,6 +1188,15 @@ msgstr "速さ"
 
 msgid "Start Test-part"
 msgstr "テストパート開始"
+
+msgid "Step 1: Download the file (see below when available)."
+msgstr ""
+
+msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
+msgstr ""
+
+msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
+msgstr ""
 
 msgid "Stop"
 msgstr "ストップ"
@@ -1069,11 +1207,20 @@ msgstr "送信（提出）"
 msgid "Submit and go to the end of the test"
 msgstr "テストを送信し終了画面に移動します"
 
+msgid "Submit and go to the item %s"
+msgstr ""
+
 msgid "Submit and go to the next item"
 msgstr "送信して次の問題に進みます"
 
 msgid "Submit and go to the previous item"
 msgstr "送信して前の問題に戻ります"
+
+msgid "SUBMIT THE TEST"
+msgstr ""
+
+msgid "SUBMIT THIS PART"
+msgstr ""
 
 msgid "technical"
 msgstr "テクニカル"
@@ -1090,15 +1237,28 @@ msgstr "テストメタデータのエクスポートが完了しました。"
 msgid "Test Navigation"
 msgstr "テストナビゲーション"
 
+msgid "Test Part Properties"
+msgstr ""
+
+msgid "Test Preview is not installed, please contact to your administrator."
+msgstr ""
+
 msgid "Test Saved"
 msgstr "テストを保存しました"
 
 msgid "Test status"
 msgstr "解答状況"
 
+msgid "Test status and review structure"
+msgstr ""
+
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "サポートツール"
 
+#, tao-public
 msgid "Tests"
 msgstr "テスト"
 
@@ -1111,8 +1271,14 @@ msgstr "テキスト読み上げ"
 msgid "Text To Speech"
 msgstr "テキスト読み上げ"
 
+msgid "that was being taken."
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "アーカイブで見つかった 'imsmanifest.xml'ファイルは有効ではありません"
+
+msgid "the assessment (LCL or Mathematics)"
+msgstr ""
 
 msgid "The assessment has been created but is not already running."
 msgstr "テストは作成されましたが、まだ実施されていません"
@@ -1141,17 +1307,14 @@ msgstr "無効な解答（未解答がないか）を確認しアラートを出
 msgid "The connection seems to be back, please proceed"
 msgstr "接続が回復したようです。続けてください。"
 
-msgid "The connection seems to be back, please proceed."
-msgstr "接続が回復したようです。続けてください。"
+msgid "the current question"
+msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "IMSマニフェストファイル内の IMS QTI AssessmentItemRef\"%s\"への依存関係は解決できませんでした。"
 
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr "ダウンロードは<strong>%d</strong>秒で利用可能になります。"
-
-msgid "The file will save into the Downloads folder on your PC."
-msgstr "ファイルはPCのダウンロードフォルダに保存されます"
 
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "この識別子はテスト全体でユニークではありません : %s"
@@ -1204,9 +1367,6 @@ msgstr "QTI-XMLテストは正常に書き込むことができませんでし�
 msgid "The reference."
 msgstr "参照"
 
-msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr "IMSマニフェストファイル \"%s\"からIMS QTIテストに関連するリソースはロールバックされました"
-
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
 msgstr "テスト全体での採点が行われます。スコア（得点）の合計をMAX SCORE（最大得点）で割った値がカットスコア（合格得点率）と比較され、PASS_TOTAL で合否判定が提示されます。"
 
@@ -1228,11 +1388,35 @@ msgstr "サーバに接続できないため、テストを一時停止しまし
 msgid "The test has not been saved."
 msgstr "テストは保存されませんでした。"
 
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr ""
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr ""
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr ""
+
 msgid "The test part identifier."
 msgstr "テストパート識別子"
 
 msgid "The test title."
 msgstr "テストタイトル"
+
+msgid "The time limit has been reached for this part of the test."
+msgstr ""
+
+msgid "There are %s unanswered questions"
+msgstr ""
+
+msgid "There are %s unanswered questions in this part of the test"
+msgstr ""
+
+msgid "There is %s unanswered question"
+msgstr ""
+
+msgid "There is %s unanswered question in this part of the test"
+msgstr ""
 
 msgid "There is not outcomes!"
 msgstr "結果がありません!"
@@ -1242,6 +1426,9 @@ msgstr "この制約は、最後の実施終了後のフィードバックの見
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr "受検中に，問題に対するコメントを受検者に許可するかどうかを設定します。なお、コメントは採点対象にはなりません。"
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
+msgstr ""
 
 msgid "This test has been suspended"
 msgstr "テストは一時中断されました"
@@ -1273,8 +1460,17 @@ msgstr "再生を切り替える"
 msgid "Toggle start from here mode"
 msgstr "[ここから開始] モードを切り替える"
 
+msgid "Tool box and flagging for review"
+msgstr ""
+
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr "合計スコア"
+
+msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
+msgstr ""
 
 msgid "Tutor"
 msgstr "チュータ"
@@ -1296,6 +1492,9 @@ msgstr "不明なエラー"
 
 msgid "Unlink to use separated durations"
 msgstr "分離した期間を使用するためにリンクを解除する"
+
+msgid "Unseen"
+msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "QTI 2.1 Test Package Fileのアップロード"
@@ -1323,6 +1522,9 @@ msgstr "表示可能"
 
 msgid "Volume"
 msgstr "ボリューム"
+
+msgid "Wait for your connection to come back online."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "警告：テスト終了まであと%sです"
@@ -1354,9 +1556,6 @@ msgstr "重み付け"
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "チェックを入れると同じ問題が繰り返し選択される場合があります。通常はチェックを外しておきます。"
 
-msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
-msgstr "ネットワーク接続がある場合は、ダウンロードフォルダからファイルを選択し、先生に電子メールで送信してください。"
-
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "チェックを入れると，アイテムで設定された制限時間に達した後であっても，解答し送信することができます。"
 
@@ -1369,8 +1568,11 @@ msgstr "チェックを入れると，テストパートで設定された制限
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "チェックを入れると，制限時間に達した後であっても，解答し送信することができます。"
 
-msgid "White on black"
-msgstr "黒地に白"
+msgid "White on Black"
+msgstr ""
+
+msgid "White on Blue (TAO standard theme)"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "デリバリ中に誰がルーブリックブロックを参照できるか"
@@ -1381,14 +1583,24 @@ msgstr "復元抽出"
 msgid "Wrong file mime type"
 msgstr "ファイルのMIMEタイプが間違っています"
 
+msgid "XML Content"
+msgstr ""
+
+#, tao-public
+msgid "XML Editor"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""
+
+msgid "Yellow on Blue"
+msgstr ""
 
 msgid "Yes"
 msgstr "はい"
 
-msgid "You answered all %s question(s)"
-msgstr "全 %s問の問題に答えました"
+msgid "You answered %s of %s question(s) for this section of the test"
+msgstr ""
 
 msgid "You answered all %s question(s) in this section"
 msgstr "このセクションの全 %s問の問題に答えました。"
@@ -1405,17 +1617,38 @@ msgstr "次の問題に進もうとしています。次の問題に進む場合
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
 msgstr "前の問題に戻ろうとしています。前の問題に戻る場合は「OK」をクリックしてください。"
 
+msgid "You are about to leave this section."
+msgstr ""
+
+msgid "You are about to submit the test."
+msgstr ""
+
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "テストを終了しようとしています。一度終了したテストには再びアクセスすることはできません よろしければOK をクリックしてテストを終了してください。"
 
-msgid "You are encountering a prolonged connectivity loss."
-msgstr "長時間の接続障害が発生しています"
+msgid "You are about to submit this test part."
+msgstr ""
+
+msgid "You are currently working offline."
+msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr "長時間の接続障害が発生しています"
 
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
+msgstr ""
+
+msgid "You flagged %s item(s) that you can review now"
+msgstr ""
+
 msgid "You have %s item(s) marked for review."
 msgstr "見直しマークがついた問題が%s問あります"
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr "未解答の問題が%s問あります。"
@@ -1426,8 +1659,14 @@ msgstr "%s問の未解答問題と%s問の見直しマーク問題がありま�
 msgid "You have %s unanswered question(s)."
 msgstr "%s問の未解答問題があります"
 
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
+msgstr ""
+
 msgid "Your comment…"
 msgstr "あなたのコメント..."
+
+msgid "Your connection seems to be back, please proceed."
+msgstr ""
 
 msgid "Zoom"
 msgstr "ズーム"
