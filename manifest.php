@@ -20,6 +20,7 @@
  */
 
 use oat\tao\model\user\TaoRoles;
+use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\scripts\update\Updater;
 use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
@@ -134,5 +135,8 @@ return [
     ],
     'extra' => [
         'structures' => __DIR__ . DIRECTORY_SEPARATOR . 'actions' . DIRECTORY_SEPARATOR . 'structures.xml',
+    ],
+    'containerServiceProviders' => [
+        ItemsReferencesServiceProvider::class
     ],
 ];
