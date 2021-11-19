@@ -3,180 +3,116 @@
 namespace oat\taoQtiTest\test\models\runner\synchronisation\action;
 
 use common_exception_InconsistentData;
+use Exception;
 use oat\generis\test\TestCase;
-use oat\taoQtiTest\models\runner\config\RunnerConfig;
+use oat\taoQtiTest\model\Service\ActionResponse;
+use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
-use oat\generis\test\MockObject;
-use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class NextItemDataTest extends TestCase
 {
     /** @var QtiRunnerService|MockObject */
-    private $qtiRunnerService;
+    private $runnerService;
 
     /** @var QtiRunnerServiceContext|MockObject */
-    private $qtiRunnerServiceContext;
+    private $runnerServiceContext;
 
-    /** @var TestSession|MockObject */
-    private $testSession;
+    /** @var ListItemsService|MockObject */
+    private $listItemsService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->qtiRunnerService = $this->createMock(QtiRunnerService::class);
-        $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
-        $this->testSession = $this->createMock(TestSession::class);
+        $this->listItemsService = $this->createMock(ListItemsService::class);
+        $this->runnerService = $this->createMock(QtiRunnerService::class);
+        $this->runnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
 
-        $this->qtiRunnerService
+        $this->runnerService
             ->method('getServiceContext')
-            ->willReturn($this->qtiRunnerServiceContext);
-
-        $this->qtiRunnerServiceContext
-            ->method('getTestSession')
-            ->willReturn($this->testSession);
+            ->willReturn($this->runnerServiceContext);
     }
 
-    public function testValidationExceptionIfRequestParametersAreMissing()
+    public function testReturnsSuccessfulResponse(): void
+    {
+        $expectedActionResponse = ActionResponse::success(['itemIdentifier' => 'item-1']);
+        $this->expectActionResponse($expectedActionResponse);
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedActionResponse->toArray(), $subject->process());
+    }
+
+    public function testReturnsUnsuccessfulResponseWhenServiceReturnsEmptyResponse(): void
+    {
+        $this->expectActionResponse(ActionResponse::empty());
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals(['success' => false], $subject->process());
+    }
+
+    public function testReturnsErrorResponseWhenServiceThrows(): void
+    {
+        $this->expectServiceThrows(new Exception('Error message', 100));
+
+        $expectedResponse = [
+            'success' => false,
+            'type' => 'exception',
+            'code' => 100,
+            'message' => 'An error occurred!',
+        ];
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedResponse, $subject->process());
+    }
+
+    public function testThrowsWhenValidationFails(): void
     {
         $this->expectException(common_exception_InconsistentData::class);
         $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, itemDefinition');
-        $this->createSubjectWithParameters(['missing parameters'])->process();
+
+        $this->createSubject(['missing parameters'])
+            ->process();
     }
 
-    public function testErrorResponse()
-    {
-        $this->setItemCacheEnabledConfigExpectation(false);
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
-
-        $this->assertEquals([
-            'success' => false,
-            'type' => 'exception',
-            'code' => 403,
-            'message' => 'You are not authorized to perform this operation',
-        ], $subject->process());
-    }
-
-    public function testSuccessfulResponse()
-    {
-        $this->setItemCacheEnabledConfigExpectation(true);
-
-        $requestParameters = ['itemDefinition' => 'expectedItemDefinition'] + $this->getRequiredRequestParameters();
-        $subject = $this->createSubjectWithParameters($requestParameters);
-
-        $this->assertEquals([
-            'items' => [
-                [
-                    'baseUrl' => null,
-                    'itemData' => null,
-                    'itemState' => new stdClass(),
-                    'itemIdentifier' => 'expectedItemDefinition',
-                    'portableElements' => null,
-                ]
-            ],
-            'success' => true,
-        ], $subject->process());
-    }
-
-    public function testSuccessfulResponseWithMultipleItemDefinitions()
-    {
-        $itemId1 = 'itemId1';
-        $itemId2 = 'itemId2';
-
-        $state1 = ['expectedItemState1'];
-        $state2 = null;
-        $storedState2 = new stdClass();
-
-
-        $itemDefinition = [$itemId1, $itemId2];
-        $requestParameters = $this->getRequiredRequestParameters($itemDefinition);
-
-        $this->setItemCacheEnabledConfigExpectation(true);
-
-        $this->qtiRunnerService
-            ->method('getItemState')
-            ->willReturnMap([
-                [$this->qtiRunnerServiceContext, $itemId1, $state1],
-                [$this->qtiRunnerServiceContext, $itemId2, $state2],
-            ]);
-
-        $subject = $this->createSubjectWithParameters($requestParameters);
-
-        $this->assertEquals([
-            'success' => true,
-            'items' => [
-                [
-                    'baseUrl' => null,
-                    'itemData' => null,
-                    'itemState' => $state1,
-                    'itemIdentifier' => $itemId1,
-                    'portableElements' => null,
-                ],
-                [
-                    'baseUrl' => null,
-                    'itemData' => null,
-                    'itemState' => $storedState2,
-                    'itemIdentifier' => $itemId2,
-                    'portableElements' => null,
-                ],
-            ]
-        ], $subject->process());
-    }
-
-    /**
-     * @param array $requestParameters
-     *
-     * @return NextItemData
-     */
-    private function createSubjectWithParameters($requestParameters = [])
+    private function createSubject($requestParameters = []): NextItemData
     {
         $subject = new NextItemData('test', microtime(), $requestParameters);
 
         $services = [
-            QtiRunnerService::SERVICE_ID => $this->qtiRunnerService,
+            QtiRunnerService::SERVICE_ID => $this->runnerService,
+            ListItemsService::class => $this->listItemsService
         ];
 
         return $subject->setServiceLocator($this->getServiceLocatorMock($services));
     }
 
-    /**
-     * @param mixed $itemDefinition
-     * @param mixed $testDefinition
-     * @param mixed $testCompilation
-     * @param mixed $serviceCallId
-     *
-     * @return array
-     */
-    private function getRequiredRequestParameters(
-        $itemDefinition = null,
-        $testDefinition = null,
-        $testCompilation = null,
-        $serviceCallId = null
-    ) {
+    private function getRequiredRequestParameters(): array
+    {
         return [
-            'testDefinition' => $testDefinition,
-            'testCompilation' => $testCompilation,
-            'serviceCallId' => $serviceCallId,
-            'itemDefinition' => $itemDefinition,
+            'testDefinition' => null,
+            'testCompilation' => null,
+            'serviceCallId' => null,
+            'itemDefinition' => null,
         ];
     }
 
-    /**
-     * @param bool $isEnabled
-     */
-    private function setItemCacheEnabledConfigExpectation($isEnabled)
+    private function expectActionResponse(ActionResponse $actionResponse): void
     {
-        $runnerConfig = $this->createMock(RunnerConfig::class);
-        $runnerConfig
-            ->method('getConfigValue')
-            ->with('itemCaching.enabled')
-            ->willReturn($isEnabled);
+        $this->listItemsService
+            ->method('__invoke')
+            ->willReturn($actionResponse);
+    }
 
-        $this->qtiRunnerService
-            ->method('getTestConfig')
-            ->willReturn($runnerConfig);
+    private function expectServiceThrows(Exception $exception)
+    {
+        $this->listItemsService
+            ->method('__invoke')
+            ->willThrowException($exception);
     }
 }

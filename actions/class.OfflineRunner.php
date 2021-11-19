@@ -50,7 +50,7 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
         } catch (\Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }

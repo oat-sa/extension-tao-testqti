@@ -24,70 +24,40 @@ use common_Exception;
 use common_exception_Error;
 use common_exception_InconsistentData;
 use Exception;
+use oat\taoQtiTest\model\Service\PauseCommand;
+use oat\taoQtiTest\model\Service\PauseService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
-/**
- * Pause the test
- *
- * @package oat\taoQtiTest\models\runner\synchronisation\action
- */
 class Pause extends TestRunnerAction
 {
     /**
      * Process the pause action.
      *
-     * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 
         try {
-            $serviceContext = $this->getServiceContext();
-
-            $this->saveToolStates();
-
-            $isTerminated = (bool) $this->getRunnerService()->isTerminated($serviceContext);
-
-            if (!$isTerminated) {
-                $this->saveItemState();
-            }
-
-            if ($this->shouldTimerStopOnPause($isTerminated)) {
-                $this->endItemTimer($this->getTime());
-            }
-
             if ($this->getRequestParameter('offline') === true) {
                 $this->setOffline();
             }
 
-            $result = $this->getRunnerService()->pause($serviceContext);
+            $command = new PauseCommand($this->getServiceContext());
 
-            $response = [
-                'success' => $result
-            ];
+            $this->setItemContextToCommand($command);
+
+            /** @var PauseService $pause */
+            $pause = $this->getPsrContainer()->get(PauseService::class);
+
+            $response = $pause($command);
+
+            return $response->toArray();
         } catch (Exception $e) {
-            $response = $this->getErrorResponse($e);
+            return $this->getErrorResponse($e);
         }
-
-        return $response;
-    }
-
-    /**
-     * @param  bool  $isTerminated
-     * @return bool
-     */
-    private function shouldTimerStopOnPause(bool $isTerminated): bool
-    {
-        if (!$isTerminated) {
-            $timerTarget = $this->getRunnerService()->getTestConfig()->getConfigValue('timer.target');
-            if ($timerTarget === 'client') {
-                return  true;
-            }
-        }
-        return false;
     }
 }

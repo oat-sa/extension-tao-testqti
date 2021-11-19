@@ -277,11 +277,62 @@ interface RunnerService extends DeliveryExecutionDelete
      */
     public function getItemPortableElements(RunnerServiceContext $context, $itemRef);
 
-
     /**
      * Get the list of metadata elements used in the item
      * @param $itemRef
      * @return mixed
      */
     public function getItemMetadataElements($itemRef);
+
+    /**
+     * Gets AssessmentItemRef's Href by AssessmentItemRef Identifier.
+     * @param RunnerServiceContext $context
+     * @param string $itemRef
+     * @return string
+     */
+    public function getItemHref(RunnerServiceContext $context, string $itemRef): string;
+
+    /**
+     * Get the base url to the item public directory
+     * @param RunnerServiceContext $context
+     * @param string $itemRef
+     * @return string
+     */
+    public function getItemPublicUrl(RunnerServiceContext $context, string $itemRef): string;
+
+    /**
+     * Starts the timer for the current item in the TestSession
+     * @param RunnerServiceContext $context
+     * @param float|null $timestamp allow to start the timer at a specific time, or use current when it's null
+     * @return bool
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function startTimer(RunnerServiceContext $context, ?float $timestamp = null): bool;
+
+    /**
+     * Ends the timer for the current item in the TestSession
+     * @param RunnerServiceContext $context
+     * @param float|null $duration The client side duration to adjust the timer
+     * @param float|null $timestamp allow to end the timer at a specific time, or use current when it's null
+     * @return bool
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function endTimer(RunnerServiceContext $context, ?float $duration = null, ?float $timestamp = null): bool;
+
+    /**
+     * Stores trace variable related to an item, a test or a section
+     *
+     * @param RunnerServiceContext $context
+     * @param string|null $itemUri
+     * @param string $variableIdentifier
+     * @param mixed $variableValue
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function storeTraceVariable(
+        RunnerServiceContext $context,
+        ?string $itemUri,
+        string $variableIdentifier,
+        $variableValue
+    ): bool;
 }

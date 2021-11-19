@@ -23,167 +23,105 @@ namespace oat\taoQtiTest\test\unit\models\classes\runner\synchronisation\action;
 use common_exception_InconsistentData;
 use Exception;
 use oat\generis\test\TestCase;
-use oat\oatbox\event\EventManager;
-use oat\taoQtiTest\models\event\TraceVariableStored;
-use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
+use oat\taoQtiTest\model\Service\ActionResponse;
+use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\StoreTraceData;
-use oat\generis\test\MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class StoreTraceDataTest extends TestCase
 {
     /** @var QtiRunnerService|MockObject */
-    private $qtiRunnerService;
+    private $runnerService;
 
     /** @var QtiRunnerServiceContext|MockObject */
-    private $qtiRunnerServiceContext;
+    private $runnerServiceContext;
 
-    /** @var TestSession|MockObject */
-    private $testSession;
-
-    /** @var EventManager|MockObject */
-    private $eventManager;
-
-    /** @var QtiRunnerMap|MockObject */
-    private $qtiRunnerMap;
+    /** @var StoreTraceVariablesService|MockObject */
+    private $storeTranceVariablesService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->qtiRunnerService = $this->createMock(QtiRunnerService::class);
-        $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
-        $this->testSession = $this->createMock(TestSession::class);
-        $this->eventManager = $this->createMock(EventManager::class);
-        $this->qtiRunnerMap = $this->createMock(QtiRunnerMap::class);
+        $this->storeTranceVariablesService = $this->createMock(StoreTraceVariablesService::class);
+        $this->runnerService = $this->createMock(QtiRunnerService::class);
+        $this->runnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
 
-        $this->qtiRunnerService
+        $this->runnerService
             ->method('getServiceContext')
-            ->willReturn($this->qtiRunnerServiceContext);
-
-        $this->qtiRunnerServiceContext
-            ->method('getTestSession')
-            ->willReturn($this->testSession);
+            ->willReturn($this->runnerServiceContext);
     }
 
-    public function testValidationExceptionIfRequestParametersAreMissing()
+    public function testReturnsSuccessfulResponse(): void
     {
-        $this->expectException(common_exception_InconsistentData::class);
-        $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, traceData');
-        $this->createSubjectWithParameters(['missing parameters'])->process();
+        $expectedActionResponse = ActionResponse::success();
+        $this->expectActionResponse($expectedActionResponse);
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedActionResponse->toArray(), $subject->process());
     }
 
-    public function testUnsuccessfulResponse()
+    public function testReturnsErrorResponseWhenServiceThrows(): void
     {
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('storeTraceVariable')
-            ->willReturn(false);
+        $this->expectServiceThrows(new Exception('Error message', 100));
 
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters(['traceData']));
-
-        $this->assertEquals(['success' => false], $subject->process());
-    }
-
-    public function testErrorResponse()
-    {
-        $this->qtiRunnerService
-            ->method('getServiceContext')
-            ->willThrowException(new Exception('Error message', 100));
-
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
-
-        $this->assertEquals([
+        $expectedResponse = [
             'success' => false,
             'type' => 'exception',
             'code' => 100,
             'message' => 'An error occurred!',
-        ], $subject->process());
+        ];
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedResponse, $subject->process());
     }
 
-    public function testSuccessfulResponse()
+    public function testThrowsWhenValidationFails(): void
     {
-        $requestParameters = [
-            'itemDefinition' => 'expectedItemIdentifier'
-        ] + $this->getRequiredRequestParameters(['expectedIdentifier' => 'expectedValue']);
+        $this->expectException(common_exception_InconsistentData::class);
+        $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, traceData');
 
-        $this->qtiRunnerMap
-            ->expects($this->once())
-            ->method('getItemHref')
-            ->with($this->qtiRunnerServiceContext, 'expectedItemIdentifier')
-            ->willReturn('expectedItemHref');
-
-        $this->qtiRunnerService
-            ->method('storeTraceVariable')
-            ->with($this->qtiRunnerServiceContext, 'expectedItemHref', 'expectedIdentifier', 'expectedValue')
-            ->willReturn(true);
-
-        $subject = $this->createSubjectWithParameters($requestParameters);
-
-        $this->assertEquals(['success' => true], $subject->process());
+        $this->createSubject(['missing parameters'])
+            ->process();
     }
 
-    public function testItTriggersTraceVariableStoredEvent()
-    {
-        $this->qtiRunnerService
-            ->method('storeTraceVariable')
-            ->willReturn(true);
-
-        $this->testSession
-            ->expects($this->once())
-            ->method('getSessionId')
-            ->willReturn('expectedSessionId');
-
-        $this->eventManager
-            ->expects($this->once())
-            ->method('trigger')
-            ->willReturnCallback(function (TraceVariableStored $event) {
-                return $event->getName() === 'expectedSessionId'
-                    && $event->getTraceData() === ['expectedTraceData'];
-            });
-
-        $this->createSubjectWithParameters($this->getRequiredRequestParameters(['expectedTraceData']))->process();
-    }
-
-    /**
-     * @param array $requestParameters
-     *
-     * @return StoreTraceData
-     */
-    private function createSubjectWithParameters($requestParameters = [])
+    private function createSubject($requestParameters = []): StoreTraceData
     {
         $subject = new StoreTraceData('test', microtime(), $requestParameters);
 
         $services = [
-            QtiRunnerService::SERVICE_ID => $this->qtiRunnerService,
-            EventManager::SERVICE_ID => $this->eventManager,
-            QtiRunnerMap::SERVICE_ID => $this->qtiRunnerMap,
+            QtiRunnerService::SERVICE_ID => $this->runnerService,
+            StoreTraceVariablesService::class => $this->storeTranceVariablesService
         ];
 
         return $subject->setServiceLocator($this->getServiceLocatorMock($services));
     }
 
-    /**
-     * @param array $traceData
-     * @param mixed $testDefinition
-     * @param mixed $testCompilation
-     * @param mixed $serviceCallId
-     *
-     * @return array
-     */
-    private function getRequiredRequestParameters(
-        $traceData = [],
-        $testDefinition = null,
-        $testCompilation = null,
-        $serviceCallId = null
-    ) {
+    private function getRequiredRequestParameters(): array
+    {
         return [
-            'testDefinition' => $testDefinition,
-            'testCompilation' => $testCompilation,
-            'serviceCallId' => $serviceCallId,
-            'traceData' => json_encode($traceData),
+            'testDefinition' => null,
+            'testCompilation' => null,
+            'serviceCallId' => null,
+            'traceData' => json_encode([]),
         ];
+    }
+
+    private function expectActionResponse(ActionResponse $actionResponse): void
+    {
+        $this->storeTranceVariablesService
+            ->method('__invoke')
+            ->willReturn($actionResponse);
+    }
+
+    private function expectServiceThrows(Exception $exception): void
+    {
+        $this->storeTranceVariablesService
+            ->method('__invoke')
+            ->willThrowException($exception);
     }
 }
