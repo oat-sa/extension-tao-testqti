@@ -25,13 +25,28 @@
  */
 
 use oat\libCat\exception\CatEngineConnectivityException;
-use oat\oatbox\event\EventManager;
 use oat\tao\model\routing\AnnotationReader\security;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiTest\model\Service\ExitTestCommand;
+use oat\taoQtiTest\model\Service\ExitTestService;
+use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
+use oat\taoQtiTest\model\Service\ListItemsQuery;
+use oat\taoQtiTest\model\Service\ListItemsService;
+use oat\taoQtiTest\model\Service\MoveCommand;
+use oat\taoQtiTest\model\Service\MoveService;
+use oat\taoQtiTest\model\Service\NavigationContextAwareInterface;
+use oat\taoQtiTest\model\Service\PauseCommand;
+use oat\taoQtiTest\model\Service\PauseService;
+use oat\taoQtiTest\model\Service\SkipCommand;
+use oat\taoQtiTest\model\Service\SkipService;
+use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
+use oat\taoQtiTest\model\Service\StoreTraceVariablesCommand;
+use oat\taoQtiTest\model\Service\TimeoutCommand;
+use oat\taoQtiTest\model\Service\TimeoutService;
+use oat\taoQtiTest\model\Service\ToolsStateAwareInterface;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
-use oat\taoQtiTest\models\event\TraceVariableStored;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
@@ -101,8 +116,12 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getStorageManager()->persist();
         } catch (common_Exception $e) {
             $data = $this->getErrorResponse($e);
-            $httpStatus = $this->getErrorCode($e);
+            $httpStatus = $this->getStatusCodeFromException($e);
         }
+
+        // Applies status code to the response object
+        $this->response = $this->getPsrResponse()
+            ->withStatus($httpStatus);
 
         return parent::returnJson($data, $httpStatus);
     }
@@ -159,12 +178,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @throws common_exception_Unauthorized
      * @throws common_ext_ExtensionException
      */
-    protected function checkSecurityToken()
+    protected function validateSecurityToken(): void
     {
         $config = $this->getRunnerService()->getTestConfig()->getConfigValue('security');
-        if (isset($config['csrfToken']) && $config['csrfToken'] === true) {
-            $this->validateCsrf();
+
+        $isCsrfValidationRequired = (bool)($config['csrfToken'] ?? false);
+
+        if (!$isCsrfValidationRequired) {
+            return;
         }
+
+        $this->validateCsrf();
     }
 
     /**
@@ -231,38 +255,26 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         return $response;
     }
 
-    /**
-     * Gets an HTTP response code
-     * @param Exception [$e] Optional exception from which extract the error context
-     * @return int
-     */
-    protected function getErrorCode($e = null)
+    protected function getStatusCodeFromException(Exception $exception): int
     {
-        $code = 200;
-        if ($e) {
-            $code = 500;
+        switch (get_class($exception)) {
+            case CatEngineConnectivityException::class:
+            case CatEngineNotFoundException::class:
+            case QtiRunnerEmptyResponsesException::class:
+            case QtiRunnerClosedException::class:
+            case QtiRunnerPausedException::class:
+                return 200;
 
-            switch (true) {
-                case $e instanceof CatEngineConnectivityException:
-                case $e instanceof CatEngineNotFoundException:
-                case $e instanceof QtiRunnerEmptyResponsesException:
-                case $e instanceof QtiRunnerClosedException:
-                case $e instanceof QtiRunnerPausedException:
-                    $code = 200;
-                    break;
+            case common_exception_NotImplemented::class:
+            case common_exception_NoImplementation::class:
+            case common_exception_Unauthorized::class:
+                return 403;
 
-                case $e instanceof common_exception_NotImplemented:
-                case $e instanceof common_exception_NoImplementation:
-                case $e instanceof common_exception_Unauthorized:
-                    $code = 403;
-                    break;
-
-                case $e instanceof tao_models_classes_FileNotFoundException:
-                    $code = 404;
-                    break;
-            }
+            case tao_models_classes_FileNotFoundException::class:
+                return 404;
         }
-        return $code;
+
+        return 500;
     }
 
     /**
@@ -271,7 +283,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function init()
     {
-        $this->checkSecurityToken();
+        $this->validateSecurityToken();
 
         try {
             /** @var QtiRunnerServiceContext $serviceContext */
@@ -280,7 +292,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         } catch (Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -295,7 +307,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
-            $this->checkSecurityToken();
+            $this->validateSecurityToken();
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
 
             $response = [
@@ -304,7 +316,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -318,7 +330,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
-            $this->checkSecurityToken();
+            $this->validateSecurityToken();
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
 
             $response = [
@@ -327,7 +339,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -341,7 +353,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
-            $this->checkSecurityToken();
+            $this->validateSecurityToken();
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
 
             $response = [
@@ -350,7 +362,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -396,7 +408,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             }
 
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -407,34 +419,30 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function getNextItemData()
     {
-        $code = 200;
+        $itemIdentifiers = $this->getRequestParameter('itemDefinition');
 
-        $itemIdentifier = $this->getRequestParameter('itemDefinition');
-        if (!is_array($itemIdentifier)) {
-            $itemIdentifier = [$itemIdentifier];
+        if (!is_array($itemIdentifiers)) {
+            $itemIdentifiers = [$itemIdentifiers];
         }
 
         try {
-            if (!$this->getRunnerService()->getTestConfig()->getConfigValue('itemCaching.enabled')) {
-                common_Logger::w("Attempt to disclose the next items without the configuration");
-                throw new common_exception_Unauthorized();
-            }
+            $query = new ListItemsQuery(
+                $this->getServiceContext(),
+                $itemIdentifiers
+            );
 
-            $response = [];
-            foreach ($itemIdentifier as $itemId) {
-                //load item data
-                $response['items'][] = $this->getItemData($itemId);
-            }
+            /** @var ListItemsService $listItems */
+            $listItems = $this->getPsrContainer()->get(ListItemsService::class);
 
-            if (isset($response['items'])) {
-                $response['success'] = true;
-            }
+            $response = $listItems($query);
+
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getStatusCodeFromException($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -479,13 +487,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $serviceContext = $this->getServiceContext();
             $itemIdentifier = $this->getRequestParameter('itemDefinition');
 
-            //to read JSON encoded params
-            $params = $this->getRequest()->getRawParameters();
-            $itemState  = isset($params['itemState']) ? $params['itemState'] : new stdClass();
-
-            $state   =  json_decode($itemState, true);
-
-            return $this->getRunnerService()->setItemState($serviceContext, $itemIdentifier, $state);
+            return $this->getRunnerService()->setItemState($serviceContext, $itemIdentifier, $this->getItemState());
         }
         return false;
     }
@@ -522,15 +524,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $itemDefinition = $this->getRunnerService()->getItemHref($serviceContext, $itemIdentifier);
 
             //to read JSON encoded params
-            $params = $this->getRequest()->getRawParameters();
-            $itemResponse = isset($params['itemResponse']) ? $params['itemResponse'] : null;
+            $itemResponse = $this->getItemResponse();
 
             if ($serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemIdentifier) {
                 throw new QtiRunnerItemResponseException(__('Item response identifier does not match current item'));
             }
 
-            if (!is_null($itemResponse) && ! empty($itemDefinition)) {
-                $responses = $this->getRunnerService()->parsesItemResponse($serviceContext, $itemDefinition, json_decode($itemResponse, true));
+            if (!is_null($itemResponse) && !empty($itemDefinition)) {
+                $responses = $this->getRunnerService()->parsesItemResponse($serviceContext, $itemDefinition, $itemResponse);
 
                 //still verify allowSkipping & empty responses
                 if (
@@ -560,7 +561,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         try {
             // get the service context, but do not perform the test state check,
             // as we need to store the item state whatever the test state is
-            $this->checkSecurityToken();
+            $this->validateSecurityToken();
             $serviceContext = $this->getServiceContext();
             $itemRef        = $this->getRunnerService()->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
 
@@ -587,7 +588,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->persist($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -598,58 +599,32 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function move()
     {
-        $code = 200;
-
-        $ref               = $this->getRequestParameter('ref');
-        $direction         = $this->getRequestParameter('direction');
-        $scope             = $this->getRequestParameter('scope');
-        $start             = $this->hasRequestParameter('start');
-
         try {
-            $this->checkSecurityToken();
-            $serviceContext = $this->getServiceContext();
+            $this->validateSecurityToken();
 
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer();
-                $this->saveItemState();
-            }
+            $moveCommand = new MoveCommand(
+                $this->getServiceContext(),
+                $this->hasRequestParameter('start')
+            );
 
-            $this->getRunnerService()->initServiceContext($serviceContext);
+            $this->setNavigationContextToCommand($moveCommand);
+            $this->setItemContextToCommand($moveCommand);
+            $this->setToolsStateContextToCommand($moveCommand);
 
-            $this->saveItemResponses(false);
-            $this->saveToolStates();
+            /** @var MoveService $moveService */
+            $moveService = $this->getPsrContainer()->get(MoveService::class);
 
-            $serviceContext->getTestSession()->initItemTimer();
-            $result = $this->getRunnerService()->move($serviceContext, $direction, $scope, $ref);
+            $response = $moveService($moveCommand);
 
-            $response = [
-                'success' => $result
-            ];
+            common_Logger::d('Test session state : ' . $this->getServiceContext()->getTestSession()->getState());
 
-            if ($result) {
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-
-                if ($serviceContext->containsAdaptive()) {
-                    // Force map update.
-                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
-                }
-            }
-
-            common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
-
-            $this->getRunnerService()->persist($serviceContext);
-
-            if ($start == true) {
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext);
-            }
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getStatusCodeFromException($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -657,49 +632,30 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function skip()
     {
-        $code = 200;
-
-        $ref               = $this->getRequestParameter('ref');
-        $scope             = $this->getRequestParameter('scope');
-        $start             = $this->hasRequestParameter('start');
-
         try {
-            $this->checkSecurityToken();
-            /** @var QtiRunnerServiceContext $serviceContext */
-            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+            $this->validateSecurityToken();
 
-            $this->saveToolStates();
+            $command = new SkipCommand(
+                $this->getServiceContext(),
+                $this->hasRequestParameter('start')
+            );
 
-            $this->endItemTimer();
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            $result = $this->getRunnerService()->skip($serviceContext, $scope, $ref);
+            /** @var SkipService $skip */
+            $skip = $this->getPsrContainer()->get(SkipService::class);
 
-            $response = [
-                'success' => $result,
-            ];
+            $response = $skip($command);
 
-            if ($result) {
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-
-                if ($serviceContext->containsAdaptive()) {
-                    // Force map update.
-                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
-                }
-            }
-
-            $this->getRunnerService()->persist($serviceContext);
-
-            if ($start == true) {
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext);
-            }
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getStatusCodeFromException($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -707,55 +663,31 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function timeout()
     {
-        $code = 200;
-
-        $ref   = $this->getRequestParameter('ref');
-        $scope = $this->getRequestParameter('scope');
-        $start = $this->hasRequestParameter('start');
-        $late = $this->hasRequestParameter('late');
-
         try {
-            $this->checkSecurityToken();
-            $serviceContext = $this->getServiceContext();
+            $this->validateSecurityToken();
 
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer();
-                $this->saveItemState();
-            }
+            $command = new TimeoutCommand(
+                $this->getServiceContext(),
+                $this->hasRequestParameter('start'),
+                $this->hasRequestParameter('late')
+            );
 
-            $this->getRunnerService()->initServiceContext($serviceContext);
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            $this->saveItemResponses();
-            $this->saveToolStates();
+            /** @var TimeoutService $timeout */
+            $timeout = $this->getPsrContainer()->get(TimeoutService::class);
 
-            $result = $this->getRunnerService()->timeout($serviceContext, $scope, $ref, $late);
+            $response = $timeout($command);
 
-            $response = [
-                'success' => $result,
-            ];
-
-            if ($result) {
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-
-                if ($serviceContext->containsAdaptive()) {
-                    // Force map update.
-                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
-                }
-            }
-
-            $this->getRunnerService()->persist($serviceContext);
-
-            if ($start == true) {
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext);
-            }
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getStatusCodeFromException($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -763,33 +695,27 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function exitTest()
     {
-        $code = 200;
-
         try {
-            $this->checkSecurityToken();
-            $serviceContext = $this->getServiceContext();
+            $this->validateSecurityToken();
 
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer();
-                $this->saveItemState();
-            }
+            $command = new ExitTestCommand($this->getServiceContext());
 
-            $this->getRunnerService()->initServiceContext($serviceContext);
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            $this->saveItemResponses();
-            $this->saveToolStates();
+            /** @var ExitTestService $exitTest */
+            $exitTest = $this->getPsrContainer()->get(ExitTestService::class);
 
-            $response = [
-                'success' => $this->getRunnerService()->exitTest($serviceContext),
-            ];
+            $response = $exitTest($command);
 
-            $this->getRunnerService()->persist($serviceContext);
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getStatusCodeFromException($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -814,34 +740,22 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function pause()
     {
-        $code = 200;
-
         try {
-            $this->checkSecurityToken();
+            $this->validateSecurityToken();
 
-            $serviceContext = $this->getServiceContext();
+            $command = new PauseCommand($this->getServiceContext());
 
-            $isTerminated = (bool) $this->getRunnerService()->isTerminated($serviceContext);
+            $this->setItemContextToCommand($command);
 
-            if (!$isTerminated) {
-                $this->saveItemState();
-            }
+            /** @var PauseService $pause */
+            $pause = $this->getPsrContainer()->get(PauseService::class);
 
-            if ($this->shouldTimerStopOnPause($isTerminated)) {
-                $this->endItemTimer();
-            }
+            $response = $pause($command);
 
-            $serviceContext = $this->getRunnerService()->initServiceContext($serviceContext);
-
-            $response = [
-                'success' => $this->getRunnerService()->pause($serviceContext),
-            ];
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->createErrorResponseFromException($e);
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -852,7 +766,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
-            $this->checkSecurityToken();
+            $this->validateSecurityToken();
             /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $result = $this->getRunnerService()->resume($serviceContext);
@@ -873,7 +787,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getRunnerService()->persist($serviceContext);
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -887,7 +801,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $code = 200;
 
         try {
-            $this->checkSecurityToken();
+            $this->validateSecurityToken();
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $testSession = $serviceContext->getTestSession();
 
@@ -915,7 +829,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -931,7 +845,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $comment = $this->getRequestParameter('comment');
 
         try {
-            $this->checkSecurityToken();
+            $this->validateSecurityToken();
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $result = $this->getRunnerService()->comment($serviceContext, $comment);
 
@@ -940,7 +854,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -951,41 +865,34 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function storeTraceData()
     {
-        $code = 200;
-
-        $traceData = json_decode(html_entity_decode($this->getRequestParameter('traceData')), true);
-
         try {
-            $this->checkSecurityToken();
-            $serviceContext = $this->getServiceContext();
-            if ($this->hasRequestParameter('itemDefinition')) {
-                $itemRef = $this->getRunnerService()->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
-            } else {
-                $itemRef = null;
-            }
+            $this->validateSecurityToken();
 
-            $stored = 0;
-            $size   = count($traceData);
+            $traceVariables = json_decode(
+                html_entity_decode($this->getRequestParameter('traceData')),
+                true
+            );
 
-            foreach ($traceData as $variableIdentifier => $variableValue) {
-                if ($this->getRunnerService()->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue)) {
-                    $stored++;
-                }
-            }
+            $command = new StoreTraceVariablesCommand(
+                $this->getServiceContext(),
+                $traceVariables,
+                $this->getRequestParameter('itemDefinition') ?: null
+            );
 
-            $response = [
-                'success' => $stored == $size
-            ];
-            common_Logger::d("Stored {$stored}/{$size} trace variables");
-            $eventManager = $this->getServiceLocator()->get(EventManager::class);
-            $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
-            $eventManager->trigger($event);
+            /** @var StoreTraceVariablesService $storeTraceVariables */
+            $storeTraceVariables = $this->getPsrContainer()->get(StoreTraceVariablesService::class);
+
+            $response = $storeTraceVariables($command);
+
+            common_Logger::d('Stored ' . count($traceVariables) . ' trace variables');
+
+            $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
-            $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $this->returnJson(
+                $this->getErrorResponse($e),
+                $this->getStatusCodeFromException($e)
+            );
         }
-
-        $this->returnJson($response, $code);
     }
 
     /**
@@ -1010,7 +917,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $code = 200;
 
-        $this->checkSecurityToken(); // will return 500 on error
+        $this->validateSecurityToken(); // will return 500 on error
 
         // close the PHP session to prevent session overwriting and loss of security token for secured queries
         session_write_close();
@@ -1033,7 +940,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             ];
         } catch (common_Exception $e) {
             $response = $this->getErrorResponse($e);
-            $code = $this->getErrorCode($e);
+            $code = $this->getStatusCodeFromException($e);
         }
 
         $this->returnJson($response, $code);
@@ -1156,5 +1063,72 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     private function getRuntimeService(): RuntimeService
     {
         return $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
+    }
+
+    private function getItemDuration(): ?float
+    {
+        if (!$this->hasRequestParameter('itemDuration')) {
+            return null;
+        }
+
+        return (float)$this->getRequestParameter('itemDuration');
+    }
+
+    private function getItemState(): ?array
+    {
+        $params = $this->getRequest()->getRawParameters();
+
+        if (!isset($params['itemState'])) {
+            return null;
+        }
+
+        return (array)json_decode($params['itemState'], true);
+    }
+
+    private function getItemResponse(): ?array
+    {
+        $params = $this->getRequest()->getRawParameters();
+
+        if (!isset($params['itemResponse'])) {
+            return null;
+        }
+
+        return (array)json_decode($params['itemResponse'], true);
+    }
+
+    private function setNavigationContextToCommand(NavigationContextAwareInterface $command): void
+    {
+        $command->setNavigationContext(
+            $this->getRequestParameter('direction') ?? '',
+            $this->getRequestParameter('scope'),
+            $this->getRequestParameter('ref')
+        );
+    }
+
+    private function setItemContextToCommand(ItemContextAwareInterface $command): void
+    {
+        if (empty($this->getRequestParameter('itemDefinition'))) {
+            return;
+        }
+
+        $command->setItemContext(
+            $this->getRequestParameter('itemDefinition'),
+            $this->getItemState(),
+            $this->getItemDuration(),
+            $this->getItemResponse()
+        );
+    }
+
+    private function setToolsStateContextToCommand(ToolsStateAwareInterface $command): void
+    {
+        $command->setToolsState($this->getToolStatesFromRequest());
+    }
+
+    private function createErrorResponseFromException(Exception $exception): void
+    {
+        $this->returnJson(
+            $this->getErrorResponse($exception),
+            $this->getStatusCodeFromException($exception)
+        );
     }
 }

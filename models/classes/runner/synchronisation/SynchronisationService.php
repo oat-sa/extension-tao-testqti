@@ -22,17 +22,13 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
-use common_Exception;
 use common_exception_InconsistentData;
-use common_Logger;
 use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\synchronisation\synchronisationService\ResponseGenerator;
 
 class SynchronisationService extends ConfigurableService
 {
-
     public const SERVICE_ID = 'taoQtiTest/synchronisationService';
     public const ACTIONS_OPTION = 'actions';
 
@@ -72,8 +68,6 @@ class SynchronisationService extends ConfigurableService
             // no need to break on the first error as all actions expected to be with a response by the fe part
         }
 
-        $this->persistContext($serviceContext);
-
         return $response;
     }
 
@@ -107,21 +101,6 @@ class SynchronisationService extends ConfigurableService
     {
         if (empty($data)) {
             throw new common_exception_InconsistentData('No action to check. Processing action requires data.');
-        }
-    }
-
-    /**
-     * @param QtiRunnerServiceContext $serviceContext
-     */
-    protected function persistContext(QtiRunnerServiceContext $serviceContext): void
-    {
-        try {
-            /** @var QtiRunnerService $runnerService */
-            $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
-            $runnerService->persist($serviceContext);
-        } catch (common_Exception $e) {
-            // log the error message but return the data
-            common_Logger::e($e->getMessage());
         }
     }
 }

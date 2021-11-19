@@ -24,13 +24,10 @@ use common_Exception;
 use common_exception_Error;
 use common_exception_InconsistentData;
 use Exception;
+use oat\taoQtiTest\model\Service\SkipCommand;
+use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
-/**
- * Skip item into the test context.
- *
- * @package oat\taoQtiTest\models\runner\synchronisation\action
- */
 class Skip extends TestRunnerAction
 {
     /**
@@ -41,64 +38,40 @@ class Skip extends TestRunnerAction
      * Wrap the skip to runner service.
      * Start next timer.
      *
-     * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 
-        $ref = $this->getRequestParameter('ref') ?: null;
-        $itemDuration = null;
-
-        $scope = $this->getRequestParameter('scope');
-        $start = $this->getRequestParameter('start') !== false;
-
         try {
-            $serviceContext = $this->getServiceContext();
-
-            $this->saveToolStates();
-
-            $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $this->getTime());
-
             if ($this->getRequestParameter('offline') === true) {
                 $this->setOffline();
             }
 
-            $result = $this->getRunnerService()->skip($serviceContext, $scope, $ref);
+            $command = new SkipCommand(
+                $this->getServiceContext(),
+                $this->hasRequestParameter('start')
+            );
 
-            $response = [
-                'success' => $result,
-            ];
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            if ($result) {
-                $response['testContext'] = $this->getRunnerService()->getTestContext($serviceContext);
-                if ($serviceContext->containsAdaptive()) {
-                    // Force map update.
-                    $response['testMap'] = $this->getRunnerService()->getTestMap($serviceContext, true);
-                }
-            }
+            /** @var SkipService $skip */
+            $skip = $this->getPsrContainer()->get(SkipService::class);
 
-            if ($start == true) {
-                // start the timer only when move starts the item session
-                // and after context build to avoid timing error
-                $this->getRunnerService()->startTimer($serviceContext, $this->getTime());
-            }
+            $response = $skip($command);
+
+            return $response->toArray();
         } catch (Exception $e) {
-            $response = $this->getErrorResponse($e);
+            return $this->getErrorResponse($e);
         }
-
-        return $response;
     }
 
-    /**
-     * Scope parameter is required.
-     *
-     * @return array
-     */
-    protected function getRequiredFields()
+    protected function getRequiredFields(): array
     {
         return array_merge(parent::getRequiredFields(), ['scope']);
     }

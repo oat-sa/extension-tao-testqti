@@ -136,6 +136,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 'enableLinearNextItemWarningCheckbox' => isset($rawConfig['enable-linear-next-item-warning-checkbox']) ? $rawConfig['enable-linear-next-item-warning-checkbox'] : true,
             ];
         }
+
         return $config;
     }
 

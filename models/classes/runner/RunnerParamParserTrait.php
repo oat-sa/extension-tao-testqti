@@ -20,6 +20,9 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
+use oat\taoQtiTest\model\Service\NavigationContextAwareInterface;
+use oat\taoQtiTest\model\Service\ToolsStateAwareInterface;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
@@ -201,5 +204,65 @@ trait RunnerParamParserTrait
         /** @var QtiRunnerMap $mapService */
         $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
         return $mapService->getItemHref($serviceContext, $itemIdentifier);
+    }
+
+    protected function setNavigationContextToCommand(NavigationContextAwareInterface $command): void
+    {
+        $command->setNavigationContext(
+            $this->getRequestParameter('direction'),
+            $this->getRequestParameter('scope'),
+            $this->getRequestParameter('ref')
+        );
+    }
+
+    protected function setItemContextToCommand(ItemContextAwareInterface $command): void
+    {
+        if (empty($this->getRequestParameter('itemDefinition'))) {
+            return;
+        }
+
+        $command->setItemContext(
+            $this->getRequestParameter('itemDefinition'),
+            $this->getItemState(),
+            $this->getItemDuration(),
+            $this->getItemResponse(),
+            $this->getTime()
+        );
+    }
+
+    protected function setToolsStateContextToCommand(ToolsStateAwareInterface $command): void
+    {
+        $command->setToolsState($this->getToolStatesFromRequest());
+    }
+
+    private function getItemDuration(): ?float
+    {
+        if (!$this->hasRequestParameter('itemDuration')) {
+            return null;
+        }
+
+        return (float)$this->getRequestParameter('itemDuration');
+    }
+
+    private function getItemState(): ?array
+    {
+        $itemState = $this->getRequestParameter('itemState');
+
+        if (empty($itemState)) {
+            return null;
+        }
+
+        return (array)json_decode($itemState, true);
+    }
+
+    private function getItemResponse(): ?array
+    {
+        $itemResponse = $this->getRequestParameter('itemResponse');
+
+        if (empty($itemResponse)) {
+            return null;
+        }
+
+        return (array)json_decode($itemResponse, true);
     }
 }

@@ -23,179 +23,122 @@ namespace oat\taoQtiTest\test\unit\models\classes\runner\synchronisation\action;
 use common_exception_InconsistentData;
 use Exception;
 use oat\generis\test\TestCase;
+use oat\taoQtiTest\model\Service\ActionResponse;
+use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\ExitTest;
-use oat\generis\test\MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ExitTestTest extends TestCase
 {
     /** @var QtiRunnerService|MockObject */
-    private $qtiRunnerService;
+    private $runnerService;
 
     /** @var QtiRunnerServiceContext|MockObject */
-    private $qtiRunnerServiceContext;
+    private $serviceContext;
 
     /** @var TestSession|MockObject */
     private $testSession;
+
+    /** @var ExitTestService|MockObject */
+    private $exitTestService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->qtiRunnerService = $this->createMock(QtiRunnerService::class);
-        $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
+        $this->exitTestService = $this->createMock(ExitTestService::class);
+        $this->runnerService = $this->createMock(QtiRunnerService::class);
+        $this->serviceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->testSession = $this->createMock(TestSession::class);
 
-        $this->qtiRunnerService
+        $this->runnerService
             ->method('getServiceContext')
-            ->willReturn($this->qtiRunnerServiceContext);
+            ->willReturn($this->serviceContext);
 
-        $this->qtiRunnerServiceContext
+        $this->serviceContext
             ->method('getTestSession')
             ->willReturn($this->testSession);
     }
 
-    public function testValidationExceptionIfRequestParametersAreMissing()
+    public function testReturnsSuccessfulResponse(): void
     {
-        $this->expectException(common_exception_InconsistentData::class);
-        $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId');
-        $this->createSubjectWithParameters(['missing parameters'])->process();
+        $expectedActionResponse = ActionResponse::success();
+        $this->expectActionResponse($expectedActionResponse);
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedActionResponse->toArray(), $subject->process());
     }
 
-    public function testUnsuccessfulResponse()
+    public function testReturnsUnsuccessfulResponseWhenServiceReturnsEmptyResponse(): void
     {
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('exitTest')
-            ->willReturn(false);
+        $this->expectActionResponse(ActionResponse::empty());
 
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
 
         $this->assertEquals(['success' => false], $subject->process());
     }
 
-    public function testErrorResponse()
+    public function testReturnsErrorResponseWhenServiceThrows(): void
     {
-        $this->qtiRunnerService
-            ->method('getServiceContext')
-            ->willThrowException(new Exception('Error message', 100));
+        $this->expectServiceThrows(new Exception('Error message', 100));
 
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
-
-        $this->assertEquals([
+        $expectedResponse = [
             'success' => false,
             'type' => 'exception',
             'code' => 100,
             'message' => 'An error occurred!',
-        ], $subject->process());
-    }
-
-    public function testSuccessfulResponse()
-    {
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('exitTest')
-            ->willReturn(true);
-
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
-
-        $this->assertEquals(['success' => true], $subject->process());
-    }
-
-    public function testItSavesToolStates()
-    {
-        $rawToolStates = [
-            ['testTool1' => 'testStatus1'],
-            ['testTool2' => 'testStatus2'],
         ];
 
-        $requestParameters = $this->getRequiredRequestParameters();
-        $requestParameters['toolStates'] = json_encode($rawToolStates);
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
 
-        $expectedToolStates = [
-            json_encode(['testTool1' => 'testStatus1']),
-            json_encode(['testTool2' => 'testStatus2']),
-        ];
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('setToolsStates')
-            ->willReturnCallback(
-                function (RunnerServiceContext $runnerServiceContext, $toolStates) use ($expectedToolStates) {
-                    return $runnerServiceContext === $this->qtiRunnerServiceContext
-                        && $toolStates === $expectedToolStates;
-                }
-            );
-
-        $this->createSubjectWithParameters($requestParameters)->process();
+        $this->assertEquals($expectedResponse, $subject->process());
     }
 
-    public function testItEndsTimerAndSavesItemStateIfRunnerIsNotTerminated()
+    public function testThrowsWhenValidationFails(): void
     {
-        $expectedDecodedItemState = ['item' => 'expectedItemState'];
-        $requestParameters = [
-                'itemDuration' => 1000,
-                'itemDefinition' => 'expectedItemDefinition',
-                'itemState' => json_encode($expectedDecodedItemState),
-            ] + $this->getRequiredRequestParameters();
+        $this->expectException(common_exception_InconsistentData::class);
+        $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId');
 
-        $subject = $this->createSubjectWithParameters($requestParameters);
-
-        $expectedTime = microtime(true);
-        $subject->setTime($expectedTime);
-
-        $this->qtiRunnerService
-            ->method('isTerminated')
-            ->willReturn(false);
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('endTimer')
-            ->with($this->qtiRunnerServiceContext, 1000, $expectedTime);
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('setItemState')
-            ->with($this->qtiRunnerServiceContext, 'expectedItemDefinition', $expectedDecodedItemState);
-
-        $subject->process();
+        $this->createSubject(['missing parameters'])
+            ->process();
     }
 
-    /**
-     * @param array $requestParameters
-     *
-     * @return ExitTest
-     */
-    private function createSubjectWithParameters($requestParameters = [])
+    private function createSubject(array $requestParameters = []): ExitTest
     {
         $subject = new ExitTest('test', microtime(), $requestParameters);
 
         $services = [
-            QtiRunnerService::SERVICE_ID => $this->qtiRunnerService,
+            QtiRunnerService::SERVICE_ID => $this->runnerService,
+            ExitTestService::class => $this->exitTestService
         ];
 
         return $subject->setServiceLocator($this->getServiceLocatorMock($services));
     }
 
-    /**
-     * @param mixed $testDefinition
-     * @param mixed $testCompilation
-     * @param mixed $serviceCallId
-     *
-     * @return array
-     */
-    private function getRequiredRequestParameters(
-        $testDefinition = null,
-        $testCompilation = null,
-        $serviceCallId = null
-    ) {
+    private function getRequiredRequestParameters(): array
+    {
         return [
-            'testDefinition' => $testDefinition,
-            'testCompilation' => $testCompilation,
-            'serviceCallId' => $serviceCallId,
+            'testDefinition' => null,
+            'testCompilation' => null,
+            'serviceCallId' => null,
         ];
+    }
+
+    private function expectActionResponse(ActionResponse $actionResponse): void
+    {
+        $this->exitTestService
+            ->method('__invoke')
+            ->willReturn($actionResponse);
+    }
+
+    private function expectServiceThrows(Exception $exception)
+    {
+        $this->exitTestService
+            ->method('__invoke')
+            ->willThrowException($exception);
     }
 }
