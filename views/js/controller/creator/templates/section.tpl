@@ -9,6 +9,8 @@
                         <span class="tlb-bar">
                             <span class="tlb-start"></span>
                             <span class="tlb-group">
+                                <a href="#" class="tlb-button-off add-subsection" title="{{__ 'Add Subsection'}}" data-testid="add-subsection"><span class="icon-rubric"></span></a>
+                                <span class="tlb-separator"></span>
                                 <a href="#" class="tlb-button-off rub-toggler" title="{{__ 'Manage Rubric Blocks'}}" data-toggle="#rublocks-{{identifier}}" data-testid="manage-rubric-blocks"><span class="icon-rubric"></span></a>
                                 <span class="tlb-separator"></span>
                                 <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Section Properties'}}" data-testid="section-properties"><span class="icon-settings"></span></a>
@@ -44,4 +46,6 @@
             {{__ 'Add selected item(s) here.'}}
         </div>
     </div>
+
+    <div class="subsections" data-bind-each="assessmentSubsections" data-bind-tmpl="subsection"></div>
 </div>

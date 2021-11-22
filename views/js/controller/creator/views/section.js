@@ -79,6 +79,7 @@ function(
         }
         actions.properties($actionContainer, 'section', sectionModel, propHandler);
         actions.move($actionContainer, 'sections', 'section');
+        actions.addSubsection($actionContainer);
         itemRefs();
         acceptItemRefs();
         rubricBlocks();

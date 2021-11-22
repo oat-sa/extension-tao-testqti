@@ -203,17 +203,25 @@ function($, propertyView){
         $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);
     }
 
+    function addSubsection($actionContainer) {
+        //move down an element
+        $('.add-subsection', $actionContainer).click(function(e){
+            console.log('Adding subsection');
+        });
+    }
+
     /**
      * The actions gives you shared behavior for some actions.
      *
      * @exports taoQtiTest/controller/creator/views/actions
      */
     return {
-        properties  : properties,
-        move        : move,
-        removable   : removable,
-        movable     : movable,
-        disable     : disable,
-        enable      : enable
+        properties    : properties,
+        move          : move,
+        removable     : removable,
+        movable       : movable,
+        disable       : disable,
+        enable        : enable,
+        addSubsection : addSubsection
     };
 });
