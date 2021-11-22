@@ -11,7 +11,8 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/itemref-props',
     'tpl!taoQtiTest/controller/creator/templates/itemref-props-weight',
     'tpl!taoQtiTest/controller/creator/templates/rubricblock-props',
-    'tpl!taoQtiTest/controller/creator/templates/category-presets'
+    'tpl!taoQtiTest/controller/creator/templates/category-presets',
+    'tpl!taoQtiTest/controller/creator/templates/subsection'
 ],
 function(
     defaults,
@@ -26,7 +27,8 @@ function(
     itemRefProps,
     itemRefPropsWeight,
     rubricBlockProps,
-    categoryPresets
+    categoryPresets,
+    subsection
 ){
     'use strict';
 
@@ -42,6 +44,7 @@ function(
         itemref     : applyTemplateConfiguration(itemRef),
         rubricblock : applyTemplateConfiguration(rubricBlock),
         outcomes    : applyTemplateConfiguration(outcomes),
+        subsection  : applyTemplateConfiguration(subsection),
         properties  : {
             test            : applyTemplateConfiguration(testProps),
             testpart        : applyTemplateConfiguration(testPartProps),
@@ -49,7 +52,9 @@ function(
             itemref         : applyTemplateConfiguration(itemRefProps),
             itemrefweight   : applyTemplateConfiguration(itemRefPropsWeight),
             rubricblock     : applyTemplateConfiguration(rubricBlockProps),
-            categorypresets : applyTemplateConfiguration(categoryPresets)
+            categorypresets : applyTemplateConfiguration(categoryPresets),
+            subsection  : applyTemplateConfiguration(subsection)
+
         }
     };
 });

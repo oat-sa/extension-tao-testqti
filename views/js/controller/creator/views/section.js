@@ -79,12 +79,12 @@ function(
         }
         actions.properties($actionContainer, 'section', sectionModel, propHandler);
         actions.move($actionContainer, 'sections', 'section');
-        actions.addSubsection($actionContainer);
+        actions.addSubsectionHandler($actionContainer);
         itemRefs();
         acceptItemRefs();
         rubricBlocks();
         addRubricBlock();
-
+        addSubsection();
         //trigger for the case the section is added an a selection is ongoing
 
         /**
@@ -445,6 +445,34 @@ function(
                 sectionBlueprint.setBlueprint(sectionModel, blueprint);
             }
 
+        }
+
+        function addSubsection() {
+            $('.add-subsection', $section).adder({
+                target: $('.subsection-adder', $section),
+                content : templates.subsection,
+                templateData : function(cb){
+                    debugger;
+                    //create a new subsection model object to be bound to the template
+                    const subsectionIndex = $('.subsection', $section).length;
+                    cb({
+                        'qti-type' : 'assessmentSubsection',
+                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSubsection', defaults().sectionIdPrefix),
+                        title : `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
+                        index : 0,
+                        sectionParts : [],
+                        visible: true
+                    });
+                }
+            });
+            
+            debugger;
+            //we listen the event not from the adder but  from the data binder to be sure the model is up to date
+            $(document)
+                .off('add.subsection', '#' + $section.attr('id'))
+                .on ('add.subsection', '#' + $section.attr('id'), function(e, $subsection){
+                    debugger;
+                });
         }
     }
 

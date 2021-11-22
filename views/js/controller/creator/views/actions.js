@@ -203,10 +203,14 @@ function($, propertyView){
         $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);
     }
 
-    function addSubsection($actionContainer) {
-        //move down an element
+    /**
+     * Sets handler to add a subsection to clicked section/subsection
+     *@param {jQueryElement} $actionContainer - action's container
+     */
+    function addSubsectionHandler($actionContainer) {
         $('.add-subsection', $actionContainer).click(function(e){
-            console.log('Adding subsection');
+            debugger;
+            $actionContainer.trigger('add.subsection');
         });
     }
 
@@ -222,6 +226,6 @@ function($, propertyView){
         movable       : movable,
         disable       : disable,
         enable        : enable,
-        addSubsection : addSubsection
+        addSubsectionHandler : addSubsectionHandler
     };
 });
