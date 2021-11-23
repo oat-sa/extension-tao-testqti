@@ -209,7 +209,6 @@ function($, propertyView){
      */
     function addSubsectionHandler($actionContainer) {
         $('.add-subsection', $actionContainer).click(function(e){
-            debugger;
             $actionContainer.trigger('add.subsection');
         });
     }

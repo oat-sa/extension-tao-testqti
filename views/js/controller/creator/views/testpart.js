@@ -127,7 +127,6 @@ function($, _, defaults, actions, sectionView, templates, qtiTestHelper){
             $(document)
                 .off('add.binder', '#' + $testPart.attr('id') + ' .sections')
                 .on ('add.binder', '#' + $testPart.attr('id') + ' .sections', function(e, $section){
-                    debugger;
                     var index, sectionModel;
                     if(e.namespace === 'binder' && $section.hasClass('section')){
                         index = $section.data('bind-index');

@@ -19,7 +19,7 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define([
+ define([
     'jquery',
     'lodash',
     'uri',
@@ -33,7 +33,6 @@ define([
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
-    'taoQtiTest/controller/creator/views/subsection',
 ],
 function(
     $,
@@ -49,10 +48,8 @@ function(
     categorySelectorFactory,
     sectionCategory,
     sectionBlueprint,
-    subsectionView
 ){
     'use strict';
-
     /**
      * Set up a section: init action behaviors. Called for each section.
      *
@@ -61,8 +58,8 @@ function(
      * @param {Object} partModel - the parent data model to inherit
      * @param {jQuery} $section - the section to set up
      */
-    function setUp (creatorContext, sectionModel, partModel, $section) {
-
+     function setUp (creatorContext, sectionModel, partModel, $section) {
+        debugger;
         var $actionContainer = $('h2', $section);
         var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
@@ -478,56 +475,12 @@ function(
         }
     }
 
-    /**
-     * Listen for state changes to enable/disable . Called globally.
-     */
-    function listenActionState (){
-
-        var $sections;
-
-        $('.sections').each(function(){
-            $sections = $('.section', $(this));
-
-            actions.removable($sections, 'h2');
-            actions.movable($sections, 'section', 'h2');
-        });
-
-        $(document)
-            .on('delete', function(e){
-                var $parent;
-                var $target = $(e.target);
-                if($target.hasClass('section')){
-                    $parent = $target.parents('.sections');
-                    actions.disable($parent.find('.section'), 'h2');
-                }
-            })
-            .on('add change undo.deleter deleted.deleter', function(e){
-                var $target = $(e.target);
-                if($target.hasClass('section') || $target.hasClass('sections')){
-                    $sections = $('.section', $target.hasClass('sections') ? $target : $target.parents('.sections'));
-                    actions.removable($sections, 'h2');
-                    actions.movable($sections, 'section', 'h2');
-                }
-            })
-            .on('open.toggler', '.rub-toggler', function(e){
-                if(e.namespace === 'toggler'){
-                    $(this).parents('h2').addClass('active');
-                }
-            })
-            .on('close.toggler', '.rub-toggler', function(e){
-                if(e.namespace === 'toggler'){
-                    $(this).parents('h2').removeClass('active');
-                }
-            });
-    }
-
-    /**
+     /**
      * The sectionView setup section related components and beahvior
      *
      * @exports taoQtiTest/controller/creator/views/section
      */
-    return {
-        setUp : setUp,
-        listenActionState: listenActionState
-    };
+         return {
+            setUp : setUp
+        };
 });
