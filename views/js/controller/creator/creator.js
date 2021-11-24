@@ -40,7 +40,8 @@ define([
     'ui/validator/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
     'taoTests/previewer/factory',
-    'core/logger'
+    'core/logger',
+    'taoQtiTest/controller/creator/views/subsection',
 ], function(
     module,
     $,
@@ -63,7 +64,8 @@ define([
     validators,
     changeTracker,
     previewerFactory,
-    loggerFactory
+    loggerFactory,
+    subsectionView
 ){
     'use strict';
     const logger = loggerFactory('taoQtiTest/controller/creator');
@@ -202,6 +204,7 @@ define([
                     //listen for changes to update available actions
                     testPartView.listenActionState();
                     sectionView.listenActionState();
+                    subsectionView.listenActionState();
                     itemrefView.listenActionState();
                     itemrefView.resize();
 

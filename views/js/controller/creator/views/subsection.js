@@ -446,12 +446,55 @@ function(
         }
     }
 
+        /**
+         * Listen for state changes to enable/disable . Called globally.
+         */
+        function listenActionState (){
+
+            var $subsections;
+    
+            $('.subsections').each(function(){
+                $subsections = $('.subsection', $(this));
+    
+                actions.removable($subsections, 'h2');
+                actions.movable($subsections, 'subsection', 'h2');
+            });
+    
+            $(document)
+                .on('delete', function(e){
+                    var $parent;
+                    var $target = $(e.target);
+                    if($target.hasClass('subsection')){
+                        $parent = $target.parents('.subsections');
+                        actions.disable($parent.find('.subsection'), 'h2');
+                    }
+                })
+                .on('add change undo.deleter deleted.deleter', function(e){
+                    var $target = $(e.target);
+                    if($target.hasClass('subsection') || $target.hasClass('subsections')){
+                        $subsections = $('.subsection', $target.hasClass('subsections') ? $target : $target.parents('.sections'));
+                        actions.removable($subsections, 'h2');
+                        actions.movable($subsections, 'subsection', 'h2');
+                    }
+                })
+                .on('open.toggler', '.rub-toggler', function(e){
+                    if(e.namespace === 'toggler'){
+                        $(this).parents('h2').addClass('active');
+                    }
+                })
+                .on('close.toggler', '.rub-toggler', function(e){
+                    if(e.namespace === 'toggler'){
+                        $(this).parents('h2').removeClass('active');
+                    }
+                });
+        }
      /**
      * The sectionView setup section related components and beahvior
      *
      * @exports taoQtiTest/controller/creator/views/section
      */
          return {
-            setUp : setUp
+            setUp : setUp,
+            listenActionState: listenActionState
         };
 });
