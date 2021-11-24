@@ -450,14 +450,15 @@ function(
         }
 
         function addSubsection() {
-            $('.add-subsection', $section).adder({
-                target: $('.subsection-adder', $section),
+            $('.subsection-adder', $section).adder({
+                target: $('.subsections', $section),
                 content : templates.subsection,
                 templateData : function(cb){
+
                     //create a new subsection model object to be bound to the template
                     const subsectionIndex = $('.subsection', $section).length;
                     cb({
-                        'qti-type' : 'assessmentSubsection',
+                        'qti-type' : 'assessmentSection',
                         identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'subsection'),
                         title : `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
                         index : 0,
@@ -466,14 +467,26 @@ function(
                     });
                 }
             });
-            
+
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.subsection', '#' + $section.attr('id'))
-                .on ('add.subsection', '#' + $section.attr('id'), function(e, $subsection){
-                    debugger;
+                .off('add.binder', '#' + $section.attr('id'))
+                .on('add.binder', '#' + $section.attr('id'), function(e, $subsection){
+                    debugger; // adding a new section
+                    if(e.namespace === 'binder' && $subsection.hasClass('subsection')){
+                        const sectionIndex = $subsection.parents('.section').data('bind-index')
+                        const subsectionIndex = $subsection.data('bind-index');
+                        sectionModel = partModel.assessmentSections[sectionIndex].assessmentSubsections[subsectionIndex];
+
                         //initialize the new test part
-                        subsectionView.setUp(creatorContext, sectionModel, partModel, $section);                    
+                        subsectionView.setUp(creatorContext, sectionModel, partModel, $subsection);
+
+                        /**
+                         * @event modelOverseer#section-add
+                         * @param {Object} sectionModel
+                         */
+                        modelOverseer.trigger('section-add', sectionModel);
+                    }
                 });
         }
     }

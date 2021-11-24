@@ -59,7 +59,6 @@ function(
      * @param {jQuery} $section - the section to set up
      */
      function setUp (creatorContext, sectionModel, partModel, $section) {
-        debugger;
         var $actionContainer = $('h2', $section);
         var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
@@ -83,7 +82,7 @@ function(
         acceptItemRefs();
         rubricBlocks();
         addRubricBlock();
-        addSubsection();
+        // addSubsection();
         //trigger for the case the section is added an a selection is ongoing
 
         /**
@@ -444,34 +443,6 @@ function(
                 sectionBlueprint.setBlueprint(sectionModel, blueprint);
             }
 
-        }
-
-        function addSubsection() {
-            $('.add-subsection', $section).adder({
-                target: $('.subsection-adder', $section),
-                content : templates.subsection,
-                templateData : function(cb){
-                    //create a new subsection model object to be bound to the template
-                    const subsectionIndex = $('.subsection', $section).length;
-                    cb({
-                        'qti-type' : 'assessmentSubsection',
-                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'subsection'),
-                        title : `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
-                        index : 0,
-                        sectionParts : [],
-                        visible: true
-                    });
-                }
-            });
-            
-            //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            $(document)
-                .off('add.subsection', '#' + $section.attr('id'))
-                .on ('add.subsection', '#' + $section.attr('id'), function(e, $subsection){
-                    debugger;
-                        //initialize the new test part
-                        subsectionView.setUp(creatorContext, sectionModel, partModel, $section);                    
-                });
         }
     }
 

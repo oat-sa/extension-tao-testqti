@@ -45,5 +45,4 @@
             {{__ 'Add selected item(s) here.'}}
         </div>
     </div>
-    <div class="subsection-adder"/>
 </div>
