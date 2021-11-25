@@ -34,6 +34,7 @@
     $propsColor: $uiOverlay;
     $testPartColor: $websiteBorder;
     $sectionColor: $darkBlueGrey;
+    $subsectionColor: #d2e9f3;
     $rubColor: whiten($info, 0.3);
 
     position: relative;
@@ -413,6 +414,11 @@
             .actions .tlb-group {
                 min-width: 157px;
             }
+        }
+
+        .subsection {
+            border-left: solid 5px $subsectionColor;
+            padding: 0 5px 20px 15px;
         }
 
         .rublocks{

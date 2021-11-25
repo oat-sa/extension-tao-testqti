@@ -76,7 +76,7 @@ function(
             sectionModel.hasBlueprint = true;
         }
         actions.properties($actionContainer, 'section', sectionModel, propHandler);
-        actions.move($actionContainer, 'sections', 'section');
+        actions.move($actionContainer, 'subsections', 'subsection');
         actions.addSubsectionHandler($actionContainer);
         itemRefs();
         acceptItemRefs();

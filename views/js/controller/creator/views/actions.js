@@ -177,7 +177,7 @@ function($, propertyView){
             var $actionContainer = $(actionContainerElt, $elt);
             var $delete = $('[data-delete]', $actionContainer);
 
-            if($container.length <= 1){
+            if($container.length <= 1 && !$elt.hasClass('subsection')){
                 $delete.addClass(disabledClass);
             } else {
                 $delete.removeClass(disabledClass);

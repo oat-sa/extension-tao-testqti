@@ -14,10 +14,10 @@
                                 <span class="tlb-separator"></span>
                                 <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Section Properties'}}" data-testid="section-properties"><span class="icon-settings"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off move-up disabled" title="{{__ 'Move Up'}}" data-testid="move-up-section"><span class="icon-up"></span></a>
-                                <a href="#" class="tlb-button-off move-down disabled" title="{{__ 'Move Down'}}" data-testid="move-down-section"><span class="icon-down"></span></a>
+                                <a href="#" class="tlb-button-off move-up disabled" title="{{__ 'Move Up'}}" data-testid="move-up-subsection"><span class="icon-up"></span></a>
+                                <a href="#" class="tlb-button-off move-down disabled" title="{{__ 'Move Down'}}" data-testid="move-down-subsection"><span class="icon-down"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off disabled" title="{{__ 'Remove Section'}}" data-delete=":parent .section" data-testid="remove-section"><span class="icon-bin"></span></a>
+                                <a href="#" class="tlb-button-off disabled" title="{{__ 'Remove Subsection'}}" data-delete=":parent .subsection" data-testid="remove-subsection"><span class="icon-bin"></span></a>
                             </span>
                             <span class="tlb-end"></span>
                         </span>
