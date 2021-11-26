@@ -472,20 +472,22 @@ function(
             $(document)
                 .off('add.binder', '#' + $section.attr('id'))
                 .on('add.binder', '#' + $section.attr('id'), function(e, $subsection){
-                    debugger; // adding a new section
                     if(e.namespace === 'binder' && $subsection.hasClass('subsection')){
                         const sectionIndex = $subsection.parents('.section').data('bind-index')
                         const subsectionIndex = $subsection.data('bind-index');
-                        sectionModel = partModel.assessmentSections[sectionIndex].assessmentSubsections[subsectionIndex];
+                        sectionModel = partModel.assessmentSections[sectionIndex];
+                        const subsectionModel = partModel.assessmentSections[sectionIndex].assessmentSubsections[subsectionIndex];
 
                         //initialize the new test part
-                        subsectionView.setUp(creatorContext, sectionModel, partModel, $subsection);
+                        subsectionView.setUp(creatorContext, subsectionModel, partModel, $subsection);
+
+                        actions.displayItemWrapper(sectionModel, $section);
 
                         /**
                          * @event modelOverseer#section-add
-                         * @param {Object} sectionModel
+                         * @param {Object} subsectionModel
                          */
-                        modelOverseer.trigger('section-add', sectionModel);
+                        modelOverseer.trigger('section-add', subsectionModel);
                     }
                 });
         }
@@ -512,6 +514,9 @@ function(
                 if($target.hasClass('section')){
                     $parent = $target.parents('.sections');
                     actions.disable($parent.find('.section'), 'h2');
+                } else if($target.hasClass('subsection')) {
+                    $parent = $target.parents('.section');
+                    actions.displayItemWrapper(null, $parent, true);
                 }
             })
             .on('add change undo.deleter deleted.deleter', function(e){

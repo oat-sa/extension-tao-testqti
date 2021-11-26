@@ -213,6 +213,31 @@ function($, propertyView){
         });
     }
 
+
+    /**
+     * Hides/shows container for adding items inside a section checking if there is at least
+     * one subsection inside of it. As delete subsection event is triggered before subsection
+     * container is actually removed from section container, we need to have conditional flow
+     * @param {Object | null} sectionModel - section model
+     * @param {Object} sectionContainer - section jquery container
+     * @param {boolean} subsectionDeleted - if subsection was deleted
+     */
+    function displayItemWrapper(sectionModel, sectionContainer, subsectionDeleted = false) {
+        const $elt = $('.itemrefs-wrapper:first', sectionContainer);
+        if (subsectionDeleted) {
+            if($('.subsection', sectionContainer).length > 1) {
+                $elt.hide();
+            } else {
+                $elt.show();
+            }
+        } else if (sectionModel.assessmentSubsections && sectionModel.assessmentSubsections.length > 0) {
+            $elt.hide();
+        } else {
+            $elt.show();
+
+        }
+    }
+
     /**
      * The actions gives you shared behavior for some actions.
      *
@@ -225,6 +250,7 @@ function($, propertyView){
         movable       : movable,
         disable       : disable,
         enable        : enable,
-        addSubsectionHandler : addSubsectionHandler
+        addSubsectionHandler : addSubsectionHandler,
+        displayItemWrapper: displayItemWrapper
     };
 });
