@@ -221,11 +221,18 @@ function($, propertyView){
      * @param {Object | null} sectionModel - section model
      * @param {Object} sectionContainer - section jquery container
      * @param {boolean} subsectionDeleted - if subsection was deleted
+     * @param {boolean} undoSubsectionDeletion - if subsection was recreated with undo action
      */
-    function displayItemWrapper(sectionModel, sectionContainer, subsectionDeleted = false) {
+    function displayItemWrapper(sectionModel, sectionContainer, subsectionDeleted = false, undoSubsectionDeletion = false) {
         const $elt = $('.itemrefs-wrapper:first', sectionContainer);
         if (subsectionDeleted) {
             if($('.subsection', sectionContainer).length > 1) {
+                $elt.hide();
+            } else {
+                $elt.show();
+            }
+        } else if (undoSubsectionDeletion) {
+            if($('.subsection', sectionContainer).length >= 1) {
                 $elt.hide();
             } else {
                 $elt.show();

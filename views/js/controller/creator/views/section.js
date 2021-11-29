@@ -526,6 +526,9 @@ function(
                     actions.removable($sections, 'h2');
                     actions.movable($sections, 'section', 'h2');
                 }
+                if (e.type === 'undo' && $target.parents('.subsection')) {
+                    actions.displayItemWrapper(null, $target.parents('.section'), false, true);
+                }
             })
             .on('open.toggler', '.rub-toggler', function(e){
                 if(e.namespace === 'toggler'){
