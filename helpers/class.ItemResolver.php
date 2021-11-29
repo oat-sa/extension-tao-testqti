@@ -61,7 +61,7 @@ class taoQtiTest_helpers_ItemResolver implements Resolver
     {
         $taoItem = new core_kernel_classes_Resource($url);
         if ($taoItem->exists() === false) {
-            $msg = "The QTI Item with URI '${url}' cannot be found.";
+            $msg = __("The QTI Item with URI '%s' cannot be found.", $url);
             throw new ResolutionException($msg);
         }
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 2021.10\n"
-"PO-Revision-Date: 2021-11-17T13:23:39\n"
+"PO-Revision-Date: 2021-11-18T23:39:55\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -766,7 +766,7 @@ msgstr "このテストパートの最小時間"
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \'id\'"
 msgstr ""
 
 msgid "Missed test package file"
@@ -1352,6 +1352,9 @@ msgstr "テストの主要識別子"
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
 msgstr "適応されたアーカイブは無効です。破損していないか、'imsmanifest.xml'ファイルを含んでいるかを確認してください。"
 
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr "QTIアイテム（ URI '%s'）が見つかりません。"
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "コンパイルするQTIテスト'%s'は少なくとも１つのQTIアイテムが必要ですが，見つかりません。"
 
@@ -1395,7 +1398,7 @@ msgid "The test has unsaved changes, would you like to save it?"
 msgstr ""
 
 msgid "The test needs to be saved before it can be previewed."
-msgstr ""
+msgstr "プレビューする前に、テストを保存してください。"
 
 msgid "The test part identifier."
 msgstr "テストパート識別子"
@@ -1428,7 +1431,7 @@ msgid "This constraint controls whether or not the candidate is allowed to provi
 msgstr "受検中に，問題に対するコメントを受検者に許可するかどうかを設定します。なお、コメントは採点対象にはなりません。"
 
 msgid "This functionality is blocked. Please contact with your administrator for more details."
-msgstr ""
+msgstr "この機能はブロックされています。詳細については、管理者にお問い合わせください。"
 
 msgid "This test has been suspended"
 msgstr "テストは一時中断されました"
