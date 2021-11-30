@@ -62,7 +62,14 @@ function(
         var $actionContainer = $('h2', $section);
         var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
+        debugger;
+        const isNestedSubsection = $section.parents('.subsection').length !== 0;
 
+        // prevent adding a third subsection level
+        if (isNestedSubsection) {
+            $('.add-subsection', $section).hide();
+            $('.add-subsection + .tlb-separator', $section).hide();
+        }
         // set item session control to use test part options if section level isn't set
         if (!sectionModel.itemSessionControl) {
             sectionModel.itemSessionControl = {};
@@ -82,8 +89,6 @@ function(
         acceptItemRefs();
         rubricBlocks();
         addRubricBlock();
-        // addSubsection();
-        //trigger for the case the section is added an a selection is ongoing
 
         /**
          * Perform some binding once the property view is create
