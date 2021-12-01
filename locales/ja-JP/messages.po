@@ -374,7 +374,7 @@ msgid "Do not show alert on timeout"
 msgstr "タイムアウト警告を非表示"
 
 msgid "Don\'t save"
-msgstr ""
+msgstr "保存しないでください"
 
 msgid "Download"
 msgstr "ダウンロード"
@@ -427,10 +427,8 @@ msgstr "エラー"
 msgid "Error during file import"
 msgstr "ファイルインポート中のエラー"
 
-msgid "Error found in the IMS QTI Test:\n"
-"%s"
-msgstr "QTIテストにエラーが見つかりました:\n"
-"%s"
+msgid "Error found in the IMS QTI Test:\n%s"
+msgstr "QTIテストにエラーが見つかりました:\n%s"
 
 msgid "Expand the review panel"
 msgstr "レビューパネルを開く"
@@ -1410,13 +1408,13 @@ msgid "The time limit has been reached for this part of the test."
 msgstr ""
 
 msgid "There are %s unanswered questions"
-msgstr ""
+msgstr "未回答のものが%s問あります。"
 
 msgid "There are %s unanswered questions in this part of the test"
 msgstr ""
 
 msgid "There is %s unanswered question"
-msgstr ""
+msgstr "未回答のものが%s問あります。"
 
 msgid "There is %s unanswered question in this part of the test"
 msgstr ""
@@ -1624,7 +1622,7 @@ msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "テストを終了しようとしています。"
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "テストを終了しようとしています。一度終了したテストには再びアクセスすることはできません よろしければOK をクリックしてテストを終了してください。"
@@ -1663,7 +1661,7 @@ msgid "You have %s unanswered question(s)."
 msgstr "%s問の未解答問題があります"
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr ""
+msgstr "一度終了したテストには再びアクセスすることはできません。よろしければ\"%s\" をクリックしてテストを終了してください。"
 
 msgid "Your comment…"
 msgstr "あなたのコメント..."
