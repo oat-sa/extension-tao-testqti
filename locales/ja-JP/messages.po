@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 2021.10\n"
-"PO-Revision-Date: 2021-11-18T23:39:55\n"
+"PO-Revision-Date: 2021-12-01T14:28:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -226,6 +226,12 @@ msgstr ""
 msgid "Black on White"
 msgstr ""
 
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
 msgid "Calculator"
 msgstr "電卓"
 
@@ -364,6 +370,9 @@ msgstr "ラベル表示"
 msgid "Displays a customisable magnifier"
 msgstr "カスタマイズ拡大レンズを表示"
 
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "現在のアイテムに見直しフラグを外す"
 
@@ -432,6 +441,9 @@ msgstr "QTIテストにエラーが見つかりました:\n%s"
 
 msgid "Expand the review panel"
 msgstr "レビューパネルを開く"
+
+msgid "Export"
+msgstr ""
 
 msgid "Export failed for the test \"%s"
 msgstr "テスト \"%s のエクスポート失敗"
@@ -631,10 +643,10 @@ msgstr "アイテム・レスポンス識別子が現在のアイテムと一致
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "Items"
+msgid "items"
 msgstr "アイテム"
 
-msgid "items"
+msgid "Items"
 msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -764,7 +776,7 @@ msgstr "このテストパートの最小時間"
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\'"
+msgid "Missed required parameter \'id\"
 msgstr ""
 
 msgid "Missed test package file"
@@ -857,10 +869,10 @@ msgstr "チェックを入れるとシャッフルされずに，提示順はこ
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr "OK"
 
-msgid "Ok"
+msgid "OK"
 msgstr "OK"
 
 msgid "OK & End test"
@@ -974,10 +986,10 @@ msgstr "QTI Test Package 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Test Content Package"
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
 msgid "questions"
@@ -1241,6 +1253,9 @@ msgstr ""
 msgid "Test Preview is not installed, please contact to your administrator."
 msgstr ""
 
+msgid "Test review"
+msgstr ""
+
 msgid "Test Saved"
 msgstr "テストを保存しました"
 
@@ -1263,10 +1278,10 @@ msgstr "テスト"
 msgid "Text content"
 msgstr "テキストコンテンツ"
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr "テキスト読み上げ"
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr "テキスト読み上げ"
 
 msgid "that was being taken."
@@ -1367,6 +1382,9 @@ msgstr "QTI-XMLテストは正常に書き込むことができませんでし�
 
 msgid "The reference."
 msgstr "参照"
+
+msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
+msgstr ""
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
 msgstr "テスト全体での採点が行われます。スコア（得点）の合計をMAX SCORE（最大得点）で割った値がカットスコア（合格得点率）と比較され、PASS_TOTAL で合否判定が提示されます。"
