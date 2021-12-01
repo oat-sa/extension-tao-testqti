@@ -479,10 +479,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             @$this->deleteTest($data->rdfsResource);
 
             if (count($data->newItems) > 0) {
-                $msg = __(
-                    "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back.",
-                    $data->manifestResource->getIdentifier()
-                );
+                $msg = __("The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back.", $data->manifestResource->getIdentifier());
                 $report->add(new common_report_Report(common_report_Report::TYPE_WARNING, $msg));
             }
         }
