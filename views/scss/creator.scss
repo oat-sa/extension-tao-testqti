@@ -375,8 +375,14 @@
                 border-radius: 2px 2px 0 0;
                 & > .toggler {
                     position: absolute;
-                    right: 15px;
+                    left: 5px;
+                    top: 15px;
                     color: $textHighlight;
+                    text-decoration: none;
+                    transform: rotate(180deg);
+                }
+                & > .closed {
+                    transform: rotate(-90deg);
                 }
             }
             .actions {
