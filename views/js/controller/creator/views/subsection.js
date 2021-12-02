@@ -32,7 +32,7 @@
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
-    'taoQtiTest/controller/creator/helpers/sectionBlueprints',
+    'taoQtiTest/controller/creator/helpers/sectionBlueprints'
 ],
 function(
     $,
@@ -47,7 +47,7 @@ function(
     qtiTestHelper,
     categorySelectorFactory,
     sectionCategory,
-    sectionBlueprint,
+    sectionBlueprint
 ){
     'use strict';
     /**
@@ -89,7 +89,7 @@ function(
         acceptItemRefs();
         rubricBlocks();
         addRubricBlock();
-
+        addSubsection();
         /**
          * Perform some binding once the property view is create
          * @param {propView} propView - the view object
@@ -448,6 +448,50 @@ function(
                 sectionBlueprint.setBlueprint(sectionModel, blueprint);
             }
 
+        }
+
+        function addSubsection() {
+            $('.add-subsection', $section).adder({
+                target: $('.subsections', $section),
+                content : templates.subsection,
+                templateData : function(cb){
+    
+                    //create a new subsection model object to be bound to the template
+                    const subsectionIndex = $('.subsection', $section).length;
+                    cb({
+                        'qti-type' : 'assessmentSection',
+                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'subsection'),
+                        title : `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
+                        index : 0,
+                        sectionParts : [],
+                        visible: true
+                    });
+                }
+            });
+
+            //we listen the event not from the adder but  from the data binder to be sure the model is up to date
+            $(document)
+                .off('add.binder', '#' + $section.attr('id'))
+                .on('add.binder', '#' + $section.attr('id'), function(e, $subsection){
+                    if(e.namespace === 'binder' && $subsection.hasClass('subsection')){
+                        const sectionIndex = $subsection.parents('.section').data('bind-index');
+                        const subsectionIndex = $subsection.data('bind-index');
+                        sectionModel = partModel.assessmentSections[sectionIndex];
+                        //!!!TODO issue with model!!!
+                        const subsectionModel = partModel.assessmentSections[sectionIndex].assessmentSubsections[subsectionIndex];
+
+                        //initialize the new test part
+                        setUp(creatorContext, subsectionModel, partModel, $subsection);
+
+                        actions.displayItemWrapper(sectionModel, $section);
+
+                        /**
+                         * @event modelOverseer#section-add
+                         * @param {Object} subsectionModel
+                         */
+                        modelOverseer.trigger('section-add', subsectionModel);
+                    }
+                });
         }
     }
 

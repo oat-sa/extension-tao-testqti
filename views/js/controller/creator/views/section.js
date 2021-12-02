@@ -474,23 +474,6 @@ function(
                 .off('add.binder', '#' + $section.attr('id'))
                 .on('add.binder', '#' + $section.attr('id'), function(e, $subsection){
                     if(e.namespace === 'binder' && $subsection.hasClass('subsection')){
-                        $subsection.adder({
-                            target: $('.subsections', $subsection),
-                            content : templates.subsection,
-                            templateData : function(cb){
-
-                                //create a new subsection model object to be bound to the template
-                                const subsectionIndex = $('.subsection', $section).length;
-                                cb({
-                                    'qti-type' : 'assessmentSection',
-                                    identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'subsection'),
-                                    title : `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
-                                    index : 0,
-                                    sectionParts : [],
-                                    visible: true
-                                });
-                            }
-                        });
                         const sectionIndex = $subsection.parents('.section').data('bind-index');
                         const subsectionIndex = $subsection.data('bind-index');
                         sectionModel = partModel.assessmentSections[sectionIndex];
