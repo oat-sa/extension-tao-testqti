@@ -652,6 +652,12 @@ return [
      */
     'item-cache-size' => 3,
 
+    /**
+     * Defines the TimeToLive of items in the cache, in seconds
+     * This is required for caching scenarios
+     * @type integer
+     */
+    'item-store-ttl' => 15 * 60,
 
     /**
      * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
