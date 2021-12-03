@@ -324,9 +324,21 @@
             }
         }
 
-
+        .button-add {
+            background-color: transparent;
+            color: #266d9c;
+            text-shadow: none;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            & > span {
+                padding: 0;
+                font-size: 1.6rem;
+                text-shadow: none;
+            }
+        }
         .test-content {
-            padding: 0 0 0 10px;
+            padding: 0 18px 0 18px;
             height: calc(100% - 65px);
             overflow-y : auto;
             h1, h2 {
@@ -338,30 +350,39 @@
 
         .testpart-content {
             & > button{
-                margin-left: 10px;
+                margin-left: 13px;
             }
         }
 
         .testpart {
             color: $textColor;
-            border-left: solid 5px $testPartColor;
-            padding: 0 5px;
-            margin: 10px 0;
+            border: solid 1px $testPartColor;
+            padding: 0;
+            margin: 16px 0;
+            padding-bottom: 10px;
+            @include border-radius(3);
 
             & > h1 {
+                font-size: 1.25em;
+                display: flex;
+                align-items: center;
                 background-color: whiten($testPartColor, 0.2);
-                padding: 0 5px;
-                margin-right: 5px;
+                padding: 25px;
                 margin-top: 0;
                 color: $textHighlight;
-                @include border-radius;
+                font-weight: bold;
+                border-radius: 2px 2px 0 0;
                 & > .toggler {
                     position: absolute;
                     right: 15px;
                     color: $textHighlight;
                 }
             }
+            .actions {
+                top: 6px;
+                right: 10px;
 
+            }
             .actions .tlb-group {
                 min-width: 126px;
             }
@@ -374,15 +395,20 @@
         .section {
             color: $textColor;
             border-left: solid 5px $sectionColor;
-            padding: 0 5px 0 15px;
-            margin: 10px 0 10px 10px;
+            padding: 0 5px 20px 15px;
+            margin: 10px 16px 10px 16px;
 
             & > h2 {
-                color: blacken($sectionColor, 0.4);
+                color: black;
+                font-weight: bold;
             }
 
             &:last-child{
                 margin-bottom: 0;
+            }
+            .actions {
+                top: 0;
+                right: -4px;
             }
             .actions .tlb-group {
                 min-width: 157px;
@@ -391,7 +417,7 @@
 
         .rublocks{
             border-left: solid 5px $rubColor;
-            padding: 0 5px 0 15px;
+            padding: 0 5px 16px 20px;
             margin: 0px 0 10px 0px;
             h3 {
                 color: $rubColor;

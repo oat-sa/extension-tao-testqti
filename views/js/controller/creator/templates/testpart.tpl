@@ -28,7 +28,7 @@
        <!-- assessmentTest/testPart/assessmentSections -->
        <div class="sections" data-bind-each="assessmentSections" data-bind-tmpl="section" data-bind-filter="isSection"></div>
 
-        <button class="btn-info small section-adder" data-testid="add-section">
+        <button class="btn-info small section-adder button-add" data-testid="add-section">
             <span class="icon-add"></span>
             {{__ 'New section'}}
         </button>
