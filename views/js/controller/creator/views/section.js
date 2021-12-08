@@ -62,8 +62,7 @@ function(
      * @param {jQuery} $section - the section to set up
      */
     function setUp (creatorContext, sectionModel, partModel, $section) {
-
-        var $actionContainer = $('h2', $section);
+        var $actionContainer = $section.children('h2');
         var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
 
@@ -496,7 +495,7 @@ function(
                 .on('add.binder', '#' + $section.attr('id'), function(e, $subsection){
                     if(e.namespace === 'binder' &&
                         $subsection.hasClass('subsection') &&
-                        !$subsection.parents(".subsection").length) { // first level of subsection
+                        !$subsection.parents('.subsection').length) { // first level of subsection
                         const subsectionIndex = $subsection.data('bind-index');
                         const subsectionModel = sectionModel.sectionParts[subsectionIndex];
 
@@ -536,7 +535,7 @@ function(
                 if($target.hasClass('section')){
                     $parent = $target.parents('.sections');
                     actions.disable($parent.find('.section'), 'h2');
-                } else if($target.hasClass('subsection')) {
+                } else if($target.hasClass('subsection') && !$target.parents('.subsection').length) { // first level of subsection
                     $parent = $target.parents('.section');
                     actions.displayItemWrapper(null, $parent, true);
                 }
@@ -548,7 +547,7 @@ function(
                     actions.removable($sections, 'h2');
                     actions.movable($sections, 'section', 'h2');
                 }
-                if (e.type === 'undo' && $target.parents('.subsection')) {
+                if (e.type === 'undo' && ($target.hasClass('subsection') || $target.hasClass('subsections')) && !$target.parents('.subsection').length) {
                     actions.displayItemWrapper(null, $target.parents('.section'), false, true);
                 }
             })

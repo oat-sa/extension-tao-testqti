@@ -246,6 +246,18 @@ function($, propertyView){
     }
 
     /**
+     * Update delete selector for 2nd level subsections
+     *@param {jQueryElement} $actionContainer - action's container
+     */
+     function updateDeleteSelector($actionContainer) {
+        const $deleteButton = $actionContainer.find('.delete-subsection');
+        if($deleteButton.parents('.subsection').length > 1) {
+            const deleteSelector = $deleteButton.data('delete');
+            $deleteButton.attr('data-delete', `${deleteSelector} .subsection`)
+        }
+    }
+
+    /**
      * The actions gives you shared behavior for some actions.
      *
      * @exports taoQtiTest/controller/creator/views/actions
@@ -258,6 +270,7 @@ function($, propertyView){
         disable       : disable,
         enable        : enable,
         addSubsectionHandler : addSubsectionHandler,
-        displayItemWrapper: displayItemWrapper
+        displayItemWrapper: displayItemWrapper,
+        updateDeleteSelector: updateDeleteSelector
     };
 });

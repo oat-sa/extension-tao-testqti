@@ -17,7 +17,7 @@
                                 <a href="#" class="tlb-button-off move-up disabled" title="{{__ 'Move Up'}}" data-testid="move-up-subsection"><span class="icon-up"></span></a>
                                 <a href="#" class="tlb-button-off move-down disabled" title="{{__ 'Move Down'}}" data-testid="move-down-subsection"><span class="icon-down"></span></a>
                                 <span class="tlb-separator"></span>
-                                <a href="#" class="tlb-button-off disabled" title="{{__ 'Remove Subsection'}}" data-delete=":parent .subsection" data-testid="remove-subsection"><span class="icon-bin"></span></a>
+                                <a href="#" class="tlb-button-off disabled delete-subsection" title="{{__ 'Remove Subsection'}}" data-delete=":parent .subsection" data-testid="remove-subsection"><span class="icon-bin"></span></a>
                             </span>
                             <span class="tlb-end"></span>
                         </span>

@@ -59,7 +59,7 @@ function(
      * @param {jQuery} $subsection - the subsection to set up
      */
      function setUp (creatorContext, subsectionModel, sectionModel, $subsection) {
-        var $actionContainer = $('h2', $subsection);
+        var $actionContainer = $subsection.children('h2');
         var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
         const isNestedSubsection = $subsection.parents('.subsection').length !== 0;
@@ -85,6 +85,7 @@ function(
         actions.move($actionContainer, 'subsections', 'subsection');
         actions.addSubsectionHandler($actionContainer);
         actions.displayItemWrapper(subsectionModel, $subsection);
+        actions.updateDeleteSelector($actionContainer);
 
         subsections();
         itemRefs();
@@ -495,7 +496,7 @@ function(
                 .on('add.binder', '#' + $subsection.attr('id'), function(e, $sub2section){
                     if(e.namespace === 'binder' &&
                         $sub2section.hasClass('subsection') &&
-                        $subsection.parents(".subsection").length) { // second level of subsection){
+                        $sub2section.parents('.subsection').length) { // second level of subsection){
                         const sub2sectionIndex = $sub2section.data('bind-index');
                         const sub2sectionModel = subsectionModel.sectionParts[sub2sectionIndex];
 
@@ -533,8 +534,12 @@ function(
                     var $parent;
                     var $target = $(e.target);
                     if($target.hasClass('subsection')){
-                        $parent = $target.parents('.subsections');
+                        $parent = $target.parents('.subsections').first();
                         actions.disable($parent.find('.subsection'), 'h2');
+                        if($target.parents('.subsection').length) { // second level of subsection
+                            $parent = $target.parents('.subsection');
+                            actions.displayItemWrapper(null, $parent, true);
+                        }
                     }
                 })
                 .on('add change undo.deleter deleted.deleter', function(e){
@@ -543,6 +548,10 @@ function(
                         $subsections = $('.subsection', $target.hasClass('subsections') ? $target : $target.parents('.sections'));
                         actions.removable($subsections, 'h2');
                         actions.movable($subsections, 'subsection', 'h2');
+
+                        if (e.type === 'undo' && $subsections.parents('.subsection').length) {
+                            actions.displayItemWrapper(null, $subsections.parents('.subsection'), false, true);
+                        }
                     }
                 })
                 .on('open.toggler', '.rub-toggler', function(e){
