@@ -80,8 +80,8 @@ function($, propertyView){
      * @param {String} elementClass - the cssClass to identify elements
      */
     function move ($actionContainer, containerClass, elementClass) {
-        var $element = $actionContainer.parents('.' + elementClass);
-        var $container = $element.parents('.' + containerClass );
+        var $element = $actionContainer.closest('.' + elementClass);
+        var $container = $element.closest('.' + containerClass );
 
         //move up an element
         $('.move-up', $actionContainer).click(function(e){
@@ -94,12 +94,12 @@ function($, propertyView){
             }
 
             //get the position
-            $elements = $('.' + elementClass, $container);
+            $elements = $container.children('.' + elementClass);
             index = $elements.index($element);
             if (index > 0) {
                 $element.fadeOut(200, () => {
                     $element
-                        .insertBefore($(`.${elementClass}:eq(${index - 1})`, $container))
+                        .insertBefore($container.children(`.${elementClass}:eq(${index - 1})`))
                         .fadeIn(400, () => $container.trigger('change') );
                 });
             }
