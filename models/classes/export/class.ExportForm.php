@@ -67,9 +67,7 @@ abstract class taoQtiTest_models_classes_export_ExportForm extends tao_helpers_f
 
         $exportElt = tao_helpers_form_FormFactory::getElement('export', 'Free');
         $exportElt->setValue(
-            '<a href="#" class="form-submitter btn-success small"><span class="icon-export"></span> ' . __(
-                'Export'
-            ) . '</a>'
+            '<a href="#" class="form-submitter btn-success small"><span class="icon-export"></span> ' . __('Export') . '</a>'
         );
 
         $this->form->setActions([$exportElt], 'bottom');
