@@ -270,7 +270,7 @@ function(
                 .off('add.binder', '#' + $subsection.attr('id') + ' .itemrefs')
                 .on('add.binder', '#' + $subsection.attr('id') + ' .itemrefs', function(e, $itemRef){
                     var index, itemRefModel;
-                    if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
+                    if(e.namespace === 'binder' && $itemRef.hasClass('itemref') && $itemRef.closest('.subsection').attr('id') === $subsection.attr('id')){
                         index = $itemRef.data('bind-index');
                         itemRefModel = subsectionModel.sectionParts[index];
 
