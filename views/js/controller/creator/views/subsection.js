@@ -54,37 +54,39 @@ function(
      * Set up a section: init action behaviors. Called for each section.
      *
      * @param {Object} creatorContext
-     * @param {Object} sectionModel - the data model to bind to the test section
-     * @param {Object} partModel - the parent data model to inherit
-     * @param {jQuery} $section - the section to set up
+     * @param {Object} subsectionModel - the data model to bind to the test section
+     * @param {Object} sectionModel - the parent data model to inherit
+     * @param {jQuery} $subsection - the subsection to set up
      */
-     function setUp (creatorContext, sectionModel, partModel, $section) {
-        var $actionContainer = $('h2', $section);
+     function setUp (creatorContext, subsectionModel, sectionModel, $subsection) {
+        var $actionContainer = $('h2', $subsection);
         var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
-        debugger;
-        const isNestedSubsection = $section.parents('.subsection').length !== 0;
+        const isNestedSubsection = $subsection.parents('.subsection').length !== 0;
 
         // prevent adding a third subsection level
         if (isNestedSubsection) {
-            $('.add-subsection', $section).hide();
-            $('.add-subsection + .tlb-separator', $section).hide();
+            $('.add-subsection', $subsection).hide();
+            $('.add-subsection + .tlb-separator', $subsection).hide();
         }
         // set item session control to use test part options if section level isn't set
-        if (!sectionModel.itemSessionControl) {
-            sectionModel.itemSessionControl = {};
+        if (!subsectionModel.itemSessionControl) {
+            subsectionModel.itemSessionControl = {};
         }
-        if (!sectionModel.categories) {
-            sectionModel.categories = defaults().categories;
+        if (!subsectionModel.categories) {
+            subsectionModel.categories = defaults().categories;
         }
-        _.defaults(sectionModel.itemSessionControl, partModel.itemSessionControl);
+        _.defaults(subsectionModel.itemSessionControl, sectionModel.itemSessionControl);
 
         if(!_.isEmpty(config.routes.blueprintsById)){
-            sectionModel.hasBlueprint = true;
+            subsectionModel.hasBlueprint = true;
         }
-        actions.properties($actionContainer, 'section', sectionModel, propHandler);
+        actions.properties($actionContainer, 'section', subsectionModel, propHandler);
         actions.move($actionContainer, 'subsections', 'subsection');
         actions.addSubsectionHandler($actionContainer);
+        actions.displayItemWrapper(subsectionModel, $subsection);
+
+        subsections();
         itemRefs();
         acceptItemRefs();
         rubricBlocks();
@@ -104,9 +106,9 @@ function(
             var $selectionSelect = $('[name=section-select]', $view);
             var $selectionWithRep = $('[name=section-with-replacement]', $view);
 
-            // sectionModel.selection will be filled by binded values from template section-props.tpl
-            // if sectionModel.selection from server response it has 'qti-type'
-            var isSelectionFromServer = !!(sectionModel.selection && sectionModel.selection['qti-type']);
+            // subsectionModel.selection will be filled by binded values from template section-props.tpl
+            // if subsectionModel.selection from server response it has 'qti-type'
+            var isSelectionFromServer = !!(subsectionModel.selection && subsectionModel.selection['qti-type']);
 
             var switchSelection = function switchSelection(){
                 if($selectionSwitcher.prop('checked') === true){
@@ -122,35 +124,35 @@ function(
                 if(!$selectionSwitcher.prop('checked')){
                     $selectionSelect.val(0);
                     $selectionWithRep.prop('checked', false);
-                    delete sectionModel.selection;
+                    delete subsectionModel.selection;
                 }
             });
 
             $selectionSwitcher.prop('checked', isSelectionFromServer).trigger('change');
 
             //listen for databinder change to update the test part title
-            $title =  $('[data-bind=title]', $section);
+            $title =  $('[data-bind=title]', $subsection);
             $view.on('change.binder', function(e){
-                if(e.namespace === 'binder' && sectionModel['qti-type'] === 'assessmentSection'){
-                    $title.text(sectionModel.title);
+                if(e.namespace === 'binder' && subsectionModel['qti-type'] === 'assessmentSection'){
+                    $title.text(subsectionModel.title);
                 }
             });
 
             // deleted.deleter event fires only on the parent nodes (testparts, sections, etc)
             // Since it "bubles" we can subsctibe only to the highest parent node
-            $section.parents('.testparts').on('deleted.deleter', removePropHandler);
+            $subsection.parents('.testparts').on('deleted.deleter', removePropHandler);
 
             //section level category configuration
             categoriesProperty($view);
 
-            if(typeof sectionModel.hasBlueprint !== 'undefined'){
+            if(typeof subsectionModel.hasBlueprint !== 'undefined'){
                 blueprintProperty($view);
             }
 
             function removePropHandler(e, $deletedNode) {
                 const validIds = [
-                    $section.parents('.testpart').attr('id'),
-                    $section.attr('id')
+                    $subsection.parents('.testpart').attr('id'),
+                    $subsection.attr('id')
                 ];
 
                 const deletedNodeId = $deletedNode.attr('id');
@@ -165,24 +167,42 @@ function(
                 }
             }
         }
+        /**
+         * Set up subsections that already belongs to the section
+         * @private
+         */
+        function subsections(){
+            if(!subsectionModel.sectionParts){
+                subsectionModel.sectionParts = [];
+            }
+            
+            $subsection.children('.subsections').children('.subsection').each(function(){
+                var $subsection = $(this);
+                var index = $subsection.data('bind-index');
+                if(!subsectionModel.sectionParts[index]){
+                    subsectionModel.sectionParts[index] = {};
+                }
 
+                setUp(creatorContext, subsectionModel.sectionParts[index], subsectionModel, $subsection);
+            });
+        }
         /**
          * Set up the item refs that already belongs to the section
          * @private
          */
         function itemRefs(){
 
-            if(!sectionModel.sectionParts){
-                sectionModel.sectionParts = [];
+            if(!subsectionModel.sectionParts){
+                subsectionModel.sectionParts = [];
             }
-            $('.itemref', $section).each(function(){
+            $('.itemref', $subsection).each(function(){
                 var $itemRef = $(this);
                 var index = $itemRef.data('bind-index');
-                if(!sectionModel.sectionParts[index]){
-                    sectionModel.sectionParts[index] = {};
+                if(!subsectionModel.sectionParts[index]){
+                    subsectionModel.sectionParts[index] = {};
                 }
 
-                itemRefView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, partModel, $itemRef);
+                itemRefView.setUp(creatorContext, subsectionModel.sectionParts[index], subsectionModel, sectionModel, $itemRef);
                 $itemRef.find('.title').text(
                     config.labels[uri.encode($itemRef.data('uri'))]
                 );
@@ -200,7 +220,7 @@ function(
             //the item selector trigger a select event
             $itemsPanel.on('itemselect.creator', function(e, selection){
 
-                var $placeholder = $('.itemref-placeholder', $section);
+                var $placeholder = $('.itemref-placeholder', $subsection);
                 var $placeholders = $('.itemref-placeholder');
 
                 if(_.size(selection) > 0){
@@ -210,14 +230,14 @@ function(
                         var categories,
                             defaultItemData = {};
 
-                        if(sectionModel.itemSessionControl && !_.isUndefined(sectionModel.itemSessionControl.maxAttempts)){
+                        if(subsectionModel.itemSessionControl && !_.isUndefined(subsectionModel.itemSessionControl.maxAttempts)){
 
                             //for a matter of consistency, the itemRef will "inherit" the itemSessionControl configuration from its parent section
-                            defaultItemData.itemSessionControl = _.clone(sectionModel.itemSessionControl);
+                            defaultItemData.itemSessionControl = _.clone(subsectionModel.itemSessionControl);
                         }
 
                         //the itemRef should also "inherit" the categories set at the item level
-                        categories = sectionCategory.getCategories(sectionModel);
+                        categories = sectionCategory.getCategories(subsectionModel);
                         defaultItemData.categories = _.clone(categories.propagated) || [];
 
                         _.forEach(selection, function(item){
@@ -231,7 +251,7 @@ function(
                                 itemData.categories = item.categories.concat(itemData.categories);
                             }
 
-                            addItemRef($('.itemrefs', $section), null, itemData);
+                            addItemRef($('.itemrefs', $subsection), null, itemData);
                         });
 
                         $itemsPanel.trigger('itemselected.creator');
@@ -246,15 +266,15 @@ function(
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $section.attr('id') + ' .itemrefs')
-                .on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
+                .off('add.binder', '#' + $subsection.attr('id') + ' .itemrefs')
+                .on('add.binder', '#' + $subsection.attr('id') + ' .itemrefs', function(e, $itemRef){
                     var index, itemRefModel;
                     if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
                         index = $itemRef.data('bind-index');
-                        itemRefModel = sectionModel.sectionParts[index];
+                        itemRefModel = subsectionModel.sectionParts[index];
 
                         //initialize the new item ref
-                        itemRefView.setUp(creatorContext, itemRefModel, sectionModel, partModel, $itemRef);
+                        itemRefView.setUp(creatorContext, itemRefModel, subsectionModel, sectionModel, $itemRef);
 
                         /**
                          * @event modelOverseer#item-add
@@ -292,22 +312,22 @@ function(
          * @private
          */
         function rubricBlocks () {
-            if(!sectionModel.rubricBlocks){
-                sectionModel.rubricBlocks = [];
+            if(!subsectionModel.rubricBlocks){
+                subsectionModel.rubricBlocks = [];
             }
-            $('.rubricblock', $section).each(function(){
+            $('.rubricblock', $subsection).each(function(){
                 var $rubricBlock = $(this);
                 var index = $rubricBlock.data('bind-index');
-                if(!sectionModel.rubricBlocks[index]){
-                    sectionModel.rubricBlocks[index] = {};
+                if(!subsectionModel.rubricBlocks[index]){
+                    subsectionModel.rubricBlocks[index] = {};
                 }
 
-                rubricBlockView.setUp(creatorContext, sectionModel.rubricBlocks[index], $rubricBlock);
+                rubricBlockView.setUp(creatorContext, subsectionModel.rubricBlocks[index], $rubricBlock);
             });
 
             //opens the rubric blocks section if they are there.
-            if(sectionModel.rubricBlocks.length > 0){
-                $('.rub-toggler', $section).trigger('click');
+            if(subsectionModel.rubricBlocks.length > 0){
+                $('.rub-toggler', $subsection).trigger('click');
             }
         }
 
@@ -318,13 +338,13 @@ function(
          */
         function addRubricBlock () {
 
-            $('.rublock-adder', $section).adder({
-                target: $('.rubricblocks', $section),
+            $('.rublock-adder', $subsection).adder({
+                target: $('.rubricblocks', $subsection),
                 content : templates.rubricblock,
                 templateData : function(cb){
                     cb({
                         'qti-type' : 'rubricBlock',
-                        index  : $('.rubricblock', $section).length,
+                        index  : $('.rubricblock', $subsection).length,
                         content : [],
                         views : [1]
                     });
@@ -332,11 +352,11 @@ function(
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
+            $(document).on('add.binder', '#' + $subsection.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
                 var index, rubricModel;
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
                     index = $rubricBlock.data('bind-index');
-                    rubricModel = sectionModel.rubricBlocks[index] || {};
+                    rubricModel = subsectionModel.rubricBlocks[index] || {};
 
                     $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
                     rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
@@ -357,7 +377,7 @@ function(
          * @fires modelOverseer#category-change
          */
         function categoriesProperty($view){
-            var categories = sectionCategory.getCategories(sectionModel),
+            var categories = sectionCategory.getCategories(subsectionModel),
                 categorySelector = categorySelectorFactory($view);
 
             categorySelector.createForm(categories.all);
@@ -368,14 +388,14 @@ function(
             });
 
             categorySelector.on('category-change', function(selected, indeterminate) {
-                sectionCategory.setCategories(sectionModel, selected, indeterminate);
+                sectionCategory.setCategories(subsectionModel, selected, indeterminate);
 
                 modelOverseer.trigger('category-change');
             });
         }
 
         function updateFormState(categorySelector) {
-            var categories = sectionCategory.getCategories(sectionModel);
+            var categories = sectionCategory.getCategories(subsectionModel);
             categorySelector.updateFormState(categories.propagated, categories.partial);
         }
 
@@ -425,13 +445,13 @@ function(
              */
             function initBlueprint(){
 
-                if(typeof sectionModel.blueprint === 'undefined'){
+                if(typeof subsectionModel.blueprint === 'undefined'){
                     sectionBlueprint
-                        .getBlueprint(config.routes.blueprintByTestSection, sectionModel)
+                        .getBlueprint(config.routes.blueprintByTestSection, subsectionModel)
                         .success(function(data){
                             if(!_.isEmpty(data)){
-                                if(sectionModel.blueprint !== ""){
-                                    sectionModel.blueprint = data.uri;
+                                if(subsectionModel.blueprint !== ""){
+                                    subsectionModel.blueprint = data.uri;
                                     $select.select2('data', {id: data.uri, text: data.text});
                                     $select.trigger('change');
                                 }
@@ -445,19 +465,19 @@ function(
              * @private
              */
             function setBlueprint(blueprint){
-                sectionBlueprint.setBlueprint(sectionModel, blueprint);
+                sectionBlueprint.setBlueprint(subsectionModel, blueprint);
             }
 
         }
 
         function addSubsection() {
-            $('.add-subsection', $section).adder({
-                target: $('.subsections', $section),
+            $('.add-subsection', $subsection).adder({
+                target: $subsection.children('.subsections'),
                 content : templates.subsection,
                 templateData : function(cb){
     
                     //create a new subsection model object to be bound to the template
-                    const subsectionIndex = $('.subsection', $section).length;
+                    const subsectionIndex = $('.subsection', $subsection).length;
                     cb({
                         'qti-type' : 'assessmentSection',
                         identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'subsection'),
@@ -471,25 +491,24 @@ function(
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $section.attr('id'))
-                .on('add.binder', '#' + $section.attr('id'), function(e, $subsection){
-                    if(e.namespace === 'binder' && $subsection.hasClass('subsection')){
-                        const sectionIndex = $subsection.parents('.section').data('bind-index');
-                        const subsectionIndex = $subsection.data('bind-index');
-                        sectionModel = partModel.assessmentSections[sectionIndex];
-                        //!!!TODO issue with model!!!
-                        const subsectionModel = partModel.assessmentSections[sectionIndex].assessmentSubsections[subsectionIndex];
+                .off('add.binder', '#' + $subsection.attr('id'))
+                .on('add.binder', '#' + $subsection.attr('id'), function(e, $sub2section){
+                    if(e.namespace === 'binder' &&
+                        $sub2section.hasClass('subsection') &&
+                        $subsection.parents(".subsection").length) { // second level of subsection){
+                        const sub2sectionIndex = $sub2section.data('bind-index');
+                        const sub2sectionModel = subsectionModel.sectionParts[sub2sectionIndex];
 
                         //initialize the new test part
-                        setUp(creatorContext, subsectionModel, partModel, $subsection);
+                        setUp(creatorContext, sub2sectionModel, subsectionModel, $sub2section);
 
-                        actions.displayItemWrapper(sectionModel, $section);
+                        actions.displayItemWrapper(subsectionModel, $subsection);
 
                         /**
                          * @event modelOverseer#section-add
-                         * @param {Object} subsectionModel
+                         * @param {Object} sub2sectionModel
                          */
-                        modelOverseer.trigger('section-add', subsectionModel);
+                        modelOverseer.trigger('section-add', sub2sectionModel);
                     }
                 });
         }

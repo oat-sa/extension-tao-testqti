@@ -206,11 +206,6 @@ define([
                     sectionView.listenActionState();
                     subsectionView.listenActionState();
                     itemrefView.listenActionState();
-                    itemrefView.resize();
-
-                    $(window)
-                        .off('resize.qti-test-creator')
-                        .on('resize.qti-test-creator', () => itemrefView.resize() );
 
                     changeTracker($container.get()[0], creatorContext, '.content-wrap');
 

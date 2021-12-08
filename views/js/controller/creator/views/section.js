@@ -82,7 +82,9 @@ function(
         actions.properties($actionContainer, 'section', sectionModel, propHandler);
         actions.move($actionContainer, 'sections', 'section');
         actions.addSubsectionHandler($actionContainer);
+        actions.displayItemWrapper(sectionModel, $section);
         
+        subsections();
         itemRefs();
         acceptItemRefs();
         rubricBlocks();
@@ -166,6 +168,25 @@ function(
             }
         }
 
+        /**
+         * Set up subsections that already belongs to the section
+         * @private
+         */
+        function subsections(){
+            if(!sectionModel.sectionParts){
+                sectionModel.sectionParts = [];
+            }
+            
+            $section.children('.subsections').children('.subsection').each(function(){
+                var $subsection = $(this);
+                var index = $subsection.data('bind-index');
+                if(!sectionModel.sectionParts[index]){
+                    sectionModel.sectionParts[index] = {};
+                }
+
+                subsectionView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, $subsection);
+            });
+        }
         /**
          * Set up the item refs that already belongs to the section
          * @private
@@ -452,7 +473,7 @@ function(
 
         function addSubsection() {
             $('.subsection-adder', $section).adder({
-                target: $('.subsections', $section),
+                target: $section.children('.subsections'),
                 content : templates.subsection,
                 templateData : function(cb){
     
@@ -473,14 +494,14 @@ function(
             $(document)
                 .off('add.binder', '#' + $section.attr('id'))
                 .on('add.binder', '#' + $section.attr('id'), function(e, $subsection){
-                    if(e.namespace === 'binder' && $subsection.hasClass('subsection')){
-                        const sectionIndex = $subsection.parents('.section').data('bind-index');
+                    if(e.namespace === 'binder' &&
+                        $subsection.hasClass('subsection') &&
+                        !$subsection.parents(".subsection").length) { // first level of subsection
                         const subsectionIndex = $subsection.data('bind-index');
-                        sectionModel = partModel.assessmentSections[sectionIndex];
-                        const subsectionModel = partModel.assessmentSections[sectionIndex].assessmentSubsections[subsectionIndex];
+                        const subsectionModel = sectionModel.sectionParts[subsectionIndex];
 
                         //initialize the new test part
-                        subsectionView.setUp(creatorContext, subsectionModel, partModel, $subsection);
+                        subsectionView.setUp(creatorContext, subsectionModel, sectionModel, $subsection);
 
                         actions.displayItemWrapper(sectionModel, $section);
 

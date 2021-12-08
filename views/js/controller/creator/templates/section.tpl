@@ -46,6 +46,6 @@
             {{__ 'Add selected item(s) here.'}}
         </div>
     </div>
-     <div class="subsections" data-bind-each="assessmentSubsections" data-bind-tmpl="subsection" data-bind-filter="isSubsection"></div>
+     <div class="subsections" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection"></div>
 
 </div>

@@ -237,7 +237,7 @@ function($, propertyView){
             } else {
                 $elt.show();
             }
-        } else if (sectionModel.assessmentSubsections && sectionModel.assessmentSubsections.length > 0) {
+        } else if (sectionModel.sectionParts && sectionModel.sectionParts.length > 0  && sectionModel.sectionParts[0]['qti-type'] === 'assessmentSection') {
             $elt.hide();
         } else {
             $elt.show();
