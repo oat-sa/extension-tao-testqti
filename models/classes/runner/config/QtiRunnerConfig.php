@@ -129,6 +129,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 'itemCaching' => [
                     'enabled' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false,
                     'amount' => isset($rawConfig['item-cache-size']) ? intval($rawConfig['item-cache-size']) : 3,
+                    'itemStoreTTL' => isset($rawConfig['item-store-ttl']) ? intval($rawConfig['item-store-ttl']) : 15 * 60,
                 ],
                 'guidedNavigation' => isset($rawConfig['guidedNavigation']) ? $rawConfig['guidedNavigation'] : false,
                 'toolStateServerStorage' => isset($rawConfig['tool-state-server-storage']) ? $rawConfig['tool-state-server-storage'] : [],
