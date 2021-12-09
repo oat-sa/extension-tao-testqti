@@ -121,7 +121,7 @@ function($, propertyView){
             if (index < ($elements.length - 1) && $elements.length > 1) {
                 $element.fadeOut(200, () => {
                     $element
-                        .insertAfter($(`.${elementClass}:eq(${index + 1})`, $container))
+                        .insertAfter($container.children(`.${elementClass}:eq(${index + 1})`))
                         .fadeIn(400, () =>  $container.trigger('change') );
                 });
             }
