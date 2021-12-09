@@ -652,6 +652,14 @@ return [
      */
     'item-cache-size' => 3,
 
+    /**
+     * Defines the TimeToLive of items in the cache, in seconds.
+     * This is required for caching scenarios.
+     * The value must be lower than the typical TTL applied to the assets URL,
+     * defined in `config/tao/websource_NNNNNNNN.conf.php`, where `NNNNNNNN` is a random identifier.
+     * @type integer
+     */
+    'item-store-ttl' => 15 * 60,
 
     /**
      * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
