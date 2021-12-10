@@ -35,6 +35,7 @@
     $testPartColor: $websiteBorder;
     $sectionColor: $darkBlueGrey;
     $subsectionColor: #d2e9f3;
+    $sub2sectionColor: #d4d5d7;
     $rubColor: whiten($info, 0.3);
 
     position: relative;
@@ -402,7 +403,7 @@
         .section {
             color: $textColor;
             border-left: solid 5px $sectionColor;
-            padding: 0 5px 20px 15px;
+            padding: 0 5px 0 15px;
             margin: 10px 16px 10px 16px;
 
             & > h2 {
@@ -424,7 +425,10 @@
 
         .subsection {
             border-left: solid 5px $subsectionColor;
-            padding: 0 5px 20px 15px;
+            padding: 0 0 0 15px;
+            .subsection {
+                border-left-color: $sub2sectionColor;
+            }
         }
 
         .rublocks{
