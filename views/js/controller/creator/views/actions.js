@@ -13,21 +13,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2020 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define([
-'jquery',
-'taoQtiTest/controller/creator/views/property'],
-function($, propertyView){
+define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, propertyView) {
     'use strict';
 
-    var disabledClass = 'disabled';
-    var activeClass = 'active';
-    var btnOnClass = 'tlb-button-on';
+    const disabledClass = 'disabled';
+    const activeClass = 'active';
+    const btnOnClass = 'tlb-button-on';
 
     /**
      * Set up the property view for an element
@@ -36,33 +33,31 @@ function($, propertyView){
      * @param {Object} model - the model to bind
      * @param {PropertyViewCallback} cb - execute at view setup phase
      */
-    function properties ($container, template, model, cb) {
-        var propView = null;
-        $container.find('.property-toggler').on('click', function(e){
+    function properties($container, template, model, cb) {
+        let propView = null;
+        $container.find('.property-toggler').on('click', function (e) {
             e.preventDefault();
-            var $elt = $(this);
-            if(!$(this).hasClass(disabledClass)){
-
+            const $elt = $(this);
+            if (!$(this).hasClass(disabledClass)) {
                 $elt.blur(); //to remove the focus
 
-                if(propView === null){
-
+                if (propView === null) {
                     $container.addClass(activeClass);
                     $elt.addClass(btnOnClass);
 
                     propView = propertyView(template, model);
                     propView.open();
 
-                    propView.onOpen(function(){
+                    propView.onOpen(function () {
                         $container.addClass(activeClass);
                         $elt.addClass(btnOnClass);
                     });
-                    propView.onClose(function(){
+                    propView.onClose(function () {
                         $container.removeClass(activeClass);
                         $elt.removeClass(btnOnClass);
                     });
 
-                    if(typeof cb === 'function'){
+                    if (typeof cb === 'function') {
                         cb(propView);
                     }
                 } else {
@@ -72,24 +67,23 @@ function($, propertyView){
         });
     }
 
-
     /**
      * Enable to move an element
      * @param {jQueryElement} $actionContainer - where the mover is
      * @param {String} containerClass - the cssClass of the element container
      * @param {String} elementClass - the cssClass to identify elements
      */
-    function move ($actionContainer, containerClass, elementClass) {
-        var $element = $actionContainer.closest('.' + elementClass);
-        var $container = $element.closest('.' + containerClass );
+    function move($actionContainer, containerClass, elementClass) {
+        const $element = $actionContainer.closest('.' + elementClass);
+        const $container = $element.closest('.' + containerClass);
 
         //move up an element
-        $('.move-up', $actionContainer).click(function(e){
-            var $elements, index;
+        $('.move-up', $actionContainer).click(function (e) {
+            let $elements, index;
 
             //prevent default and click during animation
             e.preventDefault();
-            if($element.is(':animated')){
+            if ($element.is(':animated')) {
                 return false;
             }
 
@@ -100,29 +94,29 @@ function($, propertyView){
                 $element.fadeOut(200, () => {
                     $element
                         .insertBefore($container.children(`.${elementClass}:eq(${index - 1})`))
-                        .fadeIn(400, () => $container.trigger('change') );
+                        .fadeIn(400, () => $container.trigger('change'));
                 });
             }
         });
 
         //move down an element
-        $('.move-down', $actionContainer).click(function(e){
-            var $elements, index;
+        $('.move-down', $actionContainer).click(function (e) {
+            let $elements, index;
 
             //prevent default and click during animation
             e.preventDefault();
-            if($element.is(':animated')){
+            if ($element.is(':animated')) {
                 return false;
             }
 
             //get the position
             $elements = $('.' + elementClass, $container);
             index = $elements.index($element);
-            if (index < ($elements.length - 1) && $elements.length > 1) {
+            if (index < $elements.length - 1 && $elements.length > 1) {
                 $element.fadeOut(200, () => {
                     $element
                         .insertAfter($container.children(`.${elementClass}:eq(${index + 1})`))
-                        .fadeIn(400, () =>  $container.trigger('change') );
+                        .fadeIn(400, () => $container.trigger('change'));
                 });
             }
         });
@@ -134,36 +128,36 @@ function($, propertyView){
      * @param {String} elementClass - the cssClass to identify elements
      * @param {String} actionContainerElt - the element name that contains the actions
      */
-    function movable ($container, elementClass, actionContainerElt){
-        $container.each(function(){
-            var $elt = $(this);
-            var $actionContainer = $(actionContainerElt, $elt);
+    function movable($container, elementClass, actionContainerElt) {
+        $container.each(function () {
+            const $elt = $(this);
+            const $actionContainer = $(actionContainerElt, $elt);
 
-            var index = $container.index($elt);
-            var $moveUp = $('.move-up', $actionContainer);
-            var $moveDown = $('.move-down', $actionContainer);
+            const index = $container.index($elt);
+            const $moveUp = $('.move-up', $actionContainer);
+            const $moveDown = $('.move-down', $actionContainer);
 
             //only one test part, no moving
-            if( $container.length === 1 ){
+            if ($container.length === 1) {
                 $moveUp.addClass(disabledClass);
                 $moveDown.addClass(disabledClass);
 
-            //testpart is the first, only moving down
-            } else if(index === 0) {
+                //testpart is the first, only moving down
+            } else if (index === 0) {
                 $moveUp.addClass(disabledClass);
                 $moveDown.removeClass(disabledClass);
 
-            //testpart is the lasst, only moving up
-            } else if ( index >= ($container.length - 1) ) {
+                //testpart is the lasst, only moving up
+            } else if (index >= $container.length - 1) {
                 $moveDown.addClass(disabledClass);
                 $moveUp.removeClass(disabledClass);
 
-            //or enable moving top/bottom
+                //or enable moving top/bottom
             } else {
                 $moveUp.removeClass(disabledClass);
                 $moveDown.removeClass(disabledClass);
             }
-         });
+        });
     }
 
     /**
@@ -171,13 +165,13 @@ function($, propertyView){
      * @param {jQueryElement} $container - that contains the removable action
      * @param {String} actionContainerElt - the element name that contains the actions
      */
-    function removable ($container, actionContainerElt){
-        $container.each(function(){
-            var $elt = $(this);
-            var $actionContainer = $(actionContainerElt, $elt);
-            var $delete = $('[data-delete]', $actionContainer);
+    function removable($container, actionContainerElt) {
+        $container.each(function () {
+            const $elt = $(this);
+            const $actionContainer = $(actionContainerElt, $elt);
+            const $delete = $('[data-delete]', $actionContainer);
 
-            if($container.length <= 1 && !$elt.hasClass('subsection')){
+            if ($container.length <= 1 && !$elt.hasClass('subsection')) {
                 $delete.addClass(disabledClass);
             } else {
                 $delete.removeClass(disabledClass);
@@ -190,7 +184,7 @@ function($, propertyView){
      * @param {jQueryElement} $container - that contains the the actions
      * @param {String} actionContainerElt - the element name that contains the actions
      */
-    function disable($container, actionContainerElt){
+    function disable($container, actionContainerElt) {
         $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
     }
 
@@ -199,7 +193,7 @@ function($, propertyView){
      * @param {jQueryElement} $container - that contains the the actions
      * @param {String} actionContainerElt - the element name that contains the actions
      */
-    function enable($container, actionContainerElt){
+    function enable($container, actionContainerElt) {
         $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);
     }
 
@@ -208,11 +202,10 @@ function($, propertyView){
      *@param {jQueryElement} $actionContainer - action's container
      */
     function addSubsectionHandler($actionContainer) {
-        $('.add-subsection', $actionContainer).click(function(e){
+        $('.add-subsection', $actionContainer).click(function (e) {
             $actionContainer.trigger('add.subsection');
         });
     }
-
 
     /**
      * Hides/shows container for adding items inside a section checking if there is at least
@@ -223,25 +216,33 @@ function($, propertyView){
      * @param {boolean} subsectionDeleted - if subsection was deleted
      * @param {boolean} undoSubsectionDeletion - if subsection was recreated with undo action
      */
-    function displayItemWrapper(sectionModel, sectionContainer, subsectionDeleted = false, undoSubsectionDeletion = false) {
+    function displayItemWrapper(
+        sectionModel,
+        sectionContainer,
+        subsectionDeleted = false,
+        undoSubsectionDeletion = false
+    ) {
         const $elt = $('.itemrefs-wrapper:first', sectionContainer);
         if (subsectionDeleted) {
-            if($('.subsection', sectionContainer).length > 1) {
+            if ($('.subsection', sectionContainer).length > 1) {
                 $elt.hide();
             } else {
                 $elt.show();
             }
         } else if (undoSubsectionDeletion) {
-            if($('.subsection', sectionContainer).length >= 1) {
+            if ($('.subsection', sectionContainer).length >= 1) {
                 $elt.hide();
             } else {
                 $elt.show();
             }
-        } else if (sectionModel.sectionParts && sectionModel.sectionParts.length > 0  && sectionModel.sectionParts[0]['qti-type'] === 'assessmentSection') {
+        } else if (
+            sectionModel.sectionParts &&
+            sectionModel.sectionParts.length > 0 &&
+            sectionModel.sectionParts[0]['qti-type'] === 'assessmentSection'
+        ) {
             $elt.hide();
         } else {
             $elt.show();
-
         }
     }
 
@@ -249,11 +250,11 @@ function($, propertyView){
      * Update delete selector for 2nd level subsections
      *@param {jQueryElement} $actionContainer - action's container
      */
-     function updateDeleteSelector($actionContainer) {
+    function updateDeleteSelector($actionContainer) {
         const $deleteButton = $actionContainer.find('.delete-subsection');
-        if($deleteButton.parents('.subsection').length > 1) {
+        if ($deleteButton.parents('.subsection').length > 1) {
             const deleteSelector = $deleteButton.data('delete');
-            $deleteButton.attr('data-delete', `${deleteSelector} .subsection`)
+            $deleteButton.attr('data-delete', `${deleteSelector} .subsection`);
         }
     }
 
@@ -263,13 +264,13 @@ function($, propertyView){
      * @exports taoQtiTest/controller/creator/views/actions
      */
     return {
-        properties    : properties,
-        move          : move,
-        removable     : removable,
-        movable       : movable,
-        disable       : disable,
-        enable        : enable,
-        addSubsectionHandler : addSubsectionHandler,
+        properties: properties,
+        move: move,
+        removable: removable,
+        movable: movable,
+        disable: disable,
+        enable: enable,
+        addSubsectionHandler: addSubsectionHandler,
         displayItemWrapper: displayItemWrapper,
         updateDeleteSelector: updateDeleteSelector
     };

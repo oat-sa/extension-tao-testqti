@@ -59,7 +59,11 @@ function(
      * @param {jQuery} $subsection - the subsection to set up
      */
      function setUp (creatorContext, subsectionModel, sectionModel, $subsection) {
-        var $actionContainer = $subsection.children('h2');
+        // select elements for subsection, to avoid selecting the same elements in nested subsections
+        var $itemRefsWrapper = $subsection.children('.itemrefs-wrapper');
+        var $rubBlocks = $subsection.children('.rublocks');
+        var $titleWithActions = $subsection.children('h2');
+
         var modelOverseer = creatorContext.getModelOverseer();
         var config = modelOverseer.getConfig();
         const isNestedSubsection = $subsection.parents('.subsection').length !== 0;
@@ -81,11 +85,11 @@ function(
         if(!_.isEmpty(config.routes.blueprintsById)){
             subsectionModel.hasBlueprint = true;
         }
-        actions.properties($actionContainer, 'section', subsectionModel, propHandler);
-        actions.move($actionContainer, 'subsections', 'subsection');
-        actions.addSubsectionHandler($actionContainer);
+        actions.properties($titleWithActions, 'section', subsectionModel, propHandler);
+        actions.move($titleWithActions, 'subsections', 'subsection');
+        actions.addSubsectionHandler($titleWithActions);
         actions.displayItemWrapper(subsectionModel, $subsection);
-        actions.updateDeleteSelector($actionContainer);
+        actions.updateDeleteSelector($titleWithActions);
 
         subsections();
         itemRefs();
@@ -93,6 +97,7 @@ function(
         rubricBlocks();
         addRubricBlock();
         addSubsection();
+
         /**
          * Perform some binding once the property view is create
          * @param {propView} propView - the view object
@@ -132,7 +137,7 @@ function(
             $selectionSwitcher.prop('checked', isSelectionFromServer).trigger('change');
 
             //listen for databinder change to update the test part title
-            $title =  $('[data-bind=title]', $subsection);
+            $title =  $('[data-bind=title]', $titleWithActions);
             $view.on('change.binder', function(e){
                 if(e.namespace === 'binder' && subsectionModel['qti-type'] === 'assessmentSection'){
                     $title.text(subsectionModel.title);
@@ -196,7 +201,7 @@ function(
             if(!subsectionModel.sectionParts){
                 subsectionModel.sectionParts = [];
             }
-            $('.itemref', $subsection).each(function(){
+            $('.itemref', $itemRefsWrapper).each(function(){
                 var $itemRef = $(this);
                 var index = $itemRef.data('bind-index');
                 if(!subsectionModel.sectionParts[index]){
@@ -221,7 +226,7 @@ function(
             //the item selector trigger a select event
             $itemsPanel.on('itemselect.creator', function(e, selection){
 
-                var $placeholder = $('.itemref-placeholder', $subsection);
+                var $placeholder = $('.itemref-placeholder', $itemRefsWrapper);
                 var $placeholders = $('.itemref-placeholder');
 
                 if(_.size(selection) > 0){
@@ -252,7 +257,7 @@ function(
                                 itemData.categories = item.categories.concat(itemData.categories);
                             }
 
-                            addItemRef($('.itemrefs', $subsection), null, itemData);
+                            addItemRef($('.itemrefs', $itemRefsWrapper), null, itemData);
                         });
 
                         $itemsPanel.trigger('itemselected.creator');
@@ -267,8 +272,8 @@ function(
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $subsection.attr('id') + ' .itemrefs')
-                .on('add.binder', '#' + $subsection.attr('id') + ' .itemrefs', function(e, $itemRef){
+                .off('add.binder', '#' + $subsection.attr('id') + ' > .itemrefs-wrapper .itemrefs')
+                .on('add.binder', '#' + $subsection.attr('id') + ' > .itemrefs-wrapper .itemrefs', function(e, $itemRef){
                     var index, itemRefModel;
                     if(e.namespace === 'binder' && $itemRef.hasClass('itemref') && $itemRef.closest('.subsection').attr('id') === $subsection.attr('id')){
                         index = $itemRef.data('bind-index');
@@ -316,7 +321,7 @@ function(
             if(!subsectionModel.rubricBlocks){
                 subsectionModel.rubricBlocks = [];
             }
-            $('.rubricblock', $subsection).each(function(){
+            $('.rubricblock', $rubBlocks).each(function(){
                 var $rubricBlock = $(this);
                 var index = $rubricBlock.data('bind-index');
                 if(!subsectionModel.rubricBlocks[index]){
@@ -328,7 +333,7 @@ function(
 
             //opens the rubric blocks section if they are there.
             if(subsectionModel.rubricBlocks.length > 0){
-                $('.rub-toggler', $subsection).trigger('click');
+                $('.rub-toggler', $titleWithActions).trigger('click');
             }
         }
 
@@ -338,8 +343,7 @@ function(
          * @fires modelOverseer#rubric-add
          */
         function addRubricBlock () {
-
-            $('.rublock-adder', $subsection).adder({
+            $('.rublock-adder', $titleWithActions).adder({
                 target: $('.rubricblocks', $subsection),
                 content : templates.rubricblock,
                 templateData : function(cb){
@@ -353,7 +357,9 @@ function(
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            $(document).on('add.binder', '#' + $subsection.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
+            $(document)
+                .off('add.binder', '#' + $subsection.attr('id') + ' > .rublocks .rubricblocks')
+                .on('add.binder', '#' + $subsection.attr('id') + ' > .rublocks .rubricblocks', function(e, $rubricBlock){
                 var index, rubricModel;
                 if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
                     index = $rubricBlock.data('bind-index');
@@ -472,7 +478,7 @@ function(
         }
 
         function addSubsection() {
-            $('.add-subsection', $subsection).adder({
+            $('.add-subsection', $titleWithActions).adder({
                 target: $subsection.children('.subsections'),
                 content : templates.subsection,
                 templateData : function(cb){
@@ -492,8 +498,8 @@ function(
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $subsection.attr('id'))
-                .on('add.binder', '#' + $subsection.attr('id'), function(e, $sub2section){
+                .off('add.binder', '#' + $subsection.attr('id') + ' > .subsections')
+                .on('add.binder', '#' + $subsection.attr('id') + ' > .subsections', function(e, $sub2section){
                     if(e.namespace === 'binder' &&
                         $sub2section.hasClass('subsection') &&
                         $sub2section.parents('.subsection').length) { // second level of subsection){

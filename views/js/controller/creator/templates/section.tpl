@@ -9,7 +9,7 @@
                         <span class="tlb-bar">
                             <span class="tlb-start"></span>
                             <span class="tlb-group">
-                                <a href="#" class="tlb-button-off subsection-adder" title="{{__ 'Add Subsection'}}" data-testid="add-subsection"><span class="icon-add-subsection"></span></a>
+                                <a href="#" class="tlb-button-off add-subsection" title="{{__ 'Add Subsection'}}" data-testid="add-subsection"><span class="icon-add-subsection"></span></a>
                                 <span class="tlb-separator"></span>
                                 <a href="#" class="tlb-button-off rub-toggler" title="{{__ 'Manage Rubric Blocks'}}" data-toggle="#rublocks-{{identifier}}" data-testid="manage-rubric-blocks"><span class="icon-rubric"></span></a>
                                 <span class="tlb-separator"></span>
