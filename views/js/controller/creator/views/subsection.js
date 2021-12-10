@@ -87,7 +87,6 @@ function(
         }
         actions.properties($titleWithActions, 'section', subsectionModel, propHandler);
         actions.move($titleWithActions, 'subsections', 'subsection');
-        actions.addSubsectionHandler($titleWithActions);
         actions.displayItemWrapper(subsectionModel, $subsection);
         actions.updateDeleteSelector($titleWithActions);
 
@@ -343,13 +342,13 @@ function(
          * @fires modelOverseer#rubric-add
          */
         function addRubricBlock () {
-            $('.rublock-adder', $titleWithActions).adder({
-                target: $('.rubricblocks', $subsection),
+            $('.rublock-adder', $rubBlocks).adder({
+                target: $('.rubricblocks', $rubBlocks),
                 content : templates.rubricblock,
                 templateData : function(cb){
                     cb({
                         'qti-type' : 'rubricBlock',
-                        index  : $('.rubricblock', $subsection).length,
+                        index  : $('.rubricblock', $rubBlocks).length,
                         content : [],
                         views : [1]
                     });
@@ -361,7 +360,8 @@ function(
                 .off('add.binder', '#' + $subsection.attr('id') + ' > .rublocks .rubricblocks')
                 .on('add.binder', '#' + $subsection.attr('id') + ' > .rublocks .rubricblocks', function(e, $rubricBlock){
                 var index, rubricModel;
-                if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
+                if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock') &&
+                    $rubricBlock.closest('.subsection').attr('id') === $subsection.attr('id') ){
                     index = $rubricBlock.data('bind-index');
                     rubricModel = subsectionModel.rubricBlocks[index] || {};
 

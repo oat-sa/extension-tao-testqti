@@ -84,7 +84,6 @@ function(
         }
         actions.properties($titleWithActions, 'section', sectionModel, propHandler);
         actions.move($titleWithActions, 'sections', 'section');
-        actions.addSubsectionHandler($titleWithActions);
         actions.displayItemWrapper(sectionModel, $section);
         
         subsections();
@@ -340,7 +339,7 @@ function(
          * @fires modelOverseer#rubric-add
          */
         function addRubricBlock () {
-            $('.rublock-adder', $titleWithActions).adder({
+            $('.rublock-adder', $rubBlocks).adder({
                 target: $('.rubricblocks', $rubBlocks),
                 content : templates.rubricblock,
                 templateData : function(cb){
@@ -358,7 +357,7 @@ function(
                 .off('add.binder', '#' + $section.attr('id') + ' > .rublocks .rubricblocks')
                 .on('add.binder', '#' + $section.attr('id') + ' > .rublocks .rubricblocks', function(e, $rubricBlock){
                 var index, rubricModel;
-                if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
+                if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock') && !$rubricBlock.parents('.subsection').length){
                     index = $rubricBlock.data('bind-index');
                     rubricModel = sectionModel.rubricBlocks[index] || {};
 

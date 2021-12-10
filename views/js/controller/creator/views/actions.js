@@ -198,16 +198,6 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
     }
 
     /**
-     * Sets handler to add a subsection to clicked section/subsection
-     *@param {jQueryElement} $actionContainer - action's container
-     */
-    function addSubsectionHandler($actionContainer) {
-        $('.add-subsection', $actionContainer).click(function (e) {
-            $actionContainer.trigger('add.subsection');
-        });
-    }
-
-    /**
      * Hides/shows container for adding items inside a section checking if there is at least
      * one subsection inside of it. As delete subsection event is triggered before subsection
      * container is actually removed from section container, we need to have conditional flow
@@ -270,7 +260,6 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
         movable: movable,
         disable: disable,
         enable: enable,
-        addSubsectionHandler: addSubsectionHandler,
         displayItemWrapper: displayItemWrapper,
         updateDeleteSelector: updateDeleteSelector
     };
