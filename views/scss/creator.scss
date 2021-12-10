@@ -407,6 +407,7 @@
             margin: 10px 16px 10px 16px;
 
             & > h2 {
+                font-size: 1.25em;
                 color: black;
                 font-weight: bold;
             }
@@ -424,6 +425,9 @@
         }
 
         .subsection {
+            & > h2 {
+                font-size: 1.25em;
+            }
             border-left: solid 5px $subsectionColor;
             padding: 0 0 0 15px;
             .subsection {
