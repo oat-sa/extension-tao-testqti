@@ -20,14 +20,30 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor;
+namespace oat\taoQtiTest\test\unit\models\classes\render\CustomInteraction\PostProcessor;
 
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
+use oat\generis\test\TestCase;
+use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
 
-class NullCustomInteractionPostProcessor implements CustomInteractionPostProcessorInterface
+class NullCustomInteractionPostProcessorTest extends TestCase
 {
-    public function postProcess(array $element): array
+    /**
+     * @var NullCustomInteractionPostProcessor
+     */
+    private $subject;
+
+    public function setUp(): void
     {
-        return $element;
+        $this->subject = new NullCustomInteractionPostProcessor();
+    }
+
+    public function testNullPostProcessing(): void
+    {
+        $element = ['properties' => []];
+        for ($i = 0, $iMax = random_int(1, 10); $i < $iMax; $i++) {
+            $element['properties'][uniqid('prefix', true)] = uniqid((string) $i, true);
+        }
+
+        $this->assertSame($element, $this->subject->postProcess($element));
     }
 }
