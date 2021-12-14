@@ -83,295 +83,317 @@ const allowSkippingText = 'A response to this item is required.';
 const allowSkippingButtons = ['ok'];
 
 export function warningMessagesFirstLaunchSpecs() {
-    it('"Display Next Part Warning"=true: dialog if has unanswered', () => {
-        const dialogTitle = 'You are about to submit this test part.';
-        const dialogText =
-            'There is 1 unanswered question in this part of the test. Click "SUBMIT THIS PART" to continue.';
-        const dialogButtons = ['submit this part', 'cancel'];
+    describe('Display Next Part Warning', () => {
+        it('if true, dialog on leaving test part when has unanswered', () => {
+            const dialogTitle = 'You are about to submit this test part.';
+            const dialogText =
+                'There is 1 unanswered question in this part of the test. Click "SUBMIT THIS PART" to continue.';
+            const dialogButtons = ['submit this part', 'cancel'];
 
-        //first item in section, do not answer it
-        expectItemLoaded('1-1', 'choice');
-        goToNextItem();
-        //second, last item in section, answer it
-        expectItemLoaded('1-1', 'text');
-        answerInteraction('text');
-        goToNextItem();
-        //dialog
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //cancel dialog
-        clickDialogButton(dialogButtons[1]);
-        expectDialogClosed();
-        goToNextItem();
-        //dialog is shown again
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //continue in dialog
-        clickDialogButton(dialogButtons[0]);
-        //first item of next test part is loaded
-        expectItemLoaded('5-1', 'choice');
-        expectDialogClosed();
+            //first item in section, do not answer it
+            expectItemLoaded('1-1', 'choice');
+            goToNextItem();
+            //second, last item in section, answer it
+            expectItemLoaded('1-1', 'text');
+            answerInteraction('text');
+            goToNextItem();
+            //dialog
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //cancel dialog
+            clickDialogButton(dialogButtons[1]);
+            expectDialogClosed();
+            goToNextItem();
+            //dialog is shown again
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //continue in dialog
+            clickDialogButton(dialogButtons[0]);
+            //first item of next test part is loaded
+            expectItemLoaded('5-1', 'choice');
+            expectDialogClosed();
+        });
     });
 
-    it('"Display Unanswered Warning"=true: dialog if has unanswered', () => {
-        const dialogTitle = 'You are about to submit this test part.';
-        const dialogText =
-            'There is 1 unanswered question in this part of the test. Click "SUBMIT THIS PART" to continue.';
-        const dialogButtons = ['submit this part', 'cancel'];
+    describe('Display Unanswered Warning', () => {
+        it('if true, dialog on leaving test part when has unanswered', () => {
+            const dialogTitle = 'You are about to submit this test part.';
+            const dialogText =
+                'There is 1 unanswered question in this part of the test. Click "SUBMIT THIS PART" to continue.';
+            const dialogButtons = ['submit this part', 'cancel'];
 
-        //first item in section, do not answer it
-        expectItemLoaded('5-1', 'choice');
-        goToNextItem();
-        //second, last item in section, answer it
-        expectItemLoaded('5-1', 'text');
-        answerInteraction('text');
-        goToNextItem();
-        //dialog
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //cancel dialog
-        clickDialogButton(dialogButtons[1]);
-        expectDialogClosed();
-        goToNextItem();
-        //dialog is shown again
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //continue in dialog
-        clickDialogButton(dialogButtons[0]);
-        //first item of next test part is loaded
-        expectItemLoaded('2-1', 'text');
-        expectDialogClosed();
+            //first item in section, do not answer it
+            expectItemLoaded('5-1', 'choice');
+            goToNextItem();
+            //second, last item in section, answer it
+            expectItemLoaded('5-1', 'text');
+            answerInteraction('text');
+            goToNextItem();
+            //dialog
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //cancel dialog
+            clickDialogButton(dialogButtons[1]);
+            expectDialogClosed();
+            goToNextItem();
+            //dialog is shown again
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //continue in dialog
+            clickDialogButton(dialogButtons[0]);
+            //first item of next test part is loaded
+            expectItemLoaded('2-1', 'text');
+            expectDialogClosed();
+        });
     });
 
-    it('"Hide Timed Section Warning"=true: no dialog if not timed out', () => {
-        //first item in section
-        expectItemLoaded('2-1', 'text');
-        goToNextItem();
-        //no dialog; first item of next test part is loaded
-        expectItemLoaded('2-2', 'choice');
-        expectDialogClosed();
+    describe('Hide Timed Section Warning', () => {
+        it('if true, no dialog on leaving section when not timed out', () => {
+            //first item in section
+            expectItemLoaded('2-1', 'text');
+            goToNextItem();
+            //no dialog; first item of next test part is loaded
+            expectItemLoaded('2-2', 'choice');
+            expectDialogClosed();
+        });
     });
 
-    it('"Do not show alert on timeout"=true: no dialog if timed out', () => {
-        //first item in section
-        expectItemLoaded('2-2', 'choice');
-        //advance clock to reach timeout, then wait to ensure timer code runs
-        cy.clock().tick(60 * 1000);
-        //no dialog; first item of next test part is loaded
-        expectItemLoaded('3-1', 'text');
-        expectDialogClosed();
+    describe('Do not show alert on timeout', () => {
+        it('if true, no dialog on leaving section when timed out', () => {
+            //first item in section
+            expectItemLoaded('2-2', 'choice');
+            //advance clock to reach timeout, then wait to ensure timer code runs
+            cy.clock().tick(60 * 1000);
+            //no dialog; first item of next test part is loaded
+            expectItemLoaded('3-1', 'text');
+            expectDialogClosed();
+        });
     });
 
-    it('"Allow Skipping": no dialog if on item=true [section=false, part=false]', () => {
-        expectItemLoaded('3-1', 'text');
-        goToNextItem();
-        //no dialog; next item is loaded
-        expectItemLoaded('3-1', 'choice');
-        expectDialogClosed();
+    describe('Allow Skipping', () => {
+        it('no dialog on moving from unanswered item if: item=true [section=false, part=false]', () => {
+            expectItemLoaded('3-1', 'text');
+            goToNextItem();
+            //no dialog; next item is loaded
+            expectItemLoaded('3-1', 'choice');
+            expectDialogClosed();
+        });
+
+        it('dialog on moving from unanswered item if: on item=false [section=false, part=false]', () => {
+            expectItemLoaded('3-1', 'choice');
+            goToNextItem();
+            //dialog
+            expectDialog(allowSkippingTitle, allowSkippingText, allowSkippingButtons);
+            //close dialog
+            clickDialogButton(allowSkippingButtons[0]);
+            expectDialogClosed();
+            answerInteraction('choice');
+            goToNextItem();
+            //no dialog, next item is loaded
+            expectItemLoaded('3-2', 'text');
+            expectDialogClosed();
+        });
+
+        it('dialog on moving from unanswered item if: on item=false [section=true, part=false]', () => {
+            expectItemLoaded('3-2', 'text');
+            goToNextItem();
+            //dialog
+            expectDialog(allowSkippingTitle, allowSkippingText, allowSkippingButtons);
+            //close dialog
+            clickDialogButton(allowSkippingButtons[0]);
+            expectDialogClosed();
+            answerInteraction('text');
+            goToNextItem();
+            //no dialog, next item is loaded
+            expectItemLoaded('4-1', 'choice');
+            expectDialogClosed();
+        });
+
+        it('dialog on moving from unanswered item if: on item=false [section=true, part=true]', () => {
+            expectItemLoaded('4-1', 'choice');
+            goToNextItem();
+            //dialog
+            expectDialog(allowSkippingTitle, allowSkippingText, allowSkippingButtons);
+            //close dialog
+            clickDialogButton(allowSkippingButtons[0]);
+            expectDialogClosed();
+            answerInteraction('choice');
+            goToNextItem();
+            //no dialog, next item is loaded
+            expectItemLoaded('4-2', 'text');
+            expectDialogClosed();
+        });
+
+        it('dialog on moving from unanswered item if: on item=false [section=false, part=true]', () => {
+            expectItemLoaded('4-2', 'text');
+            endTest();
+            //dialog
+            expectDialog(allowSkippingTitle, allowSkippingText, allowSkippingButtons);
+            //close dialog
+            clickDialogButton(allowSkippingButtons[0]);
+            expectDialogClosed();
+            answerInteraction('text');
+        });
     });
 
-    it('"Allow Skipping": dialog if on item=false [section=false, part=false]', () => {
-        expectItemLoaded('3-1', 'choice');
-        goToNextItem();
-        //dialog
-        expectDialog(allowSkippingTitle, allowSkippingText, allowSkippingButtons);
-        //close dialog
-        clickDialogButton(allowSkippingButtons[0]);
-        expectDialogClosed();
-        answerInteraction('choice');
-        goToNextItem();
-        //no dialog, next item is loaded
-        expectItemLoaded('3-2', 'text');
-        expectDialogClosed();
-    });
+    describe('Display End Test Warning', () => {
+        it('if true, dialog on ending test when has unanswered', () => {
+            const dialogTitle = 'You are about to submit the test.';
+            const dialogText =
+                'There are 5 unanswered questions. You will not be able to access this test once submitted. ' +
+                'Click "SUBMIT THE TEST" to continue and submit the test.';
+            const dialogButtons = ['submit the test', 'cancel'];
 
-    it('"Allow Skipping": dialog if on item=false [section=true, part=false]', () => {
-        expectItemLoaded('3-2', 'text');
-        goToNextItem();
-        //dialog
-        expectDialog(allowSkippingTitle, allowSkippingText, allowSkippingButtons);
-        //close dialog
-        clickDialogButton(allowSkippingButtons[0]);
-        expectDialogClosed();
-        answerInteraction('text');
-        goToNextItem();
-        //no dialog, next item is loaded
-        expectItemLoaded('4-1', 'choice');
-        expectDialogClosed();
-    });
-
-    it('"Allow Skipping": dialog if on item=false [section=true, part=true]', () => {
-        expectItemLoaded('4-1', 'choice');
-        goToNextItem();
-        //dialog
-        expectDialog(allowSkippingTitle, allowSkippingText, allowSkippingButtons);
-        //close dialog
-        clickDialogButton(allowSkippingButtons[0]);
-        expectDialogClosed();
-        answerInteraction('choice');
-        goToNextItem();
-        //no dialog, next item is loaded
-        expectItemLoaded('4-2', 'text');
-        expectDialogClosed();
-    });
-
-    it('"Allow Skipping": dialog if on item=false [section=false, part=true]', () => {
-        expectItemLoaded('4-2', 'text');
-        endTest();
-        //dialog
-        expectDialog(allowSkippingTitle, allowSkippingText, allowSkippingButtons);
-        //close dialog
-        clickDialogButton(allowSkippingButtons[0]);
-        expectDialogClosed();
-        answerInteraction('text');
-    });
-
-    it('"Display End Test Warning"=true: dialog if has unanswered', () => {
-        const dialogTitle = 'You are about to submit the test.';
-        const dialogText =
-            'There are 5 unanswered questions. You will not be able to access this test once submitted. ' +
-            'Click "SUBMIT THE TEST" to continue and submit the test.';
-        const dialogButtons = ['submit the test', 'cancel'];
-
-        //last item in test
-        expectItemLoaded('4-2', 'text');
-        endTest();
-        //dialog
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //cancel dialog
-        clickDialogButton(dialogButtons[1]);
-        expectDialogClosed();
-        endTest();
-        //dialog is shown again
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //continue in dialog
-        clickDialogButton(dialogButtons[0]);
-        //that test was actually ended should be checked afterwards
-        expectDialogClosed();
+            //last item in test
+            expectItemLoaded('4-2', 'text');
+            endTest();
+            //dialog
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //cancel dialog
+            clickDialogButton(dialogButtons[1]);
+            expectDialogClosed();
+            endTest();
+            //dialog is shown again
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //continue in dialog
+            clickDialogButton(dialogButtons[0]);
+            //that test was actually ended should be checked afterwards
+            expectDialogClosed();
+        });
     });
 }
 
 export function warningMessagesSecondLaunchSpecs() {
-    it('"Display Next Part Warning"=true: dialog if all answered', () => {
-        const dialogTitle = 'You are about to submit this test part. ';
-        const dialogText = 'Click "SUBMIT THIS PART" to continue.';
-        const dialogButtons = ['submit this part', 'cancel'];
+    describe('Display Next Part Warning', () => {
+        it('if true, dialog on leaving test part when all answered', () => {
+            const dialogTitle = 'You are about to submit this test part. ';
+            const dialogText = 'Click "SUBMIT THIS PART" to continue.';
+            const dialogButtons = ['submit this part', 'cancel'];
 
-        //first item in section, answer it
-        expectItemLoaded('1-1', 'choice');
-        answerInteraction('choice');
-        goToNextItem();
-        //second, last item in section, answer it
-        expectItemLoaded('1-1', 'text');
-        answerInteraction('text');
-        goToNextItem();
-        //dialog
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //cancel dialog
-        clickDialogButton(dialogButtons[1]);
-        expectDialogClosed();
-        goToNextItem();
-        //dialog is shown again
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //continue in dialog
-        clickDialogButton(dialogButtons[0]);
-        //first item of next test part is loaded
-        expectItemLoaded('5-1', 'choice');
-        expectDialogClosed();
+            //first item in section, answer it
+            expectItemLoaded('1-1', 'choice');
+            answerInteraction('choice');
+            goToNextItem();
+            //second, last item in section, answer it
+            expectItemLoaded('1-1', 'text');
+            answerInteraction('text');
+            goToNextItem();
+            //dialog
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //cancel dialog
+            clickDialogButton(dialogButtons[1]);
+            expectDialogClosed();
+            goToNextItem();
+            //dialog is shown again
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //continue in dialog
+            clickDialogButton(dialogButtons[0]);
+            //first item of next test part is loaded
+            expectItemLoaded('5-1', 'choice');
+            expectDialogClosed();
+        });
     });
 
-    it('"Display Unanswered Warning"=true: no dialog if all answered', () => {
-        //first item in section, answer it
-        expectItemLoaded('5-1', 'choice');
-        answerInteraction('choice');
-        goToNextItem();
-        //second, last item in section, answer it
-        expectItemLoaded('5-1', 'text');
-        answerInteraction('text');
-        goToNextItem();
-        //no dialog; first item of next test part is loaded
-        expectItemLoaded('2-1', 'text');
-        expectDialogClosed();
+    describe('Display Unanswered Warning', () => {
+        it('if true, no dialog on leaving test part when all answered', () => {
+            //first item in section, answer it
+            expectItemLoaded('5-1', 'choice');
+            answerInteraction('choice');
+            goToNextItem();
+            //second, last item in section, answer it
+            expectItemLoaded('5-1', 'text');
+            answerInteraction('text');
+            goToNextItem();
+            //no dialog; first item of next test part is loaded
+            expectItemLoaded('2-1', 'text');
+            expectDialogClosed();
+        });
     });
 
-    it('"Do not show alert on timeout"=false: dialog if timed out', () => {
-        const dialogTitle = '';
-        const dialogText = 'The time limit has been reached for this part of the test.';
-        const dialogButtons = ['ok'];
+    describe('Do not show alert on timeout', () => {
+        it('if false, dialog on leaving section when timed out', () => {
+            const dialogTitle = '';
+            const dialogText = 'The time limit has been reached for this part of the test.';
+            const dialogButtons = ['ok'];
 
-        //first item in section
-        expectItemLoaded('2-1', 'text');
-        answerInteraction('text');
-        //advance clock to reach timeout, then wait to ensure timer code runs
-        cy.clock().tick(60 * 1000);
-        //dialog
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //continue in dialog
-        clickDialogButton(dialogButtons[0]);
-        //first item of next section is loaded
-        expectItemLoaded('2-2', 'choice');
-        expectDialogClosed();
+            //first item in section
+            expectItemLoaded('2-1', 'text');
+            answerInteraction('text');
+            //advance clock to reach timeout, then wait to ensure timer code runs
+            cy.clock().tick(60 * 1000);
+            //dialog
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //continue in dialog
+            clickDialogButton(dialogButtons[0]);
+            //first item of next section is loaded
+            expectItemLoaded('2-2', 'choice');
+            expectDialogClosed();
+        });
     });
 
-    it('"Hide Timed Section Warning"=false: dialog if not timed out', () => {
-        const dialogTitle = 'You are about to leave this section.';
-        const dialogText =
-            'You answered 1 of 1 question(s) for this section of the test. Click "Close this Section" to continue.' +
-            'Once you close this section, you cannot return to it or change your answers.';
-        const dialogButtons = ['close this section', 'review my answers'];
+    describe('Hide Timed Section Warning', () => {
+        it('if false, dialog on leaving section when not timed out', () => {
+            const dialogTitle = 'You are about to leave this section.';
+            const dialogText =
+                'You answered 1 of 1 question(s) for this section of the test. Click "Close this Section" to continue.' +
+                'Once you close this section, you cannot return to it or change your answers.';
+            const dialogButtons = ['close this section', 'review my answers'];
 
-        //first item in section
-        expectItemLoaded('2-2', 'choice');
-        answerInteraction('choice');
-        goToNextItem();
-        //dialog
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //cancel dialog
-        clickDialogButton(dialogButtons[1]);
-        expectDialogClosed();
-        goToNextItem();
-        //dialog is shown again
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //continue in dialog
-        clickDialogButton(dialogButtons[0]);
-        //first item of next section is loaded
-        expectItemLoaded('3-1', 'text');
-        expectDialogClosed();
+            //first item in section
+            expectItemLoaded('2-2', 'choice');
+            answerInteraction('choice');
+            goToNextItem();
+            //dialog
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //cancel dialog
+            clickDialogButton(dialogButtons[1]);
+            expectDialogClosed();
+            goToNextItem();
+            //dialog is shown again
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //continue in dialog
+            clickDialogButton(dialogButtons[0]);
+            //first item of next section is loaded
+            expectItemLoaded('3-1', 'text');
+            expectDialogClosed();
+        });
     });
 
-    it('continue until last item', () => {
-        expectItemLoaded('3-1', 'text');
-        answerInteraction('text');
-        goToNextItem();
-        expectItemLoaded('3-1', 'choice');
-        answerInteraction('choice');
-        goToNextItem();
-        expectItemLoaded('3-2', 'text');
-        answerInteraction('text');
-        goToNextItem();
-        expectItemLoaded('4-1', 'choice');
-        answerInteraction('choice');
-        goToNextItem();
-        expectItemLoaded('4-2', 'text');
-    });
+    describe('Display End Test Warning', () => {
+        it('[chore] continue until last item', () => {
+            expectItemLoaded('3-1', 'text');
+            answerInteraction('text');
+            goToNextItem();
+            expectItemLoaded('3-1', 'choice');
+            answerInteraction('choice');
+            goToNextItem();
+            expectItemLoaded('3-2', 'text');
+            answerInteraction('text');
+            goToNextItem();
+            expectItemLoaded('4-1', 'choice');
+            answerInteraction('choice');
+            goToNextItem();
+            expectItemLoaded('4-2', 'text');
+        });
 
-    it('"Display End Test Warning"=true: dialog if all answered', () => {
-        const dialogTitle = 'You are about to submit the test. ';
-        const dialogText =
-            'You will not be able to access this test once submitted. Click "SUBMIT THE TEST" to continue and submit the test.';
-        const dialogButtons = ['submit the test', 'cancel'];
+        it('if true, dialog on ending test when all answered', () => {
+            const dialogTitle = 'You are about to submit the test. ';
+            const dialogText =
+                'You will not be able to access this test once submitted. Click "SUBMIT THE TEST" to continue and submit the test.';
+            const dialogButtons = ['submit the test', 'cancel'];
 
-        //last item in test
-        expectItemLoaded('4-2', 'text');
-        answerInteraction('text');
-        endTest();
-        //dialog
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //cancel dialog
-        clickDialogButton(dialogButtons[1]);
-        expectDialogClosed();
-        endTest();
-        //dialog is shown again
-        expectDialog(dialogTitle, dialogText, dialogButtons);
-        //continue in dialog
-        clickDialogButton(dialogButtons[0]);
-        //that test was actually ended should be checked afterwards
-        expectDialogClosed();
+            //last item in test
+            expectItemLoaded('4-2', 'text');
+            answerInteraction('text');
+            endTest();
+            //dialog
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //cancel dialog
+            clickDialogButton(dialogButtons[1]);
+            expectDialogClosed();
+            endTest();
+            //dialog is shown again
+            expectDialog(dialogTitle, dialogText, dialogButtons);
+            //continue in dialog
+            clickDialogButton(dialogButtons[0]);
+            //that test was actually ended should be checked afterwards
+            expectDialogClosed();
+        });
     });
 }
