@@ -132,11 +132,14 @@ function($, ui, DataBinder, templates){
             var $togglers;
             $view.on('validated.group', function(e, isValid){
                 if(e.namespace === 'group'){
-                    $togglers = $('#test-creator .property-toggler, #saver');
+                    $togglers = $('#test-creator .property-toggler, .rub-toggler, .section-adder, .testpart-adder, #saver');
                     if(isValid === true){
                         $togglers.removeClass('disabled');
+                        $togglers.removeAttr('disabled');
                     } else {
                         $togglers.addClass('disabled');
+                        $togglers.attr("disabled", "disabled")
+                        $('.rub-toggler').css("pointer-events", "none")
                     }
                 }
             });
