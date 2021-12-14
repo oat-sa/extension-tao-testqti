@@ -65,7 +65,7 @@
     "oat-sa/generis" : ">=15.5.0",
     "oat-sa/tao-core" : ">=48.39.0",
     "oat-sa/extension-tao-item" : ">=11.0.0",
-    "oat-sa/extension-tao-itemqti" : ">=27.0.0",
+    "oat-sa/extension-tao-itemqti" : "dev-bug/TR-2916/text-reader-img-cdn as 100.0.0",
     "oat-sa/extension-tao-test" : ">=15.0.0",
     "oat-sa/extension-tao-delivery" : ">=15.0.0",
     "oat-sa/extension-tao-outcome" : ">=13.0.0"
