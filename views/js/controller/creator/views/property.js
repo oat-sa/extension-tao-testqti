@@ -136,6 +136,8 @@ function($, ui, DataBinder, templates){
                     if(isValid === true){
                         $togglers.removeClass('disabled');
                         $togglers.removeAttr('disabled');
+                        $('.rub-toggler').css("pointer-events", "auto")
+
                     } else {
                         $togglers.addClass('disabled');
                         $togglers.attr("disabled", "disabled")
