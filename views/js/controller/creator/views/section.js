@@ -33,7 +33,8 @@ define([
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
-    'taoQtiTest/controller/creator/views/subsection'
+    'taoQtiTest/controller/creator/views/subsection',
+    'ui/dialog/confirm'
 ], function (
     $,
     _,
@@ -48,7 +49,8 @@ define([
     categorySelectorFactory,
     sectionCategory,
     sectionBlueprint,
-    subsectionView
+    subsectionView,
+    confirmDialog
 ) {
     'use strict';
 
@@ -480,12 +482,26 @@ define([
         }
 
         function addSubsection() {
+            const optionsConfirmDialog = {
+                buttons: {
+                    labels: {
+                        ok: __('Yes'),
+                        cancel: __('No')
+                    }
+                }
+            };
+
             $('.add-subsection', $titleWithActions).adder({
                 target: $section.children('.subsections'),
                 content: templates.subsection,
                 templateData: function (cb) {
                     //create a new subsection model object to be bound to the template
                     const subsectionIndex = $('.subsection', $section).length;
+                    let sectionParts = [];
+                    if ($section.data('movedItems')) {
+                        sectionParts = $section.data('movedItems');
+                        $section.removeData('movedItems');
+                    }
                     cb({
                         'qti-type': 'assessmentSection',
                         identifier: qtiTestHelper.getAvailableIdentifier(
@@ -495,9 +511,30 @@ define([
                         ),
                         title: `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
                         index: 0,
-                        sectionParts: [],
+                        sectionParts,
                         visible: true
                     });
+                },
+                checkAndCallAdd: function (executeAdd) {
+                    if (
+                        sectionModel.sectionParts[0] &&
+                        qtiTestHelper.filterQtiType(sectionModel.sectionParts[0], 'assessmentItemRef')
+                    ) {
+                        // subsection has item(s)
+                        const subsectionIndex = $('.subsection', $section).length;
+                        const confirmMessage = __(
+                            'The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?',
+                            sectionModel.title,
+                            `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`
+                        );
+                        const acceptFunction = () => {
+                            $section.data('movedItems', _.clone(sectionModel.sectionParts));
+                            executeAdd();
+                        };
+                        confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog);
+                    } else {
+                        executeAdd();
+                    }
                 }
             });
 
@@ -556,7 +593,10 @@ define([
             .on('add change undo.deleter deleted.deleter', function (e) {
                 const $target = $(e.target);
                 if ($target.hasClass('section') || $target.hasClass('sections')) {
-                    const $sections = $('.section', $target.hasClass('sections') ? $target : $target.parents('.sections'));
+                    const $sections = $(
+                        '.section',
+                        $target.hasClass('sections') ? $target : $target.parents('.sections')
+                    );
                     actions.removable($sections, 'h2');
                     actions.movable($sections, 'section', 'h2');
                 }

@@ -32,7 +32,8 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
-    'taoQtiTest/controller/creator/helpers/sectionBlueprints'
+    'taoQtiTest/controller/creator/helpers/sectionBlueprints',
+    'ui/dialog/confirm'
 ], function (
     $,
     _,
@@ -46,7 +47,8 @@ define([
     qtiTestHelper,
     categorySelectorFactory,
     sectionCategory,
-    sectionBlueprint
+    sectionBlueprint,
+    confirmDialog
 ) {
     'use strict';
     /**
@@ -65,13 +67,7 @@ define([
 
         const modelOverseer = creatorContext.getModelOverseer();
         const config = modelOverseer.getConfig();
-        const isNestedSubsection = $subsection.parents('.subsection').length !== 0;
 
-        // prevent adding a third subsection level
-        if (isNestedSubsection) {
-            $('.add-subsection', $subsection).hide();
-            $('.add-subsection + .tlb-separator', $subsection).hide();
-        }
         // set item session control to use test part options if section level isn't set
         if (!subsectionModel.itemSessionControl) {
             subsectionModel.itemSessionControl = {};
@@ -94,7 +90,14 @@ define([
         acceptItemRefs();
         rubricBlocks();
         addRubricBlock();
-        addSubsection();
+
+        const isNestedSubsection = $subsection.parents('.subsection').length !== 0;
+        if (isNestedSubsection) { // prevent adding a third subsection level
+            $('.add-subsection', $subsection).hide();
+            $('.add-subsection + .tlb-separator', $subsection).hide();
+        } else {
+            addSubsection();
+        }
 
         /**
          * Perform some binding once the property view is create
@@ -497,12 +500,26 @@ define([
         }
 
         function addSubsection() {
+            const optionsConfirmDialog = {
+                buttons: {
+                    labels: {
+                        ok: __('Yes'),
+                        cancel: __('No')
+                    }
+                }
+            };
+
             $('.add-subsection', $titleWithActions).adder({
                 target: $subsection.children('.subsections'),
                 content: templates.subsection,
                 templateData: function (cb) {
                     //create a new subsection model object to be bound to the template
                     const subsectionIndex = $('.subsection', $subsection).length;
+                    let sectionParts = [];
+                    if ($subsection.data('movedItems')) {
+                        sectionParts = $subsection.data('movedItems');
+                        $subsection.removeData('movedItems');
+                    }
                     cb({
                         'qti-type': 'assessmentSection',
                         identifier: qtiTestHelper.getAvailableIdentifier(
@@ -512,9 +529,23 @@ define([
                         ),
                         title: `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
                         index: 0,
-                        sectionParts: [],
+                        sectionParts,
                         visible: true
                     });
+                },
+                checkAndCallAdd: function (executeAdd) {
+                    if (subsectionModel.sectionParts[0] && qtiTestHelper.filterQtiType(subsectionModel.sectionParts[0], 'assessmentItemRef')) {
+                        // subsection has item(s)
+                        const subsectionIndex = $('.subsection', $subsection).length;
+                        const confirmMessage = __('The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?', subsectionModel.title, `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`);
+                        const acceptFunction = () => {
+                            $subsection.data('movedItems', _.clone(subsectionModel.sectionParts));
+                            executeAdd();
+                        }
+                        confirmDialog(confirmMessage, acceptFunction,() => {}, optionsConfirmDialog);
+                    } else {
+                        executeAdd();
+                    }
                 }
             });
 
