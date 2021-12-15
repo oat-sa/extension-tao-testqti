@@ -16,7 +16,7 @@
  * Copyright (c) 2021 Open Assessment Technologies SA ;
  */
 
-import { goToNextItem, endTest } from '../../utils/navigation.js';
+import { goToNextItem, endTest, goToPreviousItem } from '../../utils/navigation.js';
 import { interactions, expectInteractions, toggleChoice, expectChoiceChecked } from '../../utils/interactions.js';
 
 /**
@@ -90,11 +90,15 @@ export function warningMessagesFirstLaunchSpecs() {
                 'There is 1 unanswered question in this part of the test. Click "SUBMIT THIS PART" to continue.';
             const dialogButtons = ['submit this part', 'cancel'];
 
-            //first item in section, do not answer it
-            expectItemLoaded('1-1', 'choice');
-            goToNextItem();
-            //second, last item in section, answer it
+            //first item in test part, do not answer it
             expectItemLoaded('1-1', 'text');
+            goToNextItem();
+            //second item in test part, answer it
+            expectItemLoaded('1-2', 'choice');
+            answerInteraction('choice');
+            goToNextItem();
+            //third, last item in test part, answer it
+            expectItemLoaded('1-2', 'text');
             answerInteraction('text');
             goToNextItem();
             //dialog
@@ -108,7 +112,7 @@ export function warningMessagesFirstLaunchSpecs() {
             //continue in dialog
             clickDialogButton(dialogButtons[0]);
             //first item of next test part is loaded
-            expectItemLoaded('5-1', 'choice');
+            expectItemLoaded('5-1', 'text');
             expectDialogClosed();
         });
     });
@@ -120,11 +124,15 @@ export function warningMessagesFirstLaunchSpecs() {
                 'There is 1 unanswered question in this part of the test. Click "SUBMIT THIS PART" to continue.';
             const dialogButtons = ['submit this part', 'cancel'];
 
-            //first item in section, do not answer it
-            expectItemLoaded('5-1', 'choice');
-            goToNextItem();
-            //second, last item in section, answer it
+            //first item in test part, do not answer it
             expectItemLoaded('5-1', 'text');
+            goToNextItem();
+            //second item in test part, answer it
+            expectItemLoaded('5-2', 'choice');
+            answerInteraction('choice');
+            goToNextItem();
+            //third, last item in tets part, answer it
+            expectItemLoaded('5-2', 'text');
             answerInteraction('text');
             goToNextItem();
             //dialog
@@ -148,7 +156,10 @@ export function warningMessagesFirstLaunchSpecs() {
             //first item in section
             expectItemLoaded('2-1', 'text');
             goToNextItem();
-            //no dialog; first item of next test part is loaded
+            //second item in section
+            expectItemLoaded('2-1', 'choice');
+            goToNextItem();
+            //no dialog; first item of next section is loaded
             expectItemLoaded('2-2', 'choice');
             expectDialogClosed();
         });
@@ -158,9 +169,11 @@ export function warningMessagesFirstLaunchSpecs() {
         it('if true, no dialog on leaving section when timed out', () => {
             //first item in section
             expectItemLoaded('2-2', 'choice');
-            //advance clock to reach timeout, then wait to ensure timer code runs
+            //advance clock to reach timeout, also wait to ensure timer code runs
+            //eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(200);
             cy.clock().tick(60 * 1000);
-            //no dialog; first item of next test part is loaded
+            //no dialog; first item of next section is loaded
             expectItemLoaded('3-1', 'text');
             expectDialogClosed();
         });
@@ -168,6 +181,7 @@ export function warningMessagesFirstLaunchSpecs() {
 
     describe('Allow Skipping', () => {
         it('no dialog on moving from unanswered item if: item=true [section=false, part=false]', () => {
+            //also, this is first item in section
             expectItemLoaded('3-1', 'text');
             goToNextItem();
             //no dialog; next item is loaded
@@ -201,6 +215,15 @@ export function warningMessagesFirstLaunchSpecs() {
             answerInteraction('text');
             goToNextItem();
             //no dialog, next item is loaded
+            expectItemLoaded('3-2', 'choice');
+            expectDialogClosed();
+        });
+
+        it('no dialog on moving from unanswered item if: item=true [section=true, part=false]', () => {
+            //also, this is last item in section
+            expectItemLoaded('3-2', 'choice');
+            goToNextItem();
+            //no dialog; next item is loaded
             expectItemLoaded('4-1', 'choice');
             expectDialogClosed();
         });
@@ -236,7 +259,7 @@ export function warningMessagesFirstLaunchSpecs() {
         it('if true, dialog on ending test when has unanswered', () => {
             const dialogTitle = 'You are about to submit the test.';
             const dialogText =
-                'There are 5 unanswered questions. You will not be able to access this test once submitted. ' +
+                'There are 8 unanswered questions. You will not be able to access this test once submitted. ' +
                 'Click "SUBMIT THE TEST" to continue and submit the test.';
             const dialogButtons = ['submit the test', 'cancel'];
 
@@ -266,12 +289,16 @@ export function warningMessagesSecondLaunchSpecs() {
             const dialogText = 'Click "SUBMIT THIS PART" to continue.';
             const dialogButtons = ['submit this part', 'cancel'];
 
-            //first item in section, answer it
-            expectItemLoaded('1-1', 'choice');
+            //first item in test part, answer it
+            expectItemLoaded('1-1', 'text');
+            answerInteraction('text');
+            goToNextItem();
+            //second item in test part, answer it
+            expectItemLoaded('1-2', 'choice');
             answerInteraction('choice');
             goToNextItem();
-            //second, last item in section, answer it
-            expectItemLoaded('1-1', 'text');
+            //third, last item in test part, answer it
+            expectItemLoaded('1-2', 'text');
             answerInteraction('text');
             goToNextItem();
             //dialog
@@ -285,19 +312,23 @@ export function warningMessagesSecondLaunchSpecs() {
             //continue in dialog
             clickDialogButton(dialogButtons[0]);
             //first item of next test part is loaded
-            expectItemLoaded('5-1', 'choice');
+            expectItemLoaded('5-1', 'text');
             expectDialogClosed();
         });
     });
 
     describe('Display Unanswered Warning', () => {
         it('if true, no dialog on leaving test part when all answered', () => {
-            //first item in section, answer it
-            expectItemLoaded('5-1', 'choice');
+            //first item in test part, answer it
+            expectItemLoaded('5-1', 'text');
+            answerInteraction('text');
+            goToNextItem();
+            //second item in test part, answer it
+            expectItemLoaded('5-2', 'choice');
             answerInteraction('choice');
             goToNextItem();
-            //second, last item in section, answer it
-            expectItemLoaded('5-1', 'text');
+            //third, last item in tets part, answer it
+            expectItemLoaded('5-2', 'text');
             answerInteraction('text');
             goToNextItem();
             //no dialog; first item of next test part is loaded
@@ -315,7 +346,15 @@ export function warningMessagesSecondLaunchSpecs() {
             //first item in section
             expectItemLoaded('2-1', 'text');
             answerInteraction('text');
-            //advance clock to reach timeout, then wait to ensure timer code runs
+            goToNextItem();
+            //second item in section, let's asnwer it for another test case and go back
+            expectItemLoaded('2-1', 'choice');
+            answerInteraction('choice');
+            goToPreviousItem();
+            expectItemLoaded('2-1', 'text');
+            //advance clock to reach timeout, also wait to ensure timer code runs
+            //eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(200);
             cy.clock().tick(60 * 1000);
             //dialog
             expectDialog(dialogTitle, dialogText, dialogButtons);
@@ -331,13 +370,17 @@ export function warningMessagesSecondLaunchSpecs() {
         it('if false, dialog on leaving section when not timed out', () => {
             const dialogTitle = 'You are about to leave this section.';
             const dialogText =
-                'You answered 1 of 1 question(s) for this section of the test. Click "Close this Section" to continue.' +
+                'You answered 2 of 2 question(s) for this section of the test. Click "Close this Section" to continue.' +
                 'Once you close this section, you cannot return to it or change your answers.';
             const dialogButtons = ['close this section', 'review my answers'];
 
             //first item in section
             expectItemLoaded('2-2', 'choice');
             answerInteraction('choice');
+            goToNextItem();
+            //second item in section
+            expectItemLoaded('2-2', 'text');
+            answerInteraction('text');
             goToNextItem();
             //dialog
             expectDialog(dialogTitle, dialogText, dialogButtons);
@@ -365,6 +408,9 @@ export function warningMessagesSecondLaunchSpecs() {
             goToNextItem();
             expectItemLoaded('3-2', 'text');
             answerInteraction('text');
+            goToNextItem();
+            expectItemLoaded('3-2', 'choice');
+            answerInteraction('choice');
             goToNextItem();
             expectItemLoaded('4-1', 'choice');
             answerInteraction('choice');
