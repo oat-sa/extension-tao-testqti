@@ -34,7 +34,8 @@ define([
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
     'taoQtiTest/controller/creator/views/subsection',
-    'ui/dialog/confirm'
+    'ui/dialog/confirm',
+    'taoQtiTest/controller/creator/helpers/subsection'
 ], function (
     $,
     _,
@@ -50,7 +51,8 @@ define([
     sectionCategory,
     sectionBlueprint,
     subsectionView,
-    confirmDialog
+    confirmDialog,
+    subsectionsHelper
 ) {
     'use strict';
 
@@ -174,18 +176,15 @@ define([
                 sectionModel.sectionParts = [];
             }
 
-            $section
-                .children('.subsections')
-                .children('.subsection')
-                .each(function () {
-                    const $subsection = $(this);
-                    const index = $subsection.data('bind-index');
-                    if (!sectionModel.sectionParts[index]) {
-                        sectionModel.sectionParts[index] = {};
-                    }
+            subsectionsHelper.getSubsections($section).each(function () {
+                const $subsection = $(this);
+                const index = $subsection.data('bind-index');
+                if (!sectionModel.sectionParts[index]) {
+                    sectionModel.sectionParts[index] = {};
+                }
 
-                    subsectionView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, $subsection);
-                });
+                subsectionView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, $subsection);
+            });
         }
         /**
          * Set up the item refs that already belongs to the section
@@ -529,6 +528,8 @@ define([
                         );
                         const acceptFunction = () => {
                             $section.data('movedItems', _.clone(sectionModel.sectionParts));
+                            sectionModel.sectionParts = [];
+                            $('.itemrefs', $itemRefsWrapper).empty();
                             executeAdd();
                         };
                         confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog);
@@ -584,8 +585,7 @@ define([
                 if ($target.hasClass('section')) {
                     $parent = $target.parents('.sections');
                     actions.disable($parent.find('.section'), 'h2');
-                } else if ($target.hasClass('subsection') && !$target.parents('.subsection').length) {
-                    // first level of subsection
+                } else if ($target.hasClass('subsection') && subsectionsHelper.isFistLevelSubsection($target)) {
                     $parent = $target.parents('.section');
                     actions.displayItemWrapper(null, $parent, true);
                 }
@@ -603,7 +603,7 @@ define([
                 if (
                     e.type === 'undo' &&
                     ($target.hasClass('subsection') || $target.hasClass('subsections')) &&
-                    !$target.parents('.subsection').length
+                    subsectionsHelper.isFistLevelSubsection($target)
                 ) {
                     actions.displayItemWrapper(null, $target.parents('.section'), false, true);
                 }

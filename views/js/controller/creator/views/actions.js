@@ -168,7 +168,7 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
     function removable($container, actionContainerElt) {
         $container.each(function () {
             const $elt = $(this);
-            const $actionContainer = $(actionContainerElt, $elt);
+            const $actionContainer = $elt.children(actionContainerElt);
             const $delete = $('[data-delete]', $actionContainer);
 
             if ($container.length <= 1 && !$elt.hasClass('subsection')) {
@@ -185,7 +185,7 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
      * @param {String} actionContainerElt - the element name that contains the actions
      */
     function disable($container, actionContainerElt) {
-        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
+        $container.children(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
     }
 
     /**
@@ -194,7 +194,7 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
      * @param {String} actionContainerElt - the element name that contains the actions
      */
     function enable($container, actionContainerElt) {
-        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);
+        $container.children(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);
     }
 
     /**

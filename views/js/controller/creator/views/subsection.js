@@ -33,7 +33,8 @@ define([
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
-    'ui/dialog/confirm'
+    'ui/dialog/confirm',
+    'taoQtiTest/controller/creator/helpers/subsection'
 ], function (
     $,
     _,
@@ -48,7 +49,8 @@ define([
     categorySelectorFactory,
     sectionCategory,
     sectionBlueprint,
-    confirmDialog
+    confirmDialog,
+    subsectionsHelper
 ) {
     'use strict';
     /**
@@ -91,8 +93,7 @@ define([
         rubricBlocks();
         addRubricBlock();
 
-        const isNestedSubsection = $subsection.parents('.subsection').length !== 0;
-        if (isNestedSubsection) { // prevent adding a third subsection level
+        if (subsectionsHelper.isNestedSubsection($subsection)) { // prevent adding a third subsection level
             $('.add-subsection', $subsection).hide();
             $('.add-subsection + .tlb-separator', $subsection).hide();
         } else {
@@ -178,18 +179,15 @@ define([
                 subsectionModel.sectionParts = [];
             }
 
-            $subsection
-                .children('.subsections')
-                .children('.subsection')
-                .each(function () {
-                    const $subsection = $(this);
-                    const index = $subsection.data('bind-index');
-                    if (!subsectionModel.sectionParts[index]) {
-                        subsectionModel.sectionParts[index] = {};
-                    }
+            subsectionsHelper.getSubsections($subsection).each(function () {
+                const $subsection = $(this);
+                const index = $subsection.data('bind-index');
+                if (!subsectionModel.sectionParts[index]) {
+                    subsectionModel.sectionParts[index] = {};
+                }
 
-                    setUp(creatorContext, subsectionModel.sectionParts[index], subsectionModel, $subsection);
-                });
+                setUp(creatorContext, subsectionModel.sectionParts[index], subsectionModel, $subsection);
+            });
         }
         /**
          * Set up the item refs that already belongs to the section
@@ -540,6 +538,8 @@ define([
                         const confirmMessage = __('The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?', subsectionModel.title, `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`);
                         const acceptFunction = () => {
                             $subsection.data('movedItems', _.clone(subsectionModel.sectionParts));
+                            subsectionModel.sectionParts = [];
+                            $('.itemrefs', $itemRefsWrapper).empty();
                             executeAdd();
                         }
                         confirmDialog(confirmMessage, acceptFunction,() => {}, optionsConfirmDialog);
@@ -590,30 +590,23 @@ define([
 
         $(document)
             .on('delete', function (e) {
-                let $parent;
                 const $target = $(e.target);
                 if ($target.hasClass('subsection')) {
-                    $parent = $target.parents('.subsections').first();
-                    actions.disable($parent.find('.subsection'), 'h2');
-                    if ($target.parents('.subsection').length) {
-                        // second level of subsection
-                        $parent = $target.parents('.subsection');
-                        actions.displayItemWrapper(null, $parent, true);
+                    actions.disable(subsectionsHelper.getSiblingSubsections($target), 'h2');
+                    if (subsectionsHelper.isNestedSubsection($target)) {
+                        actions.displayItemWrapper(null, subsectionsHelper.getParentSubsection($target), true);
                     }
                 }
             })
             .on('add change undo.deleter deleted.deleter', function (e) {
                 const $target = $(e.target);
                 if ($target.hasClass('subsection') || $target.hasClass('subsections')) {
-                    const $subsections = $(
-                        '.subsection',
-                        $target.hasClass('subsections') ? $target : $target.parents('.sections')
-                    );
+                    const $subsections = subsectionsHelper.getSiblingSubsections($target);
                     actions.removable($subsections, 'h2');
                     actions.movable($subsections, 'subsection', 'h2');
 
-                    if (e.type === 'undo' && $subsections.parents('.subsection').length) {
-                        actions.displayItemWrapper(null, $subsections.parents('.subsection'), false, true);
+                    if (e.type === 'undo' && subsectionsHelper.isNestedSubsection($target)) {
+                        actions.displayItemWrapper(null, subsectionsHelper.getParentSubsection($target), false, true);
                     }
                 }
             })
