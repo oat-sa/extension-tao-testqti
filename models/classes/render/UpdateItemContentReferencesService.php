@@ -26,13 +26,9 @@ use oat\taoQtiTest\models\classes\render\CustomInteraction\CustomInteractionPost
 
 class UpdateItemContentReferencesService
 {
-    /**
-     * @var ItemAssetsReplacement
-     */
+    /** @var ItemAssetsReplacement */
     private $itemAssetsReplacement;
-    /**
-     * @var CustomInteractionPostProcessorAllocator
-     */
+    /** @var CustomInteractionPostProcessorAllocator */
     private $customInteractionPostProcessorAllocator;
 
     public function __construct(

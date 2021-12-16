@@ -31,9 +31,7 @@ class TextReaderPostProcessorTest extends TestCase
     private const CONTENT_PREFIX = 'content-';
     private const CONTENT_REPLACER = 'replaced';
 
-    /**
-     * @var TextReaderPostProcessor
-     */
+    /** @var TextReaderPostProcessor */
     private $subject;
 
     public function setUp(): void
