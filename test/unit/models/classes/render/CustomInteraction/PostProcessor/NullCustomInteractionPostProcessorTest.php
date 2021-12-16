@@ -27,9 +27,7 @@ use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\NullCus
 
 class NullCustomInteractionPostProcessorTest extends TestCase
 {
-    /**
-     * @var NullCustomInteractionPostProcessor
-     */
+    /** @var NullCustomInteractionPostProcessor */
     private $subject;
 
     public function setUp(): void

@@ -30,9 +30,7 @@ use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\TextRea
 
 class CustomInteractionPostProcessorAllocatorTest extends TestCase
 {
-    /**
-     * @var CustomInteractionPostProcessorAllocator
-     */
+    /** @var CustomInteractionPostProcessorAllocator */
     private $subject;
 
     public function setUp(): void

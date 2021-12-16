@@ -29,26 +29,19 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class ContentPostprocessorServiceTest extends TestCase
 {
-    private $serviceLocator;
-    /**
-     * @var UpdateItemContentReferencesService
-     */
+    /** @var UpdateItemContentReferencesService */
     private $sut;
-    /**
-     * @var ItemAssetsReplacement|MockObject
-     */
+    /** @var ItemAssetsReplacement|MockObject */
     private $itemAssetReplacement;
-    /** @var CustomInteractionPostProcessorAllocator|MockObject */
-    private $customInteractionAllocator;
 
     public function setUp(): void
     {
         $this->itemAssetReplacement = $this->createMock(ItemAssetsReplacement::class);
-        $this->customInteractionAllocator = $this->createMock(CustomInteractionPostProcessorAllocator::class);
+        $customInteractionAllocator = $this->createMock(CustomInteractionPostProcessorAllocator::class);
 
         $this->sut = new UpdateItemContentReferencesService(
             $this->itemAssetReplacement,
-            $this->customInteractionAllocator
+            $customInteractionAllocator
         );
     }
 

@@ -28,9 +28,8 @@ use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\NullCus
 class CustomInteractionPostProcessorAllocator
 {
     public const CUSTOM_INTERACTION_QTI_CLASS = 'customInteraction';
-    /**
-     * @var array
-     */
+
+    /** @var array */
     private $postProcessorMap;
 
     public function __construct(array $postProcessorMap)

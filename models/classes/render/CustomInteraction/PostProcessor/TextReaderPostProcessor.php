@@ -30,9 +30,7 @@ class TextReaderPostProcessor implements CustomInteractionPostProcessorInterface
     public const INTERACTION_IDENTIFIER = 'textReaderInteraction';
     private const CONTENT_PREFIX = 'content-';
 
-    /**
-     * @var ItemAssetsReplacement
-     */
+    /** @var ItemAssetsReplacement */
     private $itemAssetsReplacement;
 
     public function __construct(ItemAssetsReplacement $itemAssetsReplacement)
