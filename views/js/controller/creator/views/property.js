@@ -129,30 +129,29 @@ function($, ui, DataBinder, templates){
         * @private
         */
         function propValidation() {
-            let $togglers;
-            let $inputSectionIdentifierValue;
-            let $propertySideSection = $('.test-creator-props');
-            $togglers = $('#saver');
+            let $togglers = $('#saver');
 
             $view.on('validated.group', function(e, isValid){
                 if(e.namespace === 'group'){
-                    $inputSectionIdentifierValue = $(e.currentTarget)[0].childNodes[5].childNodes[3].childNodes[1].value;
-                    let testSectionId = "#" + $inputSectionIdentifierValue;
+                    let testSectionId = "#" + $('.tlb-button-on').parents('.section').attr("id");
                     if(isValid === true){
                         $togglers.removeClass('disabled');
                         $(testSectionId).css("border-left", "solid 5px #a4bbc5");
                     } else {
                         $(testSectionId).css("border-left", "solid 5px #ba122b");
                         $togglers.addClass('disabled');
-
                     }
-                    //disables save button if error class is present in class list
-                    $togglers.on('mouseenter', function(e){
+
+            //disables save button if error class is present in class list
+            $togglers.on('mouseenter', function(e){
                         let lengthNodes = $('.test-creator-props')[0].childNodes.length;
                         for ( let i = 7; i < lengthNodes; i ++){
-                        let sectionClassList = $('.test-creator-props')[0].childNodes[i].childNodes[9].childNodes[3].childNodes[1].classList.value;
-                        if (sectionClassList === 'error'){
+                        let sectionTitleClassList = $('.test-creator-props')[0].childNodes[i].childNodes[9].childNodes[3].childNodes[1].classList.value;
+                        let sectionIdentifierClassList = $('.test-creator-props')[0].childNodes[i].childNodes[5].childNodes[3].childNodes[1].classList.value;
+
+                        if (sectionTitleClassList === 'error' || sectionIdentifierClassList === 'error' ){
                             $togglers.addClass('disabled');
+                            $togglers.attr("disabled", "disabled")
                           }
                         }
                     })
