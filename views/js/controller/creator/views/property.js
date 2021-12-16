@@ -129,22 +129,36 @@ function($, ui, DataBinder, templates){
         * @private
         */
         function propValidation() {
-            var $togglers;
+            let $togglers;
+            let $inputSectionIdentifierValue;
+            let $propertySideSection = $('.test-creator-props');
+            $togglers = $('#saver');
+
             $view.on('validated.group', function(e, isValid){
                 if(e.namespace === 'group'){
-                    $togglers = $('#test-creator .property-toggler, .rub-toggler, .section-adder, .testpart-adder, #saver');
+                    $inputSectionIdentifierValue = $(e.currentTarget)[0].childNodes[5].childNodes[3].childNodes[1].value;
+                    let testSectionId = "#" + $inputSectionIdentifierValue;
                     if(isValid === true){
                         $togglers.removeClass('disabled');
-                        $togglers.removeAttr('disabled');
-                        $('.rub-toggler').css("pointer-events", "auto")
-
+                        $(testSectionId).css("border-left", "solid 5px #a4bbc5");
                     } else {
+                        $(testSectionId).css("border-left", "solid 5px #ba122b");
                         $togglers.addClass('disabled');
-                        $togglers.attr("disabled", "disabled")
-                        $('.rub-toggler').css("pointer-events", "none")
+
                     }
+                    //disables save button if error class is present in class list
+                    $togglers.on('mouseenter', function(e){
+                        let lengthNodes = $('.test-creator-props')[0].childNodes.length;
+                        for ( let i = 7; i < lengthNodes; i ++){
+                        let sectionClassList = $('.test-creator-props')[0].childNodes[i].childNodes[9].childNodes[3].childNodes[1].classList.value;
+                        if (sectionClassList === 'error'){
+                            $togglers.addClass('disabled');
+                          }
+                        }
+                    })
                 }
             });
+
             $view.groupValidator();
         }
 
