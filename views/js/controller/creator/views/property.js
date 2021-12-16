@@ -136,21 +136,18 @@ function($, ui, DataBinder, templates){
                     let testSectionId = "#" + $('.tlb-button-on').parents('.section').attr("id");
                     if(isValid === true){
                         $togglers.removeClass('disabled');
-                        $(testSectionId).css("border-left", "solid 5px #a4bbc5");
+                        $(testSectionId).removeClass('section-error');
                     } else {
-                        $(testSectionId).css("border-left", "solid 5px #ba122b");
                         $togglers.addClass('disabled');
+                        $(testSectionId).addClass('section-error');
                     }
+                    //disables save button if span.validate-error is present in any property input
+                    let classError = $container.find("span.validate-error");
 
-            //disables save button if span.validate-error is present in any property input
-            $togglers.on('mouseenter', function(){
-                  let classError = $container.find("span.validate-error");
-
-                  if (classError.length > 0 ){
-                            $togglers.addClass('disabled');
-                            $togglers.attr("disabled", "disabled")
-                        }
-                    })
+                    if (classError.length > 0 ){
+                        $togglers.addClass('disabled');
+                        $togglers.attr("disabled", "disabled")
+                    }
                 }
             });
 
