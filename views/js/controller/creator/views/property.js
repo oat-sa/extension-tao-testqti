@@ -129,7 +129,7 @@ function($, ui, DataBinder, templates){
         * @private
         */
         function propValidation() {
-            let $togglers = $('#saver');
+            const $togglers = $('#saver');
 
             $view.on('validated.group', function(e, isValid){
                 if(e.namespace === 'group'){
@@ -142,17 +142,13 @@ function($, ui, DataBinder, templates){
                         $togglers.addClass('disabled');
                     }
 
-            //disables save button if error class is present in class list
-            $togglers.on('mouseenter', function(e){
-                        let lengthNodes = $('.test-creator-props')[0].childNodes.length;
-                        for ( let i = 7; i < lengthNodes; i ++){
-                        let sectionTitleClassList = $('.test-creator-props')[0].childNodes[i].childNodes[9].childNodes[3].childNodes[1].classList.value;
-                        let sectionIdentifierClassList = $('.test-creator-props')[0].childNodes[i].childNodes[5].childNodes[3].childNodes[1].classList.value;
+            //disables save button if span.validate-error is present in any property input
+            $togglers.on('mouseenter', function(){
+                  let classError = $container.find("span.validate-error");
 
-                        if (sectionTitleClassList === 'error' || sectionIdentifierClassList === 'error' ){
+                  if (classError.length > 0 ){
                             $togglers.addClass('disabled');
                             $togglers.attr("disabled", "disabled")
-                          }
                         }
                     })
                 }
