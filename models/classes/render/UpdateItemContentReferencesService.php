@@ -22,28 +22,34 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\render;
 
 use oat\taoItems\model\render\ItemAssetsReplacement;
+use oat\taoQtiTest\models\classes\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
 
 class UpdateItemContentReferencesService
 {
-    /**
-     * @var ItemAssetsReplacement
-     */
+    /** @var ItemAssetsReplacement */
     private $itemAssetsReplacement;
+    /** @var CustomInteractionPostProcessorAllocator */
+    private $customInteractionPostProcessorAllocator;
 
-    public function __construct(ItemAssetsReplacement $itemAssetsReplacement)
-    {
+    public function __construct(
+        ItemAssetsReplacement $itemAssetsReplacement,
+        CustomInteractionPostProcessorAllocator $customInteractionPostProcessorAllocator
+    ) {
         $this->itemAssetsReplacement = $itemAssetsReplacement;
+        $this->customInteractionPostProcessorAllocator = $customInteractionPostProcessorAllocator;
     }
 
     public function __invoke(array $itemContent): array
     {
-
-        $jsonAssets = [];
+        if ($this->isQtiItemContent($itemContent)){
+            $itemContent = $this->resolveCustomInteractionPostProcessing($itemContent);
+        }
 
         if (empty($itemContent['assets'])) {
             return $itemContent;
         }
 
+        $jsonAssets = [];
         foreach ($itemContent['assets'] as $type => $assets) {
             foreach ($assets as $key => $asset) {
                 $jsonAssets[$type][$key] = $this->itemAssetsReplacement->postProcessAssets($asset);
@@ -51,6 +57,25 @@ class UpdateItemContentReferencesService
         }
 
         $itemContent['assets'] = $jsonAssets;
+
+        return $itemContent;
+    }
+
+    private function isQtiItemContent($itemContent):bool
+    {
+        return isset($itemContent['type']) && $itemContent['type'] === 'qti';
+    }
+
+    private function resolveCustomInteractionPostProcessing(array $itemContent): array
+    {
+        foreach ($itemContent['data']['body']['elements'] as &$element) {
+            if ($element['qtiClass'] === CustomInteractionPostProcessorAllocator::CUSTOM_INTERACTION_QTI_CLASS) {
+                $postProcessorAllocator = $this->customInteractionPostProcessorAllocator->allocatePostProcessor(
+                    $element['typeIdentifier']
+                );
+                $element = $postProcessorAllocator->postProcess($element);
+            }
+        }
 
         return $itemContent;
     }

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
@@ -15,33 +15,38 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2021 (original work) Open Assessment Technologies SA
+ * Copyright (c) 2021 (original work) Open Assessment Technologies SA;
  */
+
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\render;
+namespace oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider;
 
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiTest\models\classes\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
+use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
-class ItemsReferencesServiceProvider implements ContainerServiceProviderInterface
+class CustomInteractionPostProcessingServiceProvider implements ContainerServiceProviderInterface
 {
     public function __invoke(ContainerConfigurator $configurator): void
     {
         $services = $configurator->services();
 
         $services
-            ->set(UpdateItemContentReferencesService::class, UpdateItemContentReferencesService::class)
+            ->set(TextReaderPostProcessor::class, TextReaderPostProcessor::class)
             ->public()
-            ->args(
-                [
-                    service(ItemAssetsReplacement::SERVICE_ID),
-                    service(CustomInteractionPostProcessorAllocator::class)
-                ]
-            );
+            ->args([
+                service(ItemAssetsReplacement::SERVICE_ID)
+            ]);
+
+        $services
+            ->set(CustomInteractionPostProcessorAllocator::class, CustomInteractionPostProcessorAllocator::class)
+            ->public()
+            ->args([
+                [TextReaderPostProcessor::INTERACTION_IDENTIFIER => service(TextReaderPostProcessor::class)]
+            ]);
     }
 }
