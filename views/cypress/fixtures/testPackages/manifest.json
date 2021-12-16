@@ -11,6 +11,10 @@
         {
             "key": "studentToolTest",
             "package": "student-tool-test.zip"
+        },
+        {
+            "key": "warningMessagesTest",
+            "package": "warning-messages-test.zip"
         }
     ]
 }
