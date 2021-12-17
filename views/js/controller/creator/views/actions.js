@@ -19,7 +19,11 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, propertyView) {
+define([
+    'jquery',
+    'taoQtiTest/controller/creator/views/property',
+    'taoQtiTest/controller/creator/helpers/subsection'
+], function ($, propertyView, subsectionsHelper) {
     'use strict';
 
     const disabledClass = 'disabled';
@@ -214,13 +218,13 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
     ) {
         const $elt = $('.itemrefs-wrapper:first', sectionContainer);
         if (subsectionDeleted) {
-            if ($('.subsection', sectionContainer).length > 1) {
+            if (subsectionsHelper.getSubsections(sectionContainer).length > 1) {
                 $elt.hide();
             } else {
                 $elt.show();
             }
         } else if (undoSubsectionDeletion) {
-            if ($('.subsection', sectionContainer).length >= 1) {
+            if (subsectionsHelper.getSubsections(sectionContainer).length >= 1) {
                 $elt.hide();
             } else {
                 $elt.show();
