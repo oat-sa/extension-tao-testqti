@@ -132,9 +132,11 @@ function($, ui, DataBinder, templates){
             const $togglers = $('#saver');
 
             $view.on('validated.group', function(e, isValid){
+                let classError = $container.find("span.validate-error");
                 if(e.namespace === 'group'){
                     let testSectionId = "#" + $('.tlb-button-on').parents('.section').attr("id");
-                    if(isValid === true){
+
+                    if(isValid === true && classError.length === 0){
                         $togglers.removeClass('disabled');
                         $(testSectionId).removeClass('section-error');
                     } else {
@@ -142,8 +144,6 @@ function($, ui, DataBinder, templates){
                         $(testSectionId).addClass('section-error');
                     }
                     //disables save button if span.validate-error is present in any property input
-                    let classError = $container.find("span.validate-error");
-
                     if (classError.length > 0 ){
                         $togglers.addClass('disabled');
                         $togglers.attr("disabled", "disabled")
