@@ -532,7 +532,11 @@ define([
                             $('.itemrefs', $itemRefsWrapper).empty();
                             executeAdd();
                         };
-                        confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog);
+                        confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog)
+                            .getDom()
+                            .find('.buttons')
+                            .css('display', 'flex')
+                            .css('flex-direction', 'row-reverse');
                     } else {
                         executeAdd();
                     }
