@@ -19,7 +19,11 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, propertyView) {
+define([
+    'jquery',
+    'taoQtiTest/controller/creator/views/property',
+    'taoQtiTest/controller/creator/helpers/subsection'
+], function ($, propertyView, subsectionsHelper) {
     'use strict';
 
     const disabledClass = 'disabled';
@@ -168,7 +172,7 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
     function removable($container, actionContainerElt) {
         $container.each(function () {
             const $elt = $(this);
-            const $actionContainer = $(actionContainerElt, $elt);
+            const $actionContainer = $elt.children(actionContainerElt);
             const $delete = $('[data-delete]', $actionContainer);
 
             if ($container.length <= 1 && !$elt.hasClass('subsection')) {
@@ -185,7 +189,7 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
      * @param {String} actionContainerElt - the element name that contains the actions
      */
     function disable($container, actionContainerElt) {
-        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
+        $container.children(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
     }
 
     /**
@@ -194,7 +198,7 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
      * @param {String} actionContainerElt - the element name that contains the actions
      */
     function enable($container, actionContainerElt) {
-        $container.find(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);
+        $container.children(actionContainerElt).find('[data-delete],.move-up,.move-down').removeClass(disabledClass);
     }
 
     /**
@@ -214,13 +218,13 @@ define(['jquery', 'taoQtiTest/controller/creator/views/property'], function ($, 
     ) {
         const $elt = $('.itemrefs-wrapper:first', sectionContainer);
         if (subsectionDeleted) {
-            if ($('.subsection', sectionContainer).length > 1) {
+            if (subsectionsHelper.getSubsections(sectionContainer).length > 1) {
                 $elt.hide();
             } else {
                 $elt.show();
             }
         } else if (undoSubsectionDeletion) {
-            if ($('.subsection', sectionContainer).length >= 1) {
+            if (subsectionsHelper.getSubsections(sectionContainer).length >= 1) {
                 $elt.hide();
             } else {
                 $elt.show();
