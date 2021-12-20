@@ -129,14 +129,14 @@ function($, ui, DataBinder, templates){
         * @private
         */
         function propValidation() {
-            const $togglers = $('#saver');
+            const $togglers = $('#authoringBack, #saver');
 
             $view.on('validated.group', function(e, isValid){
-                let classErrorAll = $container.find("span.validate-error");
-                let classErrorVisibleFields = $(".section-props:visible").find("span.validate-error");
+                let classErrorAll = $container.find('span.validate-error');
+                let classErrorVisibleFields = $('.section-props:visible').find('span.validate-error');
 
                 if(e.namespace === 'group'){
-                    let testSectionId = "#" + $('.tlb-button-on').parents('.section').attr("id");
+                    let testSectionId = '#' + $('.tlb-button-on').parents('.section').attr('id');
 
                     if(isValid === true && classErrorVisibleFields.length === 0 ){
                         $(testSectionId).removeClass('section-error');
@@ -148,7 +148,7 @@ function($, ui, DataBinder, templates){
                     //disables save button if span.validate-error is present in any property input
                     if (classErrorAll.length > 0 ){
                         $togglers.addClass('disabled');
-                        $togglers.attr("disabled", "disabled")
+                        $togglers.attr('disabled', 'disabled')
                     }
                 }
             });
