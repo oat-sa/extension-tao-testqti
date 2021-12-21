@@ -64,6 +64,15 @@ define(['jquery', 'lodash'], function ($, _) {
         return $subsection.parents('.subsection').first();
     }
     /**
+     * Get parent section of this subsection
+     *
+     * @param {JQueryElement} $subsection
+     * @returns {boolean}
+     */
+    function getParentSection($subsection) {
+        return $subsection.parents('.section');
+    }
+    /**
      * Get parent container('.subsections') for this subsection
      *
      * @param {JQueryElement} $subsection
@@ -79,6 +88,7 @@ define(['jquery', 'lodash'], function ($, _) {
         getSubsections,
         getSubsectionContainer,
         getSiblingSubsections,
-        getParentSubsection
+        getParentSubsection,
+        getParentSection
     };
 });

@@ -84,7 +84,7 @@ define([
         }
         actions.properties($titleWithActions, 'section', subsectionModel, propHandler);
         actions.move($titleWithActions, 'subsections', 'subsection');
-        actions.displayItemWrapper(subsectionModel, $subsection);
+        actions.displayItemWrapper($subsection);
         actions.updateDeleteSelector($titleWithActions);
 
         subsections();
@@ -154,6 +154,8 @@ define([
             if (typeof subsectionModel.hasBlueprint !== 'undefined') {
                 blueprintProperty($view);
             }
+
+            actions.displayCategoryPresets($subsection);
 
             function removePropHandler(e, $deletedNode) {
                 const validIds = [$subsection.parents('.testpart').attr('id'), $subsection.attr('id')];
@@ -414,6 +416,11 @@ define([
                 updateFormState(categorySelector);
             });
 
+            $view.on('set-default-categories', function () {
+                subsectionModel.categories = defaults().categories;
+                updateFormState(categorySelector);
+            });
+
             categorySelector.on('category-change', function (selected, indeterminate) {
                 sectionCategory.setCategories(subsectionModel, selected, indeterminate);
 
@@ -569,7 +576,8 @@ define([
                         //initialize the new test part
                         setUp(creatorContext, sub2sectionModel, subsectionModel, $sub2section);
 
-                        actions.displayItemWrapper(subsectionModel, $subsection);
+                        actions.displayItemWrapper($subsection);
+                        actions.displayCategoryPresets($subsection);
 
                         /**
                          * @event modelOverseer#section-add
@@ -598,7 +606,9 @@ define([
                 if ($target.hasClass('subsection')) {
                     actions.disable(subsectionsHelper.getSiblingSubsections($target), 'h2');
                     if (subsectionsHelper.isNestedSubsection($target)) {
-                        actions.displayItemWrapper(null, subsectionsHelper.getParentSubsection($target), true);
+                        const $parent = subsectionsHelper.getParentSubsection($target);
+                        actions.displayItemWrapper($parent, true);
+                        actions.displayCategoryPresets($parent, true);
                     }
                 }
             })
@@ -610,18 +620,10 @@ define([
                     actions.movable($subsections, 'subsection', 'h2');
 
                     if (e.type === 'undo' && subsectionsHelper.isNestedSubsection($target)) {
-                        actions.displayItemWrapper(null, subsectionsHelper.getParentSubsection($target), false, true);
+                        const $parent = subsectionsHelper.getParentSubsection($target);
+                        actions.displayItemWrapper($parent);
+                        actions.displayCategoryPresets($parent);
                     }
-                }
-            })
-            .on('open.toggler', '.rub-toggler', function (e) {
-                if (e.namespace === 'toggler') {
-                    $(this).parents('h2').addClass('active');
-                }
-            })
-            .on('close.toggler', '.rub-toggler', function (e) {
-                if (e.namespace === 'toggler') {
-                    $(this).parents('h2').removeClass('active');
                 }
             });
     }

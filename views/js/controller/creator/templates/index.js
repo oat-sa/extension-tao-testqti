@@ -74,7 +74,7 @@ function(
             itemrefweight   : applyTemplateConfiguration(itemRefPropsWeight),
             rubricblock     : applyTemplateConfiguration(rubricBlockProps),
             categorypresets : applyTemplateConfiguration(categoryPresets),
-            subsection  : applyTemplateConfiguration(subsection)
+            subsection  : applyTemplateConfiguration(sectionProps)
 
         }
     };
