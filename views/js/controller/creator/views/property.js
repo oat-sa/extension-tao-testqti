@@ -137,13 +137,16 @@ function($, ui, DataBinder, templates){
 
                 if(e.namespace === 'group'){
                     let testSectionId = '#' + $('.tlb-button-on').parents('.section').attr('id');
+                    let $deleteButtonInCurrentSection = $(testSectionId).find('[data-testid="remove-section"]');
 
                     if(isValid === true && classErrorVisibleFields.length === 0 ){
                         $(testSectionId).removeClass('section-error');
                         $togglers.removeClass('disabled');
+                        $deleteButtonInCurrentSection.removeClass('disabled');
                     } else {
                         $togglers.addClass('disabled');
                         $(testSectionId).addClass('section-error');
+                        $deleteButtonInCurrentSection.addClass('disabled');
                     }
                     //disables save button if span.validate-error is present in any property input
                     if (classErrorAll.length > 0 ){
