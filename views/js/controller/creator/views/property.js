@@ -129,7 +129,7 @@ function($, ui, DataBinder, templates){
         * @private
         */
         function propValidation() {
-            const $togglers = $('#authoringBack, #saver');
+            const $togglers = $('#authoringBack, #saver, #previewer');
 
             $view.on('validated.group', function(e, isValid){
                 let classErrorAll = $container.find('span.validate-error');
