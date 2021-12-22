@@ -218,7 +218,7 @@ define([
                     let confirmDlg;
 
                     // chosses what buttons to display depending on the message
-                    if(message === 'If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?') {
+                    if(message === messages.leaveWhenInvalid) {
                         confirmDlg = dialog({
                             message: message,
                             buttons: buttonsYesNo,
