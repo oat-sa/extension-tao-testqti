@@ -141,17 +141,19 @@ function($, ui, DataBinder, templates){
 
                     if(isValid === true && classErrorVisibleFields.length === 0 ){
                         $(testSectionId).removeClass('section-error');
-                        $togglers.removeClass('disabled');
                         $deleteButtonInCurrentSection.removeClass('disabled');
                     } else {
-                        $togglers.addClass('disabled');
                         $(testSectionId).addClass('section-error');
                         $deleteButtonInCurrentSection.addClass('disabled');
                     }
-                    //disables save button if span.validate-error is present in any property input
+                    //disables save, authoringBack and preview buttons if span.validate-error is present in any property input
                     if (classErrorAll.length > 0 ){
                         $togglers.addClass('disabled');
                         $togglers.attr('disabled', 'disabled')
+
+                    } else {
+                        $togglers.removeClass('disabled');
+                        $togglers.removeAttr('disabled');
                     }
                 }
             });

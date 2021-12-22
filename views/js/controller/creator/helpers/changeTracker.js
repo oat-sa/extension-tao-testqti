@@ -231,7 +231,6 @@ define([
                             }
                         })
                     } else {
-
                         confirmDlg = dialog({
                            message: message,
                            buttons: buttonsCancelSave,
