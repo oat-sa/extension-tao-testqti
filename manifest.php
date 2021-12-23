@@ -23,6 +23,7 @@ use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
+use oat\taoQtiTest\scripts\install\RegisterResultTransmissionEventHandlers;
 use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\DisableBRSinTestAuthoring;
@@ -92,7 +93,8 @@ return [
             RegisterQtiPackageExporter::class,
             SetupProvider::class,
             SetupDefaultTemplateConfiguration::class,
-            DisableBRSinTestAuthoring::class
+            DisableBRSinTestAuthoring::class,
+            RegisterResultTransmissionEventHandlers::class
         ],
     ],
     'update' => Updater::class,
