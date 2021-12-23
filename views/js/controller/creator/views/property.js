@@ -138,13 +138,23 @@ function($, ui, DataBinder, templates){
                 if(e.namespace === 'group'){
                     let testSectionId = '#' + $('.tlb-button-on').parents('.section').attr('id');
                     let $deleteButtonInCurrentSection = $(testSectionId).find('[data-testid="remove-section"]');
+                    let $arrowUpButtonInCurrentSection = $(testSectionId).find('[data-testid="move-up-section"]');
+                    let $arrowDownButtonInCurrentSection = $(testSectionId).find('[data-testid="move-down-section"]');
+                    let $rudblocksButtonInCurrentSection = $(testSectionId).find('[data-testid="manage-rubric-blocks"]');
 
                     if(isValid === true && classErrorVisibleFields.length === 0 ){
                         $(testSectionId).removeClass('section-error');
                         $deleteButtonInCurrentSection.removeClass('disabled');
+                        $arrowUpButtonInCurrentSection.removeClass('disabled');
+                        $arrowDownButtonInCurrentSection.removeClass('disabled');
+                        $rudblocksButtonInCurrentSection.removeClass('disabled');
+
                     } else {
                         $(testSectionId).addClass('section-error');
                         $deleteButtonInCurrentSection.addClass('disabled');
+                        $arrowUpButtonInCurrentSection.addClass('disabled');
+                        $arrowDownButtonInCurrentSection.addClass('disabled');
+                        $rudblocksButtonInCurrentSection.addClass('disabled');
                     }
                     //disables save, authoringBack and preview buttons if span.validate-error is present in any property input
                     if (classErrorAll.length > 0 ){
