@@ -10,11 +10,10 @@ use oat\oatbox\reporting\Report;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
 use oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
+use oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\AsynchronousResultTransmissionEventHandler;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
+use oat\taoQtiTest\scripts\tools\ResultVariableTransmissionEvenHandlerSwitcher;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version202112231326462260_taoQtiTest extends AbstractMigration
 {
     public function up(Schema $schema): void
@@ -23,6 +22,16 @@ final class Version202112231326462260_taoQtiTest extends AbstractMigration
         $this->attachResultItemVariablesTransmissionEvent($eventManager);
         $this->attachResultTestVariablesTransmissionEvent($eventManager);
         $this->getServiceManager()->register(EventManager::SERVICE_ID, $eventManager);
+
+
+        $command = sprintf(
+            'php index \'%s\' --class \'%s\'',
+            ResultVariableTransmissionEvenHandlerSwitcher::class,
+            AsynchronousResultTransmissionEventHandler::class
+        );
+        $this->addReport(Report::createSuccess(
+            'You can change result variable transmission events handler by running command:' . PHP_EOL . $command
+        ));
     }
 
     public function down(Schema $schema): void
@@ -48,7 +57,7 @@ final class Version202112231326462260_taoQtiTest extends AbstractMigration
         $this->addReport(
             Report::createSuccess(
                 sprintf(
-                    'Unsubscribed %s::%s to %s event',
+                    'Subscribed %s::%s to %s event',
                     ResultTransmissionEventHandlerInterface::class,
                     'transmitResultItemVariable',
                     ResultItemVariablesTransmissionEvent::class
@@ -85,7 +94,7 @@ final class Version202112231326462260_taoQtiTest extends AbstractMigration
         $this->addReport(
             Report::createSuccess(
                 sprintf(
-                    'Unsubscribed %s::%s to %s event',
+                    'Subscribed %s::%s to %s event',
                     ResultTransmissionEventHandlerInterface::class,
                     'transmitResultTestVariable',
                     ResultTestVariablesTransmissionEvent::class

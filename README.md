@@ -37,7 +37,11 @@ oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent::class
 oat\taoQtiTest\models\event\ResultTestVariablesTransmissionEvent::class
 ```
 
-Asynchronous handling of this event can be provided by updating DI config file `taoQtiTest/ResultTransmissionEventHandler` by next code 
+Asynchronous handling of this event can be provided by running next command
+```bash
+php index 'oat\taoQtiTest\scripts\cli\ResultVariableTransmissionEvenHandlerSwitcher' --class 'oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\AsynchronousResultTransmissionEventHandler'
+```
+or manually updating DI config file `taoQtiTest/ResultTransmissionEventHandler` by next code 
 ```PHP
 <?php
 /**
@@ -45,5 +49,4 @@ Asynchronous handling of this event can be provided by updating DI config file `
  */
 
 return new oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\AsynchronousResultTransmissionEventHandler();
-
 ```
