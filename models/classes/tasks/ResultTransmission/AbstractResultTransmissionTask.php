@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\classes\tasks\ResultTransmission;
 
 use oat\oatbox\extension\AbstractAction;
-use oat\oatbox\service\ServiceManager;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\models\classes\tasks\ResultTransmission\Exception\ResultTransmissionTaskValidationException;
 use taoQtiCommon_helpers_ResultTransmitter;

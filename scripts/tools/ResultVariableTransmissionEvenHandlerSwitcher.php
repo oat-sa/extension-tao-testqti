@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\scripts\tools;
 use oat\oatbox\extension\script\ScriptAction;
 use oat\oatbox\extension\script\ScriptException;
 use oat\oatbox\reporting\Report;
-use oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
+use oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
 
 /**
  * Class ResultVariableTransmissionEvenHandlerSwitcher

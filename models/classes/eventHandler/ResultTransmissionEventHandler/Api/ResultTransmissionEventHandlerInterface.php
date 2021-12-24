@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\Api;
+namespace oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\Api;
 
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;

@@ -20,6 +20,6 @@
 
 declare(strict_types=1);
 
-use oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\ResultTransmissionEventHandler;
+use oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\ResultTransmissionEventHandler;
 
 return new ResultTransmissionEventHandler();

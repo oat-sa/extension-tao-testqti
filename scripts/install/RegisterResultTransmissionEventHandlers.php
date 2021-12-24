@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\scripts\install;
 use oat\oatbox\extension\InstallAction;
 use oat\oatbox\reporting\Report;
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
-use oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
+use oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
 
 class RegisterResultTransmissionEventHandlers extends InstallAction

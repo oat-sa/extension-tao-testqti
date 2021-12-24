@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler;
+namespace oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler;
 
 use oat\oatbox\service\ServiceManager;
 use oat\tao\model\service\InjectionAwareService;

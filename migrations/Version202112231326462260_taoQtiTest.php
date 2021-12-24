@@ -9,8 +9,8 @@ use oat\oatbox\event\EventManager;
 use oat\oatbox\reporting\Report;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
-use oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
-use oat\taoQtiTest\models\classes\evnetHandler\ResultTransmissionEventHandler\AsynchronousResultTransmissionEventHandler;
+use oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
+use oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\AsynchronousResultTransmissionEventHandler;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
 use oat\taoQtiTest\scripts\tools\ResultVariableTransmissionEvenHandlerSwitcher;
 
