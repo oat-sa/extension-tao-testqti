@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\classes\tasks\ResultTransmission\Exception;
 
-class ResultTransmissionTaskValidationException extends \Exception
+use DomainException;
+
+class ResultTransmissionTaskValidationException extends DomainException
 {
 }
