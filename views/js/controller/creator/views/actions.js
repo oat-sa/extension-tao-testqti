@@ -205,36 +205,18 @@ define([
      * Hides/shows container for adding items inside a section checking if there is at least
      * one subsection inside of it. As delete subsection event is triggered before subsection
      * container is actually removed from section container, we need to have conditional flow
-     * @param {Object | null} sectionModel - section model
-     * @param {Object} sectionContainer - section jquery container
+     * @param {jQueryElement} sectionContainer - section jquery container
      * @param {boolean} subsectionDeleted - if subsection was deleted
-     * @param {boolean} undoSubsectionDeletion - if subsection was recreated with undo action
      */
-    function displayItemWrapper(
-        sectionModel,
-        sectionContainer,
-        subsectionDeleted = false,
-        undoSubsectionDeletion = false
-    ) {
-        const $elt = $('.itemrefs-wrapper:first', sectionContainer);
-        if (subsectionDeleted) {
-            if (subsectionsHelper.getSubsections(sectionContainer).length > 1) {
-                $elt.hide();
-            } else {
+    function displayItemWrapper($section, subsectionDeleted = false) {
+        const $elt = $('.itemrefs-wrapper:first', $section);
+        const subsectionsCount = subsectionsHelper.getSubsections($section).length;
+        if (subsectionsCount) {
+            if (subsectionDeleted && subsectionsCount === 1) {
                 $elt.show();
-            }
-        } else if (undoSubsectionDeletion) {
-            if (subsectionsHelper.getSubsections(sectionContainer).length >= 1) {
-                $elt.hide();
             } else {
-                $elt.show();
+                $elt.hide();
             }
-        } else if (
-            sectionModel.sectionParts &&
-            sectionModel.sectionParts.length > 0 &&
-            sectionModel.sectionParts[0]['qti-type'] === 'assessmentSection'
-        ) {
-            $elt.hide();
         } else {
             $elt.show();
         }
@@ -253,18 +235,47 @@ define([
     }
 
     /**
+     * Hides/shows category-presets (Test Navigation, Navigation Warnings, Test-Taker Tools)
+     * Hide category-presets for section that contains subsections
+     * @param {propView} propView - the view object
+     * @param {boolean} subsectionDeleted - if subsection was deleted
+     * @fires propertiesView#set-default-categories
+     */
+    function displayCategoryPresets($section, subsectionDeleted) {
+        const id = $section.attr('id');
+        const $propertiesView = $(`.test-creator-props #section-props-${id}`);
+        if (!$propertiesView.length) {
+            // property view is not setup
+            return;
+        }
+        const $elt = $propertiesView.find('.category-presets');
+        const subsectionsCount = subsectionsHelper.getSubsections($section).length;
+        if (subsectionsCount) {
+            if (subsectionDeleted && subsectionsCount === 1) {
+                $elt.show();
+            } else {
+                $elt.hide();
+                $propertiesView.trigger('set-default-categories');
+            }
+        } else {
+            $elt.show();
+        }
+    }
+
+    /**
      * The actions gives you shared behavior for some actions.
      *
      * @exports taoQtiTest/controller/creator/views/actions
      */
     return {
-        properties: properties,
-        move: move,
-        removable: removable,
-        movable: movable,
-        disable: disable,
-        enable: enable,
-        displayItemWrapper: displayItemWrapper,
-        updateDeleteSelector: updateDeleteSelector
+        properties,
+        move,
+        removable,
+        movable,
+        disable,
+        enable,
+        displayItemWrapper,
+        updateDeleteSelector,
+        displayCategoryPresets
     };
 });

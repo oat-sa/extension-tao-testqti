@@ -84,7 +84,7 @@ define([
         }
         actions.properties($titleWithActions, 'section', subsectionModel, propHandler);
         actions.move($titleWithActions, 'subsections', 'subsection');
-        actions.displayItemWrapper(subsectionModel, $subsection);
+        actions.displayItemWrapper($subsection);
         actions.updateDeleteSelector($titleWithActions);
 
         subsections();
@@ -93,7 +93,8 @@ define([
         rubricBlocks();
         addRubricBlock();
 
-        if (subsectionsHelper.isNestedSubsection($subsection)) { // prevent adding a third subsection level
+        if (subsectionsHelper.isNestedSubsection($subsection)) {
+            // prevent adding a third subsection level
             $('.add-subsection', $subsection).hide();
             $('.add-subsection + .tlb-separator', $subsection).hide();
         } else {
@@ -154,6 +155,8 @@ define([
             if (typeof subsectionModel.hasBlueprint !== 'undefined') {
                 blueprintProperty($view);
             }
+
+            actions.displayCategoryPresets($subsection);
 
             function removePropHandler(e, $deletedNode) {
                 const validIds = [$subsection.parents('.testpart').attr('id'), $subsection.attr('id')];
@@ -414,6 +417,11 @@ define([
                 updateFormState(categorySelector);
             });
 
+            $view.on('set-default-categories', function () {
+                subsectionModel.categories = defaults().categories;
+                updateFormState(categorySelector);
+            });
+
             categorySelector.on('category-change', function (selected, indeterminate) {
                 sectionCategory.setCategories(subsectionModel, selected, indeterminate);
 
@@ -532,22 +540,32 @@ define([
                     });
                 },
                 checkAndCallAdd: function (executeAdd) {
-                    if (subsectionModel.sectionParts[0] && qtiTestHelper.filterQtiType(subsectionModel.sectionParts[0], 'assessmentItemRef')) {
+                    if (
+                        subsectionModel.sectionParts[0] &&
+                        qtiTestHelper.filterQtiType(subsectionModel.sectionParts[0], 'assessmentItemRef')
+                    ) {
                         // subsection has item(s)
                         const subsectionIndex = $('.subsection', $subsection).length;
-                        const confirmMessage = __('The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?', subsectionModel.title, `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`);
+                        const confirmMessage = __(
+                            'The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?',
+                            subsectionModel.title,
+                            `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`
+                        );
                         const acceptFunction = () => {
                             $subsection.data('movedItems', _.clone(subsectionModel.sectionParts));
                             subsectionModel.sectionParts = [];
                             $('.itemrefs', $itemRefsWrapper).empty();
                             executeAdd();
-                        }
-                        confirmDialog(confirmMessage, acceptFunction,() => {}, optionsConfirmDialog)
+                        };
+                        confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog)
                             .getDom()
                             .find('.buttons')
                             .css('display', 'flex')
                             .css('flex-direction', 'row-reverse');
                     } else {
+                        if (!subsectionModel.sectionParts.length && subsectionModel.categories.length) {
+                            $subsection.data('movedCategories', _.clone(subsectionModel.categories));
+                        }
                         executeAdd();
                     }
                 }
@@ -566,10 +584,16 @@ define([
                         const sub2sectionIndex = $sub2section.data('bind-index');
                         const sub2sectionModel = subsectionModel.sectionParts[sub2sectionIndex];
 
+                        if ($subsection.data('movedCategories')) {
+                            sub2sectionModel.categories = $subsection.data('movedCategories');
+                            $subsection.removeData('movedCategories');
+                        }
+
                         //initialize the new test part
                         setUp(creatorContext, sub2sectionModel, subsectionModel, $sub2section);
 
-                        actions.displayItemWrapper(subsectionModel, $subsection);
+                        actions.displayItemWrapper($subsection);
+                        actions.displayCategoryPresets($subsection);
 
                         /**
                          * @event modelOverseer#section-add
@@ -598,7 +622,9 @@ define([
                 if ($target.hasClass('subsection')) {
                     actions.disable(subsectionsHelper.getSiblingSubsections($target), 'h2');
                     if (subsectionsHelper.isNestedSubsection($target)) {
-                        actions.displayItemWrapper(null, subsectionsHelper.getParentSubsection($target), true);
+                        const $parent = subsectionsHelper.getParentSubsection($target);
+                        actions.displayItemWrapper($parent, true);
+                        actions.displayCategoryPresets($parent, true);
                     }
                 }
             })
@@ -610,18 +636,10 @@ define([
                     actions.movable($subsections, 'subsection', 'h2');
 
                     if (e.type === 'undo' && subsectionsHelper.isNestedSubsection($target)) {
-                        actions.displayItemWrapper(null, subsectionsHelper.getParentSubsection($target), false, true);
+                        const $parent = subsectionsHelper.getParentSubsection($target);
+                        actions.displayItemWrapper($parent);
+                        actions.displayCategoryPresets($parent);
                     }
-                }
-            })
-            .on('open.toggler', '.rub-toggler', function (e) {
-                if (e.namespace === 'toggler') {
-                    $(this).parents('h2').addClass('active');
-                }
-            })
-            .on('close.toggler', '.rub-toggler', function (e) {
-                if (e.namespace === 'toggler') {
-                    $(this).parents('h2').removeClass('active');
                 }
             });
     }

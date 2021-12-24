@@ -87,7 +87,7 @@ define([
         }
         actions.properties($titleWithActions, 'section', sectionModel, propHandler);
         actions.move($titleWithActions, 'sections', 'section');
-        actions.displayItemWrapper(sectionModel, $section);
+        actions.displayItemWrapper($section);
 
         subsections();
         itemRefs();
@@ -150,6 +150,8 @@ define([
             if (typeof sectionModel.hasBlueprint !== 'undefined') {
                 blueprintProperty($view);
             }
+
+            actions.displayCategoryPresets($section);
 
             function removePropHandler(e, $deletedNode) {
                 const validIds = [$section.parents('.testpart').attr('id'), $section.attr('id')];
@@ -397,6 +399,11 @@ define([
                 updateFormState(categorySelector);
             });
 
+            $view.on('set-default-categories', function () {
+                sectionModel.categories = defaults().categories;
+                updateFormState(categorySelector);
+            });
+
             categorySelector.on('category-change', function (selected, indeterminate) {
                 sectionCategory.setCategories(sectionModel, selected, indeterminate);
 
@@ -538,6 +545,9 @@ define([
                             .css('display', 'flex')
                             .css('flex-direction', 'row-reverse');
                     } else {
+                        if (!sectionModel.sectionParts.length && sectionModel.categories.length) {
+                            $section.data('movedCategories', _.clone(sectionModel.categories));
+                        }
                         executeAdd();
                     }
                 }
@@ -556,10 +566,16 @@ define([
                         const subsectionIndex = $subsection.data('bind-index');
                         const subsectionModel = sectionModel.sectionParts[subsectionIndex];
 
+                        if ($section.data('movedCategories')) {
+                            subsectionModel.categories = $section.data('movedCategories');
+                            $section.removeData('movedCategories');
+                        }
+
                         //initialize the new test part
                         subsectionView.setUp(creatorContext, subsectionModel, sectionModel, $subsection);
 
-                        actions.displayItemWrapper(sectionModel, $section);
+                        actions.displayItemWrapper($section);
+                        actions.displayCategoryPresets($section);
 
                         /**
                          * @event modelOverseer#section-add
@@ -590,8 +606,9 @@ define([
                     $parent = $target.parents('.sections');
                     actions.disable($parent.find('.section'), 'h2');
                 } else if ($target.hasClass('subsection') && subsectionsHelper.isFistLevelSubsection($target)) {
-                    $parent = $target.parents('.section');
-                    actions.displayItemWrapper(null, $parent, true);
+                    $parent = subsectionsHelper.getParentSection($target);
+                    actions.displayItemWrapper($parent, true);
+                    actions.displayCategoryPresets($parent, true);
                 }
             })
             .on('add change undo.deleter deleted.deleter', function (e) {
@@ -609,7 +626,9 @@ define([
                     ($target.hasClass('subsection') || $target.hasClass('subsections')) &&
                     subsectionsHelper.isFistLevelSubsection($target)
                 ) {
-                    actions.displayItemWrapper(null, $target.parents('.section'), false, true);
+                    const $parent = subsectionsHelper.getParentSection($target);
+                    actions.displayItemWrapper($parent);
+                    actions.displayCategoryPresets($parent);
                 }
             })
             .on('open.toggler', '.rub-toggler', function (e) {
