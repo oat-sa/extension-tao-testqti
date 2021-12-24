@@ -60,7 +60,7 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements Ap
     private function buildTransmitter($deliveryExecutionId): taoQtiCommon_helpers_ResultTransmitter
     {
         /** @var DeliveryServerService $deliveryServerService */
-        $deliveryServerService = ServiceManager::getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
         $resultStore = $deliveryServerService->getResultStoreWrapper($deliveryExecutionId);
 
         return new taoQtiCommon_helpers_ResultTransmitter($resultStore);

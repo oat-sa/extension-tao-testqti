@@ -59,11 +59,10 @@ abstract class AbstractResultTransmissionTask extends AbstractAction
         }
     }
 
-
-    protected function buildTransmitter($deliveryExecutionId): taoQtiCommon_helpers_ResultTransmitter
+    protected function buildTransmitter(string $deliveryExecutionId): taoQtiCommon_helpers_ResultTransmitter
     {
         /** @var DeliveryServerService $deliveryServerService */
-        $deliveryServerService = ServiceManager::getServiceManager()->get(DeliveryServerService::SERVICE_ID);
+        $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
         $resultStore = $deliveryServerService->getResultStoreWrapper($deliveryExecutionId);
 
         return new taoQtiCommon_helpers_ResultTransmitter($resultStore);
