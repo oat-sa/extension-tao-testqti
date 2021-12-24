@@ -93,7 +93,8 @@ define([
         rubricBlocks();
         addRubricBlock();
 
-        if (subsectionsHelper.isNestedSubsection($subsection)) { // prevent adding a third subsection level
+        if (subsectionsHelper.isNestedSubsection($subsection)) {
+            // prevent adding a third subsection level
             $('.add-subsection', $subsection).hide();
             $('.add-subsection + .tlb-separator', $subsection).hide();
         } else {
@@ -539,22 +540,32 @@ define([
                     });
                 },
                 checkAndCallAdd: function (executeAdd) {
-                    if (subsectionModel.sectionParts[0] && qtiTestHelper.filterQtiType(subsectionModel.sectionParts[0], 'assessmentItemRef')) {
+                    if (
+                        subsectionModel.sectionParts[0] &&
+                        qtiTestHelper.filterQtiType(subsectionModel.sectionParts[0], 'assessmentItemRef')
+                    ) {
                         // subsection has item(s)
                         const subsectionIndex = $('.subsection', $subsection).length;
-                        const confirmMessage = __('The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?', subsectionModel.title, `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`);
+                        const confirmMessage = __(
+                            'The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?',
+                            subsectionModel.title,
+                            `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`
+                        );
                         const acceptFunction = () => {
                             $subsection.data('movedItems', _.clone(subsectionModel.sectionParts));
                             subsectionModel.sectionParts = [];
                             $('.itemrefs', $itemRefsWrapper).empty();
                             executeAdd();
-                        }
-                        confirmDialog(confirmMessage, acceptFunction,() => {}, optionsConfirmDialog)
+                        };
+                        confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog)
                             .getDom()
                             .find('.buttons')
                             .css('display', 'flex')
                             .css('flex-direction', 'row-reverse');
                     } else {
+                        if (!subsectionModel.sectionParts.length && subsectionModel.categories.length) {
+                            $subsection.data('movedCategories', _.clone(subsectionModel.categories));
+                        }
                         executeAdd();
                     }
                 }
@@ -572,6 +583,11 @@ define([
                         // second level of subsection){
                         const sub2sectionIndex = $sub2section.data('bind-index');
                         const sub2sectionModel = subsectionModel.sectionParts[sub2sectionIndex];
+
+                        if ($subsection.data('movedCategories')) {
+                            sub2sectionModel.categories = $subsection.data('movedCategories');
+                            $subsection.removeData('movedCategories');
+                        }
 
                         //initialize the new test part
                         setUp(creatorContext, sub2sectionModel, subsectionModel, $sub2section);

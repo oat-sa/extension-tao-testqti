@@ -545,6 +545,9 @@ define([
                             .css('display', 'flex')
                             .css('flex-direction', 'row-reverse');
                     } else {
+                        if (!sectionModel.sectionParts.length && sectionModel.categories.length) {
+                            $section.data('movedCategories', _.clone(sectionModel.categories));
+                        }
                         executeAdd();
                     }
                 }
@@ -562,6 +565,11 @@ define([
                         // first level of subsection
                         const subsectionIndex = $subsection.data('bind-index');
                         const subsectionModel = sectionModel.sectionParts[subsectionIndex];
+
+                        if ($section.data('movedCategories')) {
+                            subsectionModel.categories = $section.data('movedCategories');
+                            $section.removeData('movedCategories');
+                        }
 
                         //initialize the new test part
                         subsectionView.setUp(creatorContext, subsectionModel, sectionModel, $subsection);
