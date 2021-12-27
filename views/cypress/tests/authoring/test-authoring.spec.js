@@ -122,8 +122,9 @@ describe('Test authoring', () => {
             cy.get('.test-content #assessmentSection-2 .itemrefs').contains('Test E2E item 1').should('exist');
         });
 
-        it('Adds item to the last section', function () {
-            cy.getSettled(`.item-selection .instance a[title="Test E2E item 1"]`).click();
+        it('Adds item to the last section by searching name', function () {
+            cy.get('.search input').type('Test E2E item 1');
+            cy.getSettled('.resource-list a[title="Test E2E item 1"]').last().click();
             cy.get('.test-content  #assessmentSection-3 .itemref-placeholder').click();
             cy.get('.test-content #assessmentSection-3 .itemrefs').contains('Test E2E item 1').should('exist');
         });
