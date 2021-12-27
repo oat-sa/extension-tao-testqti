@@ -147,14 +147,19 @@ function($, ui, DataBinder, templates){
                         $deleteButtonInCurrentSection.removeClass('disabled');
                         $arrowUpButtonInCurrentSection.removeClass('disabled');
                         $arrowDownButtonInCurrentSection.removeClass('disabled');
-                        $rudblocksButtonInCurrentSection.removeClass('disabled');
-
+                        $rudblocksButtonInCurrentSection.removeClass('disabled')
+                                                        .unbind('click');
                     } else {
                         $(testSectionId).addClass('section-error');
                         $deleteButtonInCurrentSection.addClass('disabled');
                         $arrowUpButtonInCurrentSection.addClass('disabled');
                         $arrowDownButtonInCurrentSection.addClass('disabled');
-                        $rudblocksButtonInCurrentSection.addClass('disabled');
+                        $rudblocksButtonInCurrentSection
+                            .addClass('disabled')
+                            .on('click', e => {
+                                e.stopImmediatePropagation();
+                                e.preventDefault();
+                            });
                     }
                     //disables save, authoringBack and preview buttons if span.validate-error is present in any property input
                     if (classErrorAll.length > 0 ){
