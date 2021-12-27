@@ -133,22 +133,23 @@ function($, ui, DataBinder, templates){
 
             $view.on('validated.group', function(e, isValid){
                 let classErrorAll = $container.find('span.validate-error');
-                let classErrorVisibleFields = $('.section-props:visible').find('span.validate-error');
+                let $testSection = $('.tlb-button-on').parents('.section').attr('id');
+                let testSectionId = '#' + $testSection;
+                let $propsSectionError = $('#section-props-'+ $testSection).find('span.validate-error');
+                let $propsItemError = $('.itemref-props').find('span.validate-error');
+                let $deleteButtonInCurrentSection = $(testSectionId).find('[data-testid="remove-section"]');
+                let $arrowUpButtonInCurrentSection = $(testSectionId).find('[data-testid="move-up-section"]');
+                let $arrowDownButtonInCurrentSection = $(testSectionId).find('[data-testid="move-down-section"]');
+                let $rudblocksButtonInCurrentSection = $(testSectionId).find('[data-testid="manage-rubric-blocks"]');
 
                 if(e.namespace === 'group'){
-                    let testSectionId = '#' + $('.tlb-button-on').parents('.section').attr('id');
-                    let $deleteButtonInCurrentSection = $(testSectionId).find('[data-testid="remove-section"]');
-                    let $arrowUpButtonInCurrentSection = $(testSectionId).find('[data-testid="move-up-section"]');
-                    let $arrowDownButtonInCurrentSection = $(testSectionId).find('[data-testid="move-down-section"]');
-                    let $rudblocksButtonInCurrentSection = $(testSectionId).find('[data-testid="manage-rubric-blocks"]');
-
-                    if(isValid === true && classErrorVisibleFields.length === 0 ){
-                        $(testSectionId).removeClass('section-error');
-                        $deleteButtonInCurrentSection.removeClass('disabled');
-                        $arrowUpButtonInCurrentSection.removeClass('disabled');
-                        $arrowDownButtonInCurrentSection.removeClass('disabled');
-                        $rudblocksButtonInCurrentSection.removeClass('disabled')
-                                                        .unbind('click');
+                   if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0 ) {
+                       $(testSectionId).removeClass('section-error');
+                       $deleteButtonInCurrentSection.removeClass('disabled');
+                       $arrowUpButtonInCurrentSection.removeClass('disabled');
+                       $arrowDownButtonInCurrentSection.removeClass('disabled');
+                       $rudblocksButtonInCurrentSection.removeClass('disabled')
+                           .unbind('click');
                     } else {
                         $(testSectionId).addClass('section-error');
                         $deleteButtonInCurrentSection.addClass('disabled');
