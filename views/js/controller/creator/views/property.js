@@ -137,24 +137,18 @@ function($, ui, DataBinder, templates){
                 let testSectionId = '#' + $testSection;
                 let $propsSectionError = $('#section-props-'+ $testSection).find('span.validate-error');
                 let $propsItemError = $('.itemref-props').find('span.validate-error');
-                let $deleteButtonInCurrentSection = $(testSectionId).find('[data-testid="remove-section"]');
-                let $arrowUpButtonInCurrentSection = $(testSectionId).find('[data-testid="move-up-section"]');
-                let $arrowDownButtonInCurrentSection = $(testSectionId).find('[data-testid="move-down-section"]');
-                let $rudblocksButtonInCurrentSection = $(testSectionId).find('[data-testid="manage-rubric-blocks"]');
+                let $sectionTogglers = $(testSectionId).find('.tlb-button-off:not(.property-toggler)');
+                let $rudblocksButtonInCurrentSection = $(testSectionId).find('.rub-toggler');
 
                 if(e.namespace === 'group'){
                    if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0 ) {
                        $(testSectionId).removeClass('section-error');
-                       $deleteButtonInCurrentSection.removeClass('disabled');
-                       $arrowUpButtonInCurrentSection.removeClass('disabled');
-                       $arrowDownButtonInCurrentSection.removeClass('disabled');
+                       $sectionTogglers.removeClass('disabled');
                        $rudblocksButtonInCurrentSection.removeClass('disabled')
                            .unbind('click');
                     } else {
                         $(testSectionId).addClass('section-error');
-                        $deleteButtonInCurrentSection.addClass('disabled');
-                        $arrowUpButtonInCurrentSection.addClass('disabled');
-                        $arrowDownButtonInCurrentSection.addClass('disabled');
+                        $sectionTogglers.addClass('disabled');
                         $rudblocksButtonInCurrentSection
                             .addClass('disabled')
                             .on('click', e => {
