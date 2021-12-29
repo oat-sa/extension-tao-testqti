@@ -25,9 +25,9 @@ define([
 function($, propertyView){
     'use strict';
 
-    const disabledClass = 'disabled';
-    const activeClass = 'active';
-    const btnOnClass = 'tlb-button-on';
+    var disabledClass = 'disabled';
+    var activeClass = 'active';
+    var btnOnClass = 'tlb-button-on';
 
     /**
      * Set up the property view for an element
@@ -37,10 +37,10 @@ function($, propertyView){
      * @param {PropertyViewCallback} cb - execute at view setup phase
      */
     function properties ($container, template, model, cb) {
-        let propView = null;
+        var propView = null;
         $container.find('.property-toggler').on('click', function(e){
             e.preventDefault();
-            let $elt = $(this);
+            var $elt = $(this);
             if(!$(this).hasClass(disabledClass)){
 
                 $elt.blur(); //to remove the focus
@@ -80,16 +80,16 @@ function($, propertyView){
      * @param {String} elementClass - the cssClass to identify elements
      */
     function move ($actionContainer, containerClass, elementClass) {
-        let $element = $actionContainer.parents('.' + elementClass);
-        let $container = $element.parents('.' + containerClass );
+        var $element = $actionContainer.parents('.' + elementClass);
+        var $container = $element.parents('.' + containerClass );
 
         //move up an element
         $('.move-up', $actionContainer).click(function(e){
-            let $elements, index;
+            var $elements, index;
 
-            //prevent default and click during animation and if validation has an error (section-error class present)
+            //prevent default and click during animation
             e.preventDefault();
-            if($element.is(':animated') || $element.hasClass("section-error")){
+            if($element.is(':animated')){
                 return false;
             }
 
@@ -107,11 +107,11 @@ function($, propertyView){
 
         //move down an element
         $('.move-down', $actionContainer).click(function(e){
-            let $elements, index;
+            var $elements, index;
 
-            //prevent default and click during animation or if validation has an error (section-error class present)
+            //prevent default and click during animation
             e.preventDefault();
-            if($element.is(':animated') || $element.hasClass("section-error")){
+            if($element.is(':animated')){
                 return false;
             }
 
@@ -136,15 +136,15 @@ function($, propertyView){
      */
     function movable ($container, elementClass, actionContainerElt){
         $container.each(function(){
-            let $elt = $(this);
-            let $actionContainer = $(actionContainerElt, $elt);
+            var $elt = $(this);
+            var $actionContainer = $(actionContainerElt, $elt);
 
-            let index = $container.index($elt);
-            let $moveUp = $('.move-up', $actionContainer);
-            let $moveDown = $('.move-down', $actionContainer);
+            var index = $container.index($elt);
+            var $moveUp = $('.move-up', $actionContainer);
+            var $moveDown = $('.move-down', $actionContainer);
 
-            //only one test part or error (validation root-class present), no moving
-            if( $container.length === 1 || $elt.hasClass("section-error")){
+            //only one test part, no moving
+            if( $container.length === 1 ){
                 $moveUp.addClass(disabledClass);
                 $moveDown.addClass(disabledClass);
 
@@ -163,7 +163,7 @@ function($, propertyView){
                 $moveUp.removeClass(disabledClass);
                 $moveDown.removeClass(disabledClass);
             }
-         });
+            });
     }
 
     /**
@@ -173,10 +173,11 @@ function($, propertyView){
      */
     function removable ($container, actionContainerElt){
         $container.each(function(){
-            let $elt = $(this);
-            let $actionContainer = $(actionContainerElt, $elt);
-            let $delete = $('[data-delete]', $actionContainer);
-            if($container.length <= 1 || $elt.hasClass("section-error")){
+            var $elt = $(this);
+            var $actionContainer = $(actionContainerElt, $elt);
+            var $delete = $('[data-delete]', $actionContainer);
+
+            if($container.length <= 1){
                 $delete.addClass(disabledClass);
             } else {
                 $delete.removeClass(disabledClass);

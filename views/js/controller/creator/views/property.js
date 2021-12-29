@@ -129,42 +129,19 @@ function($, ui, DataBinder, templates){
         * @private
         */
         function propValidation() {
-            const $togglers = $('#authoringBack, #saver, #previewer');
-
             $view.on('validated.group', function(e, isValid){
-                let classErrorAll = $container.find('span.validate-error');
                 let $testSection = $('.tlb-button-on').parents('.section').attr('id');
                 let testSectionId = '#' + $testSection;
                 let $propsSectionError = $('#section-props-'+ $testSection).find('span.validate-error');
                 let $propsItemError = $('.itemref-props').find('span.validate-error');
-                let $sectionTogglers = $(testSectionId).find('.tlb-button-off:not(.property-toggler)');
-                let $rudblocksButtonInCurrentSection = $(testSectionId).find('.rub-toggler');
 
                 if(e.namespace === 'group'){
                    if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0 ) {
                        $(testSectionId).removeClass('section-error');
-                       $sectionTogglers.removeClass('disabled');
-                       $rudblocksButtonInCurrentSection.removeClass('disabled')
-                           .unbind('click');
                     } else {
                         $(testSectionId).addClass('section-error');
-                        $sectionTogglers.addClass('disabled');
-                        $rudblocksButtonInCurrentSection
-                            .addClass('disabled')
-                            .on('click', e => {
-                                e.stopImmediatePropagation();
-                                e.preventDefault();
-                            });
                     }
-                    //disables save, authoringBack and preview buttons if span.validate-error is present in any property input
-                    if (classErrorAll.length > 0 ){
-                        $togglers.addClass('disabled');
-                        $togglers.attr('disabled', 'disabled')
-
-                    } else {
-                        $togglers.removeClass('disabled');
-                        $togglers.removeAttr('disabled');
-                    }
+                    
                 }
             });
 
