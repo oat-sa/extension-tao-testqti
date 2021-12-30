@@ -163,7 +163,7 @@ function($, propertyView){
                 $moveUp.removeClass(disabledClass);
                 $moveDown.removeClass(disabledClass);
             }
-         });
+            });
     }
 
     /**

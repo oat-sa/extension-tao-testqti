@@ -406,6 +406,7 @@
             &:last-child{
                 margin-bottom: 0;
             }
+
             .actions {
                 top: 0;
                 right: -4px;
@@ -413,6 +414,9 @@
             .actions .tlb-group {
                 min-width: 157px;
             }
+        }
+        .section-error{
+            border-left: solid 5px $error;
         }
 
         .rublocks{
