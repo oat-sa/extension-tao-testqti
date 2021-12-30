@@ -19,40 +19,44 @@
  *
  */
 
-use oat\taoResultServer\models\classes\ResultStorageWrapper;
-use qtism\runtime\common\ProcessingException;
-use qtism\runtime\processing\OutcomeProcessingEngine;
-use qtism\data\rules\OutcomeRuleCollection;
-use qtism\data\processing\OutcomeProcessing;
-use qtism\data\rules\SetOutcomeValue;
-use qtism\data\expressions\Variable;
-use qtism\data\expressions\ExpressionCollection;
-use qtism\data\expressions\operators\Divide;
-use qtism\data\expressions\NumberPresented;
-use qtism\data\expressions\NumberCorrect;
-use qtism\common\enums\BaseType;
-use qtism\common\datatypes\QtiFloat;
-use qtism\common\datatypes\QtiDuration;
-use qtism\data\AssessmentTest;
-use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\AssessmentTestSessionException;
-use qtism\runtime\tests\AssessmentItemSession;
-use qtism\runtime\tests\AssessmentTestPlace;
-use qtism\runtime\tests\AbstractSessionManager;
-use qtism\runtime\tests\Route;
-use qtism\runtime\common\OutcomeVariable;
-use qtism\data\ExtendedAssessmentItemRef;
-use qtism\common\enums\Cardinality;
-use oat\oatbox\service\ServiceManager;
 use oat\oatbox\event\EventManager;
+use oat\oatbox\service\ServiceManager;
+use oat\taoQtiTest\helpers\TestSessionMemento;
+use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
+use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
+use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use oat\taoTests\models\event\TestExecutionPausedEvent;
 use oat\taoTests\models\event\TestExecutionResumedEvent;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use qtism\common\datatypes\QtiDuration;
+use qtism\common\datatypes\QtiFloat;
+use qtism\common\enums\BaseType;
+use qtism\common\enums\Cardinality;
+use qtism\data\AssessmentItemRef;
+use qtism\data\AssessmentTest;
+use qtism\data\expressions\ExpressionCollection;
+use qtism\data\expressions\NumberCorrect;
+use qtism\data\expressions\NumberPresented;
+use qtism\data\expressions\operators\Divide;
+use qtism\data\expressions\Variable;
+use qtism\data\ExtendedAssessmentItemRef;
+use qtism\data\processing\OutcomeProcessing;
+use qtism\data\rules\OutcomeRuleCollection;
+use qtism\data\rules\SetOutcomeValue;
+use qtism\runtime\common\OutcomeVariable;
+use qtism\runtime\common\ProcessingException;
+use qtism\runtime\processing\OutcomeProcessingEngine;
+use qtism\runtime\tests\AbstractSessionManager;
+use qtism\runtime\tests\AssessmentItemSession;
+use qtism\runtime\tests\AssessmentItemSessionException;
+use qtism\runtime\tests\AssessmentTestPlace;
+use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
-use oat\taoQtiTest\helpers\TestSessionMemento;
+use qtism\runtime\tests\Route;
 use Symfony\Component\Lock\LockInterface;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class.
@@ -69,13 +73,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      * @var ResultStorageWrapper
      */
     private $resultServer;
-
-    /**
-     * The ResultTransmitter object to be used to transmit test results.
-     *
-     * @var taoQtiCommon_helpers_ResultTransmitter
-     */
-    private $resultTransmitter;
 
     /**
      * The TAO Resource describing the test.
@@ -126,7 +123,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     ) {
         parent::__construct($assessmentTest, $manager, $route);
         $this->setResultServer($resultServer);
-        $this->setResultTransmitter(new taoQtiCommon_helpers_ResultTransmitter($this->getResultServer()));
         $this->setTest($test);
     }
 
@@ -148,26 +144,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     protected function getResultServer()
     {
         return $this->resultServer;
-    }
-
-    /**
-     * Set the ResultTransmitter object to be used to transmit test results.
-     *
-     * @param taoQtiCommon_helpers_ResultTransmitter $resultTransmitter
-     */
-    protected function setResultTransmitter(taoQtiCommon_helpers_ResultTransmitter $resultTransmitter)
-    {
-        $this->resultTransmitter = $resultTransmitter;
-    }
-
-    /**
-     * Get the ResultTransmitter object to be used to transmit test results.
-     *
-     * @return taoQtiCommon_helpers_ResultTransmitter
-     */
-    protected function getResultTransmitter()
-    {
-        return $this->resultTransmitter;
     }
 
     /**
@@ -236,8 +212,6 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         parent::submitItemResults($itemSession, $occurence);
 
         $item = $itemSession->getAssessmentItem();
-        $occurence = $occurence;
-        $sessionId = $this->getSessionId();
 
         common_Logger::t("submitting results for item '" . $item->getIdentifier() . "." . $occurence .  "'.");
 
@@ -247,18 +221,13 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             // Get the item session we just responsed and send to the
             // result server.
             $itemSession = $this->getItemSession($item, $occurence);
-            $resultTransmitter = $this->getResultTransmitter();
 
             foreach ($itemSession->getKeys() as $identifier) {
                 common_Logger::t("Examination of variable '${identifier}'");
                 $itemVariableSet[] = $itemSession->getVariable($identifier);
             }
 
-            $itemUri = self::getItemRefUri($item);
-            $testUri = self::getTestDefinitionUri($item);
-            $transmissionId = "${sessionId}.${item}.${occurence}";
-
-            $resultTransmitter->transmitItemVariable($itemVariableSet, $transmissionId, $itemUri, $testUri);
+            $this->triggerResultItemTransmissionEvent($itemVariableSet, $occurence, $item);
         } catch (AssessmentTestSessionException $e) {
             // Error whith parent::endAttempt().
             $msg = "An error occured while ending the attempt item '" . $item->getIdentifier() . "." . $occurence .  "'.";
@@ -298,7 +267,10 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             $varIdentifier = $var->getIdentifier();
 
             common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
-            $this->getResultTransmitter()->transmitTestVariable($var, $this->getSessionId(), $testUri);
+            $this->triggerResultTestVariablesTransmissionEvent(
+                [$var],
+                $testUri
+            );
         } catch (ProcessingException $e) {
             $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
             throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
@@ -315,9 +287,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     /**
      * Rewind the test to its first position
      * @param boolean $allowTimeout Whether or not it is allowed to jump if the timeLimits in force of the jump target are not respected.
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      * @throws AssessmentTestSessionException If $position is out of the Route bounds or the jump is not allowed because of time constraints.
-     * @throws \qtism\runtime\tests\AssessmentItemSessionException
+     * @throws AssessmentItemSessionException
      */
     public function rewind($allowTimeout = false)
     {
@@ -358,11 +330,12 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     protected function submitTestResults()
     {
         $testUri = $this->getTest()->getUri();
-        $sessionId = $this->getSessionId();
 
         common_Logger::t("Submitting test result related to test '" . $testUri . "'.");
-
-        $this->getResultTransmitter()->transmitTestVariable($this->getAllVariables()->getArrayCopy(), $sessionId, $testUri);
+        $this->triggerResultTestVariablesTransmissionEvent(
+            $this->getAllVariables()->getArrayCopy(),
+            $testUri
+        );
     }
 
     /**
@@ -371,7 +344,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      * @param ExtendedAssessmentItemRef $itemRef
      * @return string A URI.
      */
-    protected static function getItemRefUri(ExtendedAssessmentItemRef $itemRef)
+    protected static function getItemRefUri(AssessmentItemRef $itemRef)
     {
         $parts = explode('|', $itemRef->getHref());
         return $parts[0];
@@ -774,6 +747,33 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
                 $this->triggerStateChanged($sessionMemento);
             }
         }
+    }
+
+    private function triggerResultItemTransmissionEvent(
+        array $variables,
+        $occurrence,
+        ExtendedAssessmentItemRef $item
+    ): void {
+        $transmissionId = sprintf('%s.%s.%s', $this->getSessionId(), $item, $occurrence);
+        $this->getEventManager()->trigger(new ResultItemVariablesTransmissionEvent(
+            $this->getSessionId(),
+            $variables,
+            $transmissionId,
+            self::getItemRefUri($item),
+            self::getTestDefinitionUri($item)
+        ));
+    }
+
+    private function triggerResultTestVariablesTransmissionEvent(
+        array $variables,
+        string $testUri = ''
+    ): void {
+        $this->getEventManager()->trigger(new ResultTestVariablesTransmissionEvent(
+            $this->getSessionId(),
+            $variables,
+            $this->getSessionId(),
+            $testUri
+        ));
     }
 
     /**
