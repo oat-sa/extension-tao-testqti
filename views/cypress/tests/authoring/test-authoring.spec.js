@@ -27,6 +27,32 @@ describe('Test authoring', () => {
     const className = `Test E2E class ${getRandomNumber()}`;
     const classNameItems = `Test E2E class ${getRandomNumber()}`;
     const packagesPath = `${pathsItems.baseItemsPath}/fixtures/packages`;
+    const undoSelector = '.undobox a.undo';
+    const closeUndoSelector = '.undobox .icon-close';
+    const closeSavePopupSelector = '.feedback-success.popup .icon-close';
+
+    /**
+     * Removes items, undo and remove again
+     * @param {String} deleteSelector - css selector of delete button
+     * @param {String} item - interaction name
+     * @param {String} itemSelector - css selector of the interaction container
+     */
+    function removeItem(deleteSelector, itemName, itemSelector) {
+        cy.log('REMOVING INTERACTION', itemName);
+        cy.get(deleteSelector).click({ force: true });
+        cy.log(itemName, 'IS REMOVED');
+
+        cy.get(undoSelector).should('exist');
+        cy.get(undoSelector).click();
+        cy.log(itemName, 'UNDO REMOVE');
+        cy.get(itemSelector).contains(itemName).should('exist');
+        cy.get(undoSelector).should('not.exist');
+
+        cy.get(deleteSelector).click({ force: true });
+        cy.log(itemName, 'IS REMOVED');
+        cy.get(undoSelector).should('exist');
+        cy.get(closeUndoSelector).click();
+    }
 
     /**
      * Log in and wait for render
@@ -133,6 +159,40 @@ describe('Test authoring', () => {
             cy.intercept('POST', '**/saveTest*').as('saveTest');
             cy.get('[data-testid="save-test"]').click();
             cy.wait('@saveTest').its('response.body').its('saved').should('eq', true);
+            cy.get(closeSavePopupSelector).click();
+        });
+
+        it('Remove item, undo and remove in the first section', function () {
+            removeItem('.test-content #assessmentSection-1 .itemrefs [data-delete]', 'Test E2E item 1', '.test-content #assessmentSection-1 .itemrefs');
+        });
+
+        it('Save test after removing item', function () {
+            cy.intercept('POST', '**/saveTest*').as('saveTest');
+            cy.get('[data-testid="save-test"]').click();
+            cy.wait('@saveTest').its('response.body').its('saved').should('eq', true);
+            cy.get(closeSavePopupSelector).click();
+        });
+
+        it('Remove item, undo and remove in the second section', function () {
+            removeItem('.test-content #assessmentSection-2 .itemrefs [data-delete]', 'Test E2E item 1', '.test-content #assessmentSection-2 .itemrefs');
+        });
+
+        it('Save test after removing item', function () {
+            cy.intercept('POST', '**/saveTest*').as('saveTest');
+            cy.get('[data-testid="save-test"]').click();
+            cy.wait('@saveTest').its('response.body').its('saved').should('eq', true);
+            cy.get(closeSavePopupSelector).click();
+        });
+
+        it('Remove item, undo and remove in the last section', function () {
+            removeItem('.test-content #assessmentSection-3 .itemrefs [data-delete]', 'Test E2E item 1', '.test-content #assessmentSection-3 .itemrefs');
+        });
+
+        it('Save test after removing item', function () {
+            cy.intercept('POST', '**/saveTest*').as('saveTest');
+            cy.get('[data-testid="save-test"]').click();
+            cy.wait('@saveTest').its('response.body').its('saved').should('eq', true);
+            cy.get(closeSavePopupSelector).click();
         });
 
         it('Deletes test class', function () {
