@@ -126,13 +126,11 @@ define([
                 // every click outside the authoring
                 $(wrapperSelector)
                     .on(`click${eventNS}`, e => {
-                        let $classError = $('.test-creator-props').find('span.validate-error');
-
                         if (!$.contains(container, e.target) && this.hasChanged()) {
                             e.stopImmediatePropagation();
                             e.preventDefault();
 
-                        if ($classError.length > 0) {
+                        if (testCreator.isTestHasErrors()) {
                             this.confirmBefore('leaveWhenInvalid')
                                 .then(whatToDo => {
                                     this.ifWantSave(whatToDo);
