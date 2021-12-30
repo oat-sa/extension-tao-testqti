@@ -42,8 +42,36 @@ define([
     const messages = {
         preview: __('The test needs to be saved before it can be previewed.'),
         leave: __('The test has unsaved changes, are you sure you want to leave?'),
-        exit: __('The test has unsaved changes, would you like to save it?')
+        exit: __('The test has unsaved changes, would you like to save it?'),
+        leaveWhenInvalid: __('If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?')
     };
+    const buttonsYesNo = [{
+        id: 'dontsave',
+        type: 'regular',
+        label: __('YES'),
+        close: true
+    }, {
+        id: 'cancel',
+        type: 'regular',
+        label: __('NO'),
+        close: true
+    }];
+    const buttonsCancelSave = [{
+        id: 'dontsave',
+        type: 'regular',
+        label: __('Don\'t save'),
+        close: true
+    }, {
+        id: 'cancel',
+        type: 'regular',
+        label: __('Cancel'),
+        close: true
+    }, {
+        id: 'save',
+        type: 'info',
+        label: __('Save'),
+        close: true
+    }];
 
     /**
      *
@@ -102,6 +130,15 @@ define([
                             e.stopImmediatePropagation();
                             e.preventDefault();
 
+                        if (testCreator.isTestHasErrors()) {
+                            this.confirmBefore('leaveWhenInvalid')
+                                .then(whatToDo => {
+                                    this.ifWantSave(whatToDo);
+                                    this.uninstall();
+                                    e.target.click();
+                                })
+                                .catch(() => {});
+                        } else {
                             this.confirmBefore('exit')
                                 .then(whatToDo => {
                                     this.ifWantSave(whatToDo);
@@ -110,6 +147,7 @@ define([
                                 })
                                 //do nothing but prevent uncaught error
                                 .catch(() => {});
+                           }
                         }
                     });
 
@@ -175,35 +213,36 @@ define([
                     }
 
                     asking = true;
+                    let confirmDlg;
 
-                    const confirmDlg = dialog({
-                        message: message,
-                        buttons: [{
-                            id: 'dontsave',
-                            type: 'regular',
-                            label: __('Don\'t save'),
-                            close: true
-                        }, {
-                            id: 'cancel',
-                            type: 'regular',
-                            label: __('Cancel'),
-                            close: true
-                        }, {
-                            id: 'save',
-                            type: 'info',
-                            label: __('Save'),
-                            close: true
-                        }],
-                        autoRender: true,
-                        autoDestroy: true,
-                        onSaveBtn: () => resolve({ ifWantSave: true }),
-                        onDontsaveBtn: () => resolve({ ifWantSave: false }),
-                        onCancelBtn: () => {
-                            confirmDlg.hide();
-                            reject({ cancel: true });
-                        }
-                    })
-                    .on('closed.modal', () => asking = false);
+                    // chosses what buttons to display depending on the message
+                    if(message === messages.leaveWhenInvalid) {
+                        confirmDlg = dialog({
+                            message: message,
+                            buttons: buttonsYesNo,
+                            autoRender: true,
+                            autoDestroy: true,
+                            onDontsaveBtn: () => resolve({ ifWantSave: false }),
+                            onCancelBtn: () => {
+                                confirmDlg.hide();
+                                reject({ cancel: true });
+                            }
+                        })
+                    } else {
+                        confirmDlg = dialog({
+                           message: message,
+                           buttons: buttonsCancelSave,
+                           autoRender: true,
+                           autoDestroy: true,
+                           onSaveBtn: () => resolve({ ifWantSave: true }),
+                           onDontsaveBtn: () => resolve({ ifWantSave: false }),
+                           onCancelBtn: () => {
+                               confirmDlg.hide();
+                               reject({ cancel: true });
+                           }
+                      })
+                    }
+                    confirmDlg.on('closed.modal', () => asking = false);
                 });
             },
 
