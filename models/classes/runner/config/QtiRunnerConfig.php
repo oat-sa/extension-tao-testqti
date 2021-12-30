@@ -135,6 +135,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                 'toolStateServerStorage' => isset($rawConfig['tool-state-server-storage']) ? $rawConfig['tool-state-server-storage'] : [],
                 'forceEnableLinearNextItemWarning' => isset($rawConfig['force-enable-linear-next-item-warning']) ? $rawConfig['force-enable-linear-next-item-warning'] : false,
                 'enableLinearNextItemWarningCheckbox' => isset($rawConfig['enable-linear-next-item-warning-checkbox']) ? $rawConfig['enable-linear-next-item-warning-checkbox'] : true,
+                'skipPausedAssessmentDialog' => isset($rawConfig['skip-paused-assessment-dialog']) ? $rawConfig['skip-paused-assessment-dialog'] : false,
             ];
         }
 
