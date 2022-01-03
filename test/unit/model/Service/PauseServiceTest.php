@@ -80,6 +80,17 @@ class PauseServiceTest extends TestCase
         $this->assertEquals($expectedResponse->toArray(), $response->toArray());
     }
 
+    public function testPauseActionIsSuccessfulForAlreadyPausedSessions()
+    {
+        $this->runnerService->expects($this->never())->method('check');
+
+        $expectedResponse = ActionResponse::success();
+
+        $response = $this->executeAction();
+
+        $this->assertEquals($expectedResponse->toArray(), $response->toArray());
+    }
+
     public function testSavesItemResponse(): void
     {
         $this->itemResponseRepository->expects($this->once())
