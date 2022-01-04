@@ -691,4 +691,10 @@ return [
      * @type boolean
      */
     'enable-read-aloud-text-to-speech' => false,
+
+    /**
+     * If 'skip-paused-assessment-dialog' is true, the pause message is not displayed when pausing the test.
+     * @type boolean
+     */
+    'skip-paused-assessment-dialog' => false,
 ];
