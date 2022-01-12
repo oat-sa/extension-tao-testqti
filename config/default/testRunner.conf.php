@@ -407,9 +407,10 @@ return [
          * This config tells on which TimeLine to rely to compute the assessment test durations.
          * Caution, if the server TimeLine is always filled, the client TimeLine must be explicitly
          * provided by the implementation. If the client TimeLine is missing, the durations will be zeroed.
+         * The default QTI implementation is supplying the item duration on every move.
          * @type string
          */
-        'target' => 'server'
+        'target' => 'client'
     ],
 
     /**
