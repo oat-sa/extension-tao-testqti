@@ -8,7 +8,7 @@
   },
   "license": "GPL-2.0",
   "dependencies": {
-    "@oat-sa/tao-test-runner": "oat-sa/tao-test-runner-fe#fix/TR-3287/remove-source-based-npm-dependencies",
-    "@oat-sa/tao-test-runner-qti": "oat-sa/tao-test-runner-fe#fix/TR-3287/remove-source-based-npm-dependencies"
+    "@oat-sa/tao-test-runner": "0.8.2",
+    "@oat-sa/tao-test-runner-qti": "2.28.1"
   }
 }
