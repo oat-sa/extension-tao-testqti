@@ -100,7 +100,7 @@ class TimerMode extends ScriptAction
                 'cast' => 'string',
                 'flag' => false,
                 'required' => false,
-                'description' => 'Changes the timer mode',
+                'description' => 'Changes the timer mode (valid values: "server", "client")',
             ],
         ];
     }
