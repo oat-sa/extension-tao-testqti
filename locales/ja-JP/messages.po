@@ -275,7 +275,7 @@ msgid "Clear Highlights"
 msgstr "ラインマーカをクリア"
 
 msgid "Click \"%s\" to continue"
-msgstr ""
+msgstr "続行するには、「%s」をクリックしてください"
 
 msgid "Click to speak"
 msgstr "クリックして話してください"
