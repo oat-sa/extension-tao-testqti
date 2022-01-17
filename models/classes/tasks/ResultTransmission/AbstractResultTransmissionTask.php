@@ -120,7 +120,7 @@ abstract class AbstractResultTransmissionTask extends AbstractAction implements 
      * @param mixed $value
      * @return string
      */
-    protected static function transformValue($value): string
+    protected static function transformValue($value)
     {
         if (is_object($value)) {
             if ($value instanceof QtiFile) {
