@@ -272,9 +272,6 @@
         color: $textColor;
 
         h1, h2, li {
-            & > span:first-child {
-                float: left;
-            }
             .actions {
                 position: absolute;
                 right: 0;

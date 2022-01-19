@@ -13,12 +13,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2021-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
-/**
- * @author Bertrand Chevrier <bertrand@taotesting.com>
- */
 define([
     'jquery',
     'lodash',
@@ -520,7 +517,6 @@ define([
                 content: templates.subsection,
                 templateData: function (cb) {
                     //create a new subsection model object to be bound to the template
-                    const subsectionIndex = $('.subsection', $subsection).length;
                     let sectionParts = [];
                     if ($subsection.data('movedItems')) {
                         sectionParts = $subsection.data('movedItems');
@@ -533,7 +529,7 @@ define([
                             'assessmentSection',
                             'subsection'
                         ),
-                        title: `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
+                        title: defaults().sectionTitlePrefix,
                         index: 0,
                         sectionParts,
                         visible: true
@@ -545,11 +541,13 @@ define([
                         qtiTestHelper.filterQtiType(subsectionModel.sectionParts[0], 'assessmentItemRef')
                     ) {
                         // subsection has item(s)
-                        const subsectionIndex = $('.subsection', $subsection).length;
+                        const subsectionIndex = subsectionsHelper.getSubsectionTitleIndex($subsection);
                         const confirmMessage = __(
-                            'The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?',
+                            'The items contained in <b>%s%s</b> will be moved into the new <b>%s%s</b>. Do you wish to proceed?',
+                            subsectionIndex,
                             subsectionModel.title,
-                            `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`
+                            `${subsectionIndex}1.`,
+                            defaults().sectionTitlePrefix
                         );
                         const acceptFunction = () => {
                             $subsection.data('movedItems', _.clone(subsectionModel.sectionParts));
@@ -589,11 +587,13 @@ define([
                             $subsection.removeData('movedCategories');
                         }
 
-                        //initialize the new test part
+                        // initialize the new subsection
                         setUp(creatorContext, sub2sectionModel, subsectionModel, $sub2section);
-
+                        // hide 'Items' block and category-presets for current subsection
                         actions.displayItemWrapper($subsection);
                         actions.displayCategoryPresets($subsection);
+                        // set index for new subsection
+                        actions.updateTitleIndex($sub2section);
 
                         /**
                          * @event modelOverseer#section-add
@@ -614,6 +614,7 @@ define([
 
             actions.removable($subsections, 'h2');
             actions.movable($subsections, 'subsection', 'h2');
+            actions.updateTitleIndex($subsections);
         });
 
         $(document)
@@ -621,11 +622,14 @@ define([
                 const $target = $(e.target);
                 if ($target.hasClass('subsection')) {
                     actions.disable(subsectionsHelper.getSiblingSubsections($target), 'h2');
-                    if (subsectionsHelper.isNestedSubsection($target)) {
-                        const $parent = subsectionsHelper.getParentSubsection($target);
-                        actions.displayItemWrapper($parent, true);
-                        actions.displayCategoryPresets($parent, true);
-                    }
+                    const $parent = subsectionsHelper.getParent($target);
+                    setTimeout(() => {
+                        actions.displayItemWrapper($parent);
+                        actions.displayCategoryPresets($parent);
+                        // element detached after event
+                        const $subsections = $('.subsection', $parent);
+                        actions.updateTitleIndex($subsections);
+                    }, 100);
                 }
             })
             .on('add change undo.deleter deleted.deleter', function (e) {
@@ -635,8 +639,10 @@ define([
                     actions.removable($subsections, 'h2');
                     actions.movable($subsections, 'subsection', 'h2');
 
-                    if (e.type === 'undo' && subsectionsHelper.isNestedSubsection($target)) {
-                        const $parent = subsectionsHelper.getParentSubsection($target);
+                    if (e.type === 'undo' || e.type === 'change') {
+                        const $parent = subsectionsHelper.getParent($target);
+                        const $AllNestedSubsections = $('.subsection', $parent);
+                        actions.updateTitleIndex($AllNestedSubsections);
                         actions.displayItemWrapper($parent);
                         actions.displayCategoryPresets($parent);
                     }

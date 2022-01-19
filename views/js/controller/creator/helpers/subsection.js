@@ -73,6 +73,18 @@ define(['jquery', 'lodash'], function ($, _) {
         return $subsection.parents('.section');
     }
     /**
+     * Get parent section/subsection
+     *
+     * @param {JQueryElement} $subsection
+     * @returns {boolean}
+     */
+         function getParent($subsection) {
+            if (isFistLevelSubsection($subsection)) {
+                return getParentSection($subsection);
+            }
+            return getParentSubsection($subsection);
+        }
+    /**
      * Get parent container('.subsections') for this subsection
      *
      * @param {JQueryElement} $subsection
@@ -82,6 +94,25 @@ define(['jquery', 'lodash'], function ($, _) {
         return $subsection.hasClass('subsections') ? $subsection : $subsection.parents('.subsections').first();
     }
 
+    /**
+     * Get index for this subsection
+     *
+     * @param {JQueryElement} $subsection
+     * @returns {boolean}
+     */
+     function getSubsectionTitleIndex($subsection) {
+        const $parentSection = getParentSection($subsection);
+        const index = getSiblingSubsections($subsection).index($subsection);
+        const sectionIndex = $parentSection.parents('.sections').children('.section').index($parentSection);
+        if (isFistLevelSubsection($subsection)) {
+            return `${sectionIndex + 1}.${index + 1}.`;
+        } else {
+            const $parentSubsection = getParentSubsection($subsection);
+            const subsectionIndex = getSiblingSubsections($parentSubsection).index($parentSubsection);
+            return `${sectionIndex + 1}.${subsectionIndex + 1}.${index + 1}.`;
+        }
+    }
+
     return {
         isFistLevelSubsection,
         isNestedSubsection,
@@ -89,6 +120,8 @@ define(['jquery', 'lodash'], function ($, _) {
         getSubsectionContainer,
         getSiblingSubsections,
         getParentSubsection,
-        getParentSection
+        getParentSection,
+        getParent,
+        getSubsectionTitleIndex
     };
 });
