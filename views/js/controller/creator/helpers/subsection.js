@@ -78,12 +78,12 @@ define(['jquery', 'lodash'], function ($, _) {
      * @param {JQueryElement} $subsection
      * @returns {boolean}
      */
-         function getParent($subsection) {
-            if (isFistLevelSubsection($subsection)) {
-                return getParentSection($subsection);
-            }
-            return getParentSubsection($subsection);
+    function getParent($subsection) {
+        if (isFistLevelSubsection($subsection)) {
+            return getParentSection($subsection);
         }
+        return getParentSubsection($subsection);
+    }
     /**
      * Get parent container('.subsections') for this subsection
      *
@@ -100,7 +100,7 @@ define(['jquery', 'lodash'], function ($, _) {
      * @param {JQueryElement} $subsection
      * @returns {boolean}
      */
-     function getSubsectionTitleIndex($subsection) {
+    function getSubsectionTitleIndex($subsection) {
         const $parentSection = getParentSection($subsection);
         const index = getSiblingSubsections($subsection).index($subsection);
         const sectionIndex = $parentSection.parents('.sections').children('.section').index($parentSection);
