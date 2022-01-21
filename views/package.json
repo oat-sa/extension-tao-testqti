@@ -9,6 +9,6 @@
   "license": "GPL-2.0",
   "dependencies": {
     "@oat-sa/tao-test-runner": "0.8.2",
-    "@oat-sa/tao-test-runner-qti": "github:oat-sa/tao-test-runner-qti-fe#fix/TR-3390_force-calculator-widget-to-ltr-direction"
+    "@oat-sa/tao-test-runner-qti": "2.28.2"
   }
 }
