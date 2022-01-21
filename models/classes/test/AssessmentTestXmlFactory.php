@@ -154,7 +154,7 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
      */
     private function getAssessmentSectionTitle(): string
     {
-        return "{$this->getConfigurationRegistry()->getSectionTitlePrefix()} 1";
+        return $this->getConfigurationRegistry()->getSectionTitlePrefix();
     }
 
     private function getQtiVersion(): string
