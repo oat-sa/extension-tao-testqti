@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2021.10\n"
-"PO-Revision-Date: 2021-12-01T14:28:47\n"
+"Project-Id-Version: TAO 2022.01\n"
+"PO-Revision-Date: 2022-01-17T14:35:49\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -241,11 +241,11 @@ msgstr "電卓（BODMAS）"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr ""
-
 msgid "Cancel"
 msgstr "キャンセル"
+
+msgid "CANCEL"
+msgstr ""
 
 msgid "Candidate"
 msgstr "受検者"
@@ -275,7 +275,7 @@ msgid "Clear Highlights"
 msgstr "ラインマーカをクリア"
 
 msgid "Click \"%s\" to continue"
-msgstr ""
+msgstr "続行するには、「%s」をクリックしてください"
 
 msgid "Click to speak"
 msgstr "クリックして話してください"
@@ -520,6 +520,9 @@ msgstr "グリーン地にグレイ"
 msgid "Hide Review"
 msgstr "一覧を隠す"
 
+msgid "Hide test overview panel"
+msgstr ""
+
 msgid "Hide the review screen"
 msgstr "レビュースクリーンを隠す"
 
@@ -569,6 +572,9 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr "さらにカテゴリスコアが設定されている場合、スコアはカテゴリごとに集計され、「SCORE_xxx」として結果表示されます。（「xxx」はカテゴリ名）"
 
 msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
 msgstr ""
 
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
@@ -643,10 +649,10 @@ msgstr "アイテム・レスポンス識別子が現在のアイテムと一致
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "items"
+msgid "Items"
 msgstr "アイテム"
 
-msgid "Items"
+msgid "items"
 msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -827,6 +833,9 @@ msgstr "次へ"
 msgid "Next Section"
 msgstr "次のセクション"
 
+msgid "NO"
+msgstr ""
+
 msgid "No"
 msgstr "いいえ"
 
@@ -986,10 +995,10 @@ msgstr "QTI Test Package 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Test Content Package"
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
 msgid "questions"
@@ -1031,6 +1040,9 @@ msgstr "全て表示"
 msgid "Resource(s) successfully exported."
 msgstr "リソースが正常にエクスポートされました"
 
+msgid "ResultTransmission event successfully registered"
+msgstr ""
+
 msgid "Review"
 msgstr "レビュー"
 
@@ -1061,10 +1073,10 @@ msgstr "採点者"
 msgid "Scoring"
 msgstr "採点方法"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "スクラッチパッド"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "スクラッチパッド"
 
 msgid "Scratchpad"
@@ -1138,6 +1150,9 @@ msgstr "問題一覧"
 
 msgid "Show Solution"
 msgstr "答えを表示"
+
+msgid "Show test overview panel"
+msgstr ""
 
 msgid "Show the review screen"
 msgstr "レビュースクリーン表示"
@@ -1247,13 +1262,13 @@ msgstr "テストメタデータのエクスポートが完了しました。"
 msgid "Test Navigation"
 msgstr "テストナビゲーション"
 
+msgid "Test overview"
+msgstr ""
+
 msgid "Test Part Properties"
 msgstr ""
 
 msgid "Test Preview is not installed, please contact to your administrator."
-msgstr ""
-
-msgid "Test review"
 msgstr ""
 
 msgid "Test Saved"
@@ -1429,13 +1444,13 @@ msgid "There are %s unanswered questions"
 msgstr "未回答のものが%s問あります。"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr ""
+msgstr "テストのこの部分には、%sつの未回答の質問があります。"
 
 msgid "There is %s unanswered question"
 msgstr "未回答のものが%s問あります。"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr ""
+msgstr "テストのこの部分には未回答の質問が%sつあります。"
 
 msgid "There is not outcomes!"
 msgstr "結果がありません!"
@@ -1615,6 +1630,9 @@ msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""
 msgid "Yellow on Blue"
 msgstr ""
 
+msgid "YES"
+msgstr ""
+
 msgid "Yes"
 msgstr "はい"
 
@@ -1646,7 +1664,7 @@ msgid "You are about to submit the test. You will not be able to access this tes
 msgstr "テストを終了しようとしています。一度終了したテストには再びアクセスすることはできません よろしければOK をクリックしてテストを終了してください。"
 
 msgid "You are about to submit this test part."
-msgstr ""
+msgstr "このテストパートを提出しようとしています。"
 
 msgid "You are currently working offline."
 msgstr ""
