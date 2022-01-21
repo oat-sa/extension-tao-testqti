@@ -180,13 +180,13 @@ define([
             }
 
             subsectionsHelper.getSubsections($subsection).each(function () {
-                const $subsection = $(this);
-                const index = $subsection.data('bind-index');
+                const $sub2section = $(this);
+                const index = $sub2section.data('bind-index');
                 if (!subsectionModel.sectionParts[index]) {
                     subsectionModel.sectionParts[index] = {};
                 }
 
-                setUp(creatorContext, subsectionModel.sectionParts[index], subsectionModel, $subsection);
+                setUp(creatorContext, subsectionModel.sectionParts[index], subsectionModel, $sub2section);
             });
         }
         /**
@@ -276,10 +276,10 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $subsection.attr('id') + ' > .itemrefs-wrapper .itemrefs')
+                .off('add.binder', `#${$subsection.attr('id')} > .itemrefs-wrapper .itemrefs`)
                 .on(
                     'add.binder',
-                    '#' + $subsection.attr('id') + ' > .itemrefs-wrapper .itemrefs',
+                    `#${$subsection.attr('id')} > .itemrefs-wrapper .itemrefs`,
                     function (e, $itemRef) {
                         if (
                             e.namespace === 'binder' &&
@@ -371,10 +371,10 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $subsection.attr('id') + ' > .rublocks .rubricblocks')
+                .off('add.binder', `#${$subsection.attr('id')} > .rublocks .rubricblocks`)
                 .on(
                     'add.binder',
-                    '#' + $subsection.attr('id') + ' > .rublocks .rubricblocks',
+                    `#${$subsection.attr('id')} > .rublocks .rubricblocks`,
                     function (e, $rubricBlock) {
                         if (
                             e.namespace === 'binder' &&
@@ -495,6 +495,7 @@ define([
 
             /**
              * save the categories into the model
+             * @param {Object} blueprint
              * @private
              */
             function setBlueprint(blueprint) {
@@ -543,7 +544,7 @@ define([
                         // subsection has item(s)
                         const subsectionIndex = subsectionsHelper.getSubsectionTitleIndex($subsection);
                         const confirmMessage = __(
-                            'The items contained in <b>%s%s</b> will be moved into the new <b>%s%s</b>. Do you wish to proceed?',
+                            'The items contained in <b>%s %s</b> will be moved into the new <b>%s %s</b>. Do you wish to proceed?',
                             subsectionIndex,
                             subsectionModel.title,
                             `${subsectionIndex}1.`,
@@ -571,8 +572,8 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $subsection.attr('id') + ' > .subsections')
-                .on('add.binder', '#' + $subsection.attr('id') + ' > .subsections', function (e, $sub2section) {
+                .off('add.binder', `#${$subsection.attr('id')} > .subsections`)
+                .on('add.binder', `#${$subsection.attr('id')} > .subsections`, function (e, $sub2section) {
                     if (
                         e.namespace === 'binder' &&
                         $sub2section.hasClass('subsection') &&

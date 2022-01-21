@@ -269,8 +269,8 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $section.attr('id') + ' > .itemrefs-wrapper .itemrefs')
-                .on('add.binder', '#' + $section.attr('id') + ' > .itemrefs-wrapper .itemrefs', function (e, $itemRef) {
+                .off('add.binder', `#${$section.attr('id')} > .itemrefs-wrapper .itemrefs`)
+                .on('add.binder', `#${$section.attr('id')} > .itemrefs-wrapper .itemrefs`, function (e, $itemRef) {
                     if (
                         e.namespace === 'binder' &&
                         $itemRef.hasClass('itemref') &&
@@ -360,8 +360,8 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $section.attr('id') + ' > .rublocks .rubricblocks')
-                .on('add.binder', '#' + $section.attr('id') + ' > .rublocks .rubricblocks', function (e, $rubricBlock) {
+                .off('add.binder', `#${$section.attr('id')} > .rublocks .rubricblocks`)
+                .on('add.binder', `#${$section.attr('id')} > .rublocks .rubricblocks`, function (e, $rubricBlock) {
                     if (
                         e.namespace === 'binder' &&
                         $rubricBlock.hasClass('rubricblock') &&
@@ -480,6 +480,7 @@ define([
 
             /**
              * save the categories into the model
+             * @param {Object} blueprint
              * @private
              */
             function setBlueprint(blueprint) {
@@ -529,7 +530,7 @@ define([
                         const $parent = $section.parents('.sections');
                         const index = $('.section', $parent).index($section);
                         const confirmMessage = __(
-                            'The items contained in <b>%s%s</b> will be moved into the new <b>%s%s</b>. Do you wish to proceed?',
+                            'The items contained in <b>%s %s</b> will be moved into the new <b>%s %s</b>. Do you wish to proceed?',
                             `${index + 1}.`,
                             sectionModel.title,
                             `${index + 1}.1.`,
@@ -557,8 +558,8 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $section.attr('id') + ' > .subsections')
-                .on('add.binder', '#' + $section.attr('id') + ' > .subsections', function (e, $subsection) {
+                .off('add.binder', `#${$section.attr('id')} > .subsections`)
+                .on('add.binder', `#${$section.attr('id')} > .subsections`, function (e, $subsection) {
                     if (
                         e.namespace === 'binder' &&
                         $subsection.hasClass('subsection') &&
