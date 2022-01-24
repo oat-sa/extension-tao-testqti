@@ -37,7 +37,7 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/categorySelector',
-    'ui/validator/validators',
+    'taoQtiTest/controller/creator/helpers/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
     'taoTests/previewer/factory',
     'core/logger'
@@ -164,7 +164,7 @@ define([
 
                     //validate the model
                     try {
-                        qtiTestHelper.validateModel(model);
+                        validators.validateModel(model);
                     } catch(err) {
                         $saver.attr('disabled', false).removeClass('disabled');
                         feedback().error(`${__('The test has not been saved.')} + ${err}`);
@@ -192,9 +192,7 @@ define([
                     scoringHelper.init(modelOverseer);
 
                     //register validators
-                    validators.register('idFormat', qtiTestHelper.idFormatValidator());
-                    validators.register('testIdFormat', qtiTestHelper.testidFormatValidator());
-                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(modelOverseer), true);
+                    validators.registerValidators(modelOverseer);
 
                     //once model is loaded, we set up the test view
                     testView(creatorContext);
