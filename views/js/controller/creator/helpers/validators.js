@@ -21,11 +21,12 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/helpers/outcome',
-    'taoQtiTest/controller/creator/helpers/qtiElement'
-], function (validators, _, __, outcomeHelper, qtiElementHelper) {
+    'taoQtiTest/controller/creator/helpers/qtiElement',
+    'taoQtiItem/qtiCreator/widgets/helpers/qtiIdentifier'
+], function (validators, _, __, outcomeHelper, qtiElementHelper, qtiIdentifier) {
     'use strict';
 
-    const qtiIdPattern = /^[_a-zA-Z]{1}[a-zA-Z0-9\-._]{0,31}$/i;
+    const qtiIdPattern = qtiIdentifier.pattern;
     //Identifiers must be unique across
     //those QTI types
     const qtiTypesForUniqueIds = ['assessmentTest', 'testPart', 'assessmentSection', 'assessmentItemRef'];
@@ -37,7 +38,7 @@ define([
     function idFormatValidator() {
         return {
             name: 'idFormat',
-            message: __('is not a valid identifier (alphanum, underscore, dash and dots)'),
+            message: qtiIdentifier.invalidQtiIdMessage,
             validate: function (value, callback) {
                 if (typeof callback === 'function') {
                     callback(qtiIdPattern.test(value));
