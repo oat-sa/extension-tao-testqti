@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Test Authoring - SubSection Helper</title>
+        <base href="../../../../../../../tao/views/" />
+        <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
+        <link rel="stylesheet" type="text/css" href="css/tao-main-style.css">
+        <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
+        <script type="text/javascript" src="js/lib/require.js"></script>
+        <script type="text/javascript" src="js/lib/qunit/qunit-parameterize.js"></script>
+
+        <script  type="text/javascript">
+
+            QUnit.config.autostart = false;
+            require(['/tao/ClientConfig/config'], function(){
+                require(['taoQtiTest/test/creator/helpers/subsection/test'], function(){
+                    QUnit.start();
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <div id="qunit-fixture">
+            <div class="test-content">
+                <div class="testparts" data-bind-each="testParts" data-bind-tmpl="testpart">
+                    <div id="testPart-1" class="testpart clearfix" data-bind-index="0">
+                        <h1>
+                            <a href="#" class="toggler opened" data-toggle="#testpart-content-testPart-1"></a>
+                            <span data-bind="identifier">testPart-1</span>
+                        </h1>
+                        <div id="testpart-content-testPart-1" class="testpart-content">
+                            <!-- assessmentTest/testPart/assessmentSections -->
+                            <div class="sections" data-bind-each="assessmentSections" data-bind-tmpl="section" data-bind-filter="isSection">
+                                <div id="assessmentSection-1" class="section" data-bind-index="0">
+                                    <!-- assessmentTest/testPart/assessmentSection/title -->
+                                    <h2><span class="title-index">1.</span> <span data-bind="title">Section 1</span></h2>
+                                    <div class="itemrefs-wrapper" style="display: none;"></div>
+                                    <div class="subsections" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection">
+                                        <div id="subsection-1" class="subsection" data-bind-index="0">
+                                            <h2><span class="title-index">1.1.</span> <span data-bind="title">Section</span></h2>
+                                            <div class="subsections" id="subsections-for-2" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection">
+                                                <div id="subsection-2" class="subsection" data-bind-index="0">
+                                        
+                                                    <h2><span class="title-index">1.1.1.</span> <span data-bind="title">Section</span></h2>
+                                                    <div class="subsections" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection">
+                                                        <div id="subsection-3" class="subsection" data-bind-index="1">
+                        
+                                                            <h2><span class="title-index">1.1.2.</span> <span data-bind="title">Section</span></h2>
+                                                            <div class="subsections" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="subsection-4" class="subsection" data-bind-index="1">
+                                            <h2><span class="title-index">1.2.</span> <span data-bind="title">Section</span></h2>
+                                            <div class="subsections" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="assessmentSection-2" class="section" data-bind-index="1">
+                                <!-- assessmentTest/testPart/assessmentSection/title -->
+                                    <h2><span class="title-index">2.</span> <span data-bind="title">Section</span></h2>
+                                    <div class="subsections" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection">
+                                        <div id="subsection-5" class="subsection" data-bind-index="0">
+                                            <h2><span class="title-index">2.1.</span> <span data-bind="title">Section</span></h2>
+                                            <div class="subsections" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection">
+                                                <div id="subsection-6" class="subsection" data-bind-index="0">
+                                                    <h2><span class="title-index">2.1.1.</span> <span data-bind="title">Section</span></h2>
+                                                    <div class="subsections" data-bind-each="sectionParts" data-bind-tmpl="subsection" data-bind-filter="isSection"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

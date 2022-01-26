@@ -1,6 +1,6 @@
 <div id="{{identifier}}" class="subsection">
 
-    <h2><span data-bind="title">{{title}}</span>
+    <h2><span class="title-index"></span> <span data-bind="title">{{title}}</span>
         <div class="actions">
             <div class="tlb">
                 <div class="tlb-top">

@@ -109,11 +109,10 @@ function($, _, defaults, actions, sectionView, templates, qtiTestHelper){
                 templateData : function(cb){
 
                     //create a new section model object to be bound to the template
-                    var sectionIndex = $('.section', $testPart).length;
                     cb({
                         'qti-type' : 'assessmentSection',
                         identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', defaults().sectionIdPrefix),
-                        title : `${defaults().sectionTitlePrefix} ${sectionIndex + 1}`,
+                        title : defaults().sectionTitlePrefix,
                         index : 0,
                         sectionParts : [],
                         visible: true

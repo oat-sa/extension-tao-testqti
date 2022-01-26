@@ -13,12 +13,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2021-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
-/**
- * @author Bertrand Chevrier <bertrand@taotesting.com>
- */
 define([
     'jquery',
     'lodash',
@@ -183,13 +180,13 @@ define([
             }
 
             subsectionsHelper.getSubsections($subsection).each(function () {
-                const $subsection = $(this);
-                const index = $subsection.data('bind-index');
+                const $sub2section = $(this);
+                const index = $sub2section.data('bind-index');
                 if (!subsectionModel.sectionParts[index]) {
                     subsectionModel.sectionParts[index] = {};
                 }
 
-                setUp(creatorContext, subsectionModel.sectionParts[index], subsectionModel, $subsection);
+                setUp(creatorContext, subsectionModel.sectionParts[index], subsectionModel, $sub2section);
             });
         }
         /**
@@ -279,10 +276,10 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $subsection.attr('id') + ' > .itemrefs-wrapper .itemrefs')
+                .off('add.binder', `#${$subsection.attr('id')} > .itemrefs-wrapper .itemrefs`)
                 .on(
                     'add.binder',
-                    '#' + $subsection.attr('id') + ' > .itemrefs-wrapper .itemrefs',
+                    `#${$subsection.attr('id')} > .itemrefs-wrapper .itemrefs`,
                     function (e, $itemRef) {
                         if (
                             e.namespace === 'binder' &&
@@ -374,10 +371,10 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $subsection.attr('id') + ' > .rublocks .rubricblocks')
+                .off('add.binder', `#${$subsection.attr('id')} > .rublocks .rubricblocks`)
                 .on(
                     'add.binder',
-                    '#' + $subsection.attr('id') + ' > .rublocks .rubricblocks',
+                    `#${$subsection.attr('id')} > .rublocks .rubricblocks`,
                     function (e, $rubricBlock) {
                         if (
                             e.namespace === 'binder' &&
@@ -498,6 +495,7 @@ define([
 
             /**
              * save the categories into the model
+             * @param {Object} blueprint
              * @private
              */
             function setBlueprint(blueprint) {
@@ -520,7 +518,6 @@ define([
                 content: templates.subsection,
                 templateData: function (cb) {
                     //create a new subsection model object to be bound to the template
-                    const subsectionIndex = $('.subsection', $subsection).length;
                     let sectionParts = [];
                     if ($subsection.data('movedItems')) {
                         sectionParts = $subsection.data('movedItems');
@@ -533,7 +530,7 @@ define([
                             'assessmentSection',
                             'subsection'
                         ),
-                        title: `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
+                        title: defaults().sectionTitlePrefix,
                         index: 0,
                         sectionParts,
                         visible: true
@@ -545,11 +542,13 @@ define([
                         qtiTestHelper.filterQtiType(subsectionModel.sectionParts[0], 'assessmentItemRef')
                     ) {
                         // subsection has item(s)
-                        const subsectionIndex = $('.subsection', $subsection).length;
+                        const subsectionIndex = subsectionsHelper.getSubsectionTitleIndex($subsection);
                         const confirmMessage = __(
-                            'The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?',
+                            'The items contained in <b>%s %s</b> will be moved into the new <b>%s %s</b>. Do you wish to proceed?',
+                            subsectionIndex,
                             subsectionModel.title,
-                            `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`
+                            `${subsectionIndex}1.`,
+                            defaults().sectionTitlePrefix
                         );
                         const acceptFunction = () => {
                             $subsection.data('movedItems', _.clone(subsectionModel.sectionParts));
@@ -573,8 +572,8 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $subsection.attr('id') + ' > .subsections')
-                .on('add.binder', '#' + $subsection.attr('id') + ' > .subsections', function (e, $sub2section) {
+                .off('add.binder', `#${$subsection.attr('id')} > .subsections`)
+                .on('add.binder', `#${$subsection.attr('id')} > .subsections`, function (e, $sub2section) {
                     if (
                         e.namespace === 'binder' &&
                         $sub2section.hasClass('subsection') &&
@@ -589,11 +588,13 @@ define([
                             $subsection.removeData('movedCategories');
                         }
 
-                        //initialize the new test part
+                        // initialize the new subsection
                         setUp(creatorContext, sub2sectionModel, subsectionModel, $sub2section);
-
+                        // hide 'Items' block and category-presets for current subsection
                         actions.displayItemWrapper($subsection);
                         actions.displayCategoryPresets($subsection);
+                        // set index for new subsection
+                        actions.updateTitleIndex($sub2section);
 
                         /**
                          * @event modelOverseer#section-add
@@ -614,6 +615,7 @@ define([
 
             actions.removable($subsections, 'h2');
             actions.movable($subsections, 'subsection', 'h2');
+            actions.updateTitleIndex($subsections);
         });
 
         $(document)
@@ -621,11 +623,14 @@ define([
                 const $target = $(e.target);
                 if ($target.hasClass('subsection')) {
                     actions.disable(subsectionsHelper.getSiblingSubsections($target), 'h2');
-                    if (subsectionsHelper.isNestedSubsection($target)) {
-                        const $parent = subsectionsHelper.getParentSubsection($target);
-                        actions.displayItemWrapper($parent, true);
-                        actions.displayCategoryPresets($parent, true);
-                    }
+                    const $parent = subsectionsHelper.getParent($target);
+                    setTimeout(() => {
+                        actions.displayItemWrapper($parent);
+                        actions.displayCategoryPresets($parent);
+                        // element detached after event
+                        const $subsections = $('.subsection', $parent);
+                        actions.updateTitleIndex($subsections);
+                    }, 100);
                 }
             })
             .on('add change undo.deleter deleted.deleter', function (e) {
@@ -635,8 +640,10 @@ define([
                     actions.removable($subsections, 'h2');
                     actions.movable($subsections, 'subsection', 'h2');
 
-                    if (e.type === 'undo' && subsectionsHelper.isNestedSubsection($target)) {
-                        const $parent = subsectionsHelper.getParentSubsection($target);
+                    if (e.type === 'undo' || e.type === 'change') {
+                        const $parent = subsectionsHelper.getParent($target);
+                        const $AllNestedSubsections = $('.subsection', $parent);
+                        actions.updateTitleIndex($AllNestedSubsections);
                         actions.displayItemWrapper($parent);
                         actions.displayCategoryPresets($parent);
                     }

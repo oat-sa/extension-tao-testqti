@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
@@ -269,8 +269,8 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $section.attr('id') + ' > .itemrefs-wrapper .itemrefs')
-                .on('add.binder', '#' + $section.attr('id') + ' > .itemrefs-wrapper .itemrefs', function (e, $itemRef) {
+                .off('add.binder', `#${$section.attr('id')} > .itemrefs-wrapper .itemrefs`)
+                .on('add.binder', `#${$section.attr('id')} > .itemrefs-wrapper .itemrefs`, function (e, $itemRef) {
                     if (
                         e.namespace === 'binder' &&
                         $itemRef.hasClass('itemref') &&
@@ -360,8 +360,8 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $section.attr('id') + ' > .rublocks .rubricblocks')
-                .on('add.binder', '#' + $section.attr('id') + ' > .rublocks .rubricblocks', function (e, $rubricBlock) {
+                .off('add.binder', `#${$section.attr('id')} > .rublocks .rubricblocks`)
+                .on('add.binder', `#${$section.attr('id')} > .rublocks .rubricblocks`, function (e, $rubricBlock) {
                     if (
                         e.namespace === 'binder' &&
                         $rubricBlock.hasClass('rubricblock') &&
@@ -480,6 +480,7 @@ define([
 
             /**
              * save the categories into the model
+             * @param {Object} blueprint
              * @private
              */
             function setBlueprint(blueprint) {
@@ -502,7 +503,6 @@ define([
                 content: templates.subsection,
                 templateData: function (cb) {
                     //create a new subsection model object to be bound to the template
-                    const subsectionIndex = $('.subsection', $section).length;
                     let sectionParts = [];
                     if ($section.data('movedItems')) {
                         sectionParts = $section.data('movedItems');
@@ -515,7 +515,7 @@ define([
                             'assessmentSection',
                             'subsection'
                         ),
-                        title: `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`,
+                        title: defaults().sectionTitlePrefix,
                         index: 0,
                         sectionParts,
                         visible: true
@@ -526,12 +526,15 @@ define([
                         sectionModel.sectionParts[0] &&
                         qtiTestHelper.filterQtiType(sectionModel.sectionParts[0], 'assessmentItemRef')
                     ) {
-                        // subsection has item(s)
-                        const subsectionIndex = $('.subsection', $section).length;
+                        // section has item(s)
+                        const $parent = $section.parents('.sections');
+                        const index = $('.section', $parent).index($section);
                         const confirmMessage = __(
-                            'The items contained in <b>%s</b> will be moved into the new <b>%s</b>. Do you wish to proceed?',
+                            'The items contained in <b>%s %s</b> will be moved into the new <b>%s %s</b>. Do you wish to proceed?',
+                            `${index + 1}.`,
                             sectionModel.title,
-                            `${defaults().sectionTitlePrefix} ${subsectionIndex + 1}`
+                            `${index + 1}.1.`,
+                            defaults().sectionTitlePrefix
                         );
                         const acceptFunction = () => {
                             $section.data('movedItems', _.clone(sectionModel.sectionParts));
@@ -555,8 +558,8 @@ define([
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
-                .off('add.binder', '#' + $section.attr('id') + ' > .subsections')
-                .on('add.binder', '#' + $section.attr('id') + ' > .subsections', function (e, $subsection) {
+                .off('add.binder', `#${$section.attr('id')} > .subsections`)
+                .on('add.binder', `#${$section.attr('id')} > .subsections`, function (e, $subsection) {
                     if (
                         e.namespace === 'binder' &&
                         $subsection.hasClass('subsection') &&
@@ -571,11 +574,13 @@ define([
                             $section.removeData('movedCategories');
                         }
 
-                        //initialize the new test part
+                        //initialize the new subsection
                         subsectionView.setUp(creatorContext, subsectionModel, sectionModel, $subsection);
-
+                        // hide 'Items' block and category-presets for current section
                         actions.displayItemWrapper($section);
                         actions.displayCategoryPresets($section);
+                        // set index for new subsection
+                        actions.updateTitleIndex($subsection);
 
                         /**
                          * @event modelOverseer#section-add
@@ -596,6 +601,7 @@ define([
 
             actions.removable($sections, 'h2');
             actions.movable($sections, 'section', 'h2');
+            actions.updateTitleIndex($sections);
         });
 
         $(document)
@@ -605,30 +611,27 @@ define([
                 if ($target.hasClass('section')) {
                     $parent = $target.parents('.sections');
                     actions.disable($parent.find('.section'), 'h2');
-                } else if ($target.hasClass('subsection') && subsectionsHelper.isFistLevelSubsection($target)) {
-                    $parent = subsectionsHelper.getParentSection($target);
-                    actions.displayItemWrapper($parent, true);
-                    actions.displayCategoryPresets($parent, true);
+                    setTimeout(() => {
+                        // element detached after event
+                        const $sectionsAndsubsections = $('.section,.subsection', $parent);
+                        actions.updateTitleIndex($sectionsAndsubsections);
+                    }, 100);
                 }
             })
             .on('add change undo.deleter deleted.deleter', function (e) {
                 const $target = $(e.target);
                 if ($target.hasClass('section') || $target.hasClass('sections')) {
-                    const $sections = $(
-                        '.section',
-                        $target.hasClass('sections') ? $target : $target.parents('.sections')
-                    );
+                    const $sectionsContainer = $target.hasClass('sections') ? $target : $target.parents('.sections');
+                    const $sections = $('.section', $sectionsContainer);
                     actions.removable($sections, 'h2');
                     actions.movable($sections, 'section', 'h2');
-                }
-                if (
-                    e.type === 'undo' &&
-                    ($target.hasClass('subsection') || $target.hasClass('subsections')) &&
-                    subsectionsHelper.isFistLevelSubsection($target)
-                ) {
-                    const $parent = subsectionsHelper.getParentSection($target);
-                    actions.displayItemWrapper($parent);
-                    actions.displayCategoryPresets($parent);
+                    if (e.type === 'undo' || e.type === 'change') {
+                        const $sectionsAndsubsections = $('.section,.subsection', $sectionsContainer);
+                        actions.updateTitleIndex($sectionsAndsubsections);
+                    } else if (e.type === 'add') {
+                        const $newSection = $('.section:last', $sectionsContainer);
+                        actions.updateTitleIndex($newSection);
+                    }
                 }
             })
             .on('open.toggler', '.rub-toggler', function (e) {

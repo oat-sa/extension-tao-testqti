@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
@@ -206,17 +206,12 @@ define([
      * one subsection inside of it. As delete subsection event is triggered before subsection
      * container is actually removed from section container, we need to have conditional flow
      * @param {jQueryElement} sectionContainer - section jquery container
-     * @param {boolean} subsectionDeleted - if subsection was deleted
      */
-    function displayItemWrapper($section, subsectionDeleted = false) {
+    function displayItemWrapper($section) {
         const $elt = $('.itemrefs-wrapper:first', $section);
         const subsectionsCount = subsectionsHelper.getSubsections($section).length;
         if (subsectionsCount) {
-            if (subsectionDeleted && subsectionsCount === 1) {
-                $elt.show();
-            } else {
-                $elt.hide();
-            }
+            $elt.hide();
         } else {
             $elt.show();
         }
@@ -238,10 +233,9 @@ define([
      * Hides/shows category-presets (Test Navigation, Navigation Warnings, Test-Taker Tools)
      * Hide category-presets for section that contains subsections
      * @param {propView} propView - the view object
-     * @param {boolean} subsectionDeleted - if subsection was deleted
      * @fires propertiesView#set-default-categories
      */
-    function displayCategoryPresets($section, subsectionDeleted) {
+    function displayCategoryPresets($section) {
         const id = $section.attr('id');
         const $propertiesView = $(`.test-creator-props #section-props-${id}`);
         if (!$propertiesView.length) {
@@ -251,15 +245,30 @@ define([
         const $elt = $propertiesView.find('.category-presets');
         const subsectionsCount = subsectionsHelper.getSubsections($section).length;
         if (subsectionsCount) {
-            if (subsectionDeleted && subsectionsCount === 1) {
-                $elt.show();
-            } else {
-                $elt.hide();
-                $propertiesView.trigger('set-default-categories');
-            }
+            $elt.hide();
+            $propertiesView.trigger('set-default-categories');
         } else {
             $elt.show();
         }
+    }
+
+    /**
+     * Update the index of an section/subsection
+     * @param {jQueryElement} $list - list of elements
+     */
+    function updateTitleIndex($list) {
+        $list.each(function () {
+            const $elt = $(this);
+            const $indexSpan = $('.title-index', $elt.children('h2'));
+
+            if ($elt.hasClass('section')) {
+                const $parent = $elt.parents('.sections');
+                const index = $('.section', $parent).index($elt);
+                $indexSpan.text(`${index + 1}.`);
+            } else {
+                $indexSpan.text(subsectionsHelper.getSubsectionTitleIndex($elt));
+            }
+        });
     }
 
     /**
@@ -276,6 +285,7 @@ define([
         enable,
         displayItemWrapper,
         updateDeleteSelector,
-        displayCategoryPresets
+        displayCategoryPresets,
+        updateTitleIndex
     };
 });

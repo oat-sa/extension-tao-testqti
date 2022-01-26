@@ -160,7 +160,7 @@ function($, _, __, hider, feedback, defaults, actions, testPartView, templates, 
                         assessmentSections : [{
                             'qti-type' : 'assessmentSection',
                             identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', defaults().sectionIdPrefix),
-                            title : `${defaults().sectionTitlePrefix} 1`,
+                            title : defaults().sectionTitlePrefix,
                             index : 0,
                             sectionParts : [],
                             visible: true
@@ -179,6 +179,8 @@ function($, _, __, hider, feedback, defaults, actions, testPartView, templates, 
 
                         //initialize the new test part
                         testPartView.setUp(creatorContext, partModel, $testPart);
+                        // set index for new section
+                        actions.updateTitleIndex($('.section', $testPart));
 
                         /**
                          * @event modelOverseer#part-add
