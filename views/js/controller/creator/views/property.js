@@ -129,17 +129,22 @@ function($, ui, DataBinder, templates){
         * @private
         */
         function propValidation() {
-            var $togglers;
             $view.on('validated.group', function(e, isValid){
+                let $testSection = $('.tlb-button-on').parents('.section').attr('id');
+                let testSectionId = '#' + $testSection;
+                let $propsSectionError = $('#section-props-'+ $testSection).find('span.validate-error');
+                let $propsItemError = $('.itemref-props').find('span.validate-error');
+
                 if(e.namespace === 'group'){
-                    $togglers = $('#test-creator .property-toggler, #saver');
-                    if(isValid === true){
-                        $togglers.removeClass('disabled');
+                   if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0 ) {
+                       $(testSectionId).removeClass('section-error');
                     } else {
-                        $togglers.addClass('disabled');
+                        $(testSectionId).addClass('section-error');
                     }
+                    
                 }
             });
+
             $view.groupValidator();
         }
 
