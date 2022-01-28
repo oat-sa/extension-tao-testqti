@@ -62,7 +62,7 @@ class StateOffloadTask extends AbstractAction implements TaskAwareInterface
 
         if ($this->getStateMigrationService()->archive($userId, $callId)) {
             $this->getStateMigrationService()->removeState($userId, $callId);
-            $this->getLoggerInterface()->debug(
+            $this->getLoggerInterface()->info(
                 sprintf('%s State archived for user: %s and callId: %s', $stateType, $userId, $callId)
             );
         }
