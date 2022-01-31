@@ -407,7 +407,7 @@ msgid "Enables skipping to items within this section. Requires the review screen
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
 msgid "End test"
-msgstr "Baigti testą"
+msgstr "Baigti darbą"
 
 msgid "End Test"
 msgstr "Baigti darbą"
