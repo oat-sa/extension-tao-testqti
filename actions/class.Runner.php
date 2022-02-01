@@ -1099,8 +1099,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     private function setNavigationContextToCommand(NavigationContextAwareInterface $command): void
     {
         $command->setNavigationContext(
-            $this->getRequestParameter('direction') ?? '',
-            $this->getRequestParameter('scope') ?? '',
+            $this->getRequestParameter('direction'),
+            $this->getRequestParameter('scope'),
             $this->getRequestParameter('ref')
         );
     }
