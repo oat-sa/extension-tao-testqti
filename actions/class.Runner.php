@@ -1100,7 +1100,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $command->setNavigationContext(
             $this->getRequestParameter('direction') ?? '',
-            $this->getRequestParameter('scope'),
+            $this->getRequestParameter('scope') ?? '',
             $this->getRequestParameter('ref')
         );
     }
