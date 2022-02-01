@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +25,6 @@ namespace oat\taoQtiTest\test\unit\model\Service;
 use oat\generis\test\TestCase;
 use oat\taoQtiTest\model\Service\NavigationContextAwareTrait;
 
-
 class NavigationContextAwareTraitTest extends TestCase
 {
     /** @var NavigationContextAwareTrait */
@@ -41,14 +41,13 @@ class NavigationContextAwareTraitTest extends TestCase
      * @dataProvider setNavigationContextDataProvider
      */
     public function testSetNavigationContext(
-        string  $expectedDirection,
-        string  $expectedScope,
+        string $expectedDirection,
+        string $expectedScope,
         ?string $expectedRef,
         ?string $direction,
         ?string $scope,
         ?string $ref
-    ): void
-    {
+    ): void {
         $this->subject->setNavigationContext(
             $direction,
             $scope,
