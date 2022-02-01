@@ -35,11 +35,11 @@ trait NavigationContextAwareTrait
     /** @var string|null*/
     private $ref = null;
 
-    public function setNavigationContext(string $direction, string $scope, ?string $ref): void
+    public function setNavigationContext(?string $direction, ?string $scope, ?string $ref): void
     {
-        $this->direction = $direction;
-        $this->scope = $scope;
-        $this->ref = $ref;
+        $this->direction = $direction ?? '';
+        $this->scope = $scope ?? '';
+        $this->ref = $ref ?? null;
     }
 
     public function getDirection(): string
