@@ -34,6 +34,8 @@
     $propsColor: $uiOverlay;
     $testPartColor: $websiteBorder;
     $sectionColor: $darkBlueGrey;
+    $subsectionColor: #d2e9f3;
+    $sub2sectionColor: #d4d5d7;
     $rubColor: whiten($info, 0.3);
 
     position: relative;
@@ -270,9 +272,6 @@
         color: $textColor;
 
         h1, h2, li {
-            & > span:first-child {
-                float: left;
-            }
             .actions {
                 position: absolute;
                 right: 0;
@@ -374,8 +373,14 @@
                 border-radius: 2px 2px 0 0;
                 & > .toggler {
                     position: absolute;
-                    right: 15px;
+                    left: 5px;
+                    top: 15px;
                     color: $textHighlight;
+                    text-decoration: none;
+                    transform: rotate(180deg);
+                }
+                & > .closed {
+                    transform: rotate(-90deg);
                 }
             }
             .actions {
@@ -395,10 +400,11 @@
         .section {
             color: $textColor;
             border-left: solid 5px $sectionColor;
-            padding: 0 5px 20px 15px;
+            padding: 0 5px 0 15px;
             margin: 10px 16px 10px 16px;
 
             & > h2 {
+                font-size: 1.25em;
                 color: black;
                 font-weight: bold;
             }
@@ -417,6 +423,19 @@
         }
         .section-error{
             border-left: solid 5px $error;
+        }
+
+        .subsection {
+            & > h2 {
+                font-size: 1.25em;
+                color: black;
+                font-weight: bold;
+            }
+            border-left: solid 5px $subsectionColor;
+            padding: 0 0 0 15px;
+            .subsection {
+                border-left-color: $sub2sectionColor;
+            }
         }
 
         .rublocks{
