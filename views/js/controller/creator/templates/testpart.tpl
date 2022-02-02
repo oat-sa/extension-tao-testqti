@@ -1,6 +1,7 @@
 <div id="{{identifier}}" class="testpart clearfix">
-
-   <h1><span data-bind="identifier">{{identifier}}</span>
+   <h1>
+   <a href="#" class="toggler opened" data-toggle="#testpart-content-{{identifier}}"></a>
+   <span data-bind="identifier">{{identifier}}</span>
         <div class="actions">
             <div class="tlb">
                 <div class="tlb-top">
@@ -21,7 +22,6 @@
                 </div>
             </div>
         </div>
-        <a href="#" class="toggler opened" data-toggle="#testpart-content-{{identifier}}"></a>
     </h1>
     <div id="testpart-content-{{identifier}}" class="testpart-content">
 
