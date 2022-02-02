@@ -39,7 +39,7 @@ trait NavigationContextAwareTrait
     {
         $this->direction = $direction ?? '';
         $this->scope = $scope ?? '';
-        $this->ref = $ref ?? null;
+        $this->ref = $ref;
     }
 
     public function getDirection(): string
