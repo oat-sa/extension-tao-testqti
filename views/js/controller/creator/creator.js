@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -40,7 +40,8 @@ define([
     'taoQtiTest/controller/creator/helpers/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
     'taoTests/previewer/factory',
-    'core/logger'
+    'core/logger',
+    'taoQtiTest/controller/creator/views/subsection',
 ], function(
     module,
     $,
@@ -63,7 +64,8 @@ define([
     validators,
     changeTracker,
     previewerFactory,
-    loggerFactory
+    loggerFactory,
+    subsectionView
 ){
     'use strict';
     const logger = loggerFactory('taoQtiTest/controller/creator');
@@ -200,12 +202,8 @@ define([
                     //listen for changes to update available actions
                     testPartView.listenActionState();
                     sectionView.listenActionState();
+                    subsectionView.listenActionState();
                     itemrefView.listenActionState();
-                    itemrefView.resize();
-
-                    $(window)
-                        .off('resize.qti-test-creator')
-                        .on('resize.qti-test-creator', () => itemrefView.resize() );
 
                     changeTracker($container.get()[0], creatorContext, '.content-wrap');
 

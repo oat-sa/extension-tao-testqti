@@ -182,7 +182,7 @@ msgid "Are you sure you want to clear your answer and go to the next item? You w
 msgstr "Ar jūs tikrai norite išvalyti atsakymus ir eiti į sekantį elementą? Jūs negalėsite grįžti atgal ir pateikti atsakymą."
 
 msgid "Are you sure you want to end the test?"
-msgstr "Ar jūs tikrai norite užbaigti testą?"
+msgstr "Ar jūs tikrai norite užbaigti darbą?"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
 msgstr "Ar jūs tikrai norite eiti į sekantį elementą? Jūs negalėsite grįžti atgal ir pakeisti atsakymą."
@@ -407,10 +407,10 @@ msgid "Enables skipping to items within this section. Requires the review screen
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
 msgid "End test"
-msgstr "Baigti testą"
+msgstr "Baigti darbą"
 
 msgid "End Test"
-msgstr "Baigti testą"
+msgstr "Baigti darbą"
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -763,7 +763,7 @@ msgstr "Minimali trukmė šio testo daliai."
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \'id\'"
 msgstr ""
 
 msgid "Missed test package file"
@@ -863,7 +863,7 @@ msgid "Ok"
 msgstr "Gerai"
 
 msgid "OK & End test"
-msgstr "Gerai, baigti testą"
+msgstr "Gerai, baigti darbą"
 
 msgid "Once you close this section, you cannot return to it or change your answers."
 msgstr "Kai tik uždarysite šį skyrių, jūs negalėsite sugrįžti ir pakeisti savo atsakymus."
@@ -1148,10 +1148,10 @@ msgid "Skip"
 msgstr "Panaikinti atsakymą"
 
 msgid "Skip &amp; End Test"
-msgstr "Praleisti &amp; Baigti testą"
+msgstr "Praleisti &amp; Baigti darbą"
 
 msgid "Skip and end test"
-msgstr "Praleisti ir baigti testą"
+msgstr "Praleisti ir baigti darbą"
 
 msgid "Skip and go to the end of the test"
 msgstr "Praleisti ir eiti į testo pabaigą"

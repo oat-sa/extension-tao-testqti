@@ -77,7 +77,14 @@ function(
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
 
-        resize();
+    /**
+     * We need to resize the itemref in case of long labels
+     */
+     _.throttle(function resize(){
+        var $actions = $itemRef.find('.actions').first();
+        var width = $itemRef.innerWidth() - $actions.outerWidth();
+        $('.itemref > .title').width(width);
+    }, 100);
 
         /**
          * Set up the time limits behaviors :
@@ -314,8 +321,7 @@ function(
      */
     return {
         setUp : setUp,
-        listenActionState: listenActionState,
-        resize : resize
+        listenActionState: listenActionState
     };
 
 });
