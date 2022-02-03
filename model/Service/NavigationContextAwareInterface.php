@@ -26,5 +26,5 @@ namespace oat\taoQtiTest\model\Service;
 
 interface NavigationContextAwareInterface
 {
-    public function setNavigationContext(string $direction, string $scope, ?string $ref): void;
+    public function setNavigationContext(?string $direction, ?string $scope, ?string $ref): void;
 }
