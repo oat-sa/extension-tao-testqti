@@ -58,6 +58,7 @@
   },
   "minimum-stability": "dev",
   "require": {
+    "php": ">=7.2",
     "ext-dom": "*",
     "oat-sa/lib-test-cat": "2.3.7",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
