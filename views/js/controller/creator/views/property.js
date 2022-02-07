@@ -66,7 +66,10 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
             $view.trigger('propopen.propview');
 
             // contains identifier from model, needed for validation on keyup for identifiers
-            const $identifier = $view.find(`#props-${model.identifier}`);
+            // jQuesy selector for Id with dots don't work
+            // dots are allowed for id by default see taoQtiItem/qtiCreator/widgets/helpers/qtiIdentifier
+            // need to use attr
+            const $identifier = $view.find(`[id="props-${model.identifier}"]`);
             $view.on('change.binder', function (e) {
                 if (e.namespace === 'binder' && $identifier.length) {
                     $identifier.text(model.identifier);

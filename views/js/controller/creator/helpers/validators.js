@@ -78,7 +78,10 @@ define([
                 if (options.identifier) {
                     const key = value.toUpperCase();
                     const identifiers = extractIdentifiers(modelOverseer.getModel(), qtiTypesForUniqueIds);
-                    const $idInUI = $(`#props-${options.identifier}:contains("${value}")`);
+                    // jQuesy selector for Id with dots don't work
+                    // dots are allowed for id by default see taoQtiItem/qtiCreator/widgets/helpers/qtiIdentifier
+                    // need to use attr
+                    const $idInUI = $(`[id="props-${options.identifier}"]:contains("${value}")`);
                     if (typeof callback === 'function') {
                         const counts = _.countBy(identifiers, 'identifier');
                         //the identifier list contains itself after change on input
