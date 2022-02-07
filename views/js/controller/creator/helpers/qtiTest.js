@@ -19,7 +19,7 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['lodash', 'taoQtiTest/controller/creator/helpers/validators'], function (_, validators) {
+define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'], function ($, _, validators) {
     'use strict';
 
     /**
@@ -161,7 +161,10 @@ define(['lodash', 'taoQtiTest/controller/creator/helpers/validators'], function 
 
             do {
                 identifier = suggestion + glue + index++;
-            } while (_.contains(current, identifier.toUpperCase()));
+            } while (
+                _.contains(current, identifier.toUpperCase()) || // identifier exist in model
+                $(`#${identifier}`).length // identifier was in model but still exist in DOM
+            );
 
             return identifier;
         }

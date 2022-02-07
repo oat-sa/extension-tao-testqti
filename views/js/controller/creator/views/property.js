@@ -64,6 +64,14 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
             propValidation();
 
             $view.trigger('propopen.propview');
+
+            // contains identifier from model, needed for validation on keyup for identifiers
+            const $identifier = $view.find(`#props-${model.identifier}`);
+            $view.on('change.binder', function (e) {
+                if (e.namespace === 'binder' && $identifier.length) {
+                    $identifier.text(model.identifier);
+                }
+            });
         };
 
         /**

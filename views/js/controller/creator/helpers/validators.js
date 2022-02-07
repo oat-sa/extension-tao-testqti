@@ -18,12 +18,13 @@
  */
 define([
     'ui/validator/validators',
+    'jquery',
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/qtiElement',
     'taoQtiItem/qtiCreator/widgets/helpers/qtiIdentifier'
-], function (validators, _, __, outcomeHelper, qtiElementHelper, qtiIdentifier) {
+], function (validators, $, _, __, outcomeHelper, qtiElementHelper, qtiIdentifier) {
     'use strict';
 
     const qtiIdPattern = qtiIdentifier.pattern;
@@ -73,14 +74,23 @@ define([
         return {
             name: 'testIdAvailable',
             message: __('is already used in the test.'),
-            validate: function (value, callback) {
-                const key = value.toUpperCase();
-                const identifiers = extractIdentifiers(modelOverseer.getModel(), qtiTypesForUniqueIds);
-                if (typeof callback === 'function') {
-                    const counts = _.countBy(identifiers, 'identifier');
-                    //the identifier list always contains itself
-                    //so we check if another one is identical (ie. >= 2)
-                    callback(typeof counts[key] === 'undefined' || counts[key] < 2);
+            validate: function (value, callback, options) {
+                if (options.identifier) {
+                    const key = value.toUpperCase();
+                    const identifiers = extractIdentifiers(modelOverseer.getModel(), qtiTypesForUniqueIds);
+                    const $idInUI = $(`#props-${options.identifier}:contains("${value}")`);
+                    if (typeof callback === 'function') {
+                        const counts = _.countBy(identifiers, 'identifier');
+                        //the identifier list contains itself after change on input
+                        //on keyup $idInUI.length === 0
+                        //on change and blur $idInUI.length === 1 and text equal value
+                        callback(
+                            typeof counts[key] === 'undefined' ||
+                            $idInUI.length === 1 && $idInUI.text() === value && counts[key] === 1
+                        );
+                    }
+                } else {
+                    throw new Error('missing required option "identifier"');
                 }
             }
         };
