@@ -35,6 +35,7 @@
             </ul>
         </div>
         <h1><span data-bind="title"></span>
+            <span class="icon-warning"></span>
             <div class="actions">
                 <div class="tlb">
                     <div class="tlb-top">

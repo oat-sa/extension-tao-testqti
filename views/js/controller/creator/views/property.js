@@ -130,18 +130,46 @@ function($, ui, DataBinder, templates){
         */
         function propValidation() {
             $view.on('validated.group', function(e, isValid){
-                let $testSection = $('.tlb-button-on').parents('.section').attr('id');
+                const activeButton = $('.tlb-button-on');
+                const $warningIcon = $('span.icon-warning');
+                //get data from properties input
+                let $testPart = $(activeButton).parents('.testpart').attr('id');
+                let $testSection = $(activeButton).parents('.section').attr('id');
+                let $testSubsection = $(activeButton).parents('.subsection').attr('id');
+                let $test = $(activeButton).parents('.test-creator-test');
+                let $item = $(activeButton).parents('.itemref').attr('id');
+                // adds # to form main test id's
+                let testPartId = '#' + $testPart;
                 let testSectionId = '#' + $testSection;
+                let testSubsectionId = '#' + $testSubsection;
+                let itemId = '#' + $item;
+                // finds error in different elements if any
                 let $propsSectionError = $('#section-props-'+ $testSection).find('span.validate-error');
+                let $propsSubsectionError = $('#section-props-' + $testSubsection).find('span.validate-error');
                 let $propsItemError = $('.itemref-props').find('span.validate-error');
+                let $propsTestPartError = $('.testpart-props').find('span.validate-error');
 
                 if(e.namespace === 'group'){
                    if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0 ) {
-                       $(testSectionId).removeClass('section-error');
+                            $(testSectionId).find($warningIcon).first().css('display', 'none');
+                            $(testSubsectionId).find($warningIcon).first().css('display', 'none');
+                            $(testPartId).find($warningIcon).first().css('display', 'none');
+                            $($test).find($warningIcon).first().css('display', 'none');
+                            $(itemId).find($warningIcon).first().css('display', 'none');
                     } else {
-                        $(testSectionId).addClass('section-error');
+                       //add warning icon if validation fails
+                       if  ($propsItemError.length !== 0) {
+                           $(itemId).find($warningIcon).first().css('display', 'inline');
+                       }else if ($propsSubsectionError.length !== 0){
+                           $(testSubsectionId).find($warningIcon).first().css('display', 'inline');
+                       } else if($propsSectionError.length !== 0){
+                           $(testSectionId).find($warningIcon).first().css('display', 'inline');
+                       } else if($propsTestPartError.length !== 0){
+                           $(testPartId).find($warningIcon).first().css('display', 'inline');
+                       } else {
+                           $($test).find($warningIcon).first().css('display', 'inline');
+                       }
                     }
-                    
                 }
             });
 

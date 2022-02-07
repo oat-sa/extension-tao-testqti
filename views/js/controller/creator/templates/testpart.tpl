@@ -2,6 +2,7 @@
    <h1>
    <a href="#" class="toggler opened" data-toggle="#testpart-content-{{identifier}}"></a>
    <span data-bind="identifier">{{identifier}}</span>
+       <span class="icon-warning"></span>
         <div class="actions">
             <div class="tlb">
                 <div class="tlb-top">
