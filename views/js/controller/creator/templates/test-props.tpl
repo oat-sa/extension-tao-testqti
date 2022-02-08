@@ -7,9 +7,10 @@
     <div class="grid-row">
         <div class="col-5">
             <label for="test-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+            <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
         </div>
         <div class="col-6">
-            <input type="text" name="test-identifier" data-bind="identifier" data-validate="$notEmpty; $testIdFormat; $testIdAvailable;" />
+            <input type="text" name="test-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
         </div>
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
