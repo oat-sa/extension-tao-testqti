@@ -13,19 +13,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define([
-    'jquery',
-    'uikitLoader',
-    'core/databinder',
-    'taoQtiTest/controller/creator/templates/index'
-],
-function($, ui, DataBinder, templates){
+define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creator/templates/index'], function (
+    $,
+    ui,
+    DataBinder,
+    templates
+) {
     'use strict';
 
     /**
@@ -35,22 +34,23 @@ function($, ui, DataBinder, templates){
 
     /**
      * The PropertyView setup the property panel component
-     *
+     * @param {String} tmplName
+     * @param {Object} model
      * @exports taoQtiTest/controller/creator/views/property
+     * @returns {Object}
      */
-    var propView = function propView(tmplName, model){
-        var $container = $('.test-creator-props');
-        var template = templates.properties[tmplName];
-        var $view;
+    const propView = function propView(tmplName, model) {
+        const $container = $('.test-creator-props');
+        const template = templates.properties[tmplName];
+        let $view;
 
         /**
          * Opens the view for the 1st time
          */
-        var open = function propOpen(){
-            var databinder,
-                binderOptions = {
-                    templates: templates.properties
-                };
+        const open = function propOpen() {
+            const binderOptions = {
+                templates: templates.properties
+            };
             $container.children('.props').hide().trigger('propclose.propview');
             $view = $(template(model)).appendTo($container).filter('.props');
 
@@ -58,48 +58,58 @@ function($, ui, DataBinder, templates){
             ui.startDomComponent($view);
 
             //start the data binding
-            databinder = new DataBinder($view, model, binderOptions);
+            const databinder = new DataBinder($view, model, binderOptions);
             databinder.bind();
 
             propValidation();
 
             $view.trigger('propopen.propview');
+
+            // contains identifier from model, needed for validation on keyup for identifiers
+            // jQuesy selector for Id with dots don't work
+            // dots are allowed for id by default see taoQtiItem/qtiCreator/widgets/helpers/qtiIdentifier
+            // need to use attr
+            const $identifier = $view.find(`[id="props-${model.identifier}"]`);
+            $view.on('change.binder', function (e) {
+                if (e.namespace === 'binder' && $identifier.length) {
+                    $identifier.text(model.identifier);
+                }
+            });
         };
 
-       /**
-        * Get the view container element
-        * @returns {jQueryElement}
-        */
-        var getView = function propGetView(){
+        /**
+         * Get the view container element
+         * @returns {jQueryElement}
+         */
+        const getView = function propGetView() {
             return $view;
         };
 
-       /**
-        * Check wheter the view is displayed
-        * @returns {boolean} true id opened
-        */
-        var isOpen = function propIsOpen(){
+        /**
+         * Check wheter the view is displayed
+         * @returns {boolean} true id opened
+         */
+        const isOpen = function propIsOpen() {
             return $view.css('display') !== 'none';
         };
 
-       /**
-        * Bind a callback on view open
-        * @param {PropertyViewCallback} cb
-        */
-        var onOpen = function propOnOpen(cb){
-            $view.on('propopen.propview', function(e){
+        /**
+         * Bind a callback on view open
+         * @param {PropertyViewCallback} cb
+         */
+        const onOpen = function propOnOpen(cb) {
+            $view.on('propopen.propview', function (e) {
                 e.stopPropagation();
                 cb();
             });
         };
 
-
         /**
          * Bind a callback on view close
          * @param {PropertyViewCallback} cb
          */
-        var onClose = function propOnClose(cb){
-            $view.on('propclose.propview', function(e){
+        const onClose = function propOnClose(cb) {
+            $view.on('propclose.propview', function (e) {
                 e.stopPropagation();
                 cb();
             });
@@ -108,54 +118,53 @@ function($, ui, DataBinder, templates){
         /**
          * Removes the property view
          */
-        var destroy = function propDestroy(){
+        const destroy = function propDestroy() {
             $view.remove();
         };
 
         /**
          * Toggles the property view display
          */
-        var toggle = function propToggle(){
+        const toggle = function propToggle() {
             $container.children('.props').not($view).hide().trigger('propclose.propview');
-            if(isOpen()){
+            if (isOpen()) {
                 $view.hide().trigger('propclose.propview');
             } else {
                 $view.show().trigger('propopen.propview');
             }
         };
 
-       /**
-        * Set up the validation on the property view
-        * @private
-        */
+        /**
+         * Set up the validation on the property view
+         * @private
+         */
         function propValidation() {
-            $view.on('validated.group', function(e, isValid){
+            $view.on('validated.group', function (e, isValid) {
                 let $testSection = $('.tlb-button-on').parents('.section').attr('id');
-                let testSectionId = '#' + $testSection;
-                let $propsSectionError = $('#section-props-'+ $testSection).find('span.validate-error');
+                let testSectionId = `#${$testSection}`;
+                let $propsSectionError = $(`#section-props-${$testSection}`).find('span.validate-error');
                 let $propsItemError = $('.itemref-props').find('span.validate-error');
 
-                if(e.namespace === 'group'){
-                   if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0 ) {
-                       $(testSectionId).removeClass('section-error');
+                if (e.namespace === 'group') {
+                    if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0) {
+                        $(testSectionId).removeClass('section-error');
                     } else {
                         $(testSectionId).addClass('section-error');
                     }
-                    
                 }
             });
 
-            $view.groupValidator();
+            $view.groupValidator({ events: ['keyup', 'change', 'blur'] });
         }
 
         return {
-            open : open,
-            getView : getView,
-            isOpen : isOpen,
-            onOpen : onOpen,
-            onClose : onClose,
-            destroy : destroy,
-            toggle : toggle
+            open: open,
+            getView: getView,
+            isOpen: isOpen,
+            onOpen: onOpen,
+            onClose: onClose,
+            destroy: destroy,
+            toggle: toggle
         };
     };
 
