@@ -25,14 +25,16 @@ define([
     'i18n',
     'lib/uuid',
     'core/eventifier',
-    'ui/dialog'
+    'ui/dialog',
+    'ui/feedback',
 ], function (
     $,
     _,
     __,
     uuid,
     eventifier,
-    dialog
+    dialog,
+    feedback
 ) {
     'use strict';
 
@@ -153,11 +155,16 @@ define([
 
                 testCreator
                     .on(`ready${eventNS} saved${eventNS}`, () => this.init())
-                    .before(`creatorclose${eventNS}`, () => this.confirmBefore('exit').then(whatToDo => {
+                    .before(`creatorclose${eventNS}`, () => this.confirmBefore('leaveWhenInvalid').then(whatToDo => {
                         this.ifWantSave(whatToDo);
                     }))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
+                        if(testCreator.isTestHasErrors()){
+                            feedback().error(`${__('The test cannot be saved because it currently contains invalid settings.\n' +
+                                'Please fix the invalid settings and try again.')}`);
+                        } else {
                         this.ifWantSave(whatToDo);
+                        }
                     }))
                     .before(`exit${eventNS}`, () => this.uninstall());
 
