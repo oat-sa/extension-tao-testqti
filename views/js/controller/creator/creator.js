@@ -250,8 +250,12 @@ define([
 
             //the save button triggers binder's save action.
             $saver.on('click', function(event){
-                event.preventDefault();
-                creatorContext.trigger('save');
+                if($('div#test-creator').find('.test-creator-props').find('span.validate-error').length > 0) {
+                    event.preventDefault();
+                    feedback().error(__('The test cannot be saved because it currently contains invalid settings.\n' +
+                        'Please fix the invalid settings and try again.'));
+                } else {
+                creatorContext.trigger('save');}
             });
         }
     };
