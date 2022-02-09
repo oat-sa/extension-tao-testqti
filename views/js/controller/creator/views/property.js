@@ -158,26 +158,38 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
                 let $propsSubsectionError = $('#section-props-' + $testSubsection).find('span.validate-error');
                 let $propsItemError = $('.itemref-props').find('span.validate-error');
                 let $propsTestPartError = $('.testpart-props').find('span.validate-error');
-
+                let $propsTestError = $('.test-props').find('span.validate-error');
+                let propsErrorAllArray = [$propsTestError, $propsTestPartError , $propsSectionError, $propsSubsectionError, $propsItemError];
+                
                 if(e.namespace === 'group'){
-                   if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0 ) {
-                            $(testSectionId).find($warningIcon).first().css('display', 'none');
-                            $(testSubsectionId).find($warningIcon).first().css('display', 'none');
-                            $(testPartId).find($warningIcon).first().css('display', 'none');
-                            $($test).find($warningIcon).first().css('display', 'none');
-                            $(itemId).find($warningIcon).first().css('display', 'none');
-                    } else {
+                    for(let i= 0; i < propsErrorAllArray.length; i++) {
+                        //hide warning icon if an element is validated
+                        if (isValid && propsErrorAllArray[i].length === 0) {
+                            if (propsErrorAllArray[i] === propsErrorAllArray[4] && propsErrorAllArray[4].length === 0) {
+                                $(itemId).find($warningIcon).first().css('display', 'none');
+                            } else if (propsErrorAllArray[i] === propsErrorAllArray[3] && propsErrorAllArray[3].length === 0) {
+                                $(testSubsectionId).find($warningIcon).first().css('display', 'none');
+                            } else if (propsErrorAllArray[i] === propsErrorAllArray[2] && propsErrorAllArray[2].length === 0) {
+                                $(testSectionId).find($warningIcon).first().css('display', 'none');
+                            } else if (propsErrorAllArray[i] === propsErrorAllArray[1] && propsErrorAllArray[1].length === 0) {
+                                $(testPartId).find($warningIcon).first().css('display', 'none');
+                            } else if (propsErrorAllArray[i] === propsErrorAllArray[0] && propsErrorAllArray[0].length === 0) {
+                                $($test).find($warningIcon).first().css('display', 'none');
+                            }
+
+                        } else {
                        //add warning icon if validation fails
-                       if  ($propsItemError.length !== 0) {
-                           $(itemId).find($warningIcon).first().css('display', 'inline');
-                       }else if ($propsSubsectionError.length !== 0){
-                           $(testSubsectionId).find($warningIcon).first().css('display', 'inline');
-                       } else if($propsSectionError.length !== 0){
-                           $(testSectionId).find($warningIcon).first().css('display', 'inline');
-                       } else if($propsTestPartError.length !== 0){
-                           $(testPartId).find($warningIcon).first().css('display', 'inline');
-                       } else {
-                           $($test).find($warningIcon).first().css('display', 'inline');
+                            if  (propsErrorAllArray[i] === propsErrorAllArray[4] && propsErrorAllArray[4].length !== 0) {
+                                $(itemId).find($warningIcon).first().css('display', 'inline');
+                            }else if (propsErrorAllArray[i] === propsErrorAllArray[3] && propsErrorAllArray[3].length !== 0){
+                                $(testSubsectionId).find($warningIcon).first().css('display', 'inline');
+                            } else if(propsErrorAllArray[i] === propsErrorAllArray[2] && propsErrorAllArray[2].length !== 0){
+                                $(testSectionId).find($warningIcon).first().css('display', 'inline');
+                            } else if(propsErrorAllArray[i] === propsErrorAllArray[1] && propsErrorAllArray[1].length !== 0){
+                                $(testPartId).find($warningIcon).first().css('display', 'inline');
+                            } else if (propsErrorAllArray[i] === propsErrorAllArray[0] && propsErrorAllArray[0].length !== 0){
+                                $($test).find($warningIcon).first().css('display', 'inline');
+                            }
                        }
                     }
                 }
