@@ -140,26 +140,26 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
          */
         function propValidation() {
             $view.on('validated.group', function(e, isValid){
-                const $warningIcon = $('span.icon-warning');
+                const $warningIconSelector = $('span.icon-warning');
                 const $test = $('.tlb-button-on').parents('.test-creator-test');
 
                 // finds error current element if any
                 let errors = $(e.currentTarget).find('span.validate-error');
-                let currentTargetId = '#' + $(e.currentTarget).find('span[data-bind="identifier"]').attr('id').slice(6);
+                let currentTargetId = `[id="${$(e.currentTarget).find('span[data-bind="identifier"]').attr('id').slice(6)}"]`;
                 
                 if(e.namespace === 'group'){
                     if (isValid && errors.length === 0) {
                         //remove warning icon if validation fails
                         if($(e.currentTarget).hasClass('test-props')){
-                         $($test).find($warningIcon).first().css('display', 'none');
+                         $($test).find($warningIconSelector).first().css('display', 'none');
                         }
-                        $(currentTargetId).find($warningIcon).first().css('display', 'none');
+                        $(currentTargetId).find($warningIconSelector).first().css('display', 'none');
                     } else {
                        //add warning icon if validation fails
                         if($(e.currentTarget).hasClass('test-props')){
-                            $($test).find($warningIcon).first().css('display', 'inline');
+                            $($test).find($warningIconSelector).first().css('display', 'inline');
                         }
-                        $(currentTargetId).find($warningIcon).first().css('display', 'inline');
+                        $(currentTargetId).find($warningIconSelector).first().css('display', 'inline');
                     }
                 }
             });
