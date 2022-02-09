@@ -41,6 +41,9 @@ define([
                         return model;
                     }
                 };
+            },
+            isTestHasErrors() {
+                return false;
             }
         });
     }

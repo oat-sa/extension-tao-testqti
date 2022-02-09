@@ -1,0 +1,490 @@
+{
+  "qti-type": "assessmentTest",
+  "identifier": "t1",
+  "title": "Test+4",
+  "toolName": "tao",
+  "toolVersion": "3.3.0-sprint74",
+  "outcomeDeclarations": [{
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_TOTAL",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_TOTAL_MAX",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "SCORE_RATIO",
+    "cardinality": 0,
+    "baseType": 3
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_ALL",
+    "cardinality": 0,
+    "baseType": 1
+  }, {
+    "qti-type": "outcomeDeclaration",
+    "views": [],
+    "interpretation": "",
+    "longInterpretation": "",
+    "normalMaximum": false,
+    "normalMinimum": false,
+    "masteryValue": false,
+    "identifier": "PASS_ALL_RENDERING",
+    "cardinality": 0,
+    "baseType": 0
+  }],
+  "timeLimits": {
+    "qti-type": "timeLimits",
+    "allowLateSubmission": false
+  },
+  "testParts": [{
+    "qti-type": "testPart",
+    "identifier": "tp1",
+    "navigationMode": 1,
+    "submissionMode": 0,
+    "preConditions": [],
+    "branchRules": [],
+    "itemSessionControl": {
+      "qti-type": "itemSessionControl",
+      "maxAttempts": 0,
+      "showFeedback": false,
+      "allowReview": true,
+      "showSolution": false,
+      "allowComment": false,
+      "validateResponses": false,
+      "allowSkipping": true
+    },
+    "timeLimits": {
+      "qti-type": "timeLimits",
+      "allowLateSubmission": false
+    },
+    "assessmentSections": [{
+      "qti-type": "assessmentSection",
+      "title": "Section+1",
+      "visible": true,
+      "keepTogether": true,
+      "sectionParts": [{
+        "qti-type": "assessmentItemRef",
+        "href": "http://bertaodev/tao.rdf#i1523545264529670",
+        "categories": [],
+        "variableMappings": [],
+        "weights": [{
+          "identifier": "WEIGHT",
+          "value": 1,
+          "qti-type": "weight"
+        }],
+        "templateDefaults": [],
+        "identifier": "item-1",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 0,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "index": 0,
+        "isLinear": false,
+        "timeLimits": {
+          "maxTime": 0,
+          "minTime": 0,
+          "allowLateSubmission": false,
+          "qti-type": "timeLimits"
+        }
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://bertaodev/tao.rdf#i1523545266796682",
+        "categories": [],
+        "variableMappings": [],
+        "weights": [{
+          "identifier": "WEIGHT",
+          "value": 1,
+          "qti-type": "weight"
+        }],
+        "templateDefaults": [],
+        "identifier": "item-2",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 0,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "index": 1,
+        "isLinear": false,
+        "timeLimits": {
+          "maxTime": 0,
+          "minTime": 0,
+          "allowLateSubmission": false,
+          "qti-type": "timeLimits"
+        }
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://bertaodev/tao.rdf#i1523545265978076",
+        "categories": [],
+        "variableMappings": [],
+        "weights": [],
+        "templateDefaults": [],
+        "identifier": "item-3",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 0,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "index": 2,
+        "isLinear": false
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://bertaodev/tao.rdf#i1523545264514667",
+        "categories": [],
+        "variableMappings": [],
+        "weights": [],
+        "templateDefaults": [],
+        "identifier": "item-4",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 0,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "index": 3,
+        "isLinear": false
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://bertaodev/tao.rdf#i1523545265478473",
+        "categories": [],
+        "variableMappings": [],
+        "weights": [],
+        "templateDefaults": [],
+        "identifier": "item-5",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 0,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "index": 4,
+        "isLinear": false
+      }, {
+        "qti-type": "assessmentItemRef",
+        "href": "http://bertaodev/tao.rdf#i1523545266327579",
+        "categories": [],
+        "variableMappings": [],
+        "weights": [],
+        "templateDefaults": [],
+        "identifier": "item-6",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 0,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "index": 5,
+        "isLinear": false
+      }],
+      "identifier": "ts1",
+      "required": true,
+      "fixed": false,
+      "preConditions": [],
+      "branchRules": [],
+      "itemSessionControl": {
+        "qti-type": "itemSessionControl",
+        "maxAttempts": 0,
+        "showFeedback": false,
+        "allowReview": true,
+        "showSolution": false,
+        "allowComment": false,
+        "validateResponses": false,
+        "allowSkipping": true
+      },
+      "timeLimits": {
+        "qti-type": "timeLimits",
+        "allowLateSubmission": false
+      },
+      "index": 0
+    }],
+    "testFeedbacks": [],
+    "index": 0
+  }],
+  "outcomeProcessing": {
+    "qti-type": "outcomeProcessing",
+    "outcomeRules": [{
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_TOTAL",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "testVariables",
+          "variableIdentifier": "SCORE",
+          "baseType": -1,
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": [],
+          "excludeCategories": [],
+          "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+        }],
+        "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "SCORE_TOTAL_MAX",
+      "expression": {
+        "qti-type": "sum",
+        "minOperands": 1,
+        "maxOperands": -1,
+        "acceptedCardinalities": [0, 1, 2],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "testVariables",
+          "variableIdentifier": "MAXSCORE",
+          "baseType": -1,
+          "weightIdentifier": "",
+          "sectionIdentifier": "",
+          "includeCategories": [],
+          "excludeCategories": [],
+          "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+        }],
+        "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "isNull",
+          "minOperands": 1,
+          "maxOperands": 1,
+          "acceptedCardinalities": [5],
+          "acceptedBaseTypes": [12],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "SCORE_TOTAL_MAX",
+            "weightIdentifier": "",
+            "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+          }],
+          "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_RATIO",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 3,
+            "value": 0,
+            "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+          }
+        }]
+      },
+      "outcomeElseIfs": [],
+      "outcomeElse": {
+        "qti-type": "outcomeElse",
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "SCORE_RATIO",
+          "expression": {
+            "qti-type": "divide",
+            "minOperands": 2,
+            "maxOperands": 2,
+            "acceptedCardinalities": [0],
+            "acceptedBaseTypes": [2, 3],
+            "expressions": [{
+              "qti-type": "variable",
+              "identifier": "SCORE_TOTAL",
+              "weightIdentifier": "",
+              "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+            }, {
+              "qti-type": "variable",
+              "identifier": "SCORE_TOTAL_MAX",
+              "weightIdentifier": "",
+              "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+            }],
+            "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+          }
+        }]
+      }
+    }, {
+      "qti-type": "setOutcomeValue",
+      "identifier": "PASS_ALL",
+      "expression": {
+        "qti-type": "gte",
+        "minOperands": 2,
+        "maxOperands": 2,
+        "acceptedCardinalities": [0],
+        "acceptedBaseTypes": [2, 3],
+        "expressions": [{
+          "qti-type": "variable",
+          "identifier": "SCORE_RATIO",
+          "weightIdentifier": "",
+          "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+        }, {
+          "qti-type": "baseValue",
+          "baseType": 3,
+          "value": 0.5,
+          "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+        }],
+        "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+      }
+    }, {
+      "qti-type": "outcomeCondition",
+      "outcomeIf": {
+        "qti-type": "outcomeIf",
+        "expression": {
+          "qti-type": "match",
+          "minOperands": 2,
+          "maxOperands": 2,
+          "acceptedCardinalities": [4],
+          "acceptedBaseTypes": [4],
+          "expressions": [{
+            "qti-type": "variable",
+            "identifier": "PASS_ALL",
+            "weightIdentifier": "",
+            "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+          }, {
+            "qti-type": "baseValue",
+            "baseType": 1,
+            "value": true,
+            "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+          }],
+          "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+        },
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_ALL_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "passed",
+            "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+          }
+        }]
+      },
+      "outcomeElseIfs": [],
+      "outcomeElse": {
+        "qti-type": "outcomeElse",
+        "outcomeRules": [{
+          "qti-type": "setOutcomeValue",
+          "identifier": "PASS_ALL_RENDERING",
+          "expression": {
+            "qti-type": "baseValue",
+            "baseType": 0,
+            "value": "not_passed",
+            "expressionClassNames": ["and", "anyN", "baseValue", "containerSize", "contains", "correct", "customOperator", "default", "delete", "divide", "durationGTE", "durationLT", "equal", "equalRounded", "fieldValue", "gcd", "lcm", "repeat", "gt", "gte", "index", "inside", "integerDivide", "integerModulus", "integerToFloat", "isNull", "lt", "lte", "mapResponse", "mapResponsePoint", "match", "mathOperator", "mathConstant", "max", "min", "member", "multiple", "not", "null", "numberCorrect", "numberIncorrect", "numberPresented", "numberResponded", "numberSelected", "or", "ordered", "outcomeMaximum", "outcomeMinimum", "patternMatch", "power", "product", "random", "randomFloat", "randomInteger", "round", "roundTo", "statsOperator", "stringMatch", "substring", "subtract", "sum", "testVariables", "truncate", "variable"]
+          }
+        }]
+      }
+    }]
+  },
+  "testFeedbacks": [],
+  "scoring": {
+    "modes": {
+      "none": {
+        "key": "none",
+        "label": "None",
+        "description": "No+outcome+processing.+Erase+the+existing+rules,+if+any.",
+        "qti-type": "none"
+      },
+      "custom": {
+        "key": "custom",
+        "label": "Custom",
+        "description": "Custom+outcome+processing.+No+changes+will+be+made+to+the+existing+rules.",
+        "qti-type": "custom"
+      },
+      "total": {
+        "key": "total",
+        "label": "Total+score",
+        "description": "The+score+will+be+processed+for+the+entire+test.+A+sum+of+all+SCORE+outcomes+will+be+computed,+the+result+will+take+place+in+the+SCORE_TOTAL+outcome.+If+the+category+option+is+set,+the+score+will+also+be+processed+per+categories,+and+each+results+will+take+place+in+the+SCORE_xxx+outcome,+where+xxx+is+the+name+of+the+category.",
+        "qti-type": "total"
+      },
+      "cut": {
+        "key": "cut",
+        "label": "Cut+score",
+        "description": "The+score+will+be+processed+for+the+entire+test.+A+sum+of+all+SCORE+outcomes+will+be+computed+and+divided+by+the+sum+of+MAX+SCORE,+the+result+will+be+compared+to+the+cut+score+(or+pass+ratio),+then+the+PASS_TOTAL+outcome+will+be+set+accordingly.+If+the+category+option+is+set,+the+score+will+also+be+processed+per+categories,+and+each+results+will+take+place+in+the+PASS_xxx+outcome,+where+xxx+is+the+name+of+the+category.",
+        "qti-type": "cut"
+      },
+      "qti-type": "modes"
+    },
+    "scoreIdentifier": "SCORE",
+    "weightIdentifier": "",
+    "cutScore": 0.5,
+    "categoryScore": false,
+    "outcomeProcessing": "cut",
+    "qti-type": "scoring"
+  }
+}
