@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 3.4.0-sprint160\n"
-"PO-Revision-Date: 2021-07-27T12:35:59\n"
+"PO-Revision-Date: 2021-12-29 12:39+0100\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ar-arb\n"
@@ -9,12 +9,15 @@ msgstr ""
 "targetLanguage: ar-arb\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Basepath: ../../\n"
+"X-Poedit-Basepath: ../..\n"
 "X-Poedit-KeywordsList: __\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"POT-Creation-Date: \n"
+"X-Generator: Poedit 2.4.3\n"
 "X-Poedit-SearchPath-0: .\n"
 
 msgid "%s to answer %s"
-msgstr "٪ s للإجابة على٪ s"
+msgstr " %s للإجابة على %s"
 
 msgid "(Visual) Clear all active highlights"
 msgstr "(مرئي) امسح كل الإضاءات النشطة"
@@ -23,7 +26,7 @@ msgid "(Visual) Highlight Text"
 msgstr "(بصري) تمييز النص"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr "تعذر تجميع بند QTI المتضمن في رائز QTI '٪ s'."
+msgstr "تعذر تجميع بند QTI المتضمن في رائز QTI '%s'"
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
 msgstr "يجب أن يحتوي رائز QTI على بند QTI واحد على الأقل ليتم تجميعه. لا شيء وجد."
@@ -32,7 +35,7 @@ msgid "A qti testpackage"
 msgstr "حزمة روائز qti"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr "تعذر استرداد مورد بعيد مشار إليه في رائز QTI '٪ s'."
+msgstr "تعذر استرداد مورد بعيد مشار إليه في رائز QTI '%s'."
 
 msgid "A response to every question in this item is required."
 msgstr "مطلوب إجابة على كل سؤال في هذا البند."
@@ -149,10 +152,10 @@ msgid "An item involved in the test cannot be written."
 msgstr "لا يمكن كتابة عنصر مشترك في الرائز."
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr "حدث خطأ غير معروف أثناء تجميع الرائز QTI '٪ s' برمجيًا."
+msgstr "حدث خطأ غير معروف أثناء تجميع الرائز QTI '%s' برمجيًا."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr "حدث خطأ غير معروف أثناء تجميع الرائز QTI '٪ s'."
+msgstr "حدث خطأ غير معروف أثناء تجميع الرائز QTI '%s'."
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr "حدث خطأ لا يمكن إصلاحه. سيتم إيقاف جلسة الرائز الخاصة بك مؤقتًا."
@@ -161,10 +164,10 @@ msgid "and"
 msgstr "و"
 
 msgid "and flagged %s of them"
-msgstr "وعلمت٪ s منهم"
+msgstr "وعلمت %s منهم"
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr "وقمت بوضع علامة على٪ s عنصر (عناصر) يمكنك مراجعتها الآن"
+msgstr "وقمت بوضع علامة على %s عنصر (عناصر) يمكنك مراجعتها الآن"
 
 msgid "Answer Eliminator"
 msgstr "الجواب المحذوف"
@@ -209,7 +212,7 @@ msgid "Author"
 msgstr "كاتب"
 
 msgid "Auxiliary file not found at location \"%s\"."
-msgstr "لم يتم العثور على الملف الإضافي في الموقع \"٪ s\"."
+msgstr "لم يتم العثور على الملف الإضافي في الموقع \"%s\"."
 
 msgid "Black on Cream"
 msgstr "أسود على كريم"
@@ -266,7 +269,7 @@ msgid "Clear Highlights"
 msgstr "مسح النقاط البارزة"
 
 msgid "Click \"%s\" to continue"
-msgstr "انقر فوق \"٪ s\" للمتابعة"
+msgstr "انقر فوق \"%s\" للمتابعة"
 
 msgid "Click to speak"
 msgstr "انقر للتحدث"
@@ -426,14 +429,14 @@ msgstr "خطأ أثناء استيراد الملف"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr "تم العثور على خطأ في اختبار IMS QTI:\n"
-"٪س"
+msgstr "تم العثور على خطأ في اختبار : IMS QTI\n"
+"%s"
 
 msgid "Expand the review panel"
 msgstr "قم بتوسيع لوحة المراجعة"
 
 msgid "Export failed for the test \"%s"
-msgstr "فشل تصدير الرائز \"٪ s"
+msgstr "فشل تصدير الرائز \"%s"
 
 msgid "Export metadata"
 msgstr "تصدير البيانات الوصفية"
@@ -445,7 +448,7 @@ msgid "Export QTI 2.2 Test Package"
 msgstr "تصدير حزمة روائز QTI 2.2"
 
 msgid "Export successful for the test \"%s"
-msgstr "تم التصدير بنجاح للرائز \"٪ s"
+msgstr "تم التصدير بنجاح للرائز \"%s"
 
 msgid "Feedback block"
 msgstr "حظر التعليقات"
@@ -568,25 +571,25 @@ msgid "Import a QTI/APIP Content Package"
 msgstr "قم باستيراد حزمة محتوى QTI / APIP"
 
 msgid "Import QTI TEST into \"%s"
-msgstr "استيراد رائز QTI إلى \"٪ s"
+msgstr "استيراد رائز QTI إلى \"%s"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "تعذر استيراد بند IMS QTI المشار إليه كـ \"٪ s\" في ملف IMS Manifest."
+msgstr "تعذر استيراد بند IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest."
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "تم استيراد بند IMS QTI المشار إليه كـ \"٪ s\" في ملف IMS Manifest بنجاح."
+msgstr "تم استيراد بند IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest بنجاح."
 
 msgid "IMS QTI Test Package successfully imported."
 msgstr "تم استيراد حزمة الروائز IMS QTI بنجاح."
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "تم استيراد الرائز IMS QTI المشار إليه كـ \"٪ s\" في ملف IMS Manifest بنجاح."
+msgstr "تم استيراد الرائز IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest بنجاح."
 
 msgid "In this part of the test navigation is not allowed."
 msgstr "في هذا الجزء من الرائز التنقل غير مسموح به."
 
 msgid "Inconsistency at line %1d:"
-msgstr "عدم تناسق في السطر٪ 1d:"
+msgstr "عدم تناسق في السطر  %1d:"
 
 msgid "Individual"
 msgstr "فردي"
@@ -610,16 +613,16 @@ msgid "It is not possible to save your responses while working offline."
 msgstr "لا يمكن حفظ ردودك أثناء العمل دون اتصال."
 
 msgid "Item \"%s\" is completed."
-msgstr "تم إكمال البند \"٪ s\"."
+msgstr "تم إكمال البند  \"%s\""
 
 msgid "Item %d"
-msgstr "البند٪ d"
+msgstr "البند  %d"
 
 msgid "Item %d of %d"
-msgstr "البند٪ d من٪ d"
+msgstr "البند %d من %d"
 
 msgid "Item %s loaded"
-msgstr "تم تحميل البند٪ s"
+msgstr "تم تحميل البند %s"
 
 msgid "Item Reference Properties"
 msgstr "خصائص مرجع البند"
@@ -646,7 +649,7 @@ msgid "Items marked for later review"
 msgstr "البنود المحددة للمراجعة لاحقًا"
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
-msgstr "لم يتم تسجيل العناصر التي تحتوي على معرفات \"٪ s\" من طراز \"٪ s\" في نقطة نهاية CAT ذات الصلة."
+msgstr "لم يتم تسجيل العناصر التي تحتوي على معرفات من طراز \"%s\" في نقطة نهاية CAT ذات الصلة."
 
 msgid "Jump Menu"
 msgstr "قائمة الانتقال"
@@ -702,7 +705,6 @@ msgstr "إدارة مجموعات المواد"
 msgid "Manage test properties"
 msgstr "إدارة خصائص الرائز"
 
-#, tao-public
 msgid "Manage tests"
 msgstr "إدارة الروائز"
 
@@ -740,7 +742,7 @@ msgid "Maximum duration for this test part."
 msgstr "المدة القصوى لهذا الجزء من الرائز."
 
 msgid "Metadata export is not available for test \"%s."
-msgstr "تصدير بيانات التعريف غير متاح للرائز \"٪ s."
+msgstr "تصدير بيانات التعريف غير متاح للرائز \"%s."
 
 msgid "Minimum Duration"
 msgstr "المدة الدنيا"
@@ -763,14 +765,14 @@ msgstr "المدة الدنيا لهذا الجزء من الرائز ."
 msgid "minutes"
 msgstr "دقائق"
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter 'id\\"
 msgstr "تم فقدان المعلم المطلوب 'id \\"
 
 msgid "Missed test package file"
 msgstr "ملف حزمة الرائز مفقود"
 
 msgid "Missing required configuration option %s"
-msgstr "خيار التكوين المطلوب مفقود٪ s"
+msgstr "خيار التكوين المطلوب مفقود %s"
 
 msgid "Move"
 msgstr "حرك"
@@ -818,13 +820,13 @@ msgid "No"
 msgstr "لا"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
-msgstr "لم يتم تكوين محرك CAT لنقطة نهاية CAT \"٪ s\"."
+msgstr "لم يتم تكوين محرك CAT لنقطة نهاية \"%s\"."
 
 msgid "No file found at location \"%s\"."
-msgstr "لم يتم العثور على ملف في الموقع \"٪ s\"."
+msgstr "لم يتم العثور على ملف في الموقع \"%s\"."
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr "لا مزيد من المحاولات المسموح بها للبند \"٪ s\"."
+msgstr "لا مزيد من المحاولات المسموح بها للبند \"%s\"."
 
 msgid "no outcome declaration found"
 msgstr "لم يتم العثور على إعلان النتيجة"
@@ -911,7 +913,7 @@ msgid "Package is valid but no tests were found. Make sure that it contains vali
 msgstr "الحزمة صالحة ولكن لم يتم العثور على اختبارات. تأكد من احتوائه على اختبارات QTI صالحة."
 
 msgid "Part %d"
-msgstr "الجزء٪ d"
+msgstr "الجزء %d"
 
 msgid "Passage"
 msgstr "مقطع"
@@ -959,19 +961,19 @@ msgid "QTI Item Runner"
 msgstr "عداء بند QTI"
 
 msgid "QTI Test \"%s\" publishing failed."
-msgstr "فشل نشر الرائز QTI \"٪ s\"."
+msgstr "فشل نشر الرائز \"%s\""
 
 msgid "QTI Test \"%s\" successfully published."
-msgstr "تم نشر الرائز QTI \"٪ s\" بنجاح."
+msgstr "تم نشر الرائز  \"%s\" بنجاح."
 
 msgid "QTI Test Package 2.1"
-msgstr "حزمة الرائز QTI 2.1.1"
+msgstr "حزمة الرائز QTI 2.1"
 
 msgid "QTI Test Package 2.2"
-msgstr "حزمة الرائز QTI 2.2.1"
+msgstr "حزمة الرائز QTI 2.2"
 
 msgid "QTI/APIP Test Content Package"
-msgstr "حزمة محتوى الرائز QTI / APIP"
+msgstr "حزمة محتوى الرائز QTI/APIP"
 
 msgid "question"
 msgstr "سؤال"
@@ -992,7 +994,7 @@ msgid "Reload the page"
 msgstr "أعد تحميل الصفحة"
 
 msgid "remaining %s %s"
-msgstr "المتبقي٪ s٪ s"
+msgstr "المتبقي %s %s"
 
 msgid "Remove Item Reference"
 msgstr "إزالة مرجع البند"
@@ -1061,10 +1063,10 @@ msgid "seconds"
 msgstr "ثواني"
 
 msgid "Section %d"
-msgstr "قسم٪ d"
+msgstr "قسم %d"
 
 msgid "Section %d of %d"
-msgstr "المقطع٪ d من٪ d"
+msgstr "المقطع %d من %d"
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
 msgstr "تتيح فئة مستوى القسم تكوين فئات البنود المكونة لها دفعة واحدة. تعني الفئة باللون الرمادي أن كل البنود بها تلك الفئة. تعني الفئة باللون الأبيض أن عددًا قليلاً فقط من البنود بها هذه الفئة."
@@ -1205,7 +1207,7 @@ msgid "Submit and go to the end of the test"
 msgstr "أرسل وانتقل إلى نهايةالرائز"
 
 msgid "Submit and go to the item %s"
-msgstr "أرسل وانتقل إلى البند٪ s"
+msgstr "أرسل وانتقل إلى البند %s"
 
 msgid "Submit and go to the next item"
 msgstr "أرسل وانتقل إلى البند التالي"
@@ -1255,7 +1257,6 @@ msgstr "حالة الرائز وبنية المراجعة"
 msgid "Test-Taker Tools"
 msgstr "أدوات الرائز"
 
-#, tao-public
 msgid "Tests"
 msgstr "الروائز"
 
@@ -1308,13 +1309,13 @@ msgid "the current question"
 msgstr "السؤال الحالي"
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
-msgstr "تعذر حل التبعية لـ IMS QTI AssessmentItemRef \"٪ s\" في ملف IMS Manifest."
+msgstr "تعذر حل تبعية \"%s\" لـ IMS QTI AssessmentItemRef   في ملف IMS Manifest."
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr "سيكون التنزيل متاحًا في غضون <strong>٪ d </strong> ثانية"
+msgstr "سيكون التنزيل متاحًا في غضون <strong>%d</strong> ثانية"
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr "المعرفات التالية ليست فريدة عبر الروائز:٪ s"
+msgstr "المعرفات التالية ليست فريدة عبر الروائز: %s"
 
 msgid "The identifier of the item reference."
 msgstr "معرّف مرجع البند."
@@ -1323,13 +1324,13 @@ msgid "The identifier of the section."
 msgstr "معرّف القسم."
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr "تم تخزين بند IMS QTI المشار إليه كـ \"٪ s\" في ملف IMS Manifest بالفعل في Item Bank."
+msgstr "تم تخزين بند IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest بالفعل في Item Bank."
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "تعذر استيراد حزمة الرائز IMS QTI."
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "تعذر استيراد الرائز IMS QTI المشار إليه كـ \"٪ s\" في ملف IMS Manifest."
+msgstr "تعذر استيراد الرائز IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest."
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "يحدد وضع التنقل المسارات العامة التي قد يسلكها المرشح. يقيد النموذج الخطي المرشح لمحاولة كل عنصر بدوره. غير الخطية إزالة هذا القيد."
@@ -1338,7 +1339,7 @@ msgid "The number of child elements to be selected."
 msgstr "عدد العناصر الفرعية المطلوب تحديدها."
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
-msgstr "النتيجة \"٪ s\" غير موجودة ، ولكن تمت الإشارة إليها بواسطة كتلة ملاحظات!"
+msgstr "النتيجة \"%s\" غير موجودة ، ولكن تمت الإشارة إليها بواسطة كتلة ملاحظات!"
 
 msgid "The outcomes have been regenerated!"
 msgstr "تم تجديد النتائج!"
@@ -1350,7 +1351,7 @@ msgid "The provided archive is invalid. Make sure it is not corrupted and that i
 msgstr "الأرشيف المقدم غير مضبوط. تأكد من أنه غير تالف وأنه يحتوي على ملف \"imsmanifest.xml\"."
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr "يجب أن يحتوي رائز QTI '٪ s' المراد ترجمته على بند QTI واحد على الأقل. لا شيء وجد."
+msgstr "يجب أن يحتوي رائز QTI '%s' المراد ترجمته على بند QTI واحد على الأقل. لا شيء وجد."
 
 msgid "The QTI test could not be retrieved correctly."
 msgstr "لا يمكن استرجاع الرائز QTI بشكل صحيح."
@@ -1365,7 +1366,7 @@ msgid "The reference."
 msgstr "المرجع."
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr "تم إرجاع الموارد المتعلقة بالرائز IMS QTI المشار إليه كـ \"٪ s\" في ملف IMS Manifest."
+msgstr "تم إرجاع الموارد المتعلقة بالرائز IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest."
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
 msgstr "ستتم معالجة النتيجة للرائز بأكمله. سيتم حساب مجموع جميع نتائج SCORE وقسمتها على مجموع MAX SCORE ، وستتم مقارنة النتيجة بنتيجة القطع (أو نسبة النجاح) ، ثم سيتم تعيين نتيجة PASS_TOTAL وفقًا لذلك."
@@ -1407,16 +1408,16 @@ msgid "The time limit has been reached for this part of the test."
 msgstr "تم الوصول إلى الحد الزمني لهذا الجزء من الرائز."
 
 msgid "There are %s unanswered questions"
-msgstr "هناك٪ s من الأسئلة التي لم يتم الرد عليها"
+msgstr "هناك %s من الأسئلة التي لم يتم الرد عليها"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr "يوجد٪ s أسئلة لم تتم الإجابة عليها في هذا الجزء من الرائز"
+msgstr "يوجد %s أسئلة لم تتم الإجابة عليها في هذا الجزء من الرائز"
 
 msgid "There is %s unanswered question"
-msgstr "يوجد٪ s سؤال بدون إجابة"
+msgstr "يوجد %s سؤال بدون إجابة"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr "يوجد٪ s سؤال لم تتم الإجابة عليه في هذا الجزء من الرائز"
+msgstr "يوجد %s سؤال لم تتم الإجابة عليه في هذا الجزء من الرائز"
 
 msgid "There is not outcomes!"
 msgstr "لا توجد نتائج!"
@@ -1437,7 +1438,7 @@ msgid "This test has been terminated"
 msgstr "تم إنهاء هذا الرائز"
 
 msgid "Time limit reached for item \"%s\"."
-msgstr "تم بلوغ الحد الزمني للبند \"٪ s\"."
+msgstr "تم بلوغ الحد الزمني للبند \"%s\"."
 
 msgid "Time limit reached, this part of the test has ended."
 msgstr "تم بلوغ الحد الزمني ، وانتهى هذا الجزء من الرائز.."
@@ -1527,19 +1528,19 @@ msgid "Wait for your connection to come back online."
 msgstr "انتظر اتصالك بالإنترنت مرة أخرى."
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr "تحذير - لديك٪ s متبقية لإكمال الرائز."
+msgstr "تحذير - لديك %s متبقية لإكمال الرائز."
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr "تحذير - لديك٪ s متبقية لإكمال هذا البند."
+msgstr "تحذير - لديك %s متبقية لإكمال هذا البند."
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr "تحذير - لديك٪ s متبقية لإكمال هذا الجزء."
+msgstr "تحذير - لديك %s متبقية لإكمال هذا الجزء."
 
 msgid "Warning – You have %s remaining to complete this test part."
-msgstr "تحذير - لديك٪ s متبقية لإكمال جزء الرائز هذا."
+msgstr "تحذير - لديك %s  متبقية لإكمال جزء الرائز هذا."
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr "تحذير - لديك٪ s متبقية لإكمال هذا الرائز."
+msgstr "تحذير - لديك %s  متبقية لإكمال هذا الرائز."
 
 msgid "We are unable to connect the server to submit your results."
 msgstr "لا يمكننا الاتصال بالخادم لإرسال نتائجك."
@@ -1586,12 +1587,11 @@ msgstr "نوع الملف الخاطئ mime"
 msgid "XML Content"
 msgstr "محتوى XML"
 
-#, tao-public
 msgid "XML Editor"
 msgstr "محرر XML"
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
-msgstr "خطأ XML في السطر٪ 1 $ d العمود٪ 2 $ d \"٪ 3 $ s\"."
+msgstr "خطأ XML في السطر %1$d العمود %2$d \"%3$s\"."
 
 msgid "Yellow on Blue"
 msgstr "أصفر على أزرق"
@@ -1600,16 +1600,16 @@ msgid "Yes"
 msgstr "نعم"
 
 msgid "You answered %s of %s question(s) for this section of the test"
-msgstr "لقد أجبت على٪ s من٪ s سؤال (أسئلة) لهذا المقطع من الاختبار"
+msgstr "لقد أجبت على %s  من %s  سؤال (أسئلة) لهذا المقطع من الاختبار"
 
 msgid "You answered all %s question(s) in this section"
-msgstr "لقد أجبت على كافة٪ s سؤال (أسئلة) في هذا الجزء"
+msgstr "لقد أجبت على كافة %s سؤال (أسئلة) في هذا الجزء"
 
 msgid "You answered all %s question(s) in this test"
-msgstr "لقد أجبت على كافة٪ s سؤال (أسئلة) في هذا الرائز"
+msgstr "لقد أجبت على كافة %s سؤال (أسئلة) في هذا الرائز"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr "لقد أجبت على٪ s فقط من٪ s سؤال (أسئلة) في هذا الجزء"
+msgstr "لقد أجبت على %s فقط من %s سؤال (أسئلة) في هذا الجزء"
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
 msgstr "أنت على وشك الانتقال إلى البند التالي. انقر فوق \"موافق\" للمتابعة والانتقال إلى البند التالي."
@@ -1636,31 +1636,31 @@ msgid "You are encountering a prolonged connectivity loss. "
 msgstr "أنت تواجه فقدان اتصال مباشر"
 
 msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
-msgstr "يمكنك تكبير المحتوى بنسبة تصل إلى 200٪. تحقق من إعدادات المتصفح الخاص بك لمعرفة كيفية القيام بذلك."
+msgstr "يمكنك تكبير المحتوى بنسبة تصل إلى %200. تحقق من إعدادات المتصفح الخاص بك لمعرفة كيفية القيام بذلك."
 
 msgid "You flagged %s item(s) that you can review now"
-msgstr "لقد قمت بوضع علامة على٪ s عنصر (عناصر) يمكنك مراجعتها الآن"
+msgstr "لقد قمت بوضع علامة على %s عنصر (عناصر) يمكنك مراجعتها الآن"
 
 msgid "You have %s item(s) marked for review."
-msgstr "تم تعليم٪ s عنصرًا للمراجعة."
+msgstr "تم تعليم %s عنصرًا للمراجعة."
 
 msgid "You have %s left to answer remaining %s questions."
-msgstr "بقي لديك٪ s للإجابة على أسئلة٪ s المتبقية."
+msgstr "بقي لديك %s للإجابة على أسئلة %s المتبقية."
 
 msgid "You have %s remaining to complete the current item."
-msgstr "لديك٪ s متبقية لإكمال البند الحالي."
+msgstr "لديك %s متبقية لإكمال البند الحالي."
 
 msgid "You have %s unanswered question(s)"
-msgstr "لديك٪ s سؤال (أسئلة) لم يتم الرد عليها"
+msgstr "لديك %s سؤال (أسئلة) لم يتم الرد عليها"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr "لديك٪ s سؤال (أسئلة) لم يتم الرد عليها وتم وضع علامة على٪ s بند (بنود) للمراجعة."
+msgstr "لديك %s سؤال (أسئلة) لم يتم الرد عليها وتم وضع علامة على٪ s بند (بنود) للمراجعة."
 
 msgid "You have %s unanswered question(s)."
-msgstr "لديك٪ s سؤال (أسئلة) لم يتم الرد عليها."
+msgstr "لديك %s سؤال (أسئلة) لم يتم الرد عليها."
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr "لن تتمكن من الوصول إلى هذا الاختبار بمجرد إرساله. انقر فوق \"٪ s\" للمتابعة وإرسال الاختبار."
+msgstr "لن تتمكن من الوصول إلى هذا الاختبار بمجرد إرساله. انقر فوق \"%s\" للمتابعة وإرسال الاختبار."
 
 msgid "Your comment…"
 msgstr "تعليقك... "
