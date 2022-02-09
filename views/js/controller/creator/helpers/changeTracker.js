@@ -132,24 +132,24 @@ define([
                             e.stopImmediatePropagation();
                             e.preventDefault();
 
-                        if (testCreator.isTestHasErrors()) {
-                            this.confirmBefore('leaveWhenInvalid')
-                                .then(whatToDo => {
-                                    this.ifWantSave(whatToDo);
-                                    this.uninstall();
-                                    e.target.click();
-                                })
-                                .catch(() => {});
-                        } else {
-                            this.confirmBefore('exit')
-                                .then(whatToDo => {
-                                    this.ifWantSave(whatToDo);
-                                    this.uninstall();
-                                    e.target.click();
-                                })
-                                //do nothing but prevent uncaught error
-                                .catch(() => {});
-                           }
+                            if (testCreator.isTestHasErrors()) {
+                                this.confirmBefore('leaveWhenInvalid')
+                                    .then(whatToDo => {
+                                        this.ifWantSave(whatToDo);
+                                        this.uninstall();
+                                        e.target.click();
+                                    })
+                                    .catch(() => {});
+                            } else {
+                                this.confirmBefore('exit')
+                                    .then(whatToDo => {
+                                        this.ifWantSave(whatToDo);
+                                        this.uninstall();
+                                        e.target.click();
+                                    })
+                                    //do nothing but prevent uncaught error
+                                    .catch(() => {});
+                            }
                         }
                     });
 
@@ -234,7 +234,7 @@ define([
                                 confirmDlg.hide();
                                 reject({ cancel: true });
                             }
-                        })
+                        });
                     } else {
                         confirmDlg = dialog({
                            message: message,
@@ -247,7 +247,7 @@ define([
                                confirmDlg.hide();
                                reject({ cancel: true });
                            }
-                      })
+                      });
                     }
                     confirmDlg.on('closed.modal', () => asking = false);
                 });
