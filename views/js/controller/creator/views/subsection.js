@@ -275,11 +275,12 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
+            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
-                .off('add.binder', `#${$subsection.attr('id')} > .itemrefs-wrapper .itemrefs`)
+                .off('add.binder', `[id="${$subsection.attr('id')}"] > .itemrefs-wrapper .itemrefs`)
                 .on(
                     'add.binder',
-                    `#${$subsection.attr('id')} > .itemrefs-wrapper .itemrefs`,
+                    `[id="${$subsection.attr('id')}"] > .itemrefs-wrapper .itemrefs`,
                     function (e, $itemRef) {
                         if (
                             e.namespace === 'binder' &&
@@ -370,11 +371,12 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
+            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
-                .off('add.binder', `#${$subsection.attr('id')} > .rublocks .rubricblocks`)
+                .off('add.binder', `[id="${$subsection.attr('id')}"] > .rublocks .rubricblocks`)
                 .on(
                     'add.binder',
-                    `#${$subsection.attr('id')} > .rublocks .rubricblocks`,
+                    `[id="${$subsection.attr('id')}"] > .rublocks .rubricblocks`,
                     function (e, $rubricBlock) {
                         if (
                             e.namespace === 'binder' &&
@@ -571,9 +573,10 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
+            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
-                .off('add.binder', `#${$subsection.attr('id')} > .subsections`)
-                .on('add.binder', `#${$subsection.attr('id')} > .subsections`, function (e, $sub2section) {
+                .off('add.binder', `[id="${$subsection.attr('id')}"] > .subsections`)
+                .on('add.binder', `[id="${$subsection.attr('id')}"] > .subsections`, function (e, $sub2section) {
                     if (
                         e.namespace === 'binder' &&
                         $sub2section.hasClass('subsection') &&
