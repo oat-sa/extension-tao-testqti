@@ -136,6 +136,9 @@ define([
                     return false;
                 }
             };
+            const isTestHasErrors = () => {
+                return $('div#test-creator').find('.test-creator-props').find('span.validate-error').length > 0
+            }
 
             //set up the ItemView, give it a configured loadItems ref
             itemView($('.test-creator-items .item-selection', $container));
@@ -224,7 +227,7 @@ define([
                     });
 
                     creatorContext.on('preview', function() {
-                        if(isTestContainsItems()) {
+                        if(isTestContainsItems() && !isTestHasErrors()) {
                             const saveUrl = options.routes.save;
                             const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
                             return previewerFactory(
@@ -246,14 +249,15 @@ define([
                         creatorContext.trigger('exit');
                         window.history.back();
                     });
+
                 });
 
             //the save button triggers binder's save action.
             $saver.on('click', function(event){
-                if($('div#test-creator').find('.test-creator-props').find('span.validate-error').length > 0) {
+                if(isTestHasErrors()) {
                     event.preventDefault();
-                    feedback().error(__('The test cannot be saved because it currently contains invalid settings.\n' +
-                        'Please fix the invalid settings and try again.'));
+                    feedback().warning(__('The test cannot be saved because it currently contains invalid settings.\n' +
+                        'Please fix the invalid settings and try again.'))
                 } else {
                 creatorContext.trigger('save');}
             });

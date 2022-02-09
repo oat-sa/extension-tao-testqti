@@ -774,3 +774,12 @@
         display: none;
     }
 }
+
+.feedback-warning {
+    border-color: $errorBorderColor !important;;
+    background-color: $errorBgColor !important;;
+    span.icon-warning {
+        color: $error !important;
+    }
+}
+
