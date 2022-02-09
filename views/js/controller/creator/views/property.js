@@ -140,57 +140,26 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
          */
         function propValidation() {
             $view.on('validated.group', function(e, isValid){
-                const activeButton = $('.tlb-button-on');
                 const $warningIcon = $('span.icon-warning');
-                //get data from properties input
-                let $testPart = $(activeButton).parents('.testpart').attr('id');
-                let $testSection = $(activeButton).parents('.section').attr('id');
-                let $testSubsection = $(activeButton).parents('.subsection').attr('id');
-                let $test = $(activeButton).parents('.test-creator-test');
-                let $item = $(activeButton).parents('.itemref').attr('id');
-                // adds # to form main test id's
-                let testPartId = '#' + $testPart;
-                let testSectionId = '#' + $testSection;
-                let testSubsectionId = '#' + $testSubsection;
-                let itemId = '#' + $item;
-                // finds error in different elements if any
-                let $propsSectionError = $('#section-props-'+ $testSection).find('span.validate-error');
-                let $propsSubsectionError = $('#section-props-' + $testSubsection).find('span.validate-error');
-                let $propsItemError = $('.itemref-props').find('span.validate-error');
-                let $propsTestPartError = $('.testpart-props').find('span.validate-error');
-                let $propsTestError = $('.test-props').find('span.validate-error');
-                let propsErrorAllArray = [$propsTestError, $propsTestPartError , $propsSectionError, $propsSubsectionError, $propsItemError];
+                const $test = $('.tlb-button-on').parents('.test-creator-test');
+
+                // finds error current element if any
+                let errors = $(e.currentTarget).find('span.validate-error');
+                let currentTargetId = '#' + $(e.currentTarget).find('span[data-bind="identifier"]').attr('id').slice(6);
                 
                 if(e.namespace === 'group'){
-                    for(let i= 0; i < propsErrorAllArray.length; i++) {
-                        //hide warning icon if an element is validated
-                        if (isValid && propsErrorAllArray[i].length === 0) {
-                            if (propsErrorAllArray[i] === propsErrorAllArray[4] && propsErrorAllArray[4].length === 0) {
-                                $(itemId).find($warningIcon).first().css('display', 'none');
-                            } else if (propsErrorAllArray[i] === propsErrorAllArray[3] && propsErrorAllArray[3].length === 0) {
-                                $(testSubsectionId).find($warningIcon).first().css('display', 'none');
-                            } else if (propsErrorAllArray[i] === propsErrorAllArray[2] && propsErrorAllArray[2].length === 0) {
-                                $(testSectionId).find($warningIcon).first().css('display', 'none');
-                            } else if (propsErrorAllArray[i] === propsErrorAllArray[1] && propsErrorAllArray[1].length === 0) {
-                                $(testPartId).find($warningIcon).first().css('display', 'none');
-                            } else if (propsErrorAllArray[i] === propsErrorAllArray[0] && propsErrorAllArray[0].length === 0) {
-                                $($test).find($warningIcon).first().css('display', 'none');
-                            }
-
-                        } else {
+                    if (isValid && errors.length === 0) {
+                        //remove warning icon if validation fails
+                        if($(e.currentTarget).hasClass('test-props')){
+                         $($test).find($warningIcon).first().css('display', 'none');
+                        }
+                        $(currentTargetId).find($warningIcon).first().css('display', 'none');
+                    } else {
                        //add warning icon if validation fails
-                            if  (propsErrorAllArray[i] === propsErrorAllArray[4] && propsErrorAllArray[4].length !== 0) {
-                                $(itemId).find($warningIcon).first().css('display', 'inline');
-                            }else if (propsErrorAllArray[i] === propsErrorAllArray[3] && propsErrorAllArray[3].length !== 0){
-                                $(testSubsectionId).find($warningIcon).first().css('display', 'inline');
-                            } else if(propsErrorAllArray[i] === propsErrorAllArray[2] && propsErrorAllArray[2].length !== 0){
-                                $(testSectionId).find($warningIcon).first().css('display', 'inline');
-                            } else if(propsErrorAllArray[i] === propsErrorAllArray[1] && propsErrorAllArray[1].length !== 0){
-                                $(testPartId).find($warningIcon).first().css('display', 'inline');
-                            } else if (propsErrorAllArray[i] === propsErrorAllArray[0] && propsErrorAllArray[0].length !== 0){
-                                $($test).find($warningIcon).first().css('display', 'inline');
-                            }
-                       }
+                        if($(e.currentTarget).hasClass('test-props')){
+                            $($test).find($warningIcon).first().css('display', 'inline');
+                        }
+                        $(currentTargetId).find($warningIcon).first().css('display', 'inline');
                     }
                 }
             });
