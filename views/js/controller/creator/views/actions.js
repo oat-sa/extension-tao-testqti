@@ -114,7 +114,7 @@ define([
             }
 
             //get the position
-            $elements =  $container.children(`.${elementClass}`);
+            $elements = $container.children(`.${elementClass}`);
             index = $elements.index($element);
             if (index < $elements.length - 1 && $elements.length > 1) {
                 $element.fadeOut(200, () => {

@@ -19,7 +19,6 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-
     'taoQtiTest/controller/creator/helpers/validators',
     'json!taoQtiTest/test/creator/helpers/validators/sample.json'
 ], function(qtiTestHelper, sampleModel) {
