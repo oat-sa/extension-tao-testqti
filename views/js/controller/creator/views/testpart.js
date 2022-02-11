@@ -124,9 +124,10 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
+            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
-                .off('add.binder', `#${$testPart.attr('id')} .sections`)
-                .on('add.binder', `#${$testPart.attr('id')} .sections`, function (e, $section) {
+                .off('add.binder', `[id=${$testPart.attr('id')}] .sections`)
+                .on('add.binder', `[id=${$testPart.attr('id')}] .sections`, function (e, $section) {
                     if (e.namespace === 'binder' && $section.hasClass('section')) {
                         const index = $section.data('bind-index');
                         const sectionModel = partModel.assessmentSections[index];

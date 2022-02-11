@@ -78,21 +78,21 @@ define([
      * @param {String} elementClass - the cssClass to identify elements
      */
     function move($actionContainer, containerClass, elementClass) {
-        const $element = $actionContainer.closest('.' + elementClass);
-        const $container = $element.closest('.' + containerClass);
+        const $element = $actionContainer.closest(`.${elementClass}`);
+        const $container = $element.closest(`.${containerClass}`);
 
         //move up an element
         $('.move-up', $actionContainer).click(function (e) {
             let $elements, index;
 
-            //prevent default and click during animation
+            //prevent default and click during animation and on disabled icon
             e.preventDefault();
-            if ($element.is(':animated')) {
+            if ($element.is(':animated') && $element.hasClass('disabled')) {
                 return false;
             }
 
             //get the position
-            $elements = $container.children('.' + elementClass);
+            $elements = $container.children(`.${elementClass}`);
             index = $elements.index($element);
             if (index > 0) {
                 $element.fadeOut(200, () => {
@@ -107,14 +107,14 @@ define([
         $('.move-down', $actionContainer).click(function (e) {
             let $elements, index;
 
-            //prevent default and click during animation
+            //prevent default and click during animation and on disabled icon
             e.preventDefault();
-            if ($element.is(':animated')) {
+            if ($element.is(':animated') && $element.hasClass('disabled')) {
                 return false;
             }
 
             //get the position
-            $elements = $('.' + elementClass, $container);
+            $elements = $container.children(`.${elementClass}`);
             index = $elements.index($element);
             if (index < $elements.length - 1 && $elements.length > 1) {
                 $element.fadeOut(200, () => {
@@ -135,7 +135,7 @@ define([
     function movable($container, elementClass, actionContainerElt) {
         $container.each(function () {
             const $elt = $(this);
-            const $actionContainer = $(actionContainerElt, $elt);
+            const $actionContainer = $elt.children(actionContainerElt);
 
             const index = $container.index($elt);
             const $moveUp = $('.move-up', $actionContainer);
@@ -205,7 +205,7 @@ define([
      * Hides/shows container for adding items inside a section checking if there is at least
      * one subsection inside of it. As delete subsection event is triggered before subsection
      * container is actually removed from section container, we need to have conditional flow
-     * @param {jQueryElement} sectionContainer - section jquery container
+     * @param {jQueryElement} $section - section jquery container
      */
     function displayItemWrapper($section) {
         const $elt = $('.itemrefs-wrapper:first', $section);
@@ -232,7 +232,7 @@ define([
     /**
      * Hides/shows category-presets (Test Navigation, Navigation Warnings, Test-Taker Tools)
      * Hide category-presets for section that contains subsections
-     * @param {propView} propView - the view object
+     * @param {jQueryElement} $section
      * @fires propertiesView#set-default-categories
      */
     function displayCategoryPresets($section) {
