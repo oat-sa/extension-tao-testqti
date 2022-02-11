@@ -94,19 +94,6 @@ define([
             }
         };
 
-        $(document).on('deleted.deleter validated.group', function(e){
-            const $togglers = $('#authoringBack, #saver, #previewer');
-            //disables save, authoringBack and preview buttons if span.validate-error is present in any property input
-            if (testCreator.isTestHasErrors()){
-                $togglers.addClass('disabled');
-                $togglers.attr('disabled', 'disabled')
-
-            } else {
-                $togglers.removeClass('disabled');
-                $togglers.removeAttr('disabled');
-            }
-        });
-
         return eventifier(testCreator);
     }
 

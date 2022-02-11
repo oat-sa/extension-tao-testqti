@@ -355,7 +355,7 @@
 
         .testpart {
             color: $textColor;
-            border: solid 1px $testPartColor;
+            border: solid 1px $uiGeneralContentBorder;
             padding: 0;
             margin: 16px 0;
             padding-bottom: 10px;
@@ -365,17 +365,18 @@
                 font-size: 1.25em;
                 display: flex;
                 align-items: center;
-                background-color: whiten($testPartColor, 0.2);
+                background-color: $uiClickableDefaultBg;
                 padding: 25px;
                 margin-top: 0;
-                color: $textHighlight;
+                color: $textColor;
                 font-weight: bold;
                 border-radius: 2px 2px 0 0;
+                border: solid 1px $uiGeneralContentBorder;
                 & > .toggler {
                     position: absolute;
                     left: 5px;
                     top: 15px;
-                    color: $textHighlight;
+                    color: $textColor;
                     text-decoration: none;
                     transform: rotate(180deg);
                 }
@@ -768,4 +769,19 @@
 
         }
     }
+    span.icon-warning {
+        color: $error;
+        margin-left: 0.5em;
+        display: none;
+        font-size: 1.80rem;
+    }
 }
+
+.feedback-warning {
+    border-color: $errorBorderColor !important;
+    background-color: $errorBgColor !important;
+    span.icon-warning {
+        color: $error !important;
+    }
+}
+
