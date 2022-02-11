@@ -126,10 +126,10 @@ define([
             .forEach(function (count, id) {
                 if (count > 1) {
                     nonUniqueIdentifiers++;
-                    messageDetails += `\n${id.originalIdentifier} : ${id.type} ${id.label}`;
+                    messageDetails += `\n${id}`;
                 }
             });
-        if (nonUniqueIdentifiers.length > 1) {
+        if (nonUniqueIdentifiers >= 1) {
             throw new Error(__('The following identifiers are not unique accross the test : %s', messageDetails));
         }
 
