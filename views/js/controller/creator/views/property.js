@@ -139,17 +139,27 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
          * @private
          */
         function propValidation() {
-            $view.on('validated.group', function (e, isValid) {
-                let $testSection = $('.tlb-button-on').parents('.section').attr('id');
-                let testSectionId = `#${$testSection}`;
-                let $propsSectionError = $(`#section-props-${$testSection}`).find('span.validate-error');
-                let $propsItemError = $('.itemref-props').find('span.validate-error');
+            $view.on('validated.group', function(e, isValid){
+                const $warningIconSelector = $('span.icon-warning');
+                const $test = $('.tlb-button-on').parents('.test-creator-test');
 
-                if (e.namespace === 'group') {
-                    if (isValid && $propsItemError.length === 0 && $propsSectionError.length === 0) {
-                        $(testSectionId).removeClass('section-error');
+                // finds error current element if any
+                let errors = $(e.currentTarget).find('span.validate-error');
+                let currentTargetId = `[id="${$(e.currentTarget).find('span[data-bind="identifier"]').attr('id').slice(6)}"]`;
+                
+                if(e.namespace === 'group'){
+                    if (isValid && errors.length === 0) {
+                        //remove warning icon if validation fails
+                        if($(e.currentTarget).hasClass('test-props')){
+                         $($test).find($warningIconSelector).first().css('display', 'none');
+                        }
+                        $(currentTargetId).find($warningIconSelector).first().css('display', 'none');
                     } else {
-                        $(testSectionId).addClass('section-error');
+                       //add warning icon if validation fails
+                        if($(e.currentTarget).hasClass('test-props')){
+                            $($test).find($warningIconSelector).first().css('display', 'inline');
+                        }
+                        $(currentTargetId).find($warningIconSelector).first().css('display', 'inline');
                     }
                 }
             });

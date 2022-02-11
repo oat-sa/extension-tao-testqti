@@ -222,7 +222,7 @@ define([
                     });
 
                     creatorContext.on('preview', function() {
-                        if(isTestContainsItems()) {
+                        if(isTestContainsItems() && !creatorContext.isTestHasErrors()) {
                             const saveUrl = options.routes.save;
                             const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
                             return previewerFactory(
@@ -244,12 +244,17 @@ define([
                         creatorContext.trigger('exit');
                         window.history.back();
                     });
+
                 });
 
             //the save button triggers binder's save action.
             $saver.on('click', function(event){
-                event.preventDefault();
-                creatorContext.trigger('save');
+                if(creatorContext.isTestHasErrors()) {
+                    event.preventDefault();
+                    feedback().warning(__('The test cannot be saved because it currently contains invalid settings.\n' +
+                        'Please fix the invalid settings and try again.'));
+                } else {
+                    creatorContext.trigger('save');}
             });
         }
     };

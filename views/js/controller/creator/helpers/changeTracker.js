@@ -25,14 +25,16 @@ define([
     'i18n',
     'lib/uuid',
     'core/eventifier',
-    'ui/dialog'
+    'ui/dialog',
+    'ui/feedback',
 ], function (
     $,
     _,
     __,
     uuid,
     eventifier,
-    dialog
+    dialog,
+    feedback
 ) {
     'use strict';
 
@@ -126,38 +128,43 @@ define([
                 // every click outside the authoring
                 $(wrapperSelector)
                     .on(`click${eventNS}`, e => {
-                        if (!$.contains(container, e.target) && this.hasChanged()) {
+                        if (!$.contains(container, e.target) && this.hasChanged() && e.target.classList[0] !== 'icon-close') {
                             e.stopImmediatePropagation();
                             e.preventDefault();
 
-                        if (testCreator.isTestHasErrors()) {
-                            this.confirmBefore('leaveWhenInvalid')
-                                .then(whatToDo => {
-                                    this.ifWantSave(whatToDo);
-                                    this.uninstall();
-                                    e.target.click();
-                                })
-                                .catch(() => {});
-                        } else {
-                            this.confirmBefore('exit')
-                                .then(whatToDo => {
-                                    this.ifWantSave(whatToDo);
-                                    this.uninstall();
-                                    e.target.click();
-                                })
-                                //do nothing but prevent uncaught error
-                                .catch(() => {});
-                           }
+                            if (testCreator.isTestHasErrors()) {
+                                this.confirmBefore('leaveWhenInvalid')
+                                    .then(whatToDo => {
+                                        this.ifWantSave(whatToDo);
+                                        this.uninstall();
+                                        e.target.click();
+                                    })
+                                    .catch(() => {});
+                            } else {
+                                this.confirmBefore('exit')
+                                    .then(whatToDo => {
+                                        this.ifWantSave(whatToDo);
+                                        this.uninstall();
+                                        e.target.click();
+                                    })
+                                    //do nothing but prevent uncaught error
+                                    .catch(() => {});
+                            }
                         }
                     });
 
                 testCreator
                     .on(`ready${eventNS} saved${eventNS}`, () => this.init())
-                    .before(`creatorclose${eventNS}`, () => this.confirmBefore('exit').then(whatToDo => {
+                    .before(`creatorclose${eventNS}`, () => this.confirmBefore('leaveWhenInvalid').then(whatToDo => {
                         this.ifWantSave(whatToDo);
                     }))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
+                        if(testCreator.isTestHasErrors()){
+                            feedback().warning(`${__('The test cannot be saved because it currently contains invalid settings.\n' +
+                                'Please fix the invalid settings and try again.')}`);
+                        } else {
                         this.ifWantSave(whatToDo);
+                        }
                     }))
                     .before(`exit${eventNS}`, () => this.uninstall());
 
@@ -227,7 +234,7 @@ define([
                                 confirmDlg.hide();
                                 reject({ cancel: true });
                             }
-                        })
+                        });
                     } else {
                         confirmDlg = dialog({
                            message: message,
@@ -240,7 +247,7 @@ define([
                                confirmDlg.hide();
                                reject({ cancel: true });
                            }
-                      })
+                      });
                     }
                     confirmDlg.on('closed.modal', () => asking = false);
                 });
