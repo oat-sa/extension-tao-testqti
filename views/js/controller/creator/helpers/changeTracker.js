@@ -128,7 +128,7 @@ define([
                 // every click outside the authoring
                 $(wrapperSelector)
                     .on(`click${eventNS}`, e => {
-                        if (!$.contains(container, e.target) && this.hasChanged()) {
+                        if (!$.contains(container, e.target) && this.hasChanged() && e.target.classList[0] !== 'icon-close') {
                             e.stopImmediatePropagation();
                             e.preventDefault();
 
