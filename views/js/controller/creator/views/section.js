@@ -539,10 +539,27 @@ define([
                             defaults().sectionTitlePrefix
                         );
                         const acceptFunction = () => {
-                            $section.data('movedItems', _.clone(sectionModel.sectionParts));
-                            sectionModel.sectionParts = [];
-                            $('.itemrefs', $itemRefsWrapper).empty();
-                            executeAdd();
+                            // trigger deleted event for each itemfer to run removePropHandler and remove propView
+                            $('.itemrefs .itemref', $itemRefsWrapper).each(function() {
+                                $section.parents('.testparts').trigger('deleted.deleter', [$(this)]);
+                            });
+                            setTimeout(() => {
+                                // remove all itemrefs
+                                $('.itemrefs', $itemRefsWrapper).empty();
+                                // check itemrefs identifiers, because validation is build on <span id="props-{identifier}"> and each item should have unique id
+                                sectionModel.sectionParts.forEach(itemRef => {
+                                    if (!itemRef.identifier) {
+                                        itemRef.identifier = qtiTestHelper.getAvailableIdentifier(
+                                            modelOverseer.getModel(),
+                                            'assessmentItemRef',
+                                            'item'
+                                        );
+                                    }
+                                });
+                                $section.data('movedItems', _.clone(sectionModel.sectionParts));
+                                sectionModel.sectionParts = [];
+                                executeAdd();
+                            }, 0);
                         };
                         confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog)
                             .getDom()
