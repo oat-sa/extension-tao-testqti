@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2022.01\n"
-"PO-Revision-Date: 2022-01-17T14:35:49\n"
+"Project-Id-Version: TAO 2021.11\n"
+"PO-Revision-Date: 2022-02-17T15:10:50\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -45,9 +45,6 @@ msgstr "この問いに回答してください"
 
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "ビジブルセクションは受検者が識別できるものです。"
-
-msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
-msgstr ""
 
 msgid "Activated"
 msgstr "フィードバック有効"
@@ -226,12 +223,6 @@ msgstr ""
 msgid "Black on White"
 msgstr ""
 
-msgid "Bookmark question"
-msgstr ""
-
-msgid "Bookmark the current question for later review"
-msgstr ""
-
 msgid "Calculator"
 msgstr "電卓"
 
@@ -370,9 +361,6 @@ msgstr "ラベル表示"
 msgid "Displays a customisable magnifier"
 msgstr "カスタマイズ拡大レンズを表示"
 
-msgid "Do not bookmark the current question for later review"
-msgstr ""
-
 msgid "Do not flag the current item for later review"
 msgstr "現在のアイテムに見直しフラグを外す"
 
@@ -418,10 +406,10 @@ msgstr "受検者にレビュースクリーン（問題一覧・解答状況画
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "このセクション内のスキップを有効にします。レビュースクリーン設定が必要です。"
 
-msgid "End test"
+msgid "End Test"
 msgstr "テスト終了"
 
-msgid "End Test"
+msgid "End test"
 msgstr "テスト終了"
 
 msgid "Enter a blueprint"
@@ -436,8 +424,10 @@ msgstr "エラー"
 msgid "Error during file import"
 msgstr "ファイルインポート中のエラー"
 
-msgid "Error found in the IMS QTI Test:\n%s"
-msgstr "QTIテストにエラーが見つかりました:\n%s"
+msgid "Error found in the IMS QTI Test:\n"
+"%s"
+msgstr "QTIテストにエラーが見つかりました:\n"
+"%s"
 
 msgid "Expand the review panel"
 msgstr "レビューパネルを開く"
@@ -520,9 +510,6 @@ msgstr "グリーン地にグレイ"
 msgid "Hide Review"
 msgstr "一覧を隠す"
 
-msgid "Hide test overview panel"
-msgstr ""
-
 msgid "Hide the review screen"
 msgstr "レビュースクリーンを隠す"
 
@@ -572,9 +559,6 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr "さらにカテゴリスコアが設定されている場合、スコアはカテゴリごとに集計され、「SCORE_xxx」として結果表示されます。（「xxx」はカテゴリ名）"
 
 msgid "If the connection cannot be restored, see option B."
-msgstr ""
-
-msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
 msgstr ""
 
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
@@ -649,10 +633,10 @@ msgstr "アイテム・レスポンス識別子が現在のアイテムと一致
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "Items"
+msgid "items"
 msgstr "アイテム"
 
-msgid "items"
+msgid "Items"
 msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -833,9 +817,6 @@ msgstr "次へ"
 msgid "Next Section"
 msgstr "次のセクション"
 
-msgid "NO"
-msgstr ""
-
 msgid "No"
 msgstr "いいえ"
 
@@ -878,10 +859,10 @@ msgstr "チェックを入れるとシャッフルされずに，提示順はこ
 msgid "Offline"
 msgstr ""
 
-msgid "Ok"
+msgid "OK"
 msgstr "OK"
 
-msgid "OK"
+msgid "Ok"
 msgstr "OK"
 
 msgid "OK & End test"
@@ -1040,9 +1021,6 @@ msgstr "全て表示"
 msgid "Resource(s) successfully exported."
 msgstr "リソースが正常にエクスポートされました"
 
-msgid "ResultTransmission event successfully registered"
-msgstr ""
-
 msgid "Review"
 msgstr "レビュー"
 
@@ -1073,10 +1051,10 @@ msgstr "採点者"
 msgid "Scoring"
 msgstr "採点方法"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "スクラッチパッド"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "スクラッチパッド"
 
 msgid "Scratchpad"
@@ -1150,9 +1128,6 @@ msgstr "問題一覧"
 
 msgid "Show Solution"
 msgstr "答えを表示"
-
-msgid "Show test overview panel"
-msgstr ""
 
 msgid "Show the review screen"
 msgstr "レビュースクリーン表示"
@@ -1261,9 +1236,6 @@ msgstr "テストメタデータのエクスポートが完了しました。"
 
 msgid "Test Navigation"
 msgstr "テストナビゲーション"
-
-msgid "Test overview"
-msgstr ""
 
 msgid "Test Part Properties"
 msgstr ""
@@ -1628,9 +1600,6 @@ msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""
 
 msgid "Yellow on Blue"
-msgstr ""
-
-msgid "YES"
 msgstr ""
 
 msgid "Yes"
