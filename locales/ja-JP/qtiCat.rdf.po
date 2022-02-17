@@ -13,7 +13,7 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "CAT Sections"
-msgstr ""
+msgstr "Catセクション"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
