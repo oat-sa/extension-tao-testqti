@@ -191,10 +191,24 @@ define([
         }
         return identifiers;
     }
+
+    /**
+     * Gives you a validator that check QTI id format
+     * @param {String} value of identifier
+     * @param {Object} modelOverseer - let's you get the data model
+     * @returns {Boolean} isValid
+     */
+    function checkIfItemIdValid(value, modelOverseer) {
+        const identifiers = extractIdentifiers(modelOverseer.getModel(), qtiTypesForUniqueIds);
+        const key = value.toUpperCase();
+        const counts = _.countBy(identifiers, 'identifier');
+        return qtiIdPattern.test(value) && counts[key] === 1;
+    }
     return {
         qtiTypesForUniqueIds,
         extractIdentifiers,
         registerValidators,
-        validateModel
+        validateModel,
+        checkIfItemIdValid
     };
 });
