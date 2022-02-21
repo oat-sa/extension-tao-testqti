@@ -35,7 +35,8 @@ define([
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
     'taoQtiTest/controller/creator/views/subsection',
     'ui/dialog/confirm',
-    'taoQtiTest/controller/creator/helpers/subsection'
+    'taoQtiTest/controller/creator/helpers/subsection',
+    'taoQtiTest/controller/creator/helpers/validators'
 ], function (
     $,
     _,
@@ -52,7 +53,8 @@ define([
     sectionBlueprint,
     subsectionView,
     confirmDialog,
-    subsectionsHelper
+    subsectionsHelper,
+    validators
 ) {
     'use strict';
 
@@ -271,25 +273,29 @@ define([
             // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
                 .off('add.binder', `[id="${$section.attr('id')}"] > .itemrefs-wrapper .itemrefs`)
-                .on('add.binder', `[id="${$section.attr('id')}"] > .itemrefs-wrapper .itemrefs`, function (e, $itemRef) {
-                    if (
-                        e.namespace === 'binder' &&
-                        $itemRef.hasClass('itemref') &&
-                        !$itemRef.parents('.subsection').length
-                    ) {
-                        const index = $itemRef.data('bind-index');
-                        const itemRefModel = sectionModel.sectionParts[index];
+                .on(
+                    'add.binder',
+                    `[id="${$section.attr('id')}"] > .itemrefs-wrapper .itemrefs`,
+                    function (e, $itemRef) {
+                        if (
+                            e.namespace === 'binder' &&
+                            $itemRef.hasClass('itemref') &&
+                            !$itemRef.parents('.subsection').length
+                        ) {
+                            const index = $itemRef.data('bind-index');
+                            const itemRefModel = sectionModel.sectionParts[index];
 
-                        //initialize the new item ref
-                        itemRefView.setUp(creatorContext, itemRefModel, sectionModel, partModel, $itemRef);
+                            //initialize the new item ref
+                            itemRefView.setUp(creatorContext, itemRefModel, sectionModel, partModel, $itemRef);
 
-                        /**
-                         * @event modelOverseer#item-add
-                         * @param {Object} itemRefModel
-                         */
-                        modelOverseer.trigger('item-add', itemRefModel);
+                            /**
+                             * @event modelOverseer#item-add
+                             * @param {Object} itemRefModel
+                             */
+                            modelOverseer.trigger('item-add', itemRefModel);
+                        }
                     }
-                });
+                );
         }
 
         /**
@@ -363,25 +369,29 @@ define([
             // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
                 .off('add.binder', `[id="${$section.attr('id')}"] > .rublocks .rubricblocks`)
-                .on('add.binder', `[id="${$section.attr('id')}"] > .rublocks .rubricblocks`, function (e, $rubricBlock) {
-                    if (
-                        e.namespace === 'binder' &&
-                        $rubricBlock.hasClass('rubricblock') &&
-                        !$rubricBlock.parents('.subsection').length
-                    ) {
-                        const index = $rubricBlock.data('bind-index');
-                        const rubricModel = sectionModel.rubricBlocks[index] || {};
+                .on(
+                    'add.binder',
+                    `[id="${$section.attr('id')}"] > .rublocks .rubricblocks`,
+                    function (e, $rubricBlock) {
+                        if (
+                            e.namespace === 'binder' &&
+                            $rubricBlock.hasClass('rubricblock') &&
+                            !$rubricBlock.parents('.subsection').length
+                        ) {
+                            const index = $rubricBlock.data('bind-index');
+                            const rubricModel = sectionModel.rubricBlocks[index] || {};
 
-                        $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
-                        rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
+                            $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
+                            rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
 
-                        /**
-                         * @event modelOverseer#rubric-add
-                         * @param {Object} rubricModel
-                         */
-                        modelOverseer.trigger('rubric-add', rubricModel);
+                            /**
+                             * @event modelOverseer#rubric-add
+                             * @param {Object} rubricModel
+                             */
+                            modelOverseer.trigger('rubric-add', rubricModel);
+                        }
                     }
-                });
+                );
         }
 
         /**
@@ -540,15 +550,17 @@ define([
                         );
                         const acceptFunction = () => {
                             // trigger deleted event for each itemfer to run removePropHandler and remove propView
-                            $('.itemrefs .itemref', $itemRefsWrapper).each(function() {
+                            $('.itemrefs .itemref', $itemRefsWrapper).each(function () {
                                 $section.parents('.testparts').trigger('deleted.deleter', [$(this)]);
                             });
                             setTimeout(() => {
                                 // remove all itemrefs
                                 $('.itemrefs', $itemRefsWrapper).empty();
-                                // check itemrefs identifiers, because validation is build on <span id="props-{identifier}"> and each item should have unique id
+                                // check itemrefs identifiers
+                                // because validation is build on <span id="props-{identifier}">
+                                // and each item should have valid and unique id
                                 sectionModel.sectionParts.forEach(itemRef => {
-                                    if (!itemRef.identifier) {
+                                    if(!validators.checkIfItemIdValid(itemRef.identifier, modelOverseer)) {
                                         itemRef.identifier = qtiTestHelper.getAvailableIdentifier(
                                             modelOverseer.getModel(),
                                             'assessmentItemRef',

@@ -31,7 +31,8 @@ define([
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
     'ui/dialog/confirm',
-    'taoQtiTest/controller/creator/helpers/subsection'
+    'taoQtiTest/controller/creator/helpers/subsection',
+    'taoQtiTest/controller/creator/helpers/validators'
 ], function (
     $,
     _,
@@ -47,7 +48,8 @@ define([
     sectionCategory,
     sectionBlueprint,
     confirmDialog,
-    subsectionsHelper
+    subsectionsHelper,
+    validators
 ) {
     'use strict';
     /**
@@ -554,15 +556,17 @@ define([
                         );
                         const acceptFunction = () => {
                             // trigger deleted event for each itemfer to run removePropHandler and remove propView
-                            $('.itemrefs .itemref', $itemRefsWrapper).each(function() {
+                            $('.itemrefs .itemref', $itemRefsWrapper).each(function () {
                                 $subsection.parents('.testparts').trigger('deleted.deleter', [$(this)]);
                             });
                             setTimeout(() => {
                                 // remove all itemrefs
                                 $('.itemrefs', $itemRefsWrapper).empty();
-                                // check itemrefs identifiers, because validation is build on <span id="props-{identifier}"> and each item should have unique id
+                                // check itemrefs identifiers
+                                // because validation is build on <span id="props-{identifier}">
+                                // and each item should have valid and unique id
                                 subsectionModel.sectionParts.forEach(itemRef => {
-                                    if (!itemRef.identifier) {
+                                    if (!validators.checkIfItemIdValid(itemRef.identifier, modelOverseer)) {
                                         itemRef.identifier = qtiTestHelper.getAvailableIdentifier(
                                             modelOverseer.getModel(),
                                             'assessmentItemRef',
