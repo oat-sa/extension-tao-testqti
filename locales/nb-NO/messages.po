@@ -370,7 +370,7 @@ msgstr "Ikke gi nytt navn."
 msgid "Do not show alert on timeout"
 msgstr "Ikke vis varsel ved timeout"
 
-msgid "Don\'t save"
+msgid "Don't save"
 msgstr "Ikke lagre"
 
 msgid "Download"
