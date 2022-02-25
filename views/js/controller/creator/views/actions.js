@@ -190,7 +190,7 @@ define([
      */
     function disable($container, actionContainerElt) {
 
-        if ($container.length <= 2 && !$($container.prevObject.context).hasClass('itemref')){
+        if ($container.length <= 2){
         $container.children(actionContainerElt).find('[data-delete]').addClass(disabledClass);
         }
     }
