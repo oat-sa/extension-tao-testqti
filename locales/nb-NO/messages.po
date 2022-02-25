@@ -50,7 +50,7 @@ msgid "Activated"
 msgstr "Aktivert"
 
 msgid "add a new weight"
-msgstr "legg til en ny vekt"
+msgstr "legg til ny vekting"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Legg til en zip-fil som inneholder QTI/APIP-prøver og oppgaver"
@@ -260,10 +260,10 @@ msgid "Class successfully created."
 msgstr "Mappe ble opprettet."
 
 msgid "Clear all active highlights"
-msgstr "Fjern alle aktive uthevinger"
+msgstr "Nullstill alle aktive uthevinger"
 
 msgid "Clear Highlights"
-msgstr "Fjern utheving"
+msgstr "Nullstill utheving"
 
 msgid "Click \"%s\" to continue"
 msgstr "Klikk \"%s\" for å fortsette"
@@ -311,13 +311,13 @@ msgid "Covers parts of the item"
 msgstr "Dekker deler av oippgaven"
 
 msgid "Custom"
-msgstr "Tilpasset"
+msgstr "Egendefinert skåring"
 
 msgid "custom categories"
-msgstr "tilpassede kategorier"
+msgstr "egendefinerte kategorier"
 
 msgid "Custom outcome processing. No changes will be made to the existing rules."
-msgstr "Tilpasset resultatbehandling. Det vil ikke bli gjort endringer i de eksisterende reglene."
+msgstr "Egendefinert instilling. Det vil ikke bli gjort endringer i de eksisterende reglene."
 
 msgid "Cut score"
 msgstr "Poengsum"
@@ -344,7 +344,7 @@ msgid "Display a warning before the test-taker skips the section. Requires the S
 msgstr "Vis en advarsel når eleven hopper over en prøvedel. Krever at alternativet Hopp over prøvedel er aktivert."
 
 msgid "Display End Test Warning"
-msgstr "Vis advarsel om at eleven er ferd med å avslutte prøven"
+msgstr "Vis advarsel om at eleven er i ferd med å avslutte prøven"
 
 msgid "Display Next Part Warning"
 msgstr "Vis advarsel om at eleven nå går til neste del av prøven"
@@ -370,8 +370,8 @@ msgstr "Ikke gi nytt navn."
 msgid "Do not show alert on timeout"
 msgstr "Ikke vis varsel ved timeout"
 
-msgid "Don\'t save"
-msgstr ""
+msgid "Don't save"
+msgstr "Ikke lagre"
 
 msgid "Download"
 msgstr "Last ned"
@@ -383,16 +383,16 @@ msgid "Eliminate choices"
 msgstr "Fjern valgene"
 
 msgid "Enable Mark for Review"
-msgstr "Aktiver merk av for å se gjennom"
+msgstr "Aktiver mulighet for bokmerke"
 
 msgid "Enable mark for review of items. Requires the Review Screen option."
-msgstr "Aktiver merk av for å se gjennom oppgavene. Krever at valget gjennomgå oppgavene på skjerm er aktivert."
+msgstr "Aktiver mulighet for bokmerke på oppgaver. Krever aktivert oversiktsknapp."
 
 msgid "Enable Review Screen"
-msgstr "Aktiver se gjennom på skjerm"
+msgstr "Aktiver oversiktsknapp"
 
 msgid "Enable selection"
-msgstr "Aktiver valg"
+msgstr "Aktiver utvalg"
 
 msgid "Enable Skipping Ahead"
 msgstr "Aktiver gå videre"
@@ -444,7 +444,7 @@ msgid "Export QTI 2.2 Test Package"
 msgstr "Eksporter QTI 2.2 Testpakke"
 
 msgid "Export successful for the test \"%s"
-msgstr "Prøven \"%s ble eksportert"
+msgstr "Oppgavesett \"%s ble eksportert"
 
 msgid "Feedback block"
 msgstr "Tilbakemeldingsboks"
@@ -627,7 +627,7 @@ msgid "Item response identifier does not match current item"
 msgstr "Oppgavens svaridentifikator samsvarer ikke med gjeldende oppgave"
 
 msgid "Item Session Control"
-msgstr "Oppgaveøkt kontroll"
+msgstr "Innstilling for gjennomføring"
 
 msgid "items"
 msgstr "oppgaver"
@@ -702,11 +702,11 @@ msgid "Manage test properties"
 msgstr "Administrer prøveegenskaper"
 
 msgid "Manage Tests"
-msgstr "Administrer Prøver"
+msgstr "Administrer Oppgavesett"
 
 #, tao-public
 msgid "Manage tests"
-msgstr "Administrer prøver"
+msgstr "Administrer oppgavesett"
 
 msgid "Mark for review"
 msgstr "Marker for å se gjennom"
@@ -762,11 +762,11 @@ msgstr "Minste varighet for denne prøvedelen."
 msgid "minutes"
 msgstr "minutter"
 
-msgid "Missed required parameter \'id\"
-msgstr ""
+msgid "Missed required parameter \'id"
+msgstr "Manglet nødvendig parameter \'id"
 
 msgid "Missed test package file"
-msgstr ""
+msgstr "Manglet prøvepakke fil"
 
 msgid "Missing required configuration option %s"
 msgstr "Mangler nødvendig konfigurasjonsalternativ %s"
@@ -781,7 +781,7 @@ msgid "Move Up"
 msgstr "Flytte Opp"
 
 msgid "Moving to the next item without time limit reached message."
-msgstr "Gå til neste oppgave uten melding om at tidsbegrensning er nådd."
+msgstr "Flytter til neste oppgave uten melding om at tidsbegrensning er nådd."
 
 msgid "name of the pupil"
 msgstr "elevens navn"
@@ -895,13 +895,13 @@ msgid "or"
 msgstr "eller"
 
 msgid "Ordering"
-msgstr "Bestiller"
+msgstr "Rekkefølge på oppgaver"
 
 msgid "Outcome"
 msgstr "Resultat"
 
 msgid "Outcome declarations"
-msgstr "Resultatrapport"
+msgstr "Skåringsvariabler"
 
 msgid "Outcome processing"
 msgstr "Resultatprosessering"
@@ -934,7 +934,7 @@ msgid "Please wait while we try to restore the connection."
 msgstr "Vent mens vi prøver å gjenopprette tilkoblingen."
 
 msgid "Preview"
-msgstr "Forhåndsvisning"
+msgstr "Forhåndsvis"
 
 msgid "Preview the covered area"
 msgstr "Forhåndsvis merket området"
@@ -1015,7 +1015,7 @@ msgid "Reset filters"
 msgstr "Tilbakestill filtre"
 
 msgid "Resource(s) successfully exported."
-msgstr "Ressurs(er) eksportert."
+msgstr "Ressurs(er) ble eksportert."
 
 msgid "Review"
 msgstr "Se gjennom"
@@ -1084,7 +1084,7 @@ msgid "Select the way the responses of your test should be processed"
 msgstr "Velg måten svarene på prøven din skal behandles på"
 
 msgid "Selection"
-msgstr "Valg"
+msgstr "Utvalg"
 
 msgid "Send"
 msgstr "Send"
@@ -1225,7 +1225,7 @@ msgid "Test"
 msgstr "Prøve"
 
 msgid "Test constructor"
-msgstr "Prøvekonstruktør"
+msgstr "Prøveutvikler"
 
 msgid "Test metadata successfully exported."
 msgstr "Prøvemetadata ble eksportert."
@@ -1240,7 +1240,7 @@ msgid "Test Preview is not installed, please contact to your administrator."
 msgstr "Forhåndsvisning av prøve er ikke installert. Ta kontakt med administrator."
 
 msgid "Test Saved"
-msgstr "Prøve lagret"
+msgstr "Oppgavesett lagret"
 
 msgid "Test status"
 msgstr "Pørvestatus"
@@ -1256,7 +1256,7 @@ msgstr "Elevverktøy"
 
 #, tao-public
 msgid "Tests"
-msgstr "Prøver"
+msgstr "Oppgavesett"
 
 msgid "Text content"
 msgstr "Tekstinnhold"
@@ -1544,10 +1544,10 @@ msgid "We are unable to connect to the server to retrieve the next item."
 msgstr "Du kan ikke gå til neste oppgave da du ikke har kontakt med server."
 
 msgid "Weight"
-msgstr "Vekt"
+msgstr "Vekting"
 
 msgid "Weights"
-msgstr "Vekt"
+msgstr "Vekting"
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "Når du velger underordnede elementer, er hvert element bare kvalifisert for valg én gang."
