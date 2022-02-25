@@ -190,10 +190,8 @@ define([
      */
     function disable($container, actionContainerElt) {
 
-        if(actionContainerElt === 'h1'){
-            $($container.children(actionContainerElt).prevObject).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
-        } else {
-            $($container.children(actionContainerElt).context).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
+        if ($container.length <= 2){
+        $container.children(actionContainerElt).find('[data-delete]').addClass(disabledClass);
         }
     }
 
