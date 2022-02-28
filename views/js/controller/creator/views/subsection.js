@@ -646,7 +646,6 @@ define([
             .on('delete', function (e) {
                 const $target = $(e.target);
                 if ($target.hasClass('subsection')) {
-                    actions.disable(subsectionsHelper.getSiblingSubsections($target), 'h2');
                     const $parent = subsectionsHelper.getParent($target);
                     setTimeout(() => {
                         actions.displayItemWrapper($parent);

@@ -300,7 +300,6 @@ function(
                 var $target = $(e.target);
                 if($target.hasClass('itemref')){
                     $parent = $target.parents('.itemrefs');
-                    actions.disable($parent.find('.itemref'), '.actions');
                 }
             })
             .on('add change undo.deleter deleted.deleter', '.itemrefs',  function(e){
