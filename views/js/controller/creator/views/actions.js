@@ -189,7 +189,10 @@ define([
      * @param {String} actionContainerElt - the element name that contains the actions
      */
     function disable($container, actionContainerElt) {
-        $container.children(actionContainerElt).find('[data-delete],.move-up,.move-down').addClass(disabledClass);
+
+        if ($container.length <= 2){
+        $container.children(actionContainerElt).find('[data-delete]').addClass(disabledClass);
+        }
     }
 
     /**
