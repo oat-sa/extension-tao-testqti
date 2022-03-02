@@ -158,7 +158,7 @@ define([
             .on('delete', function (e) {
                 const $target = $(e.target);
                 if ($target.hasClass('testpart')) {
-                    actions.disable($('.testpart'), 'h1');
+                    actions.disable($(e.target.id), 'h1');
                 }
             })
             .on('add change undo.deleter deleted.deleter', function (e) {

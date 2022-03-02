@@ -31,7 +31,8 @@ define([
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
     'ui/dialog/confirm',
-    'taoQtiTest/controller/creator/helpers/subsection'
+    'taoQtiTest/controller/creator/helpers/subsection',
+    'taoQtiTest/controller/creator/helpers/validators'
 ], function (
     $,
     _,
@@ -47,7 +48,8 @@ define([
     sectionCategory,
     sectionBlueprint,
     confirmDialog,
-    subsectionsHelper
+    subsectionsHelper,
+    validators
 ) {
     'use strict';
     /**
@@ -553,10 +555,29 @@ define([
                             defaults().sectionTitlePrefix
                         );
                         const acceptFunction = () => {
-                            $subsection.data('movedItems', _.clone(subsectionModel.sectionParts));
-                            subsectionModel.sectionParts = [];
-                            $('.itemrefs', $itemRefsWrapper).empty();
-                            executeAdd();
+                            // trigger deleted event for each itemfer to run removePropHandler and remove propView
+                            $('.itemrefs .itemref', $itemRefsWrapper).each(function () {
+                                $subsection.parents('.testparts').trigger('deleted.deleter', [$(this)]);
+                            });
+                            setTimeout(() => {
+                                // remove all itemrefs
+                                $('.itemrefs', $itemRefsWrapper).empty();
+                                // check itemrefs identifiers
+                                // because validation is build on <span id="props-{identifier}">
+                                // and each item should have valid and unique id
+                                subsectionModel.sectionParts.forEach(itemRef => {
+                                    if (!validators.checkIfItemIdValid(itemRef.identifier, modelOverseer)) {
+                                        itemRef.identifier = qtiTestHelper.getAvailableIdentifier(
+                                            modelOverseer.getModel(),
+                                            'assessmentItemRef',
+                                            'item'
+                                        );
+                                    }
+                                });
+                                $subsection.data('movedItems', _.clone(subsectionModel.sectionParts));
+                                subsectionModel.sectionParts = [];
+                                executeAdd();
+                            }, 0);
                         };
                         confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog)
                             .getDom()
@@ -625,7 +646,6 @@ define([
             .on('delete', function (e) {
                 const $target = $(e.target);
                 if ($target.hasClass('subsection')) {
-                    actions.disable(subsectionsHelper.getSiblingSubsections($target), 'h2');
                     const $parent = subsectionsHelper.getParent($target);
                     setTimeout(() => {
                         actions.displayItemWrapper($parent);
