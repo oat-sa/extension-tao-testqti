@@ -22,17 +22,17 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\classes\tasks\QtiStateOffload;
 
+use Exception;
 use InvalidArgumentException;
 use oat\oatbox\extension\AbstractAction;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\state\StateMigration;
-use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\tao\model\taskQueue\Task\TaskAwareInterface;
 use oat\tao\model\taskQueue\Task\TaskAwareTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class StateOffloadTask extends AbstractAction implements TaskAwareInterface
+class StateRemovalTask extends AbstractAction implements TaskAwareInterface
 {
     use TaskAwareTrait;
 
@@ -59,22 +59,27 @@ class StateOffloadTask extends AbstractAction implements TaskAwareInterface
         $callId = $params[self::PARAM_CALL_ID_KEY];
         $stateType = $params[self::PARAM_STATE_LABEL_KEY];
 
-        $logContext = [
-            'userId' => $userId,
-            'callId' => $callId,
-            'stateType' => $stateType
-        ];
+        try {
+            $this->getStateMigrationService()->removeState($userId, $callId);
 
-        if (!$this->getStateMigrationService()->archive($userId, $callId)) {
+            $this->getLogger()->info(
+                sprintf('%s state has been deleted', $stateType),
+                [
+                    'userId' => $userId,
+                    'callId' => $callId,
+                    'stateType' => $stateType
+                ]
+            );
+        } catch (Exception $exception) {
             $this->getLogger()->warning(
-                sprintf('Failed to archive %s state', $stateType),
-                $logContext
+                sprintf('Failed to delete %s state', $stateType),
+                [
+                    'userId' => $userId,
+                    'callId' => $callId,
+                    'stateType' => $stateType
+                ]
             );
         }
-
-        $this->enqueueStateRemovalTask($userId, $callId, $stateType);
-
-        $this->getLogger()->info(sprintf('%s state has been archived', $stateType), $logContext);
     }
 
     /**
@@ -85,19 +90,5 @@ class StateOffloadTask extends AbstractAction implements TaskAwareInterface
     private function getStateMigrationService(): StateMigration
     {
         return $this->getServiceLocator()->get(StateMigration::SERVICE_ID);
-    }
-
-    private function enqueueStateRemovalTask(string $userId, string $callId, string $stateLabel): void
-    {
-        $this->getQueueDispatcher()->createTask(new StateRemovalTask(), [
-            StateOffloadTask::PARAM_USER_ID_KEY => $userId,
-            StateOffloadTask::PARAM_CALL_ID_KEY => $callId,
-            StateOffloadTask::PARAM_STATE_LABEL_KEY => $stateLabel
-        ]);
-    }
-
-    private function getQueueDispatcher(): QueueDispatcherInterface
-    {
-        return $this->getServiceLocator()->get(QueueDispatcherInterface::SERVICE_ID);
     }
 }
