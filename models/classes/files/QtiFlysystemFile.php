@@ -21,6 +21,7 @@
 
 namespace oat\taoQtiTest\models\files;
 
+use League\MimeTypeDetection\ExtensionMimeTypeDetector;
 use oat\oatbox\filesystem\File;
 use qtism\common\datatypes\QtiFile;
 use qtism\common\enums\BaseType;
@@ -43,7 +44,17 @@ class QtiFlysystemFile extends File implements QtiFile
     
     public function getMimeType()
     {
-        return parent::getMimeType();
+        $mimeType = parent::getMimeType();
+
+        // The parent function will return "text/plain" when the mime type can't be detected. As the last resort,
+        // we use the original file name when available to try to detect its mime type.
+        if ($mimeType === 'text/plain' && $this->hasFilename()) {
+            $mimeTypeDetector = new ExtensionMimeTypeDetector();
+
+            $mimeType = $mimeTypeDetector->detectMimeTypeFromFile($this->getFilename()) ?? $mimeType;
+        }
+
+        return $mimeType;
     }
     
     public function hasFilename()
