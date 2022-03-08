@@ -24,13 +24,17 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Container;
 
+use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
+use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
+use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
+use oat\taoQtiTest\model\Infrastructure\QtiTestRepository;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\model\Service\MoveService;
@@ -39,6 +43,7 @@ use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\TestModelService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -139,6 +144,16 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(QtiRunnerService::SERVICE_ID),
                     service(ItemResponseRepositoryInterface::class),
                     service(ToolsStateRepositoryInterface::class),
+                ]
+            );
+
+        $services
+            ->set(QtiTestRepositoryInterface::class, QtiTestRepository::class)
+            ->public()
+            ->args(
+                [
+                    service(Ontology::SERVICE_ID),
+                    service(TestModelService::SERVICE_ID),
                 ]
             );
     }
