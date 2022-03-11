@@ -48,7 +48,10 @@ class QtiFlysystemFile extends File implements QtiFile
 
         // The parent function will return "text/plain" when the mime type can't be detected. As the last resort,
         // we use the original file name when available to try to detect its mime type.
-        if ($mimeType === 'text/plain' && $this->hasFilename()) {
+        if (
+            in_array($mimeType, ['text/plain', 'application/octet-stream'])
+            && $this->hasFilename()
+        ) {
             $mimeTypeDetector = new ExtensionMimeTypeDetector();
 
             $mimeType = $mimeTypeDetector->detectMimeTypeFromFile($this->getFilename()) ?? $mimeType;
