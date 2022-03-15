@@ -6,6 +6,8 @@ namespace oat\taoQtiTest\migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
+use common_ext_Extension as Extension;
+use common_ext_ExtensionsManager as ExtensionsManager;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
