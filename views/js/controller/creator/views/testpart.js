@@ -127,7 +127,6 @@ define([
                         sectionParts: [],
                         visible: true
                     });
-                    // TODO: new section to inherit categories from testPart?
                 }
             });
 
@@ -140,7 +139,7 @@ define([
                         const index = $section.data('bind-index');
                         const sectionModel = partModel.assessmentSections[index];
 
-                        //initialize the new test part
+                        //initialize the new section
                         sectionView.setUp(creatorContext, sectionModel, partModel, $section);
 
                         /**
@@ -159,10 +158,10 @@ define([
          * @fires modelOverseer#category-change
          */
         function categoriesProperty($view) {
-            const categories = testPartCategory.getCategories(partModel);
+            const categoriesSummary = testPartCategory.getCategories(partModel);
             const categorySelector = categorySelectorFactory($view);
 
-            categorySelector.createForm(categories.all);
+            categorySelector.createForm(categoriesSummary.all);
             updateFormState(categorySelector);
 
             $view.on('propopen.propview', function () {
@@ -182,8 +181,8 @@ define([
         }
 
         function updateFormState(categorySelector) {
-            const categories = testPartCategory.getCategories(partModel);
-            categorySelector.updateFormState(categories.propagated, categories.partial);
+            const categoriesSummary = testPartCategory.getCategories(partModel);
+            categorySelector.updateFormState(categoriesSummary.propagated, categoriesSummary.partial);
         }
     }
 

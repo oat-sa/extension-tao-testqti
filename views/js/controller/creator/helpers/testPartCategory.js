@@ -67,10 +67,17 @@ define([
     }
 
     /**
+     * @typedef {object} CategoriesSummary
+     * @property {string[]} all - array of all categories of itemRef descendents
+     * @property {string[]} propagated - array of categories propagated to every itemRef descendent
+     * @property {string[]} partial - array of categories propagated to a partial set of itemRef descendents
+     */
+
+    /**
      * Get the categories assigned to the testPart model, inferred by its internal itemRefs
      *
      * @param {object} model
-     * @returns {object}
+     * @returns {CategoriesSummary}
      */
     function getCategories(model) {
         if (!isValidTestPartModel(model)) {
@@ -79,12 +86,15 @@ define([
 
         let itemCount = 0;
 
-        // Should be: [[i1c], [i2c], [i3c], ...]
-        const categories = _.flatten(
+        /**
+         * List of lists of categories of each item in the testPart
+         * @type {string[][]}
+         */
+        const itemRefCategories = _.flatten(
             _.map(model.assessmentSections, function(section) {
                 return _.map(section.sectionParts, function(itemRef) {
                     if (itemRef['qti-type'] === 'assessmentItemRef' && ++itemCount && _.isArray(itemRef.categories)) {
-                        return _.compact(itemRef.categories); // [i1c]
+                        return _.compact(itemRef.categories);
                     }
                 });
             }),
@@ -95,13 +105,10 @@ define([
             return createCategories(model.categories, model.categories);
         }
 
-        //array of categories
-        const arrays = _.values(categories);
-        const union = _.union.apply(null, arrays);
-
+        //all item categories
+        const union = _.union.apply(null, itemRefCategories);
         //categories that are common to all itemRef
-        const propagated = _.intersection.apply(null, arrays);
-
+        const propagated = _.intersection.apply(null, itemRefCategories);
         //the categories that are only partially covered on the section level : complementary of "propagated"
         const partial = _.difference(union, propagated);
 
@@ -153,6 +160,13 @@ define([
         }
     }
 
+    /**
+     * Assigns input category arrays to output object, while sorting each one
+     * @param {string[]} all
+     * @param {string[]} propagated
+     * @param {string[]} partial
+     * @returns {CategoriesSummary}
+     */
     function createCategories(all = [], propagated = [], partial = []) {
         return _.mapValues({
             all: all,
