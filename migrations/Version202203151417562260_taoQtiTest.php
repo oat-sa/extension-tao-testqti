@@ -25,10 +25,21 @@ final class Version202203151417562260_taoQtiTest extends AbstractMigration
     {
         $extension = $this->getExtension();
 
-        $config = $extension->getConfig(self::CONFIG_FILE);
-        $config['plugins']['review']['reviewLayout'] = 'default';
-        $config['plugins']['review']['displaySectionTitles'] = true;
+        // Fix the config as the previous migrations were not adding it.
+        // Set the default config if it does not exist.
+        if (!array_key_exists('review', $config['plugins'])) {
+            $config['plugins']['review'] = [];
+        }
+        if (!array_key_exists('reviewLayout', $config['plugins']['review'])) {
+            $config['plugins']['review']['reviewLayout'] = 'default';
+        }
+        if (!array_key_exists('displaySectionTitles', $config['plugins']['review'])) {
+            $config['plugins']['review']['displaySectionTitles'] = true;
+        }
+
+        // Set the new config entry
         $config['plugins']['review']['displayItemTooltip'] = false;
+
         $extension->setConfig(self::CONFIG_FILE, $config);
 
     }
@@ -38,7 +49,7 @@ final class Version202203151417562260_taoQtiTest extends AbstractMigration
         $extension = $this->getExtension();
 
         $config = $extension->getConfig(self::CONFIG_FILE);
-        unset($config['plugins']['review']);
+        unset($config['plugins']['review']['displayItemTooltip']);
         $extension->setConfig(self::CONFIG_FILE, $config);
     }
 
