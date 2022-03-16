@@ -974,7 +974,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
-        return $session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS;
+        return $session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS
+            && $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback();
     }
 
 
