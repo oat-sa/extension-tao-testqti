@@ -25,6 +25,8 @@ final class Version202203151417562260_taoQtiTest extends AbstractMigration
     {
         $extension = $this->getExtension();
 
+        $config = $extension->getConfig(self::CONFIG_FILE);
+
         // Fix the config as the previous migrations were not adding it.
         // Set the default config if it does not exist.
         if (!array_key_exists('review', $config['plugins'])) {
