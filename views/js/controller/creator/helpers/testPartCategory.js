@@ -19,8 +19,9 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
+    'taoQtiTest/controller/creator/helpers/testModel',
     'core/errorHandler'
-], function(_, __, sectionCategory, errorHandler) {
+], function(_, __, sectionCategory, testModelHelper, errorHandler) {
     'use strict';
 
     const _ns = '.testPartCategory';
@@ -87,19 +88,15 @@ define([
         let itemCount = 0;
 
         /**
-         * List of lists of categories of each item in the testPart
+         * List of lists of categories of each itemRef in the testPart
          * @type {string[][]}
          */
-        const itemRefCategories = _.flatten(
-            _.map(model.assessmentSections, function(section) {
-                return _.map(section.sectionParts, function(itemRef) {
-                    if (itemRef['qti-type'] === 'assessmentItemRef' && ++itemCount && _.isArray(itemRef.categories)) {
-                        return _.compact(itemRef.categories);
-                    }
-                });
-            }),
-            true // flatten depth: 1
-        );
+        const itemRefCategories = [];
+        testModelHelper.eachItemInTestPart(model, itemRef => {
+            if (++itemCount && _.isArray(itemRef.categories)) {
+                itemRefCategories.push(_.compact(itemRef.categories));
+            }
+        });
 
         if (!itemCount) {
             return createCategories(model.categories, model.categories);
@@ -107,7 +104,7 @@ define([
 
         //all item categories
         const union = _.union.apply(null, itemRefCategories);
-        //categories that are common to all itemRef
+        //categories that are common to all itemRefs
         const propagated = _.intersection.apply(null, itemRefCategories);
         //the categories that are only partially covered on the section level : complementary of "propagated"
         const partial = _.difference(union, propagated);
@@ -124,15 +121,11 @@ define([
      */
     function addCategories(model, categories) {
         if (isValidTestPartModel(model)) {
-            _.each(model.assessmentSections, function(section) {
-                _.each(section.sectionParts, function(itemRef) {
-                    if (itemRef['qti-type'] === 'assessmentItemRef') {
-                        if (!_.isArray(itemRef.categories)) {
-                            itemRef.categories = [];
-                        }
-                        itemRef.categories = _.union(itemRef.categories, categories);
-                    }
-                });
+            testModelHelper.eachItemInTestPart(model, itemRef => {
+                if (!_.isArray(itemRef.categories)) {
+                    itemRef.categories = [];
+                }
+                itemRef.categories = _.union(itemRef.categories, categories);
             });
         } else {
             errorHandler.throw(_ns, 'invalid tool config format');
@@ -148,12 +141,10 @@ define([
      */
     function removeCategories(model, categories) {
         if (isValidTestPartModel(model)) {
-            _.each(model.assessmentSections, function(section) {
-                _.each(section.sectionParts, function(itemRef) {
-                    if (itemRef['qti-type'] === 'assessmentItemRef' && _.isArray(itemRef.categories)) {
-                        itemRef.categories = _.difference(itemRef.categories, categories);
-                    }
-                });
+            testModelHelper.eachItemInTestPart(model, itemRef => {
+                if (_.isArray(itemRef.categories)) {
+                    itemRef.categories = _.difference(itemRef.categories, categories);
+                }
             });
         } else {
             errorHandler.throw(_ns, 'invalid tool config format');
