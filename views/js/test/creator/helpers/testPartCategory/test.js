@@ -53,8 +53,47 @@ define([
         ]
     };
 
+    const _testPartModelNested = {
+        'qti-type': 'testPart',
+        assessmentSections: [
+            {
+                'qti-type': 'assessmentSection',
+                sectionParts: [
+                    {
+                        'qti-type': 'assessmentSection',
+                        sectionParts: [
+                            {
+                                'qti-type': 'assessmentItemRef',
+                                categories: ['A', 'B']
+                            },
+                            {
+                                'qti-type': 'assessmentItemRef',
+                                categories: ['A', 'B']
+                            }
+                        ]
+                    },
+                ]
+            },
+            {
+                'qti-type': 'assessmentSection',
+                sectionParts: [
+                    {
+                        'qti-type': 'assessmentItemRef',
+                        categories: ['A', 'B', 'C', 'D']
+                    },
+                    {
+                        'qti-type': 'assessmentItemRef',
+                        categories: ['A', 'B', 'D', 'E', 'F']
+                    }
+                ]
+            },
+        ]
+    };
+
     QUnit.test('isValidTestPartModel', function(assert) {
         assert.ok(testPartCategory.isValidTestPartModel(_testPartModel));
+
+        assert.ok(testPartCategory.isValidTestPartModel(_testPartModelNested));
 
         assert.notOk(testPartCategory.isValidTestPartModel({
             'qti-type': 'assessmentItemRef',
@@ -82,16 +121,21 @@ define([
         }));
     });
 
-    QUnit.test('getCategories', function(assert) {
-        const testPartModel = _.cloneDeep(_testPartModel);
-        const categories = testPartCategory.getCategories(testPartModel);
+    QUnit.cases.init([
+        { title: 'not nested', testPartModel: _.cloneDeep(_testPartModel) },
+        { title: 'nested', testPartModel: _.cloneDeep(_testPartModelNested) }
+    ]).test('getCategories ', function(data, assert) {
+        const categories = testPartCategory.getCategories(_.cloneDeep(data.testPartModel));
         assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F'], 'all categories found');
         assert.deepEqual(categories.propagated, ['A', 'B'], 'propagated categories found');
         assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
     });
 
-    QUnit.test('addCategories', function(assert) {
-        const testPartModel = _.cloneDeep(_testPartModel);
+    QUnit.cases.init([
+        { title: 'not nested', testPartModel: _.cloneDeep(_testPartModel) },
+        { title: 'nested', testPartModel: _.cloneDeep(_testPartModelNested) }
+    ]).test('addCategories ', function(data, assert) {
+        const testPartModel = _.cloneDeep(data.testPartModel);
         let categories = testPartCategory.getCategories(testPartModel);
 
         assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F'], 'all categories found');
@@ -112,8 +156,11 @@ define([
         assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
     });
 
-    QUnit.test('removeCategories', function(assert) {
-        const testPartModel = _.cloneDeep(_testPartModel);
+    QUnit.cases.init([
+        { title: 'not nested', testPartModel: _.cloneDeep(_testPartModel) },
+        { title: 'nested', testPartModel: _.cloneDeep(_testPartModelNested) }
+    ]).test('removeCategories ', function(data, assert) {
+        const testPartModel = _.cloneDeep(data.testPartModel);
         let categories = testPartCategory.getCategories(testPartModel);
 
         assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F'], 'all categories found');
@@ -142,8 +189,11 @@ define([
         assert.deepEqual(categories.partial, ['C', 'E'], 'partial categories found');
     });
 
-    QUnit.test('setCategories', function(assert) {
-        const testPartModel = _.cloneDeep(_testPartModel);
+    QUnit.cases.init([
+        { title: 'not nested', testPartModel: _.cloneDeep(_testPartModel) },
+        { title: 'nested', testPartModel: _.cloneDeep(_testPartModelNested) }
+    ]).test('setCategories ', function(data, assert) {
+        const testPartModel = _.cloneDeep(data.testPartModel);
         let categories = testPartCategory.getCategories(testPartModel);
 
         assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F'], 'all categories found');
