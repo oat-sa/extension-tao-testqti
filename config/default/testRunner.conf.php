@@ -402,9 +402,16 @@ return [
             'reviewLayout' => 'default',
             /**
              * Display section titles or not
+             * (Applies only to `fizzy` layout)
              * @type boolean
              */
-            'displaySectionTitles' => true
+            'displaySectionTitles' => true,
+            /**
+             * Show item title as a tooltip
+             * (Applies only to `fizzy` layout)
+             * @type boolean
+             */
+            'displayItemTooltip' => false
         ]
     ],
 
