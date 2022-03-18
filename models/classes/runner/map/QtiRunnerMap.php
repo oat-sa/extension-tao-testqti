@@ -285,6 +285,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
                         $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
                         $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
+                        $map['parts'][$partId]['sections'][$sectionId]['visible'] = $section->isVisible();
                         $map['parts'][$partId]['sections'][$sectionId]['isCatAdaptive'] = CatUtils::isAssessmentSectionAdaptive($section);
                         $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
 
