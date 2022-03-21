@@ -31,6 +31,7 @@ define([
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/categorySelector',
+    'taoQtiTest/controller/creator/helpers/testPartCategory',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
     'taoQtiTest/controller/creator/views/subsection',
@@ -49,6 +50,7 @@ define([
     templates,
     qtiTestHelper,
     categorySelectorFactory,
+    testPartCategory,
     sectionCategory,
     sectionBlueprint,
     subsectionView,
@@ -80,7 +82,9 @@ define([
             sectionModel.itemSessionControl = {};
         }
         if (!sectionModel.categories) {
-            sectionModel.categories = defaults().categories;
+            // inherit the parent testPart's propagated categories
+            const partCategories = testPartCategory.getCategories(partModel);
+            sectionModel.categories = _.clone(partCategories.propagated || defaults().categories);
         }
         _.defaults(sectionModel.itemSessionControl, partModel.itemSessionControl);
 

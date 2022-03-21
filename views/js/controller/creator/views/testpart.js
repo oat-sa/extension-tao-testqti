@@ -26,8 +26,10 @@ define([
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/section',
     'taoQtiTest/controller/creator/templates/index',
-    'taoQtiTest/controller/creator/helpers/qtiTest'
-], function ($, _, defaults, actions, sectionView, templates, qtiTestHelper) {
+    'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/testPartCategory',
+    'taoQtiTest/controller/creator/helpers/categorySelector'
+], function ($, _, defaults, actions, sectionView, templates, qtiTestHelper, testPartCategory, categorySelectorFactory) {
     'use strict';
 
     /**
@@ -76,6 +78,11 @@ define([
                     propView.destroy();
                 }
             });
+
+            //testPart level category configuration
+            categoriesProperty($view);
+
+            actions.displayCategoryPresets($testPart, 'testpart');
         }
 
         /**
@@ -132,7 +139,7 @@ define([
                         const index = $section.data('bind-index');
                         const sectionModel = partModel.assessmentSections[index];
 
-                        //initialize the new test part
+                        //initialize the new section
                         sectionView.setUp(creatorContext, sectionModel, partModel, $section);
 
                         /**
@@ -142,6 +149,40 @@ define([
                         modelOverseer.trigger('section-add', sectionModel);
                     }
                 });
+        }
+
+        /**
+         * Set up the category property
+         * @private
+         * @param {jQuery} $view - the $view object containing the $select
+         * @fires modelOverseer#category-change
+         */
+        function categoriesProperty($view) {
+            const categoriesSummary = testPartCategory.getCategories(partModel);
+            const categorySelector = categorySelectorFactory($view);
+
+            categorySelector.createForm(categoriesSummary.all);
+            updateFormState(categorySelector);
+
+            $view.on('propopen.propview', function () {
+                updateFormState(categorySelector);
+            });
+
+            $view.on('set-default-categories', function () {
+                partModel.categories = defaults().categories;
+                updateFormState(categorySelector);
+            });
+
+            categorySelector.on('category-change', function (selected, indeterminate) {
+                testPartCategory.setCategories(partModel, selected, indeterminate);
+
+                modelOverseer.trigger('category-change');
+            });
+        }
+
+        function updateFormState(categorySelector) {
+            const categoriesSummary = testPartCategory.getCategories(partModel);
+            categorySelector.updateFormState(categoriesSummary.propagated, categoriesSummary.partial);
         }
     }
 

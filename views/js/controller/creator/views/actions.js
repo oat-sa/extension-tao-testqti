@@ -235,23 +235,32 @@ define([
     /**
      * Hides/shows category-presets (Test Navigation, Navigation Warnings, Test-Taker Tools)
      * Hide category-presets for section that contains subsections
-     * @param {jQueryElement} $section
+     * @param {jQueryElement} $authoringContainer
+     * @param {string} [scope='section'] // can also be 'testpart'
      * @fires propertiesView#set-default-categories
      */
-    function displayCategoryPresets($section) {
-        const id = $section.attr('id');
-        const $propertiesView = $(`.test-creator-props #section-props-${id}`);
+    function displayCategoryPresets($authoringContainer, scope = 'section') {
+        const id = $authoringContainer.attr('id');
+        const $propertiesView = $(`.test-creator-props #${scope}-props-${id}`);
         if (!$propertiesView.length) {
             // property view is not setup
             return;
         }
         const $elt = $propertiesView.find('.category-presets');
-        const subsectionsCount = subsectionsHelper.getSubsections($section).length;
-        if (subsectionsCount) {
-            $elt.hide();
-            $propertiesView.trigger('set-default-categories');
-        } else {
-            $elt.show();
+        switch (scope) {
+            case 'testpart':
+                $elt.show();
+                break;
+
+            case 'section':
+                const subsectionsCount = subsectionsHelper.getSubsections($authoringContainer).length;
+                if (subsectionsCount) {
+                    $elt.hide();
+                    $propertiesView.trigger('set-default-categories');
+                } else {
+                    $elt.show();
+                }
+                break;
         }
     }
 
