@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 
     const sassConfig = grunt.config('sass') || {};
     const root       = path.join(grunt.option('root'), '/taoQtiTest/views/');
-    const runnerScssPath = path.join(root, 'node_modules/@oat-sa/tao-test-runner-qti/scss');
+    const runnerScssPath = path.join(root, 'scss');
 
     grunt.config.merge({
         sass : {
