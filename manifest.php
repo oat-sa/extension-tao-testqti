@@ -88,7 +88,6 @@ return [
             RegisterTestContainer::class,
             SetUpQueueTasks::class,
             SetLinearNextItemWarningConfig::class,
-            RegisterFrontendPaths::class,
             RegisterTimerStrategyService::class,
             RegisterTimerAdjustmentService::class,
             RegisterQtiPackageExporter::class,
