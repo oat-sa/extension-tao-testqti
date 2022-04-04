@@ -1,0 +1,15 @@
+.wait-content {
+    .wait-content_text--centered {
+        text-align: center;
+    }
+
+    .wait-content_actions-list {
+        @include flex-container();
+        @include vendor-prefix(flex-direction, column, property);
+
+        .wait-content_text--centered{
+            position: relative;
+            right: 15px;
+        }
+    }
+}

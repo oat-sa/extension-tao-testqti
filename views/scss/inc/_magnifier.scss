@@ -1,0 +1,144 @@
+.magnifier-container.magnifier-container {
+
+    background-color: transparent;
+
+    .dynamic-component-title-bar {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        background-color: transparent;
+        border: none;
+        position: absolute;
+        width: 100%;
+        z-index: 3;
+
+        &.moving {
+            background: $uiClickableDefaultBg;
+            border-bottom: 1px solid $websiteBorder;
+        }
+
+        .closer {
+            display: none;
+        }
+    }
+
+    .dynamic-component-resize-container {
+        .dynamic-component-resize-wrapper {
+            bottom: 0;
+
+            &:hover, &.resizing {
+                bottom: 20px;
+            }
+        }
+    }
+
+    .dynamic-component-content {
+        .magnifier {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: $uiGeneralContentBg;
+            opacity: 1;
+            @include border-radius(5);
+            @include vendor-prefix(property, transform, translateZ(0));
+            box-sizing: content-box;
+            padding-bottom: 30px;
+
+            @include keyframes(fadeIn) {
+                0%   {opacity:0; visibility: visible;}
+                100% {opacity:1; visibility: visible;}
+            }
+            @include keyframes(fadeOut) {
+                0%   {opacity:1; visibility: visible;}
+                100% {opacity:0; visibility: hidden;}
+            }
+            @include keyframes(pop) {
+                0%   {opacity:0;  visibility: visible;}
+                50%  {opacity:.5; visibility: visible; transform: scale(2);}
+                100% {opacity:0;  visibility: hidden;  transform: scale(3);}
+            }
+
+            .level {
+                position: absolute;
+                overflow: hidden;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                background: transparent;
+                color: $uiClickableHoverBg;
+                opacity: 1;
+
+                @include font-size(50);
+                @include flex-container();
+                @include vendor-prefix(align-items, center, property);
+                @include vendor-prefix(justify-content, center, property);
+                @include vendor-prefix(animation, pop 400ms forwards, property);
+
+                &:before {
+                    content: "x";
+                }
+            }
+
+            .overlay {
+                position: absolute;
+                overflow: hidden;
+                z-index: 2;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                background: transparent;
+            }
+
+            > .controls {
+                position: absolute;
+                background-color: $uiClickableDefaultBg;
+                border: 0 solid $websiteBorder;
+                min-height: 29px;
+                z-index: 4;
+
+                a {
+                    color: $textColor;
+                    text-decoration: none;
+                    @include font-size(20);
+                    margin: 0 2px;
+
+                    &:hover {
+                        color: $pluginLinkHover;
+                    }
+                }
+
+                &.close {
+                    top: 0;
+                    right: 0;
+                    border-bottom-width: 1px;
+                    border-left-width: 1px;
+                    @include border-radius-bottom-left(5);
+                }
+            }
+
+            .inner {
+                position: absolute;
+            }
+        }
+
+        &.moving {
+            .magnifier {
+                .controls {
+                    border-left: none;
+                    border-bottom-left-radius: 0;
+                }
+            }
+        }
+
+        &.sizing {
+            border-color: $pluginBorderTransparent;
+
+            .inner, .controls, .level {
+                opacity: .45!important;
+            }
+        }
+    }
+}

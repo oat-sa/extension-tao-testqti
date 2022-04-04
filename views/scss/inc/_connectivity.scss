@@ -1,0 +1,34 @@
+.connectivity-box {
+    display: none;
+    width: 40px;
+    margin-left: 40px;
+    &.with-message {
+        width: 60px; 
+    }
+    .icon-connect, .icon-disconnect {
+        display: none;
+        line-height: 2;
+        @include font-size(16);
+        text-shadow: 0 1px 0 black(.9);
+    }
+    .message-connect, .message-disconnected {
+        display: none;
+        @include font-size(14);
+        text-shadow: none;
+        margin-right: 3px;
+    }
+    &.connected, &.disconnected {
+        display: inline-block;
+    }
+    &.connected {
+        .icon-connect, .message-connect {
+            display: inline-block;
+        }
+        
+    }
+    &.disconnected {
+        .icon-disconnect, .message-disconnected  {
+            display: inline-block;
+        }
+    }
+}

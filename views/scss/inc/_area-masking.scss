@@ -1,0 +1,132 @@
+
+.mask-container.mask-container {
+    background-color: transparent;
+
+    .dynamic-component-title-bar {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        background-color: transparent;
+        border: none;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+
+        &.moving {
+            background: $uiClickableDefaultBg;
+            border-bottom: 1px solid $websiteBorder;
+        }
+
+        .closer {
+            display: none;
+        }
+
+    }
+
+    .dynamic-component-resize-container {
+        .dynamic-component-resize-wrapper {
+            bottom: 0;
+
+            &:hover, &.resizing {
+                bottom: 20px;
+            }
+        }
+    }
+
+    .dynamic-component-content {
+        .mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            @include border-radius(5);
+            background: transparent;
+            opacity: 1;
+            @include vendor-prefix(property, transform, translateZ(0));
+
+            .inner {
+                @include border-radius(5);
+                position: relative;
+                width: 100%;
+                height: 100%;
+                background-color: $uiGeneralContentBg;
+                opacity: 1;
+                box-sizing: content-box;
+                padding-bottom: 30px;
+            }
+
+            .controls {
+                background: $uiClickableDefaultBg;
+                position: absolute;
+                top: 0;
+                right: 0;
+                padding: 0 5px 0 10px;
+                border-radius: 5px;
+                border-top-left-radius: 0;
+                border-bottom-right-radius: 0;
+                border-bottom: 1px solid $websiteBorder;
+                border-left: 1px solid $websiteBorder;
+                height: 30px;
+                z-index: 2;
+
+                a {
+                    text-decoration: none;
+                    margin-right: 5px;
+                    vertical-align: middle;
+                    &:hover {
+                        color: $pluginLinkHover;
+                    }
+                }
+                .view {
+                    @include font-size(20);
+                }
+                .close {
+                    @include font-size(20);
+                }
+            }
+        }
+
+        &.moving {
+            .mask {
+                .inner {
+                    border-color: $pluginBorderTransparent;
+                    opacity: .55;
+                }
+                .controls {
+                    border-left: none;
+                    border-bottom-left-radius: 0;
+                    z-index: 2;
+                }
+            }
+        }
+
+        &.sizing {
+            .mask {
+                border-color: $pluginBorderTransparent;
+                .inner{
+                    opacity: .55;
+                }
+                .controls {
+                    background-color: transparent;
+                    border-bottom: none;
+                    border-left: none;
+                }
+            }
+        }
+    }
+
+    &.previewing {
+        .dynamic-component-content{
+            .mask{
+                .inner {
+                    opacity: .15;
+                    @include transition(opacity, 600ms, ease);
+                }
+
+                .controls {
+                    background-color: transparent;
+                    border-bottom: none;
+                    border-left: none;
+                }
+            }
+        }
+    }
+}

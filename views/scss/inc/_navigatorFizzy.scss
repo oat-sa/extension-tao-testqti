@@ -1,0 +1,73 @@
+@import 'inc/bootstrap';
+
+$lineHeight: 3rem;
+$separatorColor: whiten($grey, 0.4);
+
+.qti-navigator-fizzy {
+    @include disableSelect();
+    @include flex-container();
+    @include vendor-prefix(flex-direction, column, property);
+    cursor: default;
+    min-width: calc(18rem - 8px);
+    height: 100%;
+    position: relative;
+    background-color: $uiReviewPanelBg !important;
+    width: 30rem;
+
+    .qti-navigator-tree {
+        overflow-y: auto;
+        max-height: 100%;
+        display: block;
+        background: none;
+        margin: 0 5px;
+    }
+
+    .qti-navigator-linear {
+        padding: 8px;
+        margin: 0 5px;
+        background: white();
+
+        .qti-navigator-message {
+            @include font-size(14);
+        }
+    }
+
+    .qti-navigator-section {
+        display: block;
+
+        .qti-navigator-label {
+            background-color: initial;
+            border: none;
+            padding: 0;
+            line-height: initial;
+            margin: 13px 0 10px 0;
+            @include font-size(15);
+        }
+    }
+
+    .qti-navigator-header {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid $separatorColor;
+        padding: 15px 0 5px 0;
+        margin: 0 5px;
+        line-height: initial;
+
+        .qti-navigator-text {
+            @include font-size(20);
+            font-weight: bold;
+        }
+
+        .icon-close {
+            @include font-size(28);
+            line-height: $lineHeight;
+            color: $uiReviewPanelTextDefault;
+
+            &:hover {
+                color: $uiReviewPanelTextDefault;
+                text-decoration: none;
+                cursor: pointer;
+            }
+        }
+    }
+}

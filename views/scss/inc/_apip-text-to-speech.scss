@@ -1,0 +1,189 @@
+$stfCursor: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxNHB4IiBoZWlnaHQ9IjE0cHgiIHZpZXdCb3g9IjAgMCAxNCAxNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5Hcm91cCAyPC90aXRsZT4gICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+ICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9IkFydGJvYXJkIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjQuMDAwMDAwLCAtMTYuMDAwMDAwKSI+ICAgICAgICAgICAgPGcgaWQ9Ikdyb3VwLTIiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIzLjAwMDAwMCwgMTUuMDAwMDAwKSI+ICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtQ29weS02IiB4PSIwIiB5PSIwIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiPjwvcmVjdD4gICAgICAgICAgICAgICAgPGcgaWQ9Imljb24tLy0xNi0vLWNoZXZyb24tYm90dG9tLWNvcHkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEuMDAwMDAwLCAyLjAwMDAwMCkiIGZpbGw9IiMyRDJEMkQiPiAgICAgICAgICAgICAgICAgICAgPHBvbHlnb24gaWQ9InN3YXAtaWNvbi1jb2xvciIgcG9pbnRzPSIwIDAgMCA4IDYgNCI+PC9wb2x5Z29uPiAgICAgICAgICAgICAgICA8L2c+ICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtQ29weSIgZmlsbD0iIzJEMkQyRCIgeD0iOSIgeT0iNSIgd2lkdGg9IjYiIGhlaWdodD0iMiI+PC9yZWN0PiAgICAgICAgICAgICAgICA8cmVjdCBpZD0iUmVjdGFuZ2xlLUNvcHktNCIgZmlsbD0iIzJEMkQyRCIgeD0iOSIgeT0iMSIgd2lkdGg9IjYiIGhlaWdodD0iMiI+PC9yZWN0PiAgICAgICAgICAgICAgICA8cmVjdCBpZD0iUmVjdGFuZ2xlLUNvcHktMiIgZmlsbD0iIzJEMkQyRCIgeD0iOSIgeT0iOSIgd2lkdGg9IjYiIGhlaWdodD0iMiI+PC9yZWN0PiAgICAgICAgICAgICAgICA8cmVjdCBpZD0iUmVjdGFuZ2xlLUNvcHktMyIgZmlsbD0iIzJEMkQyRCIgeD0iMSIgeT0iMTMiIHdpZHRoPSIxNCIgaGVpZ2h0PSIyIj48L3JlY3Q+ICAgICAgICAgICAgPC9nPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+);
+$activeApipElementBackgroundColor: yellow;
+
+.tts-container {
+    .tts-controls {
+        @include flex-container();
+
+        background-color: $uiClickableDefaultBg;
+        @include box-shadow(0, 2px, 3px, 1px, rgba(0, 0, 0, 0.20));
+
+        .tts-control {
+            @include flex-container();
+            @include vendor-prefix(justify-content, center, property);
+            @include vendor-prefix(align-items, center, property);
+
+            color: $textColor;
+            height: 100%;
+            padding: 6px 8.5px;
+            text-decoration: none;
+
+            .tts-control-label {
+                padding-left: 7.5px;
+            }
+
+            .tts-icon {
+                font-size: 18px;
+                text-align: center;
+                width: 18px;
+            }
+
+            .icon-pause {
+                display: none;
+            }
+
+            &.tts-control-drag {
+                cursor: move;
+
+                .tts-icon {
+                    color: lighten($textColor, 20);
+                }
+
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+
+            &:hover {
+                background-color: darken($uiClickableDefaultBg, 10);
+            }
+        }
+
+        .tts-control-container {
+            @include flex-container();
+
+            .tts-slider-container {
+                display: none;
+
+                .tts-slider {
+                    margin: 0 8.5px;
+                    width: 80px;
+                }
+            }
+        }
+    }
+
+    &.playing {
+        .tts-controls {
+            .tts-control {
+                .icon-pause {
+                    display: block;
+                }
+
+                .icon-play {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    &.sfhMode {
+        .tts-controls {
+            .tts-control.tts-control-mode {
+                @include vendor-prefix(box-shadow, inset 2px 2px 4px rgba(0, 0, 0, 0.20), property);
+
+                background-color: darken($uiClickableDefaultBg, 10);
+            }
+        }
+    }
+
+    &.settings {
+        .tts-controls {
+            .tts-control-container {
+                .tts-slider-container {
+                    @include flex-container();
+                    @include vendor-prefix(align-items, center, property);
+                }
+
+                &:last-child {
+                    @include vendor-prefix(box-shadow, inset 2px 2px 4px rgba(0, 0, 0, 0.20), property);
+
+                    background-color: darken($uiClickableDefaultBg, 10);
+                }
+
+                .tts-control-settings {
+                    &:hover {
+                        background-color: transparent;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.tts-content-node {
+    outline: none;
+}
+
+
+.tts-visible.tts-component-container {
+    .test-runner-sections {
+        .tts-content-node {
+            &:hover,
+            &:focus {
+                background-color: transparent !important;
+                color: $textColor !important;
+            }
+
+            .label-box,
+            .qti-choice {
+                cursor: default !important;
+            }
+        }
+    }
+}
+
+.tts-sfhMode.tts-component-container {
+    .test-runner-sections {
+        cursor: $stfCursor 0 32, auto !important;
+
+        .tts-content-node {
+            &.tts-active-content-node {
+                &:hover {
+                    color: $textColor !important;
+                    background-color: $activeApipElementBackgroundColor !important;
+                }
+            }
+
+            &:hover,
+            &:focus {
+                color: $textColor !important;
+                background-color: $uiClickableDefaultBg !important;
+            }
+
+            .label-box,
+            .qti-choice {
+                cursor: $stfCursor 0 32, auto !important;
+            }
+        }
+
+        img.tts-content-node {
+            &:hover,
+            &:focus {
+                padding: 5px;
+            }
+        }
+    }
+}
+
+.tts-playing.tts-component-container {
+    .test-runner-sections {
+        .tts-content-node {
+            &.tts-active-content-node, &.tts-active-content-node * {
+                color: $textColor !important;
+                background-color: $activeApipElementBackgroundColor !important;
+
+                &:hover {
+                    color: $textColor !important;
+                    background-color: $activeApipElementBackgroundColor !important;
+                }
+            }
+        }
+
+        img.tts-content-node {
+            &.tts-active-content-node {
+                padding: 5px;
+            }
+        }
+    }
+}

@@ -1,0 +1,35 @@
+/*
+Usage:
+- linear-gradient((color1, color2, color3)) - returns linear-gradient with evenly distributed colors,
+   if 3 colors used then the position of each will be 33,33%
+- linear-gradient((color1 0%, color2 30%, color3 80%)) - returns linear-gradient with manually distributed colors,
+   first param - color, second - position. Also you can use px or other valid units for set position.
+*/
+/* based on "visually-hidden" mixin in LDS for accessibility goals */
+/* Do not edit */
+.countdown {
+    opacity: 0;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    text-align: center;
+    vertical-align: top;
+    line-height: 1.2;
+    padding: 0 20px;
+    margin-top: -1px;
+    height: 100%;
+}
+
+.countdown.rendered {
+    opacity: 1;
+    transition: opacity, 300ms, linear, 0s;
+}
+
+.countdown .label {
+    max-width: 130px;
+    display: block;
+    font-size: 12px;
+    font-size: 1.2rem;
+}
+
+/*# sourceMappingURL=countdown.css.map */

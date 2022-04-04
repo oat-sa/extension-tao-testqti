@@ -1,0 +1,1 @@
+<div class="widget-calculator" dir="ltr"></div>

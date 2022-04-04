@@ -1,0 +1,81 @@
+/**
+ * Copyright (c) 2021 Open Assessment Technologies SA
+*/
+
+.runner {
+  .test-runner-scope {
+    .bottom-action-bar {
+      .control-box {
+
+        & > .lft {
+          float: right;
+          margin: 2px 10px 0 0;
+        }
+        .rgt {
+          float: left;
+        }
+
+        .tools-box-list, .navi-box-list {
+          //for first level only
+          & > .action {
+            & > .li-inner > .icon {
+              display: inline-block;
+            }
+            // for nested menus
+            .action {
+              text-align: right;
+              &.active {
+                .icon.icon-checkbox-checked {
+                  display: inline-block;
+                }
+              }
+              &:not(.active) {
+                .icon.icon-checkbox {
+                  display: inline-block;
+                }
+                &:hover {
+                  .icon.icon-checkbox {
+                    display: none;
+                  }
+                  .icon.icon-checkbox-checked {
+                    display: inline-block;
+                  }
+                }
+              }
+            }
+            .menu {
+              left: auto;
+              right: -3px;
+            }
+          }
+
+          .action {
+            float: right;
+            .icon {
+              padding: 0 0 0 9px;
+              &.icon-right,
+              &.icon-left,
+              &.icon-fast-forward,
+              &.icon-step-forward,
+              &.icon-forward,
+              &.icon-fast-backward,
+              &.icon-step-backward,
+              &.icon-external,
+              &.icon-backward {
+                &:before {
+                  display: inline-block;
+                  transform: scaleX(-1);
+                }
+              }
+            }
+            .action {
+              text-align: right;
+            }
+          }
+
+        }
+
+      }
+    }
+  }
+}

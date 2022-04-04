@@ -1,0 +1,16 @@
+/**
+ * Copyright (c) 2021 Open Assessment Technologies SA
+*/
+.qti-item {
+    & [class^="feedback-"].small,
+    & [class*=" feedback-"].small {
+        padding: 8px 45px 8px 20px;
+        text-align: right;
+
+        &>[class^="icon-"],
+        &>[class*=" icon-"] {
+            left: auto;
+            right: 10px;
+        }
+    }
+}
