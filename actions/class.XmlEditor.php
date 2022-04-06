@@ -34,7 +34,7 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
    public function edit() : void
    {
        if (!$this->hasPostParameter('id')) {
-            $this->returnError(__('Missed required parameter \'id\''));
+            $this->returnError(__("Missed required parameter 'id'"));
             return;
        }
        $test = $this->getResource($this->getPostParameter('id'));

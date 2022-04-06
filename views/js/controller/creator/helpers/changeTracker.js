@@ -61,7 +61,7 @@ define([
     const buttonsCancelSave = [{
         id: 'dontsave',
         type: 'regular',
-        label: __('Don\'t save'),
+        label: __("Don't save"),
         close: true
     }, {
         id: 'cancel',
@@ -159,11 +159,14 @@ define([
                         this.ifWantSave(whatToDo);
                     }))
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
-                        if(testCreator.isTestHasErrors()){
-                            feedback().warning(`${__('The test cannot be saved because it currently contains invalid settings.\n' +
-                                'Please fix the invalid settings and try again.')}`);
+                        if (testCreator.isTestHasErrors()) {
+                            const warningMsg = [
+                                __('The test cannot be saved because it currently contains invalid settings.'),
+                                __('Please fix the invalid settings and try again.')
+                            ].join('\n');
+                            feedback().warning(`${warningMsg}`);
                         } else {
-                        this.ifWantSave(whatToDo);
+                            this.ifWantSave(whatToDo);
                         }
                     }))
                     .before(`exit${eventNS}`, () => this.uninstall());
