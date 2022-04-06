@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint146\n"
-"PO-Revision-Date: 2021-01-20T12:36:07\n"
+"Project-Id-Version: TAO 2022.01\n"
+"PO-Revision-Date: 2022-04-06T19:52:24\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -46,6 +46,9 @@ msgstr "Pasitikrinkite ar teisingai įvedėte atsakymą."
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Matomas skyrius yra kandidatui atpažįstamas."
 
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
+
 msgid "Activated"
 msgstr "Aktyvuota"
 
@@ -57,6 +60,9 @@ msgstr "Pridėti ZIP failą turintį QTI/APIP testus ir elementus"
 
 msgid "Add selected item(s) here."
 msgstr "Įkelkite pažymėtus klausimus šioje vietoje"
+
+msgid "Add Subsection"
+msgstr ""
 
 msgid "Add the source file"
 msgstr "Pridėti šaltinio failą."
@@ -223,6 +229,15 @@ msgstr ""
 msgid "Black on White"
 msgstr ""
 
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
+msgid "Bookmarked question %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Skaičiuotuvas"
 
@@ -232,11 +247,11 @@ msgstr "Skaičiuotuvas BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr ""
-
 msgid "Cancel"
 msgstr "Atšaukti"
+
+msgid "CANCEL"
+msgstr "ATŠAUKTI"
 
 msgid "Candidate"
 msgstr "Kandidatas"
@@ -265,7 +280,7 @@ msgstr "Pašalinti visus aktyvius paryškinimus."
 msgid "Clear Highlights"
 msgstr "Pašalinti Paryškinimus."
 
-msgid "Click \"%s\" to continue"
+msgid "Click \"%s\" to continue."
 msgstr ""
 
 msgid "Click to speak"
@@ -361,6 +376,9 @@ msgstr "Rodomas pavadinimas"
 msgid "Displays a customisable magnifier"
 msgstr "Didinimo įrankis"
 
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "Nežymėti šio elemento vėlesnei apžvalgai"
 
@@ -370,7 +388,7 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr "Nėrodyti įspėjimo pasibaigus laikui"
 
-msgid "Don\'t save"
+msgid "Don't save"
 msgstr ""
 
 msgid "Download"
@@ -406,10 +424,10 @@ msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Baigti darbą"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Baigti darbą"
 
 msgid "Enter a blueprint"
@@ -431,6 +449,9 @@ msgstr "Rasta klaida IMS QTI Teste:\n"
 
 msgid "Expand the review panel"
 msgstr "Praplėsti apžvalgos skydelį"
+
+msgid "Export"
+msgstr ""
 
 msgid "Export failed for the test \"%s"
 msgstr "Nepavyko testo \"%s eksportavimas"
@@ -507,6 +528,9 @@ msgstr ""
 msgid "Hide Review"
 msgstr "Slėpti apžvalgą"
 
+msgid "Hide test overview panel"
+msgstr ""
+
 msgid "Hide the review screen"
 msgstr "Slėpti apžvalgos ekraną"
 
@@ -558,6 +582,9 @@ msgstr ""
 msgid "If the connection cannot be restored, see option B."
 msgstr ""
 
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr ""
+
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
@@ -591,6 +618,9 @@ msgstr "Neatitikimai %1d eilutėje:"
 msgid "Individual"
 msgstr "Individualus"
 
+msgid "Informational item"
+msgstr ""
+
 msgid "Informational Item Usage"
 msgstr "Informacinis Elemento Naudojimas"
 
@@ -599,9 +629,6 @@ msgstr "Vidinė serverio klaida!"
 
 msgid "is already used in the test."
 msgstr "jau naudojamas teste."
-
-msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr "blogas identifikatorius (raidžiai, skaičiai, pabraukimo simbolis, brūkšnys ir taškai)"
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "blogas identifikatorius (viskas išskyrus tarpus)"
@@ -763,7 +790,7 @@ msgstr "Minimali trukmė šio testo daliai."
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\'"
+msgid "Missed required parameter 'id"
 msgstr ""
 
 msgid "Missed test package file"
@@ -816,6 +843,9 @@ msgstr "Kitas skyrius"
 
 msgid "No"
 msgstr "Ne"
+
+msgid "NO"
+msgstr ""
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr ""
@@ -928,6 +958,9 @@ msgstr "Leisti"
 msgid "Please confirm you want to leave the test."
 msgstr "Prašome patvirtinti, kad jūs norite palikti testą."
 
+msgid "Please fix the invalid settings and try again."
+msgstr ""
+
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr ""
 
@@ -979,6 +1012,9 @@ msgstr ""
 msgid "Question"
 msgstr ""
 
+msgid "Question %s"
+msgstr ""
+
 msgid "questions"
 msgstr ""
 
@@ -1003,6 +1039,9 @@ msgstr "Pašalinti Rubrikos Bloką"
 msgid "Remove Section"
 msgstr "Pašalinti Skyrių"
 
+msgid "Remove Subsection"
+msgstr ""
+
 msgid "Remove Test Part"
 msgstr ""
 
@@ -1017,6 +1056,9 @@ msgstr "Atstatyti filtrus"
 
 msgid "Resource(s) successfully exported."
 msgstr "Resursas(-ai) sėkmingai eksportuoti."
+
+msgid "ResultTransmission event successfully registered"
+msgstr ""
 
 msgid "Review"
 msgstr "Apžvalga"
@@ -1048,10 +1090,10 @@ msgstr "Verintojas"
 msgid "Scoring"
 msgstr "Įvertinimas"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Juodraštis"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Juodraštis"
 
 msgid "Scratchpad"
@@ -1125,6 +1167,9 @@ msgstr "Rodyti Apžvalgą"
 
 msgid "Show Solution"
 msgstr "Rodyti Sprendimą"
+
+msgid "Show test overview panel"
+msgstr ""
 
 msgid "Show the review screen"
 msgstr "Rodyti apžvalgos ekraną"
@@ -1214,7 +1259,7 @@ msgid "Submit and go to the previous item"
 msgstr "Pateikite atsakymą ir grįžkite į ankstesnį klausimo"
 
 msgid "SUBMIT THE TEST"
-msgstr ""
+msgstr "PATEIKTI SAVO TESTĄ"
 
 msgid "SUBMIT THIS PART"
 msgstr ""
@@ -1233,6 +1278,12 @@ msgstr "Testo meta duomenys sėkmingai išeksportuoti."
 
 msgid "Test Navigation"
 msgstr "Testo Navigacija"
+
+msgid "Test overview"
+msgstr ""
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
 
 msgid "Test Part Properties"
 msgstr ""
@@ -1262,11 +1313,11 @@ msgstr "Testai"
 msgid "Text content"
 msgstr "Teksto turinys"
 
-msgid "Text to Speech"
-msgstr "Tekstas Balsu"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Tekstas Balsu"
 
 msgid "that was being taken."
 msgstr ""
@@ -1337,9 +1388,6 @@ msgstr ""
 msgid "The number of child elements to be selected."
 msgstr "Skaičius elementų vaikų pasirinkti."
 
-msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
-msgstr ""
-
 msgid "The outcomes have been regenerated!"
 msgstr ""
 
@@ -1348,6 +1396,9 @@ msgstr "Pagrindinis testo identifikatorius."
 
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
 msgstr "Pateiktas archyvas yra blogas. Patikrinkite ar jis nesugadintas ir turi „imsmanifest.xml“ failą."
+
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "QTI Testas '%s' surinkimui privalo turėti bent 1 QTI Elementą. Joks nebuvo surastas."
@@ -1377,6 +1428,9 @@ msgid "The section title."
 msgstr "Skyriaus pavadinimas."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings."
 msgstr ""
 
 msgid "The test has been closed/suspended!"
@@ -1596,6 +1650,9 @@ msgstr "XML klaida eilutės %1$d stulpelyje %2$d \"%3$s\"."
 msgid "Yellow on Blue"
 msgstr ""
 
+msgid "YES"
+msgstr ""
+
 msgid "Yes"
 msgstr "Taip"
 
@@ -1621,7 +1678,7 @@ msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "Jūs ketinate pateikti savo testą."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Jūs ketinate pateikti savo testą. Jūs negalėsite pasiekti šio testo, kai jis bus pateiktas. Spauskite Taip norėdami pateikti testą."
@@ -1660,7 +1717,7 @@ msgid "You have %s unanswered question(s)."
 msgstr "Liko neatsakyti %s klausimai(-ų)."
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr ""
+msgstr "Jūs negalėsite pasiekti šio testo, kai jis bus pateiktas. Spauskite \"%s\" norėdami pateikti testą."
 
 msgid "Your comment…"
 msgstr "Tavo komentaras..."
