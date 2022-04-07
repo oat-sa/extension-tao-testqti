@@ -265,7 +265,7 @@ msgstr "Borrar todos los resaltados activos"
 msgid "Clear Highlights"
 msgstr "Borrar resaltados"
 
-msgid "Click \"%s\" to continue"
+msgid "Click \"%s\" to continue."
 msgstr "Haga clic en \"%s\" para continuar"
 
 msgid "Click to speak"

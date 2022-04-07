@@ -245,7 +245,7 @@ msgid "Cancel"
 msgstr "キャンセル"
 
 msgid "CANCEL"
-msgstr ""
+msgstr "キャンセル"
 
 msgid "Candidate"
 msgstr "受検者"
@@ -274,7 +274,7 @@ msgstr "すべてのラインマーカをクリア"
 msgid "Clear Highlights"
 msgstr "ラインマーカをクリア"
 
-msgid "Click \"%s\" to continue"
+msgid "Click \"%s\" to continue."
 msgstr "続行するには、「%s」をクリックしてください"
 
 msgid "Click to speak"
@@ -782,7 +782,7 @@ msgstr "このテストパートの最小時間"
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \'id\'"
 msgstr ""
 
 msgid "Missed test package file"
