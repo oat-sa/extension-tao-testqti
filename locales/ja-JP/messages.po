@@ -179,7 +179,7 @@ msgid "Answered"
 msgstr "解答済み"
 
 msgid "APIP Text To Speech"
-msgstr "APIP Text To Speech"
+msgstr "テキスト読み上げ（APIP)"
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
 msgstr "解答をクリアして次に進んでよろしいですか？　戻って解答することができなくなります。"
@@ -822,7 +822,7 @@ msgid "New Rubric Block"
 msgstr "新規ルーブリックブロック"
 
 msgid "New section"
-msgstr ""
+msgstr "新規セクション"
 
 msgid "New test part"
 msgstr "新規テストパート"
@@ -1110,7 +1110,7 @@ msgid "Select the way the responses of your test should be processed"
 msgstr "テストの採点結果の処理方法を選択します"
 
 msgid "Selection"
-msgstr "選択出題"
+msgstr "選択数"
 
 msgid "Send"
 msgstr "送信"
