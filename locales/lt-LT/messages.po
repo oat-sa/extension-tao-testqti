@@ -233,7 +233,7 @@ msgid "Can not playback media file!"
 msgstr ""
 
 msgid "CANCEL"
-msgstr ""
+msgstr "ATŠAUKTI"
 
 msgid "Cancel"
 msgstr "Atšaukti"
@@ -265,7 +265,7 @@ msgstr "Pašalinti visus aktyvius paryškinimus."
 msgid "Clear Highlights"
 msgstr "Pašalinti Paryškinimus."
 
-msgid "Click \"%s\" to continue"
+msgid "Click \"%s\" to continue."
 msgstr ""
 
 msgid "Click to speak"
@@ -1214,7 +1214,7 @@ msgid "Submit and go to the previous item"
 msgstr "Pateikite atsakymą ir grįžkite į ankstesnį klausimo"
 
 msgid "SUBMIT THE TEST"
-msgstr ""
+msgstr "PATEIKTI SAVO TESTĄ"
 
 msgid "SUBMIT THIS PART"
 msgstr ""
@@ -1621,7 +1621,7 @@ msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "Jūs ketinate pateikti savo testą."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Jūs ketinate pateikti savo testą. Jūs negalėsite pasiekti šio testo, kai jis bus pateiktas. Spauskite Taip norėdami pateikti testą."
@@ -1660,7 +1660,7 @@ msgid "You have %s unanswered question(s)."
 msgstr "Liko neatsakyti %s klausimai(-ų)."
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr ""
+msgstr "Jūs negalėsite pasiekti šio testo, kai jis bus pateiktas. Spauskite \"%s\" norėdami pateikti testą."
 
 msgid "Your comment…"
 msgstr "Tavo komentaras..."

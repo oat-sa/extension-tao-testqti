@@ -233,7 +233,7 @@ msgid "Can not playback media file!"
 msgstr ""
 
 msgid "CANCEL"
-msgstr "Annuler"
+msgstr "ANNULER"
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -265,8 +265,8 @@ msgstr "Effacer toutes les mises en surbrillance actives"
 msgid "Clear Highlights"
 msgstr "Effacer la mise en surbrillance"
 
-msgid "Click \"%s\" to continue"
-msgstr "Cliquez sur \"%s\" pour continuer"
+msgid "Click \"%s\" to continue."
+msgstr "Cliquez sur \"%s\" pour continuer."
 
 msgid "Click to speak"
 msgstr "Cliquez pour parler"
@@ -1214,7 +1214,7 @@ msgid "Submit and go to the previous item"
 msgstr "Envoyer et aller à l'item précédent"
 
 msgid "SUBMIT THE TEST"
-msgstr ""
+msgstr "SOUMETTRE LE TEST"
 
 msgid "SUBMIT THIS PART"
 msgstr ""
@@ -1621,7 +1621,7 @@ msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "Vous allez soumettre le test."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Vous allez soumettre le test. Vous n'aurez plus la possibilité d'accéder à ce test une fois soumis. Cliquez sur OK pour continuer et soumettre le test."

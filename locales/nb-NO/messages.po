@@ -265,8 +265,8 @@ msgstr "Nullstill alle aktive uthevinger"
 msgid "Clear Highlights"
 msgstr "Nullstill utheving"
 
-msgid "Click \"%s\" to continue"
-msgstr "Klikk \"%s\" for å fortsette"
+msgid "Click \"%s\" to continue."
+msgstr "Klikk \"%s\" for å fortsette."
 
 msgid "Click to speak"
 msgstr "Klikk for å snakke"
