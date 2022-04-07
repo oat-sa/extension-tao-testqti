@@ -268,7 +268,7 @@ msgstr "(مرئي) امسح كل الإضاءات النشطة"
 msgid "Clear Highlights"
 msgstr "مسح النقاط البارزة"
 
-msgid "Click \"%s\" to continue"
+msgid "Click \"%s\" to continue."
 msgstr "انقر فوق \"%s\" للمتابعة"
 
 msgid "Click to speak"
