@@ -233,7 +233,7 @@ msgid "Can not playback media file!"
 msgstr ""
 
 msgid "CANCEL"
-msgstr ""
+msgstr "NO"
 
 msgid "Cancel"
 msgstr "No"
@@ -265,7 +265,7 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
-msgid "Click \"%s\" to continue"
+msgid "Click \"%s\" to continue."
 msgstr ""
 
 msgid "Click to speak"
@@ -1213,7 +1213,7 @@ msgid "Submit and go to the previous item"
 msgstr "Invia e vai all'item precedente"
 
 msgid "SUBMIT THE TEST"
-msgstr ""
+msgstr "CHIUDERE LA PROVA"
 
 msgid "SUBMIT THIS PART"
 msgstr ""
@@ -1620,7 +1620,7 @@ msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "Hai terminato la prova."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Hai terminato la prova. Una volta chiusa la prova non potrai più ritornare alle domande. Sei sicuro di voler chiudere la prova?"
@@ -1659,7 +1659,7 @@ msgid "You have %s unanswered question(s)."
 msgstr "Grazie"
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr ""
+msgstr "Una volta chiusa la prova non potrai più ritornare alle domande. Sei sicuro di voler chiudere la prova?"
 
 msgid "Your comment…"
 msgstr "Il tuo commento :"
