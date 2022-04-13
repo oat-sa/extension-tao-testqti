@@ -243,8 +243,7 @@ define([
                                 defaultItemData.itemSessionControl = _.clone(sectionModel.itemSessionControl);
                             }
 
-                            //the itemRef should also "inherit" the categories set at the item level
-                            const categories = sectionCategory.getCategories(sectionModel);
+                            //the itemRef should also "inherit" default categories set at the item level
                             defaultItemData.categories = _.clone(defaults().categories) || [];
 
                             _.forEach(selection, function (item) {
