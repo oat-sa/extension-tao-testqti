@@ -248,7 +248,7 @@ define([
 
                             //the itemRef should also "inherit" the categories set at the item level
                             const categories = sectionCategory.getCategories(subsectionModel);
-                            defaultItemData.categories = _.clone(categories.propagated) || [];
+                            defaultItemData.categories = _.clone(defaults().categories) || [];
 
                             _.forEach(selection, function (item) {
                                 const itemData = _.defaults(
