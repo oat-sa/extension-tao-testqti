@@ -233,7 +233,7 @@ msgid "Can not playback media file!"
 msgstr ""
 
 msgid "CANCEL"
-msgstr ""
+msgstr "ANNULEREN"
 
 msgid "Cancel"
 msgstr "Annuleren"
@@ -265,7 +265,7 @@ msgstr "Verwijder alle tekstmarkeringen"
 msgid "Clear Highlights"
 msgstr "Markering verwijderen"
 
-msgid "Click \"%s\" to continue"
+msgid "Click \"%s\" to continue."
 msgstr ""
 
 msgid "Click to speak"
@@ -1214,7 +1214,7 @@ msgid "Submit and go to the previous item"
 msgstr "Ga naar de vorige pagina"
 
 msgid "SUBMIT THE TEST"
-msgstr ""
+msgstr "DE TEST INLEVEREN"
 
 msgid "SUBMIT THIS PART"
 msgstr ""
@@ -1621,7 +1621,7 @@ msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "U staat op het punt om het examen te verzenden."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "U staat op het punt om het examen te verzenden. Na het verzenden bent u niet meer in staat het examen te openen. Klik op OK om de test te verzenden."
@@ -1660,7 +1660,7 @@ msgid "You have %s unanswered question(s)."
 msgstr "U heeft %s onbeantwoorde vra(a)g(en)."
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr ""
+msgstr "Na het verzenden bent u niet meer in staat het examen te openen. Klik op \"%s\" om de test te verzenden."
 
 msgid "Your comment…"
 msgstr "Uw commentaar…"

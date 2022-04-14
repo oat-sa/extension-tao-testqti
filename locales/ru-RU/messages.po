@@ -233,7 +233,7 @@ msgid "Can not playback media file!"
 msgstr ""
 
 msgid "CANCEL"
-msgstr "Отмена"
+msgstr "ОТМЕНА"
 
 msgid "Cancel"
 msgstr "Отмена"
@@ -265,8 +265,8 @@ msgstr "Очистить все активное выделение"
 msgid "Clear Highlights"
 msgstr "Очистить выделение"
 
-msgid "Click \"%s\" to continue"
-msgstr "Нажмите \"%s\", чтобы продолжить"
+msgid "Click \"%s\" to continue."
+msgstr "Нажмите \"%s\", чтобы продолжить."
 
 msgid "Click to speak"
 msgstr "Нажмите, чтобы говорить"
@@ -1213,7 +1213,7 @@ msgid "Submit and go to the previous item"
 msgstr "Отправить и перейти к предыдущему элементу"
 
 msgid "SUBMIT THE TEST"
-msgstr ""
+msgstr "ОТПРАВИТЬ ТЕСТ"
 
 msgid "SUBMIT THIS PART"
 msgstr ""
@@ -1620,7 +1620,7 @@ msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "Вы собираетесь отправить тест."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr "Вы собираетесь отправить тест. После отправки вы уже не будете иметь доступ к этому тесту. Нажмите \"Отправить\", чтобы продолжить и отправить тест."
