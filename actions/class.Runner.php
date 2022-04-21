@@ -744,6 +744,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         try {
             $this->validateSecurityToken();
+            $this->validateDeliveryExecutionInteractionAccessibility();
 
             $command = new PauseCommand($this->getServiceContext());
 
