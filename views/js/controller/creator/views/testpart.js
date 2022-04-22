@@ -22,6 +22,7 @@
 define([
     'jquery',
     'lodash',
+    'services/features',
     'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/section',
@@ -29,8 +30,25 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/testPartCategory',
     'taoQtiTest/controller/creator/helpers/categorySelector'
-], function ($, _, defaults, actions, sectionView, templates, qtiTestHelper, testPartCategory, categorySelectorFactory) {
+], function (
+    $,
+    _,
+    features,
+    defaults,
+    actions,
+    sectionView,
+    templates,
+    qtiTestHelper,
+    testPartCategory,
+    categorySelectorFactory
+) {
     'use strict';
+
+    const addVisibilityProps = model => {
+        if (features.isVisible('taoQtiTest/creator/testPart/property/timeLimits')) {
+            model.showTimeLimits = true;
+        }
+    };
 
     /**
      * Set up a test part: init action behaviors. Called for each test part.
@@ -43,6 +61,9 @@ define([
         const $actionContainer = $('h1', $testPart);
         const $titleWithActions = $testPart.children('h1');
         const modelOverseer = creatorContext.getModelOverseer();
+
+        //add feature visibility properties to testModel
+        addVisibilityProps(partModel);
 
         //run setup methods
         actions.properties($actionContainer, 'testpart', partModel, propHandler);

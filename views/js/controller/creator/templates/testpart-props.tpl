@@ -265,63 +265,65 @@
 
         </div>
 
-        <h4 class="toggler closed" data-toggle="~ .testpart-time-limits">{{__ 'Time Limits'}}</h4>
+        {{#if showTimeLimits}}
+            <h4 class="toggler closed" data-toggle="~ .testpart-time-limits">{{__ 'Time Limits'}}</h4>
 
-<!-- assessmentTest/testPart/timeLimits/minTime -->
-        <div class="testpart-time-limits toggled">
+    <!-- assessmentTest/testPart/timeLimits/minTime -->
+            <div class="testpart-time-limits toggled">
 
-{{!-- Property not yet available in delivery
-<!-- assessmentTest/testPart/timeLimits/minTime -->
-            <div class="grid-row">
-                <div class="col-5">
-                    <label for="testpart-min-time">{{__ 'Minimum Duration'}}</label>
+    {{!-- Property not yet available in delivery
+    <!-- assessmentTest/testPart/timeLimits/minTime -->
+                <div class="grid-row">
+                    <div class="col-5">
+                        <label for="testpart-min-time">{{__ 'Minimum Duration'}}</label>
+                    </div>
+                    <div class="col-6 duration-group">
+                        <input type="text" name="testpart-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
+                    </div>
+                    <div class="col-1 help">
+                        <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                        <div class="tooltip-content">
+                        {{__ 'Minimum duration for this test part.'}}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6 duration-group">
-                    <input type="text" name="testpart-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
+    --}}
+
+    <!-- assessmentTest/testPart/timeLimits/maxTime -->
+                <div class="grid-row">
+                    <div class="col-5">
+                        <label for="testpart-max-time">{{__ 'Maximum Duration'}}</label>
+                    </div>
+                    <div class="col-6 duration-group">
+                        <input type="text" id="testpart-max-time" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
+                    </div>
+                    <div class="col-1 help">
+                        <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                        <div class="tooltip-content">
+                        {{__ 'Maximum duration for this test part.'}}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                    <div class="tooltip-content">
-                    {{__ 'Minimum duration for this test part.'}}
+
+    <!-- assessmentTest/testPart/timeLimits/allowLateSubmission -->
+                <div class="grid-row pseudo-label-box">
+                    <div class="col-5">
+                        <label for="testpart-allow-late-submission">{{__ 'Late submission allowed'}}</label>
+                    </div>
+                    <div class="col-6">
+                        <label>
+                            <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
+                            <span class="icon-checkbox"></span>
+                        </label>
+                    </div>
+                    <div class="col-1 help">
+                        <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                        <div class="tooltip-content">
+                        {{__ "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."}}
+                        </div>
                     </div>
                 </div>
             </div>
---}}
-
-<!-- assessmentTest/testPart/timeLimits/maxTime -->
-            <div class="grid-row">
-                <div class="col-5">
-                    <label for="testpart-max-time">{{__ 'Maximum Duration'}}</label>
-                </div>
-                <div class="col-6 duration-group">
-                    <input type="text" id="testpart-max-time" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
-                </div>
-                <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                    <div class="tooltip-content">
-                    {{__ 'Maximum duration for this test part.'}}
-                    </div>
-                </div>
-            </div>
-
-<!-- assessmentTest/testPart/timeLimits/allowLateSubmission -->
-            <div class="grid-row pseudo-label-box">
-                <div class="col-5">
-                    <label for="testpart-allow-late-submission">{{__ 'Late submission allowed'}}</label>
-                </div>
-                <div class="col-6">
-                    <label>
-                        <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
-                        <span class="icon-checkbox"></span>
-                    </label>
-                </div>
-                <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                    <div class="tooltip-content">
-                    {{__ "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."}}
-                    </div>
-                </div>
-            </div>
-        </div>
+        {{/if}}
     </form>
 </div>
