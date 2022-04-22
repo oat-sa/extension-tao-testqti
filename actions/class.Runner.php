@@ -20,6 +20,8 @@
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
+use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
+use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoQtiTest\models\event\TraceVariableStored;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
@@ -699,8 +701,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
-            $serviceContext = $this->getServiceContext();
+            $this->validateDeliveryExecutionInteractionAccessibility();
 
+            $serviceContext = $this->getServiceContext();
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer();
                 $this->saveItemState();
@@ -787,6 +790,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
+            $this->validateDeliveryExecutionInteractionAccessibility();
 
             $serviceContext = $this->getServiceContext();
 
@@ -1064,6 +1068,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     }
 
     /**
+     * @throws QtiRunnerClosedException
+     * @throws common_exception_NotFound
+     */
+    private function validateDeliveryExecutionInteractionAccessibility(): void
+    {
+        $executionId = $this->getSessionId();
+        $deliveryExecution = $this->getDeliveryExecutionService()->getDeliveryExecution($executionId);
+        if ($deliveryExecution->getState()->getUri() === DeliveryExecutionInterface::STATE_FINISHED) {
+            throw new QtiRunnerClosedException();
+        }
+    }
+
+    /**
      * Checks the storeId request parameter and returns the last store id if set, false otherwise
      *
      * @param QtiRunnerServiceContext $serviceContext
@@ -1103,5 +1120,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             'toolStates' => $this->getToolStates(),
             'lastStoreId' => $this->getClientStoreId($serviceContext),
         ];
+    }
+
+    private function getDeliveryExecutionService(): DeliveryExecutionService
+    {
+        return $this->getServiceLocator()->get(DeliveryExecutionService::SERVICE_ID);
     }
 }
