@@ -24,6 +24,7 @@ define([
     'lodash',
     'uri',
     'i18n',
+    'services/features',
     'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/itemref',
@@ -43,6 +44,7 @@ define([
     _,
     uri,
     __,
+    features,
     defaults,
     actions,
     itemRefView,
@@ -59,6 +61,12 @@ define([
     validators
 ) {
     'use strict';
+
+    const addVisibilityProps = model => {
+        if (features.isVisible('taoQtiTest/creator/section/property/timeLimits')) {
+            model.showTimeLimits = true;
+        }
+    };
 
     /**
      * Set up a section: init action behaviors. Called for each section.
@@ -91,6 +99,10 @@ define([
         if (!_.isEmpty(config.routes.blueprintsById)) {
             sectionModel.hasBlueprint = true;
         }
+
+        //add feature visibility properties to testModel
+        addVisibilityProps(sectionModel);
+
         actions.properties($titleWithActions, 'section', sectionModel, propHandler);
         actions.move($titleWithActions, 'sections', 'section');
         actions.displayItemWrapper($section);
@@ -563,7 +575,7 @@ define([
                                 // because validation is build on <span id="props-{identifier}">
                                 // and each item should have valid and unique id
                                 sectionModel.sectionParts.forEach(itemRef => {
-                                    if(!validators.checkIfItemIdValid(itemRef.identifier, modelOverseer)) {
+                                    if (!validators.checkIfItemIdValid(itemRef.identifier, modelOverseer)) {
                                         itemRef.identifier = qtiTestHelper.getAvailableIdentifier(
                                             modelOverseer.getModel(),
                                             'assessmentItemRef',
