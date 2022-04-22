@@ -36,6 +36,7 @@
         </div>
     </div>
 
+    {{#if showTimeLimits}}
     <h4 class="toggler closed" data-toggle="~ .test-time-limits">{{__ 'Time Limits'}}</h4>
 
 <!-- assessmentTest/timeLimits -->
@@ -94,6 +95,7 @@
             </div>
         </div>
     </div>
+    {{/if}}
 
     <h4 class="toggler closed" data-toggle="~ .test-scoring">{{__ "Scoring"}}</h4>
 
