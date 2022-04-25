@@ -666,7 +666,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         try {
             $this->validateSecurityToken();
-            $this->checkDeliveryExecutionInteractionAccessibility();
+            $this->validateDeliveryExecutionInteractionAccessibility();
 
             $command = new TimeoutCommand(
                 $this->getServiceContext(),
@@ -744,6 +744,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         try {
             $this->validateSecurityToken();
+            $this->validateDeliveryExecutionInteractionAccessibility();
 
             $command = new PauseCommand($this->getServiceContext());
 
@@ -952,7 +953,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * @throws QtiRunnerClosedException
      * @throws common_exception_NotFound
      */
-    private function checkDeliveryExecutionInteractionAccessibility(): void
+    private function validateDeliveryExecutionInteractionAccessibility(): void
     {
         $executionId = $this->getSessionId();
         $deliveryExecution = $this->getDeliveryExecutionService()->getDeliveryExecution($executionId);
