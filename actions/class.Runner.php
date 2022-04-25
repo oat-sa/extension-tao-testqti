@@ -27,6 +27,7 @@
 use oat\libCat\exception\CatEngineConnectivityException;
 use oat\oatbox\event\EventManager;
 use oat\tao\model\routing\AnnotationReader\security;
+use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
@@ -716,6 +717,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
+            $this->validateDeliveryExecutionInteractionAccessibility();
             $serviceContext = $this->getServiceContext();
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
@@ -818,6 +820,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $this->checkSecurityToken();
+            $this->validateDeliveryExecutionInteractionAccessibility();
 
             $serviceContext = $this->getServiceContext();
 
@@ -1093,6 +1096,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         return [
             'success' => false,
         ];
+    }
+
+    /**
+     * @throws QtiRunnerClosedException
+     * @throws common_exception_NotFound
+     */
+    private function validateDeliveryExecutionInteractionAccessibility(): void
+    {
+        $executionId = $this->getSessionId();
+        $deliveryExecution = $this->getDeliveryExecutionService()->getDeliveryExecution($executionId);
+        if ($deliveryExecution->getState()->getUri() === DeliveryExecutionInterface::STATE_FINISHED) {
+            throw new QtiRunnerClosedException();
+        }
     }
 
     /**
