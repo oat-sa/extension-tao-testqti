@@ -60,11 +60,21 @@ define([
     subsectionsHelper,
     validators
 ) {
-    'use strict';
+    ('use strict');
 
     const addVisibilityProps = model => {
-        if (features.isVisible('taoQtiTest/creator/section/property/timeLimits')) {
+        const propertyNamespace = 'taoQtiTest/creator/section/property/';
+        if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
+            model.itemSessionShowFeedback = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowComment`)) {
+            model.itemSessionAllowComment = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
+            model.itemSessionAllowSkipping = true;
         }
     };
 
@@ -126,7 +136,7 @@ define([
             const $selectionSelect = $('[name=section-select]', $view);
             const $selectionWithRep = $('[name=section-with-replacement]', $view);
 
-            // sectionModel.selection will be filled by binded values from template section-props.tpl
+            // sectionModel.selection will be filled by bound values from template section-props.tpl
             // if sectionModel.selection from server response it has 'qti-type'
             const isSelectionFromServer = !!(sectionModel.selection && sectionModel.selection['qti-type']);
 
@@ -159,7 +169,7 @@ define([
             });
 
             // deleted.deleter event fires only on the parent nodes (testparts, sections, etc)
-            // Since it "bubles" we can subsctibe only to the highest parent node
+            // Since it "bubles" we can subscribe only to the highest parent node
             $section.parents('.testparts').on('deleted.deleter', removePropHandler);
 
             //section level category configuration
@@ -178,7 +188,7 @@ define([
                 // We have to check id of a deleted node, because
                 // 1. Event fires after child node was deleted, but e.stopPropagation doesn't help
                 // because currentTarget is always document
-                // 2. We have to subscribe to the parent node and it's posiible that another section was removed even from another testpart
+                // 2. We have to subscribe to the parent node and it's possible that another section was removed even from another testpart
                 // Subscription to the .sections selector event won't help because sections element might contain several children.
 
                 if (propView !== null && validIds.includes(deletedNodeId)) {
@@ -285,7 +295,7 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
+            // jquery issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
                 .off('add.binder', `[id="${$section.attr('id')}"] > .itemrefs-wrapper .itemrefs`)
                 .on(
@@ -381,7 +391,7 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
+            // jquery issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
                 .off('add.binder', `[id="${$section.attr('id')}"] > .rublocks .rubricblocks`)
                 .on(
@@ -603,7 +613,7 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
+            // jquery issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
                 .off('add.binder', `[id="${$section.attr('id')}"] > .subsections`)
                 .on('add.binder', `[id="${$section.attr('id')}"] > .subsections`, function (e, $subsection) {
@@ -694,7 +704,7 @@ define([
     }
 
     /**
-     * The sectionView setup section related components and beahvior
+     * The sectionView setup section related components and behavior
      *
      * @exports taoQtiTest/controller/creator/views/section
      */

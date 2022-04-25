@@ -42,11 +42,21 @@ define([
     testPartCategory,
     categorySelectorFactory
 ) {
-    'use strict';
+    ('use strict');
 
     const addVisibilityProps = model => {
-        if (features.isVisible('taoQtiTest/creator/testPart/property/timeLimits')) {
+        const propertyNamespace = 'taoQtiTest/creator/testPart/property/';
+        if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
+            model.itemSessionShowFeedback = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowComment`)) {
+            model.itemSessionAllowComment = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
+            model.itemSessionAllowSkipping = true;
         }
     };
 
@@ -152,7 +162,7 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
+            // jquery issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
                 .off('add.binder', `[id=${$testPart.attr('id')}] .sections`)
                 .on('add.binder', `[id=${$testPart.attr('id')}] .sections`, function (e, $section) {
@@ -238,7 +248,7 @@ define([
     }
 
     /**
-     * The testPartView setup testpart related components and beahvior
+     * The testPartView setup testpart related components and behavior
      *
      * @exports taoQtiTest/controller/creator/views/testpart
      */
