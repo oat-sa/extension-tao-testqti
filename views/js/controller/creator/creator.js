@@ -73,7 +73,7 @@ define([
     const logger = loggerFactory('taoQtiTest/controller/creator');
 
     const filterVisiblePresets = presetGroups => {
-        const categoryGroupNamespace = 'taoQtiTest/creator/category/group/';
+        const categoryGroupNamespace = 'taoQtiTest/creator/category/presetGroup/';
         const categoryPresetNamespace = 'taoQtiTest/creator/category/preset/';
         let filteredGroups;
         if (presetGroups && presetGroups.length) {
