@@ -23,6 +23,7 @@ use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
+use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\RegisterResultTransmissionEventHandlers;
 use oat\taoQtiTest\scripts\install\SetupProvider;
@@ -144,5 +145,6 @@ return [
         CustomInteractionPostProcessingServiceProvider::class,
         ItemsReferencesServiceProvider::class,
         TestQtiServiceProvider::class,
+        TestSessionStateServiceProvider::class
     ],
 ];
