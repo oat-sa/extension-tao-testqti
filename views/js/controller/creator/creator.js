@@ -40,6 +40,7 @@ define([
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoTests/previewer/factory',
     'core/logger',
     'taoQtiTest/controller/creator/views/subsection'
@@ -65,38 +66,13 @@ define([
     categorySelector,
     validators,
     changeTracker,
+    featureVisibility,
     previewerFactory,
     loggerFactory,
     subsectionView
 ) {
     ('use strict');
     const logger = loggerFactory('taoQtiTest/controller/creator');
-
-    /**
-     * Filters the presets and preset groups based on visibility config
-     * @param {Array} presetGroups array of presetGroups
-     * @returns {Array} filtered presetGroups array
-     */
-    function filterVisiblePresets(presetGroups) {
-        const categoryGroupNamespace = 'taoQtiTest/creator/category/presetGroup/';
-        const categoryPresetNamespace = 'taoQtiTest/creator/category/preset/';
-        let filteredGroups;
-        if (presetGroups && presetGroups.length) {
-            filteredGroups = presetGroups.filter(presetGroup => {
-                return features.isVisible(`${categoryGroupNamespace}${presetGroup.groupId}`);
-            });
-            if (filteredGroups.length) {
-                filteredGroups.forEach(presetGroup => {
-                    if (presetGroup.presets && presetGroup.presets.length) {
-                        presetGroup.presets = presetGroup.presets.filter(preset => {
-                            return features.isVisible(`${categoryPresetNamespace}${preset.id}`);
-                        });
-                    }
-                });
-            }
-        }
-        return filteredGroups;
-    }
 
     /**
      * The test creator controller is the main entry point
@@ -131,7 +107,7 @@ define([
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
             options.labels = options.labels || {};
-            options.categoriesPresets = filterVisiblePresets(options.categoriesPresets) || {};
+            options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
             options.guidedNavigation = options.guidedNavigation === true;
 
             categorySelector.setPresets(options.categoriesPresets);

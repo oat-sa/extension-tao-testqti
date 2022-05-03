@@ -28,22 +28,21 @@ define([
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoQtiTest/controller/creator/templates/index'
-], function ($, _, __, features, actions, categorySelectorFactory, sectionCategory, qtiTestHelper, templates) {
+], function (
+    $,
+    _,
+    __,
+    features,
+    actions,
+    categorySelectorFactory,
+    sectionCategory,
+    qtiTestHelper,
+    featureVisibility,
+    templates
+) {
     ('use strict');
-
-    const addVisibilityProps = model => {
-        const propertyNamespace = 'taoQtiTest/creator/itemRef/property/';
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
-            model.itemSessionShowFeedback = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowComment`)) {
-            model.itemSessionAllowComment = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
-            model.itemSessionAllowSkipping = true;
-        }
-    };
 
     /**
      * We need to resize the itemref in case of long labels
@@ -77,8 +76,8 @@ define([
 
         refModel.isLinear = partModel.navigationMode === 0;
 
-        //add feature visibility properties to testModel
-        addVisibilityProps(refModel);
+        //add feature visibility properties to itemRef model
+        featureVisibility.addItemRefVisibilityProps(refModel);
 
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');

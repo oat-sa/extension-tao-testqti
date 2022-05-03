@@ -38,7 +38,8 @@ define([
     'taoQtiTest/controller/creator/views/subsection',
     'ui/dialog/confirm',
     'taoQtiTest/controller/creator/helpers/subsection',
-    'taoQtiTest/controller/creator/helpers/validators'
+    'taoQtiTest/controller/creator/helpers/validators',
+    'taoQtiTest/controller/creator/helpers/featureVisibility'
 ], function (
     $,
     _,
@@ -58,25 +59,10 @@ define([
     subsectionView,
     confirmDialog,
     subsectionsHelper,
-    validators
+    validators,
+    featureVisibility
 ) {
     ('use strict');
-
-    const addVisibilityProps = model => {
-        const propertyNamespace = 'taoQtiTest/creator/section/property/';
-        if (features.isVisible(`${propertyNamespace}timeLimits`)) {
-            model.showTimeLimits = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
-            model.itemSessionShowFeedback = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowComment`)) {
-            model.itemSessionAllowComment = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
-            model.itemSessionAllowSkipping = true;
-        }
-    };
 
     /**
      * Set up a section: init action behaviors. Called for each section.
@@ -110,8 +96,8 @@ define([
             sectionModel.hasBlueprint = true;
         }
 
-        //add feature visibility properties to testModel
-        addVisibilityProps(sectionModel);
+        //add feature visibility properties to sectionModel
+        featureVisibility.addSectionVisibilityProps(sectionModel);
 
         actions.properties($titleWithActions, 'section', sectionModel, propHandler);
         actions.move($titleWithActions, 'sections', 'section');

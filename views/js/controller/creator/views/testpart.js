@@ -29,7 +29,8 @@ define([
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/testPartCategory',
-    'taoQtiTest/controller/creator/helpers/categorySelector'
+    'taoQtiTest/controller/creator/helpers/categorySelector',
+    'taoQtiTest/controller/creator/helpers/featureVisibility'
 ], function (
     $,
     _,
@@ -40,25 +41,12 @@ define([
     templates,
     qtiTestHelper,
     testPartCategory,
-    categorySelectorFactory
+    categorySelectorFactory,
+    featureVisibility
 ) {
     ('use strict');
 
-    const addVisibilityProps = model => {
-        const propertyNamespace = 'taoQtiTest/creator/testPart/property/';
-        if (features.isVisible(`${propertyNamespace}timeLimits`)) {
-            model.showTimeLimits = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
-            model.itemSessionShowFeedback = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowComment`)) {
-            model.itemSessionAllowComment = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
-            model.itemSessionAllowSkipping = true;
-        }
-    };
+    const addVisibilityProps = model => {};
 
     /**
      * Set up a test part: init action behaviors. Called for each test part.
@@ -72,8 +60,8 @@ define([
         const $titleWithActions = $testPart.children('h1');
         const modelOverseer = creatorContext.getModelOverseer();
 
-        //add feature visibility properties to testModel
-        addVisibilityProps(partModel);
+        //add feature visibility properties to testPartModel
+        featureVisibility.addTestPartVisibilityProps(partModel);
 
         //run setup methods
         actions.properties($actionContainer, 'testpart', partModel, propHandler);
