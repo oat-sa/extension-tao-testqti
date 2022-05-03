@@ -29,15 +29,23 @@ define([
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/testpart',
     'taoQtiTest/controller/creator/templates/index',
-    'taoQtiTest/controller/creator/helpers/qtiTest'
-], function ($, _, __, hider, feedback, features, defaults, actions, testPartView, templates, qtiTestHelper) {
-    'use strict';
-
-    const addVisibilityProps = model => {
-        if (features.isVisible('taoQtiTest/creator/test/property/timeLimits')) {
-            model.showTimeLimits = true;
-        }
-    };
+    'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/featureVisibility'
+], function (
+    $,
+    _,
+    __,
+    hider,
+    feedback,
+    features,
+    defaults,
+    actions,
+    testPartView,
+    templates,
+    qtiTestHelper,
+    featureVisibility
+) {
+    ('use strict');
 
     /**
      * The TestView setup test related components and behavior
@@ -50,7 +58,7 @@ define([
         var testModel = modelOverseer.getModel();
 
         //add feature visibility properties to testModel
-        addVisibilityProps(testModel);
+        featureVisibility.addTestVisibilityProps(testModel);
 
         actions.properties($('.test-creator-test > h1'), 'test', testModel, propHandler);
         testParts();
