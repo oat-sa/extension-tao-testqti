@@ -275,10 +275,7 @@ define([
                 if (creatorContext.isTestHasErrors()) {
                     event.preventDefault();
                     feedback().warning(
-                        __(
-                            'The test cannot be saved because it currently contains invalid settings.\n' +
-                                'Please fix the invalid settings and try again.'
-                        )
+                        __('The test cannot be saved because it currently contains invalid settings.\nPlease fix the invalid settings and try again.')
                     );
                 } else {
                     creatorContext.trigger('save');
