@@ -155,9 +155,14 @@ define([
 
                 testCreator
                     .on(`ready${eventNS} saved${eventNS}`, () => this.init())
-                    .before(`creatorclose${eventNS}`, () => this.confirmBefore('leaveWhenInvalid').then(whatToDo => {
-                        this.ifWantSave(whatToDo);
-                    }))
+                    .before(`creatorclose${eventNS}`, () => {
+                        let leavingStatus = 'leave';
+                        if(testCreator.isTestHasErrors()) {
+                            leavingStatus ='leaveWhenInvalid';
+                        }
+                        return this.confirmBefore(leavingStatus).then(whatToDo => {
+                            this.ifWantSave(whatToDo);
+                        })})
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
                         if(testCreator.isTestHasErrors()){
                             feedback().warning(`${__('The test cannot be saved because it currently contains invalid settings.\n' +
