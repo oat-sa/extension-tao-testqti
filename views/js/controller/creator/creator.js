@@ -112,9 +112,7 @@ define([
             //back button
             $back.on('click', e => {
                 e.preventDefault();
-                if (!$back.hasClass('disabled')) {
-                    creatorContext.trigger('creatorclose');
-                }
+                creatorContext.trigger('creatorclose');
             });
 
             //preview button
