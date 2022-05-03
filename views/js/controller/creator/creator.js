@@ -69,10 +69,15 @@ define([
     loggerFactory,
     subsectionView
 ) {
-    'use strict';
+    ('use strict');
     const logger = loggerFactory('taoQtiTest/controller/creator');
 
-    const filterVisiblePresets = presetGroups => {
+    /**
+     * Filters the presets and preset groups based on visibility config
+     * @param {Array} presetGroups array of presetGroups
+     * @returns {Array} filtered presetGroups array
+     */
+    function filterVisiblePresets(presetGroups) {
         const categoryGroupNamespace = 'taoQtiTest/creator/category/presetGroup/';
         const categoryPresetNamespace = 'taoQtiTest/creator/category/preset/';
         let filteredGroups;
@@ -91,7 +96,7 @@ define([
             }
         }
         return filteredGroups;
-    };
+    }
 
     /**
      * The test creator controller is the main entry point
