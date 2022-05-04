@@ -29,7 +29,7 @@ use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoQtiTest\models\QtiTestExtractionFailedException;
 use oat\taoQtiTest\models\TestSessionState\Exception\RestorationImpossibleException;
 
-interface TestSessionStateRestorationServiceInterface
+interface TestSessionStateRestorationInterface
 {
     /**
      * @throws common_exception_NoContent
