@@ -23,22 +23,24 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\TestSessionState;
 
+use common_exception_NoContent;
+use common_exception_NotFound;
 use League\Flysystem\FileNotFoundException;
 use oat\tao\model\state\StateMigration;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoQtiTest\models\QtiTestExtractionFailedException;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\runner\ExtendedState;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoQtiTest\models\TestSessionState\Api\TestSessionStateRestorationServiceInterface;
+use oat\taoQtiTest\models\TestSessionState\Api\TestSessionStateRestorationInterface;
 use oat\taoQtiTest\models\TestSessionState\Exception\RestorationImpossibleException;
 use Psr\Log\LoggerInterface;
 use qtism\data\AssessmentSection;
 use qtism\data\SectionPartCollection;
-use qtism\data\TestPart;
 use qtism\data\TestPartCollection;
 
-class TestSessionStateRestorationService implements TestSessionStateRestorationServiceInterface
+class TestSessionStateRestorationService implements TestSessionStateRestorationInterface
 {
     /** @var TestSessionService */
     private $testSessionService;
@@ -69,15 +71,24 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationS
         $deliveryExecutionId = $deliveryExecution->getIdentifier();
         $userId = $deliveryExecution->getUserIdentifier();
 
-        try {
-            $this->stateMigration->restore($userId, $deliveryExecutionId);
-        } catch (FileNotFoundException $e) {
-            throw new RestorationImpossibleException();
-        }
-
+        $this->restoreTestSessionState($userId, $deliveryExecutionId);
         $this->restoreExtendedState($userId, $deliveryExecutionId);
         $this->restoreTimeLineState($userId, $deliveryExecutionId);
         $this->restoreItemsState($deliveryExecution);
+    }
+
+    /**
+     * @throws RestorationImpossibleException
+     */
+    private function restoreTestSessionState(string $userId, string $sessionId)
+    {
+        try {
+            $this->stateMigration->restore($userId, $sessionId);
+        } catch (FileNotFoundException $e) {
+            throw new RestorationImpossibleException(
+                sprintf('[%s] impossible to reach archived test session', $sessionId)
+            );
+        }
     }
 
     private function restoreExtendedState(string $userId, string $sessionId): void
@@ -98,20 +109,25 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationS
 
     private function restoreTimeLineState(string $userId, string $sessionId): void
     {
-        $extendedStorageId = QtiTimeStorage::getStorageKeyFromTestSessionId($sessionId);
+        $qtiItemStorageId = QtiTimeStorage::getStorageKeyFromTestSessionId($sessionId);
         try {
-            $this->stateMigration->restore($userId, $extendedStorageId);
+            $this->stateMigration->restore($userId, $qtiItemStorageId);
         } catch (FileNotFoundException $e) {
             $this->logger->debug(
                 sprintf(
                     '[%s] TimeLine state restoration impossible for user %s',
-                    $extendedStorageId,
+                    $qtiItemStorageId,
                     $userId
                 )
             );
         }
     }
 
+    /**
+     * @throws common_exception_NoContent
+     * @throws QtiTestExtractionFailedException
+     * @throws common_exception_NotFound
+     */
     private function restoreItemsState(DeliveryExecution $deliveryExecution): void
     {
         $runtimeInputParameters = $this->testSessionService->getRuntimeInputParameters($deliveryExecution);
@@ -119,7 +135,9 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationS
         $this->walkTestParts($testDefinition->getTestParts(), $deliveryExecution);
     }
 
-
+    /**
+     * @throws common_exception_NotFound
+     */
     private function walkTestParts(TestPartCollection $testParts, DeliveryExecution $deliveryExecution)
     {
         foreach ($testParts as $testPart) {
@@ -127,6 +145,9 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationS
         }
     }
 
+    /**
+     * @throws common_exception_NotFound
+     */
     private function walkAssessmentSections(
         SectionPartCollection $assessmentSections,
         DeliveryExecution $deliveryExecution
@@ -136,7 +157,9 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationS
         }
     }
 
-
+    /**
+     * @throws common_exception_NotFound
+     */
     private function walkAssessmentSection(AssessmentSection $assessmentSection, DeliveryExecution $deliveryExecution)
     {
         foreach ($assessmentSection->getSectionParts() as $sectionPart) {

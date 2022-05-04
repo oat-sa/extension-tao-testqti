@@ -28,7 +28,7 @@ use oat\oatbox\log\LoggerService;
 use oat\tao\model\state\StateMigration;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoQtiTest\models\TestSessionState\Api\TestSessionStateRestorationServiceInterface;
+use oat\taoQtiTest\models\TestSessionState\Api\TestSessionStateRestorationInterface;
 use oat\taoQtiTest\models\TestSessionState\TestSessionStateRestorationService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -39,7 +39,7 @@ class TestSessionStateServiceProvider implements ContainerServiceProviderInterfa
     {
         $services = $configurator->services();
         $services
-            ->set(TestSessionStateRestorationServiceInterface::class, TestSessionStateRestorationService::class)
+            ->set(TestSessionStateRestorationInterface::class, TestSessionStateRestorationService::class)
             ->public()
             ->args(
                 [
