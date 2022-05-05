@@ -162,11 +162,10 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
      */
     private function walkAssessmentSection(AssessmentSection $assessmentSection, DeliveryExecution $deliveryExecution)
     {
+        $userId = $deliveryExecution->getUserIdentifier();
+        $deliveryExecutionId = $deliveryExecution->getIdentifier();
         foreach ($assessmentSection->getSectionParts() as $sectionPart) {
-            $this->restoreItemState(
-                $deliveryExecution->getUserIdentifier(),
-                $deliveryExecution->getIdentifier() . $sectionPart->getIdentifier()
-            );
+            $this->restoreItemState($userId, $deliveryExecutionId . $sectionPart->getIdentifier());
         }
     }
 
