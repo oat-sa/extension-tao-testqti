@@ -204,6 +204,13 @@ return [
     'test-taker-review-skipahead' => false,
 
     /**
+     * Determines whether partially answered items (example: an item containing 2 interactions, where only 1 is answered)
+     * are shown as answered or unanswered in the review
+     * @type boolean
+     */
+    'test-taker-review-partially-answered-is-answered' => true,
+
+    /**
      * Enable/Disable warning message about unanswered items at the end of the test.
      * @type boolean
      */

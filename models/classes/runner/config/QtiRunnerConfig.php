@@ -107,6 +107,7 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
                     'displaySubsectionTitle' => !empty($rawConfig['test-taker-review-display-subsection-title']),
                     'allowSkipahead' => isset($rawConfig['test-taker-review-skipahead']) ? $rawConfig['test-taker-review-skipahead'] : false,
+                    'partiallyAnsweredIsAnswered' => isset($rawConfig['test-taker-review-partially-answered-is-answered']) ? $rawConfig['test-taker-review-partially-answered-is-answered'] : true,
                 ],
                 'exitButton' => !empty($rawConfig['exitButton']),
                 'nextSection' => !empty($rawConfig['next-section']),
