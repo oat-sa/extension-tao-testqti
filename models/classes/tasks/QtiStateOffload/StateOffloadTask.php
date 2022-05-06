@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\classes\tasks\QtiStateOffload;
 
 use InvalidArgumentException;
 use oat\oatbox\extension\AbstractAction;
+use oat\oatbox\reporting\Report;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\state\StateMigration;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
@@ -32,67 +33,51 @@ use oat\tao\model\taskQueue\Task\TaskAwareTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class StateOffloadTask extends AbstractAction implements TaskAwareInterface
+class StateOffloadTask extends AbstractQtiStateManipulationTask
 {
-    use TaskAwareTrait;
-
-    public const PARAM_USER_ID_KEY = 'userId';
-    public const PARAM_CALL_ID_KEY = 'callId';
-    public const PARAM_STATE_LABEL_KEY = 'stateLabel';
-
-    /**
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     * @throws InvalidServiceManagerException
-     */
-    public function __invoke($params)
+    protected function manipulateState(string $userId, string $callId, string $stateLabel): Report
     {
-        if (!isset(
-            $params[self::PARAM_USER_ID_KEY],
-            $params[self::PARAM_CALL_ID_KEY],
-            $params[self::PARAM_STATE_LABEL_KEY]
-        )) {
-            throw new InvalidArgumentException('Invalid parameter set was provided');
-        }
-
-        $userId = $params[self::PARAM_USER_ID_KEY];
-        $callId = $params[self::PARAM_CALL_ID_KEY];
-        $stateType = $params[self::PARAM_STATE_LABEL_KEY];
-
         $logContext = [
             'userId' => $userId,
             'callId' => $callId,
-            'stateType' => $stateType
+            'stateType' => $stateLabel
         ];
 
         if (!$this->getStateMigrationService()->archive($userId, $callId)) {
             $this->getLogger()->warning(
-                sprintf('Failed to archive %s state', $stateType),
+                sprintf('Failed to archive %s state', $stateLabel),
                 $logContext
+            );
+            return Report::createError(
+                sprintf(
+                    '[%s] - %s state archiving failed for user %s',
+                    $callId,
+                    $stateLabel,
+                    $userId
+                )
             );
         }
 
-        $this->enqueueStateRemovalTask($userId, $callId, $stateType);
+        $this->enqueueStateRemovalTask($userId, $callId, $stateLabel);
 
-        $this->getLogger()->info(sprintf('%s state has been archived', $stateType), $logContext);
-    }
+        $this->getLogger()->info(sprintf('%s state has been archived', $stateLabel), $logContext);
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws InvalidServiceManagerException
-     */
-    private function getStateMigrationService(): StateMigration
-    {
-        return $this->getServiceLocator()->get(StateMigration::SERVICE_ID);
+        return Report::createSuccess(
+            sprintf(
+                '[%s] - %s state was successfully archived for user %s',
+                $callId,
+                $stateLabel,
+                $userId
+            )
+        );
     }
 
     private function enqueueStateRemovalTask(string $userId, string $callId, string $stateLabel): void
     {
         $this->getQueueDispatcher()->createTask(new StateRemovalTask(), [
-            StateOffloadTask::PARAM_USER_ID_KEY => $userId,
-            StateOffloadTask::PARAM_CALL_ID_KEY => $callId,
-            StateOffloadTask::PARAM_STATE_LABEL_KEY => $stateLabel
+            AbstractQtiStateManipulationTask::PARAM_USER_ID_KEY => $userId,
+            AbstractQtiStateManipulationTask::PARAM_CALL_ID_KEY => $callId,
+            AbstractQtiStateManipulationTask::PARAM_STATE_LABEL_KEY => $stateLabel
         ]);
     }
 

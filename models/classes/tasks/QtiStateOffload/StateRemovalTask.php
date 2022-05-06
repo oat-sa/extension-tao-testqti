@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\classes\tasks\QtiStateOffload;
 use Exception;
 use InvalidArgumentException;
 use oat\oatbox\extension\AbstractAction;
+use oat\oatbox\reporting\Report;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\state\StateMigration;
 use oat\tao\model\taskQueue\Task\TaskAwareInterface;
@@ -32,63 +33,44 @@ use oat\tao\model\taskQueue\Task\TaskAwareTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class StateRemovalTask extends AbstractAction implements TaskAwareInterface
+class StateRemovalTask extends AbstractQtiStateManipulationTask
 {
-    use TaskAwareTrait;
-
-    public const PARAM_USER_ID_KEY = 'userId';
-    public const PARAM_CALL_ID_KEY = 'callId';
-    public const PARAM_STATE_LABEL_KEY = 'stateLabel';
-
-    /**
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     * @throws InvalidServiceManagerException
-     */
-    public function __invoke($params)
+    protected function manipulateState(string $userId, string $callId, string $stateLabel): Report
     {
-        if (!isset(
-            $params[self::PARAM_USER_ID_KEY],
-            $params[self::PARAM_CALL_ID_KEY],
-            $params[self::PARAM_STATE_LABEL_KEY]
-        )) {
-            throw new InvalidArgumentException('Invalid parameter set was provided');
-        }
-
-        $userId = $params[self::PARAM_USER_ID_KEY];
-        $callId = $params[self::PARAM_CALL_ID_KEY];
-        $stateType = $params[self::PARAM_STATE_LABEL_KEY];
+        $loggerContext = [
+            'userId' => $userId,
+            'callId' => $callId,
+            'stateType' => $stateLabel
+        ];
 
         try {
             $this->getStateMigrationService()->removeState($userId, $callId);
 
             $this->getLogger()->info(
-                sprintf('%s state has been deleted', $stateType),
-                [
-                    'userId' => $userId,
-                    'callId' => $callId,
-                    'stateType' => $stateType
-                ]
+                sprintf('%s state has been deleted', $stateLabel),
+                $loggerContext
+            );
+            return Report::createSuccess(
+                sprintf(
+                    '[%s] - %s state was successfully removed for user %s',
+                    $callId,
+                    $stateLabel,
+                    $userId
+                )
             );
         } catch (Exception $exception) {
             $this->getLogger()->warning(
-                sprintf('Failed to delete %s state', $stateType),
-                [
-                    'userId' => $userId,
-                    'callId' => $callId,
-                    'stateType' => $stateType
-                ]
+                sprintf('Failed to delete %s state', $stateLabel),
+                $loggerContext
+            );
+            return Report::createError(
+                sprintf(
+                    '[%s] - %s state removing failed for user %s',
+                    $callId,
+                    $stateLabel,
+                    $userId
+                )
             );
         }
-    }
-
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws InvalidServiceManagerException
-     */
-    private function getStateMigrationService(): StateMigration
-    {
-        return $this->getServiceLocator()->get(StateMigration::SERVICE_ID);
     }
 }
