@@ -162,6 +162,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
         $uniqueInformationalTitle = isset($reviewConfig['informationalItemTitle']) ? $reviewConfig['informationalItemTitle'] : 'Instructions';
         $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
+        $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered']) ? (bool) $reviewConfig['partiallyAnsweredIsAnswered'] : true;
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -257,7 +258,7 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'position' => $offset,
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
-                        'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
+                        'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession, $partiallyAnsweredIsAnswered) : in_array($itemId, $previouslySeenItems),
                         'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
                         'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
                         'categories' => array_values($this->getAvailableCategories($itemRef)),
