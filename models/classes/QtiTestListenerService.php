@@ -24,6 +24,7 @@ use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
+use oat\taoQtiTest\models\classes\tasks\QtiStateOffload\AbstractQtiStateManipulationTask;
 use oat\taoQtiTest\models\classes\tasks\QtiStateOffload\StateOffloadTask;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
@@ -158,9 +159,9 @@ class QtiTestListenerService extends ConfigurableService
     private function dispatchOffload(string $userId, string $callId, string $stateLabel): void
     {
         $this->getQueueDispatcher()->createTask(new StateOffloadTask(), [
-            StateOffloadTask::PARAM_USER_ID_KEY => $userId,
-            StateOffloadTask::PARAM_CALL_ID_KEY => $callId,
-            StateOffloadTask::PARAM_STATE_LABEL_KEY => $stateLabel
+            AbstractQtiStateManipulationTask::PARAM_USER_ID_KEY => $userId,
+            AbstractQtiStateManipulationTask::PARAM_CALL_ID_KEY => $callId,
+            AbstractQtiStateManipulationTask::PARAM_STATE_LABEL_KEY => $stateLabel
         ]);
     }
 
