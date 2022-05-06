@@ -27,7 +27,10 @@ use common_exception_NoContent;
 use common_exception_NotFound;
 use League\Flysystem\FileNotFoundException;
 use oat\tao\model\state\StateMigration;
+use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoQtiTest\models\classes\tasks\QtiStateOffload\AbstractQtiStateManipulationTask;
+use oat\taoQtiTest\models\classes\tasks\QtiStateOffload\StateBackupRemovalTask;
 use oat\taoQtiTest\models\QtiTestExtractionFailedException;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\runner\ExtendedState;
@@ -50,17 +53,21 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
     private $stateMigration;
     /** @var LoggerInterface */
     private $logger;
+    /** @var QueueDispatcherInterface */
+    private $queueDispatcher;
 
     public function __construct(
         TestSessionService $testSessionService,
         QtiTestUtils $qtiTestUtils,
         StateMigration $stateMigration,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        QueueDispatcherInterface $queueDispatcher
     ) {
         $this->testSessionService = $testSessionService;
         $this->qtiTestUtils = $qtiTestUtils;
         $this->stateMigration = $stateMigration;
         $this->logger = $logger;
+        $this->queueDispatcher = $queueDispatcher;
     }
 
     /**
@@ -84,6 +91,7 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
     {
         try {
             $this->stateMigration->restore($userId, $sessionId);
+            $this->dispatchBackupRemoval($userId, $sessionId, 'Test Session');
         } catch (FileNotFoundException $e) {
             throw new RestorationImpossibleException(
                 sprintf('[%s] impossible to reach archived test session', $sessionId)
@@ -96,6 +104,7 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
         $extendedStorageId = ExtendedState::getStorageKeyFromTestSessionId($sessionId);
         try {
             $this->stateMigration->restore($userId, $extendedStorageId);
+            $this->dispatchBackupRemoval($userId, $extendedStorageId, 'Extended');
         } catch (FileNotFoundException $e) {
             $this->logger->debug(
                 sprintf(
@@ -112,6 +121,7 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
         $qtiItemStorageId = QtiTimeStorage::getStorageKeyFromTestSessionId($sessionId);
         try {
             $this->stateMigration->restore($userId, $qtiItemStorageId);
+            $this->dispatchBackupRemoval($userId, $qtiItemStorageId, 'TimeLine');
         } catch (FileNotFoundException $e) {
             $this->logger->debug(
                 sprintf(
@@ -173,14 +183,24 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
     {
         try {
             $this->stateMigration->restore($userId, $callId);
+            $this->dispatchBackupRemoval($userId, $callId, 'Test Item');
         } catch (FileNotFoundException $e) {
             $this->logger->debug(
                 sprintf(
-                    '[%s] Item state restoration impossible for user %s',
+                    '[%s] Test Item state restoration impossible for user %s',
                     $callId,
                     $userId
                 )
             );
         }
+    }
+
+    private function dispatchBackupRemoval(string $userId, string $callId, string $stateLabel): void
+    {
+        $this->queueDispatcher->createTask(new StateBackupRemovalTask(), [
+            AbstractQtiStateManipulationTask::PARAM_USER_ID_KEY => $userId,
+            AbstractQtiStateManipulationTask::PARAM_CALL_ID_KEY => $callId,
+            AbstractQtiStateManipulationTask::PARAM_STATE_LABEL_KEY => $stateLabel
+        ]);
     }
 }
