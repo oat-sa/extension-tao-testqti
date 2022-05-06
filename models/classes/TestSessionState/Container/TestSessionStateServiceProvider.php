@@ -26,6 +26,7 @@ namespace oat\taoQtiTest\models\TestSessionState\Container;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\log\LoggerService;
 use oat\tao\model\state\StateMigration;
+use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\models\TestSessionState\Api\TestSessionStateRestorationInterface;
@@ -47,6 +48,7 @@ class TestSessionStateServiceProvider implements ContainerServiceProviderInterfa
                     service(QtiTestUtils::SERVICE_ID),
                     service(StateMigration::SERVICE_ID),
                     service(LoggerService::SERVICE_ID),
+                    service(QueueDispatcherInterface::SERVICE_ID),
                 ]
             );
     }
