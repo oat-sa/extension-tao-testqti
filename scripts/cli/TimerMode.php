@@ -27,7 +27,7 @@ use common_ext_ExtensionsManager;
 use Exception;
 use InvalidArgumentException;
 use oat\oatbox\extension\script\ScriptAction;
-use oat\oatbox\reporting\Report;
+use \common_report_Report as Report;
 
 /**
  * Manage the timer-mode option for the TestRunner.
