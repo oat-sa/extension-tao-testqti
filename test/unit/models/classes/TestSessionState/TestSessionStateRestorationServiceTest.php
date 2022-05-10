@@ -22,8 +22,11 @@ declare(strict_types=1);
 
 
 use League\Flysystem\FileNotFoundException;
+use oat\oatbox\extension\AbstractAction;
 use oat\tao\model\state\StateMigration;
+use oat\tao\model\taskQueue\QueueDispatcher;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoQtiTest\models\classes\tasks\QtiStateOffload\StateBackupRemovalTask;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\models\TestSessionState\Exception\RestorationImpossibleException;
@@ -50,6 +53,8 @@ class TestSessionStateRestorationServiceTest extends TestCase
     private $stateMigrationMock;
     /** @var MockObject|LoggerInterface */
     private $loggerMock;
+    /** @var MockObject|QueueDispatcher */
+    private $queueDispatcherMock;
     /** @var TestSessionStateRestorationService */
     private $subject;
 
@@ -61,11 +66,13 @@ class TestSessionStateRestorationServiceTest extends TestCase
         $this->qtiTestUtilsMock = $this->createMock(QtiTestUtils::class);
         $this->stateMigrationMock = $this->createMock(StateMigration::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->queueDispatcherMock = $this->createMock(QueueDispatcher::class);
         $this->subject = new TestSessionStateRestorationService(
             $this->testSessionServiceMock,
             $this->qtiTestUtilsMock,
             $this->stateMigrationMock,
-            $this->loggerMock
+            $this->loggerMock,
+            $this->queueDispatcherMock
         );
     }
 
@@ -88,18 +95,30 @@ class TestSessionStateRestorationServiceTest extends TestCase
      */
     public function testSuccessRestoration($questionCount, $testPartCount, $assessmentTest): void
     {
+        $piecesOfDataToRestore = $questionCount + 3;
+
         $deliveryExecution = $this->createMock(DeliveryExecution::class);
         $deliveryExecution->expects(self::exactly(1 + $testPartCount))->method('getIdentifier')
             ->willReturn(Uuid::uuid4()->toString());
         $deliveryExecution->expects(self::exactly(1 + $testPartCount))->method('getUserIdentifier')
             ->willReturn(Uuid::uuid4()->toString());
 
-        $this->testSessionServiceMock->expects(self::once())->method('getRuntimeInputParameters');
+
+        $this->testSessionServiceMock->expects(self::once())->method('getRuntimeInputParameters')
+            ->willReturn(['QtiTestCompilation' => 'test|compilation']);
         $this->qtiTestUtilsMock->expects(self::once())->method('getTestDefinition')
+            ->with('test|compilation')
             ->willReturn($assessmentTest);
 
 
-        $this->stateMigrationMock->expects(self::exactly(3 + $questionCount))->method('restore');
+        $this->stateMigrationMock->expects(self::exactly($piecesOfDataToRestore))->method('restore');
+        $this->queueDispatcherMock->expects(self::exactly($piecesOfDataToRestore))->method('createTask')
+            ->willReturnCallback(
+                function (AbstractAction $action): void {
+                    $this->assertInstanceOf(StateBackupRemovalTask::class, $action);
+                }
+            );
+
         $this->subject->restore($deliveryExecution);
     }
 
