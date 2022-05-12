@@ -93,7 +93,6 @@ define(['services/features'], function (features) {
      * @returns {Array} filtered presetGroups array
      */
     function filterVisiblePresets(presetGroups) {
-        console.log(`- ${presetGroups[0].presets[0].id}`);
         const categoryGroupNamespace = 'taoQtiTest/creator/category/presetGroup/';
         const categoryPresetNamespace = 'taoQtiTest/creator/category/preset/';
         let filteredGroups;
