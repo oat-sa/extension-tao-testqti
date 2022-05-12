@@ -22,15 +22,31 @@
 define([
     'jquery',
     'lodash',
+    'services/features',
     'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/section',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/testPartCategory',
-    'taoQtiTest/controller/creator/helpers/categorySelector'
-], function ($, _, defaults, actions, sectionView, templates, qtiTestHelper, testPartCategory, categorySelectorFactory) {
-    'use strict';
+    'taoQtiTest/controller/creator/helpers/categorySelector',
+    'taoQtiTest/controller/creator/helpers/featureVisibility'
+], function (
+    $,
+    _,
+    features,
+    defaults,
+    actions,
+    sectionView,
+    templates,
+    qtiTestHelper,
+    testPartCategory,
+    categorySelectorFactory,
+    featureVisibility
+) {
+    ('use strict');
+
+    const addVisibilityProps = model => {};
 
     /**
      * Set up a test part: init action behaviors. Called for each test part.
@@ -43,6 +59,9 @@ define([
         const $actionContainer = $('h1', $testPart);
         const $titleWithActions = $testPart.children('h1');
         const modelOverseer = creatorContext.getModelOverseer();
+
+        //add feature visibility properties to testPartModel
+        featureVisibility.addTestPartVisibilityProps(partModel);
 
         //run setup methods
         actions.properties($actionContainer, 'testpart', partModel, propHandler);
@@ -131,7 +150,7 @@ define([
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            // jquesry issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
+            // jquery issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
                 .off('add.binder', `[id=${$testPart.attr('id')}] .sections`)
                 .on('add.binder', `[id=${$testPart.attr('id')}] .sections`, function (e, $section) {
@@ -217,7 +236,7 @@ define([
     }
 
     /**
-     * The testPartView setup testpart related components and beahvior
+     * The testPartView setup testpart related components and behavior
      *
      * @exports taoQtiTest/controller/creator/views/testpart
      */

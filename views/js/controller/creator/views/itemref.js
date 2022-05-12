@@ -23,28 +23,31 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'services/features',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoQtiTest/controller/creator/templates/index'
-],
-function(
+], function (
     $,
     _,
     __,
+    features,
     actions,
     categorySelectorFactory,
     sectionCategory,
     qtiTestHelper,
+    featureVisibility,
     templates
-){
-    'use strict';
+) {
+    ('use strict');
 
     /**
      * We need to resize the itemref in case of long labels
      */
-    var resize = _.throttle(function resize(){
+    var resize = _.throttle(function resize() {
         var $refs = $('.itemrefs').first();
         var $actions = $('.itemref .actions').first();
         var width = $refs.innerWidth() - $actions.outerWidth();
@@ -60,10 +63,9 @@ function(
      * @param {Object} partModel - the model of the parent's test part
      * @param {jQueryElement} $itemRef - the itemRef element to set up
      */
-    function setUp (creatorContext, refModel, sectionModel, partModel, $itemRef) {
-
+    function setUp(creatorContext, refModel, sectionModel, partModel, $itemRef) {
         var modelOverseer = creatorContext.getModelOverseer();
-        var config = modelOverseer.getConfig()  || {};
+        var config = modelOverseer.getConfig() || {};
         var $actionContainer = $('.actions', $itemRef);
 
         // set item session control to use test part options if section level isn't set
@@ -74,17 +76,20 @@ function(
 
         refModel.isLinear = partModel.navigationMode === 0;
 
+        //add feature visibility properties to itemRef model
+        featureVisibility.addItemRefVisibilityProps(refModel);
+
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
 
-    /**
-     * We need to resize the itemref in case of long labels
-     */
-     _.throttle(function resize(){
-        var $actions = $itemRef.find('.actions').first();
-        var width = $itemRef.innerWidth() - $actions.outerWidth();
-        $('.itemref > .title').width(width);
-    }, 100);
+        /**
+         * We need to resize the itemref in case of long labels
+         */
+        _.throttle(function resize() {
+            var $actions = $itemRef.find('.actions').first();
+            var width = $itemRef.innerWidth() - $actions.outerWidth();
+            $('.itemref > .title').width(width);
+        }, 100);
 
         /**
          * Set up the time limits behaviors :
@@ -93,26 +98,26 @@ function(
          *  - otherwise only the maxTime field
          * @param {propView} propView - the view object
          */
-        function timeLimitsProperty(propView){
+        function timeLimitsProperty(propView) {
             var $view = propView.getView();
 
             //target elements
-            var $minTimeContainer    = $('.mintime-container', $view);
-            var $maxTimeContainer    = $('.maxtime-container', $view);
+            var $minTimeContainer = $('.mintime-container', $view);
+            var $maxTimeContainer = $('.maxtime-container', $view);
             var $lockedTimeContainer = $('.lockedtime-container', $view);
-            var $locker              = $('.locker button', $lockedTimeContainer);
-            var $durationFields      = $(':text[data-duration]', $lockedTimeContainer);
-            var $minTimeField        = $(':text[name="min-time"]', $lockedTimeContainer);
-            var $maxTimeField        = $(':text[name="max-time"]', $lockedTimeContainer);
+            var $locker = $('.locker button', $lockedTimeContainer);
+            var $durationFields = $(':text[data-duration]', $lockedTimeContainer);
+            var $minTimeField = $(':text[name="min-time"]', $lockedTimeContainer);
+            var $maxTimeField = $(':text[name="max-time"]', $lockedTimeContainer);
 
             /**
              * Sync min value to max value, trigger change to sync the component.
              * Need to temporally remove the other handler to prevent infinite loop
              */
-            var minToMaxHandler = _.throttle(function minToMax(){
+            var minToMaxHandler = _.throttle(function minToMax() {
                 $maxTimeField.off('change.sync');
                 $maxTimeField.val($minTimeField.val()).trigger('change');
-                _.defer(function(){
+                _.defer(function () {
                     $maxTimeField.on('change.sync', minToMaxHandler);
                 });
             }, 200);
@@ -121,10 +126,10 @@ function(
              * Sync max value to min value, trigger change to sync the component.
              * Need to temporally remove the other handler to prevent infinite loop
              */
-            var maxToMinHandler = _.throttle(function maxToMin(){
+            var maxToMinHandler = _.throttle(function maxToMin() {
                 $minTimeField.off('change.sync');
                 $minTimeField.val($maxTimeField.val()).trigger('change');
-                _.defer(function(){
+                _.defer(function () {
                     $minTimeField.on('change.sync', minToMaxHandler);
                 });
             }, 200);
@@ -132,10 +137,11 @@ function(
             /**
              * Lock the timers
              */
-            var lockTimers = function lockTimers(){
-                $locker.removeClass('unlocked')
-                       .addClass('locked')
-                       .attr('title', __('Unlink to use separated durations'));
+            var lockTimers = function lockTimers() {
+                $locker
+                    .removeClass('unlocked')
+                    .addClass('locked')
+                    .attr('title', __('Unlink to use separated durations'));
 
                 //sync min to max
                 $minTimeField.val($maxTimeField.val()).trigger('change');
@@ -148,10 +154,11 @@ function(
             /**
              * Unlock the timers
              */
-            var unlockTimers = function unlockTimers(){
-                $locker.removeClass('locked')
-                       .addClass('unlocked')
-                       .attr('title', __('Link durations to activate the guided navigation'));
+            var unlockTimers = function unlockTimers() {
+                $locker
+                    .removeClass('locked')
+                    .addClass('unlocked')
+                    .attr('title', __('Link durations to activate the guided navigation'));
 
                 $durationFields.off('change.sync');
                 $minTimeField.val('00:00:00').trigger('change');
@@ -160,25 +167,25 @@ function(
             /**
              * Toggle the timelimits modes max, min + max, min + max + locked
              */
-            var toggleTimeContainers = function toggleTimeContainers(){
+            var toggleTimeContainers = function toggleTimeContainers() {
                 refModel.isLinear = partModel.navigationMode === 0;
-                if(refModel.isLinear && config.guidedNavigation){
+                if (refModel.isLinear && config.guidedNavigation) {
                     $minTimeContainer.addClass('hidden');
                     $maxTimeContainer.addClass('hidden');
                     $lockedTimeContainer.removeClass('hidden');
-                    if($minTimeField.val() === $maxTimeField.val() && $maxTimeField.val() !== '00:00:00'){
+                    if ($minTimeField.val() === $maxTimeField.val() && $maxTimeField.val() !== '00:00:00') {
                         lockTimers();
                     }
-                    $locker.on('click', function(e){
+                    $locker.on('click', function (e) {
                         e.preventDefault();
 
-                        if($locker.hasClass('locked')){
+                        if ($locker.hasClass('locked')) {
                             unlockTimers();
                         } else {
                             lockTimers();
                         }
                     });
-                } else if (refModel.isLinear){
+                } else if (refModel.isLinear) {
                     $lockedTimeContainer.addClass('hidden');
                     $minTimeContainer.removeClass('hidden');
                     $maxTimeContainer.removeClass('hidden');
@@ -190,18 +197,19 @@ function(
             };
 
             //if the testpart changes it's navigation mode
-            modelOverseer.on('testpart-change', function(){
+            modelOverseer.on('testpart-change', function () {
                 toggleTimeContainers();
             });
 
             toggleTimeContainers();
 
-            //chek if min <= maw
-            $durationFields.on('change.check', function(){
-                if( refModel.timeLimits.minTime > 0 &&
+            //check if min <= maw
+            $durationFields.on('change.check', function () {
+                if (
+                    refModel.timeLimits.minTime > 0 &&
                     refModel.timeLimits.maxTime > 0 &&
-                    refModel.timeLimits.minTime > refModel.timeLimits.maxTime ) {
-
+                    refModel.timeLimits.minTime > refModel.timeLimits.maxTime
+                ) {
                     $minTimeField.parent('div').find('.duration-ctrl-wrapper').addClass('brd-danger');
                 } else {
                     $minTimeField.parent('div').find('.duration-ctrl-wrapper').removeClass('brd-danger');
@@ -214,18 +222,18 @@ function(
          * @private
          * @param {jQueryElement} $view - the $view object containing the $select
          */
-        function categoriesProperty($view){
+        function categoriesProperty($view) {
             var categorySelector = categorySelectorFactory($view),
                 $categoryField = $view.find('[name="itemref-category"]');
 
             categorySelector.createForm();
             categorySelector.updateFormState(refModel.categories);
 
-            $view.on('propopen.propview', function(){
+            $view.on('propopen.propview', function () {
                 categorySelector.updateFormState(refModel.categories);
             });
 
-            categorySelector.on('category-change', function(selected) {
+            categorySelector.on('category-change', function (selected) {
                 // Let the binder update the model by going through the category hidden field
                 $categoryField.val(selected.join(','));
                 $categoryField.trigger('change');
@@ -242,11 +250,14 @@ function(
                 $weightList = $view.find('[data-bind-each="weights"]'),
                 weightTpl = templates.properties.itemrefweight;
 
-            $view.find('.itemref-weight-add').on('click', function(e) {
+            $view.find('.itemref-weight-add').on('click', function (e) {
                 var defaultData = {
                     value: 1,
-                    'qti-type' : 'weight',
-                    identifier: (refModel.weights.length === 0) ? 'WEIGHT' : qtiTestHelper.getAvailableIdentifier(refModel, 'weight', 'WEIGHT')
+                    'qti-type': 'weight',
+                    identifier:
+                        refModel.weights.length === 0
+                            ? 'WEIGHT'
+                            : qtiTestHelper.getAvailableIdentifier(refModel, 'weight', 'WEIGHT')
                 };
                 e.preventDefault();
 
@@ -263,8 +274,8 @@ function(
          * @private
          * @param {propView} propView - the view object
          */
-        function propHandler (propView) {
-            const removePropHandler = function removePropHandler(e, $deletedNode){
+        function propHandler(propView) {
+            const removePropHandler = function removePropHandler(e, $deletedNode) {
                 const validIds = [
                     $itemRef.attr('id'),
                     $itemRef.parents('.section').attr('id'),
@@ -288,24 +299,23 @@ function(
     /**
      * Listen for state changes to enable/disable . Called globally.
      */
-    function listenActionState (){
-
-        $('.itemrefs').each(function(){
+    function listenActionState() {
+        $('.itemrefs').each(function () {
             actions.movable($('.itemref', $(this)), 'itemref', '.actions');
         });
 
         $(document)
-            .on('delete', function(e){
+            .on('delete', function (e) {
                 var $parent;
                 var $target = $(e.target);
-                if($target.hasClass('itemref')){
+                if ($target.hasClass('itemref')) {
                     $parent = $target.parents('.itemrefs');
                 }
             })
-            .on('add change undo.deleter deleted.deleter', '.itemrefs',  function(e){
+            .on('add change undo.deleter deleted.deleter', '.itemrefs', function (e) {
                 var $parent;
                 var $target = $(e.target);
-                if($target.hasClass('itemref') || $target.hasClass('itemrefs')){
+                if ($target.hasClass('itemref') || $target.hasClass('itemrefs')) {
                     $parent = $('.itemref', $target.hasClass('itemrefs') ? $target : $target.parents('.itemrefs'));
                     actions.enable($parent, '.actions');
                     actions.movable($parent, 'itemref', '.actions');
@@ -314,13 +324,12 @@ function(
     }
 
     /**
-     * The itemrefView setup itemref related components and beahvior
+     * The itemrefView setup itemref related components and behavior
      *
      * @exports taoQtiTest/controller/creator/views/itemref
      */
     return {
-        setUp : setUp,
+        setUp: setUp,
         listenActionState: listenActionState
     };
-
 });
