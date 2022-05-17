@@ -23,7 +23,6 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'services/features',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
@@ -34,7 +33,6 @@ define([
     $,
     _,
     __,
-    features,
     actions,
     categorySelectorFactory,
     sectionCategory,
@@ -226,7 +224,7 @@ define([
             var categorySelector = categorySelectorFactory($view),
                 $categoryField = $view.find('[name="itemref-category"]');
 
-            categorySelector.createForm();
+            categorySelector.createForm([], 'itemRef');
             categorySelector.updateFormState(refModel.categories);
 
             $view.on('propopen.propview', function () {

@@ -22,7 +22,6 @@
 define([
     'jquery',
     'lodash',
-    'services/features',
     'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/section',
@@ -34,7 +33,6 @@ define([
 ], function (
     $,
     _,
-    features,
     defaults,
     actions,
     sectionView,
@@ -180,7 +178,7 @@ define([
             const categoriesSummary = testPartCategory.getCategories(partModel);
             const categorySelector = categorySelectorFactory($view);
 
-            categorySelector.createForm(categoriesSummary.all);
+            categorySelector.createForm(categoriesSummary.all, 'testPart');
             updateFormState(categorySelector);
 
             $view.on('propopen.propview', function () {
