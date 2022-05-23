@@ -263,23 +263,25 @@
         </div>
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/showFeedback -->
-        <div class="grid-row pseudo-label-box">
-            <div class="col-5">
-                <label for="section-show-feedback">{{__ 'Show Feedback'}}</label>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input type="checkbox" name="section-show-feedback" value="true" data-bind="itemSessionControl.showFeedback" data-bind-encoder="boolean" />
-                    <span class="icon-checkbox"></span>
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ 'This constraint affects the visibility of feedback after the end of the last attempt.'}}
+        {{#if itemSessionShowFeedback}}
+            <div class="grid-row pseudo-label-box">
+                <div class="col-5">
+                    <label for="section-show-feedback">{{__ 'Show Feedback'}}</label>
+                </div>
+                <div class="col-6">
+                    <label>
+                        <input type="checkbox" name="section-show-feedback" value="true" data-bind="itemSessionControl.showFeedback" data-bind-encoder="boolean" />
+                        <span class="icon-checkbox"></span>
+                    </label>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ 'This constraint affects the visibility of feedback after the end of the last attempt.'}}
+                    </div>
                 </div>
             </div>
-        </div>
+        {{/if}}
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/allowReview -->
@@ -324,42 +326,46 @@
 --}}
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/allowComment -->
-        <div class="grid-row pseudo-label-box">
-            <div class="col-5">
-                <label for="section-allow-comment">{{__ 'Allow Comment'}}</label>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input type="checkbox" name="section-allow-comment" value="true"  data-bind="itemSessionControl.allowComment" data-bind-encoder="boolean" />
-                    <span class="icon-checkbox"></span>
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ 'This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses.'}}
+        {{#if itemSessionAllowComment}}
+            <div class="grid-row pseudo-label-box">
+                <div class="col-5">
+                    <label for="section-allow-comment">{{__ 'Allow Comment'}}</label>
+                </div>
+                <div class="col-6">
+                    <label>
+                        <input type="checkbox" name="section-allow-comment" value="true"  data-bind="itemSessionControl.allowComment" data-bind-encoder="boolean" />
+                        <span class="icon-checkbox"></span>
+                    </label>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ 'This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses.'}}
+                    </div>
                 </div>
             </div>
-        </div>
+        {{/if}}
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/allowSkipping -->
-        <div class="grid-row pseudo-label-box">
-            <div class="col-5">
-                <label for="section-allow-skipping">{{__ 'Allow Skipping'}}</label>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input type="checkbox" name="section-allow-skipping" value="true" checked="checked" data-bind="itemSessionControl.allowSkipping" data-bind-encoder="boolean" />
-                    <span class="icon-checkbox"></span>
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ 'If the candidate can skip the item, without submitting a response (default is true).'}}
+        {{#if itemSessionAllowSkipping}}
+            <div class="grid-row pseudo-label-box">
+                <div class="col-5">
+                    <label for="section-allow-skipping">{{__ 'Allow Skipping'}}</label>
+                </div>
+                <div class="col-6">
+                    <label>
+                        <input type="checkbox" name="section-allow-skipping" value="true" checked="checked" data-bind="itemSessionControl.allowSkipping" data-bind-encoder="boolean" />
+                        <span class="icon-checkbox"></span>
+                    </label>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ 'If the candidate can skip the item, without submitting a response (default is true).'}}
+                    </div>
                 </div>
             </div>
-        </div>
+        {{/if}}
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/validateResponses -->
         <div class="grid-row pseudo-label-box">
@@ -382,63 +388,65 @@
 
     </div>
 
-    <h4 class="toggler closed" data-toggle="~ .section-time-limits">{{__ 'Time Limits'}}</h4>
+    {{#if showTimeLimits}}
+        <h4 class="toggler closed" data-toggle="~ .section-time-limits">{{__ 'Time Limits'}}</h4>
 
-<!-- assessmentTest/timeLimits -->
-    <div class="section-time-limits toggled">
+    <!-- assessmentTest/timeLimits -->
+        <div class="section-time-limits toggled">
 
 
-{{!-- Property not yet available in delivery
-<!-- assessmentTest/testPart/assessmentSection/timeLimits/minTime -->
-        <div class="grid-row">
-            <div class="col-5">
-                <label for="section-min-time">{{__ 'Minimum Duration'}}</label>
+    {{!-- Property not yet available in delivery
+    <!-- assessmentTest/testPart/assessmentSection/timeLimits/minTime -->
+            <div class="grid-row">
+                <div class="col-5">
+                    <label for="section-min-time">{{__ 'Minimum Duration'}}</label>
+                </div>
+                <div class="col-6 duration-group">
+                    <input type="text" name="section-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ 'Minimum duration for this section.'}}
+                    </div>
+                </div>
             </div>
-            <div class="col-6 duration-group">
-                <input type="text" name="section-min-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.minTime" data-bind-encoder="time" />
+    --}}
+
+    <!-- assessmentTest/testPart/assessmentSection/timeLimits/maxTime -->
+            <div class="grid-row">
+                <div class="col-5">
+                    <label for="section-max-time">{{__ 'Maximum Duration'}}</label>
+                </div>
+                <div class="col-6 duration-group">
+                    <input type="text" id="section-max-time" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ 'Maximum duration for this section.'}}
+                    </div>
+                </div>
             </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ 'Minimum duration for this section.'}}
+
+    <!-- assessmentTest/testPart/assessmentSection/timeLimits/allowLateSubmission -->
+            <div class="grid-row pseudo-label-box">
+                <div class="col-5">
+                    <label for="section-allow-late-submission">{{__ 'Late submission allowed'}}</label>
+                </div>
+                <div class="col-6">
+                    <label>
+                        <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
+                        <span class="icon-checkbox"></span>
+                    </label>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."}}
+                    </div>
                 </div>
             </div>
         </div>
---}}
-
-<!-- assessmentTest/testPart/assessmentSection/timeLimits/maxTime -->
-        <div class="grid-row">
-            <div class="col-5">
-                <label for="section-max-time">{{__ 'Maximum Duration'}}</label>
-            </div>
-            <div class="col-6 duration-group">
-                <input type="text" id="section-max-time" name="max-time" value="00:00:00" data-duration="HH:mm:ss" data-bind="timeLimits.maxTime" data-bind-encoder="time" />
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ 'Maximum duration for this section.'}}
-                </div>
-            </div>
-        </div>
-
-<!-- assessmentTest/testPart/assessmentSection/timeLimits/allowLateSubmission -->
-        <div class="grid-row pseudo-label-box">
-            <div class="col-5">
-                <label for="section-allow-late-submission">{{__ 'Late submission allowed'}}</label>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
-                    <span class="icon-checkbox"></span>
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."}}
-                </div>
-            </div>
-        </div>
-    </div>
+    {{/if}}
 </div>
