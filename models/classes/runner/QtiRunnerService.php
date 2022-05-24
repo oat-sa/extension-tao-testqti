@@ -434,6 +434,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
             $reviewConfig = $config->getConfigValue('review');
             $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
+            $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered']) ? (bool) $reviewConfig['partiallyAnsweredIsAnswered'] : true;
 
             if ($displaySubsectionTitle) {
                 $currentSection = $session->getCurrentAssessmentSection();
@@ -486,7 +487,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
 
             // The current item answered state
-            $response['itemAnswered'] = $this->isItemCompleted($context, $currentItem, $itemSession);
+            $response['itemAnswered'] = $this->isItemCompleted($context, $currentItem, $itemSession, $partiallyAnsweredIsAnswered);
 
             // Time constraints.
             $response['timeConstraints'] = $this->buildTimeConstraints($context);
@@ -1073,7 +1074,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         // The current item answered state
         $route    = $session->getRoute();
         $position = $route->getPosition();
-        $output['itemAnswered'] = TestRunnerUtils::isItemCompleted($route->getRouteItemAt($position), $itemSession);
+        $config = $this->getTestConfig();
+        $reviewConfig = $config->getConfigValue('review');
+        $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered']) ? (bool) $reviewConfig['partiallyAnsweredIsAnswered'] : true;
+        $output['itemAnswered'] = TestRunnerUtils::isItemCompleted($route->getRouteItemAt($position), $itemSession, $partiallyAnsweredIsAnswered);
 
         return $output;
     }
