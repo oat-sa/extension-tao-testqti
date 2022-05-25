@@ -216,7 +216,7 @@ class AssessmentTestXmlFactoryTest extends TestCase
                 [
                     'partIdPrefix'       => 'customTestPart',
                     'sectionIdPrefix'    => 'customSectionId',
-                    'sectionTitlePrefix' => 'customSectionTitle',
+                    'sectionTitlePrefix' => 'customSectionTitle 1',
                     'categories'         => [],
                     'navigationMode'     => NavigationMode::NONLINEAR,
                     'submissionMode'     => SubmissionMode::SIMULTANEOUS,
