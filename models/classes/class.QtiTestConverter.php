@@ -142,6 +142,7 @@ class taoQtiTest_models_classes_QtiTestConverter
             $value = $this->getValue($component, $property);
             if ($value !== null) {
                 $key = $property->getName();
+                error_log($property->getName());
                 if ($value instanceof QtiComponentCollection) {
                     $array[$key] = [];
                     foreach ($value as $item) {
@@ -162,7 +163,11 @@ class taoQtiTest_models_classes_QtiTestConverter
                         $array[$property->getName()][] = $item;
                     }
                 } else {
-                    $array[$property->getName()] = $value;
+                    if(is_string($value)) {   
+                        $array[$property->getName()] = html_entity_decode($value);
+                    }else{
+                        $array[$property->getName()] = $value;
+                    }
                 }
             }
         }
