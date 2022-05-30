@@ -142,7 +142,6 @@ class taoQtiTest_models_classes_QtiTestConverter
             $value = $this->getValue($component, $property);
             if ($value !== null) {
                 $key = $property->getName();
-                error_log($property->getName());
                 if ($value instanceof QtiComponentCollection) {
                     $array[$key] = [];
                     foreach ($value as $item) {
