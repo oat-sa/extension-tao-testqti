@@ -26,7 +26,7 @@ use oat\oatbox\extension\script\ScriptAction;
 use oat\oatbox\reporting\Report;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
-use oat\taoDelivery\model\execution\ServiceProxy;
+use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoResultServer\models\classes\ResultServerService;
@@ -237,9 +237,9 @@ class PropagateEmptyResponseVariables extends ScriptAction
         return [$numAttempts, $duration, $response, $completionsStatus];
     }
 
-    protected function getServiceProxy(): ServiceProxy
+    protected function getServiceProxy(): DeliveryExecutionService
     {
-        return $this->getServiceLocator()->get(ServiceProxy::SERVICE_ID);
+        return $this->getServiceLocator()->get(DeliveryExecutionService::SERVICE_ID);
     }
 
     private function getQtiTestUtil(): QtiTestUtils
