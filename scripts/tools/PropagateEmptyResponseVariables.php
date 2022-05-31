@@ -30,13 +30,18 @@ use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoResultServer\models\classes\ResultServerService;
-use qtism\data\AssessmentItemRef;
+use qtism\common\enums\BaseType;
+use qtism\common\enums\Cardinality;
 use qtism\data\AssessmentTest;
+use qtism\data\ExtendedAssessmentItemRef;
+use qtism\data\state\OutcomeDeclaration;
+use qtism\data\state\Value;
+use qtism\data\state\ValueCollection;
 use qtism\data\TestPart;
 use tao_models_classes_service_ServiceCallHelper;
-use taoResultServer_models_classes_OutcomeVariable;
+use taoResultServer_models_classes_OutcomeVariable as OutcomeVariable;
 use taoResultServer_models_classes_ReadableResultStorage as ReadableResultStorage;
-use taoResultServer_models_classes_ResponseVariable;
+use taoResultServer_models_classes_ResponseVariable as ResponseVariable;
 
 class PropagateEmptyResponseVariables extends ScriptAction
 {
@@ -97,18 +102,27 @@ class PropagateEmptyResponseVariables extends ScriptAction
             $testDefinition = $this->fetchTestDefinition($deliveryExecution);
             $assessmentItemHrefByItemId = $this->extractAssocAssessmentItemHrefByItemId($testDefinition);
             $propagated = 0;
-            foreach ($assessmentItemHrefByItemId as $itemId => $itemHref) {
+            foreach ($assessmentItemHrefByItemId as $itemId => $itemData) {
                 if (in_array($itemId, $itemsId, true)) {
                     continue;
                 }
                 if ($isWetRun) {
-                    [$itemUri, , $testUri] = explode('|', $itemHref);
+                    [$itemUri, , $testUri] = explode('|', $itemData['href']);
                     $callItemId = sprintf(sprintf('%s.%s.%s', $deliveryExecutionId, $itemId, 0));
+                    $dynamicOutcomeVariables = [];
+                    foreach ($itemData['outcomes'] as $outcomeIdentifier => $data) {
+                        $dynamicOutcomeVariables[] = (new OutcomeVariable())
+                            ->setIdentifier($outcomeIdentifier)
+                            ->setValue($data['value'])
+                            ->setCardinality($data['cardinality'])
+                            ->setBaseType($data['baseType']);
+                    }
+
                     $resultStorage->storeItemVariables(
                         $deliveryExecutionId,
                         $testUri,
                         $itemUri,
-                        $variables,
+                        array_merge($variables, $dynamicOutcomeVariables),
                         $callItemId
                     );
                 }
@@ -166,47 +180,64 @@ class PropagateEmptyResponseVariables extends ScriptAction
         /** @var TestPart $testPart */
         foreach ($assessmentTest->getTestParts() as $testPart) {
             foreach ($testPart->getAssessmentSections() as $assessmentSection) {
-                /** @var AssessmentItemRef $sectionPart */
+                /** @var ExtendedAssessmentItemRef $sectionPart */
                 foreach ($assessmentSection->getSectionParts() as $sectionPart) {
-                    $result[$sectionPart->getIdentifier()] = $sectionPart->getHref();
+                    $result[$sectionPart->getIdentifier()] = [
+                        'href' => $sectionPart->getHref(),
+                        'outcomes' => []
+                    ];
+                    /** @var OutcomeDeclaration $outcomeDeclaration */
+                    foreach ($sectionPart->getOutcomeDeclarations() as $outcomeDeclaration) {
+                        $value = 0;
+
+                        if (
+                            $outcomeDeclaration->hasDefaultValue()
+                            && $outcomeDeclaration->getDefaultValue()->getValues() instanceof ValueCollection
+                        ) {
+                            /** @var Value $defaultValue */
+                            $defaultValue = $outcomeDeclaration->getDefaultValue()->getValues()[0];
+                            $value = $defaultValue->getValue();
+                        }
+                        $result[$sectionPart->getIdentifier()]['outcomes'][$outcomeDeclaration->getIdentifier()] = [
+                            'baseType' => BaseType::getNameByConstant($outcomeDeclaration->getBaseType()),
+                            'cardinality' => Cardinality::getNameByConstant($outcomeDeclaration->getCardinality()),
+                            'value' => $value
+                        ];
+                    }
                 }
             }
         }
+
         return $result;
     }
 
     private function createVariables(): array
     {
-        $numAttempts = (new taoResultServer_models_classes_ResponseVariable())
+        $numAttempts = (new ResponseVariable())
             ->setIdentifier('numAttempts')
             ->setCandidateResponse('1')
             ->setCardinality('single')
             ->setBaseType('integer');
-        $duration = (new taoResultServer_models_classes_ResponseVariable())
+        $duration = (new ResponseVariable())
             ->setIdentifier('duration')
             ->setCandidateResponse('PT0S')
             ->setCardinality('single')
             ->setBaseType('duration');
-        $response = (new taoResultServer_models_classes_ResponseVariable())
+        $response = (new ResponseVariable())
             ->setIdentifier('RESPONSE')
             ->setCandidateResponse('')
             ->setCardinality('single')
             ->setBaseType('identifier');
-        $completionsStatus = (new taoResultServer_models_classes_OutcomeVariable())
+        $completionsStatus = (new OutcomeVariable())
             ->setValue('completed')
-            ->setIdentifier('SCORE')
+            ->setIdentifier('completionStatus')
             ->setCardinality('single')
             ->setBaseType('identifier');
-        $score = (new taoResultServer_models_classes_OutcomeVariable())
-            ->setValue('0')
-            ->setIdentifier('SCORE')
-            ->setCardinality('single')
-            ->setBaseType('float');
 
-        return [$numAttempts, $duration, $response, $completionsStatus, $score,];
+        return [$numAttempts, $duration, $response, $completionsStatus];
     }
 
-    protected function getServiceProxy()
+    protected function getServiceProxy(): ServiceProxy
     {
         return $this->getServiceLocator()->get(ServiceProxy::SERVICE_ID);
     }
