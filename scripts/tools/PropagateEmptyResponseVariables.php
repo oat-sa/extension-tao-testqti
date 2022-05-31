@@ -54,6 +54,7 @@ class PropagateEmptyResponseVariables extends ScriptAction
     ];
 
     private static $testDefinitionsByDeliveryId = [];
+    private static $mappedItemsByTestDefinition = [];
 
     protected function provideOptions()
     {
@@ -176,6 +177,10 @@ class PropagateEmptyResponseVariables extends ScriptAction
 
     private function extractAssocAssessmentItemHrefByItemId(AssessmentTest $assessmentTest): array
     {
+        if (isset(self::$mappedItemsByTestDefinition[$assessmentTest->getIdentifier()])) {
+            return self::$mappedItemsByTestDefinition[$assessmentTest->getIdentifier()];
+        }
+
         $result = [];
         /** @var TestPart $testPart */
         foreach ($assessmentTest->getTestParts() as $testPart) {
@@ -207,6 +212,8 @@ class PropagateEmptyResponseVariables extends ScriptAction
                 }
             }
         }
+
+        self::$mappedItemsByTestDefinition[$assessmentTest->getIdentifier()] = $result;
 
         return $result;
     }
