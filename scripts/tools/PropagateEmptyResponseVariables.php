@@ -22,12 +22,14 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\scripts\tools;
 
+use core_kernel_classes_Property;
 use oat\oatbox\extension\script\ScriptAction;
 use oat\oatbox\reporting\Report;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use oat\taoQtiTest\models\QtiTestUtils;
 use oat\taoResultServer\models\classes\ResultServerService;
 use qtism\common\enums\BaseType;
@@ -35,12 +37,12 @@ use qtism\common\enums\Cardinality;
 use qtism\data\AssessmentTest;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\data\state\OutcomeDeclaration;
+use qtism\data\state\OutcomeDeclarationCollection;
 use qtism\data\state\Value;
 use qtism\data\state\ValueCollection;
 use qtism\data\TestPart;
 use tao_models_classes_service_ServiceCallHelper;
 use taoResultServer_models_classes_OutcomeVariable as OutcomeVariable;
-use taoResultServer_models_classes_ReadableResultStorage as ReadableResultStorage;
 use taoResultServer_models_classes_ResponseVariable as ResponseVariable;
 
 class PropagateEmptyResponseVariables extends ScriptAction
@@ -63,7 +65,7 @@ class PropagateEmptyResponseVariables extends ScriptAction
                 'prefix' => 'de',
                 'longPrefix' => self::OPTION_DELIVERY_EXECUTION,
                 'required' => true,
-                'description' => 'A comma-separated list of Deliveries Execution ids to keep on the instance.',
+                'description' => 'A comma-separated list of Deliveries Execution ids',
             ],
             self::OPTION_WET_RUN => [
                 'prefix' => 'wr',
@@ -94,22 +96,42 @@ class PropagateEmptyResponseVariables extends ScriptAction
         $variables = $this->createVariables();
         foreach ($deliveryExecutionIdList as $deliveryExecutionId) {
             $deliveryExecution = $this->getServiceProxy()->getDeliveryExecution($deliveryExecutionId);
-            if (in_array($deliveryExecution, self::DE_ENDED_STATUSES, true)) {
-                $outcome[] = sprintf('[%s] Delivery execution not finished', $deliveryExecutionId);
+            if (!in_array($deliveryExecution->getState()->getUri(), self::DE_ENDED_STATUSES, true)) {
+                $outcome[] = sprintf('[%s] Delivery execution not ended', $deliveryExecutionId);
                 continue;
             }
 
-            $itemsId = $this->fetchUniqueItemsIdFromResponseVariables($resultStorage, $deliveryExecutionId);
+            $resultVariables = $resultStorage->getDeliveryVariables($deliveryExecutionId);
+
+            $existedTestItemVariables = $this->fetchUniqueItemsIdFromResponseVariables($resultVariables);
+            $testOutcomeVariables = $this->filterTestOutcomeVariables($resultVariables);
             $testDefinition = $this->fetchTestDefinition($deliveryExecution);
             $assessmentItemHrefByItemId = $this->extractAssocAssessmentItemHrefByItemId($testDefinition);
+            $filteredTestOutcomeVariables = $this->extractOutcomeVariables($testDefinition->getOutcomeDeclarations());
+            $filteredTestOutcomeVariablesForInsert = $this->buildFilteredTestOutcomeVariablesSet(
+                $filteredTestOutcomeVariables,
+                $testOutcomeVariables
+            );
+            if ($isWetRun) {
+                $testResource = $deliveryExecution->getDelivery()->getOnePropertyValue(
+                    new core_kernel_classes_Property(DeliveryAssemblyService::PROPERTY_ORIGIN)
+                );
+                $resultStorage->storeTestVariables(
+                    $deliveryExecutionId,
+                    $testResource->getUri(),
+                    $filteredTestOutcomeVariablesForInsert,
+                    $deliveryExecutionId
+                );
+            }
+
             $propagated = 0;
             foreach ($assessmentItemHrefByItemId as $itemId => $itemData) {
-                if (in_array($itemId, $itemsId, true)) {
+                if (in_array($itemId, $existedTestItemVariables, true)) {
                     continue;
                 }
                 if ($isWetRun) {
                     [$itemUri, , $testUri] = explode('|', $itemData['href']);
-                    $callItemId = sprintf(sprintf('%s.%s.%s', $deliveryExecutionId, $itemId, 0));
+                    $callItemId = sprintf('%s.%s.%s', $deliveryExecutionId, $itemId, 0);
                     $dynamicOutcomeVariables = [];
                     foreach ($itemData['outcomes'] as $outcomeIdentifier => $data) {
                         $dynamicOutcomeVariables[] = (new OutcomeVariable())
@@ -130,9 +152,10 @@ class PropagateEmptyResponseVariables extends ScriptAction
                 $propagated++;
             }
             $outcome[] = sprintf(
-                '[%s] Response variables were propagated for %s items',
+                '[%s] Response item variables were propagated for %s items, propagated %s test outcome variables',
                 $deliveryExecutionId,
-                $propagated
+                $propagated,
+                count($filteredTestOutcomeVariablesForInsert)
             );
         }
 
@@ -155,12 +178,8 @@ class PropagateEmptyResponseVariables extends ScriptAction
         return self::$testDefinitionsByDeliveryId[$compiledDeliveryUri];
     }
 
-    private function fetchUniqueItemsIdFromResponseVariables(
-        ReadableResultStorage $resultStorage,
-        string                $deliveryExecutionId
-    ): array
+    private function fetchUniqueItemsIdFromResponseVariables(array $resultVariables): array
     {
-        $resultVariables = $resultStorage->getDeliveryVariables($deliveryExecutionId);
         //filter Item Variables
         $itemFilteredVariables = array_filter($resultVariables, static function (array $variable) {
             return $variable[0]->callIdItem !== null;
@@ -173,6 +192,20 @@ class PropagateEmptyResponseVariables extends ScriptAction
         }, $itemFilteredVariables);
 
         return array_unique($items);
+    }
+
+    private function filterTestOutcomeVariables(array $resultVariables): array
+    {
+        //filter Test Variables
+        $testFilteredVariables = array_filter($resultVariables, static function (array $variable) {
+            return $variable[0]->callIdItem === null;
+        });
+
+        return array_map(function (array $record) {
+            /** @var OutcomeVariable $variable */
+            $variable = $record[0]->variable;
+            return $variable->getIdentifier();
+        }, $testFilteredVariables);
     }
 
     private function extractAssocAssessmentItemHrefByItemId(AssessmentTest $assessmentTest): array
@@ -189,26 +222,8 @@ class PropagateEmptyResponseVariables extends ScriptAction
                 foreach ($assessmentSection->getSectionParts() as $sectionPart) {
                     $result[$sectionPart->getIdentifier()] = [
                         'href' => $sectionPart->getHref(),
-                        'outcomes' => []
+                        'outcomes' => $this->extractOutcomeVariables($sectionPart->getOutcomeDeclarations())
                     ];
-                    /** @var OutcomeDeclaration $outcomeDeclaration */
-                    foreach ($sectionPart->getOutcomeDeclarations() as $outcomeDeclaration) {
-                        $value = 0;
-
-                        if (
-                            $outcomeDeclaration->hasDefaultValue()
-                            && $outcomeDeclaration->getDefaultValue()->getValues() instanceof ValueCollection
-                        ) {
-                            /** @var Value $defaultValue */
-                            $defaultValue = $outcomeDeclaration->getDefaultValue()->getValues()[0];
-                            $value = $defaultValue->getValue();
-                        }
-                        $result[$sectionPart->getIdentifier()]['outcomes'][$outcomeDeclaration->getIdentifier()] = [
-                            'baseType' => BaseType::getNameByConstant($outcomeDeclaration->getBaseType()),
-                            'cardinality' => Cardinality::getNameByConstant($outcomeDeclaration->getCardinality()),
-                            'value' => $value
-                        ];
-                    }
                 }
             }
         }
@@ -242,6 +257,49 @@ class PropagateEmptyResponseVariables extends ScriptAction
             ->setBaseType('identifier');
 
         return [$numAttempts, $duration, $response, $completionsStatus];
+    }
+
+    private function extractOutcomeVariables(OutcomeDeclarationCollection $outcomeDeclarationCollection): array
+    {
+        $outcomes = [];
+        /** @var OutcomeDeclaration $outcomeDeclaration */
+        foreach ($outcomeDeclarationCollection as $outcomeDeclaration) {
+            $value = 0;
+
+            if (
+                $outcomeDeclaration->hasDefaultValue()
+                && $outcomeDeclaration->getDefaultValue()->getValues() instanceof ValueCollection
+            ) {
+                /** @var Value $defaultValue */
+                $defaultValue = $outcomeDeclaration->getDefaultValue()->getValues()[0];
+                $value = $defaultValue->getValue();
+            }
+            $outcomes[$outcomeDeclaration->getIdentifier()] = [
+                'baseType' => BaseType::getNameByConstant($outcomeDeclaration->getBaseType()),
+                'cardinality' => Cardinality::getNameByConstant($outcomeDeclaration->getCardinality()),
+                'value' => $value
+            ];
+        }
+        return $outcomes;
+    }
+
+    private function buildFilteredTestOutcomeVariablesSet(
+        array $testOutcomeVariablesByIdentifier,
+        array $existedOutcomeVariables
+    ): array {
+        $resultSet = [];
+        foreach ($testOutcomeVariablesByIdentifier as $identifier => $testOutcomeVariable) {
+            if (in_array($identifier, $existedOutcomeVariables, true)) {
+                continue;
+            }
+            $resultSet[] = (new OutcomeVariable())
+                ->setIdentifier($identifier)
+                ->setValue($testOutcomeVariable['value'])
+                ->setBaseType($testOutcomeVariable['baseType'])
+                ->setCardinality($testOutcomeVariable['cardinality']);
+        }
+
+        return $resultSet;
     }
 
     protected function getServiceProxy(): DeliveryExecutionService
