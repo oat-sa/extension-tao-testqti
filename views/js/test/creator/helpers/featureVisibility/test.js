@@ -291,7 +291,7 @@ define([
 
         const presetGroups = _.cloneDeep(presetGroupsSample);
 
-        mockIsVisible(false, 'taoQtiTest/creator/category/presetGroup/navigation');
+        mockIsVisible(false, 'taoQtiTest/creator/all/category/presetGroup/navigation');
 
         const filteredPresetGroups = featureVisibility.filterVisiblePresets(presetGroups);
 
@@ -301,7 +301,7 @@ define([
             'navigation presetGroup is filtered out if them are not visible'
         );
 
-        mockIsVisible(true, 'taoQtiTest/creator/category/presetGroup/navigation');
+        mockIsVisible(true, 'taoQtiTest/creator/all/category/presetGroup/navigation');
 
         const notFilteredPresetGroups = featureVisibility.filterVisiblePresets(presetGroups);
 
@@ -317,9 +317,29 @@ define([
 
         const presetGroups = _.cloneDeep(presetGroupsSample);
 
-        mockIsVisible(false, 'taoQtiTest/creator/category/preset/reviewScreen');
+        mockIsVisible(false, 'taoQtiTest/creator/all/category/preset/reviewScreen');
 
         const filteredPresetGroups = featureVisibility.filterVisiblePresets(presetGroups);
+
+        assert.equal(filteredPresetGroups.length, 3, 'presetGroups are not filtered');
+
+        const navigationPresetGroupPresets = filteredPresetGroups[0].presets;
+
+        assert.equal(
+            navigationPresetGroupPresets.some(preset => preset.id === 'reviewScreen'),
+            false,
+            'reviewScreen preset is filtered out if marked not visible'
+        );
+    });
+
+    QUnit.test('removes single preset from presetGroups with respect to level', function (assert) {
+        assert.expect(2);
+
+        const presetGroups = _.cloneDeep(presetGroupsSample);
+
+        mockIsVisible(false, 'taoQtiTest/creator/section/category/preset/reviewScreen');
+
+        const filteredPresetGroups = featureVisibility.filterVisiblePresets(presetGroups, 'section');
 
         assert.equal(filteredPresetGroups.length, 3, 'presetGroups are not filtered');
 

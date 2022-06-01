@@ -24,7 +24,6 @@ define([
     'lodash',
     'uri',
     'i18n',
-    'services/features',
     'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/itemref',
@@ -45,7 +44,6 @@ define([
     _,
     uri,
     __,
-    features,
     defaults,
     actions,
     itemRefView,
@@ -415,7 +413,7 @@ define([
             const categories = sectionCategory.getCategories(sectionModel),
                 categorySelector = categorySelectorFactory($view);
 
-            categorySelector.createForm(categories.all);
+            categorySelector.createForm(categories.all, 'section');
             updateFormState(categorySelector);
 
             $view.on('propopen.propview', function () {

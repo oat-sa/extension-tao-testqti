@@ -30,8 +30,9 @@ define([
     'core/eventifier',
     'ui/tooltip',
     'taoQtiTest/controller/creator/templates/index',
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
     'select2'
-], function($, _, __, eventifier, tooltip, templates) {
+], function($, _, __, eventifier, tooltip, templates, featureVisibility) {
     'use strict';
 
     var allPresets = [],
@@ -93,15 +94,17 @@ define([
              *
              * @param {Array} [currentCategories] - all categories currently associated to the item. If applied to a section,
              * contains all the categories applied to at least one item of the section.
+             * @param {string} [level] one of the values `testPart`, `section` or `itemRef`
              */
-            createForm: function createForm(currentCategories) {
+            createForm: function createForm(currentCategories, level) {
                 var self = this,
                     presetsTpl = templates.properties.categorypresets,
                     customCategories = _.difference(currentCategories, allQtiCategoriesPresets);
 
+                const filteredPresets = featureVisibility.filterVisiblePresets(allPresets, level);
                 // add preset checkboxes
                 $presetsContainer.append(
-                    presetsTpl({presetGroups: allPresets})
+                    presetsTpl({presetGroups: filteredPresets})
                 );
 
                 $presetsContainer.on('click', function(e) {
