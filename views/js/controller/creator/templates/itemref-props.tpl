@@ -278,6 +278,7 @@
 
     </div>
 
+    {{#if showTimeLimits}}
     <h4 class="toggler closed" data-toggle="~ .itemref-time-limits">{{__ 'Time Limits'}}</h4>
 
 <!-- assessmentTest/timeLimits -->
@@ -313,7 +314,7 @@
                 </div>
             </div>
         </div>
-
+    
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/timeLimits/maxTime -->
         <div class="grid-row maxtime-container {{#if isLinear}}hidden{{/if}}">
             <div class="col-5">
@@ -365,4 +366,5 @@
             </div>
         </div>
     </div>
+    {{/if}}
 </div>

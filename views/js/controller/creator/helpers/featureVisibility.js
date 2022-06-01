@@ -90,11 +90,12 @@ define(['services/features'], function (features) {
     /**
      * Filters the presets and preset groups based on visibility config
      * @param {Array} presetGroups array of presetGroups
+     * @param {string} [level='all'] testPart, section of itemRef
      * @returns {Array} filtered presetGroups array
      */
-    function filterVisiblePresets(presetGroups) {
-        const categoryGroupNamespace = 'taoQtiTest/creator/category/presetGroup/';
-        const categoryPresetNamespace = 'taoQtiTest/creator/category/preset/';
+    function filterVisiblePresets(presetGroups, level = 'all') {
+        const categoryGroupNamespace = `taoQtiTest/creator/${level}/category/presetGroup/`;
+        const categoryPresetNamespace = `taoQtiTest/creator/${level}/category/preset/`;
         let filteredGroups;
         if (presetGroups && presetGroups.length) {
             filteredGroups = presetGroups.filter(presetGroup => {
