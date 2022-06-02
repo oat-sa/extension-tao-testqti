@@ -32,6 +32,8 @@ use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\theme\ThemeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -976,9 +978,11 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $session = $context->getTestSession();
 
         return $session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS
-            && $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback();
+            && (
+                $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback() ||
+                $this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_FORCE_DISPLAY_TEST_ITEM_FEEDBACK')
+            );
     }
-
 
     /**
      * Get feedback definitions
@@ -2134,5 +2138,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     private function getUpdateItemContentReferencesService(): UpdateItemContentReferencesService
     {
         return $this->getServiceLocator()->getContainer()->get(UpdateItemContentReferencesService::class);
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
+    {
+        return $this->getServiceLocator()->getContainer()->get(FeatureFlagChecker::class);
     }
 }
