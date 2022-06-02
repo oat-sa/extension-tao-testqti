@@ -50,3 +50,10 @@ or manually updating DI config file `taoQtiTest/ResultTransmissionEventHandler` 
 
 return new oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\AsynchronousResultTransmissionEventHandler();
 ```
+
+Environment variables
+=====================
+
+| Var                                           | Description                                                                         |
+|-----------------------------------------------|-------------------------------------------------------------------------------------|
+| FEATURE_FLAG_FORCE_DISPLAY_TEST_ITEM_FEEDBACK | Even if itemSessionControl `showFeedback` option is false, show item feedback modal |
