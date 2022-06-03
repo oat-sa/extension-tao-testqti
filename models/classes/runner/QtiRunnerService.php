@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2022 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -46,7 +46,6 @@ use oat\taoQtiItem\model\portableElement\PortableElementService;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
-use oat\taoQtiTest\models\CompilationDataService;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use oat\taoQtiTest\models\event\TestExitEvent;
@@ -965,7 +964,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function displayFeedbacks(RunnerServiceContext $context)
     {
         if (!$context instanceof QtiRunnerServiceContext) {
-
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'displayFeedbacks',
@@ -982,10 +980,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             return false;
         }
 
-        $data = $context->getTestMeta();
-        $testCompilationVersion = $data[CompilationDataService::COMPILATION_VERSION] ?? 0;
-
-        if ($testCompilationVersion > 0) {
+        if ($context->getTestCompilationVersion() > 0) {
             return $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback();
         }
 

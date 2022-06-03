@@ -30,7 +30,8 @@ use qtism\data\NavigationMode;
 */
 class taoQtiTest_helpers_TestCompilerUtils
 {
-    
+    public const COMPILATION_VERSION = 'compilationVersion';
+
     /**
      * Get an  associative array representing some meta-data about the
      * given $test.
@@ -46,13 +47,14 @@ class taoQtiTest_helpers_TestCompilerUtils
     public static function testMeta(AssessmentTest $test)
     {
         $meta = [];
-        
+
         $meta['branchRules'] = self::testContainsBranchRules($test);
         $meta['preConditions'] = self::testContainsPreConditions($test);
-        
+        $meta[self::COMPILATION_VERSION] = 1;
+
         return $meta;
     }
-    
+
     /**
      * Whether or not a given $test contains branchRules subject to be
      * in force during its execution.
@@ -64,23 +66,23 @@ class taoQtiTest_helpers_TestCompilerUtils
     {
         $testParts = $test->getComponentsByClassName('testPart');
         $containsBranchRules = false;
-        
+
         foreach ($testParts as $testPart) {
             // Remember that branchRules are ignored when the navigation mode
             // is non linear.
             if ($testPart->getNavigationMode() !== NavigationMode::NONLINEAR) {
                 $branchings = $testPart->getComponentsByClassName('branchRule');
-                
+
                 if (count($branchings) > 0) {
                     $containsBranchRules = true;
                     break;
                 }
             }
         }
-        
+
         return $containsBranchRules;
     }
-    
+
     /**
      * Whether or not a given $test contains preConditions subject to be in force
      * during its execution.
@@ -92,20 +94,20 @@ class taoQtiTest_helpers_TestCompilerUtils
     {
         $testParts = $test->getComponentsByClassName('testPart');
         $containsPreConditions = false;
-        
+
         foreach ($testParts as $testPart) {
             // PreConditions are only taken into account
             // in linear navigation mode.
             if ($testPart->getNavigationMode() !== NavigationMode::NONLINEAR) {
                 $preConditions = $testPart->getComponentsByClassName('preCondition');
-                
+
                 if (count($preConditions) > 0) {
                     $containsPreConditions = true;
                     break;
                 }
             }
         }
-        
+
         return $containsPreConditions;
     }
 }
