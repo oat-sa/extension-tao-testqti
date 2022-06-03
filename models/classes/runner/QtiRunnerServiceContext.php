@@ -49,6 +49,7 @@ use qtism\runtime\tests\RouteItem;
 use oat\oatbox\event\EventManager;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use oat\libCat\result\ResultVariable;
+use taoQtiTest_helpers_TestCompilerUtils;
 use taoQtiTest_models_classes_QtiTestService;
 
 /**
@@ -336,6 +337,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         }
 
         return $this->testMeta;
+    }
+
+    public function getTestCompilationVersion(): int
+    {
+        return $this->getTestMeta()[taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION] ?? 0;
     }
 
     /**
