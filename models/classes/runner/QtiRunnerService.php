@@ -46,6 +46,7 @@ use oat\taoQtiItem\model\portableElement\PortableElementService;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\GetDeliveryExecutionsItems;
+use oat\taoQtiTest\models\CompilationDataService;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use oat\taoQtiTest\models\event\TestExitEvent;
@@ -977,11 +978,19 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
-        return $session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS
-            && (
-                $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback() ||
-                $this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_FORCE_DISPLAY_TEST_ITEM_FEEDBACK')
-            );
+        if ($session->getCurrentSubmissionMode() === SubmissionMode::SIMULTANEOUS) {
+            return false;
+        }
+
+        $data = $context->getTestMeta();
+        $testCompilationVersion = $data[CompilationDataService::COMPILATION_VERSION] ?? 0;
+
+        if ($testCompilationVersion > 0) {
+            return $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback();
+        }
+
+        return $this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_FORCE_DISPLAY_TEST_ITEM_FEEDBACK')
+            || $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback();
     }
 
     /**

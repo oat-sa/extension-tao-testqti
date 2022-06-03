@@ -14,8 +14,9 @@ use qtism\data\QtiComponent;
  */
 abstract class CompilationDataService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/CompilationDataService';
-    
+    public const SERVICE_ID = 'taoQtiTest/CompilationDataService';
+    public const COMPILATION_VERSION = 'compilationVersion';
+
     /**
      * Create a new CompilationDataService object.
      *
@@ -41,8 +42,8 @@ abstract class CompilationDataService extends ConfigurableService
      * @param \qtism\data\QtiComponent $object
      */
     abstract public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object);
-    
-    
+
+
     /**
      * Read Compilation Data
      *
@@ -68,6 +69,7 @@ abstract class CompilationDataService extends ConfigurableService
         try {
             $filename = \taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_META_FILENAME . '.json';
             $meta = \taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
+            $meta[self::COMPILATION_VERSION] = 1;
             $compilationDirectory->write($filename, json_encode($meta));
         } catch (\Exception $e) {
             throw new \common_Exception("Unable to write file '${filename}'.");
