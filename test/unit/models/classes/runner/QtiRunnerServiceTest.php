@@ -2,23 +2,33 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner;
 
+use common_ext_ExtensionsManager;
 use oat\generis\test\TestCase;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\theme\Theme;
 use oat\tao\model\theme\ThemeService;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoQtiTest\models\runner\session\TestSession;
 use qtism\data\AssessmentTest;
+use qtism\data\ItemSessionControl;
+use qtism\data\SubmissionMode;
+use qtism\runtime\tests\AssessmentItemSession;
 
 class QtiRunnerServiceTest extends TestCase
 {
-    const TEST_THEME_ID = 'test';
+    public const TEST_THEME_ID = 'test';
 
     /** @var QtiRunnerService */
     private $qtiRunnerService;
 
-    /** @var \common_ext_ExtensionsManager */
+    /** @var common_ext_ExtensionsManager */
     private $extensionsManagerMock;
+
+    /** @var FeatureFlagChecker */
+    private $featureFlagChecker;
 
     public function setUp(): void
     {
@@ -41,7 +51,7 @@ class QtiRunnerServiceTest extends TestCase
             ->willReturn($qtiRunnerConfigMock)
         ;
 
-        $this->extensionsManagerMock = $this->getMockBuilder(\common_ext_ExtensionsManager::class)
+        $this->extensionsManagerMock = $this->getMockBuilder(common_ext_ExtensionsManager::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -63,9 +73,12 @@ class QtiRunnerServiceTest extends TestCase
             ->willReturn($themeMock)
         ;
 
+        $this->featureFlagChecker = $this->createMock(FeatureFlagChecker::class);
+
         $serviceLocatorMock = $this->getServiceLocatorMock([
-            \common_ext_ExtensionsManager::SERVICE_ID => $this->extensionsManagerMock,
+            common_ext_ExtensionsManager::SERVICE_ID => $this->extensionsManagerMock,
             ThemeService::SERVICE_ID => $themeServiceMock,
+            FeatureFlagChecker::class => $this->featureFlagChecker
         ]);
 
         $this->qtiRunnerService->setServiceLocator($serviceLocatorMock);
@@ -155,5 +168,117 @@ class QtiRunnerServiceTest extends TestCase
             && array_key_exists('plugins', $testData['config'])
             && !array_key_exists(QtiRunnerService::TOOL_ITEM_THEME_SWITCHER, $testData['config']['plugins'])
         );
+    }
+
+    public function testDoNotDisplayFeedbacksForSimultaneousSubmissionMode(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+
+        $context->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentSubmissionMode')
+            ->willReturn(SubmissionMode::SIMULTANEOUS);
+
+        $this->assertFalse($this->qtiRunnerService->displayFeedbacks($context));
+    }
+
+    public function testDisplayFeedbacksForNewTestCompilationVersion(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $itemSessionControl = $this->createMock(ItemSessionControl::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+
+        $context->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $context->expects($this->once())
+            ->method('getTestCompilationVersion')
+            ->willReturn(1);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentSubmissionMode')
+            ->willReturn(SubmissionMode::INDIVIDUAL);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentAssessmentItemSession')
+            ->willReturn($assessmentItemSession);
+
+        $assessmentItemSession->expects($this->once())
+            ->method('getItemSessionControl')
+            ->willReturn($itemSessionControl);
+
+        $itemSessionControl->expects($this->once())
+            ->method('mustShowFeedback')
+            ->willReturn(true);
+
+        $this->assertTrue($this->qtiRunnerService->displayFeedbacks($context));
+    }
+
+    public function testDisplayFeedbacksForOldCompilationVersionIfFeatureFlagIsEnabled(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+
+        $context->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $context->expects($this->once())
+            ->method('getTestCompilationVersion')
+            ->willReturn(0);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentSubmissionMode')
+            ->willReturn(SubmissionMode::INDIVIDUAL);
+
+        $this->featureFlagChecker->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $this->assertTrue($this->qtiRunnerService->displayFeedbacks($context));
+    }
+
+    public function testDisplayFeedbacksForOldCompilationVersionIfFeatureFlagIsDisabled(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $itemSessionControl = $this->createMock(ItemSessionControl::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+
+        $context->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $context->expects($this->once())
+            ->method('getTestCompilationVersion')
+            ->willReturn(0);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentSubmissionMode')
+            ->willReturn(SubmissionMode::INDIVIDUAL);
+
+        $this->featureFlagChecker->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(false);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentAssessmentItemSession')
+            ->willReturn($assessmentItemSession);
+
+        $assessmentItemSession->expects($this->once())
+            ->method('getItemSessionControl')
+            ->willReturn($itemSessionControl);
+
+        $itemSessionControl->expects($this->once())
+            ->method('mustShowFeedback')
+            ->willReturn(true);
+
+        $this->assertTrue($this->qtiRunnerService->displayFeedbacks($context));
     }
 }

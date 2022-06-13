@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2022 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -32,6 +32,8 @@ use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\theme\ThemeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -962,7 +964,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function displayFeedbacks(RunnerServiceContext $context)
     {
         if (!$context instanceof QtiRunnerServiceContext) {
-
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'displayFeedbacks',
@@ -975,10 +976,17 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         /* @var TestSession $session */
         $session = $context->getTestSession();
 
-        return $session->getCurrentSubmissionMode() !== SubmissionMode::SIMULTANEOUS
-            && $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback();
-    }
+        if ($session->getCurrentSubmissionMode() === SubmissionMode::SIMULTANEOUS) {
+            return false;
+        }
 
+        if ($context->getTestCompilationVersion() > 0) {
+            return $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback();
+        }
+
+        return $this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_FORCE_DISPLAY_TEST_ITEM_FEEDBACK')
+            || $session->getCurrentAssessmentItemSession()->getItemSessionControl()->mustShowFeedback();
+    }
 
     /**
      * Get feedback definitions
@@ -2134,5 +2142,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     private function getUpdateItemContentReferencesService(): UpdateItemContentReferencesService
     {
         return $this->getServiceLocator()->getContainer()->get(UpdateItemContentReferencesService::class);
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
+    {
+        return $this->getServiceLocator()->getContainer()->get(FeatureFlagChecker::class);
     }
 }
