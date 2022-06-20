@@ -245,6 +245,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         $clientTimeLine = $this->timeLine->filter($tags, TimePoint::TARGET_CLIENT);
         $clientRange = $clientTimeLine->getPoints();
         $clientRangeLength = count($clientRange);
+//        $logContext = [$this->storage->];
         if ($clientRangeLength) {
             $clientDuration = 0;
             try {
