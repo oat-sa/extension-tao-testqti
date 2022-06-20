@@ -21,6 +21,7 @@
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
 
 use common_exception_InconsistentData as InconsistentData;
+use common_Logger;
 use Exception;
 use oat\taoQtiTest\model\Service\TimeoutCommand;
 use oat\taoQtiTest\model\Service\TimeoutService;
@@ -65,6 +66,7 @@ class Timeout extends TestRunnerAction
 
             return $response->toArray();
         } catch (Exception $e) {
+            common_Logger::e($e->getMessage(), ['deliveryExecutionId' => $this->getServiceContext()->getTestExecutionUri()]);
             return $this->getErrorResponse($e);
         }
     }

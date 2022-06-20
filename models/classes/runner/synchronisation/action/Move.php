@@ -27,6 +27,7 @@ use common_Logger;
 use Exception;
 use oat\taoQtiTest\model\Service\MoveCommand;
 use oat\taoQtiTest\model\Service\MoveService;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
 /**
@@ -77,7 +78,7 @@ class Move extends TestRunnerAction
 
             return $response->toArray();
         } catch (Exception $e) {
-            common_Logger::e($e->getMessage());
+            common_Logger::e($e->getMessage(), ['deliveryExecutionId' => $this->getServiceContext()->getTestExecutionUri()]);
 
             return $this->getErrorResponse($e);
         }

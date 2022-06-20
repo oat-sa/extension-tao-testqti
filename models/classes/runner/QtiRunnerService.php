@@ -1506,12 +1506,9 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
         $isLinear = $session->getCurrentNavigationMode() === NavigationMode::LINEAR;
-
-        $logContext = [
-            'testSessionId' => $session->getSessionId(),
-        ];
+        $logContext = [];
         if ($context instanceof QtiRunnerServiceContext) {
-            $logContext['executionUri'] = $context->getTestExecutionUri();
+            $logContext['deliveryExecutionId'] = $context->getTestExecutionUri();
         }
         switch ($timeOutException->getCode()) {
             case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:

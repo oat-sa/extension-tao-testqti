@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models\runner\synchronisation\action;
 use common_Exception;
 use common_exception_Error;
 use common_exception_InconsistentData;
+use common_Logger;
 use Exception;
 use oat\taoQtiTest\model\Service\PauseCommand;
 use oat\taoQtiTest\model\Service\PauseService;
@@ -57,6 +58,7 @@ class Pause extends TestRunnerAction
 
             return $response->toArray();
         } catch (Exception $e) {
+            common_Logger::e($e->getMessage(), ['deliveryExecutionId' => $this->getServiceContext()->getTestExecutionUri()]);
             return $this->getErrorResponse($e);
         }
     }
