@@ -1506,38 +1506,42 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
         $isLinear = $session->getCurrentNavigationMode() === NavigationMode::LINEAR;
+        $logContext = [];
+        if ($context instanceof QtiRunnerServiceContext) {
+            $logContext['deliveryExecutionId'] = $context->getTestExecutionUri();
+        }
         switch ($timeOutException->getCode()) {
             case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
-                \common_Logger::i('TIMEOUT: closing the assessment test session');
+                \common_Logger::i('TIMEOUT: closing the assessment test session', $logContext);
                 $session->moveThroughAndEndTestSession();
                 break;
 
             case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    \common_Logger::i('TIMEOUT: moving to the next test part');
+                    \common_Logger::i('TIMEOUT: moving to the next test part', $logContext);
                     $session->moveNextTestPart();
                 } else {
-                    \common_Logger::i('TIMEOUT: closing the assessment test part');
+                    \common_Logger::i('TIMEOUT: closing the assessment test part', $logContext);
                     $session->closeTestPart();
                 }
                 break;
 
             case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    \common_Logger::i('TIMEOUT: moving to the next assessment section');
+                    \common_Logger::i('TIMEOUT: moving to the next assessment section', $logContext);
                     $session->moveNextAssessmentSection();
                 } else {
-                    \common_Logger::i('TIMEOUT: closing the assessment section session');
+                    \common_Logger::i('TIMEOUT: closing the assessment section session', $logContext);
                     $session->closeAssessmentSection();
                 }
                 break;
 
             case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    \common_Logger::i('TIMEOUT: moving to the next item');
+                    \common_Logger::i('TIMEOUT: moving to the next item', $logContext);
                     $session->moveNextAssessmentItem();
                 } else {
-                    \common_Logger::i('TIMEOUT: closing the assessment item session');
+                    \common_Logger::i('TIMEOUT: closing the assessment item session', $logContext);
                     $session->closeAssessmentItem();
                 }
                 break;
