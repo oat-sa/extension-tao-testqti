@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2022 (original work) Open Assessment Technologies SA ;
  */
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
@@ -66,7 +66,7 @@ class ExitTest extends TestRunnerAction
 
             return $response->toArray();
         } catch (Exception $e) {
-            common_Logger::e($e->getMessage());
+            common_Logger::e($e->getMessage(), ['deliveryExecutionId' => $this->getServiceContext()->getTestExecutionUri()]);
 
             return $this->getErrorResponse($e);
         }
