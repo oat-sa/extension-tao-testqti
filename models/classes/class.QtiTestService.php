@@ -1130,7 +1130,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
             if (!$file->update($doc->saveXML())) {
                 $msg = 'Unable to update QTI Test file.';
-                throw new taoQtiTest_models_classes_QtiTestServiceException($msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR);
+                throw new taoQtiTest_models_classes_QtiTestServiceException(
+                    $msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
+                );
             }
         }
 
@@ -1142,11 +1144,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     private function createTestIdentifier(string $testLabel): string
     {
-        $identifier = Format::sanitizeIdentifier($testLabel);
-        $identifier = str_replace('_', '-', $identifier);
-        if (preg_match('/^\d/', $identifier)) {
-            $identifier = '_' . $identifier;
+        if (preg_match('/^\d/', $testLabel)) {
+            $identifier = 't_' . $testLabel;
         }
+
+        $identifier = Format::sanitizeIdentifier($identifier);
+        $identifier = str_replace('_', '-', $identifier);
 
         return $identifier;
     }

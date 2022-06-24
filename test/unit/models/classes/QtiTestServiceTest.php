@@ -73,7 +73,7 @@ XML;
                     DefaultConfigurationRegistry::ID => [
                         'partIdPrefix'       => 'testPart',
                         'sectionIdPrefix'    => 'assessmentSection',
-                        'sectionTitlePrefix' => 'Section',
+                        'sectionTitlePrefix' => 'Section 1',
                         'categories'         => [],
                         'navigationMode'     => 0,
                         'submissionMode'     => 0,
@@ -117,22 +117,6 @@ XML;
                 $this->createNewFileMock($test)
             ),
             $this->sut->createContent($test)
-        );
-    }
-
-    public function testOverwriteContent(): void
-    {
-        $test = $this->createTestMock('https://example.com', 'label');
-
-        /** @noinspection PhpUnhandledExceptionInspection */
-        static::assertSame(
-            $this->createDirectoryMock(
-                $test,
-                $this->createNewFileMock($test),
-                true,
-                false
-            ),
-            $this->sut->createContent($test, true, false)
         );
     }
 
@@ -187,7 +171,7 @@ XML;
             ->updateDocumentTitle($document, $test)
             ->documentElement->setAttribute(
                 'identifier',
-                str_replace('_', '-', Format::sanitizeIdentifier($test->getLabel()))
+                't-0label-with-sm-ext-charctr'
             );
         $document->documentElement->setAttribute('toolVersion', self::PLATFORM_VERSION);
 
