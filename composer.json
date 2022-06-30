@@ -62,7 +62,7 @@
     "ext-dom": "*",
     "oat-sa/lib-test-cat": "2.3.7",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
-    "qtism/qtism": "dev-feature/AUT-2337/marshall-lang-dir-attributes as 0.27.0",
+    "qtism/qtism": ">=0.27.0",
     "oat-sa/generis" : ">=15.17.1",
     "oat-sa/tao-core" : ">=50.10.0",
     "oat-sa/extension-tao-item" : ">=11.0.0",
