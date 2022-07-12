@@ -25,7 +25,7 @@
 namespace oat\taoQtiTest\models\runner;
 
 use oat\libCat\CatSession;
-use oat\libCat\Exception\CatEngineException;
+use oat\libCat\exception\CatEngineException;
 use oat\libCat\result\AbstractResult;
 use oat\libCat\result\ItemResult;
 use oat\taoDelivery\model\execution\DeliveryServerService;
