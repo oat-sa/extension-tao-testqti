@@ -1,6 +1,8 @@
 extension-tao-testqti
 =====================
 
+[![codecov](https://codecov.io/gh/oat-sa/extension-tao-testqti/branch/master/graph/badge.svg?token=L2pTXu17kz)](https://codecov.io/gh/oat-sa/extension-tao-testqti)
+
 Extension to create QTI tests into TAO
 
 
