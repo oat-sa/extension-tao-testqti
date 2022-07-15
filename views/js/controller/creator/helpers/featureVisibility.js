@@ -76,6 +76,9 @@ define(['services/features'], function (features) {
      */
     function addItemRefVisibilityProps(model) {
         const propertyNamespace = 'taoQtiTest/creator/itemRef/property/';
+        if (features.isVisible(`${propertyNamespace}timeLimits`)) {
+            model.showTimeLimits = true;
+        }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
         }
