@@ -26,7 +26,6 @@ use core_kernel_classes_Property;
 use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
 use oat\generis\test\TestCase;
-use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use oat\taoQtiItem\model\qti\Item;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\model\Domain\Model\QtiTest;
@@ -141,7 +140,7 @@ class QtiTestRepositoryTest extends TestCase
         $deliveryTestProperty = $this->createMock(core_kernel_classes_Property::class);
 
         $delivery->method('getProperty')
-            ->with(DeliveryAssemblyService::PROPERTY_ORIGIN)
+            ->with('http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDeliveryOrigin')
             ->willReturn($deliveryTestProperty);
 
         $delivery->method('getOnePropertyValue')

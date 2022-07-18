@@ -24,7 +24,6 @@ namespace oat\taoQtiTest\model\Infrastructure;
 
 use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
-use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\model\Domain\Model\QtiTest;
 use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
@@ -51,7 +50,7 @@ class QtiTestRepository implements QtiTestRepositoryInterface
     public function findByDelivery(string $deliveryUri): ?QtiTest
     {
         $delivery = $this->ontology->getResource($deliveryUri);
-        $deliveryTest = $delivery->getProperty(DeliveryAssemblyService::PROPERTY_ORIGIN);
+        $deliveryTest = $delivery->getProperty('http://www.tao.lu/Ontologies/TAODelivery.rdf#AssembledDeliveryOrigin');
         $testId = $delivery->getOnePropertyValue($deliveryTest)->getUri();
 
         return new QtiTest($testId, $this->getFirstTestItemLanguage($testId));
