@@ -34,12 +34,11 @@ use \qtism\data\storage\xml\XmlDocument;
  */
 class QtiTestCompilerUtilsTest extends TestCase
 {
-    
     public static function samplesDir()
     {
         return dirname(__FILE__) . '/../samples/xml/compiler/meta/';
     }
-    
+
     /**
      *
      * @dataProvider metaProvider
@@ -50,21 +49,77 @@ class QtiTestCompilerUtilsTest extends TestCase
     {
         $xml = new XmlDocument();
         $xml->load($testFile);
-        
+
         $this->assertEquals($expectedMeta, taoQtiTest_helpers_TestCompilerUtils::testMeta($xml->getDocumentComponent()));
     }
-    
+
     public function metaProvider()
     {
         return [
-            [self::samplesDir() . 'linear_nopreconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-            [self::samplesDir() . 'linear_preconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => true]],
-            [self::samplesDir() . 'linear_nopreconditions_branchrules.xml', ['branchRules' => true, 'preConditions' => false]],
-            [self::samplesDir() . 'linear_preconditions_branchrules.xml', ['branchRules' => true, 'preConditions' => true]],
-            [self::samplesDir() . 'nonlinear_nopreconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-            [self::samplesDir() . 'nonlinear_nopreconditions_branchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-            [self::samplesDir() . 'nonlinear_preconditions_branchrules.xml', ['branchRules' => false, 'preConditions' => false]],
-            [self::samplesDir() . 'nonlinear_preconditions_nobranchrules.xml', ['branchRules' => false, 'preConditions' => false]],
+            [
+                self::samplesDir() . 'linear_nopreconditions_nobranchrules.xml',
+                [
+                    'branchRules' => false,
+                    'preConditions' => false,
+                    taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION => 1,
+                ],
+            ],
+            [
+                self::samplesDir() . 'linear_preconditions_nobranchrules.xml',
+                [
+                    'branchRules' => false,
+                    'preConditions' => true,
+                    taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION => 1,
+                ],
+            ],
+            [
+                self::samplesDir() . 'linear_nopreconditions_branchrules.xml',
+                [
+                    'branchRules' => true,
+                    'preConditions' => false,
+                    taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION => 1,
+                ],
+            ],
+            [
+                self::samplesDir() . 'linear_preconditions_branchrules.xml',
+                [
+                    'branchRules' => true,
+                    'preConditions' => true,
+                    taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION => 1,
+                ],
+            ],
+            [
+                self::samplesDir() . 'nonlinear_nopreconditions_nobranchrules.xml',
+                [
+                    'branchRules' => false,
+                    'preConditions' => false,
+                    taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION => 1,
+                ],
+            ],
+            [
+                self::samplesDir() . 'nonlinear_nopreconditions_branchrules.xml',
+                [
+                    'branchRules' => false,
+                    'preConditions' => false,
+                    taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION => 1,
+                ],
+            ],
+            [
+                self::samplesDir() . 'nonlinear_preconditions_branchrules.xml',
+                [
+                    'branchRules' => false,
+                    'preConditions' => false,
+                    taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION => 1,
+                ],
+            ],
+            [
+                self::samplesDir() . 'nonlinear_preconditions_nobranchrules.xml',
+                [
+                    'branchRules' => false,
+                    'preConditions' => false,
+                    taoQtiTest_helpers_TestCompilerUtils::COMPILATION_VERSION => 1,
+                ],
+            ],
         ];
     }
 }
