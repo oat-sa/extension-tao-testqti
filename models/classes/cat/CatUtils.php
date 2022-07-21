@@ -4,6 +4,7 @@ namespace oat\taoQtiTest\models\cat;
 
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentSection;
+use DOMDocument;
 
 /**
  * Computerized Assessment Test Utilities.
@@ -39,7 +40,8 @@ class CatUtils
         $info = [];
         
         foreach ($test->getComponentsByClassName('assessmentSection') as $assessmentSection) {
-            if (($selection = $assessmentSection->getSelection()) !== null && (($xmlExtension = $selection->getXml())) !== null) {
+            $xmlExtension = new DOMDocument();
+            if (($selection = $assessmentSection->getSelection()) !== null && $xmlExtension->loadXML($selection->getXml()->saveXML())) {
                 $xpath = new \DOMXPath($xmlExtension);
                 $xpath->registerNamespace('ais', $namespace);
                 
@@ -94,8 +96,9 @@ class CatUtils
         }
         
         $isAdaptive = false;
-        
-        if (($selection = $section->getSelection()) !== null && (($xmlExtension = $selection->getXml())) !== null) {
+        $xmlExtension = new DOMDocument();
+
+        if (($selection = $section->getSelection()) !== null && $xmlExtension->loadXML($selection->getXml()->saveXML())) {
             $xpath = new \DOMXPath($xmlExtension);
             $xpath->registerNamespace('ais', $namespace);
             
