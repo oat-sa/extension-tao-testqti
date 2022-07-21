@@ -167,7 +167,7 @@ class ResponseGeneratorTest extends TestCase
             $testRunnerAction2,
             []
         ], $serviceContext, $now);
-        $this->assertSame($now - (10 + 5 + 0.002), $last);
+        $this->assertEquals($now - (10 + 5 + 0.002), $last);
     }
 
     public function testGetActionResponseEmptyAction(): void
