@@ -162,7 +162,7 @@ class taoQtiTest_models_classes_QtiTestConverter
                         $array[$property->getName()][] = $item;
                     }
                 } else {
-                    $array[$property->getName()] = $value;
+                    $array[$property->getName()] = is_string($value) ? html_entity_decode($value) : $value;
                 }
             }
         }
