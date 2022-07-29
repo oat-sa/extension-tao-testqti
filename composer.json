@@ -81,6 +81,7 @@
     "oat-sa/generis": "dev-php8-migration as v16.0.0",
     "oat-sa/tao-core": "dev-php8-migration as v51.0.0",
     "oat-sa/extension-tao-itemqti" : "dev-php8-migration as v30.0.0",
-    "oat-sa/extension-tao-outcome" : "dev-php8-migration as v14.0.0"
+    "oat-sa/extension-tao-outcome" : "dev-php8-migration as v14.0.0",
+    "qtism/qtism": "dev-php8-migration as v0.29.0"
   }
 }
