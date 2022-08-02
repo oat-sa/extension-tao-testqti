@@ -1,14 +1,14 @@
 {
-  "name": "@oat-sa/tao-testqti",
-  "version": "0.4.2",
-  "description": "Tao Test Qti",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/oat-sa/extension-tao-testqti.git"
-  },
-  "license": "GPL-2.0",
-  "dependencies": {
-    "@oat-sa/tao-test-runner": "0.8.2",
-    "@oat-sa/tao-test-runner-qti": "2.30.3"
-  }
+    "name": "@oat-sa/tao-testqti",
+    "version": "0.4.2",
+    "description": "Tao Test Qti",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/oat-sa/extension-tao-testqti.git"
+    },
+    "license": "GPL-2.0",
+    "dependencies": {
+        "@oat-sa/tao-test-runner": "0.8.2",
+        "@oat-sa/tao-test-runner-qti": "2.30.4"
+    }
 }

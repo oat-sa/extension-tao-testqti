@@ -225,12 +225,14 @@ define([
                         if(isTestContainsItems() && !creatorContext.isTestHasErrors()) {
                             const saveUrl = options.routes.save;
                             const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
+                            const config = module.config();
                             return previewerFactory(
-                                module.config().provider,
+                                config.provider,
                                 decodeURIComponent(testUri),
                                 {
                                     readOnly: false,
-                                    fullPage: true
+                                    fullPage: true,
+                                    pluginsOptions: config.pluginsOptions
                                 }
                             )
                             .catch(err => {
@@ -244,7 +246,6 @@ define([
                         creatorContext.trigger('exit');
                         window.history.back();
                     });
-
                 });
 
             //the save button triggers binder's save action.
