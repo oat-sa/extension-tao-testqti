@@ -226,9 +226,11 @@ define([
                     if (isTestContainsItems() && !creatorContext.isTestHasErrors()) {
                         const saveUrl = options.routes.save;
                         const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
-                        return previewerFactory(module.config().provider, decodeURIComponent(testUri), {
+                        const config = module.config();
+                        return previewerFactory(config.provider, decodeURIComponent(testUri), {
                             readOnly: false,
-                            fullPage: true
+                            fullPage: true,
+                            pluginsOptions: config.pluginsOptions
                         }).catch(err => {
                             logger.error(err);
                             feedback().error(
