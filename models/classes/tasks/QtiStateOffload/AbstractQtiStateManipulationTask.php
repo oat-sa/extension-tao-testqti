@@ -24,7 +24,7 @@ namespace oat\taoQtiTest\models\classes\tasks\QtiStateOffload;
 
 use InvalidArgumentException;
 use oat\oatbox\extension\AbstractAction;
-use oat\oatbox\reporting\Report;
+use common_report_Report as Report;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\state\StateMigration;
 use oat\tao\model\taskQueue\Task\TaskAwareInterface;

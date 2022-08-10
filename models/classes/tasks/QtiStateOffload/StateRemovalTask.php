@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\models\classes\tasks\QtiStateOffload;
 use Exception;
 use InvalidArgumentException;
 use oat\oatbox\extension\AbstractAction;
-use oat\oatbox\reporting\Report;
+use common_report_Report as Report;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\state\StateMigration;
 use oat\tao\model\taskQueue\Task\TaskAwareInterface;
@@ -63,7 +63,7 @@ class StateRemovalTask extends AbstractQtiStateManipulationTask
                 sprintf('Failed to delete %s state', $stateLabel),
                 $loggerContext
             );
-            return Report::createError(
+            return Report::createFailure(
                 sprintf(
                     '[%s] - %s state removing failed for user %s',
                     $callId,

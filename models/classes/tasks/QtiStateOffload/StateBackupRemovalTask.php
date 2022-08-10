@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\classes\tasks\QtiStateOffload;
 
 use Exception;
-use oat\oatbox\reporting\Report;
+use common_report_Report as Report;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -67,7 +67,7 @@ class StateBackupRemovalTask extends AbstractQtiStateManipulationTask
                     'stateType' => $stateLabel
                 ]
             );
-            return Report::createError(
+            return Report::createFailure(
                 sprintf(
                     '[%s] - %s state backup removing failed for user %s',
                     $callId,

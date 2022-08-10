@@ -24,7 +24,7 @@ namespace oat\taoQtiTest\models\classes\tasks\QtiStateOffload;
 
 use InvalidArgumentException;
 use oat\oatbox\extension\AbstractAction;
-use oat\oatbox\reporting\Report;
+use common_report_Report as Report;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\state\StateMigration;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
@@ -48,7 +48,7 @@ class StateOffloadTask extends AbstractQtiStateManipulationTask
                 sprintf('Failed to archive %s state', $stateLabel),
                 $logContext
             );
-            return Report::createError(
+            return Report::createFailure(
                 sprintf(
                     '[%s] - %s state archiving failed for user %s',
                     $callId,
