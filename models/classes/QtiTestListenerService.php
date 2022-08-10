@@ -41,19 +41,19 @@ use qtism\runtime\tests\AssessmentTestSession;
 class QtiTestListenerService extends ConfigurableService
 {
     const SERVICE_ID = 'taoQtiTest/QtiTestListenerService';
-    
+
     const OPTION_ARCHIVE_EXCLUDE = 'archive-exclude';
-    
+
     /**
      * @var string Constant to turn off test state archiving.
      */
     const ARCHIVE_EXCLUDE_TEST = 'archive-exclude-test';
-    
+
     /**
      * @var string Constant to turn off item state archiving.
      */
     const ARCHIVE_EXCLUDE_ITEMS = 'archive-exclude-items';
-    
+
     /**
      * @var string Constant to turn off extended test state archiving.
      */
@@ -62,9 +62,9 @@ class QtiTestListenerService extends ConfigurableService
     public function __construct($options = [])
     {
         parent::__construct($options);
-        
+
         $archiveExcludeOption = $this->getOption(self::OPTION_ARCHIVE_EXCLUDE);
-        
+
         if (is_null($archiveExcludeOption) || !is_array($archiveExcludeOption)) {
             $this->setOption(self::OPTION_ARCHIVE_EXCLUDE, []);
         }
@@ -114,7 +114,7 @@ class QtiTestListenerService extends ConfigurableService
             $stateService->addEvent($session->getSessionId(), TestStateChannel::CHANNEL_NAME, $data);
         }
     }
-    
+
     /**
      * Archive Test States
      *
@@ -167,6 +167,6 @@ class QtiTestListenerService extends ConfigurableService
 
     private function getQueueDispatcher(): QueueDispatcherInterface
     {
-        return $this->getServiceManager()->getContainer()->get(QueueDispatcherInterface::SERVICE_ID);
+        return $this->getServiceManager()->get(QueueDispatcherInterface::SERVICE_ID);
     }
 }
