@@ -20,10 +20,10 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor;
+namespace oat\taoQtiTest\models\render\CustomInteraction\PostProcessor;
 
 use oat\taoItems\model\render\ItemAssetsReplacement;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
 
 class TextReaderPostProcessor implements CustomInteractionPostProcessorInterface
 {

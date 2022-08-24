@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\models\classes\render\CustomInteraction\PostProcessor;
 
 use oat\generis\test\TestCase;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
 
 class NullCustomInteractionPostProcessorTest extends TestCase
 {

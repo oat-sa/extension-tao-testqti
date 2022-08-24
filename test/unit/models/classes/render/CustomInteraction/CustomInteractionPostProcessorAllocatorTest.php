@@ -24,9 +24,9 @@ namespace oat\taoQtiTest\test\unit\models\classes\render\CustomInteraction;
 
 use oat\generis\test\TestCase;
 use oat\taoItems\model\render\ItemAssetsReplacement;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
 
 class CustomInteractionPostProcessorAllocatorTest extends TestCase
 {

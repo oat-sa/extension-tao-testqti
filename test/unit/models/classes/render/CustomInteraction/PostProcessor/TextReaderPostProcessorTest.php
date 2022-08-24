@@ -24,7 +24,7 @@ namespace oat\taoQtiTest\test\unit\models\classes\render\CustomInteraction\PostP
 
 use oat\generis\test\TestCase;
 use oat\taoItems\model\render\ItemAssetsReplacement;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
 
 class TextReaderPostProcessorTest extends TestCase
 {

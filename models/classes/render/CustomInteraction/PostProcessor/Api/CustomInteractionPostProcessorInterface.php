@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\Api;
+namespace oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\Api;
 
 interface CustomInteractionPostProcessorInterface
 {

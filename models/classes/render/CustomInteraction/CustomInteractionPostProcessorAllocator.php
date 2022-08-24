@@ -20,10 +20,10 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\classes\render\CustomInteraction;
+namespace oat\taoQtiTest\models\render\CustomInteraction;
 
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
 
 class CustomInteractionPostProcessorAllocator
 {
