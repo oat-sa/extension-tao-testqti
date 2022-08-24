@@ -20,7 +20,7 @@
  */
 
 use oat\tao\model\user\TaoRoles;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
+use oat\taoQtiTest\models\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\scripts\update\Updater;
 use oat\taoQtiTest\scripts\install\SetupProvider;
