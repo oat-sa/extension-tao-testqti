@@ -24,8 +24,8 @@ namespace oat\taoQtiTest\models\render\CustomInteraction\ServiceProvider;
 
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\taoItems\model\render\ItemAssetsReplacement;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 

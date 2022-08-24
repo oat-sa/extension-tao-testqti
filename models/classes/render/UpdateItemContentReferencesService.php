@@ -22,7 +22,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\render;
 
 use oat\taoItems\model\render\ItemAssetsReplacement;
-use oat\taoQtiTest\models\classes\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
+use oat\taoQtiTest\models\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
 
 class UpdateItemContentReferencesService
 {
