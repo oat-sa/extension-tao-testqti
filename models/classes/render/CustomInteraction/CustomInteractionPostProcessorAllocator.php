@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\render\CustomInteraction;
 
 use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
-use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\FallbackInteractionPostProcessor;
 
 class CustomInteractionPostProcessorAllocator
 {
@@ -42,7 +42,7 @@ class CustomInteractionPostProcessorAllocator
         return
             $this->postProcessorMap[$customInteractionIdentifier]
             ??
-            $this->postProcessorMap[NullCustomInteractionPostProcessor::INTERACTION_IDENTIFIER]
+            $this->postProcessorMap[FallbackInteractionPostProcessor::INTERACTION_IDENTIFIER]
             ;
     }
 }

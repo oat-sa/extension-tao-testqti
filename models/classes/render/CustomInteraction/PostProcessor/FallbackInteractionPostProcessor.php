@@ -26,7 +26,7 @@ use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoItems\model\render\NoneItemReplacement;
 use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
 
-class NullCustomInteractionPostProcessor implements CustomInteractionPostProcessorInterface
+class FallbackInteractionPostProcessor implements CustomInteractionPostProcessorInterface
 {
     public const INTERACTION_IDENTIFIER = 'null';
 

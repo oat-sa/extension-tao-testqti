@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\models\render\CustomInteraction\ServiceProvider;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiTest\models\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
-use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\FallbackInteractionPostProcessor;
 use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -44,7 +44,7 @@ class CustomInteractionPostProcessingServiceProvider implements ContainerService
             ]);
 
         $services
-            ->set(NullCustomInteractionPostProcessor::class, NullCustomInteractionPostProcessor::class)
+            ->set(FallbackInteractionPostProcessor::class, FallbackInteractionPostProcessor::class)
             ->public()
             ->args([
                 service(ItemAssetsReplacement::SERVICE_ID)
@@ -56,7 +56,7 @@ class CustomInteractionPostProcessingServiceProvider implements ContainerService
             ->args([
                 [
                     TextReaderPostProcessor::INTERACTION_IDENTIFIER => service(TextReaderPostProcessor::class),
-                    NullCustomInteractionPostProcessor::INTERACTION_IDENTIFIER => service(NullCustomInteractionPostProcessor::class)
+                    FallbackInteractionPostProcessor::INTERACTION_IDENTIFIER => service(FallbackInteractionPostProcessor::class)
                 ]
             ]);
     }
