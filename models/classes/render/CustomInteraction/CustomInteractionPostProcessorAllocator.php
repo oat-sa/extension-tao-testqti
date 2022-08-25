@@ -39,6 +39,10 @@ class CustomInteractionPostProcessorAllocator
 
     public function allocatePostProcessor(string $customInteractionIdentifier): CustomInteractionPostProcessorInterface
     {
-        return $this->postProcessorMap[$customInteractionIdentifier] ?? new NullCustomInteractionPostProcessor();
+        return
+            $this->postProcessorMap[$customInteractionIdentifier]
+            ??
+            $this->postProcessorMap[NullCustomInteractionPostProcessor::INTERACTION_IDENTIFIER]
+            ;
     }
 }
