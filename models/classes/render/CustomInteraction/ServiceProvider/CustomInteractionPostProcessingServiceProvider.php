@@ -54,8 +54,10 @@ class CustomInteractionPostProcessingServiceProvider implements ContainerService
             ->set(CustomInteractionPostProcessorAllocator::class, CustomInteractionPostProcessorAllocator::class)
             ->public()
             ->args([
-                [TextReaderPostProcessor::INTERACTION_IDENTIFIER => service(TextReaderPostProcessor::class)],
-                [NullCustomInteractionPostProcessor::INTERACTION_IDENTIFIER => service(NullCustomInteractionPostProcessor::class)]
+                [
+                    TextReaderPostProcessor::INTERACTION_IDENTIFIER => service(TextReaderPostProcessor::class),
+                    NullCustomInteractionPostProcessor::INTERACTION_IDENTIFIER => service(NullCustomInteractionPostProcessor::class)
+                ]
             ]);
     }
 }
