@@ -69,12 +69,12 @@ class UpdateItemContentReferencesService
     private function resolveCustomInteractionPostProcessing(array $itemContent): array
     {
         foreach ($itemContent['data']['body']['elements'] as &$element) {
-            if ($element['qtiClass'] === CustomInteractionPostProcessorAllocator::CUSTOM_INTERACTION_QTI_CLASS) {
+//            if ($element['qtiClass'] === CustomInteractionPostProcessorAllocator::CUSTOM_INTERACTION_QTI_CLASS) {
                 $postProcessorAllocator = $this->customInteractionPostProcessorAllocator->allocatePostProcessor(
                     $element['typeIdentifier']
                 );
                 $element = $postProcessorAllocator->postProcess($element);
-            }
+//            }
         }
 
         return $itemContent;
