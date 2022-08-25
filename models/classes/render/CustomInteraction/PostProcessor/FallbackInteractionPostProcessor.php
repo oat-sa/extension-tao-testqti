@@ -64,7 +64,7 @@ class FallbackInteractionPostProcessor implements CustomInteractionPostProcessor
                 $jsonArray[$key] = $elemA;
             } else {
                 if (is_string($elem) && false !== strpos($elem, $rootUrl)) {
-                    if (0 === strpos($elem, 'https')) {
+                    if (0 === strpos($elem, 'https') && false === strpos($elem, 'Signature=')) {
                         $elemS = $this->itemAssetsReplacement->postProcessAssets($elem);
                         $jsonArray[$key] = $elemS;
                     } else {
@@ -72,7 +72,7 @@ class FallbackInteractionPostProcessor implements CustomInteractionPostProcessor
                         $pattern = $this->itemAssetsReplacement->getOption(self::ASSET_REPLACER_PATTERN_OPTION);
                         preg_match_all($pattern, $elemStripped, $matches);
                         foreach ($matches[1] as $match) {
-                            if (false !== strpos($match, $rootUrl)) {
+                            if (false !== strpos($match, $rootUrl) && false === strpos($elem, 'Signature=')) {
                                 $elemStripped = str_replace($match, $this->itemAssetsReplacement->postProcessAssets($match), $elemStripped);
                             }
                         }
