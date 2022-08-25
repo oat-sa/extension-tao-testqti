@@ -63,7 +63,7 @@ class NullCustomInteractionPostProcessor implements CustomInteractionPostProcess
                 $elemA = $this->iterateOverItemJson($elem);
                 $jsonArray[$key] = $elemA;
             } else {
-                if (false !== strpos($elem, $rootUrl)) {
+                if (is_string($elem) && false !== strpos($elem, $rootUrl)) {
                     if (0 === strpos($elem, 'https')) {
                         $elemS = $this->itemAssetsReplacement->postProcessAssets($elem);
                         $jsonArray[$key] = $elemS;
