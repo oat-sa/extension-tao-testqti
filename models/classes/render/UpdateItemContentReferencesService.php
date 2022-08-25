@@ -71,7 +71,7 @@ class UpdateItemContentReferencesService
         foreach ($itemContent['data']['body']['elements'] as &$element) {
 //            if ($element['qtiClass'] === CustomInteractionPostProcessorAllocator::CUSTOM_INTERACTION_QTI_CLASS) {
                 $postProcessorAllocator = $this->customInteractionPostProcessorAllocator->allocatePostProcessor(
-                    $element['typeIdentifier']
+                    $element['typeIdentifier'] ?? 'null'
                 );
                 $element = $postProcessorAllocator->postProcess($element);
 //            }
