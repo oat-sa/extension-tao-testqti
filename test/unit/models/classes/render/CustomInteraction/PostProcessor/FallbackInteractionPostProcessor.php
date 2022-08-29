@@ -23,16 +23,16 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\models\classes\render\CustomInteraction\PostProcessor;
 
 use oat\generis\test\TestCase;
-use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\FallbackInteractionPostProcessor;
 
-class NullCustomInteractionPostProcessorTest extends TestCase
+class FallbackInteractionPostProcessorTest extends TestCase
 {
-    /** @var NullCustomInteractionPostProcessor */
+    /** @var FallbackInteractionPostProcessor */
     private $subject;
 
     public function setUp(): void
     {
-        $this->subject = new NullCustomInteractionPostProcessor();
+        $this->subject = new FallbackInteractionPostProcessor();
     }
 
     public function testNullPostProcessing(): void

@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\test\unit\models\classes\render\CustomInteraction;
 use oat\generis\test\TestCase;
 use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiTest\models\render\CustomInteraction\CustomInteractionPostProcessorAllocator;
-use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\NullCustomInteractionPostProcessor;
+use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\FallbackInteractionPostProcessor;
 use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\TextReaderPostProcessor;
 
 class CustomInteractionPostProcessorAllocatorTest extends TestCase
@@ -45,7 +45,7 @@ class CustomInteractionPostProcessorAllocatorTest extends TestCase
     public function testNullCustomInteractionPostProcessorAllocation(): void
     {
         $postProcessor = $this->subject->allocatePostProcessor(uniqid('prefix', true));
-        $this->assertInstanceOf(NullCustomInteractionPostProcessor::class, $postProcessor);
+        $this->assertInstanceOf(FallbackInteractionPostProcessor::class, $postProcessor);
     }
 
     public function testTextReaderInteractionPostProcessorAllocation(): void
