@@ -31,14 +31,6 @@ class TextReaderPostProcessor extends FallbackInteractionPostProcessor
     private const CONTENT_PREFIX = 'content-';
     private const PAGES_ELEMENT = 'pages';
 
-    /** @var ItemAssetsReplacement */
-    private $itemAssetsReplacement;
-
-    public function __construct(ItemAssetsReplacement $itemAssetsReplacement)
-    {
-        $this->itemAssetsReplacement = $itemAssetsReplacement;
-    }
-
     public function postProcess(array $element): array
     {
         foreach ($element['properties'] as $key => &$value) {

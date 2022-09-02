@@ -30,10 +30,10 @@ class FallbackInteractionPostProcessor implements CustomInteractionPostProcessor
 {
     public const INTERACTION_IDENTIFIER = 'null';
 
-    private const CUSTOM_PATTERN = '#\b(https?:\/\/__SLUG__\/__pva\S+)"#';
+    private const CUSTOM_PATTERN = '#\b(__SLUG__\/__pva\S+)"#';
 
     /** @var ItemAssetsReplacement */
-    private $itemAssetsReplacement;
+    protected $itemAssetsReplacement;
 
     public function __construct(ItemAssetsReplacement $itemAssetsReplacement)
     {
