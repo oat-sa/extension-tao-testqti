@@ -25,10 +25,11 @@ namespace oat\taoQtiTest\models\render\CustomInteraction\PostProcessor;
 use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiTest\models\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
 
-class TextReaderPostProcessor implements CustomInteractionPostProcessorInterface
+class TextReaderPostProcessor extends FallbackInteractionPostProcessor
 {
     public const INTERACTION_IDENTIFIER = 'textReaderInteraction';
     private const CONTENT_PREFIX = 'content-';
+    private const PAGES_ELEMENT = 'pages';
 
     /** @var ItemAssetsReplacement */
     private $itemAssetsReplacement;
@@ -43,6 +44,11 @@ class TextReaderPostProcessor implements CustomInteractionPostProcessorInterface
         foreach ($element['properties'] as $key => &$value) {
             if (strpos($key, self::CONTENT_PREFIX) === 0) {
                 $value = $this->itemAssetsReplacement->postProcessAssets($value);
+            } elseif ($key === self::PAGES_ELEMENT) {
+                foreach ($value as &$pageValue) {
+                    $pageValue['content'] = $this->iterateOverItemJson($pageValue['content']);
+                }
+
             }
         }
 
