@@ -30,7 +30,7 @@ class FallbackInteractionPostProcessor implements CustomInteractionPostProcessor
 {
     public const INTERACTION_IDENTIFIER = 'null';
 
-    private const ASSET_REPLACER_PATTERN_OPTION = 'pattern';
+    private const CUSTOM_PATTERN = '#\b(https?:\/\/__SLUG__\/__pva\S+)"#';
 
     /** @var ItemAssetsReplacement */
     private $itemAssetsReplacement;
@@ -49,7 +49,7 @@ class FallbackInteractionPostProcessor implements CustomInteractionPostProcessor
         return $element;
     }
 
-    private function iterateOverItemJson(array $jsonArray): array
+    protected function iterateOverItemJson(array $jsonArray): array
     {
         $url = ROOT_URL;
         $parsedUrl = parse_url($url);
@@ -69,7 +69,7 @@ class FallbackInteractionPostProcessor implements CustomInteractionPostProcessor
                         $jsonArray[$key] = $elemS;
                     } else {
                         $elemStripped = $elem;
-                        $pattern = $this->itemAssetsReplacement->getOption(self::ASSET_REPLACER_PATTERN_OPTION);
+                        $pattern = str_replace('__SLUG__', $rootUrl, self::CUSTOM_PATTERN);
                         preg_match_all($pattern, $elemStripped, $matches);
                         foreach ($matches[1] as $match) {
                             if (false !== strpos($match, $rootUrl) && false === strpos($elem, 'Signature=')) {
@@ -78,7 +78,7 @@ class FallbackInteractionPostProcessor implements CustomInteractionPostProcessor
                         }
                         $jsonArray[$key] = $elemStripped;
                     }
-            }
+                }
             }
         }
         return $jsonArray;
