@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiItem\controller\AbstractRestQti;
 use core_kernel_classes_Resource as Resource;
 use oat\taoTests\models\MissingTestmodelException;
+use Slim\Http\StatusCode;
 
 /**
  *
@@ -184,7 +185,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         } catch (MissingTestmodelException $e) {
             $this->returnFailure(new common_exception_NotFound(
                 sprintf('Test %s not found', $testUri),
-                404,
+                StatusCode::HTTP_NOT_FOUND,
                 $e
             ));
         } catch (Exception $e) {
