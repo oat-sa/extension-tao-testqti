@@ -23,6 +23,8 @@ use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiItem\controller\AbstractRestQti;
+use core_kernel_classes_Resource as Resource;
+use oat\taoTests\models\MissingTestmodelException;
 
 /**
  *
@@ -162,6 +164,35 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     }
 
     /**
+     * @throws common_exception_NotImplemented
+     */
+    public function getItems(): void
+    {
+        $request = $this->getPsrRequest();
+        $testUri = $request->getQueryParams()[self::PARAM_TEST_URI] ?? null;
+        try {
+            if ($request->getMethod() !== Request::HTTP_GET || empty($testUri)) {
+                throw new common_exception_MissingParameter(self::PARAM_TEST_URI, $this->getRequestURI());
+            }
+            $testResource = $this->getResource($testUri);
+
+            $this->returnSuccess(
+                array_map(static function (Resource $item) {
+                    return $item->getUri();
+                }, array_values($this->getQtiTestService()->getItems($testResource)))
+            );
+        } catch (MissingTestmodelException $e) {
+            $this->returnFailure(new common_exception_NotFound(
+                sprintf('Test %s not found', $testUri),
+                404,
+                $e
+            ));
+        } catch (Exception $e) {
+            $this->returnFailure($e);
+        }
+    }
+
+    /**
      * Add extra values to the JSON returned.
      *
      * @param EntityInterface $taskLogEntity
@@ -253,5 +284,10 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     private function getQtiPackageExporter(): QtiPackageExporter
     {
         return $this->getServiceLocator()->get(QtiPackageExporter::SERVICE_ID);
+    }
+
+    private function getQtiTestService(): taoQtiTest_models_classes_QtiTestService
+    {
+        return $this->getServiceLocator()->get(taoQtiTest_models_classes_QtiTestService::class);
     }
 }
