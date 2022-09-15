@@ -32,55 +32,58 @@ class CatUtils
      * @param string $namespace (optional) The namespace where to search the "adaptivity" information in the $test definition. If not given, a default namespace will be traversed.
      * @return array
      */
-    public static function getCatInfo(AssessmentTest $test, $namespace = '')
+    public static function getCatInfo(AssessmentTest $test, string $namespace = '')
     {
-        if ($namespace === '') {
-            $namespace = CatService::QTI_2X_ADAPTIVE_XML_NAMESPACE;
-        }
-
         $info = [];
 
         /** @var AssessmentSection $assessmentSection */
         foreach ($test->getComponentsByClassName('assessmentSection') as $assessmentSection) {
-            $selection = $assessmentSection->getSelection();
-            if (null === $selection) {
+            $xpath = self::createDomXPath($assessmentSection, $namespace);
+            if (null === $xpath) {
                 continue;
             }
-
-            $selectionXml = (string)$selection->getXml();
-            if (empty($selectionXml)) {
-                continue;
-            }
-
-            $xmlExtension = new DOMDocument();
-            if (!$xmlExtension->loadXML($selectionXml)) {
-                continue;
-            }
-
-            $xpath = new DOMXPath($xmlExtension);
-            $xpath->registerNamespace('ais', $namespace);
 
             // Reference QTI assessmentSection identifier.
             $sectionIdentifier = $assessmentSection->getIdentifier();
             $sectionInfo = [];
 
             // Get the adaptiveEngineRef.
-            foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveEngineRef', $xmlExtension) as $adaptiveEngineRef) {
+            foreach (
+                $xpath->query(
+                    './/ais:adaptiveItemSelection/ais:adaptiveEngineRef',
+                    $xpath->document
+                ) as $adaptiveEngineRef
+            ) {
                 $sectionInfo['adaptiveEngineRef'] = $adaptiveEngineRef->getAttribute('href');
             }
 
             // Get the adaptiveSettingsRef.
-            foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveSettingsRef', $xmlExtension) as $adaptiveSettingsRef) {
+            foreach (
+                $xpath->query(
+                    './/ais:adaptiveItemSelection/ais:adaptiveSettingsRef',
+                    $xpath->document
+                ) as $adaptiveSettingsRef
+            ) {
                 $sectionInfo['adaptiveSettingsRef'] = $adaptiveSettingsRef->getAttribute('href');
             }
 
             // Get the qtiUsagedataRef.
-            foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:qtiUsagedataRef', $xmlExtension) as $qtiUsagedataRef) {
+            foreach (
+                $xpath->query(
+                    './/ais:adaptiveItemSelection/ais:qtiUsagedataRef',
+                    $xpath->document
+                ) as $qtiUsagedataRef
+            ) {
                 $sectionInfo['qtiUsagedataRef'] = $qtiUsagedataRef->getAttribute('href');
             }
 
             // Get the qtiUsagedataRef.
-            foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:qtiMetadataRef', $xmlExtension) as $qtiMetadataRef) {
+            foreach (
+                $xpath->query(
+                    './/ais:adaptiveItemSelection/ais:qtiMetadataRef',
+                    $xpath->document
+                ) as $qtiMetadataRef
+            ) {
                 $sectionInfo['qtiMetadataRef'] = $qtiMetadataRef->getAttribute('href');
             }
 
@@ -102,7 +105,17 @@ class CatUtils
      *
      * @return boolean
      */
-    public static function isAssessmentSectionAdaptive(AssessmentSection $section, $namespace = '')
+    public static function isAssessmentSectionAdaptive(AssessmentSection $section, string $namespace = '')
+    {
+        $xpath = self::createDomXPath($section, $namespace);
+        if (null === $xpath) {
+            return false;
+        }
+
+        return $xpath->query('.//ais:adaptiveItemSelection', $xpath->document)->length > 0;
+    }
+
+    private static function createDomXPath(AssessmentSection $section, string $namespace = ''): ?DOMXPath
     {
         if ($namespace === '') {
             $namespace = CatService::QTI_2X_ADAPTIVE_XML_NAMESPACE;
@@ -110,22 +123,22 @@ class CatUtils
 
         $selection = $section->getSelection();
         if (null === $selection) {
-            return false;
+            return null;
         }
 
         $selectionXml = (string)$selection->getXml();
         if (empty($selectionXml)) {
-            return false;
+            return null;
         }
 
         $xmlExtension = new DOMDocument();
         if (!$xmlExtension->loadXML($selectionXml)) {
-            return false;
+            return null;
         }
 
         $xpath = new DOMXPath($xmlExtension);
         $xpath->registerNamespace('ais', $namespace);
 
-        return $xpath->query('.//ais:adaptiveItemSelection', $xmlExtension)->length > 0;
+        return $xpath;
     }
 }
