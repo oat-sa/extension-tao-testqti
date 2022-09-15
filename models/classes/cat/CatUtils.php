@@ -42,38 +42,50 @@ class CatUtils
 
         /** @var AssessmentSection $assessmentSection */
         foreach ($test->getComponentsByClassName('assessmentSection') as $assessmentSection) {
+            $selection = $assessmentSection->getSelection();
+            if (null === $selection) {
+                continue;
+            }
+
+            $selectionXml = (string)$selection->getXml();
+            if (empty($selectionXml)) {
+                continue;
+            }
+
             $xmlExtension = new DOMDocument();
-            if (($selection = $assessmentSection->getSelection()) !== null && $xmlExtension->loadXML((string)$selection->getXml())) {
-                $xpath = new DOMXPath($xmlExtension);
-                $xpath->registerNamespace('ais', $namespace);
+            if (!$xmlExtension->loadXML($selectionXml)) {
+                continue;
+            }
 
-                // Reference QTI assessmentSection identifier.
-                $sectionIdentifier = $assessmentSection->getIdentifier();
-                $sectionInfo = [];
+            $xpath = new DOMXPath($xmlExtension);
+            $xpath->registerNamespace('ais', $namespace);
 
-                // Get the adaptiveEngineRef.
-                foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveEngineRef', $xmlExtension) as $adaptiveEngineRef) {
-                    $sectionInfo['adaptiveEngineRef'] = $adaptiveEngineRef->getAttribute('href');
-                }
+            // Reference QTI assessmentSection identifier.
+            $sectionIdentifier = $assessmentSection->getIdentifier();
+            $sectionInfo = [];
 
-                // Get the adaptiveSettingsRef.
-                foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveSettingsRef', $xmlExtension) as $adaptiveSettingsRef) {
-                    $sectionInfo['adaptiveSettingsRef'] = $adaptiveSettingsRef->getAttribute('href');
-                }
+            // Get the adaptiveEngineRef.
+            foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveEngineRef', $xmlExtension) as $adaptiveEngineRef) {
+                $sectionInfo['adaptiveEngineRef'] = $adaptiveEngineRef->getAttribute('href');
+            }
 
-                // Get the qtiUsagedataRef.
-                foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:qtiUsagedataRef', $xmlExtension) as $qtiUsagedataRef) {
-                    $sectionInfo['qtiUsagedataRef'] = $qtiUsagedataRef->getAttribute('href');
-                }
+            // Get the adaptiveSettingsRef.
+            foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveSettingsRef', $xmlExtension) as $adaptiveSettingsRef) {
+                $sectionInfo['adaptiveSettingsRef'] = $adaptiveSettingsRef->getAttribute('href');
+            }
 
-                // Get the qtiUsagedataRef.
-                foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:qtiMetadataRef', $xmlExtension) as $qtiMetadataRef) {
-                    $sectionInfo['qtiMetadataRef'] = $qtiMetadataRef->getAttribute('href');
-                }
+            // Get the qtiUsagedataRef.
+            foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:qtiUsagedataRef', $xmlExtension) as $qtiUsagedataRef) {
+                $sectionInfo['qtiUsagedataRef'] = $qtiUsagedataRef->getAttribute('href');
+            }
 
-                if (!empty($sectionInfo)) {
-                    $info[$sectionIdentifier] = $sectionInfo;
-                }
+            // Get the qtiUsagedataRef.
+            foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:qtiMetadataRef', $xmlExtension) as $qtiMetadataRef) {
+                $sectionInfo['qtiMetadataRef'] = $qtiMetadataRef->getAttribute('href');
+            }
+
+            if (!empty($sectionInfo)) {
+                $info[$sectionIdentifier] = $sectionInfo;
             }
         }
 
@@ -96,17 +108,24 @@ class CatUtils
             $namespace = CatService::QTI_2X_ADAPTIVE_XML_NAMESPACE;
         }
 
-        $isAdaptive = false;
-        $xmlExtension = new DOMDocument();
-        if (($selection = $section->getSelection()) !== null && $xmlExtension->loadXML((string)$selection->getXml())) {
-            $xpath = new DOMXPath($xmlExtension);
-            $xpath->registerNamespace('ais', $namespace);
-
-            if ($xpath->query('.//ais:adaptiveItemSelection', $xmlExtension)->length > 0) {
-                $isAdaptive = true;
-            }
+        $selection = $section->getSelection();
+        if (null === $selection) {
+            return false;
         }
 
-        return $isAdaptive;
+        $selectionXml = (string)$selection->getXml();
+        if (empty($selectionXml)) {
+            return false;
+        }
+
+        $xmlExtension = new DOMDocument();
+        if (!$xmlExtension->loadXML($selectionXml)) {
+            return false;
+        }
+
+        $xpath = new DOMXPath($xmlExtension);
+        $xpath->registerNamespace('ais', $namespace);
+
+        return $xpath->query('.//ais:adaptiveItemSelection', $xmlExtension)->length > 0;
     }
 }
