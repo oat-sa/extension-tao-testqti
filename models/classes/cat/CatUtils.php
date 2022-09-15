@@ -43,7 +43,7 @@ class CatUtils
         /** @var AssessmentSection $assessmentSection */
         foreach ($test->getComponentsByClassName('assessmentSection') as $assessmentSection) {
             $xmlExtension = new DOMDocument();
-            if (($selection = $assessmentSection->getSelection()) !== null && $xmlExtension->loadXML($selection->getXml()->saveXML())) {
+            if (($selection = $assessmentSection->getSelection()) !== null && $xmlExtension->loadXML((string)$selection->getXml())) {
                 $xpath = new DOMXPath($xmlExtension);
                 $xpath->registerNamespace('ais', $namespace);
 
@@ -98,7 +98,7 @@ class CatUtils
 
         $isAdaptive = false;
         $xmlExtension = new DOMDocument();
-        if (($selection = $section->getSelection()) !== null && $xmlExtension->loadXML($selection->getXml()->saveXML())) {
+        if (($selection = $section->getSelection()) !== null && $xmlExtension->loadXML((string)$selection->getXml())) {
             $xpath = new DOMXPath($xmlExtension);
             $xpath->registerNamespace('ais', $namespace);
 
