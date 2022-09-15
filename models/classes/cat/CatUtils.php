@@ -4,6 +4,8 @@ namespace oat\taoQtiTest\models\cat;
 
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentSection;
+use DOMDocument;
+use DOMXPath;
 
 /**
  * Computerized Assessment Test Utilities.
@@ -35,24 +37,25 @@ class CatUtils
         if ($namespace === '') {
             $namespace = CatService::QTI_2X_ADAPTIVE_XML_NAMESPACE;
         }
-        
+
         $info = [];
-        
+
+        /** @var AssessmentSection $assessmentSection */
         foreach ($test->getComponentsByClassName('assessmentSection') as $assessmentSection) {
-            if (($selection = $assessmentSection->getSelection()) !== null && (($xmlExtension = $selection->getXml())) !== null) {
-                $xpath = new \DOMXPath($xmlExtension);
+            $xmlExtension = new DOMDocument();
+            if (($selection = $assessmentSection->getSelection()) !== null && $xmlExtension->loadXML((string)$selection->getXml())) {
+                $xpath = new DOMXPath($xmlExtension);
                 $xpath->registerNamespace('ais', $namespace);
-                
+
                 // Reference QTI assessmentSection identifier.
                 $sectionIdentifier = $assessmentSection->getIdentifier();
                 $sectionInfo = [];
-                
-                
+
                 // Get the adaptiveEngineRef.
                 foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveEngineRef', $xmlExtension) as $adaptiveEngineRef) {
                     $sectionInfo['adaptiveEngineRef'] = $adaptiveEngineRef->getAttribute('href');
                 }
-                
+
                 // Get the adaptiveSettingsRef.
                 foreach ($xpath->query('.//ais:adaptiveItemSelection/ais:adaptiveSettingsRef', $xmlExtension) as $adaptiveSettingsRef) {
                     $sectionInfo['adaptiveSettingsRef'] = $adaptiveSettingsRef->getAttribute('href');
@@ -73,14 +76,14 @@ class CatUtils
                 }
             }
         }
-        
+
         return $info;
     }
-    
+
     /**
      * Is a Given Section Adaptive
      *
-     * This method checks whether or not a given AssessmentSection object $section is adaptive.
+     * This method checks whether a given AssessmentSection object $section is adaptive.
      *
      * @param \qtism\data\AssessmentSection $section
      * @param string $namespace (optional) The namespace where to search the "adaptivity" information in the $test definition. If not given, a default namespace will be traversed.
@@ -92,18 +95,18 @@ class CatUtils
         if ($namespace === '') {
             $namespace = CatService::QTI_2X_ADAPTIVE_XML_NAMESPACE;
         }
-        
+
         $isAdaptive = false;
-        
-        if (($selection = $section->getSelection()) !== null && (($xmlExtension = $selection->getXml())) !== null) {
-            $xpath = new \DOMXPath($xmlExtension);
+        $xmlExtension = new DOMDocument();
+        if (($selection = $section->getSelection()) !== null && $xmlExtension->loadXML((string)$selection->getXml())) {
+            $xpath = new DOMXPath($xmlExtension);
             $xpath->registerNamespace('ais', $namespace);
-            
+
             if ($xpath->query('.//ais:adaptiveItemSelection', $xmlExtension)->length > 0) {
                 $isAdaptive = true;
             }
         }
-        
+
         return $isAdaptive;
     }
 }
