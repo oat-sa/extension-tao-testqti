@@ -598,7 +598,8 @@
                                     "description": "List of items identifiers",
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "object",
+                                        "$ref": "#/definitions/item"
                                     }
                                 }
                             }
@@ -607,7 +608,9 @@
                             "application/json": {
                                 "success": true,
                                 "data": [
-                                    "http://tao.local/mytao.rdf#xxxxxxxxxxxxx"
+                                    {
+                                        "itemUri": "http://tao.local/mytao.rdf#xxxxxxxxxxxxx"
+                                    }
                                 ],
                                 "version": "3.1.0"
                             }
@@ -733,6 +736,17 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "item": {
+            "type": "object",
+            "required": [
+                "itemUri"
+            ],
+            "properties": {
+                "itemUri": {
+                    "type": "string"
                 }
             }
         }

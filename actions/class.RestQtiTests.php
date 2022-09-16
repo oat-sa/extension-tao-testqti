@@ -179,7 +179,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
             $this->returnSuccess(
                 array_map(static function (Resource $item) {
-                    return $item->getUri();
+                    return ['itemUri' => $item->getUri()];
                 }, array_values($this->getQtiTestService()->getItems($testResource)))
             );
         } catch (MissingTestmodelException $e) {
