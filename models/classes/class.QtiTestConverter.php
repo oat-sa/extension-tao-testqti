@@ -53,6 +53,7 @@ class taoQtiTest_models_classes_QtiTestConverter
         'custom',
         'math',
         'or',
+        'match',
         'stats'
     ];
 
