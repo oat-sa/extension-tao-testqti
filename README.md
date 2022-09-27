@@ -28,7 +28,7 @@ Here is a list of known category options:
 REST API
 ========
 
-[QTI Test REST API](https://openapi.taotesting.com/viewer/?url=https://raw.githubusercontent.com/oat-sa/extension-tao-testqti/master/doc/swagger.json)
+[QTI Test REST API](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2Foat-sa%2Fextension-tao-testqti%2Fmaster%2Fdoc%2Fswagger.json)
 
 Results variables transmission
 ==============================
