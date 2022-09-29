@@ -53,13 +53,11 @@ class TestRunnerActionResolverTest extends TestCase
                 'class' => null,
                 'name' => null,
                 'exception' => TypeError::class,
-                'message' => 'Argument 1 passed to oat\taoQtiTest\models\runner\synchronisation\synchronisationService\TestRunnerActionResolver::checkClass() must be of the type string, null given',
             ],
             [
                 'class' => 'a',
                 'name' => null,
                 'exception' => TypeError::class,
-                'message' => 'Argument 2 passed to oat\taoQtiTest\models\runner\synchronisation\synchronisationService\TestRunnerActionResolver::checkClass() must be of the type string, null given',
             ],
             [
                 'class' => 'a',
@@ -78,10 +76,12 @@ class TestRunnerActionResolverTest extends TestCase
      * @param string $message
      * @throws ReflectionException
      */
-    public function testCheckClassException($actionClass, $actionName, string $exception, string $message): void
+    public function testCheckClassException($actionClass, $actionName, string $exception, string $message = null): void
     {
         $this->expectException($exception);
-        $this->expectExceptionMessage($message);
+        if (null !== $message) {
+            $this->expectExceptionMessage($message);
+        }
 
         $checkClassMethod = self::getProtectedMethod('checkClass');
         $resolver = new TestRunnerActionResolver();
