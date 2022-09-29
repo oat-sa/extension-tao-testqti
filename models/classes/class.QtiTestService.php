@@ -1144,6 +1144,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     private function createTestIdentifier(string $testLabel): string
     {
+        $identifier = null;
+
         if (preg_match('/^\d/', $testLabel)) {
             $identifier = 't_' . $testLabel;
         }
