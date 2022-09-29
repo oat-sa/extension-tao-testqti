@@ -566,6 +566,112 @@
                     }
                 }
             }
+        },
+        "/taoQtiTest/RestQtiTests/getItems": {
+            "get": {
+                "description": "Get list of test items id. Available since Tao 3.1.",
+                "tags": [
+                    "test", "items"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request was correctly handled, test waw found, test items were found",
+                        "schema": {
+                            "title": "response",
+                            "format": "json",
+                            "type": "object",
+                            "required": [
+                                "success",
+                                "version",
+                                "data"
+                            ],
+                            "properties": {
+                                "success": {
+                                    "type": "boolean",
+                                    "description": "True on success"
+                                },
+                                "version": {
+                                    "type": "string",
+                                    "description": "Tao version"
+                                },
+                                "data": {
+                                    "description": "List of items identifiers",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/definitions/item"
+                                    }
+                                }
+                            }
+                        },
+                        "examples": {
+                            "application/json": {
+                                "success": true,
+                                "data": [
+                                    {
+                                        "itemUri": "http://tao.local/mytao.rdf#xxxxxxxxxxxxx"
+                                    }
+                                ],
+                                "version": "3.1.0"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Required data was not provided",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "404": {
+                        "description": "Test with given id was not found",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error (should not occur)",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "testUri",
+                        "in": "query",
+                        "description": "Test identifier",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ]
+            }
         }
     },
     "definitions": {
@@ -630,6 +736,17 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "item": {
+            "type": "object",
+            "required": [
+                "itemUri"
+            ],
+            "properties": {
+                "itemUri": {
+                    "type": "string"
                 }
             }
         }
