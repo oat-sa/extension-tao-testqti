@@ -62,8 +62,8 @@
     "oat-sa/lib-test-cat": "2.3.7",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
     "qtism/qtism": ">=0.28.1",
-    "oat-sa/generis" : ">=15.17.1",
-    "oat-sa/tao-core" : ">=50.18.3",
+    "oat-sa/generis" : ">=15.22",
+    "oat-sa/tao-core" : ">=50.24.6",
     "oat-sa/extension-tao-item" : ">=11.0.0",
     "oat-sa/extension-tao-itemqti" : ">=28.35.0",
     "oat-sa/extension-tao-test" : ">=15.0.0",
@@ -77,9 +77,5 @@
       "oat\\taoQtiTest\\" : "",
       "oat\\taoQtiTest\\models\\": "models/classes/"
     }
-  },
-  "require-dev": {
-    "oat-sa/generis": "dev-php8-migration as v16.0.0",
-    "oat-sa/tao-core": "dev-php8-migration as v51.0.0"
   }
 }
