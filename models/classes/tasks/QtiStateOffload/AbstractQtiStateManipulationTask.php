@@ -27,12 +27,13 @@ use oat\oatbox\extension\AbstractAction;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\state\StateMigration;
+use oat\tao\model\taskQueue\Task\QueueAssociableInterface;
 use oat\tao\model\taskQueue\Task\TaskAwareInterface;
 use oat\tao\model\taskQueue\Task\TaskAwareTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-abstract class AbstractQtiStateManipulationTask extends AbstractAction implements TaskAwareInterface
+abstract class AbstractQtiStateManipulationTask extends AbstractAction implements TaskAwareInterface, QueueAssociableInterface
 {
     use TaskAwareTrait;
 
@@ -40,11 +41,18 @@ abstract class AbstractQtiStateManipulationTask extends AbstractAction implement
     public const PARAM_CALL_ID_KEY = 'callId';
     public const PARAM_STATE_LABEL_KEY = 'stateLabel';
 
+    public const QUEUE_NAME = 'state_management';
+
     public function __invoke($params): Report
     {
         [$userId, $callId, $stateLabel] = $this->validateParameters($params);
 
         return $this->manipulateState($userId, $callId, $stateLabel);
+    }
+
+    public function getQueueName(array $params = []): string
+    {
+        return self::QUEUE_NAME;
     }
 
     abstract protected function manipulateState(string $userId, string $callId, string $stateLabel): Report;
