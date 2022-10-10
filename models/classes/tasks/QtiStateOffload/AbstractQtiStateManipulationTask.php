@@ -33,7 +33,8 @@ use oat\tao\model\taskQueue\Task\TaskAwareTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-abstract class AbstractQtiStateManipulationTask extends AbstractAction implements TaskAwareInterface, QueueAssociableInterface
+abstract class AbstractQtiStateManipulationTask extends AbstractAction
+    implements TaskAwareInterface, QueueAssociableInterface
 {
     use TaskAwareTrait;
 
@@ -63,11 +64,13 @@ abstract class AbstractQtiStateManipulationTask extends AbstractAction implement
      */
     private function validateParameters($params): array
     {
-        if (!isset(
-            $params[self::PARAM_USER_ID_KEY],
-            $params[self::PARAM_CALL_ID_KEY],
-            $params[self::PARAM_STATE_LABEL_KEY]
-        )) {
+        if (
+            !isset(
+                $params[self::PARAM_USER_ID_KEY],
+                $params[self::PARAM_CALL_ID_KEY],
+                $params[self::PARAM_STATE_LABEL_KEY]
+            )
+        ) {
             throw new InvalidArgumentException('[%s] Invalid parameter set was provided', self::class);
         }
 
