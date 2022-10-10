@@ -23,7 +23,7 @@ final class Version202210071342032260_taoQtiTest extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // migration can't be rollback without code base
+        $this->throwIrreversibleMigrationException();
     }
 
     private function buildSetupStateOffloadQueueCommand(): SetupStateOffloadQueue
