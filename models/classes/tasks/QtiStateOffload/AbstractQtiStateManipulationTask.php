@@ -27,6 +27,7 @@ use oat\oatbox\extension\AbstractAction;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\state\StateMigration;
+use oat\tao\model\taskQueue\Task\QueueAssociableInterface;
 use oat\tao\model\taskQueue\Task\TaskAwareInterface;
 use oat\tao\model\taskQueue\Task\TaskAwareTrait;
 use Psr\Container\ContainerExceptionInterface;
@@ -55,11 +56,13 @@ abstract class AbstractQtiStateManipulationTask extends AbstractAction implement
      */
     private function validateParameters($params): array
     {
-        if (!isset(
-            $params[self::PARAM_USER_ID_KEY],
-            $params[self::PARAM_CALL_ID_KEY],
-            $params[self::PARAM_STATE_LABEL_KEY]
-        )) {
+        if (
+            !isset(
+                $params[self::PARAM_USER_ID_KEY],
+                $params[self::PARAM_CALL_ID_KEY],
+                $params[self::PARAM_STATE_LABEL_KEY]
+            )
+        ) {
             throw new InvalidArgumentException('[%s] Invalid parameter set was provided', self::class);
         }
 

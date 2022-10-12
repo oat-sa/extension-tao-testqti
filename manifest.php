@@ -48,6 +48,7 @@ use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupDefaultTemplateConfiguration;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
+use oat\taoQtiTest\scripts\install\SetupStateOffloadQueue;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoQtiTest\scripts\update\Updater;
 
@@ -96,7 +97,8 @@ return [
             SetupProvider::class,
             SetupDefaultTemplateConfiguration::class,
             DisableBRSinTestAuthoring::class,
-            RegisterResultTransmissionEventHandlers::class
+            RegisterResultTransmissionEventHandlers::class,
+            SetupStateOffloadQueue::class
         ],
     ],
     'update' => Updater::class,
