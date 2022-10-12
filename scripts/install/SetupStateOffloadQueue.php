@@ -48,7 +48,7 @@ class SetupStateOffloadQueue extends InstallAction
                 )
             );
         }
-        $newQueue = $this->buildNewQueue();
+        $newQueue = $this->createNewQueue();
         $newQueue->initialize();
 
         $queueDispatcher->addQueue($newQueue);
@@ -66,7 +66,7 @@ class SetupStateOffloadQueue extends InstallAction
         );
     }
 
-    private function buildNewQueue(): QueueInterface
+    private function createNewQueue(): QueueInterface
     {
         return $this->propagate(
             new Queue(
