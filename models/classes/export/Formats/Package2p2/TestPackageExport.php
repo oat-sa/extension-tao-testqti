@@ -25,6 +25,7 @@ use oat\taoQtiTest\models\export\AbstractTestExport;
 
 class TestPackageExport extends AbstractTestExport
 {
-    protected static string $version = self::VERSION_2P2;
+    protected const VERSION = '2.2';
+
     protected static string $qtiTestExporter = QtiTestExporter::class;
 }
