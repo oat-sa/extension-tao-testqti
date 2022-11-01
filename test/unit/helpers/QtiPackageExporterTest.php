@@ -21,12 +21,12 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\helpers;
 
 use common_Exception;
-use common_report_Report;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\oatbox\reporting\Report;
 use oat\tao\helpers\FileHelperService;
-use taoQtiTest_models_classes_export_TestExport22;
+use oat\taoQtiTest\models\Export\Formats\Package2p2\TestPackageExport;
 use oat\generis\test\MockObject;
 use oat\generis\test\TestCase;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
@@ -36,7 +36,7 @@ class QtiPackageExporterTest extends TestCase
     /** @var QtiPackageExporter */
     private $subject;
 
-    /** @var taoQtiTest_models_classes_export_TestExport22|MockObject */
+    /** @var TestPackageExport|MockObject */
     private $exporterMock;
 
     /** @var FileSystemService|MockObject */
@@ -48,7 +48,7 @@ class QtiPackageExporterTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->exporterMock = $this->createMock(taoQtiTest_models_classes_export_TestExport22::class);
+        $this->exporterMock = $this->createMock(TestPackageExport::class);
         $this->fileSystemServiceMock = $this->createMock(FileSystemService::class);
         $this->fileHelperServiceMock = $this->createMock(FileHelperService::class);
         $this->fileHelperServiceMock->method('createTempDir')->willReturn('FAKE_TMP_DIR');
@@ -64,7 +64,7 @@ class QtiPackageExporterTest extends TestCase
     {
         $testUri = 'FAKE_TEST_URI';
 
-        $expectedReport = common_report_Report::createFailure('FAKE ERROR MESSAGE');
+        $expectedReport = Report::createError('FAKE ERROR MESSAGE');
         $this->exporterMock->method('export')
             ->willReturn($expectedReport);
 
@@ -73,9 +73,8 @@ class QtiPackageExporterTest extends TestCase
     }
 
     /**
-     * @param array $reportData
-     *
      * @dataProvider dataProviderReportDataWithoutValidPath
+     * @throws common_Exception
      */
     public function testExportQtiTestPackageToFile_ThrowsExceptionWhenReportDoesNotHaveValidPath(array $reportData): void
     {
@@ -83,7 +82,7 @@ class QtiPackageExporterTest extends TestCase
         $fileSystemId = 'FILE_SYSTEM_ID';
         $filePath = 'FILE_PATH';
 
-        $expectedReport = common_report_Report::createSuccess('FAKE ERROR MESSAGE');
+        $expectedReport = Report::createSuccess('FAKE ERROR MESSAGE');
         $expectedReport->setData($reportData);
 
         $this->exporterMock->method('export')
@@ -100,7 +99,7 @@ class QtiPackageExporterTest extends TestCase
         $filePath = 'FILE_PATH';
 
         $expectedFileContent =  'EXPORTED_FILE_CONTENT';
-        $expectedReport = common_report_Report::createSuccess('FAKE ERROR MESSAGE');
+        $expectedReport = Report::createSuccess('FAKE ERROR MESSAGE');
         $expectedReport->setData(['path' => 'FAKE_QTI_PACKAGE_PATH']);
         $this->exporterMock->method('export')
             ->willReturn($expectedReport);
@@ -127,9 +126,6 @@ class QtiPackageExporterTest extends TestCase
         $this->subject->exportQtiTestPackageToFile($testUri, $fileSystemId, $filePath);
     }
 
-    /**
-     * @return array
-     */
     public function dataProviderReportDataWithoutValidPath(): array
     {
         return [
