@@ -50,30 +50,24 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
     use ServiceLocatorAwareTrait;
     use OntologyAwareTrait;
 
-    protected const VERSION_2P1 = '2.1';
-    protected const VERSION_2P2 = '2.2';
+    protected const AVAILABLE_VERSIONS = ['2.1', '2.2'];
 
-    protected const AVAILABLE_VERSIONS = [
-        self::VERSION_2P1,
-        self::VERSION_2P2,
-    ];
-
-    protected static string $version;
+    /** @deprecated */
     protected static string $qtiTestExporter;
 
     public function getLabel(): string
     {
-        if (!in_array(static::$version, self::AVAILABLE_VERSIONS)) {
+        if (!in_array(static::VERSION, self::AVAILABLE_VERSIONS)) {
             throw new InvalidArgumentException('The wrong version of QTI package is defined');
         }
 
-        return __('QTI Test Package %s', static::$version);
+        return __('QTI Test Package %s', static::VERSION);
     }
 
     /** @throws common_Exception */
     public function getExportForm(Resource $resource): Form
     {
-        return (new ExportForm($this->getFormData($resource), [], __('Export QTI %s Test Package', static::$version)))->getForm();
+        return (new ExportForm($this->getFormData($resource), [], __('Export QTI %s Test Package', static::VERSION)))->getForm();
     }
 
     protected function getFormData(Resource $resource): array
@@ -167,7 +161,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
 
     protected function createManifest()
     {
-        return $this->getServiceManager()->get(QtiTestUtils::SERVICE_ID)->emptyImsManifest(static::$version);
+        return $this->getServiceManager()->get(QtiTestUtils::SERVICE_ID)->emptyImsManifest(static::VERSION);
     }
 
     /** @noinspection PhpIncompatibleReturnTypeInspection */
