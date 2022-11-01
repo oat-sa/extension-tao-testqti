@@ -33,4 +33,9 @@ class QtiTestExporter extends AbstractQtiTestExporter
     {
         return new QtiItemExporter($item, $this->getZip(), $this->getManifest());
     }
+
+    protected function adjustTestXml(string $xml): string
+    {
+        return $xml;
+    }
 }

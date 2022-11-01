@@ -34,21 +34,12 @@ class QtiTestExporter extends AbstractQtiTestExporter
         return new QtiItemExporter($item, $this->getZip(), $this->getManifest());
     }
 
-    protected function postProcessing($testXmlDocument)
+    protected function adjustTestXml(string $xml): string
     {
-
-        $testXmlDocument = str_replace(
-            'http://www.imsglobal.org/xsd/imsqti_v2p1',
-            'http://www.imsglobal.org/xsd/imsqti_v2p2',
-            $testXmlDocument
+        return str_replace(
+            ['http://www.imsglobal.org/xsd/imsqti_v2p1', 'http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd'],
+            ['http://www.imsglobal.org/xsd/imsqti_v2p2', 'http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2p1.xsd'],
+            $xml
         );
-
-        $testXmlDocument = str_replace(
-            'http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd',
-            'http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2p1.xsd',
-            $testXmlDocument
-        );
-
-        return $testXmlDocument;
     }
 }

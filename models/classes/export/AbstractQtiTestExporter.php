@@ -85,6 +85,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     }
 
     abstract protected function getItemExporter(Resource $item): QtiItemExporterInterface;
+    abstract protected function adjustTestXml(string $xml): string;
 
     /** Set the QTISM XmlDocument which holds the QTI Test definition to be exported. */
     protected function setTestDocument(XmlDocument $testDocument): void
@@ -223,7 +224,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
      */
     protected function exportTest(array $itemIdentifiers): void
     {
-        $testXmlDocument = $this->getTestDocument()->saveToString();
+        $testXmlDocument = $this->adjustTestXml($this->getTestDocument()->saveToString());
 
         $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()) . '/';
         $testRootDir = $this->getTestService()->getQtiTestDir($this->getItem());
