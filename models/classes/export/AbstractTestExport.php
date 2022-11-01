@@ -52,8 +52,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
 
     protected const AVAILABLE_VERSIONS = ['2.1', '2.2'];
 
-    /** @deprecated */
-    protected static string $qtiTestExporter;
+    protected ZipArchive $zip;
 
     public function getLabel(): string
     {
@@ -70,7 +69,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return (new ExportForm($this->getFormData($resource), [], __('Export QTI %s Test Package', static::VERSION)))->getForm();
     }
 
-    abstract protected function getTestExporter();
+    abstract protected function getTestExporter(Resource $test): QtiTestExporterInterface;
 
     protected function getFormData(Resource $resource): array
     {
@@ -116,17 +115,13 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         }
 
         // Create a new ZIP archive to store data related to the QTI Test.
-        $zip = new ZipArchive();
-        if ($zip->open($path, ZipArchive::CREATE) !== true) {
+        $this->zip = new ZipArchive();
+        if ($this->zip->open($path, ZipArchive::CREATE) !== true) {
             throw new common_Exception("Unable to create ZIP archive for QTI Test at location '" . $path . "'.");
         }
 
-        // Create an empty IMS Manifest as a basis.
-        $manifest = $this->createManifest();
-
         foreach ($instances as $instance) {
-            $testResource = $this->getResource($instance);
-            $testExporter = $this->createExporter($testResource, $zip, $manifest);
+            $testExporter = $this->getTestExporter($this->getResource($instance));
             $subReport = $testExporter->export();
             if (
                 $report->getType() !== ReportInterface::TYPE_ERROR &&
@@ -138,7 +133,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
             $report->add($subReport);
         }
 
-        $zip->close();
+        $this->zip->close();
 
         if (!isset($formValues['uri']) && !isset($formValues['classUri'])) {
             $report->add(Report::createError('Export failed. Key uri nor classUri in formValues are not defined'));
@@ -156,13 +151,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return $report;
     }
 
-    /** @deprecated  */
-    protected function createExporter(Resource $testResource, ZipArchive $zip, DOMDocument $manifest): QtiTestExporterInterface
-    {
-        return new static::$qtiTestExporter($testResource, $zip, $manifest);
-    }
-
-    protected function createManifest()
+    protected function getManifest()
     {
         return $this->getServiceManager()->get(QtiTestUtils::SERVICE_ID)->emptyImsManifest(static::VERSION);
     }
@@ -176,5 +165,10 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
     protected function getServiceManager(): ServiceManager
     {
         return ServiceManager::getServiceManager();
+    }
+
+    public function getZip(): ZipArchive
+    {
+        return $this->zip;
     }
 }
