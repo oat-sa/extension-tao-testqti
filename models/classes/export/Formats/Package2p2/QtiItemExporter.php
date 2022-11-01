@@ -23,7 +23,7 @@ namespace oat\taoQtiTest\models\Export\Formats\Package2p2;
 
 use oat\taoQtiItem\model\Export\QTIPackedItem22Exporter;
 use oat\taoQtiTest\models\Export\QtiItemExporterTrait;
-use oat\taoQtiTests\models\Export\QtiItemExporterInterface;
+use oat\taoQtiTest\models\Export\QtiItemExporterInterface;
 
 class QtiItemExporter extends QTIPackedItem22Exporter implements QtiItemExporterInterface
 {

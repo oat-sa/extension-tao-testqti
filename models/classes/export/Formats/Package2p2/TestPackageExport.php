@@ -27,5 +27,10 @@ class TestPackageExport extends AbstractTestExport
 {
     protected const VERSION = '2.2';
 
+    protected function getTestExporter()
+    {
+        return new QtiTestExporter();
+    }
+
     protected static string $qtiTestExporter = QtiTestExporter::class;
 }
