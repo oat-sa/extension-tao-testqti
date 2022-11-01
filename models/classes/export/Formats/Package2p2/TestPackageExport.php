@@ -21,16 +21,20 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\Export\Formats\Package2p2;
 
+use core_kernel_classes_Resource as Resource;
 use oat\taoQtiTest\models\export\AbstractTestExport;
+use oat\taoQtiTest\models\Export\QtiTestExporterInterface;
+use taoQtiTest_models_classes_QtiTestServiceException as QtiTestServiceException;
 
 class TestPackageExport extends AbstractTestExport
 {
     protected const VERSION = '2.2';
 
-    protected function getTestExporter()
+    /**
+     * @throws QtiTestServiceException
+     */
+    protected function getTestExporter(Resource $test): QtiTestExporterInterface
     {
-        return new QtiTestExporter();
+        return new QtiTestExporter($test, $this->getZip(), $this->getManifest());
     }
-
-    protected static string $qtiTestExporter = QtiTestExporter::class;
 }
