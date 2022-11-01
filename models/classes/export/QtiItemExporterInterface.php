@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTests\models\Export;
+namespace oat\taoQtiTest\models\Export;
 
 interface QtiItemExporterInterface
 {

@@ -23,11 +23,11 @@ namespace oat\taoQtiTest\models\Export\Formats\Package2p1;
 
 use core_kernel_classes_Resource as Resource;
 use oat\taoQtiTest\models\Export\AbstractQtiTestExporter;
-use oat\taoQtiTests\models\Export\QtiItemExporterInterface;
+use oat\taoQtiTest\models\Export\QtiItemExporterInterface;
 
 class QtiTestExporter extends AbstractQtiTestExporter
 {
-    const TEST_RESOURCE_TYPE = 'imsqti_test_xmlv2p1';
+    protected const TEST_RESOURCE_TYPE = 'imsqti_test_xmlv2p1';
 
     protected function getItemExporter(Resource $item): QtiItemExporterInterface
     {

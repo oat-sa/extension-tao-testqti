@@ -70,6 +70,8 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return (new ExportForm($this->getFormData($resource), [], __('Export QTI %s Test Package', static::VERSION)))->getForm();
     }
 
+    abstract protected function getTestExporter();
+
     protected function getFormData(Resource $resource): array
     {
         $formData = [];
@@ -154,6 +156,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return $report;
     }
 
+    /** @deprecated  */
     protected function createExporter(Resource $testResource, ZipArchive $zip, DOMDocument $manifest): QtiTestExporterInterface
     {
         return new static::$qtiTestExporter($testResource, $zip, $manifest);
