@@ -21,4 +21,9 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\Export;
 
-interface QtiTestExporterInterface {}
+use oat\oatbox\reporting\Report;
+
+interface QtiTestExporterInterface
+{
+    public function export(array $options = []): Report;
+}

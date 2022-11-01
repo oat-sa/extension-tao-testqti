@@ -31,6 +31,7 @@ use DOMException;
 use DOMXPath;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\reporting\ReportInterface;
+use oat\taoQtiTests\models\Export\QtiItemExporterInterface;
 use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use oat\oatbox\filesystem\Directory;
@@ -82,6 +83,8 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $this->setItems($this->getTestService()->getItems($test));
         $this->setManifest($manifest);
     }
+
+    abstract protected function getItemExporter(Resource $item): QtiItemExporterInterface;
 
     /** Set the QTISM XmlDocument which holds the QTI Test definition to be exported. */
     protected function setTestDocument(XmlDocument $testDocument): void
@@ -182,7 +185,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $identifiers = [];
 
         foreach ($this->getItems() as $refIdentifier => $item) {
-            $itemExporter = $this->createItemExporter($item);
+            $itemExporter = $this->getItemExporter($item);
             if (!in_array($itemExporter->buildIdentifier(), $identifiers)) {
                 $identifiers[] = $itemExporter->buildIdentifier();
                 $subReport = $itemExporter->export();
@@ -264,7 +267,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         // Create the IMS Manifest <resource> element.
         $resourceElt = $manifest->createElement('resource');
         $resourceElt->setAttribute('identifier', $identifier);
-        $resourceElt->setAttribute('type', $this->getTestResourceType());
+        $resourceElt->setAttribute('type', static::TEST_RESOURCE_TYPE);
         $resourceElt->setAttribute('href', $href);
         $targetElt->appendChild($resourceElt);
 
@@ -321,18 +324,6 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $fileElement->setAttribute('href', ltrim($href, '/'));
 
         $firstDependencyElement->parentNode->insertBefore($fileElement, $firstDependencyElement);
-    }
-
-    // todo: replacement inside classes
-    protected function createItemExporter(Resource $item)
-    {
-        return new taoQtiTest_models_classes_export_QtiItemExporter($item, $this->getZip(), $this->getManifest());
-    }
-
-    // todo: candidate for overriding
-    protected function getTestResourceType(): string
-    {
-        return 'imsqti_test_xmlv2p1';
     }
 
     protected function setMetadataExporter(): MetadataExporter

@@ -21,10 +21,34 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\Export\Formats\Package2p2;
 
+use core_kernel_classes_Resource as Resource;
 use oat\taoQtiTest\models\Export\AbstractQtiTestExporter;
-use oat\taoQtiTest\models\Export\QtiTestExporterInterface;
+use oat\taoQtiTests\models\Export\QtiItemExporterInterface;
 
-class QtiTestExporter extends AbstractQtiTestExporter implements QtiTestExporterInterface
+class QtiTestExporter extends AbstractQtiTestExporter
 {
+    const TEST_RESOURCE_TYPE = 'imsqti_test_xmlv2p2';
 
+    protected function getItemExporter(Resource $item): QtiItemExporterInterface
+    {
+        return new QtiItemExporter($item, $this->getZip(), $this->getManifest());
+    }
+
+    protected function postProcessing($testXmlDocument)
+    {
+
+        $testXmlDocument = str_replace(
+            'http://www.imsglobal.org/xsd/imsqti_v2p1',
+            'http://www.imsglobal.org/xsd/imsqti_v2p2',
+            $testXmlDocument
+        );
+
+        $testXmlDocument = str_replace(
+            'http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd',
+            'http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2p1.xsd',
+            $testXmlDocument
+        );
+
+        return $testXmlDocument;
+    }
 }
