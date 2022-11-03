@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +26,6 @@ use common_Exception;
 use common_exception_Error;
 use core_kernel_classes_Class as ResourcesClass;
 use core_kernel_classes_Resource as Resource;
-use DOMDocument;
 use InvalidArgumentException;
 use Laminas\ServiceManager\ServiceLocatorAwareTrait;
 use oat\generis\model\OntologyAwareTrait;

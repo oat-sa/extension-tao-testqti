@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,7 +75,9 @@ class QtiPackageExporter extends InjectionAwareService
         $reportData = $exportReport->getData();
 
         if (!isset($reportData['path']) || !is_string($reportData['path'])) {
-            throw new common_Exception('Export report does not contain path to exported QTI package: ' . json_encode($reportData));
+            throw new common_Exception(
+                'Export report does not contain path to exported QTI package: ' . json_encode($reportData)
+            );
         }
 
         return $exportReport;
@@ -93,8 +96,11 @@ class QtiPackageExporter extends InjectionAwareService
     /**
      * @throws common_Exception
      */
-    private function moveFileToSharedFileSystem(string $sourceFilePath, string $fileSystemId, string $destinationFilePath): File
-    {
+    private function moveFileToSharedFileSystem(
+        string $sourceFilePath,
+        string $fileSystemId,
+        string $destinationFilePath
+    ): File {
         $source = $this->fileHelperService->readFile($sourceFilePath);
 
         $file = $this->fileSystemService->getDirectory($fileSystemId)->getFile($destinationFilePath);

@@ -23,7 +23,7 @@ namespace oat\taoQtiTest\models\export\metadata;
 
 use common_report_Report as Report;
 use oat\oatbox\event\EventManagerAwareTrait;
-use \oat\taoQtiItem\model\export\ItemMetadataByClassExportHandler;
+use oat\taoQtiItem\model\export\ItemMetadataByClassExportHandler;
 use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
 
 class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler

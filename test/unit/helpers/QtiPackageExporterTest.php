@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA ;
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\helpers;
@@ -33,8 +35,7 @@ use oat\taoQtiTest\helpers\QtiPackageExporter;
 
 class QtiPackageExporterTest extends TestCase
 {
-    /** @var QtiPackageExporter */
-    private $subject;
+    private QtiPackageExporter $subject;
 
     /** @var TestPackageExport|MockObject */
     private $exporterMock;
@@ -60,7 +61,7 @@ class QtiPackageExporterTest extends TestCase
         );
     }
 
-    public function testExportDeliveryQtiPackage_ThrowsExceptionWhenExportFails(): void
+    public function testExportDeliveryQtiPackageThrowsExceptionWhenExportFails(): void
     {
         $testUri = 'FAKE_TEST_URI';
 
@@ -76,7 +77,7 @@ class QtiPackageExporterTest extends TestCase
      * @dataProvider dataProviderReportDataWithoutValidPath
      * @throws common_Exception
      */
-    public function testExportQtiTestPackageToFile_ThrowsExceptionWhenReportDoesNotHaveValidPath(array $reportData): void
+    public function testExportQtiTestPackageToFileThrowsExceptionWhenReportDoesNotHaveValidPath(array $reportData): void
     {
         $testUri = 'FAKE_TEST_URI';
         $fileSystemId = 'FILE_SYSTEM_ID';
@@ -92,7 +93,7 @@ class QtiPackageExporterTest extends TestCase
         $this->subject->exportQtiTestPackageToFile($testUri, $fileSystemId, $filePath);
     }
 
-    public function testExportQtiTestPackageToFile_ReturnsValidFileAfterSuccessfulExport(): void
+    public function testExportQtiTestPackageToFileReturnsValidFileAfterSuccessfulExport(): void
     {
         $testUri = 'FAKE_TEST_URI';
         $fileSystemId = 'FILE_SYSTEM_ID';
@@ -140,4 +141,3 @@ class QtiPackageExporterTest extends TestCase
         ];
     }
 }
-

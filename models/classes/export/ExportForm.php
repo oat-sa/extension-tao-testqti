@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c)
- * 2008-2010 (original work) Deutsche Institut für Internationale Pädagogische Forschung (under the project TAO-TRANSFER);
+ * 2008-2010 (orig. work) Deutsche Institut für Internationale Pädagogische Forschung (under the project TAO-TRANSFER);
  * 2009-2012 (update and modification) Public Research Centre Henri Tudor (under the project TAO-SUSTAIN & TAO-DEV);
  * 2012-2022 (further updates) Open Assessment Technologies SA;
  */
@@ -65,19 +66,20 @@ class ExportForm extends FormContainer
     {
         $this->form = new Form('export');
 
-        $this->form->setDecorators(
-            [
-                'element'           => new TagWrapper(['tag' => 'div']),
-                'group'             => new TagWrapper(['tag' => 'div', 'cssClass' => 'form-group']),
-                'error'             => new TagWrapper(['tag' => 'div', 'cssClass' => 'form-error ui-state-error ui-corner-all']),
-                'actions-bottom'    => new TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar']),
-                'actions-top'       => new TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
-            ]
-        );
+        $this->form->setDecorators([
+            'element' => new TagWrapper(['tag' => 'div']),
+            'group' => new TagWrapper(['tag' => 'div', 'cssClass' => 'form-group']),
+            'error' => new TagWrapper(['tag' => 'div', 'cssClass' => 'form-error ui-state-error ui-corner-all']),
+            'actions-bottom' => new TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar']),
+            'actions-top' => new TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
+        ]);
 
         $exportElement = FormFactory::getElement('export', 'Free');
         $exportElement->setValue(
-            sprintf('<a href="#" class="form-submitter btn-success small"><span class="icon-export"></span>%s</a>', __('Export'))
+            sprintf(
+                '<a href="#" class="form-submitter btn-success small"><span class="icon-export"></span>%s</a>',
+                __('Export')
+            )
         );
 
         $this->form->setActions([$exportElement]);
