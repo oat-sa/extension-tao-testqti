@@ -19,11 +19,11 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\Export\Formats\Package2p2;
+namespace oat\taoQtiTest\models\export\Formats\Package2p2;
 
 use core_kernel_classes_Resource as Resource;
-use oat\taoQtiTest\models\Export\AbstractQtiTestExporter;
-use oat\taoQtiTest\models\Export\QtiItemExporterInterface;
+use oat\taoQtiTest\models\export\AbstractQtiTestExporter;
+use oat\taoQtiTest\models\export\QtiItemExporterInterface;
 
 class QtiTestExporter extends AbstractQtiTestExporter
 {

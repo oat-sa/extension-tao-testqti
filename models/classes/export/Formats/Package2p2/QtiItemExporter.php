@@ -19,11 +19,11 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\Export\Formats\Package2p2;
+namespace oat\taoQtiTest\models\export\Formats\Package2p2;
 
-use oat\taoQtiItem\model\Export\QTIPackedItem22Exporter;
-use oat\taoQtiTest\models\Export\QtiItemExporterTrait;
-use oat\taoQtiTest\models\Export\QtiItemExporterInterface;
+use oat\taoQtiItem\model\export\QTIPackedItem22Exporter;
+use oat\taoQtiTest\models\export\QtiItemExporterTrait;
+use oat\taoQtiTest\models\export\QtiItemExporterInterface;
 
 class QtiItemExporter extends QTIPackedItem22Exporter implements QtiItemExporterInterface
 {

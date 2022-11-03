@@ -29,7 +29,7 @@ use oat\oatbox\reporting\Report;
 use oat\oatbox\reporting\ReportInterface;
 use oat\tao\helpers\FileHelperService;
 use oat\tao\model\service\InjectionAwareService;
-use oat\taoQtiTest\models\Export\Formats\Package2p2\TestPackageExport;
+use oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport;
 
 class QtiPackageExporter extends InjectionAwareService
 {

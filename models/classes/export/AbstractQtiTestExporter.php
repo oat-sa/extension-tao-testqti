@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\Export;
+namespace oat\taoQtiTest\models\export;
 
 use common_exception_Error;
 use common_exception_InconsistentData;

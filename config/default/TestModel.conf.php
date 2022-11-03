@@ -25,8 +25,8 @@ use oat\taoQtiTest\models\TestModelService;
 return new TestModelService([
     'exportHandlers' => [
         new TestMetadataByClassExportHandler(),
-        new oat\taoQtiTest\models\Export\Formats\Package2p1\TestPackageExport(),
-        new oat\taoQtiTest\models\Export\Formats\Package2p2\TestPackageExport(),
+        new oat\taoQtiTest\models\export\Formats\Package2p1\TestPackageExport(),
+        new oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport(),
     ],
     'importHandlers' => [
         new taoQtiTest_models_classes_import_TestImport()
