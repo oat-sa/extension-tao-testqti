@@ -205,6 +205,13 @@
                         "required": false
                     },
                     {
+                        "name": "itemClassUri",
+                        "in": "formData",
+                        "description": "Class uri where exported items are placed. If not specified root class will be used",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
                         "name": "enableMetadataGuardians",
                         "in": "formData",
                         "description": "Boolean flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default.",

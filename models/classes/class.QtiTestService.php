@@ -338,7 +338,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @throws common_exception_Error
      * @throws common_exception_FileSystemError
      */
-    public function importMultipleTests(core_kernel_classes_Class $targetClass, $file)
+    public function importMultipleTests(core_kernel_classes_Class $targetClass, $file, ?string $itemClassUri = null)
     {
 
         $testClass = $targetClass;
@@ -392,7 +392,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         $alreadyImportedQtiResources = [];
 
                         foreach ($tests as $qtiTestResource) {
-                            $importTestReport = $this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder, $alreadyImportedQtiResources);
+                            $importTestReport = $this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder, $alreadyImportedQtiResources, $itemClassUri);
                             $report->add($importTestReport);
 
                             if ($data = $importTestReport->getData()) {
@@ -495,7 +495,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @param oat\taoQtiItem\model\qti\Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored at import time.
      * @return common_report_Report A report about how the importation behaved.
      */
-    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = [])
+    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = [], ?string $itemClassUri = null)
     {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
@@ -518,7 +518,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
 
         // The class where the items that belong to the test will be imported.
-        $itemClass = $this->getClass(TaoOntology::CLASS_URI_ITEM);
+        $itemClass = $this->getClass($itemClassUri ?: TaoOntology::CLASS_URI_ITEM);
         $targetClass = $itemClass->createSubClass($testResource->getLabel());
 
         // Load and validate the manifest

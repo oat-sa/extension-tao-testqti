@@ -37,6 +37,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     public const PARAM_PACKAGE_NAME = 'qtiPackage';
     private const PARAM_TEST_URI = 'testUri';
 
+    const ITEM_CLASS_URI = 'itemClassUri';
+
     /**
      * @throws common_exception_NotImplemented
      */
@@ -94,7 +96,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isMetadataGuardiansEnabled(),
                     $this->isMetadataValidatorsEnabled(),
                     $this->isItemMustExistEnabled(),
-                    $this->isItemMustBeOverwrittenEnabled()
+                    $this->isItemMustBeOverwrittenEnabled(),
+                    $this->getItemClassUri()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -117,6 +120,16 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         } catch (\common_exception_RestApi $e) {
             return $this->returnFailure($e);
         }
+    }
+
+    protected function getItemClassUri(): ?string
+    {
+        $itemClassUri = $this->getRequestParameter(self::ITEM_CLASS_URI);
+        if(!is_string($itemClassUri)) {
+            return null;
+        }
+
+        return $itemClassUri;
     }
 
     /**
