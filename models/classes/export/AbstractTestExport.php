@@ -26,7 +26,6 @@ use common_Exception;
 use common_exception_Error;
 use core_kernel_classes_Class as ResourcesClass;
 use core_kernel_classes_Resource as Resource;
-use InvalidArgumentException;
 use Laminas\ServiceManager\ServiceLocatorAwareTrait;
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\event\EventManagerAwareTrait;
@@ -50,23 +49,16 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
     use ServiceLocatorAwareTrait;
     use OntologyAwareTrait;
 
-    protected const AVAILABLE_VERSIONS = ['2.1', '2.2'];
-
     protected ZipArchive $zip;
 
-    public function getLabel(): string
-    {
-        if (!in_array(static::VERSION, self::AVAILABLE_VERSIONS)) {
-            throw new InvalidArgumentException('The wrong version of QTI package is defined');
-        }
+    abstract public function getLabel(): string;
 
-        return __('QTI Test Package %s', static::VERSION);
-    }
+    abstract protected function getFormTitle(): string;
 
     /** @throws common_Exception */
     public function getExportForm(Resource $resource): Form
     {
-        return (new ExportForm($this->getFormData($resource), [], __('Export QTI %s Test Package', static::VERSION)))->getForm();
+        return (new ExportForm($this->getFormData($resource), [], $this->getFormTitle()))->getForm();
     }
 
     abstract protected function getTestExporter(Resource $test): QtiTestExporterInterface;
@@ -94,7 +86,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
     public function export($formValues, $destination): Report
     {
         if (!isset($formValues['filename'])) {
-            return Report::createError('Missing filename for QTI Test export using ' . __CLASS__);
+            return Report::createError(__('Missing filename for QTI Test export using %s', __CLASS__));
         }
 
         $instances = is_string($formValues['instances'])
@@ -102,7 +94,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
             : $formValues['instances'];
 
         if (!count($instances)) {
-            return Report::createError("No instance in form to export");
+            return Report::createError(__('No instance in form to export'));
         }
 
         $report = Report::createSuccess('');
@@ -111,13 +103,13 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         $path = tao_helpers_File::concat([$destination, $fileName]);
 
         if (tao_helpers_File::securityCheck($path, true) === false) {
-            throw new common_Exception('Unauthorized file name for QTI Test ZIP archive.');
+            throw new common_Exception(__('Unauthorized file name for QTI Test ZIP archive.'));
         }
 
         // Create a new ZIP archive to store data related to the QTI Test.
         $this->zip = new ZipArchive();
         if ($this->zip->open($path, ZipArchive::CREATE) !== true) {
-            throw new common_Exception("Unable to create ZIP archive for QTI Test at location '" . $path . "'.");
+            throw new common_Exception(__('Unable to create ZIP archive for QTI Test at location "%s".', $path));
         }
 
         foreach ($instances as $instance) {
@@ -136,7 +128,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         $this->zip->close();
 
         if (!isset($formValues['uri']) && !isset($formValues['classUri'])) {
-            $report->add(Report::createError('Export failed. Key uri nor classUri in formValues are not defined'));
+            $report->add(Report::createError(__('Export failed. Key uri nor classUri in formValues are not defined')));
         } else {
             $subjectUri = $formValues['uri'] ?? $formValues['classUri'];
         }
