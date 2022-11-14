@@ -99,8 +99,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
 
         $report = Report::createSuccess('');
 
-        $fileName = $formValues['filename'] . '_' . time() . '.zip'; // ?? todo: if to need to add metadata?
-        $path = tao_helpers_File::concat([$destination, $fileName]);
+        $path = tao_helpers_File::concat([$destination, $this->getExportingFileName($formValues['filename'])]);
 
         if (tao_helpers_File::securityCheck($path, true) === false) {
             throw new common_Exception(__('Unauthorized file name for QTI Test ZIP archive.'));
@@ -142,6 +141,11 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return $report;
     }
 
+    protected function getExportingFileName(string $userDefinedName): string
+    {
+        return sprintf('%s_%d.zip', $userDefinedName, time());
+    }
+
     protected function getManifest()
     {
         return $this->getServiceManager()->get(QtiTestUtils::SERVICE_ID)->emptyImsManifest(static::VERSION);
@@ -158,6 +162,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return ServiceManager::getServiceManager();
     }
 
+    // todo: hide method
     public function getZip(): ZipArchive
     {
         return $this->zip;

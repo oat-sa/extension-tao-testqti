@@ -41,6 +41,11 @@ final class TestPackageExport extends AbstractTestExport
         return sprintf('%s %s', __('Export'), $this->getLabel());
     }
 
+    protected function getExportingFileName(string $userDefinedName): string
+    {
+        return sprintf('%s_%d_metadata.zip', $userDefinedName, time());
+    }
+
     protected function getTestExporter(Resource $instance): QtiTestExporterInterface
     {
         return new QtiTestExporter($instance, $this->getZip());
