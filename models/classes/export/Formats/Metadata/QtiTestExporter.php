@@ -15,106 +15,97 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
- *
- *
+ * Copyright (c) 2015-2022 (original work) Open Assessment Technologies SA;
  */
 
-namespace oat\taoQtiTest\models\export\metadata;
+declare(strict_types=1);
 
+namespace oat\taoQtiTest\models\export\Formats\Metadata;
+
+use core_kernel_classes_Resource as Resource;
 use oat\generis\model\OntologyAwareTrait;
-use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiItem\model\flyExporter\simpleExporter\ItemExporter;
+use oat\oatbox\log\LoggerAwareTrait;
+use oat\oatbox\reporting\Report;
+use oat\oatbox\service\ServiceManager;
 use oat\taoQtiItem\model\flyExporter\simpleExporter\SimpleExporter;
-use qtism\data\AssessmentItemRef;
-use qtism\data\AssessmentSection;
-use qtism\data\TestPart;
+use oat\taoQtiTest\models\Export\QtiTestExporterInterface;
+use qtism\data\{AssessmentItemRef, AssessmentSection, storage\xml\XmlDocument, TestPart};
+use taoQtiTest_models_classes_QtiTestService as QtiTestService;
+use ZipArchive;
 
-/**
- * Class TestExporter
- */
-class TestExporter extends ConfigurableService implements TestMetadataExporter
+class QtiTestExporter implements QtiTestExporterInterface
 {
     use OntologyAwareTrait;
+    use LoggerAwareTrait;
 
     const TEST_PART = 'testPart';
     const TEST_SECTION = 'section';
     const TEST_ITEM = 'assessmentItemRef';
+
     const ITEM_SHUFFLE = 'shuffle';
     const ITEM_ORDER = 'section-order';
     const ITEM_URI = 'uri';
 
-    const OPTION_FILE_NAME = 'fileName';
+    /** Resource object of the test, defined for export */
+    protected Resource $instance;
 
-    /**
-     * Item exporter to handle each items
-     *
-     * @var SimpleExporter
-     */
-    protected $itemExporter;
+    /** Archive object, which contains exported CSV files */
+    protected ZipArchive $archive;
 
-    /**
-     * Uri of assessment to export
-     *
-     * @var string
-     */
-    protected $assessmentUri;
-
-    /**
-     * @param string $uri
-     * @return string
-     * @throws \common_exception_Error
-     */
-    public function export($uri)
+    public function __construct(Resource $instance, ZipArchive $archive)
     {
-        $this->assessmentUri = $uri;
-
-        $testData = $this->getAssessmentData();
-
-        $finalData = [];
-        foreach ($testData as $data) {
-            $item = new \core_kernel_classes_Resource($data[self::ITEM_URI]);
-            unset($data[self::ITEM_URI]);
-            $itemData = $this->getItemExporter()->getDataByItem($item);
-            foreach ($itemData as &$column) {
-                $column = array_merge($column, $data);
-            }
-            $finalData[] = $itemData;
-        }
-
-        $headers = array_merge($this->getItemExporter()->getHeaders(), $this->getHeaders());
-
-        return $this->getItemExporter()->save($headers, $finalData);
+        $this->archive = $archive;
+        $this->instance = $instance;
     }
 
-
-    /**
-     * Fetch assessment item data
-     *
-     * @return array
-     */
-    protected function getAssessmentData()
+    public function export(array $options = []): Report
     {
-        $xml = \taoQtiTest_models_classes_QtiTestService::singleton()->getDoc($this->getResource($this->assessmentUri));
-        $testPartCollection = $xml->getDocumentComponent()->getComponentsByClassName(self::TEST_PART);
+        $report = Report::createSuccess(__('Export successful for the test "%s"', $this->instance->getLabel()));
 
+        $metadata = [];
+
+        foreach ($this->getAssessmentData(QtiTestService::singleton()->getDoc($this->instance)) as $data) {
+            $itemData = $this->getItemExporter()->getDataByItem($this->getResource($data[static::ITEM_URI]));
+            unset($data[static::ITEM_URI]);
+
+            $metadata[] = array_map(fn ($v) => array_merge($v, $data), $itemData);
+        }
+
+        $temporaryFilePath = $this->getItemExporter()->save(
+            array_merge($this->getItemExporter()->getHeaders(), $this->getHeaders()),
+            $metadata
+        );
+
+        // issue - the same title broke the flow
+        // $instance->getLabel() . '_metadata_' . time() . '.csv';
+        $this->archive->addFile($temporaryFilePath, $this->instance->getLabel() . '.csv');
+
+        return $report;
+    }
+
+    protected function getAssessmentData(XmlDocument $xml): array
+    {
         $assessmentItemData = [];
+
+        $testPartCollection = $xml->getDocumentComponent()->getComponentsByClassName(static::TEST_PART);
 
         /** @var TestPart $testPart */
         foreach ($testPartCollection as $testPart) {
             $sectionCollection = $testPart->getAssessmentSections();
             /** @var AssessmentSection $section */
             foreach ($sectionCollection as $section) {
-                $itemCollection = $section->getComponentsByClassName(self::TEST_ITEM);
+                $itemCollection = $section->getComponentsByClassName(static::TEST_ITEM);
                 $order = 1;
                 /** @var AssessmentItemRef $item */
                 foreach ($itemCollection as $item) {
                     $assessmentItemData[$item->getIdentifier()] = [
-                        self::ITEM_URI     => $item->getHref(),
-                        self::TEST_PART    => $testPart->getIdentifier(),
-                        self::TEST_SECTION => $section->getIdentifier(),
-                        self::ITEM_SHUFFLE => is_null($section->getOrdering()) ? 0 : (int)$section->getOrdering()->getShuffle(),
-                        self::ITEM_ORDER   => $order,
+                        static::ITEM_URI     => $item->getHref(),
+                        static::TEST_PART    => $testPart->getIdentifier(),
+                        static::TEST_SECTION => $section->getIdentifier(),
+                        static::ITEM_SHUFFLE => !is_null($section->getOrdering())
+                            ? (int)$section->getOrdering()->getShuffle()
+                            : 0,
+                        static::ITEM_ORDER   => $order,
                     ];
                     $order++;
                 }
@@ -124,30 +115,20 @@ class TestExporter extends ConfigurableService implements TestMetadataExporter
         return $assessmentItemData;
     }
 
-    /**
-     * Get headers of additional data for assessment items
-     *
-     * @return array
-     */
-    protected function getHeaders()
+    /** Get headers of additional data for assessment items */
+    protected function getHeaders(): array
     {
-        return [self::TEST_PART, self::TEST_SECTION, self::ITEM_SHUFFLE, self::ITEM_ORDER];
+        return [
+            static::TEST_PART,
+            static::TEST_SECTION,
+            static::ITEM_SHUFFLE,
+            static::ITEM_ORDER
+        ];
     }
 
-    /**
-     * Get item exporter service
-     *
-     * @return SimpleExporter
-     */
-    protected function getItemExporter()
+    protected function getItemExporter(): SimpleExporter
     {
-        if (!$this->itemExporter) {
-            $this->itemExporter = $this->getServiceLocator()->get(SimpleExporter::SERVICE_ID);
-        }
-        if ($this->hasOption(self::OPTION_FILE_NAME)) {
-            $this->itemExporter->setOption(ItemExporter::OPTION_FILE_LOCATION, $this->getOption(self::OPTION_FILE_NAME));
-        }
-
-        return $this->itemExporter;
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return ServiceManager::getServiceManager()->get(SimpleExporter::SERVICE_ID);
     }
 }

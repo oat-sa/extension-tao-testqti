@@ -38,7 +38,6 @@ use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
 use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
 use oat\taoQtiTest\scripts\install\RegisterTestImporters;
-use oat\taoQtiTest\scripts\install\RegisterTestMetadataExporter;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerProviders;
 use oat\taoQtiTest\scripts\install\RegisterTimerAdjustmentService;
@@ -76,7 +75,6 @@ return [
             __DIR__ . '/scripts/install/addExtraTestRunnerButtons.php',
             RegisterTestRunnerProviders::class,
             RegisterTestRunnerPlugins::class,
-            RegisterTestMetadataExporter::class,
             CreateTestSessionFilesystem::class,
             RegisterQtiFlysystemManager::class,
             RegisterTestImporters::class,

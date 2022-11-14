@@ -45,7 +45,7 @@ use ZipArchive;
 abstract class AbstractTestExport implements ExportHandler, PhpSerializable
 {
     use PhpSerializeStateless;
-    use EventManagerAwareTrait;
+    use EventManagerAwareTrait; // todo: call firing event via method to have abilty to override
     use ServiceLocatorAwareTrait;
     use OntologyAwareTrait;
 
@@ -61,7 +61,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return (new ExportForm($this->getFormData($resource), [], $this->getFormTitle()))->getForm();
     }
 
-    abstract protected function getTestExporter(Resource $test): QtiTestExporterInterface;
+    abstract protected function getTestExporter(Resource $instance): QtiTestExporterInterface;
 
     protected function getFormData(Resource $resource): array
     {
@@ -99,7 +99,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
 
         $report = Report::createSuccess('');
 
-        $fileName = $formValues['filename'] . '_' . time() . '.zip';
+        $fileName = $formValues['filename'] . '_' . time() . '.zip'; // ?? todo: if to need to add metadata?
         $path = tao_helpers_File::concat([$destination, $fileName]);
 
         if (tao_helpers_File::securityCheck($path, true) === false) {
@@ -113,8 +113,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         }
 
         foreach ($instances as $instance) {
-            $testExporter = $this->getTestExporter($this->getResource($instance));
-            $subReport = $testExporter->export();
+            $subReport = $this->getTestExporter($this->getResource($instance))->export();
             if (
                 $report->getType() !== ReportInterface::TYPE_ERROR &&
                 ($subReport->containsError() || $subReport->getType() === ReportInterface::TYPE_ERROR)
