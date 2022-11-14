@@ -42,9 +42,9 @@ class QtiTestImporter extends AbstractTestImporter
      * @param bool $itemMustBeOverwritten
      * @return \common_report_Report
      */
-    public function import(File $file, \core_kernel_classes_Class $class = null, $enableMetadataGuardians = true, $enableValidators = true, $itemMustExist = false, $itemMustBeOverwritten = false)
+    public function import(File $file, \core_kernel_classes_Class $class = null, $enableMetadataGuardians = true, $enableValidators = true, $itemMustExist = false, $itemMustBeOverwritten = false, $overwriteTest = false, ?string $itemClassUri = null)
     {
         $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
-        return $service->importQtiTest($file, $class, $enableMetadataGuardians, $enableValidators, $itemMustExist, $itemMustBeOverwritten);
+        return $service->importQtiTest($file, $class, $enableMetadataGuardians, $enableValidators, $itemMustExist, $itemMustBeOverwritten, $overwriteTest, $itemClassUri);
     }
 }

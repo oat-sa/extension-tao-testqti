@@ -38,6 +38,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     private const PARAM_TEST_URI = 'testUri';
 
     const ITEM_CLASS_URI = 'itemClassUri';
+    const OVERWRITE_TEST = 'overwriteTest';
 
     /**
      * @throws common_exception_NotImplemented
@@ -97,6 +98,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isMetadataValidatorsEnabled(),
                     $this->isItemMustExistEnabled(),
                     $this->isItemMustBeOverwrittenEnabled(),
+                    $this->isOverwriteTest(),
                     $this->getItemClassUri()
                 );
 
@@ -133,6 +135,26 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     }
 
     /**
+     * @throws \common_exception_RestApi
+     */
+    protected function isOverwriteTest(): bool
+    {
+        $overwriteTest = $this->getRequestParameter(self::OVERWRITE_TEST);
+
+        if (is_null($overwriteTest)) {
+            return false;
+        }
+
+        if (!in_array($overwriteTest, ['true', 'false'])) {
+            throw new \common_exception_RestApi(
+                self::OVERWRITE_TEST . ' parameter should be boolean (true or false).'
+            );
+        }
+
+        return filter_var($overwriteTest, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
      * @inheritdoc
      */
     protected function getTaskName()
@@ -157,7 +179,9 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isMetadataGuardiansEnabled(),
                 $this->isMetadataValidatorsEnabled(),
                 $this->isItemMustExistEnabled(),
-                $this->isItemMustBeOverwrittenEnabled()
+                $this->isItemMustBeOverwrittenEnabled(),
+                $this->isOverwriteTest(),
+                $this->getItemClassUri()
             );
 
             $result = [

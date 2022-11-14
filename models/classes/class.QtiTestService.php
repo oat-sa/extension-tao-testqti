@@ -26,6 +26,7 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
+use oat\taoBackOffice\model\tree\TreeService;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
@@ -338,7 +339,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @throws common_exception_Error
      * @throws common_exception_FileSystemError
      */
-    public function importMultipleTests(core_kernel_classes_Class $targetClass, $file, ?string $itemClassUri = null)
+    public function importMultipleTests(core_kernel_classes_Class $targetClass, $file, bool $overwriteTest = false, ?string $itemClassUri = null)
     {
 
         $testClass = $targetClass;
@@ -392,7 +393,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         $alreadyImportedQtiResources = [];
 
                         foreach ($tests as $qtiTestResource) {
-                            $importTestReport = $this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder, $alreadyImportedQtiResources, $itemClassUri);
+                            $importTestReport = $this->importTest($testClass, $qtiTestResource, $qtiManifestParser, $folder, $alreadyImportedQtiResources, $overwriteTest, $itemClassUri);
                             $report->add($importTestReport);
 
                             if ($data = $importTestReport->getData()) {
@@ -495,7 +496,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @param oat\taoQtiItem\model\qti\Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored at import time.
      * @return common_report_Report A report about how the importation behaved.
      */
-    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = [], ?string $itemClassUri = null)
+    protected function importTest(core_kernel_classes_Class $targetClass, Resource $qtiTestResource, taoQtiTest_models_classes_ManifestParser $manifestParser, $folder, array $ignoreQtiResources = [], bool $overwriteTest = false, ?string $itemClassUri = null)
     {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
@@ -519,7 +520,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
         // The class where the items that belong to the test will be imported.
         $itemClass = $this->getClass($itemClassUri ?: TaoOntology::CLASS_URI_ITEM);
-        $targetClass = $itemClass->createSubClass($testResource->getLabel());
 
         // Load and validate the manifest
         $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
@@ -569,6 +569,22 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
+
+                if($overwriteTest) {
+                    foreach ($testClass->getInstances() as $testInstance) {
+                        if($testInstance->getLabel() === $testDefinition->getDocumentComponent()->getTitle()) {
+                            $this->getTestService()->deleteTest($testInstance);
+                        }
+                    }
+
+                    foreach ($itemClass->getSubClasses() as $subClass) {
+                        if($subClass->getLabel() === $testDefinition->getDocumentComponent()->getTitle()) {
+                            $this->getItemTreeService()->deleteClass($subClass);
+                        }
+                    }
+                }
+
+                $targetClass = $itemClass->createSubClass($testResource->getLabel());
 
                 // -- Load all items related to test.
                 $itemError = false;
@@ -1295,5 +1311,21 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getQtiPackageImportPreprocessing()
     {
         return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
+    }
+
+    /**
+     * @return \oat\oatbox\service\ConfigurableService|TreeService
+     */
+    private function getItemTreeService()
+    {
+        return taoItems_models_classes_ItemsService::singleton();
+    }
+
+    /**
+     * @return \oat\oatbox\service\ConfigurableService|taoTests_models_classes_TestsService
+     */
+    private function getTestService()
+    {
+        return taoTests_models_classes_TestsService::singleton();
     }
 }
