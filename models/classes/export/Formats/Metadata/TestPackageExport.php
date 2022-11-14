@@ -24,6 +24,7 @@ namespace oat\taoQtiTest\models\export\Formats\Metadata;
 
 use core_kernel_classes_Resource as Resource;
 use oat\oatbox\event\EventManagerAwareTrait;
+use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
 use oat\taoQtiTest\models\export\AbstractTestExport;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
 
@@ -44,6 +45,11 @@ final class TestPackageExport extends AbstractTestExport
     protected function getExportingFileName(string $userDefinedName): string
     {
         return sprintf('%s_%d_metadata.zip', $userDefinedName, time());
+    }
+
+    protected function fireTestExportEvent(Resource $test)
+    {
+        $this->getEventManager()->trigger(new QtiTestMetadataExportEvent($test));
     }
 
     protected function getTestExporter(Resource $instance): QtiTestExporterInterface

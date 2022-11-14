@@ -132,13 +132,18 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         }
 
         if (isset($subjectUri) && !$report->containsError()) {
-            $this->getEventManager()->trigger(new QtiTestExportEvent($this->getResource($subjectUri)));
+            $this->fireTestExportEvent($this->getResource($subjectUri));
             $report->setMessage(__('Resource(s) successfully exported.'));
         }
 
         $report->setData(['path' => $path]);
 
         return $report;
+    }
+
+    protected function fireTestExportEvent(Resource $test)
+    {
+        $this->getEventManager()->trigger(new QtiTestExportEvent($test));
     }
 
     protected function getExportingFileName(string $userDefinedName): string
