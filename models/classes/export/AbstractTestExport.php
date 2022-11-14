@@ -162,8 +162,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return ServiceManager::getServiceManager();
     }
 
-    // todo: hide method
-    public function getZip(): ZipArchive
+    protected function getZip(): ZipArchive
     {
         return $this->zip;
     }
