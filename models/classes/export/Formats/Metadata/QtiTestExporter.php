@@ -30,6 +30,7 @@ use oat\oatbox\service\ServiceManager;
 use oat\taoQtiItem\model\flyExporter\simpleExporter\SimpleExporter;
 use oat\taoQtiTest\models\Export\QtiTestExporterInterface;
 use qtism\data\{AssessmentItemRef, AssessmentSection, storage\xml\XmlDocument, TestPart};
+use tao_helpers_Uri as Uri;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 use ZipArchive;
 
@@ -76,9 +77,10 @@ class QtiTestExporter implements QtiTestExporterInterface
             $metadata
         );
 
-        // issue - the same title broke the flow
-        // $instance->getLabel() . '_metadata_' . time() . '.csv';
-        $this->archive->addFile($temporaryFilePath, $this->instance->getLabel() . '.csv');
+        $this->archive->addFile(
+            $temporaryFilePath,
+            sprintf('%s_%s.csv', $this->instance->getLabel(), Uri::getUniqueId($this->instance->getUri()))
+        );
 
         return $report;
     }
