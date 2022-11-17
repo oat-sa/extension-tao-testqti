@@ -570,18 +570,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
 
-                if($overwriteTest) {
-                    foreach ($testClass->getInstances() as $testInstance) {
-                        if($testInstance->getLabel() === $testDefinition->getDocumentComponent()->getTitle()) {
-                            $this->getTestService()->deleteTest($testInstance);
-                        }
-                    }
 
-                    foreach ($itemClass->getSubClasses() as $subClass) {
-                        if($subClass->getLabel() === $testDefinition->getDocumentComponent()->getTitle()) {
-                            $this->getItemTreeService()->deleteClass($subClass);
-                        }
-                    }
+                if ($overwriteTest) {
+                    $this->deleteTestsFromClassByTitle($testDefinition->getDocumentComponent()->getTitle(), $testClass, $itemClass);
                 }
 
                 $targetClass = $itemClass->createSubClass($testResource->getLabel());
@@ -782,6 +773,24 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         return $report;
+    }
+
+    private function deleteTestsFromClassByTitle(string $testTitle, core_kernel_classes_Resource $testClass, core_kernel_classes_Class $itemClass)
+    {
+        $testService = $this->getTestService();
+        $itemTreeService = $this->getItemTreeService();
+
+        foreach ($testClass->getInstances() as $testInstance) {
+            if ($testInstance->getLabel() === $testTitle) {
+                $testService->deleteTest($testInstance);
+            }
+        }
+
+        foreach ($itemClass->getSubClasses() as $subClass) {
+            if ($subClass->getLabel() === $testTitle) {
+                $itemTreeService->deleteClass($subClass);
+            }
+        }
     }
 
     /**
@@ -1313,18 +1322,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
     }
 
-    /**
-     * @return \oat\oatbox\service\ConfigurableService|TreeService
-     */
-    private function getItemTreeService()
+    private function getItemTreeService(): taoItems_models_classes_ItemsService
     {
         return taoItems_models_classes_ItemsService::singleton();
     }
 
-    /**
-     * @return \oat\oatbox\service\ConfigurableService|taoTests_models_classes_TestsService
-     */
-    private function getTestService()
+    private function getTestService(): taoTests_models_classes_TestsService
     {
         return taoTests_models_classes_TestsService::singleton();
     }

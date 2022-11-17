@@ -37,8 +37,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     public const PARAM_PACKAGE_NAME = 'qtiPackage';
     private const PARAM_TEST_URI = 'testUri';
 
-    const ITEM_CLASS_URI = 'itemClassUri';
-    const OVERWRITE_TEST = 'overwriteTest';
+    private const ITEM_CLASS_URI = 'itemClassUri';
+    private const OVERWRITE_TEST = 'overwriteTest';
 
     /**
      * @throws common_exception_NotImplemented
@@ -126,32 +126,15 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
     protected function getItemClassUri(): ?string
     {
-        $itemClassUri = $this->getRequestParameter(self::ITEM_CLASS_URI);
-        if(!is_string($itemClassUri)) {
-            return null;
-        }
-
-        return $itemClassUri;
+        return $this->getPostParameter(self::ITEM_CLASS_URI);
     }
 
     /**
-     * @throws \common_exception_RestApi
+     * @throws common_exception_RestApi
      */
     protected function isOverwriteTest(): bool
     {
-        $overwriteTest = $this->getRequestParameter(self::OVERWRITE_TEST);
-
-        if (is_null($overwriteTest)) {
-            return false;
-        }
-
-        if (!in_array($overwriteTest, ['true', 'false'])) {
-            throw new \common_exception_RestApi(
-                self::OVERWRITE_TEST . ' parameter should be boolean (true or false).'
-            );
-        }
-
-        return filter_var($overwriteTest, FILTER_VALIDATE_BOOLEAN);
+        return $this->getPostParameter(self::OVERWRITE_TEST);
     }
 
     /**
