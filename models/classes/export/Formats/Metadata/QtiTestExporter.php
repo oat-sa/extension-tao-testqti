@@ -28,7 +28,7 @@ use oat\oatbox\log\LoggerAwareTrait;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiItem\model\flyExporter\simpleExporter\SimpleExporter;
-use oat\taoQtiTest\models\Export\QtiTestExporterInterface;
+use oat\taoQtiTest\models\export\QtiTestExporterInterface;
 use qtism\data\{AssessmentItemRef, AssessmentSection, storage\xml\XmlDocument, TestPart};
 use tao_helpers_Uri as Uri;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
