@@ -47,7 +47,7 @@ final class TestPackageExport extends AbstractTestExport
         return sprintf('%s_%d_metadata.zip', $userDefinedName, time());
     }
 
-    protected function fireTestExportEvent(Resource $test)
+    protected function triggerTestExportEvent(Resource $test)
     {
         $this->getEventManager()->trigger(new QtiTestMetadataExportEvent($test));
     }

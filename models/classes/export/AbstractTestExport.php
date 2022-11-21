@@ -45,7 +45,7 @@ use ZipArchive;
 abstract class AbstractTestExport implements ExportHandler, PhpSerializable
 {
     use PhpSerializeStateless;
-    use EventManagerAwareTrait; // todo: call firing event via method to have abilty to override
+    use EventManagerAwareTrait;
     use ServiceLocatorAwareTrait;
     use OntologyAwareTrait;
 
@@ -85,8 +85,8 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
      */
     public function export($formValues, $destination): Report
     {
-        if (!isset($formValues['filename'])) {
-            return Report::createError(__('Missing filename for QTI Test export using %s', __CLASS__));
+        if (empty($formValues['filename'])) {
+            return Report::createError(__('Missing filename for QTI Test export'));
         }
 
         $instances = is_string($formValues['instances'])
@@ -102,13 +102,13 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         $path = tao_helpers_File::concat([$destination, $this->getExportingFileName($formValues['filename'])]);
 
         if (tao_helpers_File::securityCheck($path, true) === false) {
-            throw new common_Exception(__('Unauthorized file name for QTI Test ZIP archive.'));
+            throw new common_Exception('Unauthorized file name for QTI Test ZIP archive.');
         }
 
         // Create a new ZIP archive to store data related to the QTI Test.
         $this->zip = new ZipArchive();
         if ($this->zip->open($path, ZipArchive::CREATE) !== true) {
-            throw new common_Exception(__('Unable to create ZIP archive for QTI Test at location "%s".', $path));
+            throw new common_Exception(sprintf('Unable to create ZIP archive for QTI Test at location "%s".', $path));
         }
 
         foreach ($instances as $instance) {
@@ -132,7 +132,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         }
 
         if (isset($subjectUri) && !$report->containsError()) {
-            $this->fireTestExportEvent($this->getResource($subjectUri));
+            $this->triggerTestExportEvent($this->getResource($subjectUri));
             $report->setMessage(__('Resource(s) successfully exported.'));
         }
 
@@ -141,7 +141,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return $report;
     }
 
-    protected function fireTestExportEvent(Resource $test)
+    protected function triggerTestExportEvent(Resource $test)
     {
         $this->getEventManager()->trigger(new QtiTestExportEvent($test));
     }
