@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\export\Formats\Package2p1;
 
-use oat\taoQtiItem\model\export\QTIPackedItemExporter;
+use oat\taoQtiItem\model\Export\QTIPackedItemExporter;
 use oat\taoQtiTest\models\export\QtiItemExporterTrait;
 use oat\taoQtiTest\models\export\QtiItemExporterInterface;
 

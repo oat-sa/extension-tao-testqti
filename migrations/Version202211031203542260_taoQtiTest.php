@@ -6,6 +6,7 @@ namespace oat\taoQtiTest\migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
+use oat\taoQtiTest\models\export\Formats\Metadata\TestPackageExport as TestPackageMetadataExport;
 use oat\taoQtiTest\models\export\Formats\Package2p1\TestPackageExport as TestPackage2p1Export;
 use oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport as TestPackage2p2Export;
 use oat\taoQtiTest\models\TestModelService;
@@ -19,6 +20,7 @@ final class Version202211031203542260_taoQtiTest extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        class_alias(TestPackageMetadataExport::class, 'oat\\taoQtiTest\\models\\export\\metadata\\TestMetadataByClassExportHandler');
         class_alias(TestPackage2p1Export::class, 'taoQtiTest_models_classes_export_TestExport');
         class_alias(TestPackage2p2Export::class, 'taoQtiTest_models_classes_export_TestExport22');
 

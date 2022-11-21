@@ -27,9 +27,19 @@ use oat\taoQtiTest\models\export\AbstractTestExport;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
 use taoQtiTest_models_classes_QtiTestServiceException as QtiTestServiceException;
 
-class TestPackageExport extends AbstractTestExport
+final class TestPackageExport extends AbstractTestExport
 {
     protected const VERSION = '2.2';
+
+    public function getLabel(): string
+    {
+        return __('QTI Test Package %s', self::VERSION);
+    }
+
+    protected function getFormTitle(): string
+    {
+        return __('Export QTI %s Test Package', self::VERSION);
+    }
 
     /**
      * @throws QtiTestServiceException

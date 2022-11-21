@@ -20,32 +20,40 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\export\Formats\Package2p1;
+namespace oat\taoQtiTest\models\export\Formats\Metadata;
 
 use core_kernel_classes_Resource as Resource;
+use oat\oatbox\event\EventManagerAwareTrait;
+use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
 use oat\taoQtiTest\models\export\AbstractTestExport;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
-use taoQtiTest_models_classes_QtiTestServiceException as QtiTestServiceException;
 
 final class TestPackageExport extends AbstractTestExport
 {
-    protected const VERSION = '2.1';
+    use EventManagerAwareTrait;
 
     public function getLabel(): string
     {
-        return __('QTI Test Package %s', self::VERSION);
+        return __('QTI Test Metadata');
     }
 
     protected function getFormTitle(): string
     {
-        return __('Export QTI %s Test Package', self::VERSION);
+        return sprintf('%s %s', __('Export'), $this->getLabel());
     }
 
-    /**
-     * @throws QtiTestServiceException
-     */
-    protected function getTestExporter(Resource $test): QtiTestExporterInterface
+    protected function getExportingFileName(string $userDefinedName): string
     {
-        return new QtiTestExporter($test, $this->getZip(), $this->getManifest());
+        return sprintf('%s_%d_metadata.zip', $userDefinedName, time());
+    }
+
+    protected function triggerTestExportEvent(Resource $test)
+    {
+        $this->getEventManager()->trigger(new QtiTestMetadataExportEvent($test));
+    }
+
+    protected function getTestExporter(Resource $instance): QtiTestExporterInterface
+    {
+        return new QtiTestExporter($instance, $this->getZip());
     }
 }
