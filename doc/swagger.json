@@ -214,7 +214,7 @@
                     {
                         "name": "overwriteTest",
                         "in": "formData",
-                        "description": "Boolean flag that indicates if already existed tests and all related items is removed in a case they have the same title and class as uploaded test. Can be used to replace existing test and avoid creating a new one with the same title and class.",
+                        "description": "Boolean flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class.",
                         "type": "boolean",
                         "required": false
                     },
@@ -353,7 +353,7 @@
                     {
                         "name": "overwriteTest",
                         "in": "formData",
-                        "description": "Boolean flag that indicates if already existed tests and all related items is removed in a case they have the same title and class as uploaded test. Can be used to replace existing test and avoid creating a new one with the same title and class.",
+                        "description": "Boolean flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class.",
                         "type": "boolean",
                         "required": false
                     },

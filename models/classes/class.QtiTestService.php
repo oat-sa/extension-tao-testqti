@@ -775,7 +775,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $report;
     }
 
-    private function deleteTestsFromClassByTitle(string $testTitle, core_kernel_classes_Resource $testClass, core_kernel_classes_Class $itemClass)
+    private function deleteTestsFromClassByTitle(string $testTitle, core_kernel_classes_Resource $testClass, core_kernel_classes_Class $itemClass): void
     {
         $testService = $this->getTestService();
         $itemTreeService = $this->getItemTreeService();
