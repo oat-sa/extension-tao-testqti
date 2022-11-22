@@ -28,7 +28,7 @@ use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
 use oat\taoQtiTest\models\export\AbstractTestExport;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
 
-final class TestPackageExport extends AbstractTestExport
+class TestPackageExport extends AbstractTestExport
 {
     use EventManagerAwareTrait;
 
