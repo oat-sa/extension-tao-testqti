@@ -77,9 +77,9 @@ class QtiTestExporter implements QtiTestExporterInterface
             $metadata
         );
 
-        $this->archive->addFile(
-            $temporaryFilePath,
-            sprintf('%s_%s.csv', $this->instance->getLabel(), Uri::getUniqueId($this->instance->getUri()))
+        $this->archive->addFromString(
+            sprintf('%s_%s.csv', $this->instance->getLabel(), Uri::getUniqueId($this->instance->getUri())),
+            file_get_contents($temporaryFilePath)
         );
 
         return $report;
