@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2022.01\n"
-"PO-Revision-Date: 2022-01-17T14:35:49\n"
+"Project-Id-Version: TAO 2022.09\n"
+"PO-Revision-Date: 2022-11-04T17:54:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -605,7 +605,7 @@ msgid "In this part of the test navigation is not allowed."
 msgstr "このパートでは問題一覧は利用できません"
 
 msgid "Inconsistency at line %1d:"
-msgstr "%1d行で矛盾があります:"
+msgstr "%1d行に矛盾があります:"
 
 msgid "Individual"
 msgstr "個別"
@@ -635,10 +635,10 @@ msgid "Item %d"
 msgstr "アイテム %d"
 
 msgid "Item %d of %d"
-msgstr "問題：%d／%d"
+msgstr "%d／%d"
 
 msgid "Item %s loaded"
-msgstr ""
+msgstr "アイテム%sを読み込みました"
 
 msgid "Item Reference Properties"
 msgstr "アイテム参照プロパティ"
@@ -783,7 +783,7 @@ msgid "minutes"
 msgstr ""
 
 msgid "Missed required parameter \'id\'"
-msgstr ""
+msgstr "必要なパラメータが不足しています \'id\'"
 
 msgid "Missed test package file"
 msgstr "見つからないテストパッケージファイル"
@@ -1119,7 +1119,7 @@ msgid "Set outcome identifier the feedback block is related to"
 msgstr "フィードバックのための結果識別子（outcome identifier）を設定してください"
 
 msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
-msgstr "カットスコア（合格得点率）を０〜１の間の数値で設定します。"
+msgstr "カットスコア（合格得点率）を０〜１の間で設定します。"
 
 msgid "Set the rubric block as a feedback block"
 msgstr "フィードバックブロックとしてルーブリックブロックを設定"
@@ -1423,7 +1423,7 @@ msgid "The test has not been saved."
 msgstr "テストは保存されませんでした。"
 
 msgid "The test has unsaved changes, are you sure you want to leave?"
-msgstr ""
+msgstr "アイテムの変更が保存されていません。終了してよろしいですか？"
 
 msgid "The test has unsaved changes, would you like to save it?"
 msgstr ""
