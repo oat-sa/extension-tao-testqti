@@ -27,6 +27,9 @@ use oat\taoQtiTest\models\export\AbstractTestExport;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
 use taoQtiTest_models_classes_QtiTestServiceException as QtiTestServiceException;
 
+// for backward compatibility
+class_alias(TestPackageExport::class, 'taoQtiTest_models_classes_export_TestExport');
+
 class TestPackageExport extends AbstractTestExport
 {
     protected const VERSION = '2.1';
