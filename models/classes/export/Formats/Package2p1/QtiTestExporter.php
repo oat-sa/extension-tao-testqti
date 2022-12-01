@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
@@ -14,22 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
- *
+ * Copyright (c) 2022 (original work) Open Assessment Technologies SA;
  */
 
-/**
- * Export form for QTI 2.2 packages
- *
- * @access public
- * @author Joel Bout, <joel.bout@tudor.lu>
- * @package taoItems
+declare(strict_types=1);
 
- */
-class taoQtiTest_models_classes_export_QtiTest22ExportForm extends taoQtiTest_models_classes_export_ExportForm
+namespace oat\taoQtiTest\models\export\Formats\Package2p1;
+
+use core_kernel_classes_Resource as Resource;
+use oat\taoQtiTest\models\export\AbstractQtiTestExporter;
+use oat\taoQtiTest\models\export\QtiItemExporterInterface;
+
+class QtiTestExporter extends AbstractQtiTestExporter
 {
-    protected function getFormGroupName()
+    protected const TEST_RESOURCE_TYPE = 'imsqti_test_xmlv2p1';
+
+    protected function getItemExporter(Resource $item): QtiItemExporterInterface
     {
-        return __('Export QTI 2.2 Test Package');
+        return new QtiItemExporter($item, $this->getZip(), $this->getManifest());
+    }
+
+    protected function adjustTestXml(string $xml): string
+    {
+        return $xml;
     }
 }

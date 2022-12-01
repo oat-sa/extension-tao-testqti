@@ -59,6 +59,7 @@
   "minimum-stability": "dev",
   "require": {
     "ext-dom": "*",
+    "ext-zip": "*",
     "oat-sa/lib-test-cat": "2.3.7",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
     "qtism/qtism": ">=0.28.3",
