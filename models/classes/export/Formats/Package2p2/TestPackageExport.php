@@ -27,9 +27,6 @@ use oat\taoQtiTest\models\export\AbstractTestExport;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
 use taoQtiTest_models_classes_QtiTestServiceException as QtiTestServiceException;
 
-// for backward compatibility
-class_alias(TestPackageExport::class, 'taoQtiTest_models_classes_export_TestExport22');
-
 class TestPackageExport extends AbstractTestExport
 {
     protected const VERSION = '2.2';
@@ -52,3 +49,6 @@ class TestPackageExport extends AbstractTestExport
         return new QtiTestExporter($test, $this->getZip(), $this->getManifest());
     }
 }
+
+// for backward compatibility
+class_alias(TestPackageExport::class, 'taoQtiTest_models_classes_export_TestExport22');

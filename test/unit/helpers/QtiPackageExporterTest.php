@@ -28,10 +28,10 @@ use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\reporting\Report;
 use oat\tao\helpers\FileHelperService;
-use oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport;
 use oat\generis\test\MockObject;
 use oat\generis\test\TestCase;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
+use oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport;
 
 class QtiPackageExporterTest extends TestCase
 {

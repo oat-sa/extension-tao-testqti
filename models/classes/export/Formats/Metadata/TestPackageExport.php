@@ -28,9 +28,6 @@ use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
 use oat\taoQtiTest\models\export\AbstractTestExport;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
 
-// for backward compatibility
-class_alias(TestPackageExport::class, 'oat\\taoQtiTest\\models\\export\\metadata\\TestMetadataByClassExportHandler');
-
 class TestPackageExport extends AbstractTestExport
 {
     use EventManagerAwareTrait;
@@ -60,3 +57,6 @@ class TestPackageExport extends AbstractTestExport
         return new QtiTestExporter($instance, $this->getZip());
     }
 }
+
+// for backward compatibility
+class_alias(TestPackageExport::class, 'oat\\taoQtiTest\\models\\export\\metadata\\TestMetadataByClassExportHandler');
