@@ -205,6 +205,20 @@
                         "required": false
                     },
                     {
+                        "name": "itemClassUri",
+                        "in": "formData",
+                        "description": "Class uri where exported items are placed. If not specified root class will be used",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "overwriteTest",
+                        "in": "formData",
+                        "description": "Boolean flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class.",
+                        "type": "boolean",
+                        "required": false
+                    },
+                    {
                         "name": "enableMetadataGuardians",
                         "in": "formData",
                         "description": "Boolean flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default.",
@@ -327,6 +341,20 @@
                         "in": "formData",
                         "description": "Label of class to import test. If not specified root class will be used. If label is not unique first match will be used.",
                         "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "itemClassUri",
+                        "in": "formData",
+                        "description": "Class uri where exported items are placed. If not specified root class will be used",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "overwriteTest",
+                        "in": "formData",
+                        "description": "Boolean flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class.",
+                        "type": "boolean",
                         "required": false
                     },
                     {

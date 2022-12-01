@@ -23,7 +23,7 @@ namespace oat\taoQtiTest\test\integration;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\oatbox\service\ServiceManager;
-use oat\taoQtiTest\models\export\metadata\TestExporter;
+use oat\taoQtiTest\models\export\metadata\QtiTestExporter;
 
 /**
  * This test case focuses on testing the TestCompilerUtils helper.
@@ -60,7 +60,7 @@ class TestExporterTest extends GenerisPhpUnitTestRunner
         $resource = current($resources);
         $this->testCreatedUri = $resource->getUri();
 
-        $testExporter = new TestExporter();
+        $testExporter = new QtiTestExporter();
         $testExporter->setServiceLocator(ServiceManager::getServiceManager());
         $file = $testExporter->export($this->testCreatedUri);
 
