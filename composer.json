@@ -65,7 +65,7 @@
     "oat-sa/generis" : ">=15.22",
     "oat-sa/tao-core" : ">=50.28.0",
     "oat-sa/extension-tao-item" : ">=11.0.0",
-    "oat-sa/extension-tao-itemqti" : ">=28.35.0",
+    "oat-sa/extension-tao-itemqti" : ">=29.18.0",
     "oat-sa/extension-tao-test" : ">=15.0.0",
     "oat-sa/extension-tao-delivery" : ">=15.0.0",
     "oat-sa/extension-tao-outcome" : ">=13.0.0",
