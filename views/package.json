@@ -9,6 +9,6 @@
     "license": "GPL-2.0",
     "dependencies": {
         "@oat-sa/tao-test-runner": "0.9.0",
-        "@oat-sa/tao-test-runner-qti": "git+https://github.com/oat-sa/tao-test-runner-qti-fe.git#feature/TR-4862/unify-handlebars-helpers"
+        "@oat-sa/tao-test-runner-qti": "2.33.0"
     }
 }
