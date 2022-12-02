@@ -17,32 +17,33 @@
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA ;
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\scripts\install;
 
-use common_report_Report;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\oatbox\reporting\Report;
 use oat\tao\helpers\FileHelperService;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
-use taoQtiTest_models_classes_export_TestExport22;
 use oat\oatbox\extension\InstallAction;
+use oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport;
 
 class RegisterQtiPackageExporter extends InstallAction
 {
-    public function __invoke($params)
+    public function __invoke($params): Report
     {
         $serviceManager = $this->getServiceManager();
-        $qtiPackageExporter = new QtiPackageExporter(
-            new taoQtiTest_models_classes_export_TestExport22(),
-            $serviceManager->get(FileSystemService::SERVICE_ID),
-            $serviceManager->get(FileHelperService::class)
-        );
-        $serviceManager->register(QtiPackageExporter::SERVICE_ID, $qtiPackageExporter);
 
-        return new common_report_Report(
-            common_report_Report::TYPE_SUCCESS,
-            'QtiPackageExporter successfully registered.'
+        $serviceManager->register(
+            QtiPackageExporter::SERVICE_ID,
+            new QtiPackageExporter(
+                new TestPackageExport(),
+                $serviceManager->get(FileSystemService::SERVICE_ID),
+                $serviceManager->get(FileHelperService::class)
+            )
         );
+
+        return Report::createSuccess('QtiPackageExporter successfully registered.');
     }
 }

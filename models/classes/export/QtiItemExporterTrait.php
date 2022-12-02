@@ -15,25 +15,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
- *
+ * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA;
  */
 
-use oat\taoQtiItem\model\Export\QTIPackedItemExporter;
+declare(strict_types=1);
 
-/**
- * A specialized QTIPackedItemExporter aiming at exporting items dependent to a test in a given
- * ZIP archive.
- *
- * @author Jérôme Bogaerts <jerome@taotesting.com>
- *
- */
-class taoQtiTest_models_classes_export_QtiItemExporter extends QTIPackedItemExporter
+namespace oat\taoQtiTest\models\Export;
+
+trait QtiItemExporterTrait
 {
-    
-    public function buildBasePath()
+    public function buildBasePath(): string
     {
-        $basePath = parent::buildBasePath();
-        return 'items/' . $basePath;
+        return 'items/' . parent::buildBasePath();
     }
 }

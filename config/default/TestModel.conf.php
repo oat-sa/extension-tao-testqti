@@ -19,12 +19,13 @@
  */
 
 use oat\taoQtiTest\models\compilation\CompilationService;
+use oat\taoQtiTest\models\TestModelService;
 
-return new \oat\taoQtiTest\models\TestModelService([
+return new TestModelService([
     'exportHandlers' => [
-        new \oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler(),
-        new taoQtiTest_models_classes_export_TestExport(),
-        new taoQtiTest_models_classes_export_TestExport22()
+        new oat\taoQtiTest\models\export\Formats\Metadata\TestPackageExport(),
+        new oat\taoQtiTest\models\export\Formats\Package2p1\TestPackageExport(),
+        new oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport(),
     ],
     'importHandlers' => [
         new taoQtiTest_models_classes_import_TestImport()
