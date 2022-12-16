@@ -22,6 +22,7 @@ namespace oat\taoQtiTest\scripts\update;
 
 use oat\libCat\custom\EchoAdaptEngine;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
@@ -37,9 +38,9 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\compilation\CompilationService;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\creator\CreatorItems;
-use oat\taoQtiTest\models\export\metadata\TestExporter;
-use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
-use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
+use oat\taoQtiTest\models\export\Formats\Metadata\TestPackageExport;
+use oat\taoQtiTest\models\export\Formats\Package2p1\TestPackageExport as TestPackageExport2p1;
+use oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport as TestPackageExport2p2;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\taoQtiTest\models\import\QtiTestImporter;
@@ -381,8 +382,8 @@ class Updater extends \common_ext_ExtensionUpdater
             OntologyUpdater::syncModels();
             $testModelService = new TestModelService([
                 'exportHandlers' => [
-                    new \taoQtiTest_models_classes_export_TestExport(),
-                    new \taoQtiTest_models_classes_export_TestExport22()
+                    new TestPackageExport2p1(),
+                    new TestPackageExport2p2(),
                 ],
                 'importHandlers' => [
                     new \taoQtiTest_models_classes_import_TestImport()
@@ -424,9 +425,9 @@ class Updater extends \common_ext_ExtensionUpdater
         $this->skip('5.12.0', '5.16.2');
 
         if ($this->isVersion('5.16.2')) {
-            $service = new TestExporter();
-            $service->setServiceManager($this->getServiceManager());
-            $this->getServiceManager()->register(TestMetadataExporter::SERVICE_ID, $service);
+            // Note! This service was removed, new structure at oat\taoQtiTest\models\export\Formats
+            // $service = $this->propagate(new TestExporter());
+            // $this->getServiceManager()->register(TestMetadataExporter::SERVICE_ID, $service);
             $this->setVersion('5.17.0');
         }
 
@@ -1038,7 +1039,9 @@ class Updater extends \common_ext_ExtensionUpdater
         if ($this->isVersion('9.11.2')) {
             $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
             $exportHandlers = $testModelService->getOption('exportHandlers');
-            array_unshift($exportHandlers, new TestMetadataByClassExportHandler());
+
+            array_unshift($exportHandlers, new TestPackageExport());
+
             $testModelService->setOption('exportHandlers', $exportHandlers);
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
 
