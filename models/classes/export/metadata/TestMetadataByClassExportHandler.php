@@ -22,6 +22,7 @@
 namespace oat\taoQtiTest\models\export\metadata;
 
 use common_report_Report as Report;
+use core_kernel_classes_Class;
 use oat\oatbox\event\EventManagerAwareTrait;
 use \oat\taoQtiItem\model\Export\ItemMetadataByClassExportHandler;
 use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
@@ -100,14 +101,20 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
 
         $tmpFiles = [];
 
-        foreach ($classToExport->getInstances(true) as $instance) {
+        foreach ($this->extractInstancesRecursively($classToExport) as $path => $uri) {
+            $tmpFileName = str_replace(DIRECTORY_SEPARATOR, '_', $path)
+                . '_metadata_'
+                . time()
+                . '.csv';
+
             $exporterService->setOption(
                 TestExporter::OPTION_FILE_NAME,
-                $instance->getLabel() . '_metadata_' . time() . '.csv'
+                $tmpFileName
             );
 
-            $filePath = $exporterService->export($instance->getUri());
-            $zip->addFile($filePath, $instance->getLabel() . '.csv');
+            $filePath = $exporterService->export($uri);
+            $zip->addFile($filePath, $path . '.csv');
+
             $tmpFiles[] = $filePath;
         }
 
@@ -122,5 +129,35 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
         $report->setMessage(__('Test metadata successfully exported.'));
 
         return $report;
+    }
+
+    private function extractInstancesRecursively(core_kernel_classes_Class $class): array
+    {
+        $data = [];
+
+        foreach ($class->getSubClasses() as $subClass) {
+            $data = array_merge(
+                $data,
+                $this->extractInstancesRecursively($subClass)
+            );
+        }
+
+        foreach ($class->getInstances() as $instance) {
+            $path = $this->replaceSpaces($instance->getLabel());
+            $data[$path] = $instance->getUri();
+        }
+
+        $prefix = $this->replaceSpaces($class->getLabel()) . DIRECTORY_SEPARATOR;
+        $res = [];
+        foreach ($data as $path => $uri) {
+            $res[$prefix . $path] = $uri;
+        }
+
+        return $res;
+    }
+
+    private function replaceSpaces(string $str): string
+    {
+        return preg_replace('~\s+~', '_', $str);
     }
 }
