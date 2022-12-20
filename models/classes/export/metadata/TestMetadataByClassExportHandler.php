@@ -44,6 +44,15 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
             return Report::createFailure('Missing filename for export using ' . __CLASS__);
         }
 
+        if (!isset($formValues['uri']) && isset($formValues['classUri'])) {
+            return $this->exportClass($formValues, $destPath);
+        }
+
+        return $this->exportTest($formValues, $destPath);
+    }
+
+    protected function exportTest($formValues, $destPath): Report
+    {
         if (!isset($formValues['uri'])) {
             return Report::createFailure('No uri selected for export using ' . __CLASS__);
         }
@@ -74,6 +83,43 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
         $report->setMessage(__('Test metadata successfully exported.'));
 
         $this->getEventManager()->trigger(new QtiTestMetadataExportEvent($instance));
+
+        return $report;
+    }
+
+    protected function exportClass($formValues, $destPath): Report
+    {
+        $classToExport = $this->getClassToExport($formValues['classUri']);
+
+        $zip = new \ZipArchive();
+        $zipPath = $formValues['filename'] . '_' . time() . '.zip';
+        $zip->open($zipPath, \ZipArchive::CREATE);
+
+        /** @var TestExporter $exporterService */
+        $exporterService = $this->getServiceManager()->get(TestMetadataExporter::SERVICE_ID);
+
+        $tmpFiles = [];
+
+        foreach ($classToExport->getInstances(true) as $instance) {
+            $exporterService->setOption(
+                TestExporter::OPTION_FILE_NAME,
+                $instance->getLabel() . '_metadata_' . time() . '.csv'
+            );
+
+            $filePath = $exporterService->export($instance->getUri());
+            $zip->addFile($filePath, $instance->getLabel() . '.csv');
+            $tmpFiles[] = $filePath;
+        }
+
+        $zip->close();
+
+        foreach ($tmpFiles as $tmpFile) {
+            unlink($tmpFile);
+        }
+
+        $report = Report::createSuccess();
+        $report->setData($zipPath);
+        $report->setMessage(__('Test metadata successfully exported.'));
 
         return $report;
     }
