@@ -22,6 +22,7 @@
 namespace oat\taoQtiTest\models\export\metadata;
 
 use common_report_Report as Report;
+use core_kernel_classes_Class;
 use oat\oatbox\event\EventManagerAwareTrait;
 use \oat\taoQtiItem\model\Export\ItemMetadataByClassExportHandler;
 use oat\taoQtiTest\models\event\QtiTestMetadataExportEvent;
@@ -44,6 +45,15 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
             return Report::createFailure('Missing filename for export using ' . __CLASS__);
         }
 
+        if (!isset($formValues['uri']) && isset($formValues['classUri'])) {
+            return $this->exportClass($formValues, $destPath);
+        }
+
+        return $this->exportTest($formValues, $destPath);
+    }
+
+    protected function exportTest($formValues, $destPath): Report
+    {
         if (!isset($formValues['uri'])) {
             return Report::createFailure('No uri selected for export using ' . __CLASS__);
         }
@@ -76,5 +86,78 @@ class TestMetadataByClassExportHandler extends ItemMetadataByClassExportHandler
         $this->getEventManager()->trigger(new QtiTestMetadataExportEvent($instance));
 
         return $report;
+    }
+
+    protected function exportClass($formValues, $destPath): Report
+    {
+        $classToExport = $this->getClassToExport($formValues['classUri']);
+
+        $zip = new \ZipArchive();
+        $zipPath = $formValues['filename'] . '_' . time() . '.zip';
+        $zip->open($zipPath, \ZipArchive::CREATE);
+
+        /** @var TestExporter $exporterService */
+        $exporterService = $this->getServiceManager()->get(TestMetadataExporter::SERVICE_ID);
+
+        $tmpFiles = [];
+
+        foreach ($this->extractInstancesRecursively($classToExport) as $path => $uri) {
+            $tmpFileName = str_replace(DIRECTORY_SEPARATOR, '_', $path)
+                . '_metadata_'
+                . time()
+                . '.csv';
+
+            $exporterService->setOption(
+                TestExporter::OPTION_FILE_NAME,
+                $tmpFileName
+            );
+
+            $filePath = $exporterService->export($uri);
+            $zip->addFile($filePath, $path . '.csv');
+
+            $tmpFiles[] = $filePath;
+        }
+
+        $zip->close();
+
+        foreach ($tmpFiles as $tmpFile) {
+            unlink($tmpFile);
+        }
+
+        $report = Report::createSuccess();
+        $report->setData($zipPath);
+        $report->setMessage(__('Test metadata successfully exported.'));
+
+        return $report;
+    }
+
+    private function extractInstancesRecursively(core_kernel_classes_Class $class): array
+    {
+        $data = [];
+
+        foreach ($class->getSubClasses() as $subClass) {
+            $data = array_merge(
+                $data,
+                $this->extractInstancesRecursively($subClass)
+            );
+        }
+
+        foreach ($class->getInstances() as $instance) {
+            $path = $this->replaceSpaces($instance->getLabel());
+            $data[$path] = $instance->getUri();
+        }
+
+        $prefix = $this->replaceSpaces($class->getLabel()) . DIRECTORY_SEPARATOR;
+        $res = [];
+        foreach ($data as $path => $uri) {
+            $res[$prefix . $path] = $uri;
+        }
+
+        return $res;
+    }
+
+    private function replaceSpaces(string $str): string
+    {
+        return preg_replace('~\s+~', '_', $str);
     }
 }
