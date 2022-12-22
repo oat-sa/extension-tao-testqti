@@ -1205,7 +1205,7 @@ msgid "Submit and go to the end of the test"
 msgstr "Pateikti ir eiti į testo pabaigą"
 
 msgid "Submit and go to the item %s"
-msgstr ""
+msgstr "Pateikti atsakymą ir pereiti prie %s klausim"
 
 msgid "Submit and go to the next item"
 msgstr "Pateikite atsakymą ir pereikite į kitą klausimą"
