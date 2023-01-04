@@ -536,7 +536,10 @@ define([
                         title: defaults().sectionTitlePrefix,
                         index: 0,
                         sectionParts,
-                        visible: true
+                        visible: true,
+                        itemSessionControl: {
+                            maxAttempts: defaults().maxAttempts
+                        }
                     });
                 },
                 checkAndCallAdd: function (executeAdd) {
