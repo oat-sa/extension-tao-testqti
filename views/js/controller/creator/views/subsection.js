@@ -32,7 +32,8 @@ define([
     'taoQtiTest/controller/creator/helpers/sectionBlueprints',
     'ui/dialog/confirm',
     'taoQtiTest/controller/creator/helpers/subsection',
-    'taoQtiTest/controller/creator/helpers/validators'
+    'taoQtiTest/controller/creator/helpers/validators',
+    'services/features'
 ], function (
     $,
     _,
@@ -49,7 +50,8 @@ define([
     sectionBlueprint,
     confirmDialog,
     subsectionsHelper,
-    validators
+    validators,
+    servicesFeatures
 ) {
     'use strict';
     /**
@@ -81,6 +83,11 @@ define([
         if (!_.isEmpty(config.routes.blueprintsById)) {
             subsectionModel.hasBlueprint = true;
         }
+
+        if (servicesFeatures.isVisible('taoQtiTest/creator/properties/selectionWithReplacement', false)) {
+            sectionModel.hasSelectionWithReplacement = true;
+        }
+
         actions.properties($titleWithActions, 'section', subsectionModel, propHandler);
         actions.move($titleWithActions, 'subsections', 'subsection');
         actions.displayItemWrapper($subsection);
