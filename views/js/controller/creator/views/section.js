@@ -96,9 +96,10 @@ define([
             sectionModel.hasBlueprint = true;
         }
 
-        if (servicesFeatures.isVisible('taoQtiTest/creator/properties/selectionWithReplacement', false)) {
-            sectionModel.hasSelectionWithReplacement = true;
-        }
+        sectionModel.hasSelectionWithReplacement = servicesFeatures.isVisible(
+            'taoQtiTest/creator/properties/selectionWithReplacement',
+            false
+        );
 
         //add feature visibility properties to sectionModel
         featureVisibility.addSectionVisibilityProps(sectionModel);

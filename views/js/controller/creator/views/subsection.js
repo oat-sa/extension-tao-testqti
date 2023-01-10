@@ -84,9 +84,10 @@ define([
             subsectionModel.hasBlueprint = true;
         }
 
-        if (servicesFeatures.isVisible('taoQtiTest/creator/properties/selectionWithReplacement', false)) {
-            sectionModel.hasSelectionWithReplacement = true;
-        }
+        sectionModel.hasSelectionWithReplacement = servicesFeatures.isVisible(
+            'taoQtiTest/creator/properties/selectionWithReplacement',
+            false
+        );
 
         actions.properties($titleWithActions, 'section', subsectionModel, propHandler);
         actions.move($titleWithActions, 'subsections', 'subsection');
