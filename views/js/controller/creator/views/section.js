@@ -38,7 +38,8 @@ define([
     'ui/dialog/confirm',
     'taoQtiTest/controller/creator/helpers/subsection',
     'taoQtiTest/controller/creator/helpers/validators',
-    'taoQtiTest/controller/creator/helpers/featureVisibility'
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
+    'services/features'
 ], function (
     $,
     _,
@@ -58,7 +59,8 @@ define([
     confirmDialog,
     subsectionsHelper,
     validators,
-    featureVisibility
+    featureVisibility,
+    servicesFeatures
 ) {
     ('use strict');
 
@@ -93,6 +95,11 @@ define([
         if (!_.isEmpty(config.routes.blueprintsById)) {
             sectionModel.hasBlueprint = true;
         }
+
+        sectionModel.hasSelectionWithReplacement = servicesFeatures.isVisible(
+            'taoQtiTest/creator/properties/selectionWithReplacement',
+            false
+        );
 
         //add feature visibility properties to sectionModel
         featureVisibility.addSectionVisibilityProps(sectionModel);

@@ -187,6 +187,7 @@
             </div>
         </div>
 
+        {{#if hasSelectionWithReplacement}}
 <!-- assessmentTest/testPart/assessmentSection/selection/withReplacement -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -206,6 +207,7 @@
                 </div>
             </div>
         </div>
+        {{/if}}
     </div>
 
     <h4 class="toggler closed" data-toggle="~ .section-ordering">{{__ 'Ordering'}}</h4>
