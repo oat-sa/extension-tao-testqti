@@ -157,7 +157,7 @@ define([
 
     QUnit.test('getCategories()', function(assert) {
         var modelOverseer = modelOverseerFactory(testModelCategoriesSample);
-        var expectedList = ['history', 'math'];
+        var expectedList = ['history', 'math', 'subsection'];
 
         assert.expect(2);
 
