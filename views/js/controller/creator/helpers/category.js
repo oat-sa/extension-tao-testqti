@@ -41,13 +41,21 @@ define([
      * @param {Function} cb
      */
     function eachCategories(testModel, cb) {
+        const getCategoriesRecursively = (section) => {
+            _.forEach(section.sectionParts, function (sectionPart) {
+                if (sectionPart['qti-type'] === 'assessmentItemRef') {
+                    _.forEach(sectionPart.categories, function(category) {
+                        cb(category, sectionPart);
+                    });
+                }
+                if(sectionPart['qti-type'] === 'assessmentSection') {
+                    getCategoriesRecursively(sectionPart);
+                }
+            });
+        };
         _.forEach(testModel.testParts, function (testPart) {
             _.forEach(testPart.assessmentSections, function (assessmentSection) {
-                _.forEach(assessmentSection.sectionParts, function (itemRef) {
-                    _.forEach(itemRef.categories, function(category) {
-                        cb(category, itemRef);
-                    });
-                });
+                getCategoriesRecursively(assessmentSection);
             });
         });
     }
