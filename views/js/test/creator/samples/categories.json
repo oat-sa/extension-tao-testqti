@@ -248,6 +248,141 @@
         "allowLateSubmission": false
       },
       "index": 1
+    }, {
+      "qti-type": "assessmentSection",
+      "title": "Section 3",
+      "visible": true,
+      "keepTogether": true,
+      "rubricBlocks": [],
+      "sectionParts": [{
+        "qti-type": "assessmentSection",
+        "title": "Section 4",
+        "visible": true,
+        "keepTogether": true,
+        "rubricBlocks": [],
+        "sectionParts": [{
+          "qti-type": "assessmentItemRef",
+          "href": "http://tao.dev/tao.rdf#i148309061819894",
+          "categories": ["history", "subsection"],
+          "variableMappings": {},
+          "weights": [],
+          "templateDefaults": {},
+          "identifier": "item-7",
+          "required": false,
+          "fixed": false,
+          "preConditions": [],
+          "branchRules": [],
+          "itemSessionControl": {
+            "qti-type": "itemSessionControl",
+            "maxAttempts": 1,
+            "showFeedback": false,
+            "allowReview": true,
+            "showSolution": false,
+            "allowComment": false,
+            "validateResponses": false,
+            "allowSkipping": true
+          },
+          "timeLimits": {
+            "qti-type": "timeLimits",
+            "allowLateSubmission": false
+          },
+          "index": 0
+        }, {
+          "qti-type": "assessmentItemRef",
+          "href": "http://tao.dev/tao.rdf#i1483090620510297",
+          "categories": ["history", "subsection"],
+          "variableMappings": {},
+          "weights": [],
+          "templateDefaults": {},
+          "identifier": "item-8",
+          "required": false,
+          "fixed": false,
+          "preConditions": [],
+          "branchRules": [],
+          "itemSessionControl": {
+            "qti-type": "itemSessionControl",
+            "maxAttempts": 1,
+            "showFeedback": false,
+            "allowReview": true,
+            "showSolution": false,
+            "allowComment": false,
+            "validateResponses": false,
+            "allowSkipping": true
+          },
+          "timeLimits": {
+            "qti-type": "timeLimits",
+            "allowLateSubmission": false
+          },
+          "index": 1
+        }, {
+          "qti-type": "assessmentItemRef",
+          "href": "http://tao.dev/tao.rdf#i14830906232870100",
+          "categories": ["math", "subsection"],
+          "variableMappings": {},
+          "weights": [],
+          "templateDefaults": {},
+          "identifier": "item-9",
+          "required": false,
+          "fixed": false,
+          "preConditions": [],
+          "branchRules": [],
+          "itemSessionControl": {
+            "qti-type": "itemSessionControl",
+            "maxAttempts": 1,
+            "showFeedback": false,
+            "allowReview": true,
+            "showSolution": false,
+            "allowComment": false,
+            "validateResponses": false,
+            "allowSkipping": true
+          },
+          "timeLimits": {
+            "qti-type": "timeLimits",
+            "allowLateSubmission": false
+          },
+          "index": 2
+        }],
+        "identifier": "subsection-1",
+        "required": false,
+        "fixed": false,
+        "preConditions": [],
+        "branchRules": [],
+        "itemSessionControl": {
+          "qti-type": "itemSessionControl",
+          "maxAttempts": 1,
+          "showFeedback": false,
+          "allowReview": true,
+          "showSolution": false,
+          "allowComment": false,
+          "validateResponses": false,
+          "allowSkipping": true
+        },
+        "timeLimits": {
+          "qti-type": "timeLimits",
+          "allowLateSubmission": false
+        },
+        "index": 1
+      }],
+      "identifier": "assessmentSection-3",
+      "required": false,
+      "fixed": false,
+      "preConditions": [],
+      "branchRules": [],
+      "itemSessionControl": {
+        "qti-type": "itemSessionControl",
+        "maxAttempts": 1,
+        "showFeedback": false,
+        "allowReview": true,
+        "showSolution": false,
+        "allowComment": false,
+        "validateResponses": false,
+        "allowSkipping": true
+      },
+      "timeLimits": {
+        "qti-type": "timeLimits",
+        "allowLateSubmission": false
+      },
+      "index": 1
     }],
     "testFeedbacks": [],
     "index": 0
