@@ -83,11 +83,17 @@ define([
             return errorHandler.throw(_ns, 'invalid tool config format');
         }
 
-        categories = _.map(model.sectionParts, function (itemRef){
-            if(itemRef['qti-type'] === 'assessmentItemRef' && ++itemCount && _.isArray(itemRef.categories)){
-                return _.compact(itemRef.categories);
+
+        const getCategoriesRecursive = sectionModel => _.map(sectionModel.sectionParts, function (sectionPart){
+            if(sectionPart['qti-type'] === 'assessmentItemRef' && ++itemCount && _.isArray(sectionPart.categories)){
+                return _.compact(sectionPart.categories);
+            }
+            if(sectionPart['qti-type'] === 'assessmentSection' && _.isArray(sectionPart.sectionParts)){
+                return _.union.apply(null, _.values(getCategoriesRecursive(sectionPart)));
             }
         });
+
+        categories = getCategoriesRecursive(model);
 
         if (!itemCount) {
             return createCategories(model.categories, model.categories);
