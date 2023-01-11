@@ -13,16 +13,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2023 (original work) Open Assessment Technologies SA ;
  */
 /**
  * Helper that provides a way to browse all categories attached to a test model at the item level.
  *
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
-define([
-    'lodash'
-], function (_) {
+define(['lodash'], function (_) {
     'use strict';
 
     /**
@@ -41,14 +39,14 @@ define([
      * @param {Function} cb
      */
     function eachCategories(testModel, cb) {
-        const getCategoriesRecursively = (section) => {
+        const getCategoriesRecursively = section => {
             _.forEach(section.sectionParts, function (sectionPart) {
                 if (sectionPart['qti-type'] === 'assessmentItemRef') {
-                    _.forEach(sectionPart.categories, function(category) {
+                    _.forEach(sectionPart.categories, function (category) {
                         cb(category, sectionPart);
                     });
                 }
-                if(sectionPart['qti-type'] === 'assessmentSection') {
+                if (sectionPart['qti-type'] === 'assessmentSection') {
                     getCategoriesRecursively(sectionPart);
                 }
             });
@@ -78,7 +76,7 @@ define([
          */
         listCategories: function listCategories(testModel) {
             var categories = {};
-            eachCategories(testModel, function(category) {
+            eachCategories(testModel, function (category) {
                 if (!isCategoryOption(category)) {
                     categories[category] = true;
                 }
@@ -94,7 +92,7 @@ define([
          */
         listOptions: function listOptions(testModel) {
             var options = {};
-            eachCategories(testModel, function(category) {
+            eachCategories(testModel, function (category) {
                 if (isCategoryOption(category)) {
                     options[category] = true;
                 }
