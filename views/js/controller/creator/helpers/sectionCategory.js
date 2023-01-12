@@ -64,7 +64,7 @@ define(['lodash', 'i18n', 'core/errorHandler'], function (_, __, errorHandler) {
      * @returns {object}
      */
     function getCategories(model) {
-        let categories,
+        let categories= [],
             arrays,
             union,
             propagated,
@@ -75,20 +75,20 @@ define(['lodash', 'i18n', 'core/errorHandler'], function (_, __, errorHandler) {
             return errorHandler.throw(_ns, 'invalid tool config format');
         }
 
-        const getCategoriesRecursive = sectionModel => _.map(sectionModel.sectionParts, function (sectionPart) {
+        const getCategoriesRecursive = sectionModel => _.forEach(sectionModel.sectionParts, function (sectionPart) {
             if (
                 sectionPart['qti-type'] === 'assessmentItemRef' &&
                 ++itemCount &&
                 _.isArray(sectionPart.categories)
             ) {
-                return _.compact(sectionPart.categories);
+                categories.push(_.compact(sectionPart.categories));
             }
             if (sectionPart['qti-type'] === 'assessmentSection' && _.isArray(sectionPart.sectionParts)) {
-                return _.union.apply(null, _.values(getCategoriesRecursive(sectionPart)));
+                getCategoriesRecursive(sectionPart);
             }
         });
 
-        categories = getCategoriesRecursive(model);
+        getCategoriesRecursive(model);
 
         if (!itemCount) {
             return createCategories(model.categories, model.categories);
