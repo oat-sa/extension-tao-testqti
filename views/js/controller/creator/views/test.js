@@ -54,6 +54,7 @@ define([
      * @param {Object} creatorContext
      */
     function testView(creatorContext) {
+        const defaultsConfigs = defaults();
         var modelOverseer = creatorContext.getModelOverseer();
         var testModel = modelOverseer.getModel();
 
@@ -178,23 +179,26 @@ define([
                         identifier: qtiTestHelper.getAvailableIdentifier(
                             modelOverseer.getModel(),
                             'testPart',
-                            defaults().partIdPrefix
+                            defaultsConfigs.partIdPrefix
                         ),
                         index: testPartIndex,
-                        navigationMode: defaults().navigationMode,
-                        submissionMode: defaults().submissionMode,
+                        navigationMode: defaultsConfigs.navigationMode,
+                        submissionMode: defaultsConfigs.submissionMode,
                         assessmentSections: [
                             {
                                 'qti-type': 'assessmentSection',
                                 identifier: qtiTestHelper.getAvailableIdentifier(
                                     modelOverseer.getModel(),
                                     'assessmentSection',
-                                    defaults().sectionIdPrefix
+                                    defaultsConfigs.sectionIdPrefix
                                 ),
-                                title: defaults().sectionTitlePrefix,
+                                title: defaultsConfigs.sectionTitlePrefix,
                                 index: 0,
                                 sectionParts: [],
-                                visible: true
+                                visible: true,
+                                itemSessionControl: {
+                                    maxAttempts: defaultsConfigs.maxAttempts
+                                }
                             }
                         ]
                     });
