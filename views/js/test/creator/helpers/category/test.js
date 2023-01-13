@@ -77,6 +77,24 @@ define([
         }, {
             category: 'math',
             item: 'item-6'
+        }, {
+            category: 'history',
+            item: 'item-7'
+        }, {
+            category: 'subsection',
+            item: 'item-7'
+        }, {
+            category: 'history',
+            item: 'item-8'
+        }, {
+            category: 'subsection',
+            item: 'item-8'
+        }, {
+            category: 'math',
+            item: 'item-9'
+        }, {
+            category: 'subsection',
+            item: 'item-9'
         }];
         var pointer = 0;
 
@@ -92,7 +110,7 @@ define([
     });
 
     QUnit.test('helpers/category.listCategories()', function(assert) {
-        var expectedCategories = ['history', 'math'];
+        var expectedCategories = ['history', 'math', 'subsection'];
         var categories = categoryHelper.listCategories(testModelSample);
 
         categories.sort();
