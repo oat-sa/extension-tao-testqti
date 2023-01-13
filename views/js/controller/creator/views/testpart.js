@@ -44,8 +44,6 @@ define([
 ) {
     ('use strict');
 
-    const addVisibilityProps = model => {};
-
     /**
      * Set up a test part: init action behaviors. Called for each test part.
      *
@@ -54,6 +52,7 @@ define([
      * @param {jQuery} $testPart - the testpart container to set up
      */
     function setUp(creatorContext, partModel, $testPart) {
+        const defaultsConfigs = defaults();
         const $actionContainer = $('h1', $testPart);
         const $titleWithActions = $testPart.children('h1');
         const modelOverseer = creatorContext.getModelOverseer();
@@ -137,14 +136,14 @@ define([
                         identifier: qtiTestHelper.getAvailableIdentifier(
                             modelOverseer.getModel(),
                             'assessmentSection',
-                            defaults().sectionIdPrefix
+                            defaultsConfigs.sectionIdPrefix
                         ),
-                        title: defaults().sectionTitlePrefix,
+                        title: defaultsConfigs.sectionTitlePrefix,
                         index: 0,
                         sectionParts: [],
                         visible: true,
                         itemSessionControl: {
-                            maxAttempts: defaults().maxAttempts
+                            maxAttempts: defaultsConfigs.maxAttempts
                         }
                     });
                 }
@@ -189,7 +188,7 @@ define([
             });
 
             $view.on('set-default-categories', function () {
-                partModel.categories = defaults().categories;
+                partModel.categories = defaultsConfigs.categories;
                 updateFormState(categorySelector);
             });
 
