@@ -13,17 +13,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2015-2023 (original work) Open Assessment Technologies SA;
  */
-define([
-    'lodash',
-    'i18n',
-    'core/errorHandler'
-], function (_, __, errorHandler){
-
+define(['lodash', 'i18n', 'core/errorHandler'], function (_, __, errorHandler) {
     'use strict';
 
-    var _ns = '.sectionCategory';
+    const _ns = '.sectionCategory';
 
     /**
      * Check if the given object is a valid assessmentSection model object
@@ -31,8 +26,8 @@ define([
      * @param {object} model
      * @returns {boolean}
      */
-    function isValidSectionModel(model){
-        return (_.isObject(model) && model['qti-type'] === 'assessmentSection' && _.isArray(model.sectionParts));
+    function isValidSectionModel(model) {
+        return _.isObject(model) && model['qti-type'] === 'assessmentSection' && _.isArray(model.sectionParts);
     }
 
     /**
@@ -43,19 +38,16 @@ define([
      * @param {array} partial - only categories in an indeterminate state
      * @returns {undefined}
      */
-    function setCategories(model, selected, partial){
-
-        var toRemove,
-            toAdd,
-            currentCategories = getCategories(model);
+    function setCategories(model, selected, partial) {
+        const currentCategories = getCategories(model);
 
         partial = partial || [];
 
         //the categories that are no longer in the new list of categories should be removed
-        toRemove = _.difference(currentCategories.all, selected.concat(partial));
+        const toRemove = _.difference(currentCategories.all, selected.concat(partial));
 
         //the categories that are not in the current categories collection should be added to the children
-        toAdd = _.difference(selected, currentCategories.propagated);
+        const toAdd = _.difference(selected, currentCategories.propagated);
 
         model.categories = _.difference(model.categories, toRemove);
         model.categories = model.categories.concat(toAdd);
@@ -72,7 +64,7 @@ define([
      * @returns {object}
      */
     function getCategories(model) {
-        var categories,
+        let categories= [],
             arrays,
             union,
             propagated,
@@ -83,11 +75,20 @@ define([
             return errorHandler.throw(_ns, 'invalid tool config format');
         }
 
-        categories = _.map(model.sectionParts, function (itemRef){
-            if(itemRef['qti-type'] === 'assessmentItemRef' && ++itemCount && _.isArray(itemRef.categories)){
-                return _.compact(itemRef.categories);
+        const getCategoriesRecursive = sectionModel => _.forEach(sectionModel.sectionParts, function (sectionPart) {
+            if (
+                sectionPart['qti-type'] === 'assessmentItemRef' &&
+                ++itemCount &&
+                _.isArray(sectionPart.categories)
+            ) {
+                categories.push(_.compact(sectionPart.categories));
+            }
+            if (sectionPart['qti-type'] === 'assessmentSection' && _.isArray(sectionPart.sectionParts)) {
+                getCategoriesRecursive(sectionPart);
             }
         });
+
+        getCategoriesRecursive(model);
 
         if (!itemCount) {
             return createCategories(model.categories, model.categories);
@@ -113,17 +114,20 @@ define([
      * @param {array} categories
      * @returns {undefined}
      */
-    function addCategories(model, categories){
-        if(isValidSectionModel(model)){
-            _.each(model.sectionParts, function (itemRef){
-                if(itemRef['qti-type'] === 'assessmentItemRef'){
-                    if(!_.isArray(itemRef.categories)){
-                        itemRef.categories = [];
+    function addCategories(model, categories) {
+        if (isValidSectionModel(model)) {
+            _.each(model.sectionParts, function (sectionPart) {
+                if (sectionPart['qti-type'] === 'assessmentItemRef') {
+                    if (!_.isArray(sectionPart.categories)) {
+                        sectionPart.categories = [];
                     }
-                    itemRef.categories = _.union(itemRef.categories, categories);
+                    sectionPart.categories = _.union(sectionPart.categories, categories);
+                }
+                if (sectionPart['qti-type'] === 'assessmentSection') {
+                    addCategories(sectionPart, categories);
                 }
             });
-        }else{
+        } else {
             errorHandler.throw(_ns, 'invalid tool config format');
         }
     }
@@ -135,33 +139,39 @@ define([
      * @param {array} categories
      * @returns {undefined}
      */
-    function removeCategories(model, categories){
-        if(isValidSectionModel(model)){
-            _.each(model.sectionParts, function (itemRef){
-                if(itemRef['qti-type'] === 'assessmentItemRef' && _.isArray(itemRef.categories)){
-                    itemRef.categories = _.difference(itemRef.categories, categories);
+    function removeCategories(model, categories) {
+        if (isValidSectionModel(model)) {
+            _.each(model.sectionParts, function (sectionPart) {
+                if (sectionPart['qti-type'] === 'assessmentItemRef' && _.isArray(sectionPart.categories)) {
+                    sectionPart.categories = _.difference(sectionPart.categories, categories);
+                }
+                if (sectionPart['qti-type'] === 'assessmentSection') {
+                    removeCategories(sectionPart, categories);
                 }
             });
-        }else{
+        } else {
             errorHandler.throw(_ns, 'invalid tool config format');
         }
     }
 
     function createCategories(all = [], propagated = [], partial = []) {
-        return _.mapValues({
-            all: all,
-            propagated: propagated,
-            partial: partial
-        }, function (categories) {
-            return categories.sort();
-        });
+        return _.mapValues(
+            {
+                all: all,
+                propagated: propagated,
+                partial: partial
+            },
+            function (categories) {
+                return categories.sort();
+            }
+        );
     }
 
     return {
-        isValidSectionModel : isValidSectionModel,
-        setCategories : setCategories,
-        getCategories : getCategories,
-        addCategories : addCategories,
-        removeCategories : removeCategories
+        isValidSectionModel: isValidSectionModel,
+        setCategories: setCategories,
+        getCategories: getCategories,
+        addCategories: addCategories,
+        removeCategories: removeCategories
     };
 });
