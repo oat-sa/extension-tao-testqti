@@ -90,7 +90,7 @@ define([
     };
 
     QUnit.test('helpers/testModel.eachItemInTest() - flat test', function(assert) {
-        const path = ['item-1', 'item-3', 'item-2', 'item-4', 'item-5', 'item-6'];
+        const path = ['item-1', 'item-3', 'item-2', 'item-4', 'item-5', 'item-6', 'item-7', 'item-8', 'item-9'];
         let pointer = 0;
 
         testModelHelper.eachItemInTest(testModelSample, function(itemRef) {
