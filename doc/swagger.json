@@ -214,36 +214,36 @@
                     {
                         "name": "overwriteTest",
                         "in": "formData",
-                        "description": "Boolean flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class.",
-                        "type": "boolean",
+                        "description": "Flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "enableMetadataGuardians",
                         "in": "formData",
-                        "description": "Boolean flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default.",
-                        "type": "boolean",
+                        "description": "Flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "enableMetadataValidators",
                         "in": "formData",
-                        "description": "Boolean flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default.",
-                        "type": "boolean",
+                        "description": "Flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "itemMustExist",
                         "in": "formData",
-                        "description": "Boolean flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. Default value is false.",
-                        "type": "boolean",
+                        "description": "Flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. 'true' value counts as true, 'false' as false. Default value is false.",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "itemMustBeOverwritten",
                         "in": "formData",
-                        "description": "Boolean flag that indicates whether items found by guardians should be overwritten. Default value is false.",
-                        "type": "boolean",
+                        "description": "Flag that indicates whether items found by guardians should be overwritten. 'true' value counts as true, 'false' as false. Default value is false.",
+                        "type": "string",
                         "required": false
                     }
                 ],
@@ -353,36 +353,36 @@
                     {
                         "name": "overwriteTest",
                         "in": "formData",
-                        "description": "Boolean flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class.",
-                        "type": "boolean",
+                        "description": "Flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "enableMetadataGuardians",
                         "in": "formData",
-                        "description": "Boolean flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default.",
-                        "type": "boolean",
+                        "description": "Flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "enableMetadataValidators",
                         "in": "formData",
-                        "description": "Boolean flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default.",
-                        "type": "boolean",
+                        "description": "Flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "itemMustExist",
                         "in": "formData",
-                        "description": "Boolean flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. Default value is false.",
-                        "type": "boolean",
+                        "description": "Flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. 'true' value counts as true, 'false' as false. Default value is false.",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "itemMustBeOverwritten",
                         "in": "formData",
-                        "description": "Boolean flag that indicates whether items found by guardians should be overwritten. Default value is false.",
-                        "type": "boolean",
+                        "description": "Flag that indicates whether items found by guardians should be overwritten. 'true' value counts as true, 'false' as false. Default value is false.",
+                        "type": "string",
                         "required": false
                     }
                 ],

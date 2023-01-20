@@ -134,7 +134,19 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     protected function isOverwriteTest(): bool
     {
-        return $this->getPostParameter(self::OVERWRITE_TEST);
+        $isOverwriteTest = $this->getPostParameter(self::OVERWRITE_TEST);
+
+        if (is_null($isOverwriteTest)) {
+            return false;
+        }
+
+        if (!in_array($isOverwriteTest, ['true', 'false'])) {
+            throw new \common_exception_RestApi(
+                'isOverwriteTest parameter should be boolean (true or false).'
+            );
+        }
+
+        return filter_var($isOverwriteTest, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
