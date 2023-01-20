@@ -570,9 +570,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
 
-
                 if ($overwriteTest) {
-                    $this->deleteTestsFromClassByTitle($testDefinition->getDocumentComponent()->getTitle(), $testClass, $itemClass);
+                    $testLabel = $testDefinition->getDocumentComponent()->getTitle();
+                    $itemsClassLabel = $testLabel;
+                    /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $m */
+                    foreach ($reportCtx->testMetadata as $singleMetadata) {
+                        if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
+                            $testLabel = $singleMetadata->getValue();
+                        }
+                    }
+
+                    $this->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemClass);
                 }
 
                 $targetClass = $itemClass->createSubClass($testResource->getLabel());
@@ -775,19 +783,24 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $report;
     }
 
-    private function deleteTestsFromClassByTitle(string $testTitle, core_kernel_classes_Resource $testClass, core_kernel_classes_Class $itemClass): void
+    private function deleteTestsFromClassByLabel(
+        string $testLabel,
+        string $itemsClassLabel,
+        core_kernel_classes_Resource $testClass,
+        core_kernel_classes_Class $itemClass
+    ): void
     {
         $testService = $this->getTestService();
         $itemTreeService = $this->getItemTreeService();
 
         foreach ($testClass->getInstances() as $testInstance) {
-            if ($testInstance->getLabel() === $testTitle) {
+            if ($testInstance->getLabel() === $testLabel) {
                 $testService->deleteTest($testInstance);
             }
         }
 
         foreach ($itemClass->getSubClasses() as $subClass) {
-            if ($subClass->getLabel() === $testTitle) {
+            if ($subClass->getLabel() === $itemsClassLabel) {
                 $itemTreeService->deleteClass($subClass);
             }
         }

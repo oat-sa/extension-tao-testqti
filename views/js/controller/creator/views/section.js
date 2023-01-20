@@ -38,7 +38,8 @@ define([
     'ui/dialog/confirm',
     'taoQtiTest/controller/creator/helpers/subsection',
     'taoQtiTest/controller/creator/helpers/validators',
-    'taoQtiTest/controller/creator/helpers/featureVisibility'
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
+    'services/features'
 ], function (
     $,
     _,
@@ -58,7 +59,8 @@ define([
     confirmDialog,
     subsectionsHelper,
     validators,
-    featureVisibility
+    featureVisibility,
+    servicesFeatures
 ) {
     ('use strict');
 
@@ -71,6 +73,7 @@ define([
      * @param {jQuery} $section - the section to set up
      */
     function setUp(creatorContext, sectionModel, partModel, $section) {
+        const defaultsConfigs = defaults();
         // select elements for section, to avoid selecting the same elements in subsections
         const $itemRefsWrapper = $section.children('.itemrefs-wrapper');
         const $rubBlocks = $section.children('.rublocks');
@@ -86,13 +89,18 @@ define([
         if (!sectionModel.categories) {
             // inherit the parent testPart's propagated categories
             const partCategories = testPartCategory.getCategories(partModel);
-            sectionModel.categories = _.clone(partCategories.propagated || defaults().categories);
+            sectionModel.categories = _.clone(partCategories.propagated || defaultsConfigs.categories);
         }
         _.defaults(sectionModel.itemSessionControl, partModel.itemSessionControl);
 
         if (!_.isEmpty(config.routes.blueprintsById)) {
             sectionModel.hasBlueprint = true;
         }
+
+        sectionModel.hasSelectionWithReplacement = servicesFeatures.isVisible(
+            'taoQtiTest/creator/properties/selectionWithReplacement',
+            false
+        );
 
         //add feature visibility properties to sectionModel
         featureVisibility.addSectionVisibilityProps(sectionModel);
@@ -250,7 +258,7 @@ define([
                             }
 
                             //the itemRef should also "inherit" default categories set at the item level
-                            defaultItemData.categories = _.clone(defaults().categories) || [];
+                            defaultItemData.categories = _.clone(defaultsConfigs.categories) || [];
 
                             _.forEach(selection, function (item) {
                                 const itemData = _.defaults(
@@ -421,7 +429,7 @@ define([
             });
 
             $view.on('set-default-categories', function () {
-                sectionModel.categories = defaults().categories;
+                sectionModel.categories = defaultsConfigs.categories;
                 updateFormState(categorySelector);
             });
 
@@ -536,10 +544,13 @@ define([
                             'assessmentSection',
                             'subsection'
                         ),
-                        title: defaults().sectionTitlePrefix,
+                        title: defaultsConfigs.sectionTitlePrefix,
                         index: 0,
                         sectionParts,
-                        visible: true
+                        visible: true,
+                        itemSessionControl: {
+                            maxAttempts: defaultsConfigs.maxAttempts
+                        }
                     });
                 },
                 checkAndCallAdd: function (executeAdd) {
@@ -555,7 +566,7 @@ define([
                             `${index + 1}.`,
                             sectionModel.title,
                             `${index + 1}.1.`,
-                            defaults().sectionTitlePrefix
+                            defaultsConfigs.sectionTitlePrefix
                         );
                         const acceptFunction = () => {
                             // trigger deleted event for each itemfer to run removePropHandler and remove propView
