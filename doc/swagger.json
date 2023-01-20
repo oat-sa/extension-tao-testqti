@@ -886,9 +886,6 @@
                     },
                     "data": {
                         "$ref": "#/definitions/metadataEntity"
-                    },
-                    "version": {
-                        "type": "string"
                     }
                 }
             }
