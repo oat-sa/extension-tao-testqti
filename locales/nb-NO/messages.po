@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2021.10\n"
-"PO-Revision-Date: 2021-10-21T13:49:33\n"
+"Project-Id-Version: TAO 2023.02 LTS\n"
+"PO-Revision-Date: 2023-02-03T14:07:09\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nb-NO\n"
@@ -46,6 +46,9 @@ msgstr "Det kreves et gyldig svar på denne oppgaven."
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "En synlig seksjon er en som kan identifiseres av eleven."
 
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
+
 msgid "Activated"
 msgstr "Aktivert"
 
@@ -57,6 +60,9 @@ msgstr "Legg til en zip-fil som inneholder QTI/APIP-prøver og oppgaver"
 
 msgid "Add selected item(s) here."
 msgstr "Legg til valgt(e) oppgave(r) her."
+
+msgid "Add Subsection"
+msgstr ""
 
 msgid "Add the source file"
 msgstr "Legg til kildefilen"
@@ -223,6 +229,15 @@ msgstr "Svart på lys magenta"
 msgid "Black on White"
 msgstr "Svart på hvit"
 
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
+msgid "Bookmarked question %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Kalkulator"
 
@@ -232,11 +247,11 @@ msgstr "BODMAS kalkulator"
 msgid "Can not playback media file!"
 msgstr "Kan ikke spille av mediefil!"
 
-msgid "Cancel"
-msgstr "Avbryt"
-
 msgid "CANCEL"
 msgstr "AVBRYT"
+
+msgid "Cancel"
+msgstr "Avbryt"
 
 msgid "Candidate"
 msgstr "Elev"
@@ -361,6 +376,9 @@ msgstr "Vist navn"
 msgid "Displays a customisable magnifier"
 msgstr "Viser en forstørrelsesglass som kan tilpasses"
 
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "Ikke flagg oppgaven for å se gjennom senere"
 
@@ -372,6 +390,9 @@ msgstr "Ikke vis varsel ved timeout"
 
 msgid "Don't save"
 msgstr "Ikke lagre"
+
+msgid "Don\'t save"
+msgstr ""
 
 msgid "Download"
 msgstr "Last ned"
@@ -406,10 +427,10 @@ msgstr "Aktiver oppgavegjennomgang/navigering på skjerm."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Aktiver muligheten til å  gå videre i oppgavesettet innen gitt oppgaveseksjon. Krever at valget se gjennom oppgavene på skjerm er aktivert."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Avslutt prøven"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Avslutt prøven"
 
 msgid "Enter a blueprint"
@@ -431,11 +452,20 @@ msgstr "Feil funnet i IMS QTI-prøven: %s"
 msgid "Expand the review panel"
 msgstr "Utvid se gjennom oppgave-panelet"
 
+msgid "Export"
+msgstr ""
+
 msgid "Export failed for the test \"%s"
 msgstr "Eksport mislyktes for testen \"%s"
 
+msgid "Export failed. Key uri nor classUri in formValues are not defined"
+msgstr ""
+
 msgid "Export metadata"
 msgstr "Eksporter metadata"
+
+msgid "Export QTI %s Test Package"
+msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "Eksporter QTI 2.1 Testpakke"
@@ -506,6 +536,9 @@ msgstr "Grå på grønn"
 msgid "Hide Review"
 msgstr "Skjul å se gjennom"
 
+msgid "Hide test overview panel"
+msgstr ""
+
 msgid "Hide the review screen"
 msgstr "Skjul å se gjennom på skjerm"
 
@@ -557,6 +590,9 @@ msgstr "Hvis kategorialternativet er angitt, blir skåren også behandlet per ka
 msgid "If the connection cannot be restored, see option B."
 msgstr "Hvis tilkoblingen ikke kan gjenopprettes, se alternativ B."
 
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr ""
+
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
@@ -589,6 +625,9 @@ msgstr "Inkonsekvens i linje %1d:"
 
 msgid "Individual"
 msgstr "Individuell"
+
+msgid "Informational item"
+msgstr ""
 
 msgid "Informational Item Usage"
 msgstr "Informasjonsside"
@@ -765,8 +804,14 @@ msgstr "minutter"
 msgid "Missed required parameter \'id"
 msgstr "Manglet nødvendig parameter \'id"
 
+msgid "Missed required parameter \'id\"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr "Manglet prøvepakke fil"
+
+msgid "Missing filename for QTI Test export"
+msgstr ""
 
 msgid "Missing required configuration option %s"
 msgstr "Mangler nødvendig konfigurasjonsalternativ %s"
@@ -816,11 +861,17 @@ msgstr "Neste seksjon"
 msgid "No"
 msgstr "Ingen"
 
+msgid "NO"
+msgstr ""
+
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Ingen CAT-motor er konfigurert for CAT-endepunkt \"%s\"."
 
 msgid "No file found at location \"%s\"."
 msgstr "Fant ingen fil på stedet \"%s\"."
+
+msgid "No instance in form to export"
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "Ingen flere tillatte forsøk for oppgave \"%s\"."
@@ -963,6 +1014,12 @@ msgstr "QTI Prøve \"%s\" publisering mislyktes."
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI-prøven \"%s\" ble publisert."
 
+msgid "QTI Test Metadata"
+msgstr ""
+
+msgid "QTI Test Package %s"
+msgstr ""
+
 msgid "QTI Test Package 2.1"
 msgstr "QTI-prøvepakke 2.1"
 
@@ -972,11 +1029,14 @@ msgstr "QTI-prøvepakke 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Innholdspakke for QTI/APIP-prøve"
 
+msgid "Question"
+msgstr "Spørsmål"
+
 msgid "question"
 msgstr "spørsmål"
 
-msgid "Question"
-msgstr "Spørsmål"
+msgid "Question %s"
+msgstr ""
 
 msgid "questions"
 msgstr "spørsmål"
@@ -1002,6 +1062,9 @@ msgstr "Fjern Rubrikkboks"
 msgid "Remove Section"
 msgstr "Fjern seksjon"
 
+msgid "Remove Subsection"
+msgstr ""
+
 msgid "Remove Test Part"
 msgstr "Fjern prøvedel"
 
@@ -1016,6 +1079,9 @@ msgstr "Tilbakestill filtre"
 
 msgid "Resource(s) successfully exported."
 msgstr "Ressurs(er) ble eksportert."
+
+msgid "ResultTransmission event successfully registered"
+msgstr ""
 
 msgid "Review"
 msgstr "Se gjennom"
@@ -1125,6 +1191,9 @@ msgstr "Vis å se gjennom"
 msgid "Show Solution"
 msgstr "Vis løsning"
 
+msgid "Show test overview panel"
+msgstr ""
+
 msgid "Show the review screen"
 msgstr "Vis å se gjennom på skjerm"
 
@@ -1233,6 +1302,12 @@ msgstr "Prøvemetadata ble eksportert."
 msgid "Test Navigation"
 msgstr "Testnavigasjon"
 
+msgid "Test overview"
+msgstr ""
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
+
 msgid "Test Part Properties"
 msgstr "Egenskaper for prøvedel"
 
@@ -1261,10 +1336,10 @@ msgstr "Oppgavesett"
 msgid "Text content"
 msgstr "Tekstinnhold"
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr "Tekst-til-tale"
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr "Tekst-til-tale"
 
 msgid "that was being taken."
@@ -1298,7 +1373,7 @@ msgid "The assessment is still running."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr "Eleven har ikke levere ugyldige svar."
+msgstr "Eleven kan ikke levere ugyldige svar."
 
 msgid "The connection seems to be back, please proceed"
 msgstr "Tilkoblingen ser ut til å være tilbake. Fortsett arbeidet"
@@ -1348,6 +1423,9 @@ msgstr "Prøvens hovedidentifikator."
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
 msgstr "Det oppgitte arkivet er ugyldig. Sørg for at det ikke er ødelagt og at det inneholder en 'imsmanifest.xml'-fil."
 
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "QTI-prøven '%s' som skal kompileres, må inneholde minst 1 QTI-oppgave. Ingen funnet."
 
@@ -1363,6 +1441,9 @@ msgstr "QTI-XML-prøven kunne ikke skrives riktig."
 msgid "The reference."
 msgstr "Referansen."
 
+msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
+msgstr ""
+
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
 msgstr "Skåren vil bli behandlet for hele prøven. En sum av alle SKÅR-utfallene vil bli beregnet og delt med summen av MAX SKÅR, resultatet vil bli sammenlignet med poengsum(eller bestått), deretter vil PASS_TOTAL-resultatet settes."
 
@@ -1374,6 +1455,14 @@ msgstr "Seksjonens tittel."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "Innleveringsmodusen avgjør når elevens svar blir sendt til vurdering. En prøvedel i individuell modus krever at eleven leverer svarene sine enkeltvis. I samtidig modus sendes alleelevenes svar sammen på slutten av prøvedelen."
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
+msgstr ""
 
 msgid "The test has been closed/suspended!"
 msgstr "Prøven er avsluttet!"
@@ -1591,6 +1680,9 @@ msgstr "XML-feil på linje %1$d kolonne %2 $ d \" %3 $ s\"."
 
 msgid "Yellow on Blue"
 msgstr "Gul på blå"
+
+msgid "YES"
+msgstr ""
 
 msgid "Yes"
 msgstr "Ja"
