@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2022.05 LTS\n"
-"PO-Revision-Date: 2023-02-24T15:55:50\n"
+"Project-Id-Version: TAO 2022.09\n"
+"PO-Revision-Date: 2022-11-04T17:54:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -442,10 +442,8 @@ msgstr "エラー"
 msgid "Error during file import"
 msgstr "ファイルインポート中のエラー"
 
-msgid "Error found in the IMS QTI Test:\n"
-"%s"
-msgstr "QTIテストにエラーが見つかりました:\n"
-"%s"
+msgid "Error found in the IMS QTI Test:\n%s"
+msgstr "QTIテストにエラーが見つかりました:\n%s"
 
 msgid "Expand the review panel"
 msgstr "レビューパネルを開く"
@@ -456,14 +454,14 @@ msgstr "エクスポート"
 msgid "Export failed for the test \"%s"
 msgstr "テスト \"%s のエクスポート失敗"
 
-msgid "Export failed. Key uri nor classUri in formValues are not defined"
-msgstr ""
-
 msgid "Export metadata"
 msgstr "メタデータエクスポート"
 
-msgid "Export QTI %s Test Package"
-msgstr ""
+msgid "Export QTI 2.1 Test Package"
+msgstr "QTI2.1 Test Packageエクスポート"
+
+msgid "Export QTI 2.2 Test Package"
+msgstr "QTI2.2 Test Packageエクスポート"
 
 msgid "Export successful for the test \"%s"
 msgstr "テスト \"%s のエクスポートが完了しました"
@@ -657,10 +655,10 @@ msgstr "アイテム・レスポンス識別子が現在のアイテムと一致
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "Items"
+msgid "items"
 msgstr "アイテム"
 
-msgid "items"
+msgid "Items"
 msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -729,11 +727,11 @@ msgstr "ルーブリックブロックの管理"
 msgid "Manage test properties"
 msgstr "テスト管理"
 
-msgid "Manage Tests"
-msgstr "テスト管理"
-
 #, tao-public
 msgid "Manage tests"
+msgstr "テスト管理"
+
+msgid "Manage Tests"
 msgstr "テスト管理"
 
 msgid "Mark for review"
@@ -766,6 +764,9 @@ msgstr "このセクションの最大時間"
 msgid "Maximum duration for this test part."
 msgstr "このテストパートの最大時間"
 
+msgid "Metadata export is not available for test \"%s."
+msgstr "メタデータのエクスポートはテスト \"%s では使用できません。"
+
 msgid "Minimum Duration"
 msgstr "最小時間"
 
@@ -787,14 +788,11 @@ msgstr "このテストパートの最小時間"
 msgid "minutes"
 msgstr "分"
 
-msgid "Missed required parameter \'id\"
-msgstr ""
+msgid "Missed required parameter \'id\'"
+msgstr "必要なパラメータが不足しています \'id\'"
 
 msgid "Missed test package file"
 msgstr "見つからないテストパッケージファイル"
-
-msgid "Missing filename for QTI Test export"
-msgstr ""
 
 msgid "Missing required configuration option %s"
 msgstr "必要な設定が見つかりません： %s "
@@ -853,9 +851,6 @@ msgstr "CATエンドポイント \"％s\" にCATエンジンが構成されて�
 msgid "No file found at location \"%s\"."
 msgstr "\"%s\"にはファイルがありません"
 
-msgid "No instance in form to export"
-msgstr ""
-
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "これ以上，問題\"%s\"の解答はできません。"
 
@@ -889,10 +884,10 @@ msgstr "チェックを入れるとシャッフルされずに，提示順はこ
 msgid "Offline"
 msgstr "オフライン"
 
-msgid "Ok"
+msgid "OK"
 msgstr "OK"
 
-msgid "OK"
+msgid "Ok"
 msgstr "OK"
 
 msgid "OK & End test"
@@ -997,11 +992,11 @@ msgstr "QTIテスト \"%s\" の公開ができませんでした"
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTIテスト\"%s\" の公開が完了しました"
 
-msgid "QTI Test Metadata"
-msgstr ""
+msgid "QTI Test Package 2.1"
+msgstr "QTI Test Package 2.1"
 
-msgid "QTI Test Package %s"
-msgstr ""
+msgid "QTI Test Package 2.2"
+msgstr "QTI Test Package 2.2"
 
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Test Content Package"
@@ -1090,10 +1085,10 @@ msgstr "採点者"
 msgid "Scoring"
 msgstr "採点方法"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "スクラッチパッド"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "スクラッチパッド"
 
 msgid "Scratchpad"
@@ -1250,7 +1245,7 @@ msgid "Submit and go to the end of the test"
 msgstr "テストを送信し終了画面に移動します"
 
 msgid "Submit and go to the item %s"
-msgstr "送信してこの問題に移動します: %s"
+msgstr "送信後，アイテム %s まで進んでください"
 
 msgid "Submit and go to the next item"
 msgstr "送信して次の問題に進みます"
@@ -1272,6 +1267,9 @@ msgstr "テスト"
 
 msgid "Test constructor"
 msgstr "テスト作成"
+
+msgid "Test metadata successfully exported."
+msgstr "テストメタデータのエクスポートが完了しました。"
 
 msgid "Test Navigation"
 msgstr "テストナビゲーション"
@@ -1310,10 +1308,10 @@ msgstr "テスト"
 msgid "Text content"
 msgstr "テキストコンテンツ"
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr "テキスト読み上げ"
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr "テキスト読み上げ"
 
 msgid "that was being taken."
@@ -1385,6 +1383,9 @@ msgstr "受験者が解答する順序をコントロールします。「順次
 msgid "The number of child elements to be selected."
 msgstr "選択出題される数"
 
+msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
+msgstr "結果 \"%s\" は存在しませんが、フィードバックブロックによって参照されます。"
+
 msgid "The outcomes have been regenerated!"
 msgstr "結果が再生成されました!"
 
@@ -1427,12 +1428,7 @@ msgstr "セクション名"
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "受験者の解答がどのようなタイミングで送信されるかを設定します。「個別」送信モードのテストパートでは、受験者はアイテムごとに解答を提出する必要があります。「同時」送信モードでは、受験者の解答はテストパートの最後にまとめて送信されます。"
 
-msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
-msgstr ""
-
-msgid "The test cannot be saved because it currently contains invalid settings.\n"
-"Please fix the invalid settings and try again."
+msgid "The test cannot be saved because it currently contains invalid settings.\nPlease fix the invalid settings and try again."
 msgstr "現在、テストに無効な設定が含まれているため、テストを保存することができません。無効な設定を修正し、再度お試しください。"
 
 msgid "The test has been closed/suspended!"
