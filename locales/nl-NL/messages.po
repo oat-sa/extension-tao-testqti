@@ -1205,13 +1205,13 @@ msgid "Submit and go to the end of the test"
 msgstr "Beëindig de test"
 
 msgid "Submit and go to the item %s"
-msgstr ""
+msgstr "Dien in en ga naar het item %s"
 
 msgid "Submit and go to the next item"
-msgstr "Ga naar de volgende pagina"
+msgstr "Dien in en ga naar het volgende item"
 
 msgid "Submit and go to the previous item"
-msgstr "Ga naar de vorige pagina"
+msgstr "Dien in en ga naar het vorige item"
 
 msgid "SUBMIT THE TEST"
 msgstr "DE TEST INLEVEREN"
