@@ -1245,7 +1245,7 @@ msgid "Submit and go to the end of the test"
 msgstr "テストを送信し終了画面に移動します"
 
 msgid "Submit and go to the item %s"
-msgstr "送信後，アイテム %s まで進んでください"
+msgstr "送信してこの問題に移動します: %s"
 
 msgid "Submit and go to the next item"
 msgstr "送信して次の問題に進みます"
