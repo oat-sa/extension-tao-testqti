@@ -20,9 +20,17 @@ final class Version202211031203542260_taoQtiTest extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        class_alias(TestPackageMetadataExport::class, 'oat\\taoQtiTest\\models\\export\\metadata\\TestMetadataByClassExportHandler');
-        class_alias(TestPackage2p1Export::class, 'taoQtiTest_models_classes_export_TestExport');
-        class_alias(TestPackage2p2Export::class, 'taoQtiTest_models_classes_export_TestExport22');
+        //class_alias(TestPackageMetadataExport::class, 'oat\\taoQtiTest\\models\\export\\metadata\\TestMetadataByClassExportHandler');
+        //class_alias(TestPackage2p1Export::class, 'taoQtiTest_models_classes_export_TestExport');
+        //class_alias(TestPackage2p2Export::class, 'taoQtiTest_models_classes_export_TestExport22');
+        if(!class_exists('oat\\taoQtiTest\\models\\export\\metadata\\TestMetadataByClassExportHandler'))
+            class_alias(TestPackageMetadataExport::class, 'oat\\taoQtiTest\\models\\export\\metadata\\TestMetadataByClassExportHandler');
+
+        if(!class_exists('taoQtiTest_models_classes_export_TestExport'))
+            class_alias(TestPackage2p1Export::class, 'taoQtiTest_models_classes_export_TestExport');
+
+        if(!class_exists('taoQtiTest_models_classes_export_TestExport22'))
+            class_alias(TestPackage2p2Export::class, 'taoQtiTest_models_classes_export_TestExport22');
 
         $testModelService = $this->getServiceLocator()->get(TestModelService::SERVICE_ID);
 
