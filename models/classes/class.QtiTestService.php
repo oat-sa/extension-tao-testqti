@@ -538,7 +538,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $reportCtx = new stdClass();
         $reportCtx->manifestResource = $qtiTestResource;
         $reportCtx->rdfsResource = $testResource;
-        $reportCtx->itemClass = $targetClass;
         $reportCtx->items = [];
         $reportCtx->newItems = [];
         $reportCtx->overwrittenItems = [];
@@ -548,8 +547,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
         // 'uriResource' key is needed by javascript in tao/views/templates/form/import.tpl
         $reportCtx->uriResource = $testResource->getUri();
-
-        $report->setData($reportCtx);
 
         // Expected test.xml file location.
         $expectedTestFile = $folder . str_replace('/', DIRECTORY_SEPARATOR, $qtiTestResource->getFile());
@@ -584,7 +581,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 }
 
                 $targetClass = $itemClass->createSubClass($testResource->getLabel());
-
+                $reportCtx->itemClass = $targetClass;
                 // -- Load all items related to test.
                 $itemError = false;
 
@@ -769,6 +766,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 );
             }
         }
+
+        $report->setData($reportCtx);
 
         if ($report->containsError() === false) {
             $report->setType(common_report_Report::TYPE_SUCCESS);
