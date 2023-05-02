@@ -8,7 +8,7 @@
     },
     "license": "GPL-2.0",
     "dependencies": {
-        "@oat-sa/tao-test-runner": "0.9.0",
-        "@oat-sa/tao-test-runner-qti": "2.34.0"
+        "@oat-sa/tao-test-runner": "https://github.com/oat-sa/tao-test-runner-fe.git#feature/ADF-1417/upgrade-to-node18",
+        "@oat-sa/tao-test-runner-qti": "https://github.com/oat-sa/tao-test-runner-qti-fe.git#feature/ADF-1417/upgrade-to-node18"
     }
 }
