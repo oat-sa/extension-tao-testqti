@@ -569,7 +569,7 @@ msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr "Se precisar de ajuda, entre em contato com o nosso Helpline no dia 0330 088 4171."
 
 msgid "Import"
-msgstr "Importação"
+msgstr "Importar"
 
 msgid "Import a QTI/APIP Content Package"
 msgstr "Importar um Pacote de Conteúdo QTI/APIP"
