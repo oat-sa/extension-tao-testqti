@@ -159,7 +159,8 @@ final class Version202009171520092260_taoQtiTest extends AbstractMigration
 
         $this->addReport(
             $this->propagate(new SetupDefaultTemplateConfiguration())(
-                $this->transformScriptActionParameters($parameters))
+                $this->transformScriptActionParameters($parameters)
+            )
         );
     }
 

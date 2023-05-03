@@ -44,7 +44,7 @@ class exportMultipleQtiTestsToDir extends ScriptAction
     /**
      * Location of the directory inside upload filesystem
      */
-    const TEST_FOLDER_EXPORT = 'testExport';
+    public const TEST_FOLDER_EXPORT = 'testExport';
 
     /**
      * @var FileSystem

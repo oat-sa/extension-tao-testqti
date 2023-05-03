@@ -34,7 +34,6 @@ use oat\taoQtiTest\models\export\metadata\QtiTestExporter;
  */
 class TestExporterTest extends GenerisPhpUnitTestRunner
 {
-
     private $testCreatedUri;
 
     public static function samplesDir()
@@ -42,7 +41,7 @@ class TestExporterTest extends GenerisPhpUnitTestRunner
         return dirname(dirname(__DIR__)) . '/samples/metadata/test/';
     }
 
-    
+
     /**
      *
      * @dataProvider metaProvider

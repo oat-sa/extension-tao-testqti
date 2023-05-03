@@ -32,7 +32,7 @@ trait QtiTimeStorageFormatAwareTrait
      * @var QtiTimeStorageFormat
      */
     protected $storageFormat;
-    
+
     /**
      * @param QtiTimeStorageFormat $storageFormat
      */

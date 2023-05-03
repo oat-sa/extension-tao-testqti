@@ -37,7 +37,6 @@ use common_report_Report;
  */
 class QtiTestParserTest extends GenerisPhpUnitTestRunner
 {
-
     public static function dataDir()
     {
         return dirname(__FILE__) . '/data/';

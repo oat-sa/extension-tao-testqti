@@ -17,7 +17,7 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
- 
+
 namespace oat\taoQtiTest\scripts\tools;
 
 use qtism\data\storage\php\PhpDocument;
@@ -37,7 +37,7 @@ class CompileDeliveriesWithPhpCode extends CompileDeliveriesPhpData
             $phpDocument = new PhpDocument();
             $phpDocument->setDocumentComponent($component);
             $file->put($phpDocument->saveToString());
-            
+
             return true;
         }
     }

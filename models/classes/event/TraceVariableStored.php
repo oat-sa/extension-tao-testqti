@@ -32,7 +32,6 @@ use oat\taoDelivery\model\execution\ServiceProxy;
 */
 class TraceVariableStored implements Event
 {
-
     private $deliveryExecutionId;
     private $traceData;
 

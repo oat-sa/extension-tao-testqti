@@ -193,10 +193,10 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         if (isset($tag)) {
             $tags = is_array($tag) ? $tag : [$tag];
         }
-        
+
         // create a another instance of the same class
         $subset = new static();
-        
+
         // fill the new instance with filtered TimePoint
         foreach ($this->points as $idx => $point) {
             if ($point->match($tags, $target, $type)) {
@@ -221,7 +221,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         if (isset($tag)) {
             $tags = is_array($tag) ? $tag : [$tag];
         }
-        
+
         // gather filterer TimePoint
         $points = [];
         foreach ($this->points as $point) {
@@ -246,17 +246,17 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         if (!$lastTimestamp) {
             $lastTimestamp = microtime(true);
         }
-        
+
         // either get all points or only a subset according to the provided criteria
         if (!$tag && $target == TimePoint::TARGET_ALL) {
             $points = $this->getPoints();
         } else {
             $points = $this->find($tag, $target, TimePoint::TYPE_ALL);
         }
-        
+
         // we need a ordered list of points
         TimePoint::sort($points);
-        
+
         // gather points by ranges, relying on the points references
         $ranges = [];
         foreach ($points as $point) {
@@ -275,14 +275,14 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             }
             // the last range could be still open, or some range could be malformed due to connection issues...
             $range = $this->fixRange($range, $nextTimestamp);
-            
+
             // compute the duration of the range, an exception may be thrown if the range is malformed
             // possible errors are (but should be avoided by the `fixRange()` method):
             // - unclosed range: should be autoclosed by fixRange
             // - unsorted points or nested/blended ranges: should be corrected by fixRange
             $duration += $this->computeRange($range);
         }
-        
+
         return $duration;
     }
 
@@ -330,7 +330,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
                 $end = null;
             }
         }
-        
+
         return $duration;
     }
 
@@ -372,7 +372,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
                 : $lastTimestamp;
             $fixedRange[] = $this->cloneTimePoint($last, TimePoint::TYPE_END, $lastTimestamp);
         }
-        
+
         return $fixedRange;
     }
 

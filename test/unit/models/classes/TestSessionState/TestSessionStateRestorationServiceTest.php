@@ -20,7 +20,6 @@
 
 declare(strict_types=1);
 
-
 use League\Flysystem\FileNotFoundException;
 use oat\oatbox\extension\AbstractAction;
 use oat\tao\model\state\StateMigration;

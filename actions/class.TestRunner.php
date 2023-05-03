@@ -53,7 +53,6 @@ use oat\taoQtiTest\models\CompilationDataService;
  */
 class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
 {
-
     /**
      * The current AssessmentTestSession object.
      *

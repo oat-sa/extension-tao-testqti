@@ -48,11 +48,11 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
 {
     use OntologyAwareTrait;
 
-    const SERVICE_ID = 'taoQtiTest/TestSessionService';
+    public const SERVICE_ID = 'taoQtiTest/TestSessionService';
 
-    const SESSION_PROPERTY_SESSION = 'session';
-    const SESSION_PROPERTY_STORAGE = 'storage';
-    const SESSION_PROPERTY_COMPILATION = 'compilation';
+    public const SESSION_PROPERTY_SESSION = 'session';
+    public const SESSION_PROPERTY_STORAGE = 'storage';
+    public const SESSION_PROPERTY_COMPILATION = 'compilation';
 
     /**
      * Cache to store session instances
@@ -169,7 +169,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
 
         return self::$cache[$sessionId][self::SESSION_PROPERTY_SESSION];
     }
-    
+
     /**
      * Register a test session
      *
@@ -186,7 +186,7 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
             self::SESSION_PROPERTY_COMPILATION => $compilationDirectories
         ];
     }
-    
+
     /**
      * Get a test session data by identifier.
      *

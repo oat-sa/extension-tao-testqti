@@ -33,7 +33,7 @@ use oat\taoQtiTest\models\runner\StorageManager;
  */
 class ExtendedStateService extends ConfigurableService implements DeliveryExecutionDelete
 {
-    const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
+    public const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
 
     protected $cache = [];
     protected $deliveryExecutions = [];

@@ -101,7 +101,6 @@ use oat\taoTests\models\runner\time\TimerStrategyInterface;
  */
 class Updater extends \common_ext_ExtensionUpdater
 {
-
     /**
      *
      * @param string $initialVersion
@@ -1804,19 +1803,19 @@ class Updater extends \common_ext_ExtensionUpdater
                     'tags'     => [ ]
                 ])
             );
-                $providerRegistry->register(
-                    TestProvider::fromArray([
-                    'id'       => 'poll',
-                    'name'     => 'poll communicator',
-                    'module'   => "core/communicator/poll",
-                    'category' => 'communicator',
-                    'active'   => true,
-                    'tags'     => [ ]
-                    ])
-                );
+            $providerRegistry->register(
+                TestProvider::fromArray([
+                'id'       => 'poll',
+                'name'     => 'poll communicator',
+                'module'   => "core/communicator/poll",
+                'category' => 'communicator',
+                'active'   => true,
+                'tags'     => [ ]
+                ])
+            );
 
-                //if the proxy was different
-                $clientLibRegistry = ClientLibConfigRegistry::getRegistry();
+            //if the proxy was different
+            $clientLibRegistry = ClientLibConfigRegistry::getRegistry();
             if ($clientLibRegistry->isRegistered('taoQtiTest/runner/proxy/loader')) {
                 $registeredProxy = $clientLibRegistry->get('taoQtiTest/runner/proxy/loader');
                 $providerRegistry->register(
@@ -1842,7 +1841,7 @@ class Updater extends \common_ext_ExtensionUpdater
                 );
             }
 
-                $this->setVersion('33.10.0');
+            $this->setVersion('33.10.0');
         }
 
         $this->skip('33.10.0', '33.10.1');
@@ -2103,13 +2102,11 @@ class Updater extends \common_ext_ExtensionUpdater
             AclProxy::applyRule(new AccessRule('grant', XmlEditorInterface::XML_EDITOR_ROLE, ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']));
 
             $this->setVersion('38.6.0');
-
         }
 
         $this->skip('38.6.0', '38.6.1');
 
         if ($this->isversion('38.6.1')) {
-
             $this->getServiceManager()->register(
                 XmlEditorInterface::SERVICE_ID,
                 new XmlEditor([
@@ -2127,7 +2124,7 @@ class Updater extends \common_ext_ExtensionUpdater
             $this->setVersion('38.13.0');
         }
 
-      $this->skip('38.13.0', '38.14.0');
+        $this->skip('38.13.0', '38.14.0');
 
 
         //Updater files are deprecated. Please use migrations.

@@ -34,10 +34,10 @@ use qtism\data\AssessmentTest;
  */
 class TestCategoryRulesService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/TestCategoryRules';
-    
+    public const SERVICE_ID = 'taoQtiTest/TestCategoryRules';
+
     private $generator;
-    
+
     /**
      * Create a new TestCategoryRulesService instance.
      *
@@ -53,14 +53,14 @@ class TestCategoryRulesService extends ConfigurableService
     public function __construct(array $options = [])
     {
         parent::__construct($options);
-        
+
         $generator = new TestCategoryRulesGenerator();
         $generator->setScoreVariableIdentifier(empty($options['score-variable-identifier']) ? 'SCORE' : (string) $options['score-variable-identifier']);
         $generator->setWeightIdentifier(array_key_exists('weight-identifier', $options) ? (string) $options['weight-identifier'] : '');
         $generator->setCategoryExclusions(empty($options['category-exclusions']) ? [] : $options['category-exclusions']);
         $this->setGenerator($generator);
     }
-    
+
     /**
      * Set the generator.
      *
@@ -72,8 +72,8 @@ class TestCategoryRulesService extends ConfigurableService
     {
         $this->generator = $generator;
     }
-    
-    
+
+
     /**
      * Get the generator.
      *
@@ -85,7 +85,7 @@ class TestCategoryRulesService extends ConfigurableService
     {
         return $this->generator;
     }
-    
+
     /**
      * Apply the category based rule generation process on a given Assessment Test.
      *

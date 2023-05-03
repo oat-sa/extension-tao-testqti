@@ -55,11 +55,11 @@ use oat\tao\model\metadata\compiler\ResourceJsonMetadataCompiler;
  */
 class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_TestCompiler implements ContainerProvider
 {
-    const ADAPTIVE_SECTION_MAP_FILENAME = 'adaptive-section-map.json';
+    public const ADAPTIVE_SECTION_MAP_FILENAME = 'adaptive-section-map.json';
 
-    const ADAPTIVE_PLACEHOLDER_CATEGORY = 'x-tao-qti-adaptive-placeholder';
+    public const ADAPTIVE_PLACEHOLDER_CATEGORY = 'x-tao-qti-adaptive-placeholder';
 
-    const COMPILATION_INFO_FILENAME = 'compilation-info.json';
+    public const COMPILATION_INFO_FILENAME = 'compilation-info.json';
     /**
      * The list of mime types of files that are accepted to be put
      * into the public compilation directory.
@@ -624,14 +624,14 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
     {
         $service = new tao_models_classes_service_ServiceCall(new core_kernel_classes_Resource(RunnerService::INSTANCE_TEST_RUNNER_SERVICE));
         $param = new tao_models_classes_service_ConstantParameter(
-                        // Test Definition URI passed to the QtiTestRunner service.
+            // Test Definition URI passed to the QtiTestRunner service.
             new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_DEFINITION),
             $this->getResource()
         );
         $service->addInParameter($param);
 
         $param = new tao_models_classes_service_ConstantParameter(
-                        // Test Compilation URI passed to the QtiTestRunner service.
+            // Test Compilation URI passed to the QtiTestRunner service.
             new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_COMPILATION),
             $this->getPrivateDirectory()->getId() . '|' . $this->getPublicDirectory()->getId()
         );

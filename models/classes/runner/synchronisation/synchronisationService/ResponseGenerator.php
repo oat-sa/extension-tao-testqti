@@ -142,8 +142,7 @@ class ResponseGenerator extends ConfigurableService
         float $now,
         float &$last,
         QtiRunnerServiceContext $serviceContext
-    ): array
-    {
+    ): array {
         try {
             $serviceContext->setSyncingMode($action->getRequestParameter('offline'));
             if ($action->hasRequestParameter('itemDuration') && $serviceContext->isSyncingMode()) {

@@ -17,11 +17,11 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
- 
+
 namespace oat\taoQtiTest\scripts\tools;
 
 use oat\oatbox\extension\AbstractAction;
-use \common_report_Report as Report;
+use common_report_Report as Report;
 use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use oat\taoDelivery\model\RuntimeService;
 
@@ -35,19 +35,19 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
     {
         $extManager = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID);
         $report = new Report(Report::TYPE_INFO, "Script gracefully ended.");
-        
+
         $count = 0;
         $failCount = 0;
-        
+
         if ($extManager->isInstalled('taoDeliveryRdf') === true && $extManager->isEnabled('taoDeliveryRdf') === true) {
             $extManager->getExtensionById('taoDeliveryRdf');
             $runtimeService = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
-            
+
             $iterator = new \core_kernel_classes_ResourceIterator([DeliveryAssemblyService::singleton()->getRootClass()]);
-            
+
             foreach ($iterator as $delivery) {
                 $deliveryUri = $delivery->getUri();
-                
+
                 $runtime = $runtimeService->getRuntime($deliveryUri);
                 $inputParameters = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, []);
                 list($privateId, $publicId) = explode('|', $inputParameters['QtiTestCompilation'], 2);
@@ -58,7 +58,7 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                         try {
                             if ($this->compileData($directory->getFile($filePrefix))) {
                                 $count++;
-                                
+
                                 $report->add(
                                     new Report(
                                         Report::TYPE_SUCCESS,
@@ -86,14 +86,14 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                     }
                 }
             }
-            
+
             $report->add(
                 new Report(
                     Report::TYPE_INFO,
                     "${count} file(s) successfully compiled."
                 )
             );
-            
+
             $report->add(
                 new Report(
                     Report::TYPE_INFO,
@@ -108,9 +108,9 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                 )
             );
         }
-        
+
         return $report;
     }
-    
+
     abstract protected function compileData($file);
 }

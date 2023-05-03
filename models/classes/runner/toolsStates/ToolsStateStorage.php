@@ -31,9 +31,9 @@ use oat\oatbox\service\ConfigurableService;
  */
 abstract class ToolsStateStorage extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/ToolsStateStorage';
+    public const SERVICE_ID = 'taoQtiTest/ToolsStateStorage';
 
-    const OPTION_PERSISTENCE = 'persistence';
+    public const OPTION_PERSISTENCE = 'persistence';
 
     /**
      * @return \common_persistence_Persistence

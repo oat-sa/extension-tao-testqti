@@ -22,10 +22,10 @@ return new \oat\taoQtiTest\models\TestCategoryRulesService(
     [
         // Variable identifier to be used for generated <testVariables> based rules.
         'score-variable-identifier' => 'SCORE',
-        
+
         // Weight identifier to be used for generated <testVariables> based rules.
         'weight-identifier' => 'WEIGHT',
-        
+
         // Categories (expressed as PCREs) to be excluded from the rule generation process.
         'category-exclusions' => [
             '/x-tao-/'

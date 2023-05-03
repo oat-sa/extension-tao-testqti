@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -72,14 +73,14 @@ class AssessmentTestXmlFactoryTest extends TestCase
         $appService = $this->createMock(ApplicationService::class);
         $appService->method('getPlatformVersion')->willReturn('test_version');
 
-        $extension = new class extends ConfigurableService implements TestExtensionInterface {
+        $extension = new class () extends ConfigurableService implements TestExtensionInterface {
             public function extend(AssessmentTest $test): void
             {
                 $test->setTitle('changedTitle');
             }
         };
 
-        $badExtension = new class extends ConfigurableService {
+        $badExtension = new class () extends ConfigurableService {
         };
 
         $this->serviceLocator = $this->createMock(ServiceManager::class);

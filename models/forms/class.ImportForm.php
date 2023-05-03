@@ -41,7 +41,7 @@ class taoQtiTest_models_forms_ImportForm extends tao_helpers_form_FormContainer
     {
         parent::__construct(['uri' => $test->getUri()]);
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see tao_helpers_form_FormContainer::initForm()
@@ -49,7 +49,7 @@ class taoQtiTest_models_forms_ImportForm extends tao_helpers_form_FormContainer
     public function initForm()
     {
         $this->form = new tao_helpers_form_xhtml_Form('export');
-        
+
         $this->form->setDecorators([
             'element'           => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div']),
             'group'             => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-group']),
@@ -57,14 +57,14 @@ class taoQtiTest_models_forms_ImportForm extends tao_helpers_form_FormContainer
             'actions-bottom'    => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar']),
             'actions-top'       => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
         ]);
-        
+
         $submitElt = tao_helpers_form_FormFactory::getElement('import', 'Free');
         $submitElt->setValue('<a href="#" class="form-submitter btn-success small"><span class="icon-import"></span> ' . __('Import') . '</a>');
 
         $this->form->setActions([$submitElt], 'bottom');
         $this->form->setActions([], 'top');
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see tao_helpers_form_FormContainer::initElements()
@@ -77,7 +77,7 @@ class taoQtiTest_models_forms_ImportForm extends tao_helpers_form_FormContainer
         $descElt->setValue(__('A qti testpackage'));
         $this->form->addElement($descElt);
         */
-        
+
         //create file upload form box
         $fileElt = tao_helpers_form_FormFactory::getElement('source', 'AsyncFile');
         $fileElt->setDescription(__("Add the source file"));
@@ -90,15 +90,15 @@ class taoQtiTest_models_forms_ImportForm extends tao_helpers_form_FormContainer
             tao_helpers_form_FormFactory::getValidator('FileMimeType', ['mimetype' => ['application/zip', 'application/x-zip', 'application/x-zip-compressed', 'application/octet-stream'], 'extension' => ['zip']]),
             tao_helpers_form_FormFactory::getValidator('FileSize', ['max' => SystemHelper::getFileUploadLimit()])
         ]);
-        
+
         $this->form->addElement($fileElt);
-        
+
         $this->form->createGroup('file', __('Upload a QTI 2.1 Test Package File'), ['source']);
-        
+
         $element = tao_helpers_form_FormFactory::getElement('uri', 'Hidden');
         //$element->setValue();
         $this->getForm()->addElement($element);
-        
+
         $xhtmlSentElt = tao_helpers_form_FormFactory::getElement('import_sent_qtitest', 'Hidden');
         $xhtmlSentElt->setValue(1);
         $this->form->addElement($xhtmlSentElt);

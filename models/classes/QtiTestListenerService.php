@@ -40,33 +40,33 @@ use qtism\runtime\tests\AssessmentTestSession;
  */
 class QtiTestListenerService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/QtiTestListenerService';
+    public const SERVICE_ID = 'taoQtiTest/QtiTestListenerService';
 
-    const OPTION_ARCHIVE_ENABLED = 'archive-enabled';
+    public const OPTION_ARCHIVE_ENABLED = 'archive-enabled';
 
-    const OPTION_ARCHIVE_EXCLUDE = 'archive-exclude';
-    
+    public const OPTION_ARCHIVE_EXCLUDE = 'archive-exclude';
+
     /**
      * @var string Constant to turn off test state archiving.
      */
-    const ARCHIVE_EXCLUDE_TEST = 'archive-exclude-test';
-    
+    public const ARCHIVE_EXCLUDE_TEST = 'archive-exclude-test';
+
     /**
      * @var string Constant to turn off item state archiving.
      */
-    const ARCHIVE_EXCLUDE_ITEMS = 'archive-exclude-items';
-    
+    public const ARCHIVE_EXCLUDE_ITEMS = 'archive-exclude-items';
+
     /**
      * @var string Constant to turn off extended test state archiving.
      */
-    const ARCHIVE_EXCLUDE_EXTRA = 'archive-exclude-extra';
+    public const ARCHIVE_EXCLUDE_EXTRA = 'archive-exclude-extra';
 
     public function __construct($options = [])
     {
         parent::__construct($options);
-        
+
         $archiveExcludeOption = $this->getOption(self::OPTION_ARCHIVE_EXCLUDE);
-        
+
         if (is_null($archiveExcludeOption) || !is_array($archiveExcludeOption)) {
             $this->setOption(self::OPTION_ARCHIVE_EXCLUDE, []);
         }
@@ -116,7 +116,7 @@ class QtiTestListenerService extends ConfigurableService
             $stateService->addEvent($session->getSessionId(), TestStateChannel::CHANNEL_NAME, $data);
         }
     }
-    
+
     /**
      * Archive Test States
      *

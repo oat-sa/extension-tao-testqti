@@ -47,7 +47,7 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
  */
 class QtiRunnerMap extends ConfigurableService implements RunnerMap
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerMap';
+    public const SERVICE_ID = 'taoQtiTest/QtiRunnerMap';
 
     /**
      * Fallback index in case of the delivery was compiled without the index of item href
@@ -519,10 +519,12 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
     {
         $prefix = QtiRunnerConfig::CATEGORY_OPTION_PREFIX;
         foreach (array_keys($categoriesMap) as $key) {
-            if (strcasecmp(
+            if (
+                strcasecmp(
                     preg_replace('/[-_\s]/', '', str_replace($prefix, '', $key)),
                     preg_replace('/[-_\s]/', '', str_replace($prefix, '', $categoryId))
-                ) === 0) {
+                ) === 0
+            ) {
                 unset($categoriesMap[$key]);
             }
         }

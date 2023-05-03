@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes\creator;
 
@@ -111,7 +113,7 @@ class ListItemLookupTest extends TestCase
         $self = $this;
         $this->resourceServiceMock
             ->method('getResourcesPermissions')
-            ->willReturnCallback(static function($user, $resources) use ($self) {
+            ->willReturnCallback(static function ($user, $resources) use ($self) {
                 $data = [];
                 foreach ($self->permissions as $uri) {
                     $data[$uri] = ['GRANT'];

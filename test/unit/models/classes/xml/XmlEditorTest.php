@@ -10,7 +10,7 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use SplObjectStorage;
 use taoQtiTest_models_classes_QtiTestConverterException;
-use \taoQtiTest_models_classes_QtiTestService;
+use taoQtiTest_models_classes_QtiTestService;
 use taoQtiTest_models_classes_QtiTestServiceException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

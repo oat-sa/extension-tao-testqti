@@ -30,10 +30,10 @@ class RdsToolsStateStorage extends ToolsStateStorage
      * Constants for the database creation and data access
      *
      */
-    const TABLE_NAME = 'runner_tool_states';
-    const COLUMN_DELIVERY_EXECUTION_ID = 'delivery_execution_id';
-    const COLUMN_TOOL_NAME = 'tool_name';
-    const COLUMN_TOOL_STATE = 'tool_state';
+    public const TABLE_NAME = 'runner_tool_states';
+    public const COLUMN_DELIVERY_EXECUTION_ID = 'delivery_execution_id';
+    public const COLUMN_TOOL_NAME = 'tool_name';
+    public const COLUMN_TOOL_STATE = 'tool_state';
 
     /**
      * @return \common_persistence_SqlPersistence

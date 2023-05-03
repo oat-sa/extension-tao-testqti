@@ -34,7 +34,6 @@ use oat\taoTests\models\runner\time\TimePoint;
  */
 class QtiTimeLineTest extends GenerisPhpUnitTestRunner
 {
-
     public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');

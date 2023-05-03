@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,11 +54,11 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
 
         $submitElt = tao_helpers_form_FormFactory::getElement('import', 'Free');
         $submitElt->setValue('<a href="#" class="form-submitter btn-success small"><span class="icon-import"></span> ' . __('Import') . '</a>');
-        
+
 
         $this->form->setActions([$submitElt], 'bottom');
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see tao_helpers_form_FormContainer::initElements()
@@ -76,9 +77,9 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             tao_helpers_form_FormFactory::getValidator('FileMimeType', ['mimetype' => ['application/zip', 'application/x-zip', 'application/x-zip-compressed', 'application/octet-stream'], 'extension' => ['zip']]),
             tao_helpers_form_FormFactory::getValidator('FileSize', ['max' => \oat\generis\Helper\SystemHelper::getFileUploadLimit()])
         ]);
-        
+
         $this->form->addElement($fileElt);
-        
+
         /*
         $disableValidationElt = tao_helpers_form_FormFactory::getElement("disable_validation", 'Checkbox');
         $disableValidationElt->setDescription(__("Disable validation"));
@@ -86,7 +87,7 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
         $this->form->addElement($disableValidationElt);
         */
         $this->form->createGroup('file', __('Import a QTI/APIP Content Package'), ['source']);
-        
+
         $qtiSentElt = tao_helpers_form_FormFactory::getElement('import_sent_qti', 'Hidden');
         $qtiSentElt->setValue(1);
         $this->form->addElement($qtiSentElt);

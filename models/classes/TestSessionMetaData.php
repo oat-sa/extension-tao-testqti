@@ -78,7 +78,7 @@ class TestSessionMetaData
     {
         $this->session = $session;
     }
-        
+
     /**
      * Save session metadata.
      *

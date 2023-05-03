@@ -39,13 +39,13 @@ class CompilationService extends ConfigurableService
      * Boolean option to enable/disable css scoping (enabled by default)
      * @var string
      */
-    const OPTION_RUBRIC_BLOCK_CSS_SCOPE = 'rubric-block-stylesheet-scoping';
+    public const OPTION_RUBRIC_BLOCK_CSS_SCOPE = 'rubric-block-stylesheet-scoping';
 
     /**
      * Boolean option to enable/disable client container for testrunner (enabled by default)
      * @var string
      */
-    const OPTION_CLIENT_TESTRUNNER = 'client-testrunner';
+    public const OPTION_CLIENT_TESTRUNNER = 'client-testrunner';
 
     /**
      * Whenever or not style sheets in rubric blocks should be scoped

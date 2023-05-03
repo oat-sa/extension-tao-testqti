@@ -36,10 +36,9 @@ use oat\tao\model\service\ServiceFileStorage;
  */
 class TestModelService extends ConfigurableService implements TestModel, \tao_models_classes_import_ImportProvider, \tao_models_classes_export_ExportProvider
 {
+    public const SERVICE_ID = 'taoQtiTest/TestModel';
 
-    const SERVICE_ID = 'taoQtiTest/TestModel';
-
-    const SUBSERVICE_COMPILATION = 'CompilationService';
+    public const SUBSERVICE_COMPILATION = 'CompilationService';
 
     /**
      * {@inheritDoc}

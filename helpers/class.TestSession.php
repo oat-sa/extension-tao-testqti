@@ -66,7 +66,6 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
  */
 class taoQtiTest_helpers_TestSession extends AssessmentTestSession
 {
-
     /**
      * The ResultServer to be used to transmit Item and Test results.
      *

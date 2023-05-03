@@ -36,7 +36,6 @@ use TypeError;
 
 class TestRunnerActionResolverTest extends TestCase
 {
-
     /**
      * @return array
      */
@@ -181,7 +180,7 @@ class TestRunnerActionResolverTest extends TestCase
         ], [
             'phpUnitAction' => get_class($mock),
         ]);
-        
+
         $this->assertTrue(true, 'resolved and returned TestRunnerAction');
     }
 

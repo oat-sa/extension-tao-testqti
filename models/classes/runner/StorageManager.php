@@ -37,27 +37,27 @@ use oat\tao\model\state\StateStorage;
  */
 class StorageManager extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/StorageManager';
+    public const SERVICE_ID = 'taoQtiTest/StorageManager';
 
     /**
      * The data does not exist in the storage
      */
-    const STATE_NOT_FOUND = -1;
+    public const STATE_NOT_FOUND = -1;
 
     /**
      * The data is aligned with the storage
      */
-    const STATE_ALIGNED = 0;
+    public const STATE_ALIGNED = 0;
 
     /**
      * The data is pending write to the storage
      */
-    const STATE_PENDING_WRITE = 1;
+    public const STATE_PENDING_WRITE = 1;
 
     /**
      * The data is pending delete from the storage
      */
-    const STATE_PENDING_DELETE = 2;
+    public const STATE_PENDING_DELETE = 2;
 
     /**
      * Link to the actual storage adapter

@@ -18,7 +18,6 @@ use common_ext_ExtensionException as ExtensionException;
  */
 final class Version202105311622466947_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Register AfterAssessmentTestSessionClosedEvent listener + set new config OPTION_ARCHIVE_ENABLED';

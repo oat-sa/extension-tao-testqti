@@ -41,7 +41,7 @@ class UpdateItemContentReferencesService
 
     public function __invoke(array $itemContent): array
     {
-        if ($this->isQtiItemContent($itemContent)){
+        if ($this->isQtiItemContent($itemContent)) {
             $itemContent = $this->resolveCustomInteractionPostProcessing($itemContent);
         }
 
@@ -61,7 +61,7 @@ class UpdateItemContentReferencesService
         return $itemContent;
     }
 
-    private function isQtiItemContent($itemContent):bool
+    private function isQtiItemContent($itemContent): bool
     {
         return isset($itemContent['type']) && $itemContent['type'] === 'qti';
     }

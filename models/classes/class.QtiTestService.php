@@ -61,40 +61,39 @@ use taoTests_models_classes_TestsService as TestService;
  */
 class taoQtiTest_models_classes_QtiTestService extends TestService
 {
+    public const CONFIG_QTITEST_FILESYSTEM = 'qtiTestFolder';
 
-    const CONFIG_QTITEST_FILESYSTEM = 'qtiTestFolder';
+    public const CONFIG_QTITEST_ACCEPTABLE_LATENCY = 'qtiAcceptableLatency';
 
-    const CONFIG_QTITEST_ACCEPTABLE_LATENCY = 'qtiAcceptableLatency';
+    public const QTI_TEST_DEFINITION_INDEX = '.index/qti-test.txt';
 
-    const QTI_TEST_DEFINITION_INDEX = '.index/qti-test.txt';
+    public const PROPERTY_QTI_TEST_IDENTIFIER = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestIdentifier';
 
-    const PROPERTY_QTI_TEST_IDENTIFIER = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestIdentifier';
+    public const INSTANCE_TEST_MODEL_QTI = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel';
 
-    const INSTANCE_TEST_MODEL_QTI = 'http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel';
+    public const TAOQTITEST_FILENAME = 'tao-qtitest-testdefinition.xml';
 
-    const TAOQTITEST_FILENAME = 'tao-qtitest-testdefinition.xml';
+    public const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
 
-    const METADATA_GUARDIAN_CONTEXT_NAME = 'tao-qtitest';
+    public const INSTANCE_FORMAL_PARAM_TEST_DEFINITION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition';
+    public const INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
 
-    const INSTANCE_FORMAL_PARAM_TEST_DEFINITION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition';
-    const INSTANCE_FORMAL_PARAM_TEST_COMPILATION = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation';
+    public const TEST_COMPILED_FILENAME = 'compact-test';
+    public const TEST_COMPILED_META_FILENAME = 'test-meta';
+    public const TEST_COMPILED_METADATA_FILENAME = 'test-metadata.json';
+    public const TEST_COMPILED_INDEX = 'test-index.json';
+    public const TEST_COMPILED_HREF_INDEX_FILE_PREFIX = 'assessment-item-ref-href-index-';
+    public const TEST_COMPILED_HREF_INDEX_FILE_EXTENSION = '.idx';
 
-    const TEST_COMPILED_FILENAME = 'compact-test';
-    const TEST_COMPILED_META_FILENAME = 'test-meta';
-    const TEST_COMPILED_METADATA_FILENAME = 'test-metadata.json';
-    const TEST_COMPILED_INDEX = 'test-index.json';
-    const TEST_COMPILED_HREF_INDEX_FILE_PREFIX = 'assessment-item-ref-href-index-';
-    const TEST_COMPILED_HREF_INDEX_FILE_EXTENSION = '.idx';
+    public const TEST_REMOTE_FOLDER = 'tao-qtitest-remote';
+    public const TEST_RENDERING_STATE_NAME = 'taoQtiTestState';
+    public const TEST_BASE_PATH_NAME = 'taoQtiBasePath';
+    public const TEST_PLACEHOLDER_BASE_URI = 'tao://qti-directory';
+    public const TEST_VIEWS_NAME = 'taoQtiViews';
 
-    const TEST_REMOTE_FOLDER = 'tao-qtitest-remote';
-    const TEST_RENDERING_STATE_NAME = 'taoQtiTestState';
-    const TEST_BASE_PATH_NAME = 'taoQtiBasePath';
-    const TEST_PLACEHOLDER_BASE_URI = 'tao://qti-directory';
-    const TEST_VIEWS_NAME = 'taoQtiViews';
-
-    const XML_TEST_PART = 'testPart';
-    const XML_ASSESSMENT_SECTION = 'assessmentSection';
-    const XML_ASSESSMENT_ITEM_REF = 'assessmentItemRef';
+    public const XML_TEST_PART = 'testPart';
+    public const XML_ASSESSMENT_SECTION = 'assessmentSection';
+    public const XML_ASSESSMENT_ITEM_REF = 'assessmentItemRef';
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
      */
@@ -787,8 +786,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         string $itemsClassLabel,
         core_kernel_classes_Resource $testClass,
         core_kernel_classes_Class $itemClass
-    ): void
-    {
+    ): void {
         $testService = $this->getTestService();
         $itemTreeService = $this->getItemTreeService();
 
@@ -999,8 +997,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
             //enable more than one reference
             if (array_key_exists($itemRefIdentifier, $itemRefIdentifiers)) {
-                    $itemRefIdentifiers[$itemRefIdentifier] += 1;
-                    $itemRefIdentifier .= '-' . $itemRefIdentifiers[$itemRefIdentifier];
+                $itemRefIdentifiers[$itemRefIdentifier] += 1;
+                $itemRefIdentifier .= '-' . $itemRefIdentifiers[$itemRefIdentifier];
             } else {
                 $itemRefIdentifiers[$itemRefIdentifier] = 0;
             }
@@ -1168,7 +1166,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             if (!$file->update($doc->saveXML())) {
                 $msg = 'Unable to update QTI Test file.';
                 throw new taoQtiTest_models_classes_QtiTestServiceException(
-                    $msg, taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
+                    $msg,
+                    taoQtiTest_models_classes_QtiTestServiceException::TEST_WRITE_ERROR
                 );
             }
         }

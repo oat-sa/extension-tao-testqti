@@ -34,7 +34,6 @@ use oat\oatbox\service\ConfigurableService;
  */
 class NoneQtiPackageImportPreprocessing extends ConfigurableService implements QtiPackageImportPreprocessing
 {
-
     /**
      * @inheritdoc
      */

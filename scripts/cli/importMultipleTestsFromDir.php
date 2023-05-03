@@ -20,7 +20,7 @@ class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
     /**
      * Location of directory inside upload filesystem
      */
-    const TEST_FOLDER_IMPORT = 'testImport';
+    public const TEST_FOLDER_IMPORT = 'testImport';
 
     /** @var  Directory */
     protected $directory;

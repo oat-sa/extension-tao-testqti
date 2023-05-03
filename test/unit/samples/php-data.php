@@ -1,4 +1,5 @@
 <?php
+
 $string_0 = "tao";
 $string_1 = "3.0.0";
 $array_0 = array();

@@ -25,9 +25,9 @@ use oat\oatbox\service\ConfigurableService;
 
 class TimerLabelFormatterService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/TimerLabelFormatter';
+    public const SERVICE_ID = 'taoQtiTest/TimerLabelFormatter';
 
-    const OPTION_DEFAULT_TIMER_LABEL = 'defaultTimerLabel';
+    public const OPTION_DEFAULT_TIMER_LABEL = 'defaultTimerLabel';
 
     /**
      * @param string $potentialLabel

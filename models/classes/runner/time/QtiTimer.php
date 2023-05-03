@@ -44,7 +44,6 @@ use oat\taoTests\models\runner\time\Timer;
  */
 class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 {
-
     /**
      * The TimeLine used to compute the duration
      * @var TimeLine

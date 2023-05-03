@@ -20,7 +20,7 @@
 
 namespace oat\taoQtiTest\test\integration\pack;
 
-use \core_kernel_classes_Resource;
+use core_kernel_classes_Resource;
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\pack\QtiTestPacker;
 
@@ -32,7 +32,6 @@ use oat\taoQtiTest\models\pack\QtiTestPacker;
  */
 class QtiTestPackerTest extends GenerisPhpUnitTestRunner
 {
-
     public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');

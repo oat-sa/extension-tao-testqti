@@ -23,7 +23,7 @@ namespace oat\taoQtiTest\scripts\install;
 use oat\generis\model\WidgetRdf;
 use oat\oatbox\extension\InstallAction;
 use oat\taoQtiTest\models\cat\CatService;
-use \common_report_Report as Report;
+use common_report_Report as Report;
 
 /**
  * Class ShowQtiAdaptiveSectionIds

@@ -34,7 +34,6 @@ use qtism\data\storage\xml\XmlDocument;
  */
 class IdentifierReplacementPreProcessor extends ConfigurableService implements AssessmentItemRefPreProcessor
 {
-
     public function process(XmlDocument $testDocument)
     {
         /** @var \qtism\data\AssessmentItemRefCollection $assessmentItemRefs */

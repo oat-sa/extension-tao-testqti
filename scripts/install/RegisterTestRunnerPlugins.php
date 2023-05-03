@@ -32,7 +32,6 @@ use oat\taoTests\models\runner\plugins\TestPlugin;
  */
 class RegisterTestRunnerPlugins extends InstallAction
 {
-
     public static $plugins = [
         'content' => [
             [

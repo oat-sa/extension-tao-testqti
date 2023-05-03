@@ -17,6 +17,7 @@
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\xmlEditor;
@@ -33,17 +34,17 @@ interface XmlEditorInterface
      * @param core_kernel_classes_Resource $test
      * @return string
      */
-    public function getTestXml(core_kernel_classes_Resource $test) : string;
+    public function getTestXml(core_kernel_classes_Resource $test): string;
 
     /**
      * @param core_kernel_classes_Resource $test
      * @param string $testString
      * @return bool
      */
-    public function saveStringTest(core_kernel_classes_Resource $test, string $testString) : bool;
+    public function saveStringTest(core_kernel_classes_Resource $test, string $testString): bool;
 
     /**
      * @return bool
      */
-    public function isLocked() : bool;
+    public function isLocked(): bool;
 }

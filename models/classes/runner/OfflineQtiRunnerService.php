@@ -32,7 +32,7 @@ use oat\taoQtiTest\models\runner\map\RunnerMap;
  */
 class OfflineQtiRunnerService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/OfflineQtiRunnerService';
+    public const SERVICE_ID = 'taoQtiTest/OfflineQtiRunnerService';
 
     /**
      * Returns an array of items, containing also confident data, like branching and response processing rules

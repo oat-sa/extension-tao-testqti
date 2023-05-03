@@ -34,16 +34,16 @@ class CreatorItems extends ConfigurableService
 {
     use OntologyAwareTrait;
 
-    const SERVICE_ID = 'taoQtiTest/CreatorItems';
+    public const SERVICE_ID = 'taoQtiTest/CreatorItems';
 
-    const ITEM_ROOT_CLASS_URI       = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
-    const PROPERTY_ITEM_CONTENT_URI = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemContent';
-    const PROPERTY_ITEM_MODEL_URI   = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemModel';
-    const ITEM_MODEL_QTI_URI        = 'http://www.tao.lu/Ontologies/TAOItem.rdf#QTI';
-    const LABEL_URI                 = 'http://www.w3.org/2000/01/rdf-schema#label';
+    public const ITEM_ROOT_CLASS_URI       = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
+    public const PROPERTY_ITEM_CONTENT_URI = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemContent';
+    public const PROPERTY_ITEM_MODEL_URI   = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemModel';
+    public const ITEM_MODEL_QTI_URI        = 'http://www.tao.lu/Ontologies/TAOItem.rdf#QTI';
+    public const LABEL_URI                 = 'http://www.w3.org/2000/01/rdf-schema#label';
 
-    const ITEM_MODEL_SEARCH_OPTION  = 'itemModel';
-    const ITEM_CONTENT_SEARCH_OPTION = 'itemContent';
+    public const ITEM_MODEL_SEARCH_OPTION  = 'itemModel';
+    public const ITEM_CONTENT_SEARCH_OPTION = 'itemContent';
 
     /**
      * The different lookup formats

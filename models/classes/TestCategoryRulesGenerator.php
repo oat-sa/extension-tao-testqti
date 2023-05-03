@@ -41,14 +41,14 @@ use oat\taoQtiTest\models\TestCategoryRulesUtils;
  */
 class TestCategoryRulesGenerator
 {
-    const COUNT = 1;
-    const CORRECT = 2;
-    const SCORE = 4;
- 
+    public const COUNT = 1;
+    public const CORRECT = 2;
+    public const SCORE = 4;
+
     private $scoreVariableIdentifier = 'SCORE';
     private $weightIdentifier = '';
     private $categoryExclusions = [];
-    
+
     /**
      * Set the identifier of the item variables involved in total scoring.
      *
@@ -61,7 +61,7 @@ class TestCategoryRulesGenerator
     {
         $this->scoreVariableIdentifier = $identifier;
     }
-    
+
     /**
      * Get the identifier of the item variables involved in total scoring.
      *
@@ -74,7 +74,7 @@ class TestCategoryRulesGenerator
     {
         return $this->scoreVariableIdentifier;
     }
-    
+
     /**
      * Set the identifier of the item weights involved in total scoring.
      *
@@ -91,7 +91,7 @@ class TestCategoryRulesGenerator
     {
         $this->weightIdentifier = $identifier;
     }
-    
+
     /**
      * Get the identifier of the item weights involved in total scoring.
      *
@@ -108,7 +108,7 @@ class TestCategoryRulesGenerator
     {
         return $this->weightIdentifier;
     }
-    
+
     /**
      * Set the category patterns to be excluded.
      *
@@ -122,7 +122,7 @@ class TestCategoryRulesGenerator
     {
         $this->categoryExclusions = $exclusions;
     }
-    
+
     /**
      * Set the category patterns to be excluded.
      *
@@ -135,7 +135,7 @@ class TestCategoryRulesGenerator
     {
         return $this->categoryExclusions;
     }
-    
+
     /**
      * Apply Outcome Declaraton and Outcome Processing Rules.
      *
@@ -179,18 +179,18 @@ class TestCategoryRulesGenerator
         if ($flags == 0) {
             $flags = (self::COUNT | self::CORRECT | self::SCORE);
         }
-        
+
         $categories = TestCategoryRulesUtils::extractCategories($test, $this->getCategoryExclusions());
         foreach ($categories as $category) {
             if ($flags & self::COUNT) {
                 TestCategoryRulesUtils::appendNumberOfItemsVariable($test, $category);
             }
-            
+
             if ($flags & self::CORRECT) {
                 $numberCorrectVarName = TestCategoryRulesUtils::appendNumberCorrectVariable($test, $category);
                 TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($test, $category, $numberCorrectVarName);
             }
-            
+
             if ($flags & self::SCORE) {
                 $totalScoreVarName = TestCategoryRulesUtils::appendTotalScoreVariable($test, $category);
                 TestCategoryRulesUtils::appendTotalScoreOutcomeProcessing(

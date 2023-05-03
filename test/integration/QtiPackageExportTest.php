@@ -220,7 +220,7 @@ class QtiPackageExportTest extends RestTestRunner
 
         // images
         foreach ($itemsInExtractedPath as $item) {
-            $expected = $itemsPath.'/'.$item.'/assets/img';
+            $expected = $itemsPath . '/' . $item . '/assets/img';
             $this->assertFileExists($expected);
             $itemsInDirAssets = scandir($expected, null);
             $itemsInExtractedAssetsPath = array_slice($itemsInDirAssets, 2);

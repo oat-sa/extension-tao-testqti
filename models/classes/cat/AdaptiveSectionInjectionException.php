@@ -30,7 +30,6 @@ namespace oat\taoQtiTest\models\cat;
  */
 class AdaptiveSectionInjectionException extends CatException
 {
-
     private $invalidItemIdentifiers;
 
     /**
@@ -46,12 +45,12 @@ class AdaptiveSectionInjectionException extends CatException
         parent::__construct($message, $code, $previous);
         $this->setInvalidItemIdentifiers($invalidItemIdentifiers);
     }
-    
+
     public function getInvalidItemIdentifiers()
     {
         return $this->invalidItemIdentifiers;
     }
-    
+
     private function setInvalidItemIdentifiers(array $invalidItemIdentifiers)
     {
         $this->invalidItemIdentifiers = $invalidItemIdentifiers;

@@ -43,7 +43,6 @@ use common_report_Report;
  */
 class QtiTestExporterTest extends GenerisPhpUnitTestRunner
 {
-
     private $dataDir = '';
     private $outputDir;
 

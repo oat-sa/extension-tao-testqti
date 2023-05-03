@@ -30,7 +30,7 @@ use taoQtiTest_models_classes_QtiTestService;
 
 class TestDefinitionSerializerService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/TestDefinitionSerializerService';
+    public const SERVICE_ID = 'taoQtiTest/TestDefinitionSerializerService';
 
     /**
      * @param QtiRunnerServiceContext $serviceContext

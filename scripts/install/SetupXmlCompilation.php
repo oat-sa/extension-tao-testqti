@@ -40,7 +40,7 @@ class SetupXmlCompilation extends InstallAction
             XmlCompilationDataService::SERVICE_ID,
             new XmlCompilationDataService()
         );
-        
+
         return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, "XML compilation for QTI-SDK components enabled.");
     }
 }

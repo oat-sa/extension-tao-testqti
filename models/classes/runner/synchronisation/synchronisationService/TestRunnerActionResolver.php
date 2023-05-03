@@ -55,10 +55,12 @@ class TestRunnerActionResolver extends ConfigurableService
      */
     private function checkData($data): void
     {
-        if (!isset(
-            $data['action'],
-            $data['timestamp'],
-            $data['parameters'])
+        if (
+            !isset(
+                $data['action'],
+                $data['timestamp'],
+                $data['parameters']
+            )
         ) {
             throw new common_exception_InconsistentData(
                 'Action parameters have to contain "action", "timestamp" and "parameters" fields.'

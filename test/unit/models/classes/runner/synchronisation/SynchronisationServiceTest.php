@@ -38,7 +38,7 @@ class SynchronisationServiceTest extends TestCase
     {
         $this->expectException(common_exception_InconsistentData::class);
         $this->expectExceptionMessage('No action to check. Processing action requires data.');
-        
+
         $service = new SynchronisationService();
         $serviceContext = $this->createMock(QtiRunnerServiceContext::class);
         $service->process([], $serviceContext);

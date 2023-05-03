@@ -40,7 +40,7 @@ class SetupPhpCodeCompilation extends InstallAction
             PhpCodeCompilationDataService::SERVICE_ID,
             new PhpCodeCompilationDataService()
         );
-        
+
         return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, "PHP code compilation for QTI-SDK components enabled.");
     }
 }

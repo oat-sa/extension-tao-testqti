@@ -17,11 +17,11 @@
  *
  * Copyright (c) 2018 (original work) Open Assessment Technologies SA;
  */
- 
+
 namespace oat\taoQtiTest\scripts\tools;
 
 use oat\generis\model\OntologyAwareTrait;
-use \common_report_Report as Report;
+use common_report_Report as Report;
 use oat\taoDelivery\model\AssignmentAggregator\UnionAssignmentService;
 use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;

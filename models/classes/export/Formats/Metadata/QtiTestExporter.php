@@ -39,13 +39,13 @@ class QtiTestExporter implements QtiTestExporterInterface
     use OntologyAwareTrait;
     use LoggerAwareTrait;
 
-    const TEST_PART = 'testPart';
-    const TEST_SECTION = 'section';
-    const TEST_ITEM = 'assessmentItemRef';
+    public const TEST_PART = 'testPart';
+    public const TEST_SECTION = 'section';
+    public const TEST_ITEM = 'assessmentItemRef';
 
-    const ITEM_SHUFFLE = 'shuffle';
-    const ITEM_ORDER = 'section-order';
-    const ITEM_URI = 'uri';
+    public const ITEM_SHUFFLE = 'shuffle';
+    public const ITEM_ORDER = 'section-order';
+    public const ITEM_URI = 'uri';
 
     /** Resource object of the test, defined for export */
     protected Resource $instance;

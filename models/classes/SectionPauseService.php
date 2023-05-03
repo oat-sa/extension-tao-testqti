@@ -27,7 +27,7 @@ use oat\taoQtiTest\models\runner\session\TestSession;
 
 class SectionPauseService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/SectionPauseService';
+    public const SERVICE_ID = 'taoQtiTest/SectionPauseService';
 
     /**
      * Checked the given session could be paused at some point

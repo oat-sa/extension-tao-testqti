@@ -44,14 +44,14 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     /**
      * @deprecated since version 29.5.0, to be removed in 30.0.0. Use QtiRunnerService::TOOL_ITEM_THEME_SWITCHER instead
      */
-    const TOOL_ITEM_THEME_SWITCHER = 'itemThemeSwitcher';
+    public const TOOL_ITEM_THEME_SWITCHER = 'itemThemeSwitcher';
 
     /**
      * @deprecated since version 29.5.0, to be removed in 30.0.0. Use QtiRunnerService::TOOL_ITEM_THEME_SWITCHER_KEY instead
      */
-    const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
+    public const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
 
-    const TARGET_CLIENT = 'client';
+    public const TARGET_CLIENT = 'client';
 
     /**
      * The test runner config

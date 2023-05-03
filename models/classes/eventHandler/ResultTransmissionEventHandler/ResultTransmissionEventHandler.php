@@ -41,7 +41,6 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements Ap
             $event->getItemUri(),
             $event->getTestUri()
         );
-
     }
 
     /**

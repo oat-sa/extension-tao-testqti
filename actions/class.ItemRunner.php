@@ -4,7 +4,6 @@ use oat\taoQtiItem\controller\AbstractQtiItemRunner;
 
 class taoQtiTest_actions_ItemRunner extends AbstractQtiItemRunner
 {
-    
     /**
      * The endpoint specific to QTI Items in a QTI Test runner context
      * @return string
@@ -13,7 +12,7 @@ class taoQtiTest_actions_ItemRunner extends AbstractQtiItemRunner
     {
         return _url('', 'TestRunner', 'taoQtiTest');
     }
-    
+
     /**
      * Define additional parameters for the result server
      * @return array
@@ -26,7 +25,7 @@ class taoQtiTest_actions_ItemRunner extends AbstractQtiItemRunner
             'itemDataPath'      => $this->getRequestParameter('itemDataPath')
         ];
     }
-    
+
     protected function selectView()
     {
         $this->setInitialVariableElements();

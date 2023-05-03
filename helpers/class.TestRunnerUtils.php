@@ -47,7 +47,6 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 */
 class taoQtiTest_helpers_TestRunnerUtils
 {
-
     /**
      * Temporary helper until proper ServiceManager integration
      * @return ServiceManager

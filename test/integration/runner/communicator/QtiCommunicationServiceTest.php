@@ -37,7 +37,6 @@ use oat\generis\test\MockObject;
  */
 class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
 {
-
     /**
      * Test CommunicationChannel::processInput
      */

@@ -32,7 +32,6 @@ use oat\oatbox\AbstractRegistry;
 
 class TestCategoryPresetRegistry extends AbstractRegistry
 {
-
     /**
      * Specify in which extensions the config will be stored
      *

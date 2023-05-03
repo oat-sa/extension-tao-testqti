@@ -42,7 +42,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     use RunnerParamParserTrait;
     use RunnerToolStates;
 
-    const OFFLINE_VARIABLE = 'OFFLINE_ITEM';
+    public const OFFLINE_VARIABLE = 'OFFLINE_ITEM';
 
     /** @var double The timestamp of current action */
     protected $time;

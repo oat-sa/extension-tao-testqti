@@ -28,62 +28,62 @@ use oat\oatbox\filesystem\FileSystemService;
 
 class QtiFlysystemFileManager extends ConfigurableService implements FileManager
 {
-    const SERVICE_ID = 'taoQtiTest/qtiFilesystem';
+    public const SERVICE_ID = 'taoQtiTest/qtiFilesystem';
     private $filePrefix = '';
-    
+
     public function setFilePrefix($filePrefix)
     {
         $this->filePrefix = $filePrefix;
     }
-    
+
     public function createFromFile($path, $mimeType, $filename = '')
     {
         $id = $this->generateId();
         $this->getFileSystem()->write($id, file_get_contents($path));
-        
+
         if (empty($filename) === false) {
             $this->getFileSystem()->write($id . QtiFlysystemFile::FILENAME_MD_PREFIX, $filename);
         }
-        
+
         $file = new QtiFlysystemFile('taoQtiTestSessionFilesystem', $id);
         $file->setServiceLocator($this->getServiceLocator());
-        
+
         return $file;
     }
-    
+
     public function createFromData($data, $mimeType, $filename = '')
     {
         $id = $this->generateId();
         $this->getFileSystem()->write($id, $data);
-        
+
         if (empty($filename) === false) {
             $this->getFileSystem()->write($id . QtiFlysystemFile::FILENAME_MD_PREFIX, $filename);
         }
-        
+
         $file = new QtiFlysystemFile('taoQtiTestSessionFilesystem', $id);
         $file->setServiceLocator($this->getServiceLocator());
-        
+
         return $file;
     }
-    
+
     public function retrieve($identifier)
     {
         $file = new QtiFlysystemFile('taoQtiTestSessionFilesystem', $identifier);
         $file->setServiceLocator($this->getServiceLocator());
-        
+
         return $file;
     }
-    
+
     public function delete(QtiFile $file)
     {
         $file->delete();
     }
-    
+
     private function getFileSystem()
     {
         return $this->getServiceLocator()->get(FileSystemService::SERVICE_ID)->getFileSystem('taoQtiTestSessionFilesystem');
     }
-    
+
     private function generateId()
     {
         return $this->filePrefix . uniqid() . mt_rand(0, 1000000);

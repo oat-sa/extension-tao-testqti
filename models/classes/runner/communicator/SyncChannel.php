@@ -29,7 +29,7 @@ class SyncChannel implements CommunicationChannel, ServiceManagerAwareInterface
 {
     use ServiceManagerAwareTrait;
 
-    const CHANNEL_NAME = 'sync';
+    public const CHANNEL_NAME = 'sync';
 
     /**
      * Get name of channel

@@ -39,7 +39,7 @@ use taoQtiTest_models_classes_QtiTestService;
  */
 class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerRubric';
+    public const SERVICE_ID = 'taoQtiTest/QtiRunnerRubric';
 
     /**
      * Gets the rubrics according to the current session state

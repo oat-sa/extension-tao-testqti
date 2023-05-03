@@ -41,9 +41,9 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 class TestStateChannel implements ServiceLocatorAwareInterface, CommunicationChannel
 {
     use ServiceLocatorAwareTrait;
-    
-    const CHANNEL_NAME = 'teststate';
-    
+
+    public const CHANNEL_NAME = 'teststate';
+
     /**
      * Get name of channel
      * @return string

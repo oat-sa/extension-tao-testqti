@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,7 +48,6 @@ use oat\oatbox\service\ServiceManager;
  */
 class TestSessionServiceTest extends TestCase
 {
-
     public function testGetTestSessionLoadsNewSessionWhenAccessModeChanged()
     {
         $service = $this->getService();
@@ -147,7 +147,7 @@ class TestSessionServiceTest extends TestCase
         ]));
 
         $doc = new PhpDocument();
-        $doc->load(__DIR__.'/samples/php-data.php');
+        $doc->load(__DIR__ . '/samples/php-data.php');
 
         $testDefinition = $doc->getDocumentComponent();
         $qtiTestUtilsService = $this->getMockBuilder(QtiTestUtils::class)->getMock();

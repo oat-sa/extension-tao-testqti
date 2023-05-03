@@ -31,7 +31,7 @@ use oat\taoTests\models\import\AbstractTestImporter;
  */
 class QtiTestImporter extends AbstractTestImporter
 {
-    const IMPORTER_ID = 'taoQtiTest';
+    public const IMPORTER_ID = 'taoQtiTest';
 
     /**
      * @param File $file

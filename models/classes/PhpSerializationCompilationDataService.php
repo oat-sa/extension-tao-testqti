@@ -14,7 +14,7 @@ use qtism\data\AssessmentItemRef;
  */
 class PhpSerializationCompilationDataService extends CompilationDataService
 {
-    const OUTPUT_FILE_TYPE = 'php';
+    public const OUTPUT_FILE_TYPE = 'php';
 
     /**
      * @return string
@@ -32,13 +32,13 @@ class PhpSerializationCompilationDataService extends CompilationDataService
         if ($object instanceof AssessmentItemRef) {
             $object = clone $object;
         }
-        
+
         $compilationDirectory->write(
             $path,
             serialize($object)
         );
     }
-    
+
     public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
     {
 

@@ -35,9 +35,9 @@ class InitializeAdaptiveSessionEvent implements Event
 {
     /** @var AssessmentTestSession */
     protected $testSession;
-    
+
     protected $catSession;
-    
+
     protected $assessmentSection;
 
     /**
@@ -73,12 +73,12 @@ class InitializeAdaptiveSessionEvent implements Event
     {
         return $this->testSession;
     }
-    
+
     public function getCatSession()
     {
         return $this->catSession;
     }
-    
+
     public function getAssessmentSection()
     {
         return $this->assessmentSection;

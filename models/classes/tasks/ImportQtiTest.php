@@ -35,7 +35,7 @@ use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\tao\model\taskQueue\Task\TaskInterface;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
-use \oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**
  * Class ImportQtiTest
@@ -44,15 +44,15 @@ use \oat\taoQtiTest\models\import\QtiTestImporter;
  */
 class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
 {
-    const FILE_DIR = 'ImportQtiTestTask';
-    const PARAM_CLASS_URI = 'class_uri';
-    const PARAM_FILE = 'file';
-    const PARAM_ENABLE_GUARDIANS = 'enable_guardians';
-    const PARAM_ENABLE_VALIDATORS = 'enable_validators';
-    const PARAM_ITEM_MUST_EXIST = 'item_must_exist';
-    const PARAM_ITEM_MUST_BE_OVERWRITTEN = 'item_must_be_overwritten';
-    const PARAM_ITEM_CLASS_URI = 'item_class_uri';
-    const PARAM_OVERWRITE_TEST = 'overwrite_test';
+    public const FILE_DIR = 'ImportQtiTestTask';
+    public const PARAM_CLASS_URI = 'class_uri';
+    public const PARAM_FILE = 'file';
+    public const PARAM_ENABLE_GUARDIANS = 'enable_guardians';
+    public const PARAM_ENABLE_VALIDATORS = 'enable_validators';
+    public const PARAM_ITEM_MUST_EXIST = 'item_must_exist';
+    public const PARAM_ITEM_MUST_BE_OVERWRITTEN = 'item_must_be_overwritten';
+    public const PARAM_ITEM_CLASS_URI = 'item_class_uri';
+    public const PARAM_OVERWRITE_TEST = 'overwrite_test';
 
     protected $service;
 

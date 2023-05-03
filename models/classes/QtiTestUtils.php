@@ -19,7 +19,6 @@
  *
  */
 
-
 namespace oat\taoQtiTest\models;
 
 use oat\generis\Helper\SystemHelper;
@@ -39,8 +38,7 @@ use oat\oatbox\service\ConfigurableService;
  */
 class QtiTestUtils extends ConfigurableService
 {
-
-    const SERVICE_ID = 'taoQtiTest/QtiTestUtils';
+    public const SERVICE_ID = 'taoQtiTest/QtiTestUtils';
 
     /**
      * Store a file referenced by $qtiResource into the final $testContent folder. If the path provided
@@ -64,7 +62,7 @@ class QtiTestUtils extends ConfigurableService
 
         $ds = DIRECTORY_SEPARATOR;
         $contentPath = rtrim($contentPath, $ds);
-        
+
         if ($qtiResource instanceof Resource) {
             $filePath = $qtiResource->getFile();
         } elseif (is_string($qtiResource) === true) {
@@ -72,9 +70,9 @@ class QtiTestUtils extends ConfigurableService
         } else {
             throw new \InvalidArgumentException("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
         }
-        
+
         $resourcePathinfo = pathinfo($filePath);
-        
+
         if (empty($resourcePathinfo['dirname']) === false && $resourcePathinfo['dirname'] !== '.') {
             // The resource file is not at the root of the archive but in a sub-folder.
             // Let's copy it in the same way into the Test Content folder.
@@ -88,7 +86,7 @@ class QtiTestUtils extends ConfigurableService
             $finalName = (empty($rename) === true) ? ($resourcePathinfo['filename'] . '.' . $resourcePathinfo['extension']) : $rename;
             $finalPath = $contentPath . $ds . $finalName;
         }
-        
+
         if ($copy === true) {
             $origin = str_replace('/', $ds, $origin);
             $origin = rtrim($origin, $ds);
@@ -97,16 +95,16 @@ class QtiTestUtils extends ConfigurableService
             if (is_readable($sourcePath) === false) {
                 throw new \common_Exception("An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'.");
             }
-            
+
             $fh = fopen($sourcePath, 'r');
             $success = $fs->writeStream($finalPath, $fh);
             fclose($fh);
-            
+
             if (!$success) {
                 throw new \common_Exception("An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'.");
             }
         }
-        
+
         return $finalPath;
     }
 
@@ -124,12 +122,12 @@ class QtiTestUtils extends ConfigurableService
             'qtiItems' => [],
             'manifestIdentifier' => 'QTI-TEST-MANIFEST-' . \tao_helpers_Display::textCleaner(uniqid('tao', true), '-')
         ]);
-            
+
         $manifest = new \DOMDocument('1.0', TAO_DEFAULT_ENCODING);
         $manifest->loadXML($templateRenderer->render());
         return $manifest;
     }
-    
+
     /**
      * It is sometimes necessary to identify the link between assessmentItemRefs described in a QTI Test definition and the resources
      * describing items in IMS Manifest file. This utility method helps you to achieve this.
@@ -156,11 +154,11 @@ class QtiTestUtils extends ConfigurableService
         $basePath = rtrim($basePath, "/\\");
         $basePath = \helpers_File::truePath($basePath);
         $basePath .= DIRECTORY_SEPARATOR;
-        
+
         $documentURI = preg_replace("/^file:\/{1,3}/", '', $test->getDomDocument()->documentURI);
         $testPathInfo = pathinfo($documentURI);
         $testBasePath = \tao_helpers_File::truePath($testPathInfo['dirname']) . DIRECTORY_SEPARATOR;
-        
+
         foreach ($assessmentItemRefs as $itemRef) {
             // Find the QTI Resource (in IMS Manifest) related to the item ref.
             // To achieve this, we compare their path.
@@ -168,31 +166,31 @@ class QtiTestUtils extends ConfigurableService
             $itemRefRelativeHref = ltrim($itemRefRelativeHref, "/\\");
             $itemRefCanonicalHref = \helpers_File::truePath($testBasePath . $itemRefRelativeHref);
             $map['items'][$itemRef->getIdentifier()] = false;
-            
+
             // Compare with items referenced in the manifest.
             foreach ($itemResources as $itemResource) {
                 $itemResourceRelativeHref = str_replace('/', DIRECTORY_SEPARATOR, $itemResource->getFile());
                 $itemResourceRelativeHref = ltrim($itemResourceRelativeHref, "/\\");
-                
+
                 $itemResourceCanonicalHref = \helpers_File::truePath($basePath . $itemResourceRelativeHref);
-                
+
                 // With some Windows flavours (Win7, Win8), the $itemRefCanonicalHref comes out with
                 // a leading 'file:\' component. Let's clean this. (str_replace is binary-safe \0/)
                 $os = SystemHelper::getOperatingSystem();
                 if ($os === 'WINNT' || $os === 'WIN32' || $os === 'Windows') {
                     $itemRefCanonicalHref = str_replace('file:\\', '', $itemRefCanonicalHref);
-                    
+
                     // And moreover, it sometimes refer the temp directory as Windows\TEMP instead of Windows\Temp.
                     $itemRefCanonicalHref = str_replace('\\TEMP\\', '\\Temp\\', $itemRefCanonicalHref);
                     $itemResourceCanonicalHref = str_replace('\\TEMP\\', '\\Temp\\', $itemResourceCanonicalHref);
                 }
-                
+
                 // With some MacOS flavours, the $itemRefCanonicalHref comes out with
                 // a leading '/private' component. Clean it!
                 if ($os === 'Darwin') {
                     $itemRefCanonicalHref = str_replace('/private', '', $itemRefCanonicalHref);
                 }
-                
+
                 if ($itemResourceCanonicalHref == $itemRefCanonicalHref && is_file($itemResourceCanonicalHref)) {
                     // assessmentItemRef <-> IMS Manifest resource successful binding!
                     $map['items'][$itemRef->getIdentifier()] = $itemResource;
@@ -213,7 +211,7 @@ class QtiTestUtils extends ConfigurableService
         }
         return $map;
     }
-    
+
     /**
      * Retrieve the Test Definition the test session is built from as an AssessmentTest object.
      * @param string $qtiTestCompilation (e.g. <i>'http://sample/first.rdf#i14363448108243883-|http://sample/first.rdf#i14363448109065884+'</i>)

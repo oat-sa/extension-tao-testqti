@@ -49,10 +49,10 @@ use qtism\runtime\tests\RouteItem;
  */
 class SessionStateService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/SessionStateService';
-    
-    const OPTION_STATE_FORMAT = 'stateFormat';
-    
+    public const SERVICE_ID = 'taoQtiTest/SessionStateService';
+
+    public const OPTION_STATE_FORMAT = 'stateFormat';
+
     /**
      * @var ServiceProxy
      */
@@ -144,7 +144,7 @@ class SessionStateService extends ConfigurableService
         }
         return 'taoQtiTest/testRunner/resumingStrategy/resetAfterResume';
     }
-    
+
     /**
      * Return a description of the test session
      *
@@ -248,7 +248,7 @@ class SessionStateService extends ConfigurableService
                 $sectionItems = $catService->getShadowTest($session, $testSessionData['compilation']['private'], $currentItem);
                 $currentItem = $catService->getCurrentCatItemId($session, $testSessionData['compilation']['private'], $currentItem);
                 $positionInSection = array_search($currentItem, $sectionItems);
-                
+
                 // When in an adaptive section, the actual section is just a placeholder that is dynamically
                 // replaced by the adaptive content. To set the right position, just grab the offset within
                 // this dynamic content and add it to the placeholder position.

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,12 +40,11 @@
  */
 class taoQtiTest_models_classes_QtiTestServiceException extends common_Exception implements common_exception_UserReadableException
 {
-    
-        const TEST_WRITE_ERROR = 0;
-        const ITEM_READ_ERROR = 1;
-        const ITEM_WRITE_ERROR = 2;
-        const TEST_READ_ERROR = 3;
-        
+    public const TEST_WRITE_ERROR = 0;
+    public const ITEM_READ_ERROR = 1;
+    public const ITEM_WRITE_ERROR = 2;
+    public const TEST_READ_ERROR = 3;
+
     /**
      * Create a new QtiTestServiceException object.
      *
@@ -55,7 +55,7 @@ class taoQtiTest_models_classes_QtiTestServiceException extends common_Exception
     {
         parent::__construct($message, $code);
     }
-    
+
     /**
      * Returns a translated human-readable message destinated to the end-user.
      *

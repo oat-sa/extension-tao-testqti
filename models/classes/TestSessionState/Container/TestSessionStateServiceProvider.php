@@ -32,6 +32,7 @@ use oat\taoQtiTest\models\TestSessionService;
 use oat\taoQtiTest\models\TestSessionState\Api\TestSessionStateRestorationInterface;
 use oat\taoQtiTest\models\TestSessionState\TestSessionStateRestorationService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class TestSessionStateServiceProvider implements ContainerServiceProviderInterface

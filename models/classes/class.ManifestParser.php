@@ -37,23 +37,23 @@ use oat\taoQtiItem\model\qti\ManifestParser;
 class taoQtiTest_models_classes_ManifestParser extends ManifestParser
 {
     private $resources = null;
-    
+
     /**
      * Flag to be used while getting resources
      * by type.
      *
      * @var integer
      */
-    const FILTER_RESOURCE_TYPE = 0;
-    
+    public const FILTER_RESOURCE_TYPE = 0;
+
     /**
      * Flag to be used while getting resources
      * by identifier.
      *
      * @var integer
      */
-    const FILTER_RESOURCE_IDENTIFIER = 1;
-    
+    public const FILTER_RESOURCE_IDENTIFIER = 1;
+
     /**
      * Get the resources contained within the manifest.
      *
@@ -64,15 +64,15 @@ class taoQtiTest_models_classes_ManifestParser extends ManifestParser
     public function getResources($filter = null, $target = self::FILTER_RESOURCE_TYPE)
     {
         $returnValue = [];
-        
+
         if (is_null($filter)) {
             $returnValue = $this->getAllResources();
         } else {
             $filter = is_array($filter) ? $filter : [$filter];
-            
+
             foreach ($this->getAllResources() as $resource) {
                 $stringTarget = ($target === self::FILTER_RESOURCE_TYPE) ? $resource->getType() : $resource->getIdentifier();
-                
+
                 if (in_array($stringTarget, $filter)) {
                     $returnValue[] = $resource;
                 }
@@ -80,7 +80,7 @@ class taoQtiTest_models_classes_ManifestParser extends ManifestParser
         }
         return $returnValue;
     }
-    
+
     /**
      * Get all the resources contained within the manifest.
      *
@@ -93,7 +93,7 @@ class taoQtiTest_models_classes_ManifestParser extends ManifestParser
         }
         return $this->resources;
     }
-    
+
     /**
      * Get all the resources contained by the $source SimpleXMLElement.
      *
@@ -104,27 +104,27 @@ class taoQtiTest_models_classes_ManifestParser extends ManifestParser
     private function getResourcesFromManifest(SimpleXMLElement $source)
     {
         $returnValue = [];
-    
+
         //check of the root tag
         if ($source->getName() != 'manifest') {
             throw new common_exception_Error("Incorrect manifest root tag '" . $source->getName() . "'.");
         }
-            
+
         $resourceNodes = $source->xpath("//*[name(.)='resource']");
-        
+
         foreach ($resourceNodes as $resourceNode) {
             $type = (string) $resourceNode['type'];
             $id = (string) $resourceNode['identifier'];
             $href = (isset($resourceNode['href'])) ? (string) $resourceNode['href'] : '';
-                
+
             $idRefs = [];
             $auxFiles = [];
             $xmlFiles = [];
-            
+
             // Retrieve Auxilliary files.
             foreach ($resourceNode->file as $fileNode) {
                 $fileHref = (string) $fileNode['href'];
-                
+
                 if (preg_match("/\.xml$|\.css$/", $fileHref)) {
                     if (empty($href) || $href === $fileHref) {
                         $xmlFiles[] = $fileHref;
@@ -135,26 +135,26 @@ class taoQtiTest_models_classes_ManifestParser extends ManifestParser
                     $auxFiles[] = $fileHref;
                 }
             }
-                
+
             if (count($xmlFiles) == 1 && empty($href)) {
                 $href = $xmlFiles[0];
             }
-            
+
             // Retrieve Dependencies.
             foreach ($resourceNode->dependency as $dependencyNode) {
                 $idRefs[] = (string) $dependencyNode['identifierref'];
             }
-            
+
             $resource = new taoQtiTest_models_classes_QtiResource($id, $type, $href);
             $resource->setAuxiliaryFiles($auxFiles);
             $resource->setDependencies($idRefs);
-                
+
             $returnValue[] = $resource;
         }
-    
+
         return (array) $returnValue;
     }
-    
+
     /**
      * Get the root SimpleXMLElement object of the currently parsed manifest.
      *
@@ -167,26 +167,26 @@ class taoQtiTest_models_classes_ManifestParser extends ManifestParser
             case self::SOURCE_FILE:
                 $xml = simplexml_load_file($this->source);
                 break;
-            
+
             case self::SOURCE_URL:
                 $xmlContent = tao_helpers_Request::load($this->source, true);
                 $xml = simplexml_load_string($xmlContent);
                 break;
-            
+
             case self::SOURCE_STRING:
                 $xml = simplexml_load_string($this->source);
                 break;
-            
+
             default:
                 throw new taoItems_models_classes_Import_ImportException('Invalid sourceType');
         }
-        
+
         if ($xml === false) {
             $this->addErrors(libxml_get_errors());
             libxml_clear_errors();
             throw new common_exception_Error('Invalid XML.');
         }
-        
+
         return $xml;
     }
 }

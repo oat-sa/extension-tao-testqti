@@ -55,5 +55,4 @@ class CloseTestSession extends AbstractAction
         $state = $session->getState();
         return new Report(Report::TYPE_SUCCESS, 'Session ' . $id . ': state changed from ' . $initialState . ' to ' . $state);
     }
-
 }

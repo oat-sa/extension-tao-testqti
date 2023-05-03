@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,14 +19,13 @@
  *
  *
  */
- 
+
 /**
  * This helper class aims at formating the item content folder description
  *
  */
 class taoQtiTest_helpers_ResourceManager
 {
-   
     public static function getBaseDir(core_kernel_classes_Resource $test)
     {
         $testFile = taoQtiTest_models_classes_QtiTestService::singleton()->getTestFile($test);
@@ -36,12 +36,12 @@ class taoQtiTest_helpers_ResourceManager
         $baseDir = $testFile->getAbsolutePath() . '/';
         return $baseDir;
     }
- 
+
     public static function buildDirectory(core_kernel_classes_Resource $test, $lang, $relPath = '/', $depth = 1, $filters = [])
     {
         $baseDir = self::getBaseDir($test);
         $path = $baseDir . ltrim($relPath, '/');
-        
+
         $data = [
             'path' => $relPath
         ];
@@ -70,7 +70,7 @@ class taoQtiTest_helpers_ResourceManager
         }
         return $data;
     }
-    
+
     public static function buildFile(core_kernel_classes_Resource $test, $lang, $relPath, $filters = [])
     {
         $file = null;
