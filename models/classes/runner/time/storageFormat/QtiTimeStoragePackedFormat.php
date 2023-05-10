@@ -80,42 +80,42 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
     /**
      * A storage key added to the sored data set to keep format type
      */
-    const STORAGE_KEY_FORMAT = 'format';
+    public const STORAGE_KEY_FORMAT = 'format';
 
     /**
      * A storage key added to the sored data set to keep version info
      */
-    const STORAGE_KEY_VERSION = 'version';
+    public const STORAGE_KEY_VERSION = 'version';
 
     /**
      * The storage key for the TimeLine index in the packed format
      */
-    const STORAGE_KEY_TIMELINE_INDEX = 'index';
+    public const STORAGE_KEY_TIMELINE_INDEX = 'index';
 
     /**
      * The storage key for the TimeLine tags in the packed format
      */
-    const STORAGE_KEY_TIMELINE_TAGS = 'tags';
+    public const STORAGE_KEY_TIMELINE_TAGS = 'tags';
 
     /**
      * The storage key for the TimeLine points in the packed format
      */
-    const STORAGE_KEY_TIMELINE_POINTS = 'points';
+    public const STORAGE_KEY_TIMELINE_POINTS = 'points';
 
     /**
      * The storage key for the timestamp reference in the packed format
      */
-    const STORAGE_KEY_TIMELINE_EPOCH = 'epoch';
+    public const STORAGE_KEY_TIMELINE_EPOCH = 'epoch';
 
     /**
      * The type of format managed by this class
      */
-    const STORAGE_FORMAT = 'pack';
+    public const STORAGE_FORMAT = 'pack';
 
     /**
      * The version of the format. Could be useful in case of changes to take care of legacy.
      */
-    const STORAGE_VERSION = 1;
+    public const STORAGE_VERSION = 1;
 
     /**
      * The type of format applied by this class
@@ -162,12 +162,17 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
         ];
 
         // Will split tags from the list of TimePoint, and put them into a dedicated index.
-        // The other TimePoint info are put in a simple array with predictable order, this way: [target, type, timestamp].
+        // The other TimePoint info are put in a simple array with predictable order, this way:
+        // [target, type, timestamp].
         // To save more space a reference value is removed from each timestamp.
         $index = 0;
         foreach ($timeLine->getPoints() as &$point) {
             /** @var TimePoint $point */
-            $data[self::STORAGE_KEY_TIMELINE_POINTS][$index] = [$point->getTarget(), $point->getType(), round($point->getTimestamp() - $epoch, 6)];
+            $data[self::STORAGE_KEY_TIMELINE_POINTS][$index] = [
+                $point->getTarget(),
+                $point->getType(),
+                round($point->getTimestamp() - $epoch, 6),
+            ];
 
             foreach ($point->getTags() as &$tag) {
                 $data[self::STORAGE_KEY_TIMELINE_INDEX][$tag][] = $index;
@@ -273,12 +278,22 @@ class QtiTimeStoragePackedFormat extends QtiTimeStorageJsonFormat
         if (is_array($decodedData)) {
             if (isset($decodedData[self::STORAGE_KEY_FORMAT])) {
                 if ($decodedData[self::STORAGE_KEY_FORMAT] != $this->getFormat()) {
-                    \common_Logger::w(sprintf('QtiTimeStorage: wrong decoder applied! (Expected: %s, Applied: %s)', $decodedData[self::STORAGE_KEY_FORMAT], $this->getFormat()));
+                    \common_Logger::w(
+                        sprintf(
+                            'QtiTimeStorage: wrong decoder applied! (Expected: %s, Applied: %s)',
+                            $decodedData[self::STORAGE_KEY_FORMAT],
+                            $this->getFormat()
+                        )
+                    );
                 }
 
-                if (array_key_exists(self::STORAGE_KEY_TIME_LINE, $decodedData)
-                    && !$decodedData[self::STORAGE_KEY_TIME_LINE] instanceof TimeLine) {
-                    $decodedData[self::STORAGE_KEY_TIME_LINE] = $this->unpackTimeLine($decodedData[self::STORAGE_KEY_TIME_LINE]);
+                if (
+                    array_key_exists(self::STORAGE_KEY_TIME_LINE, $decodedData)
+                    && !$decodedData[self::STORAGE_KEY_TIME_LINE] instanceof TimeLine
+                ) {
+                    $decodedData[self::STORAGE_KEY_TIME_LINE] = $this->unpackTimeLine(
+                        $decodedData[self::STORAGE_KEY_TIME_LINE]
+                    );
                 }
 
                 unset($decodedData[self::STORAGE_KEY_FORMAT]);

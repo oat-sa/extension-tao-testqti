@@ -19,6 +19,7 @@
  *
  * @author Sergei Mikhailov <sergei.mikhailov@taotesting.com>
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\toolsStates\DataAccess\Repository;
@@ -52,7 +53,7 @@ class OverriddenToolsRepositoryTest extends TestCase
         $this->sut = new class (
             $this->presetRepository,
             function (): OptionCollection {
-                return $this->unfilteredOptions;
+            return $this->unfilteredOptions;
             }
         ) extends AbstractOverriddenToolsRepository {
             private $unfilteredOptionsProvider;

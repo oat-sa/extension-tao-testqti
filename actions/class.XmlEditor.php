@@ -31,57 +31,60 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
 {
     use OntologyAwareTrait;
 
-   public function edit() : void
-   {
-       if (!$this->hasPostParameter('id')) {
+    public function edit(): void
+    {
+        if (!$this->hasPostParameter('id')) {
             $this->returnError(__('Missed required parameter \'id\''));
             return;
-       }
-       $test = $this->getResource($this->getPostParameter('id'));
+        }
+        $test = $this->getResource($this->getPostParameter('id'));
 
-       if ($this->getXmlEditorService()->isLocked()) {
-           $this->setData('errorMessage', __('This functionality is blocked. Please contact with your administrator for more details.'));
-       } else {
-           try {
-               $xmlString = $this->getXmlEditorService()->getTestXml($test);
+        if ($this->getXmlEditorService()->isLocked()) {
+            $this->setData(
+                'errorMessage',
+                __('This functionality is blocked. Please contact with your administrator for more details.')
+            );
+        } else {
+            try {
+                $xmlString = $this->getXmlEditorService()->getTestXml($test);
 
-               $formContainer = new XmlEditForm(
-                   $test,
-                   $xmlString,
-                   [FormContainer::CSRF_PROTECTION_OPTION => true]
-               );
-               $form = $formContainer->getForm();
-               if ($form->isSubmited() && $form->isValid()) {
-                   $this->getXmlEditorService()->saveStringTest($test, $form->getValues()['xmlString']);
-                   $this->setData('message', __('Saved'));
-               }
-           } catch (ResourceAccessDeniedException $e) {
-               $this->setData('errorMessage', $e->getMessage());
-               common_Logger::e($e->getMessage());
-           } catch (XmlStorageException $e) {
-               $errors = $e->getErrors();
-               $message = '';
-               /** @var LibXMLError $error */
-               foreach ($errors->getArrayCopy() as $error){
-                   $message .= $error->message;
-               }
-               $this->setData('errorMessage', $message);
-            }catch (Throwable $e) {
-               $this->setData('errorMessage', __('Something went wrong...'));
-               common_Logger::e($e->getMessage());
-           }
-           $this->setData('form', $form->render());
-           $this->setData('formTitle', __('XML Content'));
-       }
+                $formContainer = new XmlEditForm(
+                    $test,
+                    $xmlString,
+                    [FormContainer::CSRF_PROTECTION_OPTION => true]
+                );
+                $form = $formContainer->getForm();
+                if ($form->isSubmited() && $form->isValid()) {
+                    $this->getXmlEditorService()->saveStringTest($test, $form->getValues()['xmlString']);
+                    $this->setData('message', __('Saved'));
+                }
+            } catch (ResourceAccessDeniedException $e) {
+                $this->setData('errorMessage', $e->getMessage());
+                common_Logger::e($e->getMessage());
+            } catch (XmlStorageException $e) {
+                $errors = $e->getErrors();
+                $message = '';
+                /** @var LibXMLError $error */
+                foreach ($errors->getArrayCopy() as $error) {
+                    $message .= $error->message;
+                }
+                $this->setData('errorMessage', $message);
+            } catch (Throwable $e) {
+                $this->setData('errorMessage', __('Something went wrong...'));
+                common_Logger::e($e->getMessage());
+            }
+            $this->setData('form', $form->render());
+            $this->setData('formTitle', __('XML Content'));
+        }
 
-       $this->setView('xml_editor.tpl');
-   }
+        $this->setView('xml_editor.tpl');
+    }
 
-    /**
-     * @return XmlEditorInterface
-     */
-   private function getXmlEditorService() : XmlEditorInterface
-   {
-       return $this->getServiceLocator()->get(XmlEditorInterface::SERVICE_ID);
-   }
+     /**
+      * @return XmlEditorInterface
+      */
+    private function getXmlEditorService(): XmlEditorInterface
+    {
+        return $this->getServiceLocator()->get(XmlEditorInterface::SERVICE_ID);
+    }
 }

@@ -29,7 +29,6 @@ use oat\taoQtiTest\models\import\QtiTestImporter;
  */
 class RegisterTestImporters extends AbstractAction
 {
-
     public function __invoke($params)
     {
         /** @var ImportersService $importersService */

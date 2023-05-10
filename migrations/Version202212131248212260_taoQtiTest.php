@@ -17,7 +17,7 @@ final class Version202212131248212260_taoQtiTest extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->runAction(new RegisterQtiPackageExporter);
+        $this->runAction(new RegisterQtiPackageExporter());
     }
 
     public function down(Schema $schema): void

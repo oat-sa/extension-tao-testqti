@@ -13,7 +13,6 @@ use oat\taoQtiTest\scripts\install\DisableAloudTextToSpeech;
  */
 final class Version202110281010372260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Disables aloud text-to-speech for test authoring';

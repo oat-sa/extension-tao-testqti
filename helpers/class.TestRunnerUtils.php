@@ -47,7 +47,6 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 */
 class taoQtiTest_helpers_TestRunnerUtils
 {
-
     /**
      * Temporary helper until proper ServiceManager integration
      * @return ServiceManager
@@ -71,8 +70,10 @@ class taoQtiTest_helpers_TestRunnerUtils
      * presented to a candidate in a given Assessment Test $session.
      *
      * @param AssessmentTestSession $session An AssessmentTestSession Object.
-     * @param string $testDefinition URI The URI of the knowledge base resource representing the folder where the QTI Test Definition is stored.
-     * @param string $testCompilation URI The URI of the knowledge base resource representing the folder where the QTI Test Compilation is stored.
+     * @param string $testDefinition URI The URI of the knowledge base resource representing the folder where the QTI
+     *                               Test Definition is stored.
+     * @param string $testCompilation URI The URI of the knowledge base resource representing the folder where the QTI
+     *                                Test Compilation is stored.
      * @return tao_models_classes_service_ServiceCall A ServiceCall object.
      */
     public static function buildItemServiceCall(AssessmentTestSession $session, $testDefinitionUri, $testCompilationUri)
@@ -83,31 +84,54 @@ class taoQtiTest_helpers_TestRunnerUtils
         // retrive itemUri & itemPath.
         $parts = explode('|', $href);
 
-        $definition =  new core_kernel_classes_Resource(RunnerService::INSTANCE_TEST_ITEM_RUNNER_SERVICE);
+        $definition =  new core_kernel_classes_Resource(
+            RunnerService::INSTANCE_TEST_ITEM_RUNNER_SERVICE
+        );
         $serviceCall = new tao_models_classes_service_ServiceCall($definition);
 
-        $uriResource = new core_kernel_classes_Resource(taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_URI);
+        $uriResource = new core_kernel_classes_Resource(
+            taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_URI
+        );
         $uriParam = new tao_models_classes_service_ConstantParameter($uriResource, $parts[0]);
         $serviceCall->addInParameter($uriParam);
 
-        $pathResource = new core_kernel_classes_Resource(taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_PATH);
+        $pathResource = new core_kernel_classes_Resource(
+            taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_PATH
+        );
         $pathParam = new tao_models_classes_service_ConstantParameter($pathResource, $parts[1]);
         $serviceCall->addInParameter($pathParam);
 
-        $dataPathResource = new core_kernel_classes_Resource(taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_DATA_PATH);
+        $dataPathResource = new core_kernel_classes_Resource(
+            taoItems_models_classes_ItemsService::INSTANCE_FORMAL_PARAM_ITEM_DATA_PATH
+        );
         $dataPathParam = new tao_models_classes_service_ConstantParameter($dataPathResource, $parts[2]);
         $serviceCall->addInParameter($dataPathParam);
 
-        $parentServiceCallIdResource = new core_kernel_classes_Resource(RunnerService::INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID);
-        $parentServiceCallIdParam = new tao_models_classes_service_ConstantParameter($parentServiceCallIdResource, $session->getSessionId());
+        $parentServiceCallIdResource = new core_kernel_classes_Resource(
+            RunnerService::INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID
+        );
+        $parentServiceCallIdParam = new tao_models_classes_service_ConstantParameter(
+            $parentServiceCallIdResource,
+            $session->getSessionId()
+        );
         $serviceCall->addInParameter($parentServiceCallIdParam);
 
-        $testDefinitionResource = new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_DEFINITION);
-        $testDefinitionParam = new tao_models_classes_service_ConstantParameter($testDefinitionResource, $testDefinitionUri);
+        $testDefinitionResource = new core_kernel_classes_Resource(
+            taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_DEFINITION
+        );
+        $testDefinitionParam = new tao_models_classes_service_ConstantParameter(
+            $testDefinitionResource,
+            $testDefinitionUri
+        );
         $serviceCall->addInParameter($testDefinitionParam);
 
-        $testCompilationResource = new core_kernel_classes_Resource(taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_COMPILATION);
-        $testCompilationParam = new tao_models_classes_service_ConstantParameter($testCompilationResource, $testCompilationUri);
+        $testCompilationResource = new core_kernel_classes_Resource(
+            taoQtiTest_models_classes_QtiTestService::INSTANCE_FORMAL_PARAM_TEST_COMPILATION
+        );
+        $testCompilationParam = new tao_models_classes_service_ConstantParameter(
+            $testCompilationResource,
+            $testCompilationUri
+        );
         $serviceCall->addInParameter($testCompilationParam);
 
         return $serviceCall;
@@ -117,7 +141,8 @@ class taoQtiTest_helpers_TestRunnerUtils
      * Build the Service Call ID of the current Assessment Item to be presented to a candidate
      * in a given Assessment Test $session.
      *
-     * @return string A service call id composed of the session identifier,  the identifier of the item and its occurence number in the route.
+     * @return string A service call id composed of the session identifier,  the identifier of the item and its
+     *                occurence number in the route.
      */
     public static function buildServiceCallId(AssessmentTestSession $session)
     {
@@ -138,7 +163,9 @@ class taoQtiTest_helpers_TestRunnerUtils
      */
     public static function setInitialOutcomes(AssessmentTestSession $session, \oat\oatbox\user\User $testTaker)
     {
-        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
+        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('rdfOutcomeMap');
         if (is_array($rdfOutcomeMap)) {
             foreach ($rdfOutcomeMap as $outcomeId => $rdfPropUri) {
                 //set outcome value
@@ -161,7 +188,9 @@ class taoQtiTest_helpers_TestRunnerUtils
     public static function preserveOutcomes(AssessmentTestSession $session)
     {
         //preserve the special outcomes defined in the rdfOutcomeMap config
-        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('rdfOutcomeMap');
+        $rdfOutcomeMap = \common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('rdfOutcomeMap');
         if (is_array($rdfOutcomeMap) === true) {
             $session->setPreservedOutcomeVariables(array_keys($rdfOutcomeMap));
         }
@@ -211,13 +240,20 @@ class taoQtiTest_helpers_TestRunnerUtils
      *
      * @param AssessmentTestSession $session An AssessmentTestSession object.
      * @param string $action The action name e.g. 'moveForward', 'moveBackward', 'skip', ...
-     * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge base.
-     * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge base.
+     * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge
+     *                                     base.
+     * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge
+     *                                      base.
      * @param string $standalone
      * @return string A URL to be called to perform an action.
      */
-    public static function buildActionCallUrl(AssessmentTestSession $session, $action, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone)
-    {
+    public static function buildActionCallUrl(
+        AssessmentTestSession $session,
+        $action,
+        $qtiTestDefinitionUri,
+        $qtiTestCompilationUri,
+        $standalone
+    ) {
         return _url($action, 'TestRunner', null, [
             'QtiTestDefinition' => $qtiTestDefinitionUri,
             'QtiTestCompilation' => $qtiTestCompilationUri,
@@ -226,8 +262,11 @@ class taoQtiTest_helpers_TestRunnerUtils
         ]);
     }
 
-    public static function buildServiceApi(AssessmentTestSession $session, $qtiTestDefinitionUri, $qtiTestCompilationUri)
-    {
+    public static function buildServiceApi(
+        AssessmentTestSession $session,
+        $qtiTestDefinitionUri,
+        $qtiTestCompilationUri
+    ) {
         $serviceCall = self::buildItemServiceCall($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
         $itemServiceCallId = self::buildServiceCallId($session);
         return tao_helpers_ServiceJavascripts::getServiceApi($serviceCall, $itemServiceCallId);
@@ -238,7 +277,8 @@ class taoQtiTest_helpers_TestRunnerUtils
      */
     public static function noHttpClientCache()
     {
-        // From stackOverflow: http://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers
+        // From stackOverflow:
+        // http://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers
         // license is Creative Commons Attribution Share Alike (author Edward Wilde)
         header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
         header('Pragma: no-cache'); // HTTP 1.0.
@@ -337,7 +377,8 @@ class taoQtiTest_helpers_TestRunnerUtils
      * Build an array where each cell represent a time constraint (a.k.a. time limits)
      * in force. Each cell is actually an array with two keys:
      *
-     * * 'source': The identifier of the QTI component emitting the constraint (e.g. AssessmentTest, TestPart, AssessmentSection, AssessmentItemRef).
+     * * 'source': The identifier of the QTI component emitting the constraint
+     *   (e.g. AssessmentTest, TestPart, AssessmentSection, AssessmentItemRef).
      * * 'seconds': The number of remaining seconds until it times out.
      *
      * @param AssessmentTestSession $session An AssessmentTestSession object.
@@ -352,7 +393,9 @@ class taoQtiTest_helpers_TestRunnerUtils
         foreach ($session->getTimeConstraints() as $tc) {
             // Only consider time constraints in force.
             if ($tc->getMaximumRemainingTime() !== false) {
-                $label = method_exists($tc->getSource(), 'getTitle') ? $tc->getSource()->getTitle() : $tc->getSource()->getIdentifier();
+                $label = method_exists($tc->getSource(), 'getTitle')
+                    ? $tc->getSource()->getTitle()
+                    : $tc->getSource()->getIdentifier();
                 $constraints[] = [
                     'label' => $timerLabelFormatter->format($label),
                     'source' => $tc->getSource()->getIdentifier(),
@@ -424,16 +467,26 @@ class taoQtiTest_helpers_TestRunnerUtils
      * * considerProgress: Whether or not the test driver view must consider to give a test progress feedback.
      *
      * @param AssessmentTestSession $session A given AssessmentTestSession object.
-     * @param array $testMeta An associative array containing meta-data about the test definition taken by the candidate.
+     * @param array $testMeta An associative array containing meta-data about the test definition taken by the
+     *                        candidate.
      * @param QtiTestCompilerIndex $itemIndex
-     * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge base.
-     * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge base.
+     * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge
+     *                                     base.
+     * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge
+     *                                      base.
      * @param string $standalone
      * @param array $compilationDirs An array containing respectively the private and public compilation directories.
      * @return array The context of the candidate session.
      */
-    public static function buildAssessmentTestContext(AssessmentTestSession $session, array $testMeta, $itemIndex, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone, $compilationDirs)
-    {
+    public static function buildAssessmentTestContext(
+        AssessmentTestSession $session,
+        array $testMeta,
+        $itemIndex,
+        $qtiTestDefinitionUri,
+        $qtiTestCompilationUri,
+        $standalone,
+        $compilationDirs
+    ) {
         $context = [];
 
         // The state of the test session.
@@ -453,7 +506,9 @@ class taoQtiTest_helpers_TestRunnerUtils
 
 
         if ($session->getState() === AssessmentTestSessionState::INTERACTING) {
-            $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config = common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
 
             // The navigation mode.
             $context['navigationMode'] = $session->getCurrentNavigationMode();
@@ -510,14 +565,62 @@ class taoQtiTest_helpers_TestRunnerUtils
             $context['isDeepestSectionVisible'] = $session->getCurrentAssessmentSection()->isVisible();
 
             // The URLs to be called to move forward/backward in the Assessment Test Session or skip or comment.
-            $context['moveForwardUrl'] = self::buildActionCallUrl($session, 'moveForward', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            $context['moveBackwardUrl'] = self::buildActionCallUrl($session, 'moveBackward', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            $context['nextSectionUrl'] = self::buildActionCallUrl($session, 'nextSection', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            $context['skipUrl'] = self::buildActionCallUrl($session, 'skip', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            $context['commentUrl'] = self::buildActionCallUrl($session, 'comment', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            $context['timeoutUrl'] = self::buildActionCallUrl($session, 'timeout', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            $context['endTestSessionUrl'] = self::buildActionCallUrl($session, 'endTestSession', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-            $context['keepItemTimedUrl'] = self::buildActionCallUrl($session, 'keepItemTimed', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+            $context['moveForwardUrl'] = self::buildActionCallUrl(
+                $session,
+                'moveForward',
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri,
+                $standalone
+            );
+            $context['moveBackwardUrl'] = self::buildActionCallUrl(
+                $session,
+                'moveBackward',
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri,
+                $standalone
+            );
+            $context['nextSectionUrl'] = self::buildActionCallUrl(
+                $session,
+                'nextSection',
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri,
+                $standalone
+            );
+            $context['skipUrl'] = self::buildActionCallUrl(
+                $session,
+                'skip',
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri,
+                $standalone
+            );
+            $context['commentUrl'] = self::buildActionCallUrl(
+                $session,
+                'comment',
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri,
+                $standalone
+            );
+            $context['timeoutUrl'] = self::buildActionCallUrl(
+                $session,
+                'timeout',
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri,
+                $standalone
+            );
+            $context['endTestSessionUrl'] = self::buildActionCallUrl(
+                $session,
+                'endTestSession',
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri,
+                $standalone
+            );
+            $context['keepItemTimedUrl'] = self::buildActionCallUrl(
+                $session,
+                'keepItemTimed',
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri,
+                $standalone
+            );
             // If the candidate is allowed to move backward e.g. first item of the test.
             $context['canMoveBackward'] = $session->canMoveBackward();
 
@@ -548,9 +651,22 @@ class taoQtiTest_helpers_TestRunnerUtils
                 $context['itemPositionPart'] = $navigator['itemPositionPart'];
                 $context['itemPositionSection'] = $navigator['itemPositionSection'];
 
-                // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for later review.
-                $context['jumpUrl'] = self::buildActionCallUrl($session, 'jumpTo', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
-                $context['markForReviewUrl'] = self::buildActionCallUrl($session, 'markForReview', $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone);
+                // The URLs to be called to move to a particular item in the Assessment Test Session or mark item for
+                // later review.
+                $context['jumpUrl'] = self::buildActionCallUrl(
+                    $session,
+                    'jumpTo',
+                    $qtiTestDefinitionUri,
+                    $qtiTestCompilationUri,
+                    $standalone
+                );
+                $context['markForReviewUrl'] = self::buildActionCallUrl(
+                    $session,
+                    'markForReview',
+                    $qtiTestDefinitionUri,
+                    $qtiTestCompilationUri,
+                    $standalone
+                );
             } else {
                 // Setup data for progress bar when displaying position and timed section exit control
                 $numberItems = self::countItems($session);
@@ -563,12 +679,20 @@ class taoQtiTest_helpers_TestRunnerUtils
             }
 
             // The code to be executed to build the ServiceApi object to be injected in the QTI Item frame.
-            $context['itemServiceApiCall'] = self::buildServiceApi($session, $qtiTestDefinitionUri, $qtiTestCompilationUri);
+            $context['itemServiceApiCall'] = self::buildServiceApi(
+                $session,
+                $qtiTestDefinitionUri,
+                $qtiTestCompilationUri
+            );
 
             // Rubric Blocks.
             /** @var QtiRunnerRubric $rubricBlockHelper */
             $rubricBlockHelper = self::getServiceManager()->get(QtiRunnerRubric::SERVICE_ID);
-            $context['rubrics'] = $rubricBlockHelper->getRubricBlock($session->getRoute()->current(), $session, $compilationDirs);
+            $context['rubrics'] = $rubricBlockHelper->getRubricBlock(
+                $session->getRoute()->current(),
+                $session,
+                $compilationDirs
+            );
 
             // Comment allowed? Skipping allowed? Logout or Exit allowed ?
             $context['allowComment'] = self::doesAllowComment($session);
@@ -612,7 +736,10 @@ class taoQtiTest_helpers_TestRunnerUtils
                         $compilationDirs
                     );
                 } else {
-                    common_Logger::d('Try to use an extra context builder class that is not an instance of \\oat\\taoQtiTest\\models\\TestContextBuilder!');
+                    common_Logger::d(
+                        'Try to use an extra context builder class that is not an instance of '
+                        . '\\oat\\taoQtiTest\\models\\TestContextBuilder!'
+                    );
                 }
             }
         }
@@ -627,8 +754,11 @@ class taoQtiTest_helpers_TestRunnerUtils
      * @param string|Jump|RouteItem $itemPosition
      * @return null|string
      */
-    public static function getItemRef(AssessmentTestSession $session, $itemPosition, RunnerServiceContext $context = null)
-    {
+    public static function getItemRef(
+        AssessmentTestSession $session,
+        $itemPosition,
+        RunnerServiceContext $context = null
+    ) {
         $sessionId = $session->getSessionId();
 
         $itemRef = null;
@@ -674,8 +804,12 @@ class taoQtiTest_helpers_TestRunnerUtils
      * @return bool
      * @throws common_exception_Error
      */
-    public static function setItemFlag(AssessmentTestSession $session, $itemPosition, $flag, RunnerServiceContext $context = null)
-    {
+    public static function setItemFlag(
+        AssessmentTestSession $session,
+        $itemPosition,
+        $flag,
+        RunnerServiceContext $context = null
+    ) {
 
         $itemRef = self::getItemRef($session, $itemPosition, $context);
         $result = self::getExtendedStateService()->setItemFlag($session->getSessionId(), $itemRef, $flag);
@@ -690,8 +824,11 @@ class taoQtiTest_helpers_TestRunnerUtils
      * @return bool
      * @throws common_exception_Error
      */
-    public static function getItemFlag(AssessmentTestSession $session, $itemPosition, RunnerServiceContext $context = null)
-    {
+    public static function getItemFlag(
+        AssessmentTestSession $session,
+        $itemPosition,
+        RunnerServiceContext $context = null
+    ) {
         $result = false;
 
         $itemRef = self::getItemRef($session, $itemPosition, $context);
@@ -716,7 +853,13 @@ class taoQtiTest_helpers_TestRunnerUtils
         foreach ($categories as $category) {
             if (!strncmp($category, $prefixCategory, $prefixCategoryLen)) {
                 // extract the option name from the category, transform to camelCase if needed
-                return lcfirst(str_replace(' ', '', ucwords(strtr(substr($category, $prefixCategoryLen), ['-' => ' ', '_' => ' ']))));
+                return lcfirst(
+                    str_replace(
+                        ' ',
+                        '',
+                        ucwords(strtr(substr($category, $prefixCategoryLen), ['-' => ' ', '_' => ' ']))
+                    )
+                );
             }
         }
 
@@ -731,7 +874,8 @@ class taoQtiTest_helpers_TestRunnerUtils
      */
     public static function isItemInformational(RouteItem $routeItem, AssessmentItemSession $itemSession)
     {
-        return !count($itemSession->getAssessmentItem()->getResponseDeclarations()) || 'informational' == self::getItemUsage($routeItem);
+        return !count($itemSession->getAssessmentItem()->getResponseDeclarations())
+            || 'informational' == self::getItemUsage($routeItem);
     }
 
     /**
@@ -755,7 +899,10 @@ class taoQtiTest_helpers_TestRunnerUtils
             // - a non-adaptive item to be completed if it is responded.
             $isAdaptive = $itemSession->getAssessmentItem()->isAdaptive();
 
-            if ($isAdaptive === true && $itemSession['completionStatus']->getValue() === AssessmentItemSession::COMPLETION_STATUS_COMPLETED) {
+            if (
+                $isAdaptive === true
+                && $itemSession['completionStatus']->getValue() === AssessmentItemSession::COMPLETION_STATUS_COMPLETED
+            ) {
                 $completed = true;
             } elseif ($isAdaptive === false && $itemSession->isResponded($partially) === true) {
                 $completed = true;
@@ -856,7 +1003,9 @@ class taoQtiTest_helpers_TestRunnerUtils
         $route->setPosition($oldPosition);
 
         // get config for the sequence number option
-        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('testRunner');
         $forceTitles = !empty($config['test-taker-review-force-title']);
         $uniqueTitle = isset($config['test-taker-review-item-title']) ? $config['test-taker-review-item-title'] : '%d';
         $useTitle = !empty($config['test-taker-review-use-title']);
@@ -1197,7 +1346,9 @@ class taoQtiTest_helpers_TestRunnerUtils
      */
     public static function doesAllowExit(AssessmentTestSession $session, RunnerServiceContext $context = null)
     {
-        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('testRunner');
         $exitButton = (isset($config['exitButton']) && $config['exitButton']);
         $categories = self::getCategories($session, $context);
         return ($exitButton && in_array('x-tao-option-exit', $categories));
@@ -1211,7 +1362,9 @@ class taoQtiTest_helpers_TestRunnerUtils
      */
     public static function doesAllowLogout(AssessmentTestSession $session)
     {
-        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('testRunner');
         return !(isset($config['exitButton']) && $config['exitButton']);
     }
 
@@ -1264,7 +1417,9 @@ class taoQtiTest_helpers_TestRunnerUtils
      */
     public static function isQtiValueNull($value)
     {
-        return is_null($value) === true || ($value instanceof QtiString && $value->getValue() === '') || ($value instanceof Container && count($value) === 0);
+        return is_null($value) === true
+            || ($value instanceof QtiString && $value->getValue() === '')
+            || ($value instanceof Container && count($value) === 0);
     }
 
     /**

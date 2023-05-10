@@ -206,7 +206,8 @@ class SetupDefaultTemplateConfiguration extends ScriptAction
         return (string)$firstArgument->getType();
     }
 
-    private function createEnumerableOptionDescription(array $values): string {
+    private function createEnumerableOptionDescription(array $values): string
+    {
         return implode(
             ', ',
             array_map(

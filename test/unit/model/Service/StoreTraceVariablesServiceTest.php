@@ -179,8 +179,10 @@ class StoreTraceVariablesServiceTest extends TestCase
         $this->executeAction($command);
     }
 
-    private function createCommand(array $traceVariables = [], ?string $itemIdentifier = null): StoreTraceVariablesCommand
-    {
+    private function createCommand(
+        array $traceVariables = [],
+        ?string $itemIdentifier = null
+    ): StoreTraceVariablesCommand {
         return new StoreTraceVariablesCommand($this->serviceContext, $traceVariables, $itemIdentifier);
     }
 

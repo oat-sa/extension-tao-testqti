@@ -11,13 +11,11 @@ use oat\tao\scripts\tools\migrations\AbstractMigration;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\render\NoneQtiPackageImportPreprocessing;
 
-
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
 final class Version202007062037452260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Register ' . NoneQtiPackageImportPreprocessing::class;

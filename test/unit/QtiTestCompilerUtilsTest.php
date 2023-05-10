@@ -22,8 +22,8 @@
 namespace oat\taoQtiTest\test\unit;
 
 use oat\generis\test\TestCase;
-use \taoQtiTest_helpers_TestCompilerUtils;
-use \qtism\data\storage\xml\XmlDocument;
+use taoQtiTest_helpers_TestCompilerUtils;
+use qtism\data\storage\xml\XmlDocument;
 
 /**
  * This test case focuses on testing the TestCompilerUtils helper.
@@ -50,7 +50,10 @@ class QtiTestCompilerUtilsTest extends TestCase
         $xml = new XmlDocument();
         $xml->load($testFile);
 
-        $this->assertEquals($expectedMeta, taoQtiTest_helpers_TestCompilerUtils::testMeta($xml->getDocumentComponent()));
+        $this->assertEquals(
+            $expectedMeta,
+            taoQtiTest_helpers_TestCompilerUtils::testMeta($xml->getDocumentComponent())
+        );
     }
 
     public function metaProvider()

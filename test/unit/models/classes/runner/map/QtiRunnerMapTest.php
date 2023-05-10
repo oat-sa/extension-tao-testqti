@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,6 +57,9 @@ class QtiRunnerMapTest extends TestCase
      * @param array $itemCategories
      * @param array $overriddenCategories
      * @param array $expectedCategoryList
+     *
+     *
+     * phpcs:disable PSR1.Methods.CamelCapsMethodName
      */
     public function testGetAvailableCategories_WhenOverridesAreRegistered_ThenCategoriesAreFiltered(
         array $itemCategories,
@@ -67,6 +71,7 @@ class QtiRunnerMapTest extends TestCase
 
         $this->assertSame($expectedCategoryList, $this->invokeGetAvailableCategories($item));
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
     public function categoryProvider(): array
     {

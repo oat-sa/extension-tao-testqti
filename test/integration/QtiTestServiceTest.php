@@ -23,10 +23,10 @@ namespace oat\taoQtiTest\test\integration;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\tao\model\TaoOntology;
-use \taoTests_models_classes_TestsService;
-use \taoQtiTest_models_classes_QtiTestService;
-use \common_ext_ExtensionsManager;
-use \common_report_Report;
+use taoTests_models_classes_TestsService;
+use taoQtiTest_models_classes_QtiTestService;
+use common_ext_ExtensionsManager;
+use common_report_Report;
 
 /**
  * This test case focuses on testing the ManifestParser model.
@@ -36,7 +36,6 @@ use \common_report_Report;
  */
 class QtiTestServiceTest extends GenerisPhpUnitTestRunner
 {
-
     /**
      *
      * @var taoQtiTest_models_classes_QtiTestService

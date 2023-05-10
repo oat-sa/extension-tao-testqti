@@ -25,7 +25,10 @@ namespace oat\taoQtiTest\scripts\tools;
 use oat\oatbox\extension\script\ScriptAction;
 use oat\oatbox\extension\script\ScriptException;
 use oat\oatbox\reporting\Report;
+// phpcs:disable Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
+
+// phpcs:enable Generic.Files.LineLength
 
 /**
  * Class ResultVariableTransmissionEvenHandlerSwitcher
@@ -33,7 +36,8 @@ use oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\Ap
  * @package oat\taoQtiTest\scripts\tools
  *
  *
- * Change event handler:  php index.php 'oat\taoQtiTest\scripts\tools\ResultVariableTransmissionEvenHandlerSwitcher' --class '{className}'
+ * Change event handler:  php index.php 'oat\taoQtiTest\scripts\tools\ResultVariableTransmissionEvenHandlerSwitcher'
+ *                        --class '{className}'
  */
 class ResultVariableTransmissionEvenHandlerSwitcher extends ScriptAction
 {

@@ -21,8 +21,8 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-namespace oat\taoQtiTest\models\runner;
 
+namespace oat\taoQtiTest\models\runner;
 
 class QtiRunnerEmptyResponsesException extends \common_Exception implements \common_exception_UserReadableException
 {

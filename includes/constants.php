@@ -27,9 +27,11 @@ $todefine = [
     // Ontology references.
     'INSTANCE_QTITEST_TESTRUNNERSERVICE' => 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner',
     'INSTANCE_QTITEST_ITEMRUNNERSERVICE' => 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner',
+    // phpcs:disable Generic.Files.LineLength
     'INSTANCE_FORMALPARAM_QTITEST_TESTDEFINITION' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition',
     'INSTANCE_FORMALPARAM_QTITEST_TESTCOMPILATION' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation',
     'INSTANCE_FORMALPARAM_QTITESTITEMRUNNER_PARENTCALLID' => 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId',
+    // phpcs:enable Generic.Files.LineLength
 
     // Configuration.
    'TAOQTITEST_COMPILED_FILENAME' => 'compact-test.php',

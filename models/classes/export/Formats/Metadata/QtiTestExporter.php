@@ -29,7 +29,10 @@ use oat\oatbox\reporting\Report;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiItem\model\flyExporter\simpleExporter\SimpleExporter;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
-use qtism\data\{AssessmentItemRef, AssessmentSection, storage\xml\XmlDocument, TestPart};
+use qtism\data\AssessmentItemRef;
+use qtism\data\AssessmentSection;
+use qtism\data\storage\xml\XmlDocument;
+use qtism\data\TestPart;
 use tao_helpers_Uri as Uri;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 use ZipArchive;
@@ -39,13 +42,13 @@ class QtiTestExporter implements QtiTestExporterInterface
     use OntologyAwareTrait;
     use LoggerAwareTrait;
 
-    const TEST_PART = 'testPart';
-    const TEST_SECTION = 'section';
-    const TEST_ITEM = 'assessmentItemRef';
+    public const TEST_PART = 'testPart';
+    public const TEST_SECTION = 'section';
+    public const TEST_ITEM = 'assessmentItemRef';
 
-    const ITEM_SHUFFLE = 'shuffle';
-    const ITEM_ORDER = 'section-order';
-    const ITEM_URI = 'uri';
+    public const ITEM_SHUFFLE = 'shuffle';
+    public const ITEM_ORDER = 'section-order';
+    public const ITEM_URI = 'uri';
 
     /** Resource object of the test, defined for export */
     protected Resource $instance;

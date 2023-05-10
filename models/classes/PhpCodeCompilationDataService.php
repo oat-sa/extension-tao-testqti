@@ -16,14 +16,14 @@ class PhpCodeCompilationDataService extends CompilationDataService
 {
     protected $cacheDir;
 
-    const OPTION_CACHE_COMPACT_TEST_FILE = 'cacheCompactTestFile';
+    public const OPTION_CACHE_COMPACT_TEST_FILE = 'cacheCompactTestFile';
 
-    const OUTPUT_FILE_TYPE = 'php';
+    public const OUTPUT_FILE_TYPE = 'php';
 
     public function __construct($options = [])
     {
         parent::__construct($options);
-        
+
         $this->cacheDir = sys_get_temp_dir() . '/taooldtestrunnerphpcache';
     }
 
@@ -35,20 +35,26 @@ class PhpCodeCompilationDataService extends CompilationDataService
         return self::OUTPUT_FILE_TYPE;
     }
 
-    public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
-    {
+    public function writeCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        QtiComponent $object
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $doc = new PhpDocument();
         $doc->setDocumentComponent($object);
-        
+
         $compilationDirectory->write(
             $path,
             $doc->saveToString()
         );
     }
-    
-    public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
-    {
+
+    public function readCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        $cacheInfo = ''
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $dir = $this->ensureCacheDirectory($compilationDirectory);
         $cacheKey = $this->cacheKey($cacheInfo);
@@ -66,10 +72,11 @@ class PhpCodeCompilationDataService extends CompilationDataService
                 $doc->loadFromString($compilationDirectory->read($path));
             }
         } catch (PhpStorageException $e) {
-            $msg = "PHP Compilation Data in directory '" . $compilationDirectory->getId() . "' at path '" . $path . "' could not be executed properly.";
+            $msg = "PHP Compilation Data in directory '" . $compilationDirectory->getId() . "' at path '" . $path
+                . "' could not be executed properly.";
             throw new \common_Exception($msg);
         }
-        
+
         return $doc->getDocumentComponent();
     }
 
@@ -86,28 +93,28 @@ class PhpCodeCompilationDataService extends CompilationDataService
     protected function ensureCacheDirectory(\tao_models_classes_service_StorageDirectory $compilationDirectory)
     {
         $dirId = md5($compilationDirectory->getId());
-        
+
         for ($i = 1; $i < 6; $i += 2) {
             $dirId = substr_replace($dirId, '/', $i, 0);
         }
-        
+
         $path = $this->cacheDir . "/${dirId}";
-        
+
         if (!is_dir($path)) {
             @mkdir($path, 0700, true);
         }
-        
+
         return $path;
     }
-    
+
     protected function cacheKey($cacheInfo = '')
     {
         $key = 'php-data';
-        
+
         if (!empty($cacheInfo)) {
             $key .= "-${cacheInfo}";
         }
-        
+
         return $key;
     }
 }

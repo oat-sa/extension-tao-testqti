@@ -437,7 +437,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Builds the time constraints running for the current testPart or/and current assessmentSection
      * or/and assessmentItem. Takes care of the extra time if needed.
      *
-     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration.
+     *                        If the null value is given, all places will be taken into account.
      * @param boolean $applyExtraTime Allow to take care of extra time
      * @return TimeConstraintCollection A collection of TimeConstraint objects.
      * @qtism-test-duration-update
@@ -446,7 +447,12 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     {
         if ($places === null) {
             // Get the constraints from all places in the Assessment Test.
-            $places = (AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_SECTION | AssessmentTestPlace::ASSESSMENT_ITEM);
+            $places = (
+                AssessmentTestPlace::ASSESSMENT_TEST
+                | AssessmentTestPlace::TEST_PART
+                | AssessmentTestPlace::ASSESSMENT_SECTION
+                | AssessmentTestPlace::ASSESSMENT_ITEM
+            );
         }
 
         $constraints = new TimeConstraintCollection();
@@ -455,21 +461,44 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         $considerMinTime = $this->mustConsiderMinTime();
 
         if (($places & AssessmentTestPlace::ASSESSMENT_TEST) && ($routeItem instanceof RouteItem)) {
-            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentTest(), $navigationMode, $considerMinTime, $applyExtraTime);
+            $constraints[] = $this->getTimeConstraint(
+                $routeItem->getAssessmentTest(),
+                $navigationMode,
+                $considerMinTime,
+                $applyExtraTime
+            );
         }
 
         $currentTestPart = $this->getCurrentTestPart();
         if (($places & AssessmentTestPlace::TEST_PART) && ($currentTestPart instanceof TestPart)) {
-            $constraints[] = $this->getTimeConstraint($currentTestPart, $navigationMode, $considerMinTime, $applyExtraTime);
+            $constraints[] = $this->getTimeConstraint(
+                $currentTestPart,
+                $navigationMode,
+                $considerMinTime,
+                $applyExtraTime
+            );
         }
 
         $currentAssessmentSection = $this->getCurrentAssessmentSection();
-        if (($places & AssessmentTestPlace::ASSESSMENT_SECTION) && ($currentAssessmentSection instanceof AssessmentSection)) {
-            $constraints[] = $this->getTimeConstraint($currentAssessmentSection, $navigationMode, $considerMinTime, $applyExtraTime);
+        if (
+            ($places & AssessmentTestPlace::ASSESSMENT_SECTION)
+            && ($currentAssessmentSection instanceof AssessmentSection)
+        ) {
+            $constraints[] = $this->getTimeConstraint(
+                $currentAssessmentSection,
+                $navigationMode,
+                $considerMinTime,
+                $applyExtraTime
+            );
         }
 
         if (($places & AssessmentTestPlace::ASSESSMENT_ITEM) && ($routeItem instanceof RouteItem)) {
-            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentItemRef(), $navigationMode, $considerMinTime, $applyExtraTime);
+            $constraints[] = $this->getTimeConstraint(
+                $routeItem->getAssessmentItemRef(),
+                $navigationMode,
+                $considerMinTime,
+                $applyExtraTime
+            );
         }
 
         return $constraints;
@@ -479,7 +508,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Get the time constraints running for the current testPart or/and current assessmentSection
      * or/and assessmentItem. The extra time is taken into account.
      *
-     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration.
+     *                        If the null value is given, all places will be taken into account.
      * @return TimeConstraintCollection A collection of TimeConstraint objects.
      * @qtism-test-duration-update
      */
@@ -492,7 +522,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Get the regular time constraints running for the current testPart or/and current assessmentSection
      * or/and assessmentItem, without taking care of the extra time.
      *
-     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration.
+     *                        If the null value is given, all places will be taken into account.
      * @return TimeConstraintCollection A collection of TimeConstraint objects.
      * @qtism-test-duration-update
      */
@@ -532,7 +563,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      *
      * @param AssessmentItemSession $itemSession The lastly updated AssessmentItemSession.
      * @param integer $occurrence The occurrence number of the item bound to $assessmentItemSession.
-     * @throws AssessmentTestSessionException With error code RESULT_SUBMISSION_ERROR if an error occurs while transmitting results.
+     * @throws AssessmentTestSessionException With error code RESULT_SUBMISSION_ERROR if an error occurs
+     *                                        while transmitting results.
      */
     public function submitItemResults(AssessmentItemSession $itemSession, $occurrence = 0)
     {
@@ -560,7 +592,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * in order to send the LtiOutcome
      *
      * @see http://www.imsglobal.org/lis/ Outcome Management Service
-     * @throws \taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs whil transmitting/processing the result.
+     * @throws \taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs while
+     *                                                  transmitting/processing the result.
      */
     public function endTestSession()
     {

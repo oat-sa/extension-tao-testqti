@@ -14,7 +14,7 @@ use qtism\data\AssessmentItemRef;
  */
 class PhpSerializationCompilationDataService extends CompilationDataService
 {
-    const OUTPUT_FILE_TYPE = 'php';
+    public const OUTPUT_FILE_TYPE = 'php';
 
     /**
      * @return string
@@ -24,23 +24,29 @@ class PhpSerializationCompilationDataService extends CompilationDataService
         return self::OUTPUT_FILE_TYPE;
     }
 
-    public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
-    {
+    public function writeCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        QtiComponent $object
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
 
         // Clone the component to make sure observers are not saved.
         if ($object instanceof AssessmentItemRef) {
             $object = clone $object;
         }
-        
+
         $compilationDirectory->write(
             $path,
             serialize($object)
         );
     }
-    
-    public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
-    {
+
+    public function readCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        $cacheInfo = ''
+    ) {
 
         $path .= '.' . self::OUTPUT_FILE_TYPE;
 
@@ -48,11 +54,13 @@ class PhpSerializationCompilationDataService extends CompilationDataService
             if (($component = @unserialize($compilationData)) !== false) {
                 return $component;
             } else {
-                $msg = "PHP Compilation Data '" . substr($compilationData, 0, 20) . "...' in directory '" . $compilationDirectory->getId() . "' at path '" . $path . "' could not be unserialized properly.";
+                $msg = "PHP Compilation Data '" . substr($compilationData, 0, 20) . "...' in directory '"
+                    . $compilationDirectory->getId() . "' at path '" . $path . "' could not be unserialized properly.";
                 throw new \common_Exception($msg);
             }
         } else {
-            $msg = "PHP Compilation data in directory '" . $compilationDirectory->getId() . "' could not be read properly.";
+            $msg = "PHP Compilation data in directory '" . $compilationDirectory->getId()
+                . "' could not be read properly.";
             throw new \common_Exception($msg);
         }
     }

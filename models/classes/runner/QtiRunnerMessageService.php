@@ -38,7 +38,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
  */
 class QtiRunnerMessageService extends ConfigurableService implements RunnerMessageService
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerMessageService';
+    public const SERVICE_ID = 'taoQtiTest/QtiRunnerMessageService';
 
     /**
      * Gets a message related to the state of the assessment test session
@@ -52,13 +52,13 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
             switch ($testSession->getState()) {
                 case AssessmentTestSessionState::SUSPENDED:
                     return $this->getPausedStateMessage($testSession);
-                    
+
                 case AssessmentTestSessionState::CLOSED:
                     return $this->getTerminatedStateMessage($testSession);
-                    
+
                 case AssessmentTestSessionState::INITIAL:
                     return $this->getInitialStateMessage($testSession);
-                    
+
                 default:
                     return $this->getRunningStateMessages($testSession);
             }

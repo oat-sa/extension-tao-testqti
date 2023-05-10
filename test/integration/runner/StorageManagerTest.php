@@ -112,7 +112,9 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $prophet = new Prophet();
         $prophecy = $prophet->prophesize(StateStorage::class);
         $prophecy->get(Argument::type('string'), Argument::type('string'))->willReturn(null);
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->willThrow(new \Exception('Set() should not be called!'));
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->willThrow(new \Exception('Set() should not be called!'));
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
@@ -155,7 +157,9 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->willThrow(new \Exception('Set() should not be called!'));
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->willThrow(new \Exception('Set() should not be called!'));
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
@@ -200,8 +204,12 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->willThrow(new \Exception('Set() should not be called!'));
-        $prophecy->del(Argument::type('string'), Argument::type('string'))->willThrow(new \Exception('Del() should not be called!'));
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->willThrow(new \Exception('Set() should not be called!'));
+        $prophecy
+            ->del(Argument::type('string'), Argument::type('string'))
+            ->willThrow(new \Exception('Del() should not be called!'));
 
         $mockStorage = $prophecy->reveal();
 
@@ -267,10 +275,12 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
             }
             return null;
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            $buffer[$args[0]][$args[1]] = $args[2];
-            return true;
-        });
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->will(function ($args) use (&$buffer) {
+                $buffer[$args[0]][$args[1]] = $args[2];
+                return true;
+            });
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });
@@ -371,10 +381,12 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
             }
             return null;
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            $buffer[$args[0]][$args[1]] = $args[2];
-            return true;
-        });
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->will(function ($args) use (&$buffer) {
+                $buffer[$args[0]][$args[1]] = $args[2];
+                return true;
+            });
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });

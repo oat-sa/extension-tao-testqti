@@ -48,6 +48,9 @@ class SetInlineModeForModalFeedback implements Action
             ]
         );
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, $inlineModel ? 'Inline mode was set' : 'Inline mode was unset');
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            $inlineModel ? 'Inline mode was set' : 'Inline mode was unset'
+        );
     }
 }

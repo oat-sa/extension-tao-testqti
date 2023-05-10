@@ -175,7 +175,9 @@ class TestCategoryPreset implements JsonSerializable
     public static function fromArray(array $data)
     {
         if (!isset($data['id']) || !isset($data['label']) || !isset($data['qtiCategory'])) {
-            throw new common_exception_InconsistentData('The test category preset requires an id, a label and a qtiCategory');
+            throw new common_exception_InconsistentData(
+                'The test category preset requires an id, a label and a qtiCategory'
+            );
         }
 
         return new self(

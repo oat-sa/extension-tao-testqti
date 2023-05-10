@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2020 (original work) Open Assessment Technologies SA ;
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\time;
@@ -87,6 +89,7 @@ class TimerAdjustmentServiceTest extends TestCase
         $this->assertSame(10, $service->getAdjustment($source, $qtiTimer));
     }
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testIncrease_AppliesIncreaseToGivenSource(): void
     {
         $increaseValue = 10;
@@ -106,7 +109,9 @@ class TimerAdjustmentServiceTest extends TestCase
         );
         self::assertTrue($result, 'Method must return correct response in case of success.');
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testDecrease_AppliesIncreaseToGivenSource_WithCorrectMaximumDecreaseValue(): void
     {
         $increaseValue = 150;
@@ -131,7 +136,9 @@ class TimerAdjustmentServiceTest extends TestCase
         );
         self::assertTrue($result, 'Method must return correct response in case of successful time decrease.');
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testIncrease_SourceDoesntHaveMaxTimeLimit(): void
     {
         $increaseValue = 5;
@@ -151,7 +158,9 @@ class TimerAdjustmentServiceTest extends TestCase
 
         self::isNull($result, 'Method must return correct response if source doesn\'t have max time limit.');
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testIncrease_WithoutSourceIdAppliesToAllSources(): void
     {
         $increaseValue = 15;
@@ -192,6 +201,7 @@ class TimerAdjustmentServiceTest extends TestCase
             'Method must return correct response in case of success when source is not provided.'
         );
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
     /**
      * @param string $class
@@ -260,4 +270,3 @@ class TimerAdjustmentServiceTest extends TestCase
         return $qtiTimeConstraintMock;
     }
 }
-

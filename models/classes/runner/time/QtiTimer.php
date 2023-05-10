@@ -44,7 +44,6 @@ use oat\taoTests\models\runner\time\Timer;
  */
 class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 {
-
     /**
      * The TimeLine used to compute the duration
      * @var TimeLine
@@ -116,7 +115,12 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             // unclosed range found, auto closing
             // auto generate the timestamp for the missing END point, one microsecond earlier
             \common_Logger::t('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
-            $point = new TimePoint($tags, $timestamp - (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
+            $point = new TimePoint(
+                $tags,
+                $timestamp - (1 / TimePoint::PRECISION),
+                TimePoint::TYPE_END,
+                TimePoint::TARGET_SERVER
+            );
             $this->timeLine->add($point);
             $range[] = $point;
         }
@@ -236,7 +240,9 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         // validate the data consistence
         $rangeLength = count($range);
         if (!$rangeLength || ($rangeLength % 2)) {
-            throw new InconsistentRangeException('The time range does not seem to be consistent, the range is not complete!');
+            throw new InconsistentRangeException(
+                'The time range does not seem to be consistent, the range is not complete!'
+            );
         }
 
         $serverDuration = $itemTimeLine->compute();
@@ -256,10 +262,14 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             if (is_null($duration)) {
                 if ($clientDuration) {
                     $duration = $clientDuration;
-                    \common_Logger::t("No client duration provided to adjust the timer, but a range already exist: ${duration}");
+                    \common_Logger::t(
+                        "No client duration provided to adjust the timer, but a range already exist: ${duration}"
+                    );
                 } else {
                     $duration = $serverDuration;
-                    \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
+                    \common_Logger::t(
+                        "No client duration provided to adjust the timer, fallback to server duration: ${duration}"
+                    );
                 }
             }
 
@@ -274,9 +284,13 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         // check if the client side duration is bound by the server side duration
         if (is_null($duration)) {
             $duration = $serverDuration;
-            \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
+            \common_Logger::t(
+                "No client duration provided to adjust the timer, fallback to server duration: ${duration}"
+            );
         } elseif ($duration > $serverDuration) {
-            \common_Logger::w("A client duration must not be larger than the server time range! (${duration} > ${serverDuration})");
+            \common_Logger::w(
+                "A client duration must not be larger than the server time range! (${duration} > ${serverDuration})"
+            );
             $duration = $serverDuration;
         }
 
@@ -289,7 +303,12 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         $overallDuration = $serverEnd->getTimestamp() - $serverStart->getTimestamp();
         $delay = ($overallDuration - $duration) / 2;
 
-        $start = new TimePoint($tags, $serverStart->getTimestamp() + $delay, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT);
+        $start = new TimePoint(
+            $tags,
+            $serverStart->getTimestamp() + $delay,
+            TimePoint::TYPE_START,
+            TimePoint::TARGET_CLIENT
+        );
         $this->timeLine->add($start);
 
         $end = new TimePoint($tags, $serverEnd->getTimestamp() - $delay, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT);

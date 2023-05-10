@@ -30,8 +30,8 @@ use oat\oatbox\event\Event;
  */
 class QtiMoveEvent implements Event
 {
-    const CONTEXT_BEFORE = 'before';
-    const CONTEXT_AFTER = 'after';
+    public const CONTEXT_BEFORE = 'before';
+    public const CONTEXT_AFTER = 'after';
 
     private $from;
     private $to;

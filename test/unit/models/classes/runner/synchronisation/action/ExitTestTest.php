@@ -101,7 +101,9 @@ class ExitTestTest extends TestCase
     public function testThrowsWhenValidationFails(): void
     {
         $this->expectException(common_exception_InconsistentData::class);
-        $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId');
+        $this->expectExceptionMessage(
+            'Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId'
+        );
 
         $this->createSubject(['missing parameters'])
             ->process();

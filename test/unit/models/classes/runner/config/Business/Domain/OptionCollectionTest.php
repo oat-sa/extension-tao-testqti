@@ -19,6 +19,7 @@
  *
  * @author Sergei Mikhailov <sergei.mikhailov@taotesting.com>
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\config\Business\Domain;

@@ -34,7 +34,7 @@ use oat\oatbox\filesystem\File;
  */
 interface QtiPackageImportPreprocessing
 {
-    const SERVICE_ID = 'taoQtiTest/QtiPackageImportPreprocessing';
+    public const SERVICE_ID = 'taoQtiTest/QtiPackageImportPreprocessing';
 
     /**
      * Method that allows you to modify links to assets QTI test package to CloudFront before import

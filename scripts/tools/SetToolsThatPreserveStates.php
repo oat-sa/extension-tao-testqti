@@ -46,7 +46,10 @@ class SetToolsThatPreserveStates extends AbstractAction
         $toolNamesCommaSeparated = current($params);
         $toolNames = explode(',', $toolNamesCommaSeparated);
 
-        $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        $extension = $this
+            ->getServiceManager()
+            ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest');
         $config = $extension->getConfig('testRunner');
 
         foreach ($toolNames as $toolName) {
@@ -58,6 +61,12 @@ class SetToolsThatPreserveStates extends AbstractAction
         $config['tool-state-server-storage'] = $toolNames;
         $extension->setConfig('testRunner', $config);
 
-        return new Report(Report::TYPE_SUCCESS, sprintf('The list consisting of %d tools that should preserve their states is registered', count($toolNames)));
+        return new Report(
+            Report::TYPE_SUCCESS,
+            sprintf(
+                'The list consisting of %d tools that should preserve their states is registered',
+                count($toolNames)
+            )
+        );
     }
 }

@@ -70,7 +70,7 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
         } elseif (isset($this->index[DEFAULT_LANG]) && isset($this->index[DEFAULT_LANG][$id])) {
             return $this->index[DEFAULT_LANG][$id];
         }
-        
+
         return null;
     }
 
@@ -92,13 +92,13 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
         if ($attributes && isset($attributes[$name])) {
             return $attributes[$name];
         }
-        
+
         // Try Default Language.
         $attributes = $this->getItem($id, DEFAULT_LANG);
         if ($attributes && isset($attributes[$name])) {
             return $attributes[$name];
         }
-        
+
         return null;
     }
 
@@ -113,13 +113,13 @@ class QtiTestCompilerIndex implements ItemCompilerIndex
         if (!is_string($data)) {
             throw new \common_exception_InconsistentData('The encoded index data should be provided as a string');
         }
-        
+
         $index = json_decode($data, true);
-        
+
         if (!is_array($index)) {
             throw new \common_exception_InconsistentData('The decoded index data should be an array');
         }
-        
+
         if ($language) {
             $this->index[$language] = $index;
         } else {

@@ -43,7 +43,6 @@ final class Version202203151417562260_taoQtiTest extends AbstractMigration
         $config['plugins']['review']['displayItemTooltip'] = false;
 
         $extension->setConfig(self::CONFIG_FILE, $config);
-
     }
 
     public function down(Schema $schema): void

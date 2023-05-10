@@ -142,7 +142,9 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 $itemRefInfo = gettype($itemRef);
             }
 
-            throw new \common_exception_InconsistentData("The itemRef (value = '${itemRefInfo}') is not formatted correctly.");
+            throw new \common_exception_InconsistentData(
+                "The itemRef (value = '${itemRefInfo}') is not formatted correctly."
+            );
         }
 
         $itemUri = $directoryIds[0];
@@ -435,8 +437,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $itemRef = $context->getCurrentAssessmentItemRef();
 
             $reviewConfig = $config->getConfigValue('review');
-            $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
-            $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered']) ? (bool) $reviewConfig['partiallyAnsweredIsAnswered'] : true;
+            $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle'])
+                ? (bool) $reviewConfig['displaySubsectionTitle']
+                : true;
+            $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered'])
+                ? (bool) $reviewConfig['partiallyAnsweredIsAnswered']
+                : true;
 
             if ($displaySubsectionTitle) {
                 $currentSection = $session->getCurrentAssessmentSection();
@@ -464,7 +470,9 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $response['itemIdentifier'] = $itemRef->getIdentifier();
 
             // The number of current attempt (1 for the first time ...)
-            $response['attempt'] = ($context->isAdaptive()) ? $context->getCatAttempts($response['itemIdentifier']) + 1 : $itemSession['numAttempts']->getValue();
+            $response['attempt'] = ($context->isAdaptive())
+                ? $context->getCatAttempts($response['itemIdentifier']) + 1
+                : $itemSession['numAttempts']->getValue();
 
             // The state of the current AssessmentTestSession.
             $response['itemSessionState'] = $itemSession->getState();
@@ -489,7 +497,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $response['itemFlagged'] = TestRunnerUtils::getItemFlag($session, $response['itemPosition'], $context);
 
             // The current item answered state
-            $response['itemAnswered'] = $this->isItemCompleted($context, $currentItem, $itemSession, $partiallyAnsweredIsAnswered);
+            $response['itemAnswered'] = $this->isItemCompleted(
+                $context,
+                $currentItem,
+                $itemSession,
+                $partiallyAnsweredIsAnswered
+            );
 
             // Time constraints.
             $response['timeConstraints'] = $this->buildTimeConstraints($context);
@@ -511,7 +524,11 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $response['numberPresented'] = $session->numberPresented();
 
             // Whether or not the progress of the test can be inferred.
-            $response['considerProgress'] = TestRunnerUtils::considerProgress($session, $context->getTestMeta(), $config->getConfig());
+            $response['considerProgress'] = TestRunnerUtils::considerProgress(
+                $session,
+                $context->getTestMeta(),
+                $config->getConfig()
+            );
 
             // Whether or not the deepest current section is visible.
             $response['isDeepestSectionVisible'] = $currentSection->isVisible();
@@ -913,13 +930,18 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                         microtime(true)
                     );
                 } else {
-                    \common_Logger::i("No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an adaptive section.");
+                    \common_Logger::i(
+                        "No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an "
+                        . "adaptive section."
+                    );
                 }
 
                 $context->persistLastCatItemOutput($output);
 
                 // Send results to TAO Results.
-                $resultTransmitter = new \taoQtiCommon_helpers_ResultTransmitter($context->getSessionManager()->getResultServer());
+                $resultTransmitter = new \taoQtiCommon_helpers_ResultTransmitter(
+                    $context->getSessionManager()->getResultServer()
+                );
 
                 $hrefParts = explode('|', $assessmentItem->getHref());
                 $sessionId = $context->getTestSession()->getSessionId();
@@ -1069,7 +1091,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $currentItem       = $session->getCurrentAssessmentItemRef();
         $currentOccurrence = $session->getCurrentAssessmentItemRefOccurence();
 
-        $itemSession = $session->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurrence);
+        $itemSession = $session->getAssessmentItemSessionStore()->getAssessmentItemSession(
+            $currentItem,
+            $currentOccurrence
+        );
 
         $stateOutput = new \taoQtiCommon_helpers_PciStateOutput();
 
@@ -1084,8 +1109,14 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $position = $route->getPosition();
         $config = $this->getTestConfig();
         $reviewConfig = $config->getConfigValue('review');
-        $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered']) ? (bool) $reviewConfig['partiallyAnsweredIsAnswered'] : true;
-        $output['itemAnswered'] = TestRunnerUtils::isItemCompleted($route->getRouteItemAt($position), $itemSession, $partiallyAnsweredIsAnswered);
+        $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered'])
+            ? (bool) $reviewConfig['partiallyAnsweredIsAnswered']
+            : true;
+        $output['itemAnswered'] = TestRunnerUtils::isItemCompleted(
+            $route->getRouteItemAt($position),
+            $itemSession,
+            $partiallyAnsweredIsAnswered
+        );
 
         return $output;
     }
@@ -1358,7 +1389,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 // fork of AssessmentItemSession::isResponded()
                 $excludedResponseVariables = ['numAttempts', 'duration'];
                 foreach ($responses as $var) {
-                    if ($var instanceof ResponseVariable && in_array($var->getIdentifier(), $excludedResponseVariables) === false) {
+                    if (
+                        $var instanceof ResponseVariable
+                        && in_array($var->getIdentifier(), $excludedResponseVariables) === false
+                    ) {
                         $value = $var->getValue();
                         $defaultValue = $var->getDefaultValue();
 
@@ -1495,7 +1529,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * times out.
      *
      * @param RunnerServiceContext $context
-     * @param AssessmentTestSessionException $timeOutException The AssessmentTestSessionException object thrown to indicate the timeout.
+     * @param AssessmentTestSessionException $timeOutException The AssessmentTestSessionException object thrown to
+     *                                                         indicate the timeout.
      */
     protected function onTimeout(RunnerServiceContext $context, AssessmentTestSessionException $timeOutException)
     {
@@ -1557,7 +1592,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Build an array where each cell represent a time constraint (a.k.a. time limits)
      * in force. Each cell is actually an array with two keys:
      *
-     * * 'source': The identifier of the QTI component emitting the constraint (e.g. AssessmentTest, TestPart, AssessmentSection, AssessmentItemRef).
+     * * 'source': The identifier of the QTI component emitting the constraint
+     *   (e.g. AssessmentTest, TestPart, AssessmentSection, AssessmentItemRef).
      * * 'seconds': The number of remaining seconds until it times out.
      *
      * @param RunnerServiceContext $context
@@ -1726,7 +1762,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $testUri = $context->getTestDefinitionUri();
 
         if (!is_null($itemUri)) {
-            $resultStore->storeItemVariables($testUri, $itemUri, $metaVariables, $this->getTransmissionId($context, $itemId));
+            $resultStore->storeItemVariables(
+                $testUri,
+                $itemUri,
+                $metaVariables,
+                $this->getTransmissionId($context, $itemId)
+            );
         } else {
             $resultStore->storeTestVariables($testUri, $metaVariables, $sessionId);
         }
@@ -1759,7 +1800,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $resultStore = $deliveryServerService->getResultStoreWrapper($sessionId);
 
         if (!is_null($itemUri)) {
-            $resultStore->storeItemVariable($testUri, $itemUri, $metaVariable, $this->getTransmissionId($context, $itemId));
+            $resultStore->storeItemVariable(
+                $testUri,
+                $itemUri,
+                $metaVariable,
+                $this->getTransmissionId($context, $itemId)
+            );
         } else {
             $resultStore->storeTestVariable($testUri, $metaVariable, $sessionId);
         }
@@ -1902,7 +1948,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      *
      * Depending on the context (adaptive or not), it will return an appropriate Assessment Object to deal with.
      *
-     * In case of the context is not adaptive, an AssessmentTestSession corresponding to the current test $context is returned.
+     * In case of the context is not adaptive, an AssessmentTestSession corresponding to the current test $context
+     * is returned.
      *
      * Otherwise, an AssessmentItemSession to deal with is returned.
      *
@@ -2009,7 +2056,9 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 }
             }
         } catch (\tao_models_classes_FileNotFoundException $e) {
-            \common_Logger::i('old delivery that does not contain the compiled portable element data in the item ' . $itemRef);
+            \common_Logger::i(
+                'old delivery that does not contain the compiled portable element data in the item ' . $itemRef
+            );
         }
         return $portableElements;
     }
@@ -2025,9 +2074,14 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         try {
             $metadataElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::METADATA_FILE_NAME);
         } catch (\tao_models_classes_FileNotFoundException $e) {
-            \common_Logger::i('Old delivery that does not contain the compiled portable element data in the item ' . $itemRef . '. Original message: ' . $e->getMessage());
+            \common_Logger::i(
+                'Old delivery that does not contain the compiled portable element data in the item ' . $itemRef
+                . '. Original message: ' . $e->getMessage()
+            );
         } catch (\Exception $e) {
-            \common_Logger::w('An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage());
+            \common_Logger::w(
+                'An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage()
+            );
         }
         return $metadataElements;
     }
@@ -2066,8 +2120,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @return bool
      * @throws \common_exception_NotFound
      */
-    protected function deleteExecutionStatesBasedOnSession(DeliveryExecutionDeleteRequest $request, StorageManager $storage, $userUri, AssessmentTestSession $session)
-    {
+    protected function deleteExecutionStatesBasedOnSession(
+        DeliveryExecutionDeleteRequest $request,
+        StorageManager $storage,
+        $userUri,
+        AssessmentTestSession $session
+    ) {
         $itemsRefs = $this->getItemsRefs($request, $session);
         foreach ($itemsRefs as $itemRef) {
             $stateId = $this->buildStorageItemKey(

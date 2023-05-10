@@ -121,6 +121,7 @@ class QtiRunnerServiceTest extends TestCase
 
         $testData = $this->qtiRunnerService->getTestData($qtiRunnerServiceContextMock);
 
+        // phpcs:disable Generic.Files.LineLength
         $this->assertTrue(
             array_key_exists('config', $testData)
             && array_key_exists('plugins', $testData['config'])
@@ -128,6 +129,7 @@ class QtiRunnerServiceTest extends TestCase
             && array_key_exists('activeNamespace', $testData['config']['plugins'][QtiRunnerService::TOOL_ITEM_THEME_SWITCHER])
             && self::TEST_THEME_ID === $testData['config']['plugins'][QtiRunnerService::TOOL_ITEM_THEME_SWITCHER]['activeNamespace']
         );
+        // phpcs:enable Generic.Files.LineLength
     }
 
     public function testGetDataWithThemeSwitcherDisabled()

@@ -74,7 +74,10 @@ class NextItemDataTest extends TestCase
     public function testThrowsWhenValidationFails(): void
     {
         $this->expectException(common_exception_InconsistentData::class);
-        $this->expectExceptionMessage('Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, itemDefinition');
+        $this->expectExceptionMessage(
+            'Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, '
+                . 'itemDefinition'
+        );
 
         $this->createSubject(['missing parameters'])
             ->process();

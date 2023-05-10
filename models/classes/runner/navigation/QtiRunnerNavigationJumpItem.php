@@ -45,10 +45,10 @@ class QtiRunnerNavigationJumpItem implements RunnerNavigation
             $context,
             $context->getItemPositionInRoute($ref)
         );
-        
+
         $catItemId = '';
         $pos = $context->getItemPositionInRoute(intval($ref), $catItemId);
-        
+
         if ($context->isAdaptive()) {
             // Consider potential changes in the selected items.
             $context->selectAdaptiveNextItem();

@@ -37,11 +37,10 @@ class ResultTestVariablesTransmissionEvent implements Event
 
     public function __construct(
         string $deliveryExecutionId,
-        array  $variables,
+        array $variables,
         string $transmissionId,
         string $testUri = ''
-    )
-    {
+    ) {
         $this->deliveryExecutionId = $deliveryExecutionId;
         $this->variables = $variables;
         $this->transmissionId = $transmissionId;

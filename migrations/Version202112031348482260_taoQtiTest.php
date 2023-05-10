@@ -14,7 +14,6 @@ use common_ext_ExtensionsManager as ExtensionsManager;
  */
 final class Version202112031348482260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Set up the default item store TTL for cached proxy.';

@@ -51,4 +51,6 @@ class TestPackageExport extends AbstractTestExport
 }
 
 // for backward compatibility
+// phpcs:disable PSR1.Files.SideEffects
 class_alias(TestPackageExport::class, 'taoQtiTest_models_classes_export_TestExport22');
+// phpcs:enable PSR1.Files.SideEffects

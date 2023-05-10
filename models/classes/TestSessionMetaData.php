@@ -35,8 +35,10 @@ use qtism\runtime\tests\RouteItem;
  *
  * Data will be stored as trace variable {@link \taoResultServer_models_classes_TraceVariable}.
  *
- * Section level data stored as test variable {@link \taoResultServer_models_classes_ResultServerStateFull::storeTestVariable()}
- * prefixed with session identifier e.g. <i>SECTION_EXIT_CODE</i> will be stored as <i>SECTION_EXIT_CODE_assessmentSection-1</i>
+ * Section level data stored as test variable
+ * {@link \taoResultServer_models_classes_ResultServerStateFull::storeTestVariable()}
+ * prefixed with session identifier e.g. <i>SECTION_EXIT_CODE</i> will be stored as
+ * <i>SECTION_EXIT_CODE_assessmentSection-1</i>
  *
  *
  * Usage example:
@@ -78,7 +80,7 @@ class TestSessionMetaData
     {
         $this->session = $session;
     }
-        
+
     /**
      * Save session metadata.
      *

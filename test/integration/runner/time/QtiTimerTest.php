@@ -559,7 +559,10 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(1459335025.0000, $timePoints[1]->getTimestamp());
         $this->assertEquals(TimePoint::TARGET_SERVER, $timePoints[1]->getTarget());
         $this->assertEquals(TimePoint::TYPE_END, $timePoints[1]->getType());
-        $this->assertEquals(['itemId-1' => ['DUMMY_TYPE' => ['increase' => 1, 'decrease' => 0]]], $adjustmentMap->toArray());
+        $this->assertEquals(
+            ['itemId-1' => ['DUMMY_TYPE' => ['increase' => 1, 'decrease' => 0]]],
+            $adjustmentMap->toArray()
+        );
     }
 
     public function testLoadInvalidStorageException()
@@ -806,25 +809,65 @@ class QtiTimerTest extends GenerisPhpUnitTestRunner
             [
                 'regular' => [
                     //item-a
-                    new TimePoint(['test-a', 'item-a'], 1459519500.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
-                    new TimePoint(['test-a', 'item-a'], 1459519502.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+                    new TimePoint(
+                        ['test-a', 'item-a'],
+                        1459519500.2422,
+                        TimePoint::TYPE_START,
+                        TimePoint::TARGET_SERVER
+                    ),
+                    new TimePoint(
+                        ['test-a', 'item-a'],
+                        1459519502.2422,
+                        TimePoint::TYPE_START,
+                        TimePoint::TARGET_CLIENT
+                    ),
                     new TimePoint(['test-a', 'item-a'], 1459519510.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
                     new TimePoint(['test-a', 'item-a'], 1459519512.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
                     //item-b
-                    new TimePoint(['test-a', 'item-b'], 1459519600.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
-                    new TimePoint(['test-a', 'item-b'], 1459519602.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+                    new TimePoint(
+                        ['test-a', 'item-b'],
+                        1459519600.2422,
+                        TimePoint::TYPE_START,
+                        TimePoint::TARGET_SERVER
+                    ),
+                    new TimePoint(
+                        ['test-a', 'item-b'],
+                        1459519602.2422,
+                        TimePoint::TYPE_START,
+                        TimePoint::TARGET_CLIENT
+                    ),
                     new TimePoint(['test-a', 'item-b'], 1459519610.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
                     new TimePoint(['test-a', 'item-b'], 1459519612.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
                     //item-b
-                    new TimePoint(['test-a', 'item-c'], 1459519700.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
-                    new TimePoint(['test-a', 'item-c'], 1459519702.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+                    new TimePoint(
+                        ['test-a', 'item-c'],
+                        1459519700.2422,
+                        TimePoint::TYPE_START,
+                        TimePoint::TARGET_SERVER
+                    ),
+                    new TimePoint(
+                        ['test-a', 'item-c'],
+                        1459519702.2422,
+                        TimePoint::TYPE_START,
+                        TimePoint::TARGET_CLIENT
+                    ),
                     new TimePoint(['test-a', 'item-c'], 1459519710.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
                     new TimePoint(['test-a', 'item-c'], 1459519712.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
                 ],
                 'extra' => [
                     //item-b
-                    new TimePoint(['test-a', 'item-c'], 1459519700.2422, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
-                    new TimePoint(['test-a', 'item-c'], 1459519702.2422, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT),
+                    new TimePoint(
+                        ['test-a', 'item-c'],
+                        1459519700.2422,
+                        TimePoint::TYPE_START,
+                        TimePoint::TARGET_SERVER
+                    ),
+                    new TimePoint(
+                        ['test-a', 'item-c'],
+                        1459519702.2422,
+                        TimePoint::TYPE_START,
+                        TimePoint::TARGET_CLIENT
+                    ),
                     new TimePoint(['test-a', 'item-c'], 1459519710.2422, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT),
                     new TimePoint(['test-a', 'item-c'], 1459519712.2422, TimePoint::TYPE_END, TimePoint::TARGET_SERVER),
                 ],

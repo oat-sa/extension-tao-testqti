@@ -25,5 +25,4 @@ use oat\tao\model\event\AbstractExportEvent;
 
 class QtiTestExportEvent extends AbstractExportEvent
 {
-
 }

@@ -41,7 +41,7 @@ class TestModelTest extends GenerisPhpUnitTestRunner
             $uri
         ])
         ->getMock();
-    
+
         return $resourceMock;
     }
 
@@ -60,7 +60,7 @@ class TestModelTest extends GenerisPhpUnitTestRunner
         $url = $model->getAuthoringUrl($resourceMock);
         $this->assertEquals(1, preg_match('/uri=' . urlencode($fakeUri) . '/', $url));
     }
-    
+
 
     /**
      * Verify that TestModel import handlers are known and tested
@@ -75,7 +75,7 @@ class TestModelTest extends GenerisPhpUnitTestRunner
         $handler = reset($handlers);
         $this->assertInstanceOf('taoQtiTest_models_classes_import_TestImport', $handler);
     }
-    
+
     /**
      * Verify that TestModel export handlers are known and tested
      */

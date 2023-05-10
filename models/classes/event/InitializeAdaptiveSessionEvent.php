@@ -35,9 +35,9 @@ class InitializeAdaptiveSessionEvent implements Event
 {
     /** @var AssessmentTestSession */
     protected $testSession;
-    
+
     protected $catSession;
-    
+
     protected $assessmentSection;
 
     /**
@@ -47,8 +47,11 @@ class InitializeAdaptiveSessionEvent implements Event
      * @param \oat\libCat\CatSession $catSession
      * @param \qtism\data\AssessmentSection $assessmentSection The original QTI section the $catSession belongs to.
      */
-    public function __construct(AssessmentTestSession $testSession, AssessmentSection $assessmentSection, CatSession $catSession)
-    {
+    public function __construct(
+        AssessmentTestSession $testSession,
+        AssessmentSection $assessmentSection,
+        CatSession $catSession
+    ) {
         $this->testSession = $testSession;
         $this->catSession = $catSession;
         $this->assessmentSection = $assessmentSection;
@@ -73,12 +76,12 @@ class InitializeAdaptiveSessionEvent implements Event
     {
         return $this->testSession;
     }
-    
+
     public function getCatSession()
     {
         return $this->catSession;
     }
-    
+
     public function getAssessmentSection()
     {
         return $this->assessmentSection;

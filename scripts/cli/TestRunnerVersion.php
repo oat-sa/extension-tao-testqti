@@ -118,7 +118,11 @@ class TestRunnerVersion extends AbstractAction
         } elseif ($this->isClass($deliveryContainerClass, $oldRunnerClass)) {
             $result = $this->resultData('Default Container: Old TestRunner', false, true);
         } else {
-            $result = $this->resultData('Default Container: Unknown version / bad config (' . $deliveryContainerClass . ')', false, false);
+            $result = $this->resultData(
+                'Default Container: Unknown version / bad config (' . $deliveryContainerClass . ')',
+                false,
+                false
+            );
         }
         return $result;
     }
@@ -160,7 +164,11 @@ class TestRunnerVersion extends AbstractAction
         } elseif ($this->isClass($compilerClass, $oldRunnerClass)) {
             $result = $this->resultData('No Runner set, fallback item compiler class: Old TestRunner', false, true);
         } else {
-            $result = $this->resultData('No Runner set, fallback item compiler class: Unknown version / bad config (' . $compilerClass . ')', false, false);
+            $result = $this->resultData(
+                'No Runner set, fallback item compiler class: Unknown version / bad config (' . $compilerClass . ')',
+                false,
+                false
+            );
         }
         return $result;
     }
@@ -184,7 +192,11 @@ class TestRunnerVersion extends AbstractAction
         } elseif ($this->isClass($testSessionClass, $oldRunnerClass)) {
             $result = $this->resultData('Test Session: Old TestRunner', false, true);
         } else {
-            $result = $this->resultData('Test Session: Unknown version / bad config (' . $testSessionClass . ')', false, false);
+            $result = $this->resultData(
+                'Test Session: Unknown version / bad config (' . $testSessionClass . ')',
+                false,
+                false
+            );
         }
 
         return $result;

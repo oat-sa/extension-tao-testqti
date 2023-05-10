@@ -31,7 +31,8 @@ use oat\taoQtiTest\models\classes\tasks\ResultTransmission\ResultItemVariableTra
 use oat\taoQtiTest\models\classes\tasks\ResultTransmission\ResultTestVariableTransmissionTask;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
 
-class AsynchronousResultTransmissionEventHandler extends InjectionAwareService implements Api\ResultTransmissionEventHandlerInterface
+class AsynchronousResultTransmissionEventHandler extends InjectionAwareService implements
+    Api\ResultTransmissionEventHandlerInterface
 {
     public function transmitResultItemVariable(ResultItemVariablesTransmissionEvent $event): void
     {

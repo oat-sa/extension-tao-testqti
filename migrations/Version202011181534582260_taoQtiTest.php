@@ -14,7 +14,6 @@ use oat\taoTests\models\runner\plugins\TestPlugin;
  */
 final class Version202011181534582260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Register Pause-on-Error plugin';

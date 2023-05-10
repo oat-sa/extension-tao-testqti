@@ -49,11 +49,16 @@ class CloseTestSession extends AbstractAction
         $session = $this->getServiceManager()->get(TestSessionService::SERVICE_ID)->getTestSession($de);
         $initialState = $session->getState();
         /** @var \taoQtiTest_helpers_TestSessionStorage $testSessionStorage */
-        $testSessionStorage = $this->getServiceManager()->get(TestSessionService::SERVICE_ID)->getTestSessionStorage($de);
+        $testSessionStorage = $this
+            ->getServiceManager()
+            ->get(TestSessionService::SERVICE_ID)
+            ->getTestSessionStorage($de);
         $session->endTestSession();
         $testSessionStorage->persist($session);
         $state = $session->getState();
-        return new Report(Report::TYPE_SUCCESS, 'Session ' . $id . ': state changed from ' . $initialState . ' to ' . $state);
+        return new Report(
+            Report::TYPE_SUCCESS,
+            'Session ' . $id . ': state changed from ' . $initialState . ' to ' . $state
+        );
     }
-
 }

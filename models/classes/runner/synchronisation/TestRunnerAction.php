@@ -42,7 +42,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     use RunnerParamParserTrait;
     use RunnerToolStates;
 
-    const OFFLINE_VARIABLE = 'OFFLINE_ITEM';
+    public const OFFLINE_VARIABLE = 'OFFLINE_ITEM';
 
     /** @var double The timestamp of current action */
     protected $time;
@@ -199,7 +199,9 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
         $requiredFields = array_unique($this->getRequiredFields());
         $isValid = ($requiredFields == array_unique(array_intersect($requiredFields, array_keys($this->parameters))));
         if (!$isValid) {
-            throw new \common_exception_InconsistentData('Some parameters are missing. Required parameters are : ' . implode(', ', $requiredFields));
+            throw new \common_exception_InconsistentData(
+                'Some parameters are missing. Required parameters are : ' . implode(', ', $requiredFields)
+            );
         }
     }
 
@@ -233,7 +235,9 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
                         $messageService = $this->getServiceLocator()->get(QtiRunnerMessageService::SERVICE_ID);
+                        // phpcs:disable Generic.Files.LineLength
                         $response['message'] = __($messageService->getStateMessage($this->getServiceContext()->getTestSession()));
+                        // phpcs:enable Generic.Files.LineLength
                     }
                     $response['type'] = 'TestState';
                     break;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,8 +31,8 @@ use qtism\data\QtiIdentifiable;
 
 class TimerAdjustmentService extends ConfigurableService implements TimerAdjustmentServiceInterface
 {
-    protected CONST INCREASE = 'increase';
-    protected CONST DECREASE = 'decrease';
+    protected const INCREASE = 'increase';
+    protected const DECREASE = 'decrease';
 
     /** @var TestSession */
     private $testSession;

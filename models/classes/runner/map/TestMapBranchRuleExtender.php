@@ -28,10 +28,10 @@ use taoQtiTest_models_classes_QtiTestService;
 
 class TestMapBranchRuleExtender
 {
-    const KEY_ATTRIBUTES = '@attributes';
-    const KEY_BRANCH_RULE = 'branchRule';
-    const KEY_IDENTIFIER = 'identifier';
-    const BRANCH_RULE_MAP_PAIRS = [
+    public const KEY_ATTRIBUTES = '@attributes';
+    public const KEY_BRANCH_RULE = 'branchRule';
+    public const KEY_IDENTIFIER = 'identifier';
+    public const BRANCH_RULE_MAP_PAIRS = [
         [RunnerMap::MAP_ATTRIBUTE_PARTS, taoQtiTest_models_classes_QtiTestService::XML_TEST_PART],
         [RunnerMap::MAP_ATTRIBUTE_SECTIONS, taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_SECTION],
         [RunnerMap::MAP_ATTRIBUTE_ITEMS, taoQtiTest_models_classes_QtiTestService::XML_ASSESSMENT_ITEM_REF],
@@ -50,7 +50,8 @@ class TestMapBranchRuleExtender
     }
 
     /**
-     * Adds the branching rules from the given testDefinition into the testMap, going through recursively on the given mapping pairs.
+     * Adds the branching rules from the given testDefinition into the testMap, going through recursively on the given
+     * mapping pairs.
      *
      * @param array $testMap
      * @param array $testDefinition
@@ -59,7 +60,7 @@ class TestMapBranchRuleExtender
      */
     private function addBranchRuleToTestMapRecursively($testMap, $testDefinition, $map)
     {
-        list ($testMapIdentifier, $testDefinitionIdentifier) = array_shift($map);
+        list($testMapIdentifier, $testDefinitionIdentifier) = array_shift($map);
 
         foreach ($testMap[$testMapIdentifier] as $id => $testMapSubObject) {
             foreach ($testDefinition[$testDefinitionIdentifier] as $testDefinitionSubObject) {
@@ -72,7 +73,12 @@ class TestMapBranchRuleExtender
                         );
                     }
 
-                    $testMap = $this->addBranchRuleToTestMap($testMap, $testDefinitionSubObject, $testMapIdentifier, $id);
+                    $testMap = $this->addBranchRuleToTestMap(
+                        $testMap,
+                        $testDefinitionSubObject,
+                        $testMapIdentifier,
+                        $id
+                    );
                 }
             }
         }

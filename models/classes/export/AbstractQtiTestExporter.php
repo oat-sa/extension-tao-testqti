@@ -114,7 +114,8 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
 
     /**
      * Set the array of items that are involved in the QTI Test Definition to be exported.
-     * @param array $items An associative array where keys are assessmentItemRef identifiers and values are core_kernel_classes_Resource objects representing the items in the knowledge base.
+     * @param array $items An associative array where keys are assessmentItemRef identifiers and values are
+     *                     core_kernel_classes_Resource objects representing the items in the knowledge base.
      */
     protected function setItems(array $items): void
     {
@@ -123,7 +124,8 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
 
     /**
      * Get the array of items that are involved in the QTI Test Definition to be exported.
-     * @return array An associative array where keys are assessmentItemRef identifiers and values are core_kernel_classes_Resource objects representing the items in the knowledge base.
+     * @return array An associative array where keys are assessmentItemRef identifiers and values are
+     *               core_kernel_classes_Resource objects representing the items in the knowledge base.
      */
     protected function getItems(): array
     {

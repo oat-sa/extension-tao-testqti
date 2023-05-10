@@ -43,7 +43,10 @@ class SetPreCachingConfig extends \common_ext_action_InstallAction
     public function __invoke($params)
     {
         //set the allow flag to true
-        $qtiTest = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        $qtiTest = $this
+            ->getServiceManager()
+            ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest');
         $config = $qtiTest->getConfig('testRunner');
         $config = array_merge($config, [
             'allow-browse-next-item' => true

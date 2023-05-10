@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,8 +29,10 @@ trait QtiTimeStorageObjectDecodingTrait
 {
     private function decodeTimeline(array $data): array
     {
-        if (array_key_exists(self::STORAGE_KEY_TIME_LINE, $data)
-            && !$data[self::STORAGE_KEY_TIME_LINE] instanceof TimeLine) {
+        if (
+            array_key_exists(self::STORAGE_KEY_TIME_LINE, $data)
+            && !$data[self::STORAGE_KEY_TIME_LINE] instanceof TimeLine
+        ) {
             $timeLine = new QtiTimeLine();
             $timeLine->fromArray($data[self::STORAGE_KEY_TIME_LINE]);
             $data[self::STORAGE_KEY_TIME_LINE] = $timeLine;
@@ -40,8 +43,10 @@ trait QtiTimeStorageObjectDecodingTrait
 
     private function decodeAdjustmentMap(array $data): array
     {
-        if (array_key_exists(self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP, $data)
-            && !$data[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP] instanceof TimerAdjustmentMapInterface) {
+        if (
+            array_key_exists(self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP, $data)
+            && !$data[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP] instanceof TimerAdjustmentMapInterface
+        ) {
             $map = new AdjustmentMap();
             $map->fromArray($data[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP]);
             $data[self::STORAGE_KEY_TIMER_ADJUSTMENT_MAP] = $map;

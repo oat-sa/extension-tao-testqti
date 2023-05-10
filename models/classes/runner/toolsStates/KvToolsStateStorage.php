@@ -32,7 +32,7 @@ class KvToolsStateStorage extends ToolsStateStorage
     /**
      * Key prefix for states in the global key-value storage
      */
-    const PREFIX_STATES = 'ToolsStateStorage:states';
+    public const PREFIX_STATES = 'ToolsStateStorage:states';
 
     /**
      * @return \common_persistence_AdvKeyValuePersistence

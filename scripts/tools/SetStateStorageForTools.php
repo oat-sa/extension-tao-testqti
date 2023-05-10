@@ -115,7 +115,7 @@ class SetStateStorageForTools extends AbstractAction
         );
         return null;
     }
-    
+
     /**
      * @return void
      * @throws \common_Exception

@@ -10,7 +10,7 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use SplObjectStorage;
 use taoQtiTest_models_classes_QtiTestConverterException;
-use \taoQtiTest_models_classes_QtiTestService;
+use taoQtiTest_models_classes_QtiTestService;
 use taoQtiTest_models_classes_QtiTestServiceException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -63,6 +63,7 @@ class XmlEditorTest extends TestCase
     {
         $service = new XmlEditor();
 
+        // phpcs:disable Generic.Files.LineLength
         $xmlMock = <<<'EOL'
 <?xml version="1.0" encoding="UTF-8"?>
 <assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="UnitTestQtiItem" title="UnitTestQtiItem" toolName="tao" toolVersion="3.4.0-sprint130" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd">
@@ -72,6 +73,7 @@ class XmlEditorTest extends TestCase
     </testPart>
 </assessmentTest>
 EOL;
+        // phpcs:enable Generic.Files.LineLength
 
         $expectArrayTest = [
             "qti-type" => "assessmentTest",
