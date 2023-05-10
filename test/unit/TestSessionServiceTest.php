@@ -85,11 +85,16 @@ class TestSessionServiceTest extends TestCase
             ->getMock();
         $serviceCallMock->method('getInParameters')->willReturn([
             new \tao_models_classes_service_ConstantParameter(
-                new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation'),
-                'http://tao.local/tao.rdf#i5e283280659c811408c92e7adfa5708a14-|http://tao.local/tao.rdf#i5e283280660c611408413648d4f380e160+'
+                new \core_kernel_classes_Resource(
+                    'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation'
+                ),
+                'http://tao.local/tao.rdf#i5e283280659c811408c92e7adfa5708a14-'
+                    . '|http://tao.local/tao.rdf#i5e283280660c611408413648d4f380e160+'
             ),
             new \tao_models_classes_service_ConstantParameter(
-                new \core_kernel_classes_Resource('http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition'),
+                new \core_kernel_classes_Resource(
+                    'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition'
+                ),
                 'http://tao.local/tao.rdf#i5e28322a9c33611408e8f67f51196156cd'
             ),
         ]);
@@ -167,8 +172,14 @@ class TestSessionServiceTest extends TestCase
 
         $cacheMock = $this->getMockBuilder(\common_cache_Cache::class)->getMock();
         $cacheMock->method('get')->willReturnMap([
-            ['tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestCompilation', 'QtiTestCompilation'],
-            ['tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestDefinition', 'QtiTestDefinition'],
+            [
+                'tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestCompilation',
+                'QtiTestCompilation',
+            ],
+            [
+                'tao_service_param_http%3A%2F%2Fwww.tao.lu%2FOntologies%2FTAOTest.rdf%23FormalParamQtiTestDefinition',
+                'QtiTestDefinition',
+            ],
         ]);
 
         $config = new \common_persistence_KeyValuePersistence([], new \common_persistence_InMemoryKvDriver());

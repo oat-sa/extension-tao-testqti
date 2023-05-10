@@ -45,7 +45,11 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     public function get()
     {
         $items = [];
-        $propertyFilters = [taoItems_models_classes_ItemsService::PROPERTY_ITEM_MODEL => taoItems_models_classes_itemModel::CLASS_URI_QTI];
+        $propertyFilters = [
+            // phpcs:disable Generic.Files.LineLength
+            taoItems_models_classes_ItemsService::PROPERTY_ITEM_MODEL => taoItems_models_classes_itemModel::CLASS_URI_QTI
+            // phpcs:enable Generic.Files.LineLength
+        ];
         $options = ['recursive' => true, 'like' => true, 'limit' => 50];
         $notEmpty = filter_var($this->getRequestParameter('notempty'), FILTER_VALIDATE_BOOLEAN);
 
@@ -136,7 +140,10 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     public function getCategories()
     {
         if (!$this->hasRequestParameter('uris')) {
-            $this->returnJson(__("At least one mandatory parameter was required but found missing in your request"), 412);
+            $this->returnJson(
+                __("At least one mandatory parameter was required but found missing in your request"),
+                412
+            );
             return;
         }
 

@@ -257,7 +257,8 @@ class TestRunnerOfflineMode extends ScriptAction
 
     protected function provideDescription()
     {
-        return 'Script for enabling/disabling offline mode for TestRunner. It registers or unregisters specific plugins and sets proper configuration.';
+        return 'Script for enabling/disabling offline mode for TestRunner. It registers or unregisters specific '
+            . 'plugins and sets proper configuration.';
     }
 
     protected function provideUsage()

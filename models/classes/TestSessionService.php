@@ -177,8 +177,11 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      * @param \taoQtiTest_helpers_TestSessionStorage $storage
      * @param array $compilationDirectories
      */
-    public function registerTestSession(AssessmentTestSession $session, \taoQtiTest_helpers_TestSessionStorage $storage, array $compilationDirectories)
-    {
+    public function registerTestSession(
+        AssessmentTestSession $session,
+        \taoQtiTest_helpers_TestSessionStorage $storage,
+        array $compilationDirectories
+    ) {
         $sessionId = $session->getSessionId();
         self::$cache[$sessionId] = [
             self::SESSION_PROPERTY_SESSION => $session,
@@ -190,12 +193,13 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     /**
      * Get a test session data by identifier.
      *
-     * Get a session by $sessionId. In case it was previously registered using the TestSessionService::registerTestSession method,
-     * an array with the following keys will be returned:
+     * Get a session by $sessionId. In case it was previously registered using the
+     * TestSessionService::registerTestSession method, an array with the following keys will be returned:
      *
      * * 'session': A qtism AssessmentTestSession object.
      * * 'storage': A taoQtiTest_helpers_TestSessionStorage.
-     * * 'context': A RunnerServiceContext object (if not provided at TestSessionService::registerTestSession call time, it contains null).
+     * * 'context': A RunnerServiceContext object
+     *   (if not provided at TestSessionService::registerTestSession call time, it contains null).
      *
      * In case of no such session is found for $sessionId, false is returned.
      *
@@ -235,7 +239,8 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
      * Example:
      * <pre>
      * array(
-     *   'QtiTestCompilation' => 'http://sample/first.rdf#i14369768868163155-|http://sample/first.rdf#i1436976886612156+',
+     *   'QtiTestCompilation' => 'http://sample/first.rdf#i14369768868163155-'
+     *     . '|http://sample/first.rdf#i1436976886612156+',
      *   'QtiTestDefinition' => 'http://sample/first.rdf#i14369752345581135'
      * )
      * </pre>
@@ -245,7 +250,10 @@ class TestSessionService extends ConfigurableService implements DeliveryExecutio
     {
         try {
             $compiledDelivery = $deliveryExecution->getDelivery();
-            $runtime = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID)->getRuntime($compiledDelivery->getUri());
+            $runtime = $this
+                ->getServiceLocator()
+                ->get(RuntimeService::SERVICE_ID)
+                ->getRuntime($compiledDelivery->getUri());
             return tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, []);
         } catch (Throwable $exception) {
             throw new common_exception_NoContent($exception->getMessage());

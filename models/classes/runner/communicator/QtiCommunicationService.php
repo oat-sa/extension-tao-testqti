@@ -50,7 +50,8 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     /**
      * Processes the input messages
      * @param QtiRunnerServiceContext $context - Needs the current runner context
-     * @param array $input - Accept a list of input, each one is represented by a channel's name that is a string and a message that can be any type
+     * @param array $input - Accept a list of input, each one is represented by a channel's name that is a string and a
+     *                     message that can be any type
      * @return array - Returns a list of responses in the same order as the input list
      * @throws common_exception_InconsistentData
      */
@@ -64,7 +65,10 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
 
         foreach ($input as $data) {
             if (!is_array($data) || !isset($data['channel'], $data['message'])) {
-                throw new common_exception_InconsistentData('Wrong message chunk received by the bidirectional communication service: either channel or message content is missing!');
+                throw new common_exception_InconsistentData(
+                    'Wrong message chunk received by the bidirectional communication service: either channel '
+                    . 'or message content is missing!'
+                );
             }
 
             if ($this->hasChannel($data['channel'], self::CHANNEL_TYPE_INPUT)) {
@@ -83,7 +87,8 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     /**
      * Builds the list of output messages
      * @param QtiRunnerServiceContext $context - Needs the current runner context
-     * @return array - Returns a list of output, each one is represented by a channel's name that is a string and a message that can be any type
+     * @return array - Returns a list of output, each one is represented by a channel's name that is a string and a
+     *               message that can be any type
      */
     public function processOutput(QtiRunnerServiceContext $context): array
     {
@@ -112,7 +117,9 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     public function attachChannel(CommunicationChannel $channel, $channelType): void
     {
         if ($this->hasChannel($channel->getName(), $channelType)) {
-            throw new common_exception_InconsistentData('Channel ' . $channel->getName() . ' already registered in ' . __CLASS__);
+            throw new common_exception_InconsistentData(
+                'Channel ' . $channel->getName() . ' already registered in ' . __CLASS__
+            );
         }
 
         $channels = $this->getOption(self::OPTION_CHANNELS);
@@ -129,7 +136,9 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     public function detachChannel(CommunicationChannel $channel, $channelType): void
     {
         if (!$this->hasChannel($channel->getName(), $channelType)) {
-            throw new common_exception_InconsistentData('Channel ' . $channel->getName() . 'is not registered in ' . __CLASS__);
+            throw new common_exception_InconsistentData(
+                'Channel ' . $channel->getName() . 'is not registered in ' . __CLASS__
+            );
         }
 
         $channels = $this->getOption(self::OPTION_CHANNELS);

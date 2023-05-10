@@ -35,8 +35,11 @@ class PhpCodeCompilationDataService extends CompilationDataService
         return self::OUTPUT_FILE_TYPE;
     }
 
-    public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
-    {
+    public function writeCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        QtiComponent $object
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $doc = new PhpDocument();
         $doc->setDocumentComponent($object);
@@ -47,8 +50,11 @@ class PhpCodeCompilationDataService extends CompilationDataService
         );
     }
 
-    public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
-    {
+    public function readCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        $cacheInfo = ''
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $dir = $this->ensureCacheDirectory($compilationDirectory);
         $cacheKey = $this->cacheKey($cacheInfo);
@@ -66,7 +72,8 @@ class PhpCodeCompilationDataService extends CompilationDataService
                 $doc->loadFromString($compilationDirectory->read($path));
             }
         } catch (PhpStorageException $e) {
-            $msg = "PHP Compilation Data in directory '" . $compilationDirectory->getId() . "' at path '" . $path . "' could not be executed properly.";
+            $msg = "PHP Compilation Data in directory '" . $compilationDirectory->getId() . "' at path '" . $path
+                . "' could not be executed properly.";
             throw new \common_Exception($msg);
         }
 

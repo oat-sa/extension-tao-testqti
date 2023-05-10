@@ -49,7 +49,10 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         foreach ($items as $item) {
             $labels[$item->getUri()] = $item->getLabel();
         }
-        $this->setData('labels', json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
+        $this->setData(
+            'labels',
+            json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS))
+        );
 
         $runtimeConfig = $this->getRuntimeConfig();
         $categoriesPresetService = $this->getServiceManager()->get(TestCategoryPresetProvider::SERVICE_ID);
@@ -59,8 +62,23 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         $this->setData('saveUrl', _url('saveTest', null, null, ['uri' => $testUri]));
 
         if (common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')) {
-            $this->setData('blueprintsByIdUrl', _url('getBlueprintsByIdentifier', 'Blueprints', 'taoBlueprints'));
-            $this->setData('blueprintsByTestSectionUrl', _url('getBlueprintsByTestSection', 'Blueprints', 'taoBlueprints', ['test' => $testUri]));
+            $this->setData(
+                'blueprintsByIdUrl',
+                _url(
+                    'getBlueprintsByIdentifier',
+                    'Blueprints',
+                    'taoBlueprints'
+                )
+            );
+            $this->setData(
+                'blueprintsByTestSectionUrl',
+                _url(
+                    'getBlueprintsByTestSection',
+                    'Blueprints',
+                    'taoBlueprints',
+                    ['test' => $testUri]
+                )
+            );
         }
         $this->setData('identifierUrl', _url('getIdentifier', null, null, ['uri' => $testUri]));
 
@@ -108,7 +126,9 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
 
                 //save the blueprint if the extension is installed
                 if (common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')) {
-                    $testSectionLinkService = $this->getServiceManager()->get(\oat\taoBlueprints\model\TestSectionLinkService::SERVICE_ID);
+                    $testSectionLinkService = $this->getServiceManager()->get(
+                        \oat\taoBlueprints\model\TestSectionLinkService::SERVICE_ID
+                    );
                     $model = json_decode($parameters['model'], true);
                     if (isset($model['testParts'])) {
                         foreach ($model['testParts'] as $testPart) {
@@ -116,9 +136,16 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
                                 foreach ($testPart['assessmentSections'] as $section) {
                                     if (isset($section['blueprint'])) {
                                         if (!empty($section['blueprint'])) {
-                                            $testSectionLinkService->setBlueprintForTestSection($test, $section['identifier'], $section['blueprint']);
+                                            $testSectionLinkService->setBlueprintForTestSection(
+                                                $test,
+                                                $section['identifier'],
+                                                $section['blueprint']
+                                            );
                                         } else {
-                                            $testSectionLinkService->removeBlueprintForTestSection($test, $section['identifier']);
+                                            $testSectionLinkService->removeBlueprintForTestSection(
+                                                $test,
+                                                $section['identifier']
+                                            );
                                         }
                                     }
                                 }
@@ -176,7 +203,10 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
      */
     protected function getRuntimeConfig()
     {
-        $extension = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        $extension = $this
+            ->getServiceLocator()
+            ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest');
         return $extension->getConfig('testRunner');
     }
 }

@@ -38,7 +38,8 @@
  * @package taoQtiTest
 
  */
-class taoQtiTest_models_classes_QtiTestServiceException extends common_Exception implements common_exception_UserReadableException
+class taoQtiTest_models_classes_QtiTestServiceException extends common_Exception implements
+    common_exception_UserReadableException
 {
     public const TEST_WRITE_ERROR = 0;
     public const ITEM_READ_ERROR = 1;

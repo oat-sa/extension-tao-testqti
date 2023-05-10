@@ -83,10 +83,16 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
      */
     public function testManifestParserGetResources($objParser)
     {
-        $idResources = $objParser->getResources(null, taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_IDENTIFIER);
+        $idResources = $objParser->getResources(
+            null,
+            taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_IDENTIFIER
+        );
         $this->assertEquals(4, count($idResources));
 
-        $typeResources = $objParser->getResources('imsqti_test_xmlv2p1', taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
+        $typeResources = $objParser->getResources(
+            'imsqti_test_xmlv2p1',
+            taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE
+        );
         $this->assertEquals(1, count($typeResources));
 
         $typeResourcesDefault = $objParser->getResources('imsqti_test_xmlv2p1');

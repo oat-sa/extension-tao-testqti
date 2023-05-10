@@ -58,7 +58,10 @@ class Pause extends TestRunnerAction
 
             return $response->toArray();
         } catch (Exception $e) {
-            common_Logger::e($e->getMessage(), ['deliveryExecutionId' => $this->getServiceContext()->getTestExecutionUri()]);
+            common_Logger::e(
+                $e->getMessage(),
+                ['deliveryExecutionId' => $this->getServiceContext()->getTestExecutionUri()]
+            );
             return $this->getErrorResponse($e);
         }
     }

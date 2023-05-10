@@ -36,8 +36,17 @@ class SetupEventListeners extends InstallAction
      */
     public function __invoke($params)
     {
-        $this->registerEvent(DeliveryExecutionState::class, [QtiTestListenerService::SERVICE_ID, 'executionStateChanged']);
-        $this->registerEvent(QtiTestStateChangeEvent::class, [QtiTestListenerService::SERVICE_ID, 'sessionStateChanged']);
-        $this->registerEvent(AfterAssessmentTestSessionClosedEvent::class, [QtiTestListenerService::SERVICE_ID, 'archiveState']);
+        $this->registerEvent(
+            DeliveryExecutionState::class,
+            [QtiTestListenerService::SERVICE_ID, 'executionStateChanged']
+        );
+        $this->registerEvent(
+            QtiTestStateChangeEvent::class,
+            [QtiTestListenerService::SERVICE_ID, 'sessionStateChanged']
+        );
+        $this->registerEvent(
+            AfterAssessmentTestSessionClosedEvent::class,
+            [QtiTestListenerService::SERVICE_ID, 'archiveState']
+        );
     }
 }

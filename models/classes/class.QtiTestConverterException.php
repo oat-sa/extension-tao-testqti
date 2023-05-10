@@ -29,7 +29,8 @@
  * @package taoQtiTest
 
  */
-class taoQtiTest_models_classes_QtiTestConverterException extends common_Exception implements common_exception_UserReadableException
+class taoQtiTest_models_classes_QtiTestConverterException extends common_Exception implements
+    common_exception_UserReadableException
 {
     /**
      * Create a new QtiTestServiceException object.

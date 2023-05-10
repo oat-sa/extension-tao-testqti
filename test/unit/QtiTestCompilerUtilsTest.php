@@ -50,7 +50,10 @@ class QtiTestCompilerUtilsTest extends TestCase
         $xml = new XmlDocument();
         $xml->load($testFile);
 
-        $this->assertEquals($expectedMeta, taoQtiTest_helpers_TestCompilerUtils::testMeta($xml->getDocumentComponent()));
+        $this->assertEquals(
+            $expectedMeta,
+            taoQtiTest_helpers_TestCompilerUtils::testMeta($xml->getDocumentComponent())
+        );
     }
 
     public function metaProvider()

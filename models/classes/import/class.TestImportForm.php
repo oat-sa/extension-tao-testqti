@@ -15,9 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2008-2010 (original work) Deutsche Institut für Internationale Pädagogische Forschung (under the project TAO-TRANSFER);
- *               2009-2012 (update and modification) Public Research Centre Henri Tudor (under the project TAO-SUSTAIN & TAO-DEV);
- *
+ * Copyright (c) 2008-2010 (original work) Deutsche Institut für Internationale Pädagogische Forschung
+ *                         (under the project TAO-TRANSFER);
+ *               2009-2012 (update and modification) Public Research Centre Henri Tudor
+ *                         (under the project TAO-SUSTAIN & TAO-DEV);
  */
 
 /**
@@ -45,15 +46,21 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
         $this->form = new tao_helpers_form_xhtml_Form('export');
 
         $this->form->setDecorators([
-            'element'           => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div']),
-            'group'             => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-group']),
-            'error'             => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-error ui-state-error ui-corner-all']),
-            'actions-bottom'    => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar']),
-            'actions-top'       => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
+            'element' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div']),
+            'group' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-group']),
+            'error' => new tao_helpers_form_xhtml_TagWrapper([
+                'tag' => 'div',
+                'cssClass' => 'form-error ui-state-error ui-corner-all',
+            ]),
+            'actions-bottom' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar']),
+            'actions-top' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
         ]);
 
         $submitElt = tao_helpers_form_FormFactory::getElement('import', 'Free');
-        $submitElt->setValue('<a href="#" class="form-submitter btn-success small"><span class="icon-import"></span> ' . __('Import') . '</a>');
+        $submitElt->setValue(
+            '<a href="#" class="form-submitter btn-success small"><span class="icon-import"></span> '
+                . __('Import') . '</a>'
+        );
 
 
         $this->form->setActions([$submitElt], 'bottom');
@@ -74,8 +81,22 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             $fileElt->addValidator(tao_helpers_form_FormFactory::getValidator('NotEmpty', ['message' => '']));
         }
         $fileElt->addValidators([
-            tao_helpers_form_FormFactory::getValidator('FileMimeType', ['mimetype' => ['application/zip', 'application/x-zip', 'application/x-zip-compressed', 'application/octet-stream'], 'extension' => ['zip']]),
-            tao_helpers_form_FormFactory::getValidator('FileSize', ['max' => \oat\generis\Helper\SystemHelper::getFileUploadLimit()])
+            tao_helpers_form_FormFactory::getValidator(
+                'FileMimeType',
+                [
+                    'mimetype' => [
+                        'application/zip',
+                        'application/x-zip',
+                        'application/x-zip-compressed',
+                        'application/octet-stream',
+                    ],
+                    'extension' => ['zip'],
+                ]
+            ),
+            tao_helpers_form_FormFactory::getValidator(
+                'FileSize',
+                ['max' => \oat\generis\Helper\SystemHelper::getFileUploadLimit()]
+            )
         ]);
 
         $this->form->addElement($fileElt);

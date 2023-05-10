@@ -52,8 +52,11 @@ class taoQtiTest_helpers_Utils extends ConfigurableService
     /**
      * @deprecated use QtiTestUtils::buildAssessmentItemRefsTestMap
      */
-    public static function buildAssessmentItemRefsTestMap(XmlDocument $test, taoQtiTest_models_classes_ManifestParser $manifestParser, $basePath)
-    {
+    public static function buildAssessmentItemRefsTestMap(
+        XmlDocument $test,
+        taoQtiTest_models_classes_ManifestParser $manifestParser,
+        $basePath
+    ) {
         return static::getService()->buildAssessmentItemRefsTestMap($test, $manifestParser, $basePath);
     }
 

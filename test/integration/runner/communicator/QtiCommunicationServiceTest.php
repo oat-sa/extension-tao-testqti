@@ -171,18 +171,60 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
         $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_INPUT);
         $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
 
-        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
-        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
+        $this->assertEquals(
+            2,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
+        $this->assertEquals(
+            2,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
 
         $service->detachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
 
-        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
-        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
+        $this->assertEquals(
+            1,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
+        $this->assertEquals(
+            2,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
 
         $service->detachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_INPUT);
 
-        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
-        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
+        $this->assertEquals(
+            1,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
+        $this->assertEquals(
+            1,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
 
         $this->assertEquals(
             [

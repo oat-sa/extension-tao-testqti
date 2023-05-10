@@ -37,7 +37,8 @@ class AdaptiveSectionInjectionException extends CatException
      *
      * @param string $message A human readable message explaining the error.
      * @param array $invalidItemIdentifiers An array of string containing the invalid items identifiers.
-     * @param int $code (optional) A machine understandable error code. This should be used by very specific implementations only.
+     * @param int $code (optional) A machine understandable error code. This should be used by very specific
+     *                  implementations only.
      * @param \Exception $previous A previous caught exception that led to this one.
      */
     public function __construct($message, array $invalidItemIdentifiers, $code = 0, \Exception $previous = null)

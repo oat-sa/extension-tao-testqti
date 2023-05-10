@@ -252,10 +252,12 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
             }
             return null;
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            $buffer[$args[0]][$args[1]] = $args[2];
-            return true;
-        });
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->will(function ($args) use (&$buffer) {
+                $buffer[$args[0]][$args[1]] = $args[2];
+                return true;
+            });
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });

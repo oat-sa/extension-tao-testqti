@@ -51,7 +51,9 @@ class importMultipleTestsFromDir implements Action, ServiceLocatorAwareInterface
         } catch (ExtractException $e) {
             return $this->returnFailure('The ZIP archive containing the IMS QTI Item cannot be extracted.');
         } catch (ParsingException $e) {
-            return $this->returnFailure('The ZIP archive does not contain an imsmanifest.xml file or is an invalid ZIP archive.');
+            return $this->returnFailure(
+                'The ZIP archive does not contain an imsmanifest.xml file or is an invalid ZIP archive.'
+            );
         } catch (\Exception $e) {
             return $this->returnFailure($e->getMessage());
         }

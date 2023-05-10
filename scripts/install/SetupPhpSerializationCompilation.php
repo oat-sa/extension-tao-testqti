@@ -41,6 +41,9 @@ class SetupPhpSerializationCompilation extends InstallAction
             new PhpSerializationCompilationDataService()
         );
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, "PHP Serialization for QTI-SDK components enabled.");
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            "PHP Serialization for QTI-SDK components enabled."
+        );
     }
 }

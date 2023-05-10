@@ -55,7 +55,9 @@ class taoQtiTest_actions_TestContent extends tao_actions_CommonModule
             $filterParameter = $this->getRequestParameter('filters');
             if (!empty($filterParameter)) {
                 if (preg_match('/\/\*/', $filterParameter)) {
-                    common_Logger::w('Stars mime type are not yet supported, filter "' . $filterParameter . '" will fail');
+                    common_Logger::w(
+                        'Stars mime type are not yet supported, filter "' . $filterParameter . '" will fail'
+                    );
                 }
                 $filters = array_map('trim', explode(',', $filterParameter));
             }

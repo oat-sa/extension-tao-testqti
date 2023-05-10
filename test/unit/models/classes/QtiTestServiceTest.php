@@ -21,6 +21,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class QtiTestServiceTest extends TestCase
 {
+    // phpcs:disable Generic.Files.LineLength
     private const TEST_TEMPLATE = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="{testId}" title="{testTitle}" toolName="tao" toolVersion="{taoVersion}" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd">
@@ -30,6 +31,7 @@ class QtiTestServiceTest extends TestCase
   </testPart>
 </assessmentTest>
 XML;
+    // phpcs:enable Generic.Files.LineLength
 
     private const PLATFORM_VERSION = 'v1-test';
 

@@ -40,7 +40,10 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
         $test = $this->getResource($this->getPostParameter('id'));
 
         if ($this->getXmlEditorService()->isLocked()) {
-            $this->setData('errorMessage', __('This functionality is blocked. Please contact with your administrator for more details.'));
+            $this->setData(
+                'errorMessage',
+                __('This functionality is blocked. Please contact with your administrator for more details.')
+            );
         } else {
             try {
                 $xmlString = $this->getXmlEditorService()->getTestXml($test);

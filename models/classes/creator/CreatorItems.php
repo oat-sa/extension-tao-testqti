@@ -69,15 +69,26 @@ class CreatorItems extends ConfigurableService
      * @param int $limit  for paging
      * @return array the items
      */
-    public function getQtiItems(\core_kernel_classes_Class $itemClass, $format = 'list', $search = '', $offset = 0, $limit = 30)
-    {
+    public function getQtiItems(
+        \core_kernel_classes_Class $itemClass,
+        $format = 'list',
+        $search = '',
+        $offset = 0,
+        $limit = 30
+    ) {
         $propertyFilters = [];
 
-        if ($this->hasOption(self::ITEM_MODEL_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false) {
+        if (
+            $this->hasOption(self::ITEM_MODEL_SEARCH_OPTION)
+            && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false
+        ) {
             $propertyFilters[self::PROPERTY_ITEM_MODEL_URI] = $this->getOption(self::ITEM_MODEL_SEARCH_OPTION);
         }
 
-        if ($this->hasOption(self::ITEM_CONTENT_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false) {
+        if (
+            $this->hasOption(self::ITEM_CONTENT_SEARCH_OPTION)
+            && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false
+        ) {
             $propertyFilters[self::PROPERTY_ITEM_CONTENT_URI] = '*';
         }
 

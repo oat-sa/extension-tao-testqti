@@ -60,14 +60,17 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager
      * Create a new SessionManager object.
      *
      * @param ResultStorageWrapper $resultServer The ResultServer to be set to the AssessmentTestSession to be built.
-     * @param core_kernel_classes_Resource $test The TAO Resource describing the Test definition to be set to the AssessmentTestSession to be built.
+     * @param core_kernel_classes_Resource $test The TAO Resource describing the Test definition to be set to the
+     *                                           AssessmentTestSession to be built.
      * @throws \InvalidArgumentException
      * @throws common_Exception
      */
     public function __construct(ResultStorageWrapper $resultServer, core_kernel_classes_Resource $test)
     {
         parent::__construct();
-        $this->setAcceptableLatency(new QtiDuration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency()));
+        $this->setAcceptableLatency(
+            new QtiDuration(taoQtiTest_models_classes_QtiTestService::singleton()->getQtiTestAcceptableLatency())
+        );
         $this->setResultServer($resultServer);
         $this->setTest($test);
     }
@@ -167,8 +170,11 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager
      * @return AssessmentItemSession A freshly instantiated AssessmentItemSession.
      * @throws \InvalidArgumentException
      */
-    protected function instantiateAssessmentItemSession(IAssessmentItem $assessmentItem, $navigationMode, $submissionMode)
-    {
+    protected function instantiateAssessmentItemSession(
+        IAssessmentItem $assessmentItem,
+        $navigationMode,
+        $submissionMode
+    ) {
         return new AssessmentItemSession($assessmentItem, $this, $navigationMode, $submissionMode);
     }
 }

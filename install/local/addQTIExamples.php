@@ -35,8 +35,8 @@ try {
     }
 } catch (Throwable $e) {
     common_Logger::e(
-        'An error occurred while importing QTI Test Example. The system reported the following error: ' . $e->getMessage(
-        )
+        'An error occurred while importing QTI Test Example. The system reported the following error: '
+            . $e->getMessage()
     );
     throw $e;
 }

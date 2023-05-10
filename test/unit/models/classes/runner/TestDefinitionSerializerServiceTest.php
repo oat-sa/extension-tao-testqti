@@ -30,6 +30,7 @@ use oat\generis\test\MockObject;
 
 class TestDefinitionSerializerServiceTest extends TestCase
 {
+    // phpcs:disable Generic.Files.LineLength
     public const TEST_DEFINITION = '<?xml version="1.0" encoding="UTF-8"?>
         <assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="Test-1" title="Test 1" toolName="tao" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd">
             <testPart identifier="testPart-1" navigationMode="linear" submissionMode="individual">
@@ -42,6 +43,7 @@ class TestDefinitionSerializerServiceTest extends TestCase
                 </assessmentSection>
             </testPart>
         </assessmentTest>';
+    // phpcs:enable Generic.Files.LineLength
 
     /**
      * @var array

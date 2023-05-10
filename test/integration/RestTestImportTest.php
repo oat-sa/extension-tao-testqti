@@ -94,7 +94,9 @@ class RestTestImportTest extends RestTestRunner
     {
         $endpoint = ROOT_URL . 'taoQtiTest/RestQtiTests';
         $post_data = [
-            'qtiPackage' => new \CURLFile(__DIR__ . '/../samples/xml/compiler/meta/linear_nopreconditions_branchrules.xml')
+            'qtiPackage' => new \CURLFile(
+                __DIR__ . '/../samples/xml/compiler/meta/linear_nopreconditions_branchrules.xml'
+            )
         ];
 
         $options = [

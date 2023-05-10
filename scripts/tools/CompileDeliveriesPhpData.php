@@ -43,7 +43,9 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
             $extManager->getExtensionById('taoDeliveryRdf');
             $runtimeService = $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
 
-            $iterator = new \core_kernel_classes_ResourceIterator([DeliveryAssemblyService::singleton()->getRootClass()]);
+            $iterator = new \core_kernel_classes_ResourceIterator([
+                DeliveryAssemblyService::singleton()->getRootClass()
+            ]);
 
             foreach ($iterator as $delivery) {
                 $deliveryUri = $delivery->getUri();
@@ -54,7 +56,11 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                 $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($privateId);
 
                 foreach ($directory->getIterator() as $filePrefix) {
-                    if ($filePrefix === '/compact-test.php' || preg_match('/\/adaptive-assessment-section-.+?\.php/', $filePrefix) === 1 || preg_match('/\/adaptive-assessment-item-ref-.+?\.php/', $filePrefix) === 1) {
+                    if (
+                        $filePrefix === '/compact-test.php'
+                        || preg_match('/\/adaptive-assessment-section-.+?\.php/', $filePrefix) === 1
+                        || preg_match('/\/adaptive-assessment-item-ref-.+?\.php/', $filePrefix) === 1
+                    ) {
                         try {
                             if ($this->compileData($directory->getFile($filePrefix))) {
                                 $count++;
@@ -79,7 +85,9 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                             $report->add(
                                 new Report(
                                     Report::TYPE_ERROR,
-                                    "An unexpected error occured while compiling file '${filePrefix}' for Delivery '${deliveryUri}'. The system returned the following error:\n" . $e->getMessage()
+                                    "An unexpected error occured while compiling file '${filePrefix}' for "
+                                        . "Delivery '${deliveryUri}'. The system returned the following error:\n"
+                                        . $e->getMessage()
                                 )
                             );
                         }

@@ -412,7 +412,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getItemIndexValue($id, $name)
     {
-        return $this->itemIndex->getItemValue($id, \common_session_SessionManager::getSession()->getInterfaceLanguage(), $name);
+        return $this->itemIndex->getItemValue(
+            $id,
+            \common_session_SessionManager::getSession()->getInterfaceLanguage(),
+            $name
+        );
     }
 
     /**
@@ -425,14 +429,20 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getCatEngine(RouteItem $routeItem = null)
     {
         $compiledDirectory = $this->getCompilationDirectory()['private'];
-        $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($compiledDirectory);
+        $adaptiveSectionMap = $this
+            ->getServiceManager()
+            ->get(CatService::SERVICE_ID)
+            ->getAdaptiveSectionMap($compiledDirectory);
         $routeItem = $routeItem ? $routeItem : $this->getTestSession()->getRoute()->current();
 
         $sectionId = $routeItem->getAssessmentSection()->getIdentifier();
         $catEngine = false;
 
         if (isset($adaptiveSectionMap[$sectionId])) {
-            $catEngine = $this->getServiceManager()->get(CatService::SERVICE_ID)->getEngine($adaptiveSectionMap[$sectionId]['endpoint']);
+            $catEngine = $this
+                ->getServiceManager()
+                ->get(CatService::SERVICE_ID)
+                ->getEngine($adaptiveSectionMap[$sectionId]['endpoint']);
         }
 
         return $catEngine;
@@ -585,12 +595,16 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      *
      * Determines whether or not the current Assessment Test Session is in an adaptive context.
      *
-     * @param AssessmentItemRef $currentAssessmentItemRef (optional) An AssessmentItemRef object to be considered as the current assessmentItemRef.
+     * @param AssessmentItemRef $currentAssessmentItemRef (optional) An AssessmentItemRef object to be considered as
+     *                                                    the current assessmentItemRef.
      * @return boolean
      */
     public function isAdaptive(AssessmentItemRef $currentAssessmentItemRef = null)
     {
-        return $this->getServiceManager()->get(CatService::SERVICE_ID)->isAdaptive($this->getTestSession(), $currentAssessmentItemRef);
+        return $this
+            ->getServiceManager()
+            ->get(CatService::SERVICE_ID)
+            ->isAdaptive($this->getTestSession(), $currentAssessmentItemRef);
     }
 
     /**
@@ -602,7 +616,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function containsAdaptive()
     {
-        $adaptiveSectionMap = $this->getServiceManager()->get(CatService::SERVICE_ID)->getAdaptiveSectionMap($this->getCompilationDirectory()['private']);
+        $adaptiveSectionMap = $this
+            ->getServiceManager()
+            ->get(CatService::SERVICE_ID)
+            ->getAdaptiveSectionMap($this->getCompilationDirectory()['private']);
 
         return !empty($adaptiveSectionMap);
     }
@@ -645,7 +662,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $isShadowItem = true;
         }
 
-        $event = new SelectAdaptiveNextItemEvent($this->getTestSession(), $lastItemId, $preSelection, $selection, $isShadowItem);
+        $event = new SelectAdaptiveNextItemEvent(
+            $this->getTestSession(),
+            $lastItemId,
+            $preSelection,
+            $selection,
+            $isShadowItem
+        );
         $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
 
         $this->persistCatSession($catSession);
@@ -850,10 +873,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             if ($positionInCatSession === 0) {
                 // First item in cat section.
                 if ($session->getRoute()->getPosition() !== 0) {
+                    // phpcs:disable Generic.Files.LineLength
                     $moveBack = $session->getPreviousRouteItem()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
+                    // phpcs:enable Generic.Files.LineLength
                 }
             } else {
+                // phpcs:disable Generic.Files.LineLength
                 $moveBack = $session->getRoute()->current()->getTestPart()->getNavigationMode() === NavigationMode::NONLINEAR;
+                // phpcs:enable Generic.Files.LineLength
             }
         } else {
             $moveBack = $session->canMoveBackward();
@@ -971,7 +998,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             }
 
             if (is_null($getVariableMethod)) {
-                \common_Logger::w('Variable of type ' . $variable->getVariableType() . ' is not implemented in ' . __METHOD__);
+                \common_Logger::w(
+                    'Variable of type ' . $variable->getVariableType() . ' is not implemented in ' . __METHOD__
+                );
                 throw new \common_exception_NotImplemented();
             }
 

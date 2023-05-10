@@ -117,13 +117,19 @@ class ResponseGenerator extends ConfigurableService
      * @param float $timeNow
      * @return float
      */
-    public function getLastActionTimestamp(array $actions, QtiRunnerServiceContext $serviceContext, float $timeNow): float
-    {
+    public function getLastActionTimestamp(
+        array $actions,
+        QtiRunnerServiceContext $serviceContext,
+        float $timeNow
+    ): float {
         $lastRegisteredTimestamp = (float) $serviceContext->getTestSession()->getTimer()->getLastRegisteredTimestamp();
         $actionsDuration = $this->computeDuration($actions);
         $elapsed = $timeNow - $lastRegisteredTimestamp;
         if ($actionsDuration > $elapsed) {
-            common_Logger::t('Ignoring the last timestamp to take into account the actual duration to sync. Could introduce TimeLine inconsistency!');
+            common_Logger::t(
+                'Ignoring the last timestamp to take into account the actual duration to sync. Could introduce '
+                    . 'TimeLine inconsistency!'
+            );
             $lastRegisteredTimestamp = $timeNow - $actionsDuration;
         }
 

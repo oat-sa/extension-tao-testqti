@@ -45,7 +45,9 @@ trait PermissionLookupTrait
         $permissions = $this->getPermissions($nodes);
         if (is_array($permissions) && array_key_exists('data', $permissions) && is_array($permissions['data'])) {
             $rules = $permissions['data'];
-            $rights = isset($permissions['supportedRights']) && count($permissions['supportedRights']) ? $permissions['supportedRights'] : false;
+            $rights = isset($permissions['supportedRights']) && count($permissions['supportedRights'])
+                ? $permissions['supportedRights']
+                : false;
             if ($rights) {
                 $self = $this;
                 $nodes = array_map(static function ($node) use ($rules, $self, $rights) {

@@ -47,7 +47,8 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
     public const TOOL_ITEM_THEME_SWITCHER = 'itemThemeSwitcher';
 
     /**
-     * @deprecated since version 29.5.0, to be removed in 30.0.0. Use QtiRunnerService::TOOL_ITEM_THEME_SWITCHER_KEY instead
+     * @deprecated since version 29.5.0, to be removed in 30.0.0.
+     *             Use QtiRunnerService::TOOL_ITEM_THEME_SWITCHER_KEY instead
      */
     public const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
 
@@ -77,37 +78,41 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             $config = $this->getOption(self::OPTION_CONFIG);
         } else {
             // fallback to get the raw server config, using the old notation
-            $rawConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $rawConfig = \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
             // build the test config using the new notation
-            $target = isset($rawConfig['timer']) && isset($rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null;
+            $target = isset($rawConfig['timer'], $rawConfig['timer']['target']) ? $rawConfig['timer']['target'] : null;
             $config = [
                 'timerWarning' => isset($rawConfig['timerWarning']) ? $rawConfig['timerWarning'] : null,
-                'timerWarningForScreenreader' => isset($rawConfig['timerWarningForScreenreader']) ? $rawConfig['timerWarningForScreenreader'] : null,
+                'timerWarningForScreenreader' => $rawConfig['timerWarningForScreenreader'] ?? null,
                 'catEngineWarning' => isset($rawConfig['catEngineWarning']) ? $rawConfig['catEngineWarning'] : null,
                 'progressIndicator' => [
                     'type' => isset($rawConfig['progress-indicator']) ? $rawConfig['progress-indicator'] : null,
-                    'renderer' => isset($rawConfig['progress-indicator-renderer']) ? $rawConfig['progress-indicator-renderer'] : null,
-                    'scope' => isset($rawConfig['progress-indicator-scope']) ? $rawConfig['progress-indicator-scope'] : null,
-                    'forced' => isset($rawConfig['progress-indicator-forced']) ? $rawConfig['progress-indicator-forced'] : false,
+                    'renderer' => $rawConfig['progress-indicator-renderer'] ?? null,
+                    'scope' => $rawConfig['progress-indicator-scope'] ?? null,
+                    'forced' => $rawConfig['progress-indicator-forced'] ?? false,
                     'showLabel' => !empty($rawConfig['progress-indicator-show-label']),
                     'showTotal' => !empty($rawConfig['progress-indicator-show-total']),
                     'categories' => isset($rawConfig['progress-categories']) ? $rawConfig['progress-categories'] : [],
                 ],
                 'review' => [
                     'enabled' => !empty($rawConfig['test-taker-review']),
-                    'scope' => isset($rawConfig['test-taker-review-scope']) ? $rawConfig['test-taker-review-scope'] : null,
+                    'scope' => $rawConfig['test-taker-review-scope'] ?? null,
                     'useTitle' => !empty($rawConfig['test-taker-review-use-title']),
                     'forceTitle' => !empty($rawConfig['test-taker-review-force-title']),
                     'forceInformationalTitle' => !empty($rawConfig['test-taker-review-force-informational-title']),
                     'showLegend' => !empty($rawConfig['test-taker-review-show-legend']),
                     'defaultOpen' => !empty($rawConfig['test-taker-review-default-open']),
-                    'itemTitle' => isset($rawConfig['test-taker-review-item-title']) ? $rawConfig['test-taker-review-item-title'] : null,
-                    'informationalItemTitle' => isset($rawConfig['test-taker-review-informational-item-title']) ? $rawConfig['test-taker-review-informational-item-title'] : null,
+                    'itemTitle' => $rawConfig['test-taker-review-item-title'] ?? null,
+                    'informationalItemTitle' => $rawConfig['test-taker-review-informational-item-title'] ?? null,
                     'preventsUnseen' => !empty($rawConfig['test-taker-review-prevents-unseen']),
                     'canCollapse' => !empty($rawConfig['test-taker-review-can-collapse']),
                     'displaySubsectionTitle' => !empty($rawConfig['test-taker-review-display-subsection-title']),
-                    'allowSkipahead' => isset($rawConfig['test-taker-review-skipahead']) ? $rawConfig['test-taker-review-skipahead'] : false,
-                    'partiallyAnsweredIsAnswered' => isset($rawConfig['test-taker-review-partially-answered-is-answered']) ? $rawConfig['test-taker-review-partially-answered-is-answered'] : true,
+                    'allowSkipahead' => $rawConfig['test-taker-review-skipahead'] ?? false,
+                    // phpcs:disable Generic.Files.LineLength
+                    'partiallyAnsweredIsAnswered' => $rawConfig['test-taker-review-partially-answered-is-answered'] ?? true,
+                    // phpcs:enable Generic.Files.LineLength
                 ],
                 'exitButton' => !empty($rawConfig['exitButton']),
                 'nextSection' => !empty($rawConfig['next-section']),
@@ -121,22 +126,24 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
                     'keepUpToTimeout' => !empty($rawConfig['keep-timer-up-to-timeout']),
                     'restoreTimerFromClient' => $target === self::TARGET_CLIENT,
                 ],
-                'enableAllowSkipping' => isset($rawConfig['enable-allow-skipping']) ? $rawConfig['enable-allow-skipping'] : false,
-                'enableValidateResponses' => isset($rawConfig['enable-validate-responses']) ? $rawConfig['enable-validate-responses'] : false,
-                'checkInformational' => isset($rawConfig['check-informational']) ? $rawConfig['check-informational'] : false,
-                'enableUnansweredItemsWarning' => isset($rawConfig['test-taker-unanswered-items-message']) ? $rawConfig['test-taker-unanswered-items-message'] : true,
+                'enableAllowSkipping' => $rawConfig['enable-allow-skipping'] ?? false,
+                'enableValidateResponses' => $rawConfig['enable-validate-responses'] ?? false,
+                'checkInformational' => $rawConfig['check-informational'] ?? false,
+                'enableUnansweredItemsWarning' => $rawConfig['test-taker-unanswered-items-message'] ?? true,
                 'allowShortcuts' => !empty($rawConfig['allow-shortcuts']),
                 'shortcuts' => isset($rawConfig['shortcuts']) ? $rawConfig['shortcuts'] : [],
                 'itemCaching' => [
-                    'enabled' => isset($rawConfig['allow-browse-next-item']) ? $rawConfig['allow-browse-next-item'] : false,
+                    'enabled' => $rawConfig['allow-browse-next-item'] ?? false,
                     'amount' => isset($rawConfig['item-cache-size']) ? intval($rawConfig['item-cache-size']) : 3,
-                    'itemStoreTTL' => isset($rawConfig['item-store-ttl']) ? intval($rawConfig['item-store-ttl']) : 15 * 60,
+                    'itemStoreTTL' => isset($rawConfig['item-store-ttl'])
+                        ? intval($rawConfig['item-store-ttl'])
+                        : 15 * 60,
                 ],
                 'guidedNavigation' => isset($rawConfig['guidedNavigation']) ? $rawConfig['guidedNavigation'] : false,
-                'toolStateServerStorage' => isset($rawConfig['tool-state-server-storage']) ? $rawConfig['tool-state-server-storage'] : [],
-                'forceEnableLinearNextItemWarning' => isset($rawConfig['force-enable-linear-next-item-warning']) ? $rawConfig['force-enable-linear-next-item-warning'] : false,
-                'enableLinearNextItemWarningCheckbox' => isset($rawConfig['enable-linear-next-item-warning-checkbox']) ? $rawConfig['enable-linear-next-item-warning-checkbox'] : true,
-                'skipPausedAssessmentDialog' => isset($rawConfig['skip-paused-assessment-dialog']) ? $rawConfig['skip-paused-assessment-dialog'] : false,
+                'toolStateServerStorage' => $rawConfig['tool-state-server-storage'] ?? [],
+                'forceEnableLinearNextItemWarning' => $rawConfig['force-enable-linear-next-item-warning'] ?? false,
+                'enableLinearNextItemWarningCheckbox' => $rawConfig['enable-linear-next-item-warning-checkbox'] ?? true,
+                'skipPausedAssessmentDialog' => $rawConfig['skip-paused-assessment-dialog'] ?? false,
             ];
         }
 
@@ -203,7 +210,13 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
         foreach ($categories as $category) {
             if (!strncmp($category, self::CATEGORY_OPTION_PREFIX, $prefixCategoryLen)) {
                 // extract the option name from the category, transform to camelCase if needed
-                $optionName = lcfirst(str_replace(' ', '', ucwords(strtr(substr($category, $prefixCategoryLen), ['-' => ' ', '_' => ' ']))));
+                $optionName = lcfirst(
+                    str_replace(
+                        ' ',
+                        '',
+                        ucwords(strtr(substr($category, $prefixCategoryLen), ['-' => ' ', '_' => ' ']))
+                    )
+                );
 
                 // the options added by the categories are just flags
                 $options[$optionName] = true;

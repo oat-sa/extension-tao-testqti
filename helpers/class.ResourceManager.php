@@ -37,8 +37,13 @@ class taoQtiTest_helpers_ResourceManager
         return $baseDir;
     }
 
-    public static function buildDirectory(core_kernel_classes_Resource $test, $lang, $relPath = '/', $depth = 1, $filters = [])
-    {
+    public static function buildDirectory(
+        core_kernel_classes_Resource $test,
+        $lang,
+        $relPath = '/',
+        $depth = 1,
+        $filters = []
+    ) {
         $baseDir = self::getBaseDir($test);
         $path = $baseDir . ltrim($relPath, '/');
 
@@ -66,7 +71,12 @@ class taoQtiTest_helpers_ResourceManager
             }
             $data['children'] = $children;
         } else {
-            $data['url'] = _url('files', 'TestContent', 'taoQtiTest', ['uri' => $test->getUri(),'lang' => $lang, 'path' => $relPath]);
+            $data['url'] = _url(
+                'files',
+                'TestContent',
+                'taoQtiTest',
+                ['uri' => $test->getUri(),'lang' => $lang, 'path' => $relPath]
+            );
         }
         return $data;
     }
@@ -83,7 +93,12 @@ class taoQtiTest_helpers_ResourceManager
                 'name' => basename($path),
                 'mime' => $mime,
                 'size' => filesize($path),
-                'url' => _url('download', 'TestContent', 'taoQtiTest', ['uri' => $test->getUri(),'lang' => $lang, 'path' => $relPath])
+                'url' => _url(
+                    'download',
+                    'TestContent',
+                    'taoQtiTest',
+                    ['uri' => $test->getUri(),'lang' => $lang, 'path' => $relPath]
+                )
             ];
         }
         return $file;

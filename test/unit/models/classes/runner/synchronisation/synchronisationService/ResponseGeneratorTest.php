@@ -98,7 +98,16 @@ class ResponseGeneratorTest extends TestCase
 
         $responseGenerator = new ResponseGenerator();
         $responseGenerator->setServiceLocator($serviceLocator);
-        $actions = $responseGenerator->prepareActions([['a'], ['action' => 'actionName', 'parameters' => ['all parameters']]], []);
+        $actions = $responseGenerator->prepareActions(
+            [
+                ['a'],
+                [
+                    'action' => 'actionName',
+                    'parameters' => ['all parameters'],
+                ]
+            ],
+            []
+        );
 
         $this->assertSame([
             [

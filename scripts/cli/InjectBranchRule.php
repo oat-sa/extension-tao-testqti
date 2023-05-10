@@ -38,7 +38,8 @@ use qtism\data\rules\BranchRuleCollection;
  * stdin must contain the QTI-XML representing the branchRule to inject.
  *
  * Example usage:
- * sudo -u www-data php index.php "oat\taoQtiTest\scripts\cli\InjectBranchRule" "http://taoplatform300/300.rdf#i1475242228154935" "item-1" < /home/jerome/Documents/input.txt
+ * sudo -u www-data php index.php "oat\taoQtiTest\scripts\cli\InjectBranchRule"
+ * "http://taoplatform300/300.rdf#i1475242228154935" "item-1" < /home/jerome/Documents/input.txt
  */
 class InjectBranchRule implements Action
 {
@@ -113,6 +114,10 @@ class InjectBranchRule implements Action
             }
         }
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, "BranchRule found in stdin successfully appended to assessmentItemRef '" . $params[1] . "' part of QTI Test with URI '" . $params[0] . "'.");
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            "BranchRule found in stdin successfully appended to assessmentItemRef '"
+            . $params[1] . "' part of QTI Test with URI '" . $params[0] . "'."
+        );
     }
 }

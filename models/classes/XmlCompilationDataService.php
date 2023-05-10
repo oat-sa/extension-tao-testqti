@@ -33,8 +33,11 @@ class XmlCompilationDataService extends CompilationDataService
 {
     public const OUTPUT_FILE_TYPE = 'xml';
 
-    public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
-    {
+    public function writeCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        QtiComponent $object
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $compactDoc = new XmlCompactDocument();
         $compactDoc->setDocumentComponent($object);
@@ -45,8 +48,11 @@ class XmlCompilationDataService extends CompilationDataService
         );
     }
 
-    public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
-    {
+    public function readCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        $cacheInfo = ''
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $compactDoc = new XmlCompactDocument();
         $compactDoc->loadFromString($compilationDirectory->read($path));

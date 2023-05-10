@@ -31,7 +31,9 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use ZipArchive;
 
 /**
- * php index.php "\oat\taoQtiTest\scripts\cli\exportMultipleQtiTestsToDir" https://nccersso.taocloud.org/nccer_sso.rdf#i15325945796246250 https://nccersso.taocloud.org/nccer_sso.rdf#i15325921352024194 1234
+ * php index.php "\oat\taoQtiTest\scripts\cli\exportMultipleQtiTestsToDir"
+ * https://nccersso.taocloud.org/nccer_sso.rdf#i15325945796246250
+ * https://nccersso.taocloud.org/nccer_sso.rdf#i15325921352024194 1234
  *
  * Class exportMultipleTestsToDir
  * @package oat\taoQtiTest\scripts\cli

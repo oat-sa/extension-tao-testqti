@@ -191,7 +191,8 @@ $nullvalue_18 = null;
 $boolean_31 = false;
 $timelimits_2 = new qtism\data\TimeLimits($nullvalue_17, $nullvalue_18, $boolean_31);
 $string_23 = "I104_02488-02";
-$string_24 = "http://tao.local/tao.rdf#i5e28323826b8411408820419e6118f2b6d|http://tao.local/tao.rdf#i5e283280ad1dc114086a832d1c48abc0d0+|http://tao.local/tao.rdf#i5e283280ad23111408fd48ea93c8d2111d-";
+$string_24 = "http://tao.local/tao.rdf#i5e28323826b8411408820419e6118f2b6d|http://tao.local/tao.rdf#i5e283280ad1dc11408"
+    . "6a832d1c48abc0d0+|http://tao.local/tao.rdf#i5e283280ad23111408fd48ea93c8d2111d-";
 $string_25 = "x-tao-option-reviewScreen";
 $string_26 = "x-tao-option-markReview";
 $string_27 = "x-tao-option-exit";
@@ -212,9 +213,34 @@ $string_41 = "x-tao-option-lineReader";
 $string_42 = "x-tao-option-magnifier";
 $string_43 = "x-tao-option-zoom";
 $string_44 = "x-tao-option-eliminator";
-$array_21 = array($string_25, $string_26, $string_27, $string_28, $string_29, $string_30, $string_31, $string_32, $string_33, $string_34, $string_35, $string_36, $string_37, $string_38, $string_39, $string_40, $string_41, $string_42, $string_43, $string_44);
+$array_21 = [
+    $string_25,
+    $string_26,
+    $string_27,
+    $string_28,
+    $string_29,
+    $string_30,
+    $string_31,
+    $string_32,
+    $string_33,
+    $string_34,
+    $string_35,
+    $string_36,
+    $string_37,
+    $string_38,
+    $string_39,
+    $string_40,
+    $string_41,
+    $string_42,
+    $string_43,
+    $string_44,
+];
 $identifiercollection_0 = new qtism\common\collections\IdentifierCollection($array_21);
-$extendedassessmentitemref_0 = new qtism\data\ExtendedAssessmentItemRef($string_23, $string_24, $identifiercollection_0);
+$extendedassessmentitemref_0 = new qtism\data\ExtendedAssessmentItemRef(
+    $string_23,
+    $string_24,
+    $identifiercollection_0
+);
 $extendedassessmentitemref_0->setOutcomeDeclarations($outcomedeclarationcollection_1);
 $extendedassessmentitemref_0->setResponseDeclarations($responsedeclarationcollection_0);
 $extendedassessmentitemref_0->setResponseProcessing($responseprocessing_0);
@@ -309,7 +335,8 @@ $itemsessioncontrol_2->setValidateResponses($boolean_43);
 $itemsessioncontrol_2->setAllowSkipping($boolean_44);
 $nullvalue_24 = null;
 $string_54 = "I104_02488-09";
-$string_55 = "http://tao.local/tao.rdf#i5e28323fe4b9411408b8f46a2182e97af0|http://tao.local/tao.rdf#i5e283280c87b811408e86d762176d98ea7+|http://tao.local/tao.rdf#i5e283280c880011408726cb946e22a83d6-";
+$string_55 = "http://tao.local/tao.rdf#i5e28323fe4b9411408b8f46a2182e97af0|http://tao.local/tao.rdf#i5e283280c87b811408"
+    . "e86d762176d98ea7+|http://tao.local/tao.rdf#i5e283280c880011408726cb946e22a83d6-";
 $string_56 = "x-tao-option-reviewScreen";
 $string_57 = "x-tao-option-markReview";
 $string_58 = "x-tao-option-exit";
@@ -330,9 +357,34 @@ $string_72 = "x-tao-option-lineReader";
 $string_73 = "x-tao-option-magnifier";
 $string_74 = "x-tao-option-zoom";
 $string_75 = "x-tao-option-eliminator";
-$array_32 = array($string_56, $string_57, $string_58, $string_59, $string_60, $string_61, $string_62, $string_63, $string_64, $string_65, $string_66, $string_67, $string_68, $string_69, $string_70, $string_71, $string_72, $string_73, $string_74, $string_75);
+$array_32 = [
+    $string_56,
+    $string_57,
+    $string_58,
+    $string_59,
+    $string_60,
+    $string_61,
+    $string_62,
+    $string_63,
+    $string_64,
+    $string_65,
+    $string_66,
+    $string_67,
+    $string_68,
+    $string_69,
+    $string_70,
+    $string_71,
+    $string_72,
+    $string_73,
+    $string_74,
+    $string_75,
+];
 $identifiercollection_1 = new qtism\common\collections\IdentifierCollection($array_32);
-$extendedassessmentitemref_1 = new qtism\data\ExtendedAssessmentItemRef($string_54, $string_55, $identifiercollection_1);
+$extendedassessmentitemref_1 = new qtism\data\ExtendedAssessmentItemRef(
+    $string_54,
+    $string_55,
+    $identifiercollection_1
+);
 $extendedassessmentitemref_1->setOutcomeDeclarations($outcomedeclarationcollection_2);
 $extendedassessmentitemref_1->setResponseDeclarations($responsedeclarationcollection_1);
 $extendedassessmentitemref_1->setResponseProcessing($responseprocessing_1);
@@ -427,7 +479,8 @@ $itemsessioncontrol_3->setValidateResponses($boolean_56);
 $itemsessioncontrol_3->setAllowSkipping($boolean_57);
 $nullvalue_30 = null;
 $string_85 = "I104_02471-12";
-$string_86 = "http://tao.local/tao.rdf#i5e2832489611211408ac68c3b134292822|http://tao.local/tao.rdf#i5e283280d6c6d11408fa714f8561f4cf21+|http://tao.local/tao.rdf#i5e283280d6cc01140846119b6aeaf064c8-";
+$string_86 = "http://tao.local/tao.rdf#i5e2832489611211408ac68c3b134292822|http://tao.local/tao.rdf#i5e283280d6c6d11408"
+    . "fa714f8561f4cf21+|http://tao.local/tao.rdf#i5e283280d6cc01140846119b6aeaf064c8-";
 $string_87 = "x-tao-option-reviewScreen";
 $string_88 = "x-tao-option-markReview";
 $string_89 = "x-tao-option-exit";
@@ -448,9 +501,34 @@ $string_103 = "x-tao-option-lineReader";
 $string_104 = "x-tao-option-magnifier";
 $string_105 = "x-tao-option-zoom";
 $string_106 = "x-tao-option-eliminator";
-$array_43 = array($string_87, $string_88, $string_89, $string_90, $string_91, $string_92, $string_93, $string_94, $string_95, $string_96, $string_97, $string_98, $string_99, $string_100, $string_101, $string_102, $string_103, $string_104, $string_105, $string_106);
+$array_43 = [
+    $string_87,
+    $string_88,
+    $string_89,
+    $string_90,
+    $string_91,
+    $string_92,
+    $string_93,
+    $string_94,
+    $string_95,
+    $string_96,
+    $string_97,
+    $string_98,
+    $string_99,
+    $string_100,
+    $string_101,
+    $string_102,
+    $string_103,
+    $string_104,
+    $string_105,
+    $string_106,
+];
 $identifiercollection_2 = new qtism\common\collections\IdentifierCollection($array_43);
-$extendedassessmentitemref_2 = new qtism\data\ExtendedAssessmentItemRef($string_85, $string_86, $identifiercollection_2);
+$extendedassessmentitemref_2 = new qtism\data\ExtendedAssessmentItemRef(
+    $string_85,
+    $string_86,
+    $identifiercollection_2
+);
 $extendedassessmentitemref_2->setOutcomeDeclarations($outcomedeclarationcollection_3);
 $extendedassessmentitemref_2->setResponseDeclarations($responsedeclarationcollection_2);
 $extendedassessmentitemref_2->setResponseProcessing($responseprocessing_2);
@@ -545,7 +623,8 @@ $itemsessioncontrol_4->setValidateResponses($boolean_69);
 $itemsessioncontrol_4->setAllowSkipping($boolean_70);
 $nullvalue_36 = null;
 $string_116 = "I104_02471-18";
-$string_117 = "http://tao.local/tao.rdf#i5e283250be78611408ec7e230337093279|http://tao.local/tao.rdf#i5e283280e5bd11140845ba4b23c47256b1+|http://tao.local/tao.rdf#i5e283280e5c1d11408bbed2dc93786c71a-";
+$string_117 = "http://tao.local/tao.rdf#i5e283250be78611408ec7e230337093279|http://tao.local/tao.rdf#i5e283280e5bd11140"
+    . "845ba4b23c47256b1+|http://tao.local/tao.rdf#i5e283280e5c1d11408bbed2dc93786c71a-";
 $string_118 = "x-tao-option-reviewScreen";
 $string_119 = "x-tao-option-markReview";
 $string_120 = "x-tao-option-exit";
@@ -566,9 +645,34 @@ $string_134 = "x-tao-option-lineReader";
 $string_135 = "x-tao-option-magnifier";
 $string_136 = "x-tao-option-zoom";
 $string_137 = "x-tao-option-eliminator";
-$array_54 = array($string_118, $string_119, $string_120, $string_121, $string_122, $string_123, $string_124, $string_125, $string_126, $string_127, $string_128, $string_129, $string_130, $string_131, $string_132, $string_133, $string_134, $string_135, $string_136, $string_137);
+$array_54 = [
+    $string_118,
+    $string_119,
+    $string_120,
+    $string_121,
+    $string_122,
+    $string_123,
+    $string_124,
+    $string_125,
+    $string_126,
+    $string_127,
+    $string_128,
+    $string_129,
+    $string_130,
+    $string_131,
+    $string_132,
+    $string_133,
+    $string_134,
+    $string_135,
+    $string_136,
+    $string_137,
+];
 $identifiercollection_3 = new qtism\common\collections\IdentifierCollection($array_54);
-$extendedassessmentitemref_3 = new qtism\data\ExtendedAssessmentItemRef($string_116, $string_117, $identifiercollection_3);
+$extendedassessmentitemref_3 = new qtism\data\ExtendedAssessmentItemRef(
+    $string_116,
+    $string_117,
+    $identifiercollection_3
+);
 $extendedassessmentitemref_3->setOutcomeDeclarations($outcomedeclarationcollection_4);
 $extendedassessmentitemref_3->setResponseDeclarations($responsedeclarationcollection_3);
 $extendedassessmentitemref_3->setResponseProcessing($responseprocessing_3);
@@ -663,7 +767,8 @@ $itemsessioncontrol_5->setValidateResponses($boolean_82);
 $itemsessioncontrol_5->setAllowSkipping($boolean_83);
 $nullvalue_42 = null;
 $string_147 = "item-1";
-$string_148 = "http://tao.local/tao.rdf#i5e283258b01b811408fccaa1ef75ee5d06|http://tao.local/tao.rdf#i5e283280f3fa4114085dce517691635d3f+|http://tao.local/tao.rdf#i5e283280f4016114082b931c126f6ec6bb-";
+$string_148 = "http://tao.local/tao.rdf#i5e283258b01b811408fccaa1ef75ee5d06|http://tao.local/tao.rdf#i5e283280f3fa41140"
+    . "85dce517691635d3f+|http://tao.local/tao.rdf#i5e283280f4016114082b931c126f6ec6bb-";
 $string_149 = "x-tao-option-reviewScreen";
 $string_150 = "x-tao-option-markReview";
 $string_151 = "x-tao-option-exit";
@@ -684,9 +789,34 @@ $string_165 = "x-tao-option-lineReader";
 $string_166 = "x-tao-option-magnifier";
 $string_167 = "x-tao-option-zoom";
 $string_168 = "x-tao-option-eliminator";
-$array_65 = array($string_149, $string_150, $string_151, $string_152, $string_153, $string_154, $string_155, $string_156, $string_157, $string_158, $string_159, $string_160, $string_161, $string_162, $string_163, $string_164, $string_165, $string_166, $string_167, $string_168);
+$array_65 = [
+    $string_149,
+    $string_150,
+    $string_151,
+    $string_152,
+    $string_153,
+    $string_154,
+    $string_155,
+    $string_156,
+    $string_157,
+    $string_158,
+    $string_159,
+    $string_160,
+    $string_161,
+    $string_162,
+    $string_163,
+    $string_164,
+    $string_165,
+    $string_166,
+    $string_167,
+    $string_168,
+];
 $identifiercollection_4 = new qtism\common\collections\IdentifierCollection($array_65);
-$extendedassessmentitemref_4 = new qtism\data\ExtendedAssessmentItemRef($string_147, $string_148, $identifiercollection_4);
+$extendedassessmentitemref_4 = new qtism\data\ExtendedAssessmentItemRef(
+    $string_147,
+    $string_148,
+    $identifiercollection_4
+);
 $extendedassessmentitemref_4->setOutcomeDeclarations($outcomedeclarationcollection_5);
 $extendedassessmentitemref_4->setResponseDeclarations($responsedeclarationcollection_4);
 $extendedassessmentitemref_4->setResponseProcessing($responseprocessing_4);
@@ -781,7 +911,8 @@ $itemsessioncontrol_6->setValidateResponses($boolean_95);
 $itemsessioncontrol_6->setAllowSkipping($boolean_96);
 $nullvalue_48 = null;
 $string_178 = "item-2";
-$string_179 = "http://tao.local/tao.rdf#i5e28325f48c2a114080965c8b667a3f8f7|http://tao.local/tao.rdf#i5e283281119b711408b895b3d76d7b8338+|http://tao.local/tao.rdf#i5e28328111a01114085ca65784b719d1a1-";
+$string_179 = "http://tao.local/tao.rdf#i5e28325f48c2a114080965c8b667a3f8f7|http://tao.local/tao.rdf#i5e283281119b71140"
+    . "8b895b3d76d7b8338+|http://tao.local/tao.rdf#i5e28328111a01114085ca65784b719d1a1-";
 $string_180 = "x-tao-option-reviewScreen";
 $string_181 = "x-tao-option-markReview";
 $string_182 = "x-tao-option-exit";
@@ -802,9 +933,34 @@ $string_196 = "x-tao-option-lineReader";
 $string_197 = "x-tao-option-magnifier";
 $string_198 = "x-tao-option-zoom";
 $string_199 = "x-tao-option-eliminator";
-$array_76 = array($string_180, $string_181, $string_182, $string_183, $string_184, $string_185, $string_186, $string_187, $string_188, $string_189, $string_190, $string_191, $string_192, $string_193, $string_194, $string_195, $string_196, $string_197, $string_198, $string_199);
+$array_76 = [
+    $string_180,
+    $string_181,
+    $string_182,
+    $string_183,
+    $string_184,
+    $string_185,
+    $string_186,
+    $string_187,
+    $string_188,
+    $string_189,
+    $string_190,
+    $string_191,
+    $string_192,
+    $string_193,
+    $string_194,
+    $string_195,
+    $string_196,
+    $string_197,
+    $string_198,
+    $string_199,
+];
 $identifiercollection_5 = new qtism\common\collections\IdentifierCollection($array_76);
-$extendedassessmentitemref_5 = new qtism\data\ExtendedAssessmentItemRef($string_178, $string_179, $identifiercollection_5);
+$extendedassessmentitemref_5 = new qtism\data\ExtendedAssessmentItemRef(
+    $string_178,
+    $string_179,
+    $identifiercollection_5
+);
 $extendedassessmentitemref_5->setOutcomeDeclarations($outcomedeclarationcollection_6);
 $extendedassessmentitemref_5->setResponseDeclarations($responsedeclarationcollection_5);
 $extendedassessmentitemref_5->setResponseProcessing($responseprocessing_5);
@@ -899,7 +1055,8 @@ $itemsessioncontrol_7->setValidateResponses($boolean_108);
 $itemsessioncontrol_7->setAllowSkipping($boolean_109);
 $nullvalue_54 = null;
 $string_209 = "item-3";
-$string_210 = "http://tao.local/tao.rdf#i5e283265a6a7c114081e9f907275ab09f0|http://tao.local/tao.rdf#i5e28328121c1511408d6ff9168f273fd29+|http://tao.local/tao.rdf#i5e28328121c65114083fd0e6981167cb83-";
+$string_210 = "http://tao.local/tao.rdf#i5e283265a6a7c114081e9f907275ab09f0|http://tao.local/tao.rdf#i5e28328121c151140"
+    . "8d6ff9168f273fd29+|http://tao.local/tao.rdf#i5e28328121c65114083fd0e6981167cb83-";
 $string_211 = "x-tao-option-reviewScreen";
 $string_212 = "x-tao-option-markReview";
 $string_213 = "x-tao-option-exit";
@@ -920,9 +1077,34 @@ $string_227 = "x-tao-option-lineReader";
 $string_228 = "x-tao-option-magnifier";
 $string_229 = "x-tao-option-zoom";
 $string_230 = "x-tao-option-eliminator";
-$array_87 = array($string_211, $string_212, $string_213, $string_214, $string_215, $string_216, $string_217, $string_218, $string_219, $string_220, $string_221, $string_222, $string_223, $string_224, $string_225, $string_226, $string_227, $string_228, $string_229, $string_230);
+$array_87 = [
+    $string_211,
+    $string_212,
+    $string_213,
+    $string_214,
+    $string_215,
+    $string_216,
+    $string_217,
+    $string_218,
+    $string_219,
+    $string_220,
+    $string_221,
+    $string_222,
+    $string_223,
+    $string_224,
+    $string_225,
+    $string_226,
+    $string_227,
+    $string_228,
+    $string_229,
+    $string_230,
+];
 $identifiercollection_6 = new qtism\common\collections\IdentifierCollection($array_87);
-$extendedassessmentitemref_6 = new qtism\data\ExtendedAssessmentItemRef($string_209, $string_210, $identifiercollection_6);
+$extendedassessmentitemref_6 = new qtism\data\ExtendedAssessmentItemRef(
+    $string_209,
+    $string_210,
+    $identifiercollection_6
+);
 $extendedassessmentitemref_6->setOutcomeDeclarations($outcomedeclarationcollection_7);
 $extendedassessmentitemref_6->setResponseDeclarations($responsedeclarationcollection_6);
 $extendedassessmentitemref_6->setResponseProcessing($responseprocessing_6);
@@ -1017,7 +1199,8 @@ $itemsessioncontrol_8->setValidateResponses($boolean_121);
 $itemsessioncontrol_8->setAllowSkipping($boolean_122);
 $nullvalue_60 = null;
 $string_240 = "item-4";
-$string_241 = "http://tao.local/tao.rdf#i5e28326c257f3114081d4cd51324ba549c|http://tao.local/tao.rdf#i5e28328133bc2114085a2432d1344470dd+|http://tao.local/tao.rdf#i5e28328133c0a11408ed46cb6877ee6850-";
+$string_241 = "http://tao.local/tao.rdf#i5e28326c257f3114081d4cd51324ba549c|http://tao.local/tao.rdf#i5e28328133bc21140"
+    . "85a2432d1344470dd+|http://tao.local/tao.rdf#i5e28328133c0a11408ed46cb6877ee6850-";
 $string_242 = "x-tao-option-reviewScreen";
 $string_243 = "x-tao-option-markReview";
 $string_244 = "x-tao-option-exit";
@@ -1038,9 +1221,34 @@ $string_258 = "x-tao-option-lineReader";
 $string_259 = "x-tao-option-magnifier";
 $string_260 = "x-tao-option-zoom";
 $string_261 = "x-tao-option-eliminator";
-$array_98 = array($string_242, $string_243, $string_244, $string_245, $string_246, $string_247, $string_248, $string_249, $string_250, $string_251, $string_252, $string_253, $string_254, $string_255, $string_256, $string_257, $string_258, $string_259, $string_260, $string_261);
+$array_98 = [
+    $string_242,
+    $string_243,
+    $string_244,
+    $string_245,
+    $string_246,
+    $string_247,
+    $string_248,
+    $string_249,
+    $string_250,
+    $string_251,
+    $string_252,
+    $string_253,
+    $string_254,
+    $string_255,
+    $string_256,
+    $string_257,
+    $string_258,
+    $string_259,
+    $string_260,
+    $string_261,
+];
 $identifiercollection_7 = new qtism\common\collections\IdentifierCollection($array_98);
-$extendedassessmentitemref_7 = new qtism\data\ExtendedAssessmentItemRef($string_240, $string_241, $identifiercollection_7);
+$extendedassessmentitemref_7 = new qtism\data\ExtendedAssessmentItemRef(
+    $string_240,
+    $string_241,
+    $identifiercollection_7
+);
 $extendedassessmentitemref_7->setOutcomeDeclarations($outcomedeclarationcollection_8);
 $extendedassessmentitemref_7->setResponseDeclarations($responsedeclarationcollection_7);
 $extendedassessmentitemref_7->setResponseProcessing($responseprocessing_7);
@@ -1055,7 +1263,16 @@ $extendedassessmentitemref_7->setPreConditions($preconditioncollection_8);
 $extendedassessmentitemref_7->setBranchRules($branchrulecollection_8);
 $extendedassessmentitemref_7->setItemSessionControl($itemsessioncontrol_8);
 $extendedassessmentitemref_7->setTimeLimits($nullvalue_60);
-$array_99 = array($extendedassessmentitemref_0, $extendedassessmentitemref_1, $extendedassessmentitemref_2, $extendedassessmentitemref_3, $extendedassessmentitemref_4, $extendedassessmentitemref_5, $extendedassessmentitemref_6, $extendedassessmentitemref_7);
+$array_99 = [
+    $extendedassessmentitemref_0,
+    $extendedassessmentitemref_1,
+    $extendedassessmentitemref_2,
+    $extendedassessmentitemref_3,
+    $extendedassessmentitemref_4,
+    $extendedassessmentitemref_5,
+    $extendedassessmentitemref_6,
+    $extendedassessmentitemref_7,
+];
 $sectionpartcollection_0 = new qtism\data\SectionPartCollection($array_99);
 $boolean_123 = true;
 $boolean_124 = false;

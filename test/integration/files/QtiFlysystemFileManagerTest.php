@@ -35,7 +35,9 @@ class QtiFlysystemFileManagerTest extends GenerisPhpUnitTestRunner
     public function setUp(): void
     {
         $this->serviceLocator = ServiceManager::getServiceManager();
-        $this->filesystem = $this->serviceLocator->get(FileSystemService::SERVICE_ID)->getFileSystem('taoQtiTestSessionFilesystem');
+        $this->filesystem = $this->serviceLocator
+            ->get(FileSystemService::SERVICE_ID)
+            ->getFileSystem('taoQtiTestSessionFilesystem');
         $this->fileManager = new QtiFlysystemFileManager();
         $this->fileManager->setFilePrefix('unittest');
         $this->fileManager->setServiceLocator($this->serviceLocator);

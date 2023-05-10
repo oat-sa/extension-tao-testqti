@@ -110,9 +110,18 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc = new XmlDocument();
         $doc->load(self::samplesDir() . 'categories.xml');
 
-        $this->assertEquals(2, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'math'));
-        $this->assertEquals(2, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'english'));
-        $this->assertEquals(0, TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'X'));
+        $this->assertEquals(
+            2,
+            TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'math')
+        );
+        $this->assertEquals(
+            2,
+            TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'english')
+        );
+        $this->assertEquals(
+            0,
+            TestCategoryRulesUtils::CountNumberOfItemsWithCategory($doc->getDocumentComponent(), 'X')
+        );
     }
 
     public function testAppendOutcomeDeclarationToTest()
@@ -120,7 +129,12 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc = new XmlDocument();
         $doc->load(self::samplesDir() . 'no-categories.xml');
 
-        TestCategoryRulesUtils::appendOutcomeDeclarationToTest($doc->getDocumentComponent(), 'TEST', BaseType::FLOAT, 0.0);
+        TestCategoryRulesUtils::appendOutcomeDeclarationToTest(
+            $doc->getDocumentComponent(),
+            'TEST',
+            BaseType::FLOAT,
+            0.0
+        );
 
         $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('TEST');
         $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
@@ -136,7 +150,12 @@ class TestCategoryRulesUtilsTest extends TestCase
         $this->assertEquals(0., $values[0]->getValue());
 
         // Check that there is no duplicate if we add the same variable twice...
-        TestCategoryRulesUtils::appendOutcomeDeclarationToTest($doc->getDocumentComponent(), 'TEST', BaseType::FLOAT, 0.0);
+        TestCategoryRulesUtils::appendOutcomeDeclarationToTest(
+            $doc->getDocumentComponent(),
+            'TEST',
+            BaseType::FLOAT,
+            0.0
+        );
 
         $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('TEST');
         $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
@@ -153,7 +172,9 @@ class TestCategoryRulesUtilsTest extends TestCase
             TestCategoryRulesUtils::appendNumberOfItemsVariable($doc->getDocumentComponent(), 'math')
         );
 
-        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX);
+        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier(
+            'MATH' . TestCategoryRulesUtils::NUMBER_ITEMS_SUFFIX
+        );
         $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
         $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
         $this->assertEquals(BaseType::INTEGER, $outcome->getBaseType());
@@ -177,7 +198,9 @@ class TestCategoryRulesUtilsTest extends TestCase
             TestCategoryRulesUtils::appendNumberCorrectVariable($doc->getDocumentComponent(), 'math')
         );
 
-        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX);
+        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier(
+            'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX
+        );
         $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
         $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
         $this->assertEquals(BaseType::INTEGER, $outcome->getBaseType());
@@ -197,7 +220,9 @@ class TestCategoryRulesUtilsTest extends TestCase
             TestCategoryRulesUtils::appendTotalScoreVariable($doc->getDocumentComponent(), 'math')
         );
 
-        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX);
+        $outcome = $doc->getDocumentComponent()->getComponentByIdentifier(
+            'MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX
+        );
         $this->assertInstanceOf(OutcomeDeclaration::class, $outcome);
         $this->assertEquals(Cardinality::SINGLE, $outcome->getCardinality());
         $this->assertEquals(BaseType::FLOAT, $outcome->getBaseType());
@@ -212,7 +237,11 @@ class TestCategoryRulesUtilsTest extends TestCase
         $doc = new XmlDocument();
         $doc->load(self::samplesDir() . 'categories.xml');
 
-        TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($doc->getDocumentComponent(), 'math', 'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX);
+        TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing(
+            $doc->getDocumentComponent(),
+            'math',
+            'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX
+        );
 
         $this->assertInstanceOf(OutcomeProcessing::class, $doc->getDocumentComponent()->getOutcomeProcessing());
         $outcomeRules = $doc->getDocumentComponent()->getOutcomeProcessing()->getOutcomeRules();
@@ -226,7 +255,11 @@ class TestCategoryRulesUtilsTest extends TestCase
 
         // If a second call to TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing occurs for a variable wich
         // is already targeted by a setOutcomeValue rule, no new outcome rule should appear to avoid duplicates.
-        TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing($doc->getDocumentComponent(), 'math', 'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX);
+        TestCategoryRulesUtils::appendNumberCorrectOutcomeProcessing(
+            $doc->getDocumentComponent(),
+            'math',
+            'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX
+        );
 
         $outcomeRules = $doc->getDocumentComponent()->getOutcomeProcessing()->getOutcomeRules();
         $this->assertCount(1, $outcomeRules);

@@ -26,7 +26,10 @@ namespace oat\taoQtiTest\model\Service;
 
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
-final class TimeoutCommand implements ItemContextAwareInterface, NavigationContextAwareInterface, ToolsStateAwareInterface
+final class TimeoutCommand implements
+    ItemContextAwareInterface,
+    NavigationContextAwareInterface,
+    ToolsStateAwareInterface
 {
     use ItemContextAwareTrait;
     use NavigationContextAwareTrait;

@@ -50,7 +50,8 @@ class TestMapBranchRuleExtender
     }
 
     /**
-     * Adds the branching rules from the given testDefinition into the testMap, going through recursively on the given mapping pairs.
+     * Adds the branching rules from the given testDefinition into the testMap, going through recursively on the given
+     * mapping pairs.
      *
      * @param array $testMap
      * @param array $testDefinition
@@ -72,7 +73,12 @@ class TestMapBranchRuleExtender
                         );
                     }
 
-                    $testMap = $this->addBranchRuleToTestMap($testMap, $testDefinitionSubObject, $testMapIdentifier, $id);
+                    $testMap = $this->addBranchRuleToTestMap(
+                        $testMap,
+                        $testDefinitionSubObject,
+                        $testMapIdentifier,
+                        $id
+                    );
                 }
             }
         }

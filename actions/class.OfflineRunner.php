@@ -67,7 +67,9 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
      */
     private function attachBranchingRulesToResponse(array $testMap, QtiRunnerServiceContext $serviceContext)
     {
-        $serializedTestDefinition = $this->getTestDefinitionSerializerService()->getSerializedTestDefinition($serviceContext);
+        $serializedTestDefinition = $this->getTestDefinitionSerializerService()->getSerializedTestDefinition(
+            $serviceContext
+        );
         $branchRuleExtender = new TestMapBranchRuleExtender();
 
         return $branchRuleExtender->getTestMapWithBranchRules($testMap, $serializedTestDefinition);

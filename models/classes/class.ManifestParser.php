@@ -57,8 +57,11 @@ class taoQtiTest_models_classes_ManifestParser extends ManifestParser
     /**
      * Get the resources contained within the manifest.
      *
-     * @param string|array $filter The resource types you want to obtain. An empty $filter will make the method return all the resources within the manifest.
-     * @param integer $target The critera to be used for filtering. ManifestParser::FILTER_RESOURCE_TYPE allows to filter by resource type, ManifestParser::FILTER_RESOURCE_IDENTIFIER allows to filter by resource identifier.
+     * @param string|array $filter The resource types you want to obtain. An empty $filter will make the method return
+     *                             all the resources within the manifest.
+     * @param integer $target The critera to be used for filtering. ManifestParser::FILTER_RESOURCE_TYPE allows
+     *                        to filter by resource type, ManifestParser::FILTER_RESOURCE_IDENTIFIER allows to filter
+     *                        by resource identifier.
      * @return array An array of oat\taoQtiItem\model\qti\Resource objects matching $filter (if given).
      */
     public function getResources($filter = null, $target = self::FILTER_RESOURCE_TYPE)
@@ -71,7 +74,9 @@ class taoQtiTest_models_classes_ManifestParser extends ManifestParser
             $filter = is_array($filter) ? $filter : [$filter];
 
             foreach ($this->getAllResources() as $resource) {
-                $stringTarget = ($target === self::FILTER_RESOURCE_TYPE) ? $resource->getType() : $resource->getIdentifier();
+                $stringTarget = ($target === self::FILTER_RESOURCE_TYPE)
+                    ? $resource->getType()
+                    : $resource->getIdentifier();
 
                 if (in_array($stringTarget, $filter)) {
                     $returnValue[] = $resource;

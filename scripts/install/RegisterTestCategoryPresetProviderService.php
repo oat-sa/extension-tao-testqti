@@ -15,6 +15,9 @@ class RegisterTestCategoryPresetProviderService extends InstallAction
     {
         $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, 'Test category preset provider successfully registered');
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            'Test category preset provider successfully registered'
+        );
     }
 }

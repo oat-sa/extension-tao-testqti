@@ -37,6 +37,12 @@ class SetOfflineTestRunnerConfig extends common_ext_action_InstallAction
 {
     public function __invoke($params)
     {
-        return new Report(Report::TYPE_WARNING, sprintf('This script deprecated, please, use %s to handle offline mode', TestRunnerOfflineMode::class));
+        return new Report(
+            Report::TYPE_WARNING,
+            sprintf(
+                'This script deprecated, please, use %s to handle offline mode',
+                TestRunnerOfflineMode::class
+            )
+        );
     }
 }

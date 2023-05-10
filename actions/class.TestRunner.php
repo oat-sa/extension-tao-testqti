@@ -308,7 +308,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
         $userUri = common_session_SessionManager::getSession()->getUserUri();
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
 
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = \common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('testRunner');
         $storageClassName = $config['test-session-storage'];
         $this->setStorage(new $storageClassName($sessionManager, $seeker, $userUri));
 
@@ -319,7 +321,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
         $state = $session->getState();
         if ($state == AssessmentTestSessionState::CLOSED) {
             if ($notifyError) {
-                $this->notifyError(__('The assessment has been terminated. You cannot interact with it anymore.'), $state);
+                $this->notifyError(
+                    __('The assessment has been terminated. You cannot interact with it anymore.'),
+                    $state
+                );
             }
             return false;
         }
@@ -327,7 +332,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
         // @TODO: maybe use an option to enable this behavior
         if ($state == AssessmentTestSessionState::SUSPENDED) {
             if ($notifyError) {
-                $this->notifyError(__('The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required.'), $state);
+                $this->notifyError(
+                    // phpcs:disable Generic.Files.LineLength
+                    __('The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required.'),
+                    // phpcs:enable Generic.Files.LineLength
+                    $state
+                );
             }
             return false;
         }
@@ -405,7 +415,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
      */
     public function index()
     {
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = \common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('testRunner');
         $noError = $this->beforeAction();
 
         // this part is only accessible if beforeAction did not return an error
@@ -438,7 +450,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
         // this part must be processed no matter if beforeAction returned an error:
         // the context object is provided through the view
         $this->setData('review_screen', !empty($config['test-taker-review']));
-        $this->setData('review_region', isset($config['test-taker-review-region']) ? $config['test-taker-review-region'] : '');
+        $this->setData('review_region', $config['test-taker-review-region'] ?? '');
 
         $this->setData('client_config_url', $this->getClientConfigUrl());
         $this->setData('client_timeout', $this->getClientTimeout());
@@ -460,9 +472,15 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
     public function keepItemTimed()
     {
         if ($this->beforeAction()) {
-            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config = \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
 
-            if (isset($config['reset-timer-after-resume']) && $config['reset-timer-after-resume'] && $this->hasRequestParameter('duration')) {
+            if (
+                isset($config['reset-timer-after-resume'])
+                && $config['reset-timer-after-resume']
+                && $this->hasRequestParameter('duration')
+            ) {
                 $session = $this->getTestSession();
 
                 // originally in milliseconds, but we have to convert to seconds now
@@ -537,7 +555,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
 
                 $session->jumpTo($nextPosition);
 
-                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                if (
+                    $session->isRunning() === true
+                    && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false
+                ) {
                     taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
                 }
             } catch (AssessmentTestSessionException $e) {
@@ -550,7 +571,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
 
     protected function endTimedSection($nextPosition)
     {
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = \common_ext_ExtensionsManager::singleton()
+            ->getExtensionById('taoQtiTest')
+            ->getConfig('testRunner');
 
         if (empty($config['keep-timer-up-to-timeout'])) {
             $isJumpOutOfSection = false;
@@ -562,7 +585,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
             if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
                 $nextSection = $route->getRouteItemAt($nextPosition);
 
+                // phpcs:disable Generic.Files.LineLength
                 $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+                // phpcs:enable Generic.Files.LineLength
             }
 
             $limits = $section->getTimeLimits();
@@ -601,7 +626,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
 
                 $session->moveNext();
 
-                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                if (
+                    $session->isRunning() === true
+                    && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false
+                ) {
                     taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
                 }
             } catch (AssessmentTestSessionException $e) {
@@ -650,7 +678,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
             try {
                 $session->moveNextAssessmentSection();
 
-                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                if (
+                    $session->isRunning() === true
+                    && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false
+                ) {
                     taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
                 }
             } catch (AssessmentTestSessionException $e) {
@@ -674,7 +705,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
                 $session->skip();
                 $session->moveNext();
 
-                if ($session->isRunning() === true && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false) {
+                if (
+                    $session->isRunning() === true
+                    && taoQtiTest_helpers_TestRunnerUtils::isTimeout($session) === false
+                ) {
                     taoQtiTest_helpers_TestRunnerUtils::beginCandidateInteraction($session);
                 }
             } catch (AssessmentTestSessionException $e) {
@@ -727,7 +761,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
      * Stuff to be undertaken when the Assessment Item presented to the candidate
      * times out.
      *
-     * @param AssessmentTestSessionException $timeOutException The AssessmentTestSessionException object thrown to indicate the timeout.
+     * @param AssessmentTestSessionException $timeOutException The AssessmentTestSessionException object thrown to
+     *                                                         indicate the timeout.
      */
     protected function onTimeout(AssessmentTestSessionException $timeOutException)
     {
@@ -814,7 +849,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
                 $this->getTestSession()->endAttempt($responses, true);
 
                 // Return the item session state to the client side.
-                $itemSession = $this->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession($currentItem, $currentOccurence);
+                $itemSession = $this->getTestSession()->getAssessmentItemSessionStore()->getAssessmentItemSession(
+                    $currentItem,
+                    $currentOccurence
+                );
 
                 foreach ($itemSession->getAllVariables() as $var) {
                     $stateOutput->addVariable($var);
@@ -864,7 +902,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
             // build variable and send it.
             $itemUri = taoQtiTest_helpers_TestRunnerUtils::getCurrentItemUri($testSession);
             $testUri = $testSession->getTest()->getUri();
-            $variable = new ResponseVariable('comment', Cardinality::SINGLE, BaseType::STRING, new QtismString($comment));
+            $variable = new ResponseVariable(
+                'comment',
+                Cardinality::SINGLE,
+                BaseType::STRING,
+                new QtismString($comment)
+            );
 
             $transmitter = new taoQtiCommon_helpers_ResultTransmitter($resultStore);
             $transmitter->transmitItemVariable($variable, $transmissionId, $itemUri, $testUri);
@@ -876,7 +919,8 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
      * from as an AssessmentTest object. This method
      * also retrieves the compilation directory.
      *
-     * @param string $qtiTestCompilation (e.g. <i>'http://sample/first.rdf#i14363448108243883-|http://sample/first.rdf#i14363448109065884+'</i>)
+     * @param string $qtiTestCompilation (e.g. <i>'http://sample/first.rdf#i14363448108243883-
+     *                                   |http://sample/first.rdf#i14363448109065884+'</i>)
      *
      * @return AssessmentTest The AssessmentTest object the current test session is built from.
      */

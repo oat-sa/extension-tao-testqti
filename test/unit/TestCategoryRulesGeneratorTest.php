@@ -55,25 +55,46 @@ class TestCategoryRulesGeneratorTest extends TestCase
         $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
         $this->assertCount(4, $setOutcomeValues);
 
-        $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[0]->getIdentifier());
+        $this->assertEquals(
+            'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX,
+            $setOutcomeValues[0]->getIdentifier()
+        );
         $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[0]->getExpression());
         $this->assertEquals(['math'], $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
 
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[1]->getIdentifier());
         $this->assertInstanceOf(Sum::class, $setOutcomeValues[1]->getExpression());
-        $this->assertEquals(['math'], $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(
+            ['math'],
+            $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy()
+        );
         $this->assertEquals('', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
-        $this->assertEquals('SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+        $this->assertEquals(
+            'SCORE',
+            $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier()
+        );
 
-        $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[2]->getIdentifier());
+        $this->assertEquals(
+            'ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX,
+            $setOutcomeValues[2]->getIdentifier()
+        );
         $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[2]->getExpression());
         $this->assertEquals(['english'], $setOutcomeValues[2]->getExpression()->getIncludeCategories()->getArrayCopy());
 
-        $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[3]->getIdentifier());
+        $this->assertEquals(
+            'ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX,
+            $setOutcomeValues[3]->getIdentifier()
+        );
         $this->assertInstanceOf(Sum::class, $setOutcomeValues[3]->getExpression());
-        $this->assertEquals(['english'], $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(
+            ['english'],
+            $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy()
+        );
         $this->assertEquals('', $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getWeightIdentifier());
-        $this->assertEquals('SCORE', $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+        $this->assertEquals(
+            'SCORE',
+            $setOutcomeValues[3]->getExpression()->getExpressions()[0]->getVariableIdentifier()
+        );
     }
 
     public function testApplyCountOnly()
@@ -107,11 +128,17 @@ class TestCategoryRulesGeneratorTest extends TestCase
 
         $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
         $this->assertCount(2, $setOutcomeValues);
-        $this->assertEquals('MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[0]->getIdentifier());
+        $this->assertEquals(
+            'MATH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX,
+            $setOutcomeValues[0]->getIdentifier()
+        );
         $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[0]->getExpression());
         $this->assertEquals(['math'], $setOutcomeValues[0]->getExpression()->getIncludeCategories()->getArrayCopy());
 
-        $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX, $setOutcomeValues[1]->getIdentifier());
+        $this->assertEquals(
+            'ENGLISH' . TestCategoryRulesUtils::NUMBER_CORRECT_SUFFIX,
+            $setOutcomeValues[1]->getIdentifier()
+        );
         $this->assertInstanceOf(NumberCorrect::class, $setOutcomeValues[1]->getExpression());
         $this->assertEquals(['english'], $setOutcomeValues[1]->getExpression()->getIncludeCategories()->getArrayCopy());
     }
@@ -133,15 +160,30 @@ class TestCategoryRulesGeneratorTest extends TestCase
         $this->assertCount(2, $setOutcomeValues);
         $this->assertEquals('MATH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[0]->getIdentifier());
         $this->assertInstanceOf(Sum::class, $setOutcomeValues[0]->getExpression());
-        $this->assertEquals(['math'], $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(
+            ['math'],
+            $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy()
+        );
         $this->assertEquals('', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getWeightIdentifier());
-        $this->assertEquals('SCORE', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+        $this->assertEquals(
+            'SCORE',
+            $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier()
+        );
 
-        $this->assertEquals('ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX, $setOutcomeValues[1]->getIdentifier());
+        $this->assertEquals(
+            'ENGLISH' . TestCategoryRulesUtils::TOTAL_SCORE_SUFFIX,
+            $setOutcomeValues[1]->getIdentifier()
+        );
         $this->assertInstanceOf(Sum::class, $setOutcomeValues[1]->getExpression());
-        $this->assertEquals(['english'], $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy());
+        $this->assertEquals(
+            ['english'],
+            $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getIncludeCategories()->getArrayCopy()
+        );
         $this->assertEquals('', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
-        $this->assertEquals('SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+        $this->assertEquals(
+            'SCORE',
+            $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier()
+        );
     }
 
     /**
@@ -164,8 +206,14 @@ class TestCategoryRulesGeneratorTest extends TestCase
 
         $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
         $this->assertCount(2, $setOutcomeValues);
-        $this->assertEquals('MY_SCORE', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier());
-        $this->assertEquals('MY_SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
+        $this->assertEquals(
+            'MY_SCORE',
+            $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier()
+        );
+        $this->assertEquals(
+            'MY_SCORE',
+            $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier()
+        );
     }
 
     /**
@@ -189,9 +237,21 @@ class TestCategoryRulesGeneratorTest extends TestCase
 
         $setOutcomeValues = $doc->getDocumentComponent()->getComponentsByClassName('setOutcomeValue');
         $this->assertCount(2, $setOutcomeValues);
-        $this->assertEquals('MY_SCORE', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier());
-        $this->assertEquals('MY_WEIGHT', $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getWeightIdentifier());
-        $this->assertEquals('MY_SCORE', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier());
-        $this->assertEquals('MY_WEIGHT', $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier());
+        $this->assertEquals(
+            'MY_SCORE',
+            $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getVariableIdentifier()
+        );
+        $this->assertEquals(
+            'MY_WEIGHT',
+            $setOutcomeValues[0]->getExpression()->getExpressions()[0]->getWeightIdentifier()
+        );
+        $this->assertEquals(
+            'MY_SCORE',
+            $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getVariableIdentifier()
+        );
+        $this->assertEquals(
+            'MY_WEIGHT',
+            $setOutcomeValues[1]->getExpression()->getExpressions()[0]->getWeightIdentifier()
+        );
     }
 }

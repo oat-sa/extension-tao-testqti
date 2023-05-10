@@ -41,20 +41,27 @@ class RecompileHrefIndexes extends AbstractAction
         $extManager = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID);
         $report = new Report(Report::TYPE_INFO, "Script gracefully ended.");
 
-        if ($extManager->isInstalled('taoDeliveryRdf') === true && $extManager->isEnabled('taoDeliveryRdf') === true) {
+        if (
+            $extManager->isInstalled('taoDeliveryRdf') === true
+            && $extManager->isEnabled('taoDeliveryRdf') === true
+        ) {
             $extManager->getExtensionById('taoDeliveryRdf');
 
             $compiledDeliveryClass = new \core_kernel_classes_Class(DeliveryAssemblyService::CLASS_URI);
             $phpDocument = new PhpDocument();
 
             if ($compiledDeliveryClass->exists() === true) {
-                $compiledDirectoryProperty = new \core_kernel_classes_Property(DeliveryAssemblyService::PROPERTY_DELIVERY_DIRECTORY);
+                $compiledDirectoryProperty = new \core_kernel_classes_Property(
+                    DeliveryAssemblyService::PROPERTY_DELIVERY_DIRECTORY
+                );
 
                 foreach ($compiledDeliveryClass->getInstances(true) as $compiledDelivery) {
                     $directories = $compiledDelivery->getPropertyValues($compiledDirectoryProperty);
 
                     foreach ($directories as $directoryId) {
-                        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryId);
+                        $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById(
+                            $directoryId
+                        );
 
                         foreach ($directory->getIterator() as $filePrefix) {
                             $file = $directory->getFile($filePrefix);
@@ -62,14 +69,26 @@ class RecompileHrefIndexes extends AbstractAction
 
                             if ($fileBasename === 'compact-test.php') {
                                 $phpDocument->loadFromString($file->read());
+                                $assessmentItemRefs = $phpDocument->getDocumentComponent()->getComponentsByClassName(
+                                    'assessmentItemRef',
+                                    true
+                                );
 
-                                foreach ($phpDocument->getDocumentComponent()->getComponentsByClassName('assessmentItemRef', true) as $assessmentItemRef) {
+                                foreach ($assessmentItemRefs as $assessmentItemRef) {
                                     $assessmentItemRefIdentifier = $assessmentItemRef->getIdentifier();
-                                    $indexPath = \taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($assessmentItemRefIdentifier);
+                                    $indexPath = \taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath(
+                                        $assessmentItemRefIdentifier
+                                    );
                                     $newFile = $directory->getFile($indexPath);
                                     $newFile->put($assessmentItemRef->getHref());
 
-                                    $report->add(new Report(Report::TYPE_SUCCESS, "HrefIndex for assessmentItemRef identifier '${assessmentItemRefIdentifier}' compiled."));
+                                    $report->add(
+                                        new Report(
+                                            Report::TYPE_SUCCESS,
+                                            "HrefIndex for assessmentItemRef identifier "
+                                                . "'${assessmentItemRefIdentifier}' compiled."
+                                        )
+                                    );
                                 }
 
                                 break 2;
@@ -80,7 +99,10 @@ class RecompileHrefIndexes extends AbstractAction
             }
         } else {
             $report->add(
-                new Report(Report::TYPE_WARNING, "Extension taoDeliveryRdf is not installed. No compilation environment is available.")
+                new Report(
+                    Report::TYPE_WARNING,
+                    "Extension taoDeliveryRdf is not installed. No compilation environment is available."
+                )
             );
         }
 

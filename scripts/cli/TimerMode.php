@@ -112,7 +112,12 @@ class TimerMode extends ScriptAction
 
     protected function run()
     {
-        $report = Report::createInfo(sprintf('The test runner timer mode is currently set to "%s"', $this->getTimerMode()));
+        $report = Report::createInfo(
+            sprintf(
+                'The test runner timer mode is currently set to "%s"',
+                $this->getTimerMode()
+            )
+        );
 
         if ($this->getOption(self::GET_TIMER_MODE)) {
             return $report;
@@ -144,7 +149,9 @@ class TimerMode extends ScriptAction
         }
 
         if (!in_array($mode, self::SUPPORTED_MODES, true)) {
-            throw new InvalidArgumentException('The timer mode must be one of: ' . implode(', ', self::SUPPORTED_MODES));
+            throw new InvalidArgumentException(
+                'The timer mode must be one of: ' . implode(', ', self::SUPPORTED_MODES)
+            );
         }
     }
 
@@ -169,7 +176,10 @@ class TimerMode extends ScriptAction
         $taoQtiTestExtension = $this->getExtension();
         $taoQtiTestExtension->setConfig(
             self::CONFIG_FILE,
-            array_replace_recursive($taoQtiTestExtension->getConfig(self::CONFIG_FILE), ['timer' => ['target' => $mode]])
+            array_replace_recursive(
+                $taoQtiTestExtension->getConfig(self::CONFIG_FILE),
+                ['timer' => ['target' => $mode]]
+            )
         );
     }
 }

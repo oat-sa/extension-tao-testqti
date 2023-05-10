@@ -339,7 +339,11 @@ class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDe
      */
     public function getCatValue($assessmentSectionId, $key)
     {
-        return (isset($this->state[self::VAR_CAT]) && isset($this->state[self::VAR_CAT][$assessmentSectionId]) && isset($this->state[self::VAR_CAT][$assessmentSectionId][$key])) ? $this->state[self::VAR_CAT][$assessmentSectionId][$key] : null;
+        return (isset($this->state[self::VAR_CAT])
+            && isset($this->state[self::VAR_CAT][$assessmentSectionId])
+            && isset($this->state[self::VAR_CAT][$assessmentSectionId][$key]))
+                ? $this->state[self::VAR_CAT][$assessmentSectionId][$key]
+                : null;
     }
 
     /**
@@ -350,7 +354,11 @@ class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDe
      */
     public function removeCatValue($assessmentSectionId, $key)
     {
-        if (isset($this->state[self::VAR_CAT]) && isset($this->state[self::VAR_CAT][$assessmentSectionId]) && isset($this->state[self::VAR_CAT][$assessmentSectionId][$key])) {
+        if (
+            isset($this->state[self::VAR_CAT])
+            && isset($this->state[self::VAR_CAT][$assessmentSectionId])
+            && isset($this->state[self::VAR_CAT][$assessmentSectionId][$key])
+        ) {
             unset($this->state[self::VAR_CAT][$assessmentSectionId][$key]);
         }
         return $this;

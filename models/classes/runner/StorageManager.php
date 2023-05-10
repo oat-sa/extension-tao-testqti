@@ -111,7 +111,8 @@ class StorageManager extends ConfigurableService
      */
     protected function exists($key)
     {
-        return isset($this->cache[$key]) && in_array($this->cache[$key]['state'], [self::STATE_ALIGNED, self::STATE_PENDING_WRITE]);
+        return isset($this->cache[$key])
+            && in_array($this->cache[$key]['state'], [self::STATE_ALIGNED, self::STATE_PENDING_WRITE]);
     }
 
     /**
@@ -144,7 +145,9 @@ class StorageManager extends ConfigurableService
                 case self::STATE_PENDING_WRITE:
                     $success = $this->getStorage()->set($cache['userId'], $cache['callId'], $cache['data']);
                     if (!$success) {
-                        throw new \common_exception_Error('Can\'t write into test runner state storage at ' . static::class);
+                        throw new \common_exception_Error(
+                            'Can\'t write into test runner state storage at ' . static::class
+                        );
                     }
                     $this->cache[$key]['state'] = self::STATE_ALIGNED;
                     break;

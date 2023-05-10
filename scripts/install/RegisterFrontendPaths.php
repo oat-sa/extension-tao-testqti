@@ -37,7 +37,8 @@ class RegisterFrontendPaths extends InstallAction
     public function __invoke($params)
     {
         $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
-        $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
+        $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest')
+            . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
         $clientLibRegistry = ClientLibRegistry::getRegistry();
         $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
 

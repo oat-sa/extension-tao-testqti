@@ -68,7 +68,9 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     public function __invoke($params)
     {
         if (!isset($params[self::PARAM_FILE])) {
-            throw new common_exception_MissingParameter('Missing parameter `' . self::PARAM_FILE . '` in ' . self::class);
+            throw new common_exception_MissingParameter(
+                'Missing parameter `' . self::PARAM_FILE . '` in ' . self::class
+            );
         }
 
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -109,12 +111,21 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      * @param \core_kernel_classes_Class $class uploaded file
      * @param bool $enableGuardians Flag that marks use or not metadata guardians during the import.
      * @param bool $enableValidators Flag that marks use or not metadata validators during the import.
-     * @param bool $itemMustExist Flag to indicate that all items must exist in database (via metadata guardians) to make the test import successful.
+     * @param bool $itemMustExist Flag to indicate that all items must exist in database (via metadata guardians) to
+     *                            make the test import successful.
      * @param bool $itemMustBeOverwritten Flag to indicate that items found by metadata guardians will be overwritten.
      * @return TaskInterface
      */
-    public static function createTask($packageFile, \core_kernel_classes_Class $class, $enableGuardians = true, $enableValidators = true, $itemMustExist = false, $itemMustBeOverwritten = false, $overwriteTest = false, ?string $itemClassUri = null)
-    {
+    public static function createTask(
+        $packageFile,
+        \core_kernel_classes_Class $class,
+        $enableGuardians = true,
+        $enableValidators = true,
+        $itemMustExist = false,
+        $itemMustBeOverwritten = false,
+        $overwriteTest = false,
+        ?string $itemClassUri = null
+    ) {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
 

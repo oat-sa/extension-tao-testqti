@@ -1,7 +1,5 @@
 <?php
 
-use oat\taoQtiTest\models\runner\session\TestSession;
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +17,8 @@ use oat\taoQtiTest\models\runner\session\TestSession;
  *
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
  */
+
+use oat\taoQtiTest\models\runner\session\TestSession;
 
 /**
  * Default test runner config
@@ -47,9 +47,11 @@ return [
      * Tells what type of progress bar to use? Can be:
      * - percentage : Classic progress bar displaying the percentage of answered items
      * - position : Progress bar displaying the position of the current item within the test session
-     * - questions : Progress bar displaying the position of the last viewed question (informational items will be ignored)
+     * - questions : Progress bar displaying the position of the last viewed question
+     *               (informational items will be ignored)
      * - sections : Progress bar displaying the position of the last reached answerable section
-     * - categories : Progress bar displaying the position of the last reached item only for defined categories (in the 'categories' configuration)
+     * - categories : Progress bar displaying the position of the last reached item only for defined categories
+     *                (in the 'categories' configuration)
      * @type string
      */
     'progress-indicator' => 'percentage',
@@ -204,8 +206,8 @@ return [
     'test-taker-review-skipahead' => false,
 
     /**
-     * Determines whether partially answered items (example: an item containing 2 interactions, where only 1 is answered)
-     * are shown as answered or unanswered in the review
+     * Determines whether partially answered items (example: an item containing 2 interactions, where only 1 is
+     * answered) are shown as answered or unanswered in the review
      * @type boolean
      */
     'test-taker-review-partially-answered-is-answered' => true,
@@ -346,7 +348,8 @@ return [
          */
         'calculator' => [
             /**
-             * The optional amd path to an alternative template, e.g. myExtension/runner/plugins/tool/calculator/template.tpl
+             * The optional amd path to an alternative template, e.g.
+             * myExtension/runner/plugins/tool/calculator/template.tpl
              */
             'template' => '',
             /**
@@ -391,7 +394,8 @@ return [
             /**
              * The type of content navigation. For now only two modes are supported:
              * - `default`: the regular navigation mode
-             * - `linear`: a linear navigation mode, where the user can navigation linearly between choices using the tab key
+             * - `linear`: a linear navigation mode, where the user can navigation linearly between choices using the
+             *             tab key
              * @type string
              */
             'contentNavigatorType' => 'default'

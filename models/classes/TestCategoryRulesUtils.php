@@ -102,7 +102,12 @@ class TestCategoryRulesUtils
     public static function appendNumberOfItemsVariable(AssessmentTest $test, $category)
     {
         $varName = strtoupper($category) . self::NUMBER_ITEMS_SUFFIX;
-        self::appendOutcomeDeclarationToTest($test, $varName, BaseType::INTEGER, self::countNumberOfItemsWithCategory($test, $category));
+        self::appendOutcomeDeclarationToTest(
+            $test,
+            $varName,
+            BaseType::INTEGER,
+            self::countNumberOfItemsWithCategory($test, $category)
+        );
 
         return $varName;
     }
@@ -110,8 +115,8 @@ class TestCategoryRulesUtils
     /**
      * Append a variable dedicated to counting number of correctly responded items related to a given category.
      *
-     * This method will append a QTI outcome variable dedicated to count the number of items that are correctly responded
-     * related to a given QTI $category, to a given QTI $test.
+     * This method will append a QTI outcome variable dedicated to count the number of items that are correctly
+     * responded related to a given QTI $category, to a given QTI $test.
      *
      * @param qtism\data\AssessmentTest $test A QTI-SDK AssessmentTest object.
      * @param string $category A QTI category identifier.
@@ -144,10 +149,11 @@ class TestCategoryRulesUtils
     }
 
     /**
-     * Append the outcome processing rules to populate an outcome variable with the number of items correctly responded related to a given category.
+     * Append the outcome processing rules to populate an outcome variable with the number of items correctly responded
+     * related to a given category.
      *
-     * This method will append a QTI outcome processing to a given QTI-SDK AssessmentTest $test, dedicated to count the number
-     * of correctly responded items related to a given QTI $category.
+     * This method will append a QTI outcome processing to a given QTI-SDK AssessmentTest $test, dedicated to count
+     * the number of correctly responded items related to a given QTI $category.
      *
      * In case of an outcome processing rule targetting a variable name $varName already exists in the test, the outcome
      * processing rule is not appended to the test.
@@ -176,13 +182,15 @@ class TestCategoryRulesUtils
     }
 
     /**
-     * Append the outcome processing rules to populate an outcome variable with total score of items related to a given category.
+     * Append the outcome processing rules to populate an outcome variable with total score of items related to
+     * a given category.
      *
      * This method will append a QTI outcome processing to a given QTI-SDK AssessmentTest $test, dedicated to store
      * the total score of items related to a given QTI $category.
      *
-     * In case of the $weightIdentifier argument is given, the score will consider weights defined at the assessmentItemRef
-     * level identified by $weightIdentifier. Otherwise, no weights are taken into account while computing total scores.
+     * In case of the $weightIdentifier argument is given, the score will consider weights defined at the
+     * assessmentItemRef level identified by $weightIdentifier. Otherwise, no weights are taken into account while
+     * computing total scores.
      *
      * In case of an outcome processing rule targetting a variable name $varName already exists in the test, the outcome
      * processing rule is not appended to the test.
@@ -190,11 +198,18 @@ class TestCategoryRulesUtils
      * @param qtism\data\AssessmentTest $test A QTI-SDK AssessmentTest object.
      * @param string $category A QTI category identifier.
      * @param string $varName The QTI identifier of the variable to be populated by the outcome processing rule.
-     * @param string $scoreIdentifier (optional) An optional QTI identifier to be used as items' score variable (defaults to "SCORE").
-     * @param string $weightIdentifier (optional) An optional QTI identifier to be used as items' weight to be considered for total score. (defaults to empty string).
+     * @param string $scoreIdentifier (optional) An optional QTI identifier to be used as items' score variable
+     *                                (defaults to "SCORE").
+     * @param string $weightIdentifier (optional) An optional QTI identifier to be used as items' weight to be
+     *                                 considered for total score. (defaults to empty string).
      */
-    public static function appendTotalScoreOutcomeProcessing(AssessmentTest $test, $category, $varName, $scoreVariableIdentifier = 'SCORE', $weightIdentifier = '')
-    {
+    public static function appendTotalScoreOutcomeProcessing(
+        AssessmentTest $test,
+        $category,
+        $varName,
+        $scoreVariableIdentifier = 'SCORE',
+        $weightIdentifier = ''
+    ) {
         if (self::isVariableSetOutcomeValueTarget($test, $varName) === false) {
             $testVariablesExpression = new TestVariables($scoreVariableIdentifier, BaseType::FLOAT);
             $testVariablesExpression->setWeightIdentifier($weightIdentifier);
@@ -230,8 +245,12 @@ class TestCategoryRulesUtils
      * @param integer $baseType A QTI-SDK Base Type.
      * @param mixed (optional) A default value for the variable.
      */
-    public static function appendOutcomeDeclarationToTest(AssessmentTest $test, $varName, $baseType, $defaultValue = null)
-    {
+    public static function appendOutcomeDeclarationToTest(
+        AssessmentTest $test,
+        $varName,
+        $baseType,
+        $defaultValue = null
+    ) {
         $outcomeDeclarations = $test->getOutcomeDeclarations();
         $outcome = new OutcomeDeclaration($varName, $baseType, Cardinality::SINGLE);
 

@@ -85,7 +85,11 @@ class GetDeliveryExecutionsItems
             $mainItemRef = $routeItem->getAssessmentItemRef();
 
             if ($this->catService->isAdaptivePlaceholder($mainItemRef)) {
-                $seenCatItems = $this->catService->getPreviouslySeenCatItemIds($this->assessmentTestSession, $this->directoryStorage, $routeItem);
+                $seenCatItems = $this->catService->getPreviouslySeenCatItemIds(
+                    $this->assessmentTestSession,
+                    $this->directoryStorage,
+                    $routeItem
+                );
                 $itemIds = array_merge($itemIds, $seenCatItems);
             } else {
                 $itemIds[] = $mainItemRef->getIdentifier();

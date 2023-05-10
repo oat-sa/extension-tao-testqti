@@ -43,13 +43,17 @@ class AdjustmentMapTest extends TestCase
      * @param $sourceId
      * @param $action
      * @param $seconds
+     *
+     * phpcs:disable PSR1.Methods.CamelCapsMethodName
      */
     public function testIncrease_WhenParametersAreNotValid_ThenMapIsNotUpdated($sourceId, $seconds): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->subject->increase($sourceId, self::DUMMY_ADJUSTMENT_TYPE, $seconds);
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testIncrease_WhenValueIsRegisteredForNewSource_ThenEntryIsCorrectlyInitialized(): void
     {
         $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
@@ -62,7 +66,9 @@ class AdjustmentMapTest extends TestCase
             $this->subject->toArray()['testSourceId'][self::DUMMY_ADJUSTMENT_TYPE][AdjustmentMap::ACTION_DECREASE]
         );
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testIncrease_WhenValueExistsInTheMap_ThenSubsequentValuesAreAdded(): void
     {
         $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
@@ -72,12 +78,16 @@ class AdjustmentMapTest extends TestCase
             $this->subject->toArray()['testSourceId'][self::DUMMY_ADJUSTMENT_TYPE][AdjustmentMap::ACTION_INCREASE]
         );
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testGet_WhenThereIsNoValuePresent_ThenZeroIsReturned(): void
     {
         $this->assertEquals(0, $this->subject->get('newSourceId'));
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testGet_WhenRequested_ThenReturnValueIsCalculatedFromIncreasesAndDecreasesOfAllTypes(): void
     {
         $this->subject->increase('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
@@ -87,7 +97,9 @@ class AdjustmentMapTest extends TestCase
         $this->subject->decrease('testSourceId', self::DUMMY_ADJUSTMENT_TYPE, 10);
         $this->assertEquals(-5, $this->subject->get('testSourceId'));
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testGetByType_WhenAdjustmentForTypeExist_ThenReturnsValuesCalculated(): void
     {
         $newAdjustmentType = 'NEW_TYPE';
@@ -115,7 +127,9 @@ class AdjustmentMapTest extends TestCase
             $this->subject->getByType('testSourceId', self::DUMMY_ADJUSTMENT_TYPE)
         );
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testGetByType_WhenAdjustmentForTypeDoesntExist_ThenReturnsZero(): void
     {
         $this->assertEquals(
@@ -123,7 +137,9 @@ class AdjustmentMapTest extends TestCase
             $this->subject->getByType('newSourceId', self::DUMMY_ADJUSTMENT_TYPE)
         );
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testToArray_WhenSerializedToAndFromArray_ThenValuesAreStillTheSame(): void
     {
         $this->subject->increase('testSourceId1', self::DUMMY_ADJUSTMENT_TYPE, 10);
@@ -133,7 +149,9 @@ class AdjustmentMapTest extends TestCase
         $secondMap->fromArray($data);
         $this->assertEquals($this->subject->toArray(), $secondMap->toArray());
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testFromArray_WhenSerializedToAndFromArray_ThenValuesAreStillTheSame(): void
     {
         $this->subject->increase('testSourceId1', self::DUMMY_ADJUSTMENT_TYPE, 10);
@@ -143,7 +161,9 @@ class AdjustmentMapTest extends TestCase
         $secondMap->fromArray($data);
         $this->assertEquals($secondMap->toArray(), $this->subject->toArray());
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName
     public function testJsonSerialize_WhenEntriesAreEncodedToAndDecodedFromJson_ThenValuesAreTheSame(): void
     {
         $this->subject->increase('testSourceId1', self::DUMMY_ADJUSTMENT_TYPE, 10);
@@ -152,6 +172,7 @@ class AdjustmentMapTest extends TestCase
         $data = $this->subject->toArray();
         $this->assertEquals($data, json_decode($encoded, true));
     }
+    // phpcs:enable PSR1.Methods.CamelCapsMethodName
 
     public function increaseParameterValidationDataProvider(): array
     {

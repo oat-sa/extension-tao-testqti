@@ -57,7 +57,10 @@ class XmlEditForm extends tao_helpers_form_FormContainer
         ]);
 
         $action = tao_helpers_form_FormFactory::getElement('save', 'Free');
-        $action->setValue('<a href="#" class="form-submitter btn-success small"><span class="icon-save"></span> ' . __('Save') . '</a>');
+        $action->setValue(
+            '<a href="#" class="form-submitter btn-success small"><span class="icon-save"></span> '
+                . __('Save') . '</a>'
+        );
 
         $this->form->setActions([$action], 'bottom');
     }

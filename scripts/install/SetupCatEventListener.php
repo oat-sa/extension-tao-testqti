@@ -36,6 +36,9 @@ class SetupCatEventListener extends InstallAction
     {
         $this->registerEvent(QtiContinueInteractionEvent::class, [CatService::SERVICE_ID, 'onQtiContinueInteraction']);
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, "CAT Event Listener successfully configured.");
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            "CAT Event Listener successfully configured."
+        );
     }
 }

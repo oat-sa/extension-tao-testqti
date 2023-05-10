@@ -153,7 +153,9 @@ class SessionStateService extends ConfigurableService
     public function getSessionDescription(\taoQtiTest_helpers_TestSession $session)
     {
         if ($session->isRunning()) {
-            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config = \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
             $progressScope = isset($config['progress-indicator-scope']) ? $config['progress-indicator-scope'] : 'test';
             $progress = $this->getSessionProgress($session);
             $itemPosition = $progress[$progressScope];
@@ -177,7 +179,9 @@ class SessionStateService extends ConfigurableService
     protected function getSessionProgress(\taoQtiTest_helpers_TestSession $session)
     {
         if ($session->isRunning() !== false) {
-            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config = \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
             $categories = [];
             if (isset($config['progress-indicator']) && $config['progress-indicator'] == 'categories') {
                 $categories = $config['progress-categories'];
@@ -245,8 +249,16 @@ class SessionStateService extends ConfigurableService
             if ($catService->isAdaptive($session, $currentItem->getAssessmentItemRef())) {
                 $testSessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
                 $testSessionData = $testSessionService->getTestSessionDataById($session->getSessionId());
-                $sectionItems = $catService->getShadowTest($session, $testSessionData['compilation']['private'], $currentItem);
-                $currentItem = $catService->getCurrentCatItemId($session, $testSessionData['compilation']['private'], $currentItem);
+                $sectionItems = $catService->getShadowTest(
+                    $session,
+                    $testSessionData['compilation']['private'],
+                    $currentItem
+                );
+                $currentItem = $catService->getCurrentCatItemId(
+                    $session,
+                    $testSessionData['compilation']['private'],
+                    $currentItem
+                );
                 $positionInSection = array_search($currentItem, $sectionItems);
 
                 // When in an adaptive section, the actual section is just a placeholder that is dynamically

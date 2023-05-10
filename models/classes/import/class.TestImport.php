@@ -34,7 +34,11 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
  * @author  Joel Bout, <joel@taotesting.com>
  * @package taoQTI
  */
-class taoQtiTest_models_classes_import_TestImport implements tao_models_classes_import_ImportHandler, PhpSerializable, ServiceLocatorAwareInterface, TaskParameterProviderInterface
+class taoQtiTest_models_classes_import_TestImport implements
+    tao_models_classes_import_ImportHandler,
+    PhpSerializable,
+    ServiceLocatorAwareInterface,
+    TaskParameterProviderInterface
 {
     use PhpSerializeStateless;
     use EventManagerAwareTrait;

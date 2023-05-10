@@ -41,7 +41,10 @@ abstract class ToolsStateStorage extends ConfigurableService
     protected function getPersistence()
     {
         $persistenceId = $this->getOption(self::OPTION_PERSISTENCE) ?: 'default';
-        return $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_ID)->getPersistenceById($persistenceId);
+        return $this
+            ->getServiceLocator()
+            ->get(\common_persistence_Manager::SERVICE_ID)
+            ->getPersistenceById($persistenceId);
     }
 
     /**

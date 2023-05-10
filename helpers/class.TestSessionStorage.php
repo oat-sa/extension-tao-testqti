@@ -70,8 +70,10 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     /**
      * Create a new TestSessionStorage object.
      *
-     * @param AbstractSessionManager $manager The session manager to be used to create new AssessmentTestSession and AssessmentItemSession objects.
-     * @param BinaryAssessmentTestSeeker $seeker The seeker making able the storage engine to index AssessmentTest's components.
+     * @param AbstractSessionManager $manager The session manager to be used to create new AssessmentTestSession and
+     *                                        AssessmentItemSession objects.
+     * @param BinaryAssessmentTestSeeker $seeker The seeker making able the storage engine to index AssessmentTest's
+     *                                           components.
      * @param string $userUri The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
      */
     public function __construct(AbstractSessionManager $manager, BinaryAssessmentTestSeeker $seeker, $userUri)

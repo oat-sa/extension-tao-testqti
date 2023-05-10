@@ -309,7 +309,9 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             if ($this->isStartPoint($point)) {
                 // we cannot have the START TimePoint twice
                 if ($start) {
-                    throw new MalformedRangeException('A time range must be defined by a START and a END TimePoint! Twice START found.');
+                    throw new MalformedRangeException(
+                        'A time range must be defined by a START and a END TimePoint! Twice START found.'
+                    );
                 }
                 $start = $point;
             }
@@ -318,7 +320,9 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             if ($this->isEndPoint($point)) {
                 // we cannot have the END TimePoint twice
                 if ($end) {
-                    throw new MalformedRangeException('A time range must be defined by a START and a END TimePoint! Twice END found.');
+                    throw new MalformedRangeException(
+                        'A time range must be defined by a START and a END TimePoint! Twice END found.'
+                    );
                 }
                 $end = $point;
             }

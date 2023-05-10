@@ -99,7 +99,9 @@ class taoQtiTest_models_classes_QtiTestConverter
         } catch (ReflectionException $re) {
             common_Logger::e($re->getMessage());
             common_Logger::d($re->getTraceAsString());
-            throw new taoQtiTest_models_classes_QtiTestConverterException('Unable to convert the QTI Test to json: ' . $re->getMessage());
+            throw new taoQtiTest_models_classes_QtiTestConverterException(
+                'Unable to convert the QTI Test to json: ' . $re->getMessage()
+            );
         }
     }
 
@@ -120,7 +122,9 @@ class taoQtiTest_models_classes_QtiTestConverter
         } catch (ReflectionException $re) {
             common_Logger::e($re->getMessage());
             common_Logger::d($re->getTraceAsString());
-            throw new taoQtiTest_models_classes_QtiTestConverterException('Unable to create the QTI Test from json: ' . $re->getMessage());
+            throw new taoQtiTest_models_classes_QtiTestConverterException(
+                'Unable to create the QTI Test from json: ' . $re->getMessage()
+            );
         }
     }
 
@@ -155,7 +159,9 @@ class taoQtiTest_models_classes_QtiTestConverter
                 } elseif ($value instanceof QtiComponent) {
                     $array[$property->getName()] = $this->componentToArray($value);
                 } elseif ($value instanceof QtiDuration) {
-                    $array[$property->getName()] = taoQtiTest_helpers_TestRunnerUtils::getDurationWithMicroseconds($value);
+                    $array[$property->getName()] = taoQtiTest_helpers_TestRunnerUtils::getDurationWithMicroseconds(
+                        $value
+                    );
                 } elseif ($value instanceof IntegerCollection || $value instanceof StringCollection) {
                     $array[$property->getName()] = [];
                     foreach ($value as $item) {
@@ -403,7 +409,10 @@ class taoQtiTest_models_classes_QtiTestConverter
                     if (is_array($properties[$name])) {
                         $component = $this->arrayToComponent($properties[$name]);
                         if (! $component) {
-                            $component = $this->createComponentCollection(new ReflectionClass($paramClass->name), $properties[$name]);
+                            $component = $this->createComponentCollection(
+                                new ReflectionClass($paramClass->name),
+                                $properties[$name]
+                            );
                         }
 
                         $arguments[] = $component;
@@ -450,7 +459,11 @@ class taoQtiTest_models_classes_QtiTestConverter
     private function getHint($docComment, $varName)
     {
         $matches = [];
-        $count = preg_match_all('/@param[\t\s]*(?P<type>[^\t\s]*)[\t\s]*\$(?P<name>[^\t\s]*)/sim', $docComment, $matches);
+        $count = preg_match_all(
+            '/@param[\t\s]*(?P<type>[^\t\s]*)[\t\s]*\$(?P<name>[^\t\s]*)/sim',
+            $docComment,
+            $matches
+        );
         if ($count > 0) {
             foreach ($matches['name'] as $n => $name) {
                 if ($name === $varName) {

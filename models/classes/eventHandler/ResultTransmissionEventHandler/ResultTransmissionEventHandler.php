@@ -28,7 +28,8 @@ use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
 use taoQtiCommon_helpers_ResultTransmitter;
 
-class ResultTransmissionEventHandler extends InjectionAwareService implements Api\ResultTransmissionEventHandlerInterface
+class ResultTransmissionEventHandler extends InjectionAwareService implements
+    Api\ResultTransmissionEventHandlerInterface
 {
     /**
      * @throws \taoQtiCommon_helpers_ResultTransmissionException

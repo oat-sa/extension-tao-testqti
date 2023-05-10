@@ -25,18 +25,23 @@ use qtism\data\AssessmentTest;
 use oat\taoQtiTest\models\TestCategoryRulesUtils;
 
 /**
- * The TestCategoryRulesGenerator class makes possible to automatically apply various outcome processing rules on QTI-SDK AssessmentTest objects.
+ * The TestCategoryRulesGenerator class makes possible to automatically apply various outcome processing rules on
+ * QTI-SDK AssessmentTest objects.
  *
- * This classes provide mechanisms enabling the client code to apply automatically some outcome processing rules on existing QTI Assessment Tests,
- * provided as QTI-SDK AssessmentTest objects. It can be configured in multiple ways, in order to apply on tests:
+ * This classes provide mechanisms enabling the client code to apply automatically some outcome processing rules
+ * on existing QTI Assessment Tests, provided as QTI-SDK AssessmentTest objects. It can be configured in multiple ways,
+ * in order to apply on tests:
  *
- * * Outcome Declarations aiming at counting the number of items related to a given category (TestCategoryRulesGenerator::COUNT flag).
- * * Outcome Declarations and their related Outcome Processing Rules to determine the number of correctly responded items that belong to a given category (TestCategoryRulesGenerator::CORRECT flag).
- * * Outcome Declarations and their related Outcome Processing Rules to determine the total score of items that belong to a given category. (TestCategoryRulesGenerator::SCORE flag).
+ * * Outcome Declarations aiming at counting the number of items related to a given category
+ *   (TestCategoryRulesGenerator::COUNT flag).
+ * * Outcome Declarations and their related Outcome Processing Rules to determine the number of correctly responded
+ *   items that belong to a given category (TestCategoryRulesGenerator::CORRECT flag).
+ * * Outcome Declarations and their related Outcome Processing Rules to determine the total score of items that belong
+ *   to a given category. (TestCategoryRulesGenerator::SCORE flag).
  *
- * The TestCategoryRulesGenerator::COUNT, TestCategoryRulesGenerator::CORRECT and TestCategoryRulesGenerator::SCORE flags
- * can be provided to the TestCategoryRulesGenerator::apply() method, in order to select which kind of rules to be applied on
- * processed AssessmentTest objects.
+ * The TestCategoryRulesGenerator::COUNT, TestCategoryRulesGenerator::CORRECT and TestCategoryRulesGenerator::SCORE
+ * flags can be provided to the TestCategoryRulesGenerator::apply() method, in order to select which kind of rules to
+ * be applied on processed AssessmentTest objects.
  *
  */
 class TestCategoryRulesGenerator
@@ -139,40 +144,44 @@ class TestCategoryRulesGenerator
     /**
      * Apply Outcome Declaraton and Outcome Processing Rules.
      *
-     * This method will trigger the process of applying Outcome Declarations and Outcome Processing Rules on a given $test,
-     * dependings on the assessmentItemRef categories found into it.
+     * This method will trigger the process of applying Outcome Declarations and Outcome Processing Rules on a given
+     * $test, dependings on the assessmentItemRef categories found into it.
      *
      * This method can be configure with the following flags:
      *
      * TestCategoryRulesGenerator::COUNT:
      *
-     * The COUNT flag will trigger the process of creating Outcome Declarations where default values represent the number
-     * of items involved in categories found in the $test. For instance, if $test contains two assessmentItemRef elements with a 'math'
-     * category are found in the $test, an Outcome Declaration 'MATH_CATEGORY_NUMBER_ITEMS' with single cardinality, integer base type, and a default
-     * value of 2 will be injected in the $test definition.
+     * The COUNT flag will trigger the process of creating Outcome Declarations where default values represent the
+     * number of items involved in categories found in the $test. For instance, if $test contains two assessmentItemRef
+     * elements with a 'math' category are found in the $test, an Outcome Declaration 'MATH_CATEGORY_NUMBER_ITEMS' with
+     * single cardinality, integer base type, and a default value of 2 will be injected in the $test definition.
      *
      * TestCategoryRulesGenerator::CORRECT:
      *
-     * The CORRECT flag will trigger the process of creating Outcome Declarations and their related Outcome Processing Rules that
-     * will take care of counting the number of items that were correctly responded, by category. As an example, if two assessmentItemRef elements with a
-     * 'math' category are found in the $test, an Outcome Declaration 'MATH_CATEGORY_NUMBER_CORRECT' with single cardinality and integer base type
-     * will be injected in the $test definition, in addition with the relevant Outcome Processing Rule in charge of computing the appropriate Outcome
+     * The CORRECT flag will trigger the process of creating Outcome Declarations and their related Outcome Processing
+     * Rules that will take care of counting the number of items that were correctly responded, by category. As an
+     * example, if two assessmentItemRef elements with a 'math' category are found in the $test, an Outcome Declaration
+     * 'MATH_CATEGORY_NUMBER_CORRECT' with single cardinality and integer base type will be injected in the $test
+     * definition, in addition with the relevant Outcome Processing Rule in charge of computing the appropriate Outcome
      * value at test runtime.
      *
      * TestCategoryRulesGenerator::SCORE:
      *
-     * The SCORE flag will trigger the process of creating Outcome Declarations and their related Outcome Processing Rules that
-     * will take care of counting the total score of items, by category. As an example, if two assessmentItemRef elements with a
-     * 'math' category are found in the $test, an Outcome Declaration 'MATH_CATEGORY_TOTAL_SCORE' with single cardinality and float base type
-     * will be injected in the $test definition, in addition with the relevant Outcome Processing Rule in charge of computing the appropriate Outcome
-     * value at test runtime. When this flag is enabled, the generation process for the Outcome Processing Rules will take into account the values
-     * provided to the TestCategoryRulesGenerator::setScoreVariableIdentifier() and TestCategoryRulesGenerator::setWeightIdentifier() setters to
-     * respectively identify which item variable (by default 'SCORE'), and which item weights should be used to compute total scores.
+     * The SCORE flag will trigger the process of creating Outcome Declarations and their related Outcome Processing
+     * Rules that will take care of counting the total score of items, by category. As an example, if two
+     * assessmentItemRef elements with a 'math' category are found in the $test, an Outcome Declaration
+     * 'MATH_CATEGORY_TOTAL_SCORE' with single cardinality and float base type will be injected in the $test definition,
+     * in addition with the relevant Outcome Processing Rule in charge of computing the appropriate Outcome value at
+     * test runtime. When this flag is enabled, the generation process for the Outcome Processing Rules will take into
+     * account the values provided to the TestCategoryRulesGenerator::setScoreVariableIdentifier() and
+     * TestCategoryRulesGenerator::setWeightIdentifier() setters to respectively identify which item variable
+     * (by default 'SCORE'), and which item weights should be used to compute total scores.
      *
      * If no $flags are given, it is considered that all the flags above are enabled.
      *
      * @param qtism\data\AssessmentTest $test A QTI-SDK AssessmentTest object.
-     * @param integer $flags (optional) TestCategoryRulesGenerator::COUNT | TestCategoryRulesGenerator::CORRECT | TestCategoryRulesGenerator::SCORE
+     * @param integer $flags (optional) TestCategoryRulesGenerator::COUNT | TestCategoryRulesGenerator::CORRECT
+     *                       | TestCategoryRulesGenerator::SCORE
      */
     public function apply(AssessmentTest $test, $flags = 0)
     {

@@ -81,7 +81,10 @@ class QtiFlysystemFileManager extends ConfigurableService implements FileManager
 
     private function getFileSystem()
     {
-        return $this->getServiceLocator()->get(FileSystemService::SERVICE_ID)->getFileSystem('taoQtiTestSessionFilesystem');
+        return $this
+            ->getServiceLocator()
+            ->get(FileSystemService::SERVICE_ID)
+            ->getFileSystem('taoQtiTestSessionFilesystem');
     }
 
     private function generateId()

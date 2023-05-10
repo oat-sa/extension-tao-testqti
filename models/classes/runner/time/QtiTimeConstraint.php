@@ -147,7 +147,8 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      * Get the time remaining to be spent by the candidate on the source of the time
      * constraint. Please note that this method will never return negative durations.
      *
-     * @return Duration A Duration object or null if there is no maxTime constraint running for the source of the time constraint.
+     * @return Duration A Duration object or null if there is no maxTime constraint running for the source of the time
+     *                  constraint.
      */
     public function getMaximumRemainingTime()
     {
@@ -170,11 +171,15 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
      * Get the time remaining the candidate has to spend by the candidate on the source of the time
      * constraint. Please note that this method will never return negative durations.
      *
-     * @return Duration A Duration object or null if there is no minTime constraint running for the source of the time constraint.
+     * @return Duration A Duration object or null if there is no minTime constraint running for the source of the time
+     *                  constraint.
      */
     public function getMinimumRemainingTime()
     {
-        if (($timeLimits = $this->getSource()->getTimeLimits()) !== null && ($minTime = $timeLimits->getMinTime()) !== null) {
+        if (
+            ($timeLimits = $this->getSource()->getTimeLimits()) !== null
+            && ($minTime = $timeLimits->getMinTime()) !== null
+        ) {
             return $this->getRemainingTimeFrom($minTime);
         }
         return false;

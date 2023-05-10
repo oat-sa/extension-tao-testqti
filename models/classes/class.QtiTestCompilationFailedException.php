@@ -26,10 +26,14 @@
  *
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
-
+ *
+ * phpcs:disable Generic.Files.LineLength
  */
-class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_models_classes_CompilationFailedException implements common_exception_UserReadableException
+class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_models_classes_CompilationFailedException implements
+    common_exception_UserReadableException
 {
+    // phpcs:enable Generic.Files.LineLength
+
     /**
      * Error code to use when the error is unknown.
      *
@@ -120,7 +124,9 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
                 break;
 
             case self::NO_ITEMS:
+                // phpcs:disable Generic.Files.LineLength
                 return sprintf(__("The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."), $testLabel);
+                // phpcs:enable Generic.Files.LineLength
                 break;
 
             case self::REMOTE_RESOURCE:

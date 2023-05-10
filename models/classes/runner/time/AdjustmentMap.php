@@ -72,7 +72,9 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
             return 0;
         }
 
+        // phpcs:disable Generic.Files.LineLength
         return $this->map[$sourceId][$type][self::ACTION_INCREASE] - $this->map[$sourceId][$type][self::ACTION_DECREASE];
+        // phpcs:enable Generic.Files.LineLength
     }
 
     public function jsonSerialize()

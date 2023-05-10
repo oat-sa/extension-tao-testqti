@@ -39,9 +39,14 @@ interface RunnerService extends DeliveryExecutionDelete
 {
     public const INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
 
+    // phpcs:disable Generic.Files.LineLength
     public const INSTANCE_TEST_ITEM_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner';
+    // phpcs:enable Generic.Files.LineLength
 
+    // phpcs:disable Generic.Files.LineLength
     public const INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId';
+    // phpcs:enable Generic.Files.LineLength
+
     /**
      * Initializes the delivery execution session
      * @param RunnerServiceContext $context
