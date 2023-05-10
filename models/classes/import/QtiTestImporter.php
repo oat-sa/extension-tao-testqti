@@ -31,7 +31,7 @@ use oat\taoTests\models\import\AbstractTestImporter;
  */
 class QtiTestImporter extends AbstractTestImporter
 {
-    const IMPORTER_ID = 'taoQtiTest';
+    public const IMPORTER_ID = 'taoQtiTest';
 
     /**
      * @param File $file
@@ -53,6 +53,15 @@ class QtiTestImporter extends AbstractTestImporter
         ?string $itemClassUri = null
     ) {
         $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
-        return $service->importQtiTest($file, $class, $enableMetadataGuardians, $enableValidators, $itemMustExist, $itemMustBeOverwritten, $overwriteTest, $itemClassUri);
+        return $service->importQtiTest(
+            $file,
+            $class,
+            $enableMetadataGuardians,
+            $enableValidators,
+            $itemMustExist,
+            $itemMustBeOverwritten,
+            $overwriteTest,
+            $itemClassUri
+        );
     }
 }

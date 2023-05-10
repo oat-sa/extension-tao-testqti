@@ -26,5 +26,4 @@ namespace oat\taoQtiTest\models;
  */
 class QtiTestExtractionFailedException extends \Exception
 {
-
 }

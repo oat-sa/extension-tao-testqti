@@ -25,7 +25,7 @@ use oat\generis\test\GenerisPhpUnitTestRunner;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
 use ReflectionClass;
-use \taoQtiTest_models_classes_QtiTestConverter;
+use taoQtiTest_models_classes_QtiTestConverter;
 
 /**
  * Integration test of the {@link taoQtiTest_models_classes_QtiTestConverter} class.
@@ -36,7 +36,6 @@ use \taoQtiTest_models_classes_QtiTestConverter;
  */
 class QtiTestConverterTest extends GenerisPhpUnitTestRunner
 {
-
     /**
      * Data provider
      * @return array[] the parameters
@@ -44,7 +43,7 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
     public function dataProvider()
     {
         $dataPath = __DIR__ . '/data/';
-        
+
         return [
             [
                 $dataPath . 'qtitest.xml',
@@ -75,7 +74,7 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
         } catch (StorageException $e) {
             $this->fail($e->getMessage());
         }
-        
+
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $result = $converter->toJson();
 
@@ -94,7 +93,7 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
         $doc = new XmlDocument('2.1');
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $converter->fromJson($json);
-        
+
         $result = preg_replace([
             '/ {2,}/',
             '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'
@@ -113,7 +112,7 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
         ], file_get_contents($testPath))
 
         ;
-        
+
         $this->assertEquals($result, $expected);
     }
 

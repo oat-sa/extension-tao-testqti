@@ -32,7 +32,6 @@ use oat\taoTests\models\runner\providers\TestProvider;
  */
 class RegisterTestRunnerProviders extends InstallAction
 {
-
     public static $providers = [
     //runner
         [

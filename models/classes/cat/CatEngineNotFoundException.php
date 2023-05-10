@@ -31,7 +31,7 @@ class CatEngineNotFoundException extends CatException
 {
     /** @var string The requested endpoint URL. */
     private $requestedEndpoint;
-    
+
     /**
      * New CatEngineNotFoundException object.
      *
@@ -47,7 +47,7 @@ class CatEngineNotFoundException extends CatException
         parent::__construct($message, $code, $previous);
         $this->setRequestedEndpoint($requestedEndpoint);
     }
-    
+
     /**
      * Get Requested Endpoint.
      *
@@ -59,7 +59,7 @@ class CatEngineNotFoundException extends CatException
     {
         return $this->requestedEndpoint;
     }
-    
+
     /**
      * Set Requested Endpoint.
      *

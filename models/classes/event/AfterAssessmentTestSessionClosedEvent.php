@@ -31,7 +31,6 @@ use qtism\runtime\tests\AssessmentTestSession;
  */
 class AfterAssessmentTestSessionClosedEvent implements Event
 {
-
     protected $session;
 
     protected $userId;

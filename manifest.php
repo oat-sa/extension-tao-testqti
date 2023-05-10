@@ -21,7 +21,9 @@
 
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
+// phpcs:disable Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
+// phpcs:enable Generic.Files.LineLength
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
@@ -111,12 +113,47 @@ return [
         ['grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', ['ext' => 'taoQtiTest', 'mod' => 'ItemRunner']],
         ['grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', ['ext' => 'taoQtiTest', 'mod' => 'TestRunner']],
         ['grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', ['ext' => 'taoQtiTest', 'mod' => 'Runner']],
-        ['grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', ['ext' => 'taoQtiTest', 'mod' => 'OfflineRunner']],
-        ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'Creator']],
-        ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'Items']],
-        ['grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
+        [
+            'grant',
+            'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole',
+            [
+                'ext' => 'taoQtiTest',
+                'mod' => 'OfflineRunner',
+            ],
+        ],
+        [
+            'grant',
+            'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole',
+            [
+                'ext' => 'taoQtiTest',
+                'mod' => 'Creator',
+            ],
+        ],
+        [
+            'grant',
+            'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole',
+            [
+                'ext' => 'taoQtiTest',
+                'mod' => 'Items',
+            ],
+        ],
+        [
+            'grant',
+            'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole',
+            [
+                'ext' => 'taoQtiTest',
+                'mod' => 'RestQtiTests',
+            ],
+        ],
         ['grant', TaoRoles::REST_PUBLISHER, ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']],
-        ['deny', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole', ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']],
+        [
+            'deny',
+            'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole',
+            [
+                'ext' => 'taoQtiTest',
+                'mod' => 'XmlEditor',
+            ],
+        ],
         ['grant', XmlEditorInterface::XML_EDITOR_ROLE, ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']],
     ],
     'constants' => [

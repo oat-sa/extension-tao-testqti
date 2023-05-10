@@ -39,7 +39,6 @@ use tao_helpers_form_FormElement;
  */
 class QtiTestImportTest extends GenerisPhpUnitTestRunner
 {
-
     private $dataDir = '';
 
     private $tmpDir = '';

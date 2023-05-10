@@ -17,7 +17,7 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
- 
+
 namespace oat\taoQtiTest\scripts\tools;
 
 use qtism\data\storage\php\PhpDocument;
@@ -35,7 +35,7 @@ class CompileDeliveriesWithPhpSerialization extends CompileDeliveriesPhpData
             $phpDocument = new PhpDocument();
             $phpDocument->loadFromString($file->read());
             $file->put(serialize($phpDocument->getDocumentComponent()));
-            
+
             return true;
         } catch (PhpStorageException $e) {
             return false;

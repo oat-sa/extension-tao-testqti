@@ -11,7 +11,6 @@ use common_ext_ExtensionsManager as ExtensionsManager;
 
 final class Version202205121848072260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Set up test runner configuration option "test-taker-review-partially-answered-is-answered"';

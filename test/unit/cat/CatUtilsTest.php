@@ -15,11 +15,11 @@ class CatUtilsTest extends TestCase
     {
         $doc = new XmlDocument();
         $doc->load($sampleFile);
-        
+
         $info = CatUtils::getCatInfo($doc->getDocumentComponent());
         $this->assertEquals($expected, $info);
     }
-    
+
     public function getCatInfoProvider()
     {
         return [

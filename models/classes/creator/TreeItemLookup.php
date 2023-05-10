@@ -69,8 +69,7 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
         array $propertyFilters = [],
         $offset = 0,
         $limit = 30
-    ): array
-    {
+    ): array {
         $data = $this->getTreeResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
         $nodes =  $this->formatTreeData($data);
         $nodes = $this->fillPermissions($nodes);
@@ -94,8 +93,7 @@ class TreeItemLookup extends ConfigurableService implements ItemLookup
                 $item['categories'] = $this->getCategoryService()->getItemCategories(
                     new core_kernel_classes_Resource($item['uri'])
                 );
-            }
-            elseif (isset($item['children'])) {
+            } elseif (isset($item['children'])) {
                 $item['children'] = $this->formatTreeData($item['children']);
             }
         }

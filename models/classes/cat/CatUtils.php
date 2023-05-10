@@ -29,7 +29,8 @@ class CatUtils
      * ]
      *
      * @param \qtism\data\AssessmentTest $test
-     * @param string $namespace (optional) The namespace where to search the "adaptivity" information in the $test definition. If not given, a default namespace will be traversed.
+     * @param string $namespace (optional) The namespace where to search the "adaptivity" information in the
+     *                          $test definition. If not given, a default namespace will be traversed.
      * @return array
      */
     public static function getCatInfo(AssessmentTest $test, string $namespace = '')
@@ -101,7 +102,8 @@ class CatUtils
      * This method checks whether a given AssessmentSection object $section is adaptive.
      *
      * @param \qtism\data\AssessmentSection $section
-     * @param string $namespace (optional) The namespace where to search the "adaptivity" information in the $test definition. If not given, a default namespace will be traversed.
+     * @param string $namespace (optional) The namespace where to search the "adaptivity" information in the
+     *                          $test definition. If not given, a default namespace will be traversed.
      *
      * @return boolean
      */

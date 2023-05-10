@@ -38,7 +38,10 @@ class SetLinearNextItemWarningConfig extends \common_ext_action_InstallAction
     public function __invoke($params)
     {
 
-        $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        $extension = $this
+            ->getServiceManager()
+            ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest');
         $config = $extension->getConfig('testRunner');
         $config['force-enable-linear-next-item-warning'] = false;
         $config['enable-linear-next-item-warning-checkbox'] = true;

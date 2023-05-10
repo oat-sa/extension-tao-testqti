@@ -35,5 +35,4 @@ use oat\taoQtiItem\model\qti\Resource;
  */
 class taoQtiTest_models_classes_QtiResource extends Resource
 {
-    
 }

@@ -9,13 +9,11 @@ use oat\tao\scripts\tools\migrations\AbstractMigration;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
 
-
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
 final class Version202011031024012260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Register Item Scrolling plugin';

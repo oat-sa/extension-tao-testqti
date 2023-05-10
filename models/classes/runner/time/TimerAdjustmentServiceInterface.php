@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +21,6 @@
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\runner\time;
-
 
 use oat\taoQtiTest\models\runner\session\TestSession;
 use qtism\common\datatypes\QtiDuration;

@@ -66,7 +66,6 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
  */
 class taoQtiTest_helpers_TestSession extends AssessmentTestSession
 {
-
     /**
      * The ResultServer to be used to transmit Item and Test results.
      *
@@ -230,12 +229,22 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             $this->triggerResultItemTransmissionEvent($itemVariableSet, $occurence, $item);
         } catch (AssessmentTestSessionException $e) {
             // Error whith parent::endAttempt().
-            $msg = "An error occured while ending the attempt item '" . $item->getIdentifier() . "." . $occurence .  "'.";
-            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
+            $msg = "An error occured while ending the attempt item '" . $item->getIdentifier() . "." . $occurence
+                .  "'.";
+            throw new taoQtiTest_helpers_TestSessionException(
+                $msg,
+                taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR,
+                $e
+            );
         } catch (taoQtiCommon_helpers_ResultTransmissionException $e) {
             // Error with Result Server.
-            $msg = "An error occured while transmitting item results for item '" . $item->getIdentifier() . "." . $occurence .  "'.";
-            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
+            $msg = "An error occured while transmitting item results for item '" . $item->getIdentifier() . "."
+                . $occurence .  "'.";
+            throw new taoQtiTest_helpers_TestSessionException(
+                $msg,
+                taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR,
+                $e
+            );
         }
     }
 
@@ -247,7 +256,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      *
      * @see http://www.imsglobal.org/lis/ Outcome Management Service
      * @throws AssessmentTestSessionException
-     * @throws taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs whil transmitting/processing the result.
+     * @throws taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs whil
+     *                                                 transmitting/processing the result.
      */
     public function endTestSession()
     {
@@ -257,7 +267,14 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         common_Logger::i('Ending test session: ' . $this->getSessionId());
         try {
             // Compute the LtiOutcome variable for LTI support.
-            $this->setVariable(new OutcomeVariable('LtiOutcome', Cardinality::SINGLE, BaseType::FLOAT, new QtiFloat(0.0)));
+            $this->setVariable(
+                new OutcomeVariable(
+                    'LtiOutcome',
+                    Cardinality::SINGLE,
+                    BaseType::FLOAT,
+                    new QtiFloat(0.0)
+                )
+            );
             $outcomeProcessingEngine = new OutcomeProcessingEngine($this->buildLtiOutcomeProcessing(), $this);
             $outcomeProcessingEngine->process();
 
@@ -273,10 +290,18 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             );
         } catch (ProcessingException $e) {
             $msg = "An error occured while processing the 'LtiOutcome' outcome variable.";
-            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
+            throw new taoQtiTest_helpers_TestSessionException(
+                $msg,
+                taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR,
+                $e
+            );
         } catch (taoQtiCommon_helpers_ResultTransmissionException $e) {
             $msg = "An error occured during test-level outcome results transmission.";
-            throw new taoQtiTest_helpers_TestSessionException($msg, taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR, $e);
+            throw new taoQtiTest_helpers_TestSessionException(
+                $msg,
+                taoQtiTest_helpers_TestSessionException::RESULT_SUBMISSION_ERROR,
+                $e
+            );
         } finally {
             $this->unsetVariable('LtiOutcome');
         }
@@ -286,9 +311,11 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
 
     /**
      * Rewind the test to its first position
-     * @param boolean $allowTimeout Whether or not it is allowed to jump if the timeLimits in force of the jump target are not respected.
+     * @param boolean $allowTimeout Whether or not it is allowed to jump if the timeLimits in force of the jump target
+     *                              are not respected.
      * @throws UnexpectedValueException
-     * @throws AssessmentTestSessionException If $position is out of the Route bounds or the jump is not allowed because of time constraints.
+     * @throws AssessmentTestSessionException If $position is out of the Route bounds or the jump is not allowed because
+     *                                        of time constraints.
      * @throws AssessmentItemSessionException
      */
     public function rewind($allowTimeout = false)
@@ -325,7 +352,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      *
      * This method is triggered once at the end of the AssessmentTestSession.
      *
-     * * @throws AssessmentTestSessionException With error code RESULT_SUBMISSION_ERROR if an error occurs while transmitting results.
+     * * @throws AssessmentTestSessionException With error code RESULT_SUBMISSION_ERROR if an error occurs while
+     *                                          transmitting results.
      */
     protected function submitTestResults()
     {
@@ -371,7 +399,8 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     protected function buildLtiOutcomeProcessing()
     {
 
-        //ltiOutcome is calculated based on the SCORE_RATIO_WEIGHTED outcome for weighted items or SCORE_RATIO for not rated items
+        // ltiOutcome is calculated based on the SCORE_RATIO_WEIGHTED outcome for weighted items or SCORE_RATIO for not
+        // rated items
         $ratioVariable = $this->getVariable('SCORE_RATIO_WEIGHTED');
         if (is_null($ratioVariable)) {
             $ratioVariable = $this->getVariable('SCORE_RATIO');
@@ -443,8 +472,10 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      * mode must be LINEAR to be able to jump.
      *
      * @param integer $position The position in the route the jump has to be made.
-     * @param boolean $allowTimeout Whether or not it is allowed to jump if the timeLimits in force of the jump target are not respected.
-     * @throws AssessmentTestSessionException If $position is out of the Route bounds or the jump is not allowed because of time constraints.
+     * @param boolean $allowTimeout Whether or not it is allowed to jump if the timeLimits in force of the jump target
+     *                              are not respected.
+     * @throws AssessmentTestSessionException If $position is out of the Route bounds or the jump is not allowed because
+     *                                        of time constraints.
      * @qtism-test-interaction
      * @qtism-test-duration-update
      */
@@ -465,8 +496,10 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      * which is not timed out will be set as the current RouteItem. If there is no more following RouteItems
      * that are not timed out in the Route sequence, the test session ends gracefully.
      *
-     * @param boolean $allowTimeout If set to true, the next RouteItem in the Route sequence does not have to respect the timeLimits in force. Default value is false.
-     * @throws AssessmentTestSessionException If the test session is not running or an issue occurs during the transition (e.g. branching, preConditions, ...).
+     * @param boolean $allowTimeout If set to true, the next RouteItem in the Route sequence does not have to respect
+     *                              the timeLimits in force. Default value is false.
+     * @throws AssessmentTestSessionException If the test session is not running or an issue occurs during the
+     *                                        transition (e.g. branching, preConditions, ...).
      * @qtism-test-interaction
      * @qtism-test-duration-update
      */
@@ -488,8 +521,12 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
      * that are not timed out in the Route sequence, the current RouteItem remains the same and an
      * AssessmentTestSessionException with the appropriate timing error code is thrown.
      *
-     * @param boolean $allowTimeout If set to true, the next RouteItem in the sequence does not have to respect timeLimits in force. Default value is false.
-     * @throws AssessmentTestSessionException If the test session is not running or an issue occurs during the transition (e.g. branching, preConditions, ...) or if $allowTimeout = false and there absolutely no possibility to move backward (even the first RouteItem is timed out).
+     * @param boolean $allowTimeout If set to true, the next RouteItem in the sequence does not have to respect
+     *                              timeLimits in force. Default value is false.
+     * @throws AssessmentTestSessionException If the test session is not running or an issue occurs during the
+     *                                        transition (e.g. branching, preConditions, ...) or
+     *                                        if $allowTimeout = false and there absolutely no possibility to move
+     *                                        backward (even the first RouteItem is timed out).
      * @qtism-test-interaction
      * @qtism-test-duration-update
      */
@@ -503,7 +540,9 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     /**
      * Skip the current item.
      *
-     * @throws AssessmentTestSessionException If the test session is not running or it is the last route item of the testPart but the SIMULTANEOUS submission mode is in force and not all responses were provided.
+     * @throws AssessmentTestSessionException If the test session is not running or it is the last route item of the
+     *                                        testPart but the SIMULTANEOUS submission mode is in force and not all
+     *                                        responses were provided.
      * @qtism-test-interaction
      * @qtism-test-duration-update
      */
@@ -601,14 +640,18 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     {
         $sessionMemento = $this->getSessionMemento();
         if ($this->isRunning() === false) {
-            $msg = "Cannot move to the next assessmentSection while the state of the test session is INITIAL or CLOSED.";
+            $msg = "Cannot move to the next assessmentSection while the state of the test session is INITIAL or "
+                . "CLOSED.";
             throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::STATE_VIOLATION);
         }
 
         $route = $this->getRoute();
         $from = $route->current();
 
-        while ($route->valid() === true && $route->current()->getAssessmentSection() === $from->getAssessmentSection()) {
+        while (
+            $route->valid() === true
+            && $route->current()->getAssessmentSection() === $from->getAssessmentSection()
+        ) {
             $itemSession = $this->getCurrentAssessmentItemSession();
             $itemSession->endItemSession();
             $this->nextRouteItem();
@@ -697,7 +740,10 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
                 break;
 
             default:
-                $places = AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_SECTION | AssessmentTestPlace::ASSESSMENT_ITEM;
+                $places = AssessmentTestPlace::ASSESSMENT_TEST
+                    | AssessmentTestPlace::TEST_PART
+                    | AssessmentTestPlace::ASSESSMENT_SECTION
+                    | AssessmentTestPlace::ASSESSMENT_ITEM;
         }
 
         $constraints = $this->getTimeConstraints($places);

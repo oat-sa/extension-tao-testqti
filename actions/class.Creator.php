@@ -18,12 +18,12 @@
 * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
 */
 
-use function GuzzleHttp\Psr7\stream_for;
-
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
 use oat\generis\model\data\event\ResourceUpdated;
 use oat\oatbox\event\EventManager;
+
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  *  QTI test Creator Controller.
@@ -35,43 +35,60 @@ use oat\oatbox\event\EventManager;
  */
 class taoQtiTest_actions_Creator extends tao_actions_CommonModule
 {
-
-        /**
-         * Render the creator base view
-         */
+    /**
+     * Render the creator base view
+     */
     public function index()
     {
 
-            $labels = [];
-            $testUri   =  $this->getRequestParameter('uri');
-            $testModel = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
+        $labels = [];
+        $testUri   =  $this->getRequestParameter('uri');
+        $testModel = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
 
-            $items = $testModel->getItems(new core_kernel_classes_Resource(tao_helpers_Uri::decode($testUri)));
+        $items = $testModel->getItems(new core_kernel_classes_Resource(tao_helpers_Uri::decode($testUri)));
         foreach ($items as $item) {
             $labels[$item->getUri()] = $item->getLabel();
         }
-            $this->setData('labels', json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS)));
+        $this->setData(
+            'labels',
+            json_encode(tao_helpers_Uri::encodeArray($labels, tao_helpers_Uri::ENCODE_ARRAY_KEYS))
+        );
 
-            $runtimeConfig = $this->getRuntimeConfig();
-            $categoriesPresetService = $this->getServiceManager()->get(TestCategoryPresetProvider::SERVICE_ID);
-            $this->setData('categoriesPresets', json_encode($categoriesPresetService->getAvailablePresets($runtimeConfig)));
+        $runtimeConfig = $this->getRuntimeConfig();
+        $categoriesPresetService = $this->getServiceManager()->get(TestCategoryPresetProvider::SERVICE_ID);
+        $this->setData('categoriesPresets', json_encode($categoriesPresetService->getAvailablePresets($runtimeConfig)));
 
-            $this->setData('loadUrl', _url('getTest', null, null, ['uri' => $testUri]));
-            $this->setData('saveUrl', _url('saveTest', null, null, ['uri' => $testUri]));
+        $this->setData('loadUrl', _url('getTest', null, null, ['uri' => $testUri]));
+        $this->setData('saveUrl', _url('saveTest', null, null, ['uri' => $testUri]));
 
         if (common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')) {
-            $this->setData('blueprintsByIdUrl', _url('getBlueprintsByIdentifier', 'Blueprints', 'taoBlueprints'));
-            $this->setData('blueprintsByTestSectionUrl', _url('getBlueprintsByTestSection', 'Blueprints', 'taoBlueprints', ['test' => $testUri]));
+            $this->setData(
+                'blueprintsByIdUrl',
+                _url(
+                    'getBlueprintsByIdentifier',
+                    'Blueprints',
+                    'taoBlueprints'
+                )
+            );
+            $this->setData(
+                'blueprintsByTestSectionUrl',
+                _url(
+                    'getBlueprintsByTestSection',
+                    'Blueprints',
+                    'taoBlueprints',
+                    ['test' => $testUri]
+                )
+            );
         }
-            $this->setData('identifierUrl', _url('getIdentifier', null, null, ['uri' => $testUri]));
+        $this->setData('identifierUrl', _url('getIdentifier', null, null, ['uri' => $testUri]));
 
-            $guidedNavigation = false;
+        $guidedNavigation = false;
         if (is_array($runtimeConfig) && isset($runtimeConfig['guidedNavigation'])) {
             $guidedNavigation = $runtimeConfig['guidedNavigation'];
         }
-            $this->setData('guidedNavigation', json_encode($guidedNavigation == true));
+        $this->setData('guidedNavigation', json_encode($guidedNavigation == true));
 
-            $this->setView('creator.tpl');
+        $this->setView('creator.tpl');
     }
 
         /**
@@ -109,7 +126,9 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
 
                 //save the blueprint if the extension is installed
                 if (common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')) {
-                    $testSectionLinkService = $this->getServiceManager()->get(\oat\taoBlueprints\model\TestSectionLinkService::SERVICE_ID);
+                    $testSectionLinkService = $this->getServiceManager()->get(
+                        \oat\taoBlueprints\model\TestSectionLinkService::SERVICE_ID
+                    );
                     $model = json_decode($parameters['model'], true);
                     if (isset($model['testParts'])) {
                         foreach ($model['testParts'] as $testPart) {
@@ -117,9 +136,16 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
                                 foreach ($testPart['assessmentSections'] as $section) {
                                     if (isset($section['blueprint'])) {
                                         if (!empty($section['blueprint'])) {
-                                            $testSectionLinkService->setBlueprintForTestSection($test, $section['identifier'], $section['blueprint']);
+                                            $testSectionLinkService->setBlueprintForTestSection(
+                                                $test,
+                                                $section['identifier'],
+                                                $section['blueprint']
+                                            );
                                         } else {
-                                            $testSectionLinkService->removeBlueprintForTestSection($test, $section['identifier']);
+                                            $testSectionLinkService->removeBlueprintForTestSection(
+                                                $test,
+                                                $section['identifier']
+                                            );
                                         }
                                     }
                                 }
@@ -177,7 +203,10 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
      */
     protected function getRuntimeConfig()
     {
-        $extension = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        $extension = $this
+            ->getServiceLocator()
+            ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest');
         return $extension->getConfig('testRunner');
     }
 }

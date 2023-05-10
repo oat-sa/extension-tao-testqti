@@ -117,9 +117,11 @@ class QtiTimeStorageTest extends GenerisPhpUnitTestRunner
         $prophecy->get(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return $buffer[$args[0]][$args[1]];
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            $buffer[$args[0]][$args[1]] = $args[2];
-        });
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->will(function ($args) use (&$buffer) {
+                $buffer[$args[0]][$args[1]] = $args[2];
+            });
         $storage->setStorageService($prophecy->reveal());
         $storage->setStorageFormat(new QtiTimeStorageJsonFormat());
     }

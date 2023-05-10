@@ -25,7 +25,9 @@ namespace oat\taoQtiTest\scripts\install;
 use oat\oatbox\extension\InstallAction;
 use oat\oatbox\reporting\Report;
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
+// phpcs:disable Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler\Api\ResultTransmissionEventHandlerInterface;
+// phpcs:enable Generic.Files.LineLength
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
 
 class RegisterResultTransmissionEventHandlers extends InstallAction

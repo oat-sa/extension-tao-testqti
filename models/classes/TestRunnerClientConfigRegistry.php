@@ -32,18 +32,17 @@ use oat\tao\model\ClientLibConfigRegistry;
  */
 class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
 {
-
-    const AMD = 'taoQtiTest/controller/runtime/testRunner';
+    public const AMD = 'taoQtiTest/controller/runtime/testRunner';
 
     /**
      * Path to the runner controller module
      */
-    const RUNNER = 'taoQtiTest/controller/runner/runner';
+    public const RUNNER = 'taoQtiTest/controller/runner/runner';
 
     /**
      * Path to the runner controller module in production mode
      */
-    const RUNNER_PROD = 'taoQtiTest/qtiTestRunner.min';
+    public const RUNNER_PROD = 'taoQtiTest/qtiTestRunner.min';
 
     /**
      * Register a qti tools in the client lib config registry
@@ -118,7 +117,7 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
     {
         $config = [];
         $registry = self::getRegistry();
-        
+
         if ($registry->isRegistered(self::RUNNER)) {
             $config = $registry->get(self::RUNNER);
         }

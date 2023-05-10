@@ -37,27 +37,27 @@ use oat\tao\model\state\StateStorage;
  */
 class StorageManager extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/StorageManager';
+    public const SERVICE_ID = 'taoQtiTest/StorageManager';
 
     /**
      * The data does not exist in the storage
      */
-    const STATE_NOT_FOUND = -1;
+    public const STATE_NOT_FOUND = -1;
 
     /**
      * The data is aligned with the storage
      */
-    const STATE_ALIGNED = 0;
+    public const STATE_ALIGNED = 0;
 
     /**
      * The data is pending write to the storage
      */
-    const STATE_PENDING_WRITE = 1;
+    public const STATE_PENDING_WRITE = 1;
 
     /**
      * The data is pending delete from the storage
      */
-    const STATE_PENDING_DELETE = 2;
+    public const STATE_PENDING_DELETE = 2;
 
     /**
      * Link to the actual storage adapter
@@ -111,7 +111,8 @@ class StorageManager extends ConfigurableService
      */
     protected function exists($key)
     {
-        return isset($this->cache[$key]) && in_array($this->cache[$key]['state'], [self::STATE_ALIGNED, self::STATE_PENDING_WRITE]);
+        return isset($this->cache[$key])
+            && in_array($this->cache[$key]['state'], [self::STATE_ALIGNED, self::STATE_PENDING_WRITE]);
     }
 
     /**
@@ -144,7 +145,9 @@ class StorageManager extends ConfigurableService
                 case self::STATE_PENDING_WRITE:
                     $success = $this->getStorage()->set($cache['userId'], $cache['callId'], $cache['data']);
                     if (!$success) {
-                        throw new \common_exception_Error('Can\'t write into test runner state storage at ' . static::class);
+                        throw new \common_exception_Error(
+                            'Can\'t write into test runner state storage at ' . static::class
+                        );
                     }
                     $this->cache[$key]['state'] = self::STATE_ALIGNED;
                     break;

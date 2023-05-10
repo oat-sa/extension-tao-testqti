@@ -27,8 +27,7 @@ namespace oat\taoQtiTest\models\event;
  */
 class QtiTestStateChangeEvent extends QtiTestChangeEvent
 {
-
-    const EVENT_NAME = __CLASS__;
+    public const EVENT_NAME = __CLASS__;
 
     /**
      * @return string

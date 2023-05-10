@@ -54,7 +54,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
      * @var integer
      */
     private $lastError = -1;
-   
+
     /**
      * The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
      *
@@ -70,8 +70,10 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     /**
      * Create a new TestSessionStorage object.
      *
-     * @param AbstractSessionManager $manager The session manager to be used to create new AssessmentTestSession and AssessmentItemSession objects.
-     * @param BinaryAssessmentTestSeeker $seeker The seeker making able the storage engine to index AssessmentTest's components.
+     * @param AbstractSessionManager $manager The session manager to be used to create new AssessmentTestSession and
+     *                                        AssessmentItemSession objects.
+     * @param BinaryAssessmentTestSeeker $seeker The seeker making able the storage engine to index AssessmentTest's
+     *                                           components.
      * @param string $userUri The URI (Uniform Resource Identifier) of the user the Test Session belongs to.
      */
     public function __construct(AbstractSessionManager $manager, BinaryAssessmentTestSeeker $seeker, $userUri)
@@ -79,7 +81,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
         parent::__construct($manager, $seeker);
         $this->setUserUri($userUri);
     }
-   
+
     /**
      * Get the last retrieved error. -1 means
      * no error.
@@ -90,7 +92,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     {
         return $this->lastError;
     }
-   
+
     /**
      * Set the last retrieved error. -1 means
      * no error.
@@ -101,7 +103,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     {
         $this->lastError = $lastError;
     }
-   
+
     /**
      * Get the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
      *
@@ -111,7 +113,7 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
     {
         return $this->userUri;
     }
-   
+
     /**
      * Set the URI (Uniform Resource Identifier) of the user the Test Session belongs to.
      *
@@ -219,36 +221,37 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
 
     protected function getRetrievalStream($sessionId)
     {
-    
+
         $storageService = $this->getServiceLocator()->get(tao_models_classes_service_StateStorage::SERVICE_ID);
         $userUri = $this->getUserUri();
-       
+
         if (is_null($userUri) === true) {
             $msg = "Could not retrieve current user URI.";
             throw new StorageException($msg, StorageException::RETRIEVAL);
         }
 
         $data = $storageService->get($userUri, $sessionId);
-       
+
         $stateEmpty = (empty($data) === true);
         $stream = new MemoryStream(($stateEmpty === true) ? '' : $data);
         $stream->open();
-       
+
         if ($stateEmpty === false) {
             // Consume additional error (short signed integer).
             $this->setLastError($stream->read(2));
         }
-       
+
         $stream->close();
         return $stream;
     }
-   
+
     protected function persistStream(AssessmentTestSession $assessmentTestSession, MemoryStream $stream)
     {
         /** @var tao_models_classes_service_StateStorage $storageService */
-        $storageService = $this->getServiceLocator()->get(tao_models_classes_service_StateStorage::SERVICE_ID);;
+        $storageService = $this->getServiceLocator()->get(tao_models_classes_service_StateStorage::SERVICE_ID);
+        ;
         $userUri = $this->getUserUri();
-       
+
         if (is_null($userUri) === true) {
             $msg = "Could not retrieve current user URI.";
             throw new StorageException($msg, StorageException::RETRIEVAL);
@@ -259,17 +262,17 @@ class taoQtiTest_helpers_TestSessionStorage extends AbstractQtiBinaryStorage imp
             throw new StorageException('Can\'t write into storage at ' . static::class);
         }
     }
-   
+
     public function exists($sessionId)
     {
         $storageService = $this->getServiceLocator()->get(tao_models_classes_service_StateStorage::SERVICE_ID);
         $userUri = $this->getUserUri();
-       
+
         if (is_null($userUri) === true) {
             $msg = "Could not retrieve current user URI.";
             throw new StorageException($msg, StorageException::RETRIEVAL);
         }
-       
+
         return $storageService->has($userUri, $sessionId);
     }
 

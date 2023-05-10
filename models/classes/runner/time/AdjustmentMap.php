@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,7 +72,9 @@ class AdjustmentMap implements TimerAdjustmentMapInterface, JsonSerializable, Ar
             return 0;
         }
 
+        // phpcs:disable Generic.Files.LineLength
         return $this->map[$sourceId][$type][self::ACTION_INCREASE] - $this->map[$sourceId][$type][self::ACTION_DECREASE];
+        // phpcs:enable Generic.Files.LineLength
     }
 
     public function jsonSerialize()

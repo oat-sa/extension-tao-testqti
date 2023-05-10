@@ -34,7 +34,6 @@ use oat\taoQtiTest\models\export\metadata\QtiTestExporter;
  */
 class TestExporterTest extends GenerisPhpUnitTestRunner
 {
-
     private $testCreatedUri;
 
     public static function samplesDir()
@@ -42,7 +41,7 @@ class TestExporterTest extends GenerisPhpUnitTestRunner
         return dirname(dirname(__DIR__)) . '/samples/metadata/test/';
     }
 
-    
+
     /**
      *
      * @dataProvider metaProvider
@@ -51,7 +50,9 @@ class TestExporterTest extends GenerisPhpUnitTestRunner
      */
     public function testExport($testFile, $expectedMeta)
     {
-        $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('functional'));
+        $class = \taoTests_models_classes_TestsService::singleton()
+            ->getRootclass()
+            ->createSubClass(uniqid('functional'));
         \helpers_TimeOutHelper::setTimeOutLimit(\helpers_TimeOutHelper::LONG);
         $report = \taoQtiTest_models_classes_QtiTestService::singleton()
             ->importMultipleTests($class, $testFile);

@@ -37,5 +37,5 @@ interface TestSessionStateRestorationInterface
      * @throws QtiTestExtractionFailedException
      * @throws RestorationImpossibleException
      */
-    public function restore(DeliveryExecution $deliveryExecution):void;
+    public function restore(DeliveryExecution $deliveryExecution): void;
 }

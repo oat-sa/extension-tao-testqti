@@ -38,11 +38,11 @@ use oat\taoTests\models\runner\time\TimeStorage;
  */
 class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDelete
 {
-    const SERVICE_ID = 'taoQtiTest/QtiTimerFactory';
-    
-    const OPTION_TIMER_CLASS = 'timer-class';
-    const OPTION_STORAGE_CLASS = 'storage-class';
-    const OPTION_STORAGE_FORMAT_CLASS = 'storage-format';
+    public const SERVICE_ID = 'taoQtiTest/QtiTimerFactory';
+
+    public const OPTION_TIMER_CLASS = 'timer-class';
+    public const OPTION_STORAGE_CLASS = 'storage-class';
+    public const OPTION_STORAGE_FORMAT_CLASS = 'storage-format';
 
     /**
      * @return string
@@ -92,12 +92,12 @@ class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDe
         $storageClass = $this->getStorageClass();
         $timerStorage = new $storageClass($testSessionId, $userUri);
         $timerStorage->setStorageService($this->getServiceLocator()->get(StorageManager::SERVICE_ID));
-        
+
         if ($timerStorage instanceof QtiTimeStorageFormatAware) {
             $storageFormatClass = $this->getStorageFormatClass();
             $timerStorage->setStorageFormat(new $storageFormatClass());
         }
-        
+
         /* @var Timer $timer */
         $timerClass = $this->getTimerClass();
         $timer = new $timerClass();

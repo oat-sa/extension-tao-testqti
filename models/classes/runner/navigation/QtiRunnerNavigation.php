@@ -76,7 +76,9 @@ class QtiRunnerNavigation
         $navigator = self::getNavigator($direction, $scope);
 
         if ($context instanceof QtiRunnerServiceContext) {
-            $from = $context->getTestSession()->isRunning() === true ? $context->getTestSession()->getRoute()->current() : null;
+            $from = $context->getTestSession()->isRunning() === true
+                ? $context->getTestSession()->getRoute()->current()
+                : null;
             $event = new QtiMoveEvent(QtiMoveEvent::CONTEXT_BEFORE, $context->getTestSession(), $from);
             ServiceManager::getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
         }
@@ -84,7 +86,9 @@ class QtiRunnerNavigation
         $result = $navigator->move($context, $ref);
 
         if ($context instanceof QtiRunnerServiceContext) {
-            $to = $context->getTestSession()->isRunning() === true ? $context->getTestSession()->getRoute()->current() : null;
+            $to = $context->getTestSession()->isRunning() === true
+                ? $context->getTestSession()->getRoute()->current()
+                : null;
             $event = new QtiMoveEvent(QtiMoveEvent::CONTEXT_AFTER, $context->getTestSession(), $from, $to);
             ServiceManager::getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
         }
@@ -107,13 +111,16 @@ class QtiRunnerNavigation
             $section = $session->getCurrentAssessmentSection();
             $limits = $section->getTimeLimits();
 
-            // As we have only one identifier for the whole adaptive section it will consider a jump of section on the first item
+            // As we have only one identifier for the whole adaptive section it will consider a jump of section on the
+            // first item
             if (!($context instanceof QtiRunnerServiceContext) || !$context->isAdaptive()) {
                 $isJumpOutOfSection = false;
                 if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
                     $nextSection = $route->getRouteItemAt($nextPosition);
 
+                    // phpcs:disable Generic.Files.LineLength
                     $isJumpOutOfSection = ($section->getIdentifier() !== $nextSection->getAssessmentSection()->getIdentifier());
+                    // phpcs:enable Generic.Files.LineLength
                 }
 
                 if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {

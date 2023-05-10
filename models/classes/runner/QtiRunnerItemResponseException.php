@@ -27,7 +27,6 @@ namespace oat\taoQtiTest\models\runner;
  */
 class QtiRunnerItemResponseException extends \common_Exception implements \common_exception_UserReadableException
 {
-
     /**
      * QtiRunnerItemResponseException constructor.
      * @param string $message

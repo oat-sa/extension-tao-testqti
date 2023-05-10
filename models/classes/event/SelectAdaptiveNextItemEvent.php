@@ -55,8 +55,13 @@ class SelectAdaptiveNextItemEvent implements Event
      * @param array|null $catItemIds
      * @param bool $isShadowItem
      */
-    public function __construct(AssessmentTestSession $testSession, $currentItemId, array $preCatItemIds = null, array $catItemIds = null, $isShadowItem = false)
-    {
+    public function __construct(
+        AssessmentTestSession $testSession,
+        $currentItemId,
+        array $preCatItemIds = null,
+        array $catItemIds = null,
+        $isShadowItem = false
+    ) {
         $this->currentItemId = $currentItemId;
         $this->preCatItemIds = $preCatItemIds;
         $this->catItemIds = $catItemIds;

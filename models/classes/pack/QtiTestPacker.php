@@ -24,10 +24,10 @@ use oat\oatbox\service\ServiceManager;
 use oat\taoItems\model\pack\Packer;
 use oat\taoTests\models\pack\Packable;
 use oat\taoTests\models\pack\TestPack;
-use \taoQtiTest_models_classes_QtiTestService;
-use \core_kernel_classes_Resource;
-use \InvalidArgumentException;
-use \common_Exception;
+use taoQtiTest_models_classes_QtiTestService;
+use core_kernel_classes_Resource;
+use InvalidArgumentException;
+use common_Exception;
 use Exception;
 
 /**
@@ -40,7 +40,6 @@ use Exception;
  */
 class QtiTestPacker implements Packable
 {
-
     /**
      * The test type identifier
      * @var string

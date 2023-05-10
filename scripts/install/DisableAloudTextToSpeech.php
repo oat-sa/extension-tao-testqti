@@ -39,7 +39,8 @@ class DisableAloudTextToSpeech extends InstallAction
         $config['enable-read-aloud-text-to-speech'] = false;
         $extension->setConfig('testRunner', $config);
         return \common_report_Report::createSuccess(
-            'Disabling read-aloud-text-to-speech. Configuration of taoQtiTest (testRunner.conf) was successfully updated'
+            'Disabling read-aloud-text-to-speech. Configuration of taoQtiTest (testRunner.conf) was successfully '
+                . 'updated'
         );
     }
 }

@@ -38,7 +38,7 @@ class QtiRunnerPausedException extends \common_Exception implements \common_exce
     {
         parent::__construct($message, $code);
     }
-    
+
     /**
      * Returns a translated human-readable message destinated to the end-user.
      *

@@ -31,7 +31,7 @@ use qtism\data\storage\xml\XmlDocument;
  */
 interface AssessmentItemRefPreProcessor
 {
-    const SERVICE_ID = 'taoQtiTest/itempreprocessor';
+    public const SERVICE_ID = 'taoQtiTest/itempreprocessor';
 
     /**
      * @return array $items key is item identifier and value are item resources

@@ -37,5 +37,10 @@ interface ItemLookup
      * @param int    $limit  for paging
      * @return array the items
      */
-    public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30);
+    public function getItems(
+        \core_kernel_classes_Class $itemClass,
+        array $propertyFilters = [],
+        $offset = 0,
+        $limit = 30
+    );
 }

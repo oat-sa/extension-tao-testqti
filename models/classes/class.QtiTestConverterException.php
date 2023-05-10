@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,9 +29,9 @@
  * @package taoQtiTest
 
  */
-class taoQtiTest_models_classes_QtiTestConverterException extends common_Exception implements common_exception_UserReadableException
+class taoQtiTest_models_classes_QtiTestConverterException extends common_Exception implements
+    common_exception_UserReadableException
 {
-    
     /**
      * Create a new QtiTestServiceException object.
      *
@@ -41,7 +42,7 @@ class taoQtiTest_models_classes_QtiTestConverterException extends common_Excepti
     {
         parent::__construct($message);
     }
-    
+
     /**
      * Returns a translated human-readable message destinated to the end-user.
      *

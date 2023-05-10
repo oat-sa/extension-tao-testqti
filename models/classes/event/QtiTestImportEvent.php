@@ -25,5 +25,4 @@ use oat\tao\model\event\AbstractImportEvent;
 
 class QtiTestImportEvent extends AbstractImportEvent
 {
-
 }

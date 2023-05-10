@@ -43,7 +43,6 @@ use common_report_Report;
  */
 class QtiTestExporterTest extends GenerisPhpUnitTestRunner
 {
-
     private $dataDir = '';
     private $outputDir;
 
@@ -259,8 +258,11 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     public function testQtiTestExporterWithTestWithLongPaths()
     {
         // import
-        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
-        $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter'));
+        $testFile = __DIR__
+            . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
+        $class = \taoTests_models_classes_TestsService::singleton()
+            ->getRootclass()
+            ->createSubClass(uniqid('test-exporter'));
         $report = \taoQtiTest_models_classes_QtiTestService::singleton()
             ->importMultipleTests($class, $testFile);
 
@@ -327,8 +329,11 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     {
         // import
         $label = 'this label should be persisted';
-        $testFile = __DIR__ . '/samples/archives/QTI 2.2/test_label_is_persisted.zip'; // contains label 'QTI Example Te2211111st (LABEL)'
-        $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter'));
+        // contains label 'QTI Example Te2211111st (LABEL)'
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/test_label_is_persisted.zip';
+        $class = \taoTests_models_classes_TestsService::singleton()
+            ->getRootclass()
+            ->createSubClass(uniqid('test-exporter'));
         $report = \taoQtiTest_models_classes_QtiTestService::singleton()
             ->importMultipleTests($class, $testFile);
 

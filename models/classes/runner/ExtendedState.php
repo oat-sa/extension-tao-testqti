@@ -31,13 +31,13 @@ use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDelete
 {
     use ServiceManagerAwareTrait;
-    
-    const STORAGE_PREFIX = 'extra_';
-    const VAR_REVIEW = 'review';
-    const VAR_STORE_ID = 'client_store_id';
-    const VAR_EVENTS_QUEUE = 'events_queue';
-    const VAR_CAT = 'cat';
-    const VAR_HREF_INDEX = 'item_href_index';
+
+    public const STORAGE_PREFIX = 'extra_';
+    public const VAR_REVIEW = 'review';
+    public const VAR_STORE_ID = 'client_store_id';
+    public const VAR_EVENTS_QUEUE = 'events_queue';
+    public const VAR_CAT = 'cat';
+    public const VAR_HREF_INDEX = 'item_href_index';
 
     /**
      * @var string
@@ -105,7 +105,7 @@ class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDe
         $this->userId = $userId;
         return $this;
     }
-    
+
     /**
      * Gets the StorageManager service
      * @return StorageManager
@@ -339,7 +339,11 @@ class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDe
      */
     public function getCatValue($assessmentSectionId, $key)
     {
-        return (isset($this->state[self::VAR_CAT]) && isset($this->state[self::VAR_CAT][$assessmentSectionId]) && isset($this->state[self::VAR_CAT][$assessmentSectionId][$key])) ? $this->state[self::VAR_CAT][$assessmentSectionId][$key] : null;
+        return (isset($this->state[self::VAR_CAT])
+            && isset($this->state[self::VAR_CAT][$assessmentSectionId])
+            && isset($this->state[self::VAR_CAT][$assessmentSectionId][$key]))
+                ? $this->state[self::VAR_CAT][$assessmentSectionId][$key]
+                : null;
     }
 
     /**
@@ -350,7 +354,11 @@ class ExtendedState implements ServiceManagerAwareInterface, DeliveryExecutionDe
      */
     public function removeCatValue($assessmentSectionId, $key)
     {
-        if (isset($this->state[self::VAR_CAT]) && isset($this->state[self::VAR_CAT][$assessmentSectionId]) && isset($this->state[self::VAR_CAT][$assessmentSectionId][$key])) {
+        if (
+            isset($this->state[self::VAR_CAT])
+            && isset($this->state[self::VAR_CAT][$assessmentSectionId])
+            && isset($this->state[self::VAR_CAT][$assessmentSectionId][$key])
+        ) {
             unset($this->state[self::VAR_CAT][$assessmentSectionId][$key]);
         }
         return $this;

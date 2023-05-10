@@ -74,7 +74,7 @@ class taoQtiTest_helpers_ItemResolver implements Resolver
         $dom = new DOMDocument();
         $dom->loadXML($raw);
         foreach ($dom->getElementsByTagNameNS('http://www.w3.org/2001/XInclude', 'include') as $element) {
-                $element->parentNode->removeChild($element);
+            $element->parentNode->removeChild($element);
         }
 
         $tmpfile = sys_get_temp_dir() . '/' . md5($url) . '.xml';

@@ -43,7 +43,9 @@ class ManualTranslations
             __('technical'),
             __('Text to Speech'),
             __('The assessment has been created but is not already running.'),
+            // phpcs:disable Generic.Files.LineLength
             __('The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required.'),
+            // phpcs:enable Generic.Files.LineLength
             __('The assessment has been suspended. To resume your assessment, please relaunch it.'),
             __('The assessment has been terminated.'),
             __('The assessment has been terminated. You cannot interact with it anymore.'),

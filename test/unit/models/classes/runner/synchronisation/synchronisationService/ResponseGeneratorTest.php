@@ -45,15 +45,15 @@ class ResponseGeneratorTest extends TestCase
         $testRunnerActionResolverMock = $this->createMock(TestRunnerActionResolver::class);
         $testRunnerActionResolverMock
             ->method('resolve')
-            ->willReturnCallback(static function(array $action) use ($testRunnerAction1Mock, $testRunnerAction2Mock) {
+            ->willReturnCallback(static function (array $action) use ($testRunnerAction1Mock, $testRunnerAction2Mock) {
                 switch ($action[0]) {
-                    case 'a';
+                    case 'a':
                         return $testRunnerAction1Mock;
-                    case 'b';
+                    case 'b':
                         throw new common_exception_InconsistentData('PHPUnit error InconsistentData');
-                    case 'c';
+                    case 'c':
                         return $testRunnerAction2Mock;
-                    case 'd';
+                    case 'd':
                         throw new ResolverException('PHPUnit Resolver Exception');
                 }
 
@@ -98,7 +98,16 @@ class ResponseGeneratorTest extends TestCase
 
         $responseGenerator = new ResponseGenerator();
         $responseGenerator->setServiceLocator($serviceLocator);
-        $actions = $responseGenerator->prepareActions([['a'], ['action' => 'actionName', 'parameters' => ['all parameters']]], []);
+        $actions = $responseGenerator->prepareActions(
+            [
+                ['a'],
+                [
+                    'action' => 'actionName',
+                    'parameters' => ['all parameters'],
+                ]
+            ],
+            []
+        );
 
         $this->assertSame([
             [
@@ -167,7 +176,7 @@ class ResponseGeneratorTest extends TestCase
             $testRunnerAction2,
             []
         ], $serviceContext, $now);
-        $this->assertEquals(round($now - (10 + 5 + 0.002), 3), round($last,3));
+        $this->assertEquals(round($now - (10 + 5 + 0.002), 3), round($last, 3));
     }
 
     public function testGetActionResponseEmptyAction(): void
@@ -249,7 +258,8 @@ class ResponseGeneratorTest extends TestCase
     }
 }
 
-class TestTimer {
+class TestTimer
+{
     public function getTimer(): self
     {
         return $this;
@@ -260,4 +270,3 @@ class TestTimer {
         return 0;
     }
 }
-

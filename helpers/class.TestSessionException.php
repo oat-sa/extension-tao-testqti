@@ -30,7 +30,6 @@ use qtism\runtime\tests\AssessmentTestSessionException;
  */
 class taoQtiTest_helpers_TestSessionException extends AssessmentTestSessionException
 {
-    
     /**
      * Create a new taoQtiTest_helpers_TestSessionException object.
      *

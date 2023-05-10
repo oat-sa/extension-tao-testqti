@@ -31,7 +31,7 @@ use oat\taoQtiTest\models\QtiTestUtils;
  */
 class taoQtiTest_helpers_Utils extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/taoQtiTestHelpersUtils';
+    public const SERVICE_ID = 'taoQtiTest/taoQtiTestHelpersUtils';
 
     /**
      * @deprecated use QtiTestUtils::storeQtiResource
@@ -48,12 +48,15 @@ class taoQtiTest_helpers_Utils extends ConfigurableService
     {
         return static::getService()->emptyImsManifest($version);
     }
-    
+
     /**
      * @deprecated use QtiTestUtils::buildAssessmentItemRefsTestMap
      */
-    public static function buildAssessmentItemRefsTestMap(XmlDocument $test, taoQtiTest_models_classes_ManifestParser $manifestParser, $basePath)
-    {
+    public static function buildAssessmentItemRefsTestMap(
+        XmlDocument $test,
+        taoQtiTest_models_classes_ManifestParser $manifestParser,
+        $basePath
+    ) {
         return static::getService()->buildAssessmentItemRefsTestMap($test, $manifestParser, $basePath);
     }
 
@@ -68,7 +71,7 @@ class taoQtiTest_helpers_Utils extends ConfigurableService
     /**
      * @return QtiTestUtils
      */
-    private static function  getService()
+    private static function getService()
     {
         return ServiceManager::getServiceManager()->get(QtiTestUtils::SERVICE_ID);
     }

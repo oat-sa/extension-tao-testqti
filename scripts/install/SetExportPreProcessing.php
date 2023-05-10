@@ -40,7 +40,10 @@ class SetExportPreProcessing extends InstallAction
     public function __invoke($params)
     {
 
-        $this->getServiceManager()->register(AssessmentItemRefPreProcessor::SERVICE_ID, new IdentifierReplacementPreProcessor());
+        $this->getServiceManager()->register(
+            AssessmentItemRefPreProcessor::SERVICE_ID,
+            new IdentifierReplacementPreProcessor()
+        );
 
         return new \common_report_Report(
             \common_report_Report::TYPE_SUCCESS,

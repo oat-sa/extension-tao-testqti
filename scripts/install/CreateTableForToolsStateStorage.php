@@ -43,7 +43,10 @@ class CreateTableForToolsStateStorage extends AbstractAction
     {
         $persistenceId = count($params) > 0 ? reset($params) : 'default';
         /** @var \common_persistence_Persistence $persistence */
-        $persistence = $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_KEY)->getPersistenceById($persistenceId);
+        $persistence = $this
+            ->getServiceLocator()
+            ->get(\common_persistence_Manager::SERVICE_KEY)
+            ->getPersistenceById($persistenceId);
 
         /** @var \common_persistence_sql_dbal_SchemaManager $schemaManager */
         $schemaManager = $persistence->getDriver()->getSchemaManager();
@@ -57,11 +60,23 @@ class CreateTableForToolsStateStorage extends AbstractAction
         $revisionTable = $schema->createTable(RdsToolsStateStorage::TABLE_NAME);
         $revisionTable->addOption('engine', 'MyISAM');
 
-        $revisionTable->addColumn(RdsToolsStateStorage::COLUMN_DELIVERY_EXECUTION_ID, 'string', ['notnull' => true, 'length' => 255]);
-        $revisionTable->addColumn(RdsToolsStateStorage::COLUMN_TOOL_NAME, 'string', ['notnull' => true, 'length' => 60]);
+        $revisionTable->addColumn(
+            RdsToolsStateStorage::COLUMN_DELIVERY_EXECUTION_ID,
+            'string',
+            ['notnull' => true, 'length' => 255]
+        );
+        $revisionTable->addColumn(
+            RdsToolsStateStorage::COLUMN_TOOL_NAME,
+            'string',
+            ['notnull' => true, 'length' => 60]
+        );
 
         $longtextThreshold = 16777215 + 1;
-        $revisionTable->addColumn(RdsToolsStateStorage::COLUMN_TOOL_STATE, 'string', ['notnull' => false, 'length' => $longtextThreshold]);
+        $revisionTable->addColumn(
+            RdsToolsStateStorage::COLUMN_TOOL_STATE,
+            'string',
+            ['notnull' => false, 'length' => $longtextThreshold]
+        );
 
         $revisionTable->addUniqueIndex(
             [RdsToolsStateStorage::COLUMN_DELIVERY_EXECUTION_ID, RdsToolsStateStorage::COLUMN_TOOL_NAME],

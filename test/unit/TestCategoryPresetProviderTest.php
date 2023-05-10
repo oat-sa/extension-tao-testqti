@@ -22,6 +22,7 @@
 /**
  * @author Christophe Noël <christophe@taotesting.com>
  */
+
 namespace oat\taoQtiTest\test\unit;
 
 use oat\generis\test\TestCase;

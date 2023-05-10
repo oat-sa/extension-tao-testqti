@@ -21,6 +21,7 @@
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
+
 namespace oat\taoQtiTest\models\runner;
 
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
@@ -36,11 +37,16 @@ use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
  */
 interface RunnerService extends DeliveryExecutionDelete
 {
-    const INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
+    public const INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
 
-    const INSTANCE_TEST_ITEM_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner';
+    // phpcs:disable Generic.Files.LineLength
+    public const INSTANCE_TEST_ITEM_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner';
+    // phpcs:enable Generic.Files.LineLength
 
-    const INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId';
+    // phpcs:disable Generic.Files.LineLength
+    public const INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId';
+    // phpcs:enable Generic.Files.LineLength
+
     /**
      * Initializes the delivery execution session
      * @param RunnerServiceContext $context

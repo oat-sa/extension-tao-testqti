@@ -17,7 +17,6 @@ use oat\oatbox\service\exception\InvalidServiceManagerException;
  */
 final class Version202107210931372260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Disable feature flag BRS (search by metadata) within Test Authoring';
@@ -35,13 +34,13 @@ final class Version202107210931372260_taoQtiTest extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-         /** @var ExtensionsManager $extensionManager */
-         $extensionManager = $this->getServiceManager()->get(ExtensionsManager::SERVICE_ID);
-         $extension = $extensionManager->getExtensionById('tao');
- 
-         $config = $extension->getConfig('client_lib_config_registry');
-         unset($config['taoQtiTest/controller/creator/views/item']);
- 
-         $extension->setConfig('client_lib_config_registry', $config);
+        /** @var ExtensionsManager $extensionManager */
+        $extensionManager = $this->getServiceManager()->get(ExtensionsManager::SERVICE_ID);
+        $extension = $extensionManager->getExtensionById('tao');
+
+        $config = $extension->getConfig('client_lib_config_registry');
+        unset($config['taoQtiTest/controller/creator/views/item']);
+
+        $extension->setConfig('client_lib_config_registry', $config);
     }
 }

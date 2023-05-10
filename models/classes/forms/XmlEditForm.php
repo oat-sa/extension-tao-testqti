@@ -44,7 +44,7 @@ class XmlEditForm extends tao_helpers_form_FormContainer
     /**
      * {@inheritdoc}
      */
-    protected function initForm() : void
+    protected function initForm(): void
     {
         $this->form = new tao_helpers_form_xhtml_Form('test_xml_editor_form');
 
@@ -57,7 +57,10 @@ class XmlEditForm extends tao_helpers_form_FormContainer
         ]);
 
         $action = tao_helpers_form_FormFactory::getElement('save', 'Free');
-        $action->setValue('<a href="#" class="form-submitter btn-success small"><span class="icon-save"></span> ' . __('Save') . '</a>');
+        $action->setValue(
+            '<a href="#" class="form-submitter btn-success small"><span class="icon-save"></span> '
+                . __('Save') . '</a>'
+        );
 
         $this->form->setActions([$action], 'bottom');
     }
@@ -65,7 +68,7 @@ class XmlEditForm extends tao_helpers_form_FormContainer
     /**
      * {@inheritdoc}
      */
-    protected function initElements() : void
+    protected function initElements(): void
     {
         $element = tao_helpers_form_FormFactory::getElement('xmlString', 'textarea');
         $element->addAttribute('rows', '20');

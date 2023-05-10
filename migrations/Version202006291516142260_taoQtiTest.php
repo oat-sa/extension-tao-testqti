@@ -16,7 +16,6 @@ use oat\taoQtiTest\models\test\AssessmentTestXmlFactoryInterface;
  */
 final class Version202006291516142260_taoQtiTest extends AbstractMigration
 {
-
     public function getDescription(): string
     {
         return 'Register ' . AssessmentTestXmlFactory::class;

@@ -32,7 +32,6 @@ use oat\taoTests\models\runner\plugins\TestPlugin;
  */
 class RegisterTestRunnerPlugins extends InstallAction
 {
-
     public static $plugins = [
         'content' => [
             [
@@ -419,7 +418,8 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'name'        => 'APIP Text To Speech',
                 'module'      => 'taoQtiTest/runner/plugins/tools/apipTextToSpeech/plugin',
                 'bundle'      => 'taoQtiTest/loader/testPlugins.min',
-                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to item content.',
+                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to '
+                    . 'item content.',
                 'category'    => 'tools',
                 'active'      => true,
                 'tags'        => [  ]

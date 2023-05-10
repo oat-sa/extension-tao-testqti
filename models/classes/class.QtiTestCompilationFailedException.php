@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,42 +26,45 @@
  *
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
-
+ *
+ * phpcs:disable Generic.Files.LineLength
  */
-class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_models_classes_CompilationFailedException implements common_exception_UserReadableException
+class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_models_classes_CompilationFailedException implements
+    common_exception_UserReadableException
 {
-    
+    // phpcs:enable Generic.Files.LineLength
+
     /**
      * Error code to use when the error is unknown.
      *
      * @var integer
      */
-    const UNKNOWN = 0;
-    
+    public const UNKNOWN = 0;
+
     /**
      * Error code to use when no items are composing
      * the test to be compiled.
      *
      * @var integer
      */
-    const NO_ITEMS = 1;
-    
+    public const NO_ITEMS = 1;
+
     /**
      * Error code to use when a remote resource (e.g. image
      * referenced with absolute URL) cannot be retrieved.
      *
      * @var integer
      */
-    const REMOTE_RESOURCE = 2;
-    
+    public const REMOTE_RESOURCE = 2;
+
     /**
      * Error code to use when a dependent item failed to
      * be compiled.
      *
      * @var integer
      */
-    const ITEM_COMPILATION = 3;
-    
+    public const ITEM_COMPILATION = 3;
+
     /**
      * The resource in database describing the test that failed
      * to be compiled.
@@ -68,7 +72,7 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
      * @var core_kernel_classes_Resource
      */
     private $test;
-    
+
     /**
      * Create a new QtiTestCompilationFailedException object.
      *
@@ -81,7 +85,7 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
         parent::__construct($message, $code);
         $this->setTest($test);
     }
-    
+
     /**
      * Get the resource in database describing the test that failed to
      * be compiled.
@@ -92,7 +96,7 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
     {
         return $this->test;
     }
-    
+
     /**
      * Set the resource in database describing the test that failed
      * to be compiled.
@@ -103,7 +107,7 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
     {
         $this->test = $test;
     }
-    
+
     /**
      * Returns a translated human-readable message destinated to the end-user. The content
      * of the message will depend on the $code given at instantiation-time.
@@ -113,27 +117,29 @@ class taoQtiTest_models_classes_QtiTestCompilationFailedException extends tao_mo
     public function getUserMessage()
     {
         $testLabel = $this->getTest()->getLabel();
-        
+
         switch ($this->getCode()) {
             case self::UNKNOWN:
                 return sprintf(__("An unknown error occured while compiled QTI Test '%s'."), $testLabel);
-            break;
-            
+                break;
+
             case self::NO_ITEMS:
+                // phpcs:disable Generic.Files.LineLength
                 return sprintf(__("The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."), $testLabel);
-            break;
-            
+                // phpcs:enable Generic.Files.LineLength
+                break;
+
             case self::REMOTE_RESOURCE:
                 return sprintf(__("A remote resource referenced in QTI test '%s' could not be retrieved.", $testLabel));
-            break;
-            
+                break;
+
             case self::ITEM_COMPILATION:
                 return sprintf(__("A QTI Item involved in the QTI Test '%s' could not be compiled.", $testLabel));
-            break;
-            
+                break;
+
             default:
                 return sprintf(__("An unknown error occured while compiling QTI test '%s'."), $testLabel);
-            break;
+                break;
         }
     }
 }

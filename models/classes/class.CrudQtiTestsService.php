@@ -32,7 +32,6 @@ use oat\tao\model\TaoOntology;
  */
 class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_CrudService
 {
-
     /** (non-PHPdoc)
      * @see tao_models_classes_CrudSservice::getClassService()
      */

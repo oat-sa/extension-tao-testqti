@@ -70,7 +70,7 @@ class RunnerServiceContext implements ServiceLocatorAwareInterface
     {
         $this->testConfig = $testConfig;
     }
-    
+
 
     /**
      * Gets the test session

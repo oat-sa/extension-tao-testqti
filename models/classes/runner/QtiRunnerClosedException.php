@@ -34,8 +34,10 @@ class QtiRunnerClosedException extends \common_Exception implements \common_exce
      * @param string $message A technical information message.
      * @param integer $code A code to explicitly identify the nature of the error.
      */
-    public function __construct($message = 'The assessment has been terminated. You cannot interact with it anymore.', $code = AssessmentTestSessionState::CLOSED)
-    {
+    public function __construct(
+        $message = 'The assessment has been terminated. You cannot interact with it anymore.',
+        $code = AssessmentTestSessionState::CLOSED
+    ) {
         parent::__construct($message, $code);
     }
 
