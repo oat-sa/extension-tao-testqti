@@ -1,9 +1,1 @@
-{
-	"version": 3,
-	"file": "xml-editor.css",
-	"sources": [
-		"../scss/xml-editor.scss"
-	],
-	"names": [],
-	"mappings": "AAAA,AACE,kBADgB,CAChB,kBAAkB,AAAA,CAChB,SAAS,CAAE,kBAAkB,CAC9B,AAHH,AAKE,kBALgB,CAKhB,eAAe,AAAC,CACd,SAAS,CAAE,IAAI,CAChB"
-}
+{"version":3,"sourceRoot":"","sources":["../scss/xml-editor.scss"],"names":[],"mappings":"AACE,sCACE,6BAGF,mCACE","file":"xml-editor.css"}
