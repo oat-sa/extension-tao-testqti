@@ -96,7 +96,7 @@ define([
         if (!_.isEmpty(config.routes.blueprintsById)) {
             sectionModel.hasBlueprint = true;
         }
-
+        sectionModel.isSubsection = false;
         sectionModel.hasSelectionWithReplacement = servicesFeatures.isVisible(
             'taoQtiTest/creator/properties/selectionWithReplacement',
             false

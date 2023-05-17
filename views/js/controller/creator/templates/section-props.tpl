@@ -34,7 +34,7 @@
         </div>
     </div>
 
-{{!-- Property not yet available in delivery
+{{#if isSubsection}}
 <!-- assessmentTest/testPart/assessmentSection/required -->
     <div class="grid-row pseudo-label-box">
         <div class="col-5">
@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
---}}
+{{/if}}
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/fixed -->
