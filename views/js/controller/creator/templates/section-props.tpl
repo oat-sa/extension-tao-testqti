@@ -34,7 +34,7 @@
         </div>
     </div>
 
-{{!-- Property not yet available in delivery
+{{#if isSubsection}}
 <!-- assessmentTest/testPart/assessmentSection/required -->
     <div class="grid-row pseudo-label-box">
         <div class="col-5">
@@ -49,11 +49,11 @@
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
-            {{__ 'If required, it must appears at least once in the selection.'}}
+            {{__ 'If required it must appear (at least once) in the selection.'}}
             </div>
         </div>
     </div>
---}}
+{{/if}}
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/fixed -->
