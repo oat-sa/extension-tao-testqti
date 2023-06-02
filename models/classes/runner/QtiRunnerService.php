@@ -1050,40 +1050,9 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     {
         $this->assertIsQtiRunnerServiceContext($context, __FUNCTION__);
 
-        $session = $context->getTestSession();
-
-        if ($session instanceof AssessmentTestSession) {
-            $logger = common_Logger::singleton()->getLogger();
-            $logger->debug(sprintf('%s::move() called', self::class));
-            $logger->debug(sprintf('%s session state is %s', self::class, $session->getState()));
-
-            if ($session->getState() == AssessmentTestSessionState::SUSPENDED) {
-                $logger->debug(
-                    sprintf('%s DeliveryExecution is suspended', self::class)
-                );
-
-                return false;
-            }
-
-            if (class_exists(TaoDeliveryServiceProxy::class)) {
-                $executionService = TaoDeliveryServiceProxy::singleton();
-
-                $execution = $executionService->getDeliveryExecution(
-                    $context->getTestExecutionUri()
-                );
-
-                if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-                    $logger->debug(
-                        sprintf(
-                            '%s DeliveryExecution is Paused (state=%s)',
-                            self::class,
-                            $execution->getState()->getUri()
-                        )
-                    );
-
-                    return false;
-                }
-            }
+        if ($this->isSessionSuspended($context)
+            || $this->isExecutionPaused($context)) {
+            return false;
         }
 
         $result = true;
@@ -1098,6 +1067,52 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         }
 
         return $result;
+    }
+
+    private function isSessionSuspended(RunnerServiceContext $context): bool
+    {
+        $session = $context->getTestSession();
+
+        if ($session instanceof AssessmentTestSession) {
+            $logger = common_Logger::singleton()->getLogger();
+            $logger->debug(sprintf('%s::move() called', self::class));
+            $logger->debug(sprintf('%s session state is %s', self::class, $session->getState()));
+
+            if ($session->getState() == AssessmentTestSessionState::SUSPENDED) {
+                $logger->debug(
+                    sprintf('%s DeliveryExecution is suspended', self::class)
+                );
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isExecutionPaused(RunnerServiceContext $context): bool
+    {
+        if (class_exists(TaoDeliveryServiceProxy::class)) {
+            $executionService = TaoDeliveryServiceProxy::singleton();
+
+            $execution = $executionService->getDeliveryExecution(
+                $context->getTestExecutionUri()
+            );
+
+            if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
+                common_Logger::singleton()->getLogger()->debug(
+                    sprintf(
+                        '%s DeliveryExecution is Paused (state=%s)',
+                        self::class,
+                        $execution->getState()->getUri()
+                    )
+                );
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
