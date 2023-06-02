@@ -42,7 +42,7 @@ use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryServerService;
-use oat\taoDelivery\model\execution\ServiceProxy;
+use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoProctoring\model\implementation\TestSessionService as ProctoringTestSessionService;
 use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
@@ -1059,8 +1059,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $logger->debug(sprintf('%s session state is %s', self::class, $session->getState()));
 
             if ($session->getState() == AssessmentTestSessionState::SUSPENDED) {
-                // This should already be checked by a call to
-                // ProctoringRunnerService::check done from MoveService
                 $logger->debug(
                     sprintf('%s DeliveryExecution is suspended', self::class)
                 );
@@ -1068,36 +1066,24 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 return false;
             }
 
-            // @todo Check if the proxy exists
-            $executionService = ServiceProxy::singleton(); // From taoDelivery
+            if (class_exists(TaoDeliveryServiceProxy::class)) {
+                $executionService = TaoDeliveryServiceProxy::singleton();
 
-            // @fixme Note we are in taoQtiTest while the service is from Proctoring
-            /*$proctoringTestSessionService = $this->getServiceManager()->get(
-                ProctoringTestSessionService::SERVICE_ID
-            );
-
-            assert($proctoringTestSessionService instanceof ProctoringTestSessionService);*/
-
-            $executionUri = $context->getTestExecutionUri();
-            $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
-
-            $logger->debug(
-                sprintf(
-                    '%s DeliveryExecution state is %s',
-                    self::class,
-                    $deliveryExecution->getState()->getUri()
-                )
-            );
-
-            if ($deliveryExecution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-                $logger->debug(
-                    sprintf(
-                        '%s PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED',
-                        self::class,
-                    )
+                $execution = $executionService->getDeliveryExecution(
+                    $context->getTestExecutionUri()
                 );
 
-                return false;
+                if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
+                    $logger->debug(
+                        sprintf(
+                            '%s DeliveryExecution is Paused (state=%s)',
+                            self::class,
+                            $execution->getState()->getUri()
+                        )
+                    );
+
+                    return false;
+                }
             }
         }
 
