@@ -273,15 +273,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function init(RunnerServiceContext $context)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'init');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'init',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -340,15 +331,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function getTestData(RunnerServiceContext $context)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'getTestData');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'getTestData',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $testDefinition = $context->getTestDefinition();
 
@@ -420,15 +402,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function getTestContext(RunnerServiceContext $context)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'getTestContext');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'getTestContext',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -590,15 +563,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function getTestMap(RunnerServiceContext $context, $partial = false)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'getTestMap');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'getTestMap',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
 
@@ -619,15 +583,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function getRubrics(RunnerServiceContext $context, AssessmentItemRef $itemRef = null)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'getRubrics');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'getRubrics',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $rubricHelper = $this->getServiceLocator()->get(QtiRunnerRubric::SERVICE_ID);
         return $rubricHelper->getRubrics($context, $itemRef);
@@ -655,15 +610,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function getItemData(RunnerServiceContext $context, $itemRef)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'getItemData');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'getItemData',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         return $this->loadItemData($itemRef, QtiJsonItemCompiler::ITEM_FILE_NAME);
     }
@@ -699,15 +645,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function getItemState(RunnerServiceContext $context, $itemRef)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'getItemState');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'getItemState',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
@@ -735,15 +672,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function setItemState(RunnerServiceContext $context, $itemRef, $state)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'setItemState');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'setItemState',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
@@ -813,15 +741,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function parsesItemResponse(RunnerServiceContext $context, $itemRef, $response)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'parsesItemResponse');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'storeItemResponse',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         /** @var TestSession $session */
         $session = $context->getTestSession();
@@ -872,15 +791,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function emptyResponse(RunnerServiceContext $context, $responses)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'emptyResponse');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'storeItemResponse',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $similar = 0;
 
@@ -915,15 +825,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $responses)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'storeItemResponse');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'storeItemResponse',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $session = $this->getCurrentAssessmentSession($context);
 
@@ -1009,15 +910,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function displayFeedbacks(RunnerServiceContext $context)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'displayFeedbacks');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'displayFeedbacks',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -1102,15 +994,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function getItemSession(RunnerServiceContext $context)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'getItemSession');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'getItemSession',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -1161,16 +1044,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function move(RunnerServiceContext $context, $direction, $scope, $ref)
     {
         $this->assertIsQtiRunnerServiceContext($context, __FUNCTION__);
-
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'move',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $session = $context->getTestSession();
 
@@ -1261,15 +1134,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function timeout(RunnerServiceContext $context, $scope, $ref, $late = false)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'timeout');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'timeout',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -1309,15 +1173,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function exitTest(RunnerServiceContext $context)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'exitTest');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'exitTest',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -1349,15 +1204,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function finish(RunnerServiceContext $context, $finalState = DeliveryExecution::STATE_FINISHED)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'finish');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'finish',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $executionUri = $context->getTestExecutionUri();
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
@@ -1387,15 +1233,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function pause(RunnerServiceContext $context)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'pause');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'pause',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $context->getTestSession()->suspend();
         $this->persist($context);
@@ -1412,15 +1249,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     public function resume(RunnerServiceContext $context)
     {
         $this->assertIsQtiRunnerServiceContext($context, 'resume');
-        /*if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                'QtiRunnerService',
-                'resume',
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }*/
 
         $context->getTestSession()->resume();
         $this->persist($context);
