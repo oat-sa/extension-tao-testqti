@@ -73,11 +73,13 @@ use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
 use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
+use qtism\data\storage\php\PhpStorageException;
 use qtism\data\SubmissionMode;
 use qtism\runtime\common\ResponseVariable;
 use qtism\runtime\common\State;
 use qtism\runtime\common\Utils;
 use qtism\runtime\tests\AssessmentItemSession;
+use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -88,6 +90,7 @@ use tao_models_classes_FileNotFoundException;
 use tao_models_classes_service_StateStorage;
 use taoQtiCommon_helpers_PciStateOutput;
 use taoQtiCommon_helpers_PciVariableFiller;
+use taoQtiCommon_helpers_ResultTransmissionException;
 use taoQtiCommon_helpers_ResultTransmitter;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use taoResultServer_models_classes_TraceVariable;
@@ -820,7 +823,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $itemRef
      * @param $responses
      * @return boolean
-     * @throws common_Exception
+     * @throws InvalidArgumentTypeException
+     * @throws PhpStorageException
+     * @throws AssessmentItemSessionException
+     * @throws taoQtiCommon_helpers_ResultTransmissionException
      */
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $responses)
     {
