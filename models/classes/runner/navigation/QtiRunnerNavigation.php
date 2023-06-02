@@ -93,6 +93,7 @@ class QtiRunnerNavigation
             $logger->debug(
                 sprintf('%s state is %s', self::class, $session->getState())
             );
+            // @todo Remove this
             // This should already be checked by the call to
             // ProctoringRunnerService::check done from MoveService
             //
