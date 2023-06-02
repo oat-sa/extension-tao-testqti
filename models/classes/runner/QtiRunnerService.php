@@ -15,16 +15,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2022 (original work) Open Assessment Technologies SA ;
- */
-
-/**
+ * Copyright (c) 2016-2023 (original work) Open Assessment Technologies SA ;
+ *
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
 namespace oat\taoQtiTest\models\runner;
 
+use common_Exception;
+use common_exception_InconsistentData;
 use common_exception_InvalidArgumentType as InvalidArgumentTypeException;
+use common_ext_ExtensionException;
+use common_Logger;
 use common_persistence_AdvKeyValuePersistence;
 use common_persistence_KeyValuePersistence;
 use League\Flysystem\FileNotFoundException;
@@ -32,14 +34,17 @@ use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ConfigurableService;
+use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\theme\ThemeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoProctoring\model\implementation\TestSessionService as ProctoringTestSessionService;
 use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
 use oat\taoQtiItem\model\portableElement\exception\PortableModelMissing;
 use oat\taoQtiItem\model\portableElement\PortableElementService;
@@ -62,6 +67,7 @@ use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\TestSessionService;
+use qtism\common\datatypes\QtiInteger;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
 use qtism\common\enums\Cardinality;
@@ -78,8 +84,13 @@ use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\RouteItem;
 use qtism\runtime\tests\SessionManager;
+use tao_models_classes_FileNotFoundException;
 use tao_models_classes_service_StateStorage;
+use taoQtiCommon_helpers_PciStateOutput;
+use taoQtiCommon_helpers_PciVariableFiller;
+use taoQtiCommon_helpers_ResultTransmitter;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
+use taoResultServer_models_classes_TraceVariable;
 
 /**
  * Class QtiRunnerService
@@ -123,7 +134,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Get the data folder from a given item definition
      * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
      * @return array the path
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     private function loadItemData($itemRef, $path)
     {
@@ -142,7 +153,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 $itemRefInfo = gettype($itemRef);
             }
 
-            throw new \common_exception_InconsistentData(
+            throw new common_exception_InconsistentData(
                 "The itemRef (value = '${itemRefInfo}') is not formatted correctly."
             );
         }
@@ -154,12 +165,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         if ($directory->has($userDataLang)) {
             $lang = $userDataLang;
         } elseif ($directory->has(DEFAULT_LANG)) {
-            \common_Logger::d(
+            common_Logger::d(
                 $userDataLang . ' is not part of compilation directory for item : ' . $itemUri . ' use ' . DEFAULT_LANG
             );
             $lang = DEFAULT_LANG;
         } else {
-            throw new \common_Exception(
+            throw new common_Exception(
                 'item : ' . $itemUri . 'is neither compiled in ' . $userDataLang . ' nor in ' . DEFAULT_LANG
             );
         }
@@ -170,7 +181,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $this->dataCache[$cacheKey] = $jsonContent;
             return $this->dataCache[$cacheKey];
         } catch (FileNotFoundException $e) {
-            throw new \tao_models_classes_FileNotFoundException(
+            throw new tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
             );
         }
@@ -186,7 +197,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param string $testExecutionUri The URI of the delivery execution
      * @param string $userUri User identifier. If null current user will be used
      * @return QtiRunnerServiceContext
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function getServiceContext($testDefinitionUri, $testCompilationUri, $testExecutionUri, $userUri = null)
     {
@@ -211,7 +222,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Checks the created context, then initializes it.
      * @param RunnerServiceContext $context
      * @return RunnerServiceContext
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function initServiceContext(RunnerServiceContext $context)
     {
@@ -233,7 +244,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $testSession = $serviceContext->getTestSession();
         $sessionId = $testSession->getSessionId();
 
-        \common_Logger::d("Persisting QTI Assessment Test Session '${sessionId}'...");
+        common_Logger::d("Persisting QTI Assessment Test Session '${sessionId}'...");
         $serviceContext->getStorage()->persist($testSession);
         if ($this->isTerminated($serviceContext)) {
             /** @var StorageManager $storageManager */
@@ -257,11 +268,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      *
      * @param RunnerServiceContext $context
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function init(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'init');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'init',
@@ -269,7 +281,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -280,10 +292,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $session->beginTestSession();
             $event = new TestInitEvent($session);
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
-            \common_Logger::i(sprintf('Assessment Test Session begun. Session id: %s', $session->getSessionId()));
+            common_Logger::i(sprintf('Assessment Test Session begun. Session id: %s', $session->getSessionId()));
 
             if ($context->isAdaptive()) {
-                \common_Logger::t("Very first item is adaptive.");
+                common_Logger::t("Very first item is adaptive.");
                 $nextCatItemId = $context->selectAdaptiveNextItem();
                 $context->persistCurrentCatItemId($nextCatItemId);
                 $context->persistSeenCatItemIds($nextCatItemId);
@@ -305,7 +317,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     /**
      * Gets the test runner config
      * @return RunnerConfig
-     * @throws \common_ext_ExtensionException
+     * @throws common_ext_ExtensionException
      */
     public function getTestConfig()
     {
@@ -323,11 +335,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      *
      * @param RunnerServiceContext $context
      * @return array
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function getTestData(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'getTestData');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'getTestData',
@@ -335,7 +348,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $testDefinition = $context->getTestDefinition();
 
@@ -402,11 +415,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Gets the test context object
      * @param RunnerServiceContext $context
      * @return array
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function getTestContext(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'getTestContext');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'getTestContext',
@@ -414,7 +428,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -571,11 +585,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param bool $partial the full testMap or only the current section
      * @return array
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function getTestMap(RunnerServiceContext $context, $partial = false)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'getTestMap');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'getTestMap',
@@ -583,7 +598,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
 
@@ -599,11 +614,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param AssessmentItemRef $itemRef (optional) otherwise use the current
      * @return mixed
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function getRubrics(RunnerServiceContext $context, AssessmentItemRef $itemRef = null)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'getRubrics');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'getRubrics',
@@ -611,7 +627,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $rubricHelper = $this->getServiceLocator()->get(QtiRunnerRubric::SERVICE_ID);
         return $rubricHelper->getRubrics($context, $itemRef);
@@ -634,11 +650,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param $itemRef
      * @return mixed
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function getItemData(RunnerServiceContext $context, $itemRef)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'getItemData');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'getItemData',
@@ -646,7 +663,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         return $this->loadItemData($itemRef, QtiJsonItemCompiler::ITEM_FILE_NAME);
     }
@@ -677,11 +694,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param string $itemRef
      * @return array|null
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function getItemState(RunnerServiceContext $context, $itemRef)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'getItemState');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'getItemState',
@@ -689,7 +707,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
@@ -699,7 +717,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         if ($state) {
             $state = json_decode($state, true);
             if (is_null($state)) {
-                throw new \common_exception_InconsistentData('Unable to decode the state for the item ' . $itemRef);
+                throw new common_exception_InconsistentData('Unable to decode the state for the item ' . $itemRef);
             }
         }
 
@@ -712,11 +730,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $itemRef
      * @param  $state
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function setItemState(RunnerServiceContext $context, $itemRef, $state)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'setItemState');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'setItemState',
@@ -724,7 +743,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
@@ -739,7 +758,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     /**
      * @param RunnerServiceContext $context
      * @param $toolStates
-     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
+     * @throws InvalidServiceManagerException
      */
     public function setToolsStates(RunnerServiceContext $context, $toolStates)
     {
@@ -754,8 +773,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     /**
      * @param RunnerServiceContext $context
      * @return array
-     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
-     * @throws \common_ext_ExtensionException
+     * @throws InvalidServiceManagerException
+     * @throws common_ext_ExtensionException
      */
     public function getToolsStates(RunnerServiceContext $context)
     {
@@ -767,6 +786,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         if (count($toolsEnabled) === 0) {
             return [];
         }
+
         if ($context instanceof QtiRunnerServiceContext) {
             /** @var ToolsStateStorage $toolsStateStorage */
             $toolsStateStorage = $this->getServiceLocator()->get(ToolsStateStorage::SERVICE_ID);
@@ -788,11 +808,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $itemRef
      * @param $response
      * @return mixed
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function parsesItemResponse(RunnerServiceContext $context, $itemRef, $response)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'parsesItemResponse');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'storeItemResponse',
@@ -800,7 +821,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         /** @var TestSession $session */
         $session = $context->getTestSession();
@@ -812,10 +833,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $msg .= "Session state value: " . $session->getState() . "\n";
             $msg .= "Session ID: " . $session->getSessionId() . "\n";
             $msg .= "JSON Payload: " . mb_substr(json_encode($response), 0, 1000);
-            \common_Logger::e($msg);
+            common_Logger::e($msg);
         }
 
-        $filler = new \taoQtiCommon_helpers_PciVariableFiller(
+        $filler = new taoQtiCommon_helpers_PciVariableFiller(
             $currentItem,
             $this->getServiceManager()->get(QtiFlysystemFileManager::SERVICE_ID)
         );
@@ -829,13 +850,13 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                         $responses->setVariable($var);
                     }
                 } catch (\OutOfRangeException $e) {
-                    \common_Logger::d("Could not convert client-side value for variable '${id}'.");
+                    common_Logger::d("Could not convert client-side value for variable '${id}'.");
                 } catch (\OutOfBoundsException $e) {
-                    \common_Logger::d("Could not find variable with identifier '${id}' in current item.");
+                    common_Logger::d("Could not find variable with identifier '${id}' in current item.");
                 }
             }
         } else {
-            \common_Logger::e('Invalid json payload');
+            common_Logger::e('Invalid json payload');
         }
 
         return $responses;
@@ -846,11 +867,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param $responses
      * @return mixed
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function emptyResponse(RunnerServiceContext $context, $responses)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'emptyResponse');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'storeItemResponse',
@@ -858,7 +880,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $similar = 0;
 
@@ -888,11 +910,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $itemRef
      * @param $responses
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function storeItemResponse(RunnerServiceContext $context, $itemRef, $responses)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'storeItemResponse');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'storeItemResponse',
@@ -900,12 +923,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $session = $this->getCurrentAssessmentSession($context);
 
         try {
-            \common_Logger::t('Responses sent from the client-side. The Response Processing will take place.');
+            common_Logger::t('Responses sent from the client-side. The Response Processing will take place.');
 
             if ($context->isAdaptive()) {
                 $session->beginItemSession();
@@ -930,7 +953,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                         microtime(true)
                     );
                 } else {
-                    \common_Logger::i(
+                    common_Logger::i(
                         "No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an "
                         . "adaptive section."
                     );
@@ -939,7 +962,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 $context->persistLastCatItemOutput($output);
 
                 // Send results to TAO Results.
-                $resultTransmitter = new \taoQtiCommon_helpers_ResultTransmitter(
+                $resultTransmitter = new taoQtiCommon_helpers_ResultTransmitter(
                     $context->getSessionManager()->getResultServer()
                 );
 
@@ -955,7 +978,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
                 foreach ($session->getAllVariables() as $var) {
                     if ($var->getIdentifier() === 'numAttempts') {
-                        $var->setValue(new \qtism\common\datatypes\QtiInteger($attempt));
+                        $var->setValue(new QtiInteger($attempt));
                     }
 
                     $variables[] = $var;
@@ -972,7 +995,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
             return true;
         } catch (AssessmentTestSessionException $e) {
-            \common_Logger::w($e->getMessage());
+            common_Logger::w($e->getMessage());
             return false;
         }
     }
@@ -981,11 +1004,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Should we display feedbacks
      * @param RunnerServiceContext $context
      * @return boolean
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function displayFeedbacks(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'displayFeedbacks');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'displayFeedbacks',
@@ -993,7 +1017,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -1016,8 +1040,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param string $itemRef  the item reference
      * @return array the feedbacks data
-     * @throws \common_Exception
-     * @throws \common_exception_InvalidArgumentType
+     * @throws common_Exception
+     * @throws InvalidArgumentTypeException
      * @deprecated since version 30.7.0, to be removed in 31.0.0. Use getItemVariableElementsData() instead
      */
     public function getFeedbacks(RunnerServiceContext $context, $itemRef)
@@ -1029,8 +1053,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param $itemRef
      * @return array
-     * @throws \common_Exception
-     * @throws \common_exception_InvalidArgumentType
+     * @throws common_Exception
+     * @throws InvalidArgumentTypeException
      */
     public function getItemVariableElementsData(RunnerServiceContext $context, $itemRef)
     {
@@ -1045,10 +1069,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param string $itemRef  the item reference
      * @return boolean
-     * @throws \common_Exception
-     * @throws \common_exception_InconsistentData
-     * @throws \common_exception_InvalidArgumentType
-     * @throws \tao_models_classes_FileNotFoundException
+     * @throws common_Exception
+     * @throws common_exception_InconsistentData
+     * @throws InvalidArgumentTypeException
+     * @throws tao_models_classes_FileNotFoundException
      */
     public function hasFeedbacks(RunnerServiceContext $context, $itemRef)
     {
@@ -1065,17 +1089,20 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 }
             }
         }
+
         return $hasFeedbacks;
     }
+
     /**
      * Should we display feedbacks
      * @param RunnerServiceContext $context
      * @return array the item session
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function getItemSession(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'getItemSession');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'getItemSession',
@@ -1083,7 +1110,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
@@ -1096,7 +1123,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $currentOccurrence
         );
 
-        $stateOutput = new \taoQtiCommon_helpers_PciStateOutput();
+        $stateOutput = new taoQtiCommon_helpers_PciStateOutput();
 
         foreach ($itemSession->getAllVariables() as $var) {
             $stateOutput->addVariable($var);
@@ -1112,6 +1139,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered'])
             ? (bool) $reviewConfig['partiallyAnsweredIsAnswered']
             : true;
+
         $output['itemAnswered'] = TestRunnerUtils::isItemCompleted(
             $route->getRouteItemAt($position),
             $itemSession,
@@ -1128,13 +1156,13 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $scope
      * @param $ref
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function move(RunnerServiceContext $context, $direction, $scope, $ref)
     {
-        $result = true;
+        $this->assertIsQtiRunnerServiceContext($context, __FUNCTION__);
 
-        if (!$context instanceof QtiRunnerServiceContext) {
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'move',
@@ -1142,7 +1170,59 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
+        }*/
+
+        $session = $context->getTestSession();
+
+        if ($session instanceof AssessmentTestSession) {
+            $logger = common_Logger::singleton()->getLogger();
+            $logger->debug(sprintf('%s::move() called', self::class));
+            $logger->debug(sprintf('%s session state is %s', self::class, $session->getState()));
+
+            if ($session->getState() == AssessmentTestSessionState::SUSPENDED) {
+                // This should already be checked by a call to
+                // ProctoringRunnerService::check done from MoveService
+                $logger->debug(
+                    sprintf('%s DeliveryExecution is suspended', self::class)
+                );
+
+                return false;
+            }
+
+            // @todo Check if the proxy exists
+            $executionService = ServiceProxy::singleton(); // From taoDelivery
+
+            // @fixme Note we are in taoQtiTest while the service is from Proctoring
+            /*$proctoringTestSessionService = $this->getServiceManager()->get(
+                ProctoringTestSessionService::SERVICE_ID
+            );
+
+            assert($proctoringTestSessionService instanceof ProctoringTestSessionService);*/
+
+            $executionUri = $context->getTestExecutionUri();
+            $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
+
+            $logger->debug(
+                sprintf(
+                    '%s DeliveryExecution state is %s',
+                    self::class,
+                    $deliveryExecution->getState()->getUri()
+                )
+            );
+
+            if ($deliveryExecution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
+                $logger->debug(
+                    sprintf(
+                        '%s PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED PAUSED',
+                        self::class,
+                    )
+                );
+
+                return false;
+            }
         }
+
+        $result = true;
 
         try {
             $result = QtiRunnerNavigation::move($direction, $scope, $context, $ref);
@@ -1162,7 +1242,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $scope
      * @param $ref
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function skip(RunnerServiceContext $context, $scope, $ref)
     {
@@ -1176,11 +1256,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $ref
      * @param $late
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function timeout(RunnerServiceContext $context, $scope, $ref, $late = false)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'timeout');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'timeout',
@@ -1188,12 +1269,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
         if ($context->isAdaptive()) {
-            \common_Logger::t("Select next item before timeout");
+            common_Logger::t("Select next item before timeout");
             $context->selectAdaptiveNextItem();
         }
         try {
@@ -1223,11 +1304,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Exits the test before its end
      * @param RunnerServiceContext $context
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function exitTest(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'exitTest');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'exitTest',
@@ -1235,15 +1317,15 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         /* @var TestSession $session */
         $session = $context->getTestSession();
         $sessionId = $session->getSessionId();
-        \common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+        common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
 
         if ($context->isAdaptive()) {
-            \common_Logger::t("Select next item before test exit");
+            common_Logger::t("Select next item before test exit");
             $context->selectAdaptiveNextItem();
         }
 
@@ -1257,17 +1339,17 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         return true;
     }
 
-
     /**
      * Finishes the test
      * @param RunnerServiceContext $context
      * @param string $finalState
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function finish(RunnerServiceContext $context, $finalState = DeliveryExecution::STATE_FINISHED)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'finish');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'finish',
@@ -1275,7 +1357,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $executionUri = $context->getTestExecutionUri();
         $userUri = \common_session_SessionManager::getSession()->getUserUri();
@@ -1284,10 +1366,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
 
         if ($deliveryExecution->getUserIdentifier() == $userUri) {
-            \common_Logger::i("Finishing the delivery execution {$executionUri}");
+            common_Logger::i("Finishing the delivery execution {$executionUri}");
             $result = $deliveryExecution->setState($finalState);
         } else {
-            \common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
+            common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
             $result = false;
         }
 
@@ -1300,11 +1382,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Sets the test to paused state
      * @param RunnerServiceContext $context
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function pause(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'pause');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'pause',
@@ -1312,7 +1395,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $context->getTestSession()->suspend();
         $this->persist($context);
@@ -1324,11 +1407,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Resumes the test from paused state
      * @param RunnerServiceContext $context
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function resume(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
+        $this->assertIsQtiRunnerServiceContext($context, 'resume');
+        /*if (!$context instanceof QtiRunnerServiceContext) {
             throw new InvalidArgumentTypeException(
                 'QtiRunnerService',
                 'resume',
@@ -1336,7 +1420,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 QtiRunnerServiceContext::class,
                 $context
             );
-        }
+        }*/
 
         $context->getTestSession()->resume();
         $this->persist($context);
@@ -1348,7 +1432,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Checks if the test is still valid
      * @param RunnerServiceContext $context
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      * @throws QtiRunnerClosedException
      */
     public function check(RunnerServiceContext $context)
@@ -1369,7 +1453,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param AssessmentItemSession $itemSession
      * @param bool $partially (optional) Whether or not consider partially responded sessions as responded.
      * @return bool
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function isItemCompleted(RunnerServiceContext $context, $routeItem, $itemSession, $partially = true)
     {
@@ -1440,9 +1524,9 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param string $itemRef
      * @return string
-     * @throws \common_Exception
+     * @throws common_Exception
      * @throws \common_exception_Error
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function getItemPublicUrl(RunnerServiceContext $context, string $itemRef): string
     {
@@ -1488,7 +1572,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
         $resultStore = $deliveryServerService->getResultStoreWrapper($sessionId);
 
-        $transmitter = new \taoQtiCommon_helpers_ResultTransmitter($resultStore);
+        $transmitter = new taoQtiCommon_helpers_ResultTransmitter($resultStore);
 
         // build variable and send it.
         $itemUri = TestRunnerUtils::getCurrentItemUri($testSession);
@@ -1547,36 +1631,36 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         }
         switch ($timeOutException->getCode()) {
             case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
-                \common_Logger::i('TIMEOUT: closing the assessment test session', $logContext);
+                common_Logger::i('TIMEOUT: closing the assessment test session', $logContext);
                 $session->moveThroughAndEndTestSession();
                 break;
 
             case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    \common_Logger::i('TIMEOUT: moving to the next test part', $logContext);
+                    common_Logger::i('TIMEOUT: moving to the next test part', $logContext);
                     $session->moveNextTestPart();
                 } else {
-                    \common_Logger::i('TIMEOUT: closing the assessment test part', $logContext);
+                    common_Logger::i('TIMEOUT: closing the assessment test part', $logContext);
                     $session->closeTestPart();
                 }
                 break;
 
             case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    \common_Logger::i('TIMEOUT: moving to the next assessment section', $logContext);
+                    common_Logger::i('TIMEOUT: moving to the next assessment section', $logContext);
                     $session->moveNextAssessmentSection();
                 } else {
-                    \common_Logger::i('TIMEOUT: closing the assessment section session', $logContext);
+                    common_Logger::i('TIMEOUT: closing the assessment section session', $logContext);
                     $session->closeAssessmentSection();
                 }
                 break;
 
             case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    \common_Logger::i('TIMEOUT: moving to the next item', $logContext);
+                    common_Logger::i('TIMEOUT: moving to the next item', $logContext);
                     $session->moveNextAssessmentItem();
                 } else {
-                    \common_Logger::i('TIMEOUT: closing the assessment item session', $logContext);
+                    common_Logger::i('TIMEOUT: closing the assessment item session', $logContext);
                     $session->closeAssessmentItem();
                 }
                 break;
@@ -1621,7 +1705,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param string $variableIdentifier
      * @param mixed $variableValue
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function storeTraceVariable(
         RunnerServiceContext $context,
@@ -1641,15 +1725,16 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      *
      * @param $variableIdentifier
      * @param $variableValue
-     * @return \taoResultServer_models_classes_TraceVariable
-     * @throws \common_exception_InvalidArgumentType
+     * @return taoResultServer_models_classes_TraceVariable
+     * @throws InvalidArgumentTypeException
      */
     public function getTraceVariable($variableIdentifier, $variableValue)
     {
         if (!is_string($variableValue) && !is_numeric($variableValue)) {
             $variableValue = json_encode($variableValue);
         }
-        $metaVariable = new \taoResultServer_models_classes_TraceVariable();
+
+        $metaVariable = new taoResultServer_models_classes_TraceVariable();
         $metaVariable->setIdentifier($variableIdentifier);
         $metaVariable->setBaseType('string');
         $metaVariable->setCardinality(Cardinality::getNameByConstant(Cardinality::SINGLE));
@@ -1666,7 +1751,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $variableIdentifier
      * @param $variableValue
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function storeOutcomeVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
     {
@@ -1681,7 +1766,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $variableIdentifier
      * @param $variableValue
      * @return \taoResultServer_models_classes_OutcomeVariable
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function getOutcomeVariable($variableIdentifier, $variableValue)
     {
@@ -1705,7 +1790,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $variableIdentifier
      * @param $variableValue
      * @return boolean
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function storeResponseVariable(RunnerServiceContext $context, $itemUri, $variableIdentifier, $variableValue)
     {
@@ -1720,7 +1805,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param $variableIdentifier
      * @param $variableValue
      * @return \taoResultServer_models_classes_ResponseVariable
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function getResponseVariable($variableIdentifier, $variableValue)
     {
@@ -1839,19 +1924,11 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Check if the given RunnerServiceContext is a QtiRunnerServiceContext
      *
      * @param RunnerServiceContext $context
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function assertQtiRunnerServiceContext(RunnerServiceContext $context)
     {
-        if (!$context instanceof QtiRunnerServiceContext) {
-            throw new InvalidArgumentTypeException(
-                __CLASS__,
-                __FUNCTION__,
-                0,
-                QtiRunnerServiceContext::class,
-                $context
-            );
-        }
+        $this->assertIsQtiRunnerServiceContext($context, __FUNCTION__);
     }
 
     /**
@@ -1859,7 +1936,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param float|null $timestamp allow to start the timer at a specific time, or use current when it's null
      * @return bool
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function startTimer(RunnerServiceContext $context, ?float $timestamp = null): bool
     {
@@ -1888,7 +1965,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param float|null $duration The client side duration to adjust the timer
      * @param float|null $timestamp allow to end the timer at a specific time, or use current when it's null
      * @return bool
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function endTimer(RunnerServiceContext $context, ?float $duration = null, ?float $timestamp = null): bool
     {
@@ -1915,7 +1992,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param string $receivedStoreId The identifier of the client side store
      * @return string the identifier of the LAST saved client side store
-     * @throws \common_exception_InvalidArgumentType
+     * @throws InvalidArgumentTypeException
      */
     public function switchClientStoreId(RunnerServiceContext $context, $receivedStoreId)
     {
@@ -2030,12 +2107,11 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param RunnerServiceContext $context
      * @param $itemRef
      * @return array|string
-     * @throws \common_Exception
-     * @throws \common_exception_InconsistentData
+     * @throws common_Exception
+     * @throws common_exception_InconsistentData
      */
     public function getItemPortableElements(RunnerServiceContext $context, $itemRef)
     {
-
         $portableElementService = new PortableElementService();
         $portableElementService->setServiceLocator($this->getServiceLocator());
 
@@ -2048,15 +2124,15 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                         try {
                             $portableElementService->setBaseUrlToPortableData($portableData);
                         } catch (PortableElementNotFoundException $e) {
-                            \common_Logger::w('the portable element version does not exist in delivery server');
+                            common_Logger::w('the portable element version does not exist in delivery server');
                         } catch (PortableModelMissing $e) {
-                            \common_Logger::w('the portable element model does not exist in delivery server');
+                            common_Logger::w('the portable element model does not exist in delivery server');
                         }
                     }
                 }
             }
-        } catch (\tao_models_classes_FileNotFoundException $e) {
-            \common_Logger::i(
+        } catch (tao_models_classes_FileNotFoundException $e) {
+            common_Logger::i(
                 'old delivery that does not contain the compiled portable element data in the item ' . $itemRef
             );
         }
@@ -2066,20 +2142,20 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     /**
      * @param $itemRef
      * @return array|mixed|string
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     public function getItemMetadataElements($itemRef)
     {
         $metadataElements = [];
         try {
             $metadataElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::METADATA_FILE_NAME);
-        } catch (\tao_models_classes_FileNotFoundException $e) {
-            \common_Logger::i(
+        } catch (tao_models_classes_FileNotFoundException $e) {
+            common_Logger::i(
                 'Old delivery that does not contain the compiled portable element data in the item ' . $itemRef
                 . '. Original message: ' . $e->getMessage()
             );
         } catch (\Exception $e) {
-            \common_Logger::w(
+            common_Logger::w(
                 'An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage()
             );
         }
@@ -2175,7 +2251,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Returns that the Theme Switcher Plugin is enabled or not
      *
      * @return bool
-     * @throws \common_ext_ExtensionException
+     * @throws common_ext_ExtensionException
      */
     private function isThemeSwitcherEnabled()
     {
@@ -2191,7 +2267,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * Returns the ID of the current theme
      *
      * @return string
-     * @throws \common_exception_InconsistentData
+     * @throws common_exception_InconsistentData
      */
     private function getCurrentThemeId()
     {
@@ -2209,5 +2285,23 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
     {
         return $this->getServiceLocator()->getContainer()->get(FeatureFlagChecker::class);
+    }
+
+    /**
+     * @throws InvalidArgumentTypeException
+     */
+    private function assertIsQtiRunnerServiceContext(
+        RunnerServiceContext $context,
+        string $action
+    ): void {
+        if (!$context instanceof QtiRunnerServiceContext) {
+            throw new InvalidArgumentTypeException(
+                'QtiRunnerService',
+                $action,
+                0,
+                QtiRunnerServiceContext::class,
+                $context
+            );
+        }
     }
 }
