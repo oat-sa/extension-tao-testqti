@@ -15,27 +15,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
- */
-
-/**
- * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * Copyright (c) 2017-2023 (original work) Open Assessment Technologies SA.
  */
 
 namespace oat\taoQtiTest\models\runner;
 
-use common_Exception;
-use common_exception_Error;
-use common_exception_NotImplemented;
-use common_Logger;
-use Exception;
+use common_exception_InvalidArgumentType;
+use common_ext_ExtensionException;
+use common_ext_ExtensionsManager;
+use common_session_SessionManager;
+use core_kernel_classes_Resource;
+use oat\libCat\CatEngine;
+use oat\libCat\CatSection;
 use oat\libCat\CatSession;
 use oat\libCat\exception\CatEngineException;
 use oat\libCat\result\AbstractResult;
 use oat\libCat\result\ItemResult;
+use oat\libCat\result\ResultVariable;
+use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ServiceNotFoundException;
+use oat\oatbox\user\User;
+use oat\tao\helpers\UserHelper;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\helpers\TestSessionMemento;
+use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\CompilationDataService;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
@@ -44,20 +47,28 @@ use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\SectionPauseService;
-use oat\tao\helpers\UserHelper;
+use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
+use qtism\data\ExtendedAssessmentItemRef;
 use qtism\data\NavigationMode;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
 use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\RouteItem;
-use oat\oatbox\event\EventManager;
-use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
-use oat\libCat\result\ResultVariable;
+use tao_models_classes_service_FileStorage;
+use tao_models_classes_service_StorageDirectory;
+use taoQtiTest_helpers_SessionManager;
 use taoQtiTest_helpers_TestCompilerUtils;
+use taoQtiTest_helpers_TestRunnerUtils;
 use taoQtiTest_models_classes_QtiTestService;
 use taoResultServer_models_classes_Variable;
+use common_Exception;
+use common_exception_Error;
+use common_exception_NotImplemented;
+use common_Logger;
+use Exception;
 
 /**
  * Class QtiRunnerServiceContext
@@ -65,6 +76,8 @@ use taoResultServer_models_classes_Variable;
  * Defines a container to store and to share runner service context of the QTI implementation
  *
  * @package oat\taoQtiTest\models
+ *
+ * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 class QtiRunnerServiceContext extends RunnerServiceContext
 {
@@ -75,7 +88,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     protected $storage;
 
     /**
-     * @var \taoQtiTest_helpers_SessionManager
+     * @var taoQtiTest_helpers_SessionManager
      */
     protected $sessionManager;
 
@@ -88,7 +101,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * The path of the compilation directory.
      *
-     * @var \tao_models_classes_service_StorageDirectory[]
+     * @var tao_models_classes_service_StorageDirectory[]
      */
     protected $compilationDirectory;
 
@@ -162,7 +175,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     protected function initCompilationDirectory()
     {
-        $fileStorage = \tao_models_classes_service_FileStorage::singleton();
+        $fileStorage = tao_models_classes_service_FileStorage::singleton();
         $directoryIds = explode('|', $this->getTestCompilationUri());
         $directories = [
             'private' => $fileStorage->getDirectoryById($directoryIds[0]),
@@ -183,20 +196,20 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Loads the storage
      * @throws common_exception_Error
-     * @throws \common_ext_ExtensionException
+     * @throws common_ext_ExtensionException
      */
     protected function initStorage()
     {
         /** @var DeliveryServerService $deliveryServerService */
         $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
         $resultStore = $deliveryServerService->getResultStoreWrapper($this->getTestExecutionUri());
-        $testResource = new \core_kernel_classes_Resource($this->getTestDefinitionUri());
-        $sessionManager = new \taoQtiTest_helpers_SessionManager($resultStore, $testResource);
+        $testResource = new core_kernel_classes_Resource($this->getTestDefinitionUri());
+        $sessionManager = new taoQtiTest_helpers_SessionManager($resultStore, $testResource);
 
         $seeker = new BinaryAssessmentTestSeeker($this->getTestDefinition());
         $userUri = $this->getUserUri();
 
-        $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+        $config = common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
         $storageClassName = $config['test-session-storage'];
         $this->storage = new $storageClassName($sessionManager, $seeker, $userUri);
         $this->sessionManager = $sessionManager;
@@ -216,13 +229,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->setTestSession($storage->instantiate($this->getTestDefinition(), $sessionId));
 
             $testTaker = $this->getTestTakerFromSessionOrRds();
-            \taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
+            taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         } else {
             common_Logger::d("Retrieving QTI Assessment Test Session '${sessionId}'...");
             $this->setTestSession($storage->retrieve($this->getTestDefinition(), $sessionId));
         }
 
-        \taoQtiTest_helpers_TestRunnerUtils::preserveOutcomes($this->getTestSession());
+        taoQtiTest_helpers_TestRunnerUtils::preserveOutcomes($this->getTestSession());
     }
 
     /**
@@ -252,18 +265,18 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Sets the test session
      * @param mixed $testSession
-     * @throws \common_exception_InvalidArgumentType
+     * @throws common_exception_InvalidArgumentType
      */
     public function setTestSession($testSession)
     {
         if ($testSession instanceof TestSession) {
             parent::setTestSession($testSession);
         } else {
-            throw new \common_exception_InvalidArgumentType(
+            throw new common_exception_InvalidArgumentType(
                 'QtiRunnerServiceContext',
                 'setTestSession',
                 0,
-                'oat\taoQtiTest\models\runner\session\TestSession',
+                TestSession::class,
                 $testSession
             );
         }
@@ -273,7 +286,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * Gets the session storage
      * @return AbstractQtiBinaryStorage
      * @throws common_exception_Error
-     * @throws \common_ext_ExtensionException
+     * @throws common_ext_ExtensionException
      */
     public function getStorage()
     {
@@ -293,9 +306,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * @return \taoQtiTest_helpers_SessionManager
+     * @return taoQtiTest_helpers_SessionManager
      * @throws common_exception_Error
-     * @throws \common_ext_ExtensionException
+     * @throws common_ext_ExtensionException
      */
     public function getSessionManager()
     {
@@ -319,7 +332,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * Gets the path of the compilation directory
-     * @return \tao_models_classes_service_StorageDirectory[]
+     * @return tao_models_classes_service_StorageDirectory[]
      */
     public function getCompilationDirectory()
     {
@@ -332,6 +345,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Gets the meta data about the test definition being executed.
      * @return array
+     * @throws common_Exception
      */
     public function getTestMeta()
     {
@@ -386,7 +400,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      */
     public function getItemIndex($id)
     {
-        return $this->itemIndex->getItem($id, \common_session_SessionManager::getSession()->getInterfaceLanguage());
+        return $this->itemIndex->getItem($id, common_session_SessionManager::getSession()->getInterfaceLanguage());
     }
 
 
@@ -397,7 +411,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     public function getUserUri()
     {
         if ($this->userUri === null) {
-            $this->userUri = \common_session_SessionManager::getSession()->getUserUri();
+            $this->userUri = common_session_SessionManager::getSession()->getUserUri();
         }
         return $this->userUri;
     }
@@ -421,7 +435,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     {
         return $this->itemIndex->getItemValue(
             $id,
-            \common_session_SessionManager::getSession()->getInterfaceLanguage(),
+            common_session_SessionManager::getSession()->getInterfaceLanguage(),
             $name
         );
     }
@@ -431,7 +445,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      *
      * Get the currently configured Cat Engine implementation.
      *
-     * @return \oat\libCat\CatEngine
+     * @param RouteItem|null $routeItem
+     * @return CatEngine
+     *
+     * @throws ServiceNotFoundException
+     * @throws CatEngineNotFoundException
+     * @throws common_exception_Error
      */
     public function getCatEngine(RouteItem $routeItem = null)
     {
@@ -468,7 +487,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * Get the current CAT Session Object.
      *
      * @param RouteItem|null $routeItem
-     * @return \oat\libCat\CatSession|false
+     * @return CatSession|false
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
      */
     public function getCatSession(RouteItem $routeItem = null)
     {
@@ -487,6 +509,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @param string $catSession JSON encoded CAT Session data.
      * @param RouteItem|null $routeItem
      * @return mixed
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
      */
     public function persistCatSession($catSession, RouteItem $routeItem = null)
     {
@@ -502,6 +527,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * Persist seen CAT Item identifiers.
      *
      * @param string $seenCatItemId
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
      */
     public function persistSeenCatItemIds($seenCatItemId)
     {
@@ -511,6 +539,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $this->getCatSection()->getSectionId(),
             'cat-seen-item-ids'
         );
+
         if (!$items) {
             $items = [];
         } else {
@@ -563,6 +592,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * Persist CAT Item Output.
      *
      * Persist the last CAT Item Result in memory.
+     *
+     * @throws common_exception_Error
+     * @throws ServiceNotFoundException
      */
     public function persistLastCatItemOutput(array $lastCatItemOutput)
     {
@@ -582,7 +614,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * Returns the current CatSection object. In case of the current Assessment Section is not adaptive, the method
      * returns the boolean false value.
      *
-     * @return \oat\libCat\CatSection|boolean
+     * @param RouteItem|null $routeItem
+     * @return CatSection|boolean
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
      */
     public function getCatSection(RouteItem $routeItem = null)
     {
@@ -596,12 +632,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Is the Assessment Test Session Context Adaptive.
      *
-     * Determines whether or not the current Assessment Test Session is in an adaptive context.
+     * Determines whether the current Assessment Test Session is in an adaptive context.
      *
      * @param ?AssessmentItemRef $currentAssessmentItemRef An AssessmentItemRef object to be considered as
      *                                                    the current assessmentItemRef.
      * @return boolean
+     *
      * @throws common_exception_Error
+     * @throws ServiceNotFoundException
      */
     public function isAdaptive(AssessmentItemRef $currentAssessmentItemRef = null)
     {
@@ -614,9 +652,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Contains Adaptive Content.
      *
-     * Whether or not the current Assessment Test Session has some adaptive contents.
+     * Whether the current Assessment Test Session has some adaptive contents.
      *
      * @return boolean
+     *
+     * @throws ServiceNotFoundException
      */
     public function containsAdaptive()
     {
@@ -637,7 +677,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * null meaning that there is no CAT Item to be presented.
      *
      * @return mixed|null
+     *
      * @throws common_Exception
+     * @throws ServiceNotFoundException
      */
     public function selectAdaptiveNextItem()
     {
@@ -689,7 +731,10 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      *
      * This method returns the current AssessmentItemRef object depending on the test $context.
      *
-     * @return \qtism\data\ExtendedAssessmentItemRef|false
+     * @return ExtendedAssessmentItemRef|false
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
      */
     public function getCurrentAssessmentItemRef()
     {
@@ -703,6 +748,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         }
     }
 
+    /**
+     * @return array
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
+     */
     public function getPreviouslySeenCatItemIds(RouteItem $routeItem = null)
     {
         return $this->getCatService()->getPreviouslySeenCatItemIds(
@@ -712,6 +763,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         );
     }
 
+
+    /**
+     * @return array
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
+     */
     public function getShadowTest(RouteItem $routeItem = null)
     {
         return $this->getCatService()->getShadowTest(
@@ -721,6 +779,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         );
     }
 
+    /**
+     * @return mixed
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
+     */
     public function getCurrentCatItemId(RouteItem $routeItem = null)
     {
         return $this->getCatService()->getCurrentCatItemId(
@@ -730,6 +794,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         );
     }
 
+    /**
+     * @return void
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
+     */
     public function persistCurrentCatItemId($catItemId)
     {
         $session = $this->getTestSession();
@@ -746,6 +816,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         $this->getEventManager()->trigger($event);
     }
 
+    /**
+     * @return int
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
+     */
     public function getItemPositionInRoute($refId, &$catItemId = '')
     {
         $route = $this->getTestSession()->getRoute();
@@ -789,6 +865,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * the item flow, by considering CAT sections.
      *
      * @return integer A zero-based index.
+     *
+     * @throws common_exception_Error
+     * @throws ServiceNotFoundException
      */
     public function getCurrentPosition()
     {
@@ -823,6 +902,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $finalPosition;
     }
 
+    /**
+     * @return int|mixed
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
+     */
     public function getCatAttempts($identifier, RouteItem $routeItem = null)
     {
         return $this->getCatService()->getCatAttempts(
@@ -833,6 +918,12 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         );
     }
 
+    /**
+     * @return void
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_exception_Error
+     */
     public function persistCatAttempts($identifier, $attempts)
     {
         $sessionId = $this->getTestSession()->getSessionId();
@@ -858,10 +949,14 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     /**
      * Can Move Backward
      *
-     * Whether or not the Test Taker is able to navigate backward.
+     * Whether the Test Taker is able to navigate backward.
      * This implementation takes the CAT sections into consideration.
      *
      * @return boolean
+     * @throws AssessmentTestSessionException
+     *
+     * @throws common_exception_Error
+     * @throws ServiceNotFoundException
      */
     public function canMoveBackward()
     {
@@ -900,6 +995,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      *
      * @param CatSession $catSession
      * @return bool
+     *
+     * @throws ServiceNotFoundException
      */
     protected function saveAdaptiveResults(CatSession $catSession)
     {
@@ -917,6 +1014,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      *
      * @param AbstractResult[] $results
      * @return bool
+     * @throws ServiceNotFoundException
      */
     protected function storeResult(array $results)
     {
@@ -1048,13 +1146,13 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * @return \oat\oatbox\user\User
+     * @return User
      * @throws common_exception_Error
      */
     private function getTestTakerFromSessionOrRds()
     {
         try {
-            $session = \common_session_SessionManager::getSession();
+            $session = common_session_SessionManager::getSession();
         } catch (common_exception_Error $exception) {
             $session = null;
             common_Logger::w($exception->getMessage());
@@ -1069,11 +1167,17 @@ class QtiRunnerServiceContext extends RunnerServiceContext
         return $testTaker;
     }
 
+    /**
+     * @throws ServiceNotFoundException
+     */
     private function getSectionPauseService(): SectionPauseService
     {
         return $this->getServiceManager()->get(SectionPauseService::SERVICE_ID);
     }
 
+    /**
+     * @throws ServiceNotFoundException
+     */
     private function getCatService(): CatService
     {
         return $this->getServiceManager()->get(CatService::SERVICE_ID);
