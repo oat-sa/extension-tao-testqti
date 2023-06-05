@@ -1107,11 +1107,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
             if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
                 $this->getLogger()->debug(
-                    sprintf(
-                        '%s DeliveryExecution is Paused (state=%s)',
-                        self::class,
-                        $execution->getState()->getUri()
-                    )
+                    sprintf('%s DeliveryExecution is Paused (state=%s)', self::class)
                 );
 
                 return true;
