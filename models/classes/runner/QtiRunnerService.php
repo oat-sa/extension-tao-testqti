@@ -1081,12 +1081,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $session = $context->getTestSession();
 
         if ($session instanceof AssessmentTestSession) {
-            $logger = $this->getLogger();
-            $logger->debug(sprintf('%s::move() called', self::class));
-            $logger->debug(sprintf('%s session state is %s', self::class, $session->getState()));
-
             if ($session->getState() == AssessmentTestSessionState::SUSPENDED) {
-                $logger->debug(
+                $this->getLogger()->debug(
                     sprintf('%s DeliveryExecution is suspended', self::class)
                 );
 
@@ -1107,7 +1103,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
             if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
                 $this->getLogger()->debug(
-                    sprintf('%s DeliveryExecution is Paused (state=%s)', self::class)
+                    sprintf('%s DeliveryExecution is Paused', self::class)
                 );
 
                 return true;
