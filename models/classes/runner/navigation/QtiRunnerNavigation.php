@@ -169,7 +169,7 @@ class QtiRunnerNavigation
 
     private static function isAdaptive(RunnerServiceContext $context): bool
     {
-        return (($context instanceof QtiRunnerServiceContext) && $context->isAdaptive());
+        return $context instanceof QtiRunnerServiceContext && $context->isAdaptive();
     }
 
     private static function getEventManager(): EventManager
