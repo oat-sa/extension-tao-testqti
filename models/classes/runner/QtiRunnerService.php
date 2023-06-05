@@ -24,6 +24,7 @@ use common_Exception;
 use common_exception_Error;
 use common_exception_InconsistentData;
 use common_exception_InvalidArgumentType as InvalidArgumentTypeException;
+use common_exception_NotImplemented;
 use common_ext_ExtensionException;
 use common_ext_ExtensionsManager;
 use common_Logger;
@@ -96,6 +97,7 @@ use taoQtiCommon_helpers_ResultTransmissionException;
 use taoQtiCommon_helpers_ResultTransmitter;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use taoResultServer_models_classes_TraceVariable;
+use taoResultServer_models_classes_Variable;
 
 /**
  * Class QtiRunnerService
@@ -1678,11 +1680,11 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      *
      * @param QtiRunnerServiceContext $context
      * @param string $itemUri This is the item uri
-     * @param \taoResultServer_models_classes_Variable[] $metaVariables
+     * @param taoResultServer_models_classes_Variable[] $metaVariables
      * @param null $itemId The assessment item ref id (optional)
      * @return bool
      * @throws Exception
-     * @throws \common_exception_NotImplemented If the given $itemId is not the current assessment item ref
+     * @throws common_exception_NotImplemented If the given $itemId is not the current assessment item ref
      */
     public function storeVariables(
         QtiRunnerServiceContext $context,
@@ -1717,15 +1719,15 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      *
      * @param QtiRunnerServiceContext $context
      * @param string $itemUri This is the item identifier
-     * @param \taoResultServer_models_classes_Variable $metaVariable
+     * @param taoResultServer_models_classes_Variable $metaVariable
      * @param null $itemId The assessment item ref id (optional)
      * @return bool
-     * @throws \common_exception_NotImplemented If the given $itemId is not the current assessment item ref
+     * @throws common_exception_NotImplemented If the given $itemId is not the current assessment item ref
      */
     protected function storeVariable(
         QtiRunnerServiceContext $context,
         $itemUri,
-        \taoResultServer_models_classes_Variable $metaVariable,
+        taoResultServer_models_classes_Variable $metaVariable,
         $itemId = null
     ) {
         $sessionId = $context->getTestSession()->getSessionId();
@@ -1756,14 +1758,14 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param QtiRunnerServiceContext $context
      * @param null $itemId The item ref identifier
      * @return string The transmission id to store item variables
-     * @throws \common_exception_NotImplemented If the given $itemId is not the current assessment item ref
+     * @throws common_exception_NotImplemented If the given $itemId is not the current assessment item ref
      */
     protected function getTransmissionId(QtiRunnerServiceContext $context, $itemId = null)
     {
         if (is_null($itemId)) {
             $itemId = $context->getCurrentAssessmentItemRef();
         } elseif ($itemId != $context->getCurrentAssessmentItemRef()) {
-            throw new \common_exception_NotImplemented('Item variables can be stored only for the current item');
+            throw new common_exception_NotImplemented('Item variables can be stored only for the current item');
         }
 
         $sessionId = $context->getTestSession()->getSessionId();
@@ -1976,9 +1978,13 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                         try {
                             $portableElementService->setBaseUrlToPortableData($portableData);
                         } catch (PortableElementNotFoundException $e) {
-                            $this->getLogger()->warning('the portable element version does not exist in delivery server');
+                            $this->getLogger()->warning(
+                                'the portable element version does not exist in delivery server'
+                            );
                         } catch (PortableModelMissing $e) {
-                            $this->getLogger()->warning('the portable element model does not exist in delivery server');
+                            $this->getLogger()->warning(
+                                'the portable element model does not exist in delivery server'
+                            );
                         }
                     }
                 }
@@ -1988,6 +1994,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 'old delivery that does not contain the compiled portable element data in the item ' . $itemRef
             );
         }
+
         return $portableElements;
     }
 
