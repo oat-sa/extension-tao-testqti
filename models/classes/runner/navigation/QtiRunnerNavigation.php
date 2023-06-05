@@ -24,16 +24,14 @@ use common_Exception;
 use common_exception_InconsistentData;
 use common_exception_InvalidArgumentType;
 use common_exception_NotImplemented;
-use common_Logger;
 use oat\taoQtiTest\models\event\QtiMoveEvent;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use qtism\data\ExtendedAssessmentItemRef;
-use qtism\runtime\tests\AssessmentItemSession;
+use qtism\data\AssessmentSection;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\event\EventManager;
 use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\AssessmentTestSessionState;
+use qtism\runtime\tests\Route;
 
 /**
  * Class QtiRunnerNavigation
@@ -119,33 +117,54 @@ class QtiRunnerNavigation
             $session = $context->getTestSession();
             $route = $session->getRoute();
             $section = $session->getCurrentAssessmentSection();
-            $limits = $section->getTimeLimits();
 
             // As we have only one identifier for the whole adaptive section
             // it will consider a jump of section on the first item
-            if (!self::isAdaptive($context)) {
-                $isJumpOutOfSection = false;
-                if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
-                    $nextSection = $route->getRouteItemAt($nextPosition);
-                    $nextSectionId = $nextSection->getAssessmentSection()->getIdentifier();
+            if (
+                !self::isAdaptive($context)
+                && self::jumpsOutOfSection($route, $section, $nextPosition)
+                && self::isTimeLimited($section)
+            ) {
+                self::endTimedSection($session, $section);
+            }
+        }
+    }
 
-                    $isJumpOutOfSection = ($section->getIdentifier() !== $nextSectionId);
-                }
+    private static function endTimedSection(
+        AssessmentTestSession $session,
+        AssessmentSection $section
+    ): void {
+        foreach ($section->getComponentsByClassName('assessmentItemRef') as $assessmentItemRef) {
+            $itemSessions = $session->getAssessmentItemSessions($assessmentItemRef->getIdentifier());
 
-                if ($isJumpOutOfSection && $limits != null && $limits->hasMaxTime()) {
-                    $assessmentItemRefs = $section->getComponentsByClassName('assessmentItemRef');
-                    foreach ($assessmentItemRefs as $assessmentItemRef) {
-                        $itemSessions = $session->getAssessmentItemSessions($assessmentItemRef->getIdentifier());
-
-                        if ($itemSessions !== false) {
-                            foreach ($itemSessions as $itemSession) {
-                                $itemSession->endItemSession();
-                            }
-                        }
-                    }
+            if ($itemSessions !== false) {
+                foreach ($itemSessions as $itemSession) {
+                    $itemSession->endItemSession();
                 }
             }
         }
+    }
+
+    private static function jumpsOutOfSection(
+        Route $route,
+        AssessmentSection $section,
+        $nextPosition
+    ): bool {
+        if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
+            $nextSection = $route->getRouteItemAt($nextPosition);
+            $nextSectionId = $nextSection->getAssessmentSection()->getIdentifier();
+
+            return ($section->getIdentifier() !== $nextSectionId);
+        }
+
+        return false;
+    }
+
+    private static function isTimeLimited(AssessmentSection $section): bool
+    {
+        $limits = $section->getTimeLimits();
+
+        return ($limits != null) && $limits->hasMaxTime();
     }
 
     private static function isAdaptive(RunnerServiceContext $context): bool
