@@ -164,7 +164,7 @@ class QtiRunnerNavigation
     {
         $limits = $section->getTimeLimits();
 
-        return ($limits != null) && $limits->hasMaxTime();
+        return $limits != null && $limits->hasMaxTime();
     }
 
     private static function isAdaptive(RunnerServiceContext $context): bool
