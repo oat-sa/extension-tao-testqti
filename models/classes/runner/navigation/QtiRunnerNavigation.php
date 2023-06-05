@@ -82,26 +82,6 @@ class QtiRunnerNavigation
     {
         /* @var ?AssessmentTestSession $session */
         $session = $context->getTestSession();
-
-        $logger = common_Logger::singleton()->getLogger();
-        $logger->debug(sprintf('%s::move() called', self::class));
-
-        if (
-            $session instanceof AssessmentTestSession
-            && ($session->getState() == AssessmentTestSessionState::SUSPENDED)
-        ) {
-            $logger->debug(
-                sprintf('%s state is %s', self::class, $session->getState())
-            );
-            // @todo Remove this
-            // This should already be checked by the call to
-            // ProctoringRunnerService::check done from MoveService
-            //
-            // Note this does not solve the issue but breaks the UI
-            // ("An error occurred!")
-            //return false;
-        }
-
         $navigator = self::getNavigator($direction, $scope);
 
         if ($context instanceof QtiRunnerServiceContext) {

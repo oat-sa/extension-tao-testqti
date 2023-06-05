@@ -29,6 +29,7 @@ use common_ext_ExtensionsManager;
 use common_Logger;
 use common_persistence_AdvKeyValuePersistence;
 use common_persistence_KeyValuePersistence;
+use common_session_SessionManager;
 use Exception;
 use League\Flysystem\FileNotFoundException;
 use oat\libCat\result\ItemResult;
@@ -169,7 +170,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         }
 
         $itemUri = $directoryIds[0];
-        $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
+        $userDataLang = common_session_SessionManager::getSession()->getDataLanguage();
         $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[2]);
 
         if ($directory->has($userDataLang)) {
@@ -254,14 +255,14 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $testSession = $serviceContext->getTestSession();
         $sessionId = $testSession->getSessionId();
 
-        common_Logger::d("Persisting QTI Assessment Test Session '${sessionId}'...");
+        $this->getLogger()->debug("Persisting QTI Assessment Test Session '${sessionId}'...");
         $serviceContext->getStorage()->persist($testSession);
         if ($this->isTerminated($serviceContext)) {
             /** @var StorageManager $storageManager */
             $storageManager = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
             $storageManager->persist();
 
-            $userId = \common_session_SessionManager::getSession()->getUser()->getIdentifier();
+            $userId = common_session_SessionManager::getSession()->getUser()->getIdentifier();
             $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
             $eventManager->trigger(new AfterAssessmentTestSessionClosedEvent($testSession, $userId));
         }
@@ -293,10 +294,13 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $session->beginTestSession();
             $event = new TestInitEvent($session);
             $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
-            common_Logger::i(sprintf('Assessment Test Session begun. Session id: %s', $session->getSessionId()));
+
+            $this->getLogger()->info(
+                sprintf('Assessment Test Session begun. Session id: %s', $session->getSessionId())
+            );
 
             if ($context->isAdaptive()) {
-                common_Logger::t("Very first item is adaptive.");
+                $this->getLogger()->debug("Very first item is adaptive.");
                 $nextCatItemId = $context->selectAdaptiveNextItem();
                 $context->persistCurrentCatItemId($nextCatItemId);
                 $context->persistSeenCatItemIds($nextCatItemId);
@@ -657,7 +661,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $this->assertIsQtiRunnerServiceContext($context, 'getItemState');
 
         $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
+        $userUri = common_session_SessionManager::getSession()->getUserUri();
         $stateId = $this->getStateId($context, $itemRef);
         $state = is_null($userUri) ? null : $serviceService->get($userUri, $stateId);
 
@@ -684,7 +688,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $this->assertIsQtiRunnerServiceContext($context, 'setItemState');
 
         $serviceService = $this->getServiceManager()->get(StorageManager::SERVICE_ID);
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
+        $userUri = common_session_SessionManager::getSession()->getUserUri();
         $stateId = $this->getStateId($context, $itemRef);
         if (!isset($state)) {
             $state = '';
@@ -762,7 +766,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $msg .= "Session state value: " . $session->getState() . "\n";
             $msg .= "Session ID: " . $session->getSessionId() . "\n";
             $msg .= "JSON Payload: " . mb_substr(json_encode($response), 0, 1000);
-            common_Logger::e($msg);
+            $this->getLogger()->error($msg);
         }
 
         $filler = new taoQtiCommon_helpers_PciVariableFiller(
@@ -779,13 +783,13 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                         $responses->setVariable($var);
                     }
                 } catch (\OutOfRangeException $e) {
-                    common_Logger::d("Could not convert client-side value for variable '${id}'.");
+                    $this->getLogger()->debug("Could not convert client-side value for variable '${id}'.");
                 } catch (\OutOfBoundsException $e) {
-                    common_Logger::d("Could not find variable with identifier '${id}' in current item.");
+                    $this->getLogger()->debug("Could not find variable with identifier '${id}' in current item.");
                 }
             }
         } else {
-            common_Logger::e('Invalid json payload');
+            $this->getLogger()->error('Invalid json payload');
         }
 
         return $responses;
@@ -1154,7 +1158,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         /* @var TestSession $session */
         $session = $context->getTestSession();
         if ($context->isAdaptive()) {
-            common_Logger::t("Select next item before timeout");
+            $this->getLogger()->debug("Select next item before timeout");
             $context->selectAdaptiveNextItem();
         }
         try {
@@ -1193,10 +1197,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         /* @var TestSession $session */
         $session = $context->getTestSession();
         $sessionId = $session->getSessionId();
-        common_Logger::i("The user has requested termination of the test session '{$sessionId}'");
+        $this->getLogger()->info(
+            "The user has requested termination of the test session '{$sessionId}'"
+        );
 
         if ($context->isAdaptive()) {
-            common_Logger::t("Select next item before test exit");
+            $this->getLogger()->debug('Select next item before test exit');
             $context->selectAdaptiveNextItem();
         }
 
@@ -1222,16 +1228,18 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $this->assertIsQtiRunnerServiceContext($context, 'finish');
 
         $executionUri = $context->getTestExecutionUri();
-        $userUri = \common_session_SessionManager::getSession()->getUserUri();
+        $userUri = common_session_SessionManager::getSession()->getUserUri();
 
         $executionService = ServiceProxy::singleton();
         $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
 
         if ($deliveryExecution->getUserIdentifier() == $userUri) {
-            common_Logger::i("Finishing the delivery execution {$executionUri}");
+            $this->getLogger()->info("Finishing the delivery execution {$executionUri}");
             $result = $deliveryExecution->setState($finalState);
         } else {
-            common_Logger::w("Non owner {$userUri} tried to finish deliveryExecution {$executionUri}");
+            $this->getLogger()->warning(
+                "Non owner {$userUri} tried to finish deliveryExecution {$executionUri}"
+            );
             $result = false;
         }
 
@@ -1386,7 +1394,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
         $directoryIds = explode('|', $itemRef);
 
-        $userDataLang = \common_session_SessionManager::getSession()->getDataLanguage();
+        $userDataLang = common_session_SessionManager::getSession()->getDataLanguage();
 
         $directory = \tao_models_classes_service_FileStorage::singleton()->getDirectoryById($directoryIds[1]);
         // do fallback in case userlanguage is not default language
@@ -1475,36 +1483,36 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         }
         switch ($timeOutException->getCode()) {
             case AssessmentTestSessionException::ASSESSMENT_TEST_DURATION_OVERFLOW:
-                common_Logger::i('TIMEOUT: closing the assessment test session', $logContext);
+                $this->getLogger()->info('TIMEOUT: closing the assessment test session', $logContext);
                 $session->moveThroughAndEndTestSession();
                 break;
 
             case AssessmentTestSessionException::TEST_PART_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    common_Logger::i('TIMEOUT: moving to the next test part', $logContext);
+                    $this->getLogger()->info('TIMEOUT: moving to the next test part', $logContext);
                     $session->moveNextTestPart();
                 } else {
-                    common_Logger::i('TIMEOUT: closing the assessment test part', $logContext);
+                    $this->getLogger()->info('TIMEOUT: closing the assessment test part', $logContext);
                     $session->closeTestPart();
                 }
                 break;
 
             case AssessmentTestSessionException::ASSESSMENT_SECTION_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    common_Logger::i('TIMEOUT: moving to the next assessment section', $logContext);
+                    $this->getLogger()->info('TIMEOUT: moving to the next assessment section', $logContext);
                     $session->moveNextAssessmentSection();
                 } else {
-                    common_Logger::i('TIMEOUT: closing the assessment section session', $logContext);
+                    $this->getLogger()->info('TIMEOUT: closing the assessment section session', $logContext);
                     $session->closeAssessmentSection();
                 }
                 break;
 
             case AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW:
                 if ($isLinear) {
-                    common_Logger::i('TIMEOUT: moving to the next item', $logContext);
+                    $this->getLogger()->info('TIMEOUT: moving to the next item', $logContext);
                     $session->moveNextAssessmentItem();
                 } else {
-                    common_Logger::i('TIMEOUT: closing the assessment item session', $logContext);
+                    $this->getLogger()->info('TIMEOUT: closing the assessment item session', $logContext);
                     $session->closeAssessmentItem();
                 }
                 break;
@@ -1968,15 +1976,15 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                         try {
                             $portableElementService->setBaseUrlToPortableData($portableData);
                         } catch (PortableElementNotFoundException $e) {
-                            common_Logger::w('the portable element version does not exist in delivery server');
+                            $this->getLogger()->warning('the portable element version does not exist in delivery server');
                         } catch (PortableModelMissing $e) {
-                            common_Logger::w('the portable element model does not exist in delivery server');
+                            $this->getLogger()->warning('the portable element model does not exist in delivery server');
                         }
                     }
                 }
             }
         } catch (tao_models_classes_FileNotFoundException $e) {
-            common_Logger::i(
+            $this->getLogger()->info(
                 'old delivery that does not contain the compiled portable element data in the item ' . $itemRef
             );
         }
@@ -1994,12 +2002,12 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         try {
             $metadataElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::METADATA_FILE_NAME);
         } catch (tao_models_classes_FileNotFoundException $e) {
-            common_Logger::i(
+            $this->getLogger()->info(
                 'Old delivery that does not contain the compiled portable element data in the item ' . $itemRef
                 . '. Original message: ' . $e->getMessage()
             );
         } catch (Exception $e) {
-            common_Logger::w(
+            $this->getLogger()->warning(
                 'An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage()
             );
         }
