@@ -2,7 +2,9 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner;
 
+use common_ext_Extension;
 use common_ext_ExtensionsManager;
+use core_kernel_classes_Resource;
 use oat\generis\test\TestCase;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\theme\Theme;
@@ -92,7 +94,7 @@ class QtiRunnerServiceTest extends TestCase
 
     public function testGetDataWithThemeSwitcherEnabled()
     {
-        $extensionMock = $this->getMockBuilder(\common_ext_Extension::class)
+        $extensionMock = $this->getMockBuilder(common_ext_Extension::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -140,7 +142,7 @@ class QtiRunnerServiceTest extends TestCase
 
     public function testGetDataWithThemeSwitcherDisabled()
     {
-        $extensionMock = $this->getMockBuilder(\common_ext_Extension::class)
+        $extensionMock = $this->getMockBuilder(common_ext_Extension::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -351,7 +353,7 @@ class QtiRunnerServiceTest extends TestCase
             ->method('getTestSession')
             ->willReturn($testSession);
 
-        $stateMock = $this->createMock(\core_kernel_classes_Resource::class);
+        $stateMock = $this->createMock(core_kernel_classes_Resource::class);
         $stateMock
             ->method('getUri')
             ->willReturn(DeliveryExecutionInterface::STATE_PAUSED);
