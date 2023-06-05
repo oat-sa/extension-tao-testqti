@@ -125,22 +125,24 @@ class QtiRunnerNavigation
                 && self::jumpsOutOfSection($route, $section, $nextPosition)
                 && self::isTimeLimited($section)
             ) {
-                self::endTimedSection($session, $section);
+                self::endItemSessions($session, $section);
             }
         }
     }
 
-    private static function endTimedSection(
+    private static function endItemSessions(
         AssessmentTestSession $session,
         AssessmentSection $section
     ): void {
         foreach ($section->getComponentsByClassName('assessmentItemRef') as $assessmentItemRef) {
             $itemSessions = $session->getAssessmentItemSessions($assessmentItemRef->getIdentifier());
 
-            if ($itemSessions !== false) {
-                foreach ($itemSessions as $itemSession) {
-                    $itemSession->endItemSession();
-                }
+            if ($itemSessions === false) {
+                continue;
+            }
+
+            foreach ($itemSessions as $itemSession) {
+                $itemSession->endItemSession();
             }
         }
     }
