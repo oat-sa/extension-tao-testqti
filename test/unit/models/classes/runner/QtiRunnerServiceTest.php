@@ -7,15 +7,21 @@ use oat\generis\test\TestCase;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\theme\Theme;
 use oat\tao\model\theme\ThemeService;
+use oat\taoDelivery\model\execution\DeliveryExecution;
+use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
+use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
+use Psr\Log\LoggerInterface;
 use qtism\data\AssessmentTest;
 use qtism\data\ItemSessionControl;
 use qtism\data\SubmissionMode;
 use qtism\runtime\tests\AssessmentItemSession;
+use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\AssessmentTestSessionState;
 
 class QtiRunnerServiceTest extends TestCase
 {
@@ -30,12 +36,16 @@ class QtiRunnerServiceTest extends TestCase
     /** @var FeatureFlagChecker */
     private $featureFlagChecker;
 
+    /** @var LoggerInterface */
+    private $loggerMock;
+
     public function setUp(): void
     {
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+
         $this->qtiRunnerService = $this->getMockBuilder(QtiRunnerService::class)
             ->setMethods(['getTestConfig'])
-            ->getMock()
-        ;
+            ->getMock();
 
         $qtiRunnerConfigMock = $this->getMockBuilder(QtiRunnerConfig::class)->getMock();
 
@@ -43,35 +53,29 @@ class QtiRunnerServiceTest extends TestCase
             ->method('getConfig')
             ->willReturn([
                 'plugins' => [],
-            ])
-        ;
+            ]);
 
         $this->qtiRunnerService
             ->method('getTestConfig')
-            ->willReturn($qtiRunnerConfigMock)
-        ;
+            ->willReturn($qtiRunnerConfigMock);
 
         $this->extensionsManagerMock = $this->getMockBuilder(common_ext_ExtensionsManager::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $themeServiceMock = $this->getMockBuilder(ThemeService::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $themeMock = $this->getMockBuilder(Theme::class)->getMock();
 
         $themeMock
             ->method('getId')
-            ->willReturn(self::TEST_THEME_ID)
-        ;
+            ->willReturn(self::TEST_THEME_ID);
 
         $themeServiceMock
             ->method('getTheme')
-            ->willReturn($themeMock)
-        ;
+            ->willReturn($themeMock);
 
         $this->featureFlagChecker = $this->createMock(FeatureFlagChecker::class);
 
@@ -82,6 +86,8 @@ class QtiRunnerServiceTest extends TestCase
         ]);
 
         $this->qtiRunnerService->setServiceLocator($serviceLocatorMock);
+
+        $this->qtiRunnerService->setLogger($this->loggerMock);
     }
 
     public function testGetDataWithThemeSwitcherEnabled()
@@ -282,5 +288,80 @@ class QtiRunnerServiceTest extends TestCase
             ->willReturn(true);
 
         $this->assertTrue($this->qtiRunnerService->displayFeedbacks($context));
+    }
+
+    public function testMoveFailsForSuspendedSession(): void
+    {
+        if (!class_exists(TaoDeliveryServiceProxy::class)) {
+            $this->markTestSkipped('This test needs ' . TaoDeliveryServiceProxy::class);
+        }
+
+        $testSession = $this->createMock(TestSession::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+        $serviceMock = $this->createMock(TaoDeliveryServiceProxy::class);
+
+        $this->qtiRunnerService->setDeliveryExecutionService($serviceMock);
+
+        $testSession
+            ->expects($this->atLeastOnce())
+            ->method('getState')
+            ->willReturn(AssessmentTestSessionState::SUSPENDED);
+
+        $context
+            ->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $this->assertFalse(
+            $this->qtiRunnerService->move($context, 'next', 'item', 'ref')
+        );
+    }
+
+    public function testMoveFailsForPausedExecution(): void
+    {
+        if (!class_exists(TaoDeliveryServiceProxy::class)) {
+            $this->markTestSkipped('This test needs ' . TaoDeliveryServiceProxy::class);
+        }
+
+        $testSession = $this->createMock(TestSession::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+        $serviceMock = $this->createMock(TaoDeliveryServiceProxy::class);
+        $execution = $this->createMock(DeliveryExecution::class);
+
+        $this->qtiRunnerService->setDeliveryExecutionService($serviceMock);
+
+        $context
+            ->expects($this->once())
+            ->method('getTestExecutionUri')
+            ->willReturn('http://execution/uri');
+
+        $serviceMock
+            ->expects($this->once())
+            ->method('getDeliveryExecution')
+            ->with('http://execution/uri')
+            ->willReturn($execution);
+
+        $testSession
+            ->expects($this->atLeastOnce())
+            ->method('getState')
+            ->willReturn(AssessmentTestSessionState::INTERACTING);
+
+        $context
+            ->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $stateMock = $this->createMock(\core_kernel_classes_Resource::class);
+        $stateMock
+            ->method('getUri')
+            ->willReturn(DeliveryExecutionInterface::STATE_PAUSED);
+
+        $execution
+            ->method('getState')
+            ->willReturn($stateMock);
+
+        $this->assertFalse(
+            $this->qtiRunnerService->move($context, 'next', 'item', 'ref')
+        );
     }
 }

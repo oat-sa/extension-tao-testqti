@@ -21,12 +21,15 @@
 namespace oat\taoQtiTest\models\runner;
 
 use common_Exception;
+use common_exception_Error;
 use common_exception_InconsistentData;
 use common_exception_InvalidArgumentType as InvalidArgumentTypeException;
 use common_ext_ExtensionException;
+use common_ext_ExtensionsManager;
 use common_Logger;
 use common_persistence_AdvKeyValuePersistence;
 use common_persistence_KeyValuePersistence;
+use Exception;
 use League\Flysystem\FileNotFoundException;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
@@ -131,6 +134,11 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @var array
      */
     private $dataCache = [];
+
+    /**
+     * @var ?TaoDeliveryServiceProxy
+     */
+    private $deliveryExecutionService;
 
     /**
      * Get the data folder from a given item definition
@@ -1073,7 +1081,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $session = $context->getTestSession();
 
         if ($session instanceof AssessmentTestSession) {
-            $logger = common_Logger::singleton()->getLogger();
+            $logger = $this->getLogger();
             $logger->debug(sprintf('%s::move() called', self::class));
             $logger->debug(sprintf('%s session state is %s', self::class, $session->getState()));
 
@@ -1091,15 +1099,14 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
     private function isExecutionPaused(RunnerServiceContext $context): bool
     {
-        if (class_exists(TaoDeliveryServiceProxy::class)) {
-            $executionService = TaoDeliveryServiceProxy::singleton();
-
+        $executionService = $this->getDeliveryExecutionService();
+        if ($executionService !== null) {
             $execution = $executionService->getDeliveryExecution(
                 $context->getTestExecutionUri()
             );
 
             if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-                common_Logger::singleton()->getLogger()->debug(
+                $this->getLogger()->debug(
                     sprintf(
                         '%s DeliveryExecution is Paused (state=%s)',
                         self::class,
@@ -1112,6 +1119,18 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         }
 
         return false;
+    }
+
+    private function getDeliveryExecutionService(): ?TaoDeliveryServiceProxy
+    {
+        if (
+            ($this->deliveryExecutionService === null)
+            && (class_exists(TaoDeliveryServiceProxy::class))
+        ) {
+            $this->deliveryExecutionService = TaoDeliveryServiceProxy::singleton();
+        }
+
+        return $this->deliveryExecutionService;
     }
 
     /**
@@ -1358,7 +1377,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param string $itemRef
      * @return string
      * @throws common_Exception
-     * @throws \common_exception_Error
+     * @throws common_exception_Error
      * @throws InvalidArgumentTypeException
      */
     public function getItemPublicUrl(RunnerServiceContext $context, string $itemRef): string
@@ -1662,7 +1681,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      * @param \taoResultServer_models_classes_Variable[] $metaVariables
      * @param null $itemId The assessment item ref id (optional)
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      * @throws \common_exception_NotImplemented If the given $itemId is not the current assessment item ref
      */
     public function storeVariables(
@@ -1987,7 +2006,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 'Old delivery that does not contain the compiled portable element data in the item ' . $itemRef
                 . '. Original message: ' . $e->getMessage()
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             common_Logger::w(
                 'An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage()
             );
@@ -1995,10 +2014,16 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         return $metadataElements;
     }
 
+    public function setDeliveryExecutionService(
+        TaoDeliveryServiceProxy $deliveryExecutionService
+    ): void {
+        $this->deliveryExecutionService = $deliveryExecutionService;
+    }
+
     /**
      * @param $deUri
      * @param $userUri
-     * @param $storage
+     * @param StorageManager $storage
      * @return mixed
      */
     protected function deleteExecutionStates($deUri, $userUri, StorageManager $storage)
@@ -2064,7 +2089,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 $request->getDeliveryExecution(),
                 $session
             ))->getItemsRefs();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $itemsRefs = [];
         }
 
@@ -2088,8 +2113,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      */
     private function isThemeSwitcherEnabled()
     {
-        /** @var \common_ext_ExtensionsManager $extensionsManager */
-        $extensionsManager = $this->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID);
+        /** @var common_ext_ExtensionsManager $extensionsManager */
+        $extensionsManager = $this->getServiceLocator()->get(common_ext_ExtensionsManager::SERVICE_ID);
         $config = $extensionsManager->getExtensionById("taoTests")->getConfig("test_runner_plugin_registry");
 
         return array_key_exists(self::TOOL_ITEM_THEME_SWITCHER_KEY, $config)
