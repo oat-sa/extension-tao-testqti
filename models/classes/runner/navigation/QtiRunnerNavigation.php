@@ -137,12 +137,10 @@ class QtiRunnerNavigation
         foreach ($section->getComponentsByClassName('assessmentItemRef') as $assessmentItemRef) {
             $itemSessions = $session->getAssessmentItemSessions($assessmentItemRef->getIdentifier());
 
-            if ($itemSessions === false) {
-                continue;
-            }
-
-            foreach ($itemSessions as $itemSession) {
-                $itemSession->endItemSession();
+            if ($itemSessions !== false) {
+                foreach ($itemSessions as $itemSession) {
+                    $itemSession->endItemSession();
+                }
             }
         }
     }
