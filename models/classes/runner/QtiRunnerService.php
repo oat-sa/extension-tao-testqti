@@ -137,11 +137,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     private $dataCache = [];
 
     /**
-     * @var ?TaoDeliveryServiceProxy
-     */
-    //private $deliveryExecutionService;
-
-    /**
      * Get the data folder from a given item definition
      * @param string $itemRef - formatted as itemURI|publicFolderURI|privateFolderURI
      * @return array the path
