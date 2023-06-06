@@ -4,26 +4,19 @@ namespace oat\taoQtiTest\test\unit\models\classes\runner;
 
 use common_ext_Extension;
 use common_ext_ExtensionsManager;
-use core_kernel_classes_Resource;
 use oat\generis\test\TestCase;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\theme\Theme;
 use oat\tao\model\theme\ThemeService;
-use oat\taoDelivery\model\execution\DeliveryExecution;
-use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
-use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use Psr\Log\LoggerInterface;
 use qtism\data\AssessmentTest;
 use qtism\data\ItemSessionControl;
 use qtism\data\SubmissionMode;
 use qtism\runtime\tests\AssessmentItemSession;
-use qtism\runtime\tests\AssessmentTestSession;
-use qtism\runtime\tests\AssessmentTestSessionState;
 
 class QtiRunnerServiceTest extends TestCase
 {
