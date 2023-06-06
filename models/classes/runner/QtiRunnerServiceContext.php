@@ -972,11 +972,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
                 // First item in cat section.
                 if ($session->getRoute()->getPosition() !== 0) {
                     $testPart = $session->getPreviousRouteItem()->getTestPart();
-                    $moveBack = ($testPart->getNavigationMode() === NavigationMode::NONLINEAR);
+                    $moveBack = $testPart->getNavigationMode() === NavigationMode::NONLINEAR;
                 }
             } else {
                 $testPart = $session->getRoute()->current()->getTestPart();
-                $moveBack = ($testPart->getNavigationMode() === NavigationMode::NONLINEAR);
+                $moveBack = $testPart->getNavigationMode() === NavigationMode::NONLINEAR;
             }
         } else {
             $moveBack = $session->canMoveBackward();
