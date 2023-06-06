@@ -2058,56 +2058,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         return DeliveryExecution::STATE_FINISHED;
     }
 
-    private function isSessionSuspended(RunnerServiceContext $context): bool
-    {
-        $session = $context->getTestSession();
-
-        if ($session instanceof AssessmentTestSession) {
-            if ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
-                $this->getLogger()->debug(
-                    sprintf('%s DeliveryExecution is suspended', self::class)
-                );
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function isExecutionPaused(RunnerServiceContext $context): bool
-    {
-        $executionService = $this->getDeliveryExecutionService();
-
-        if ($executionService !== null) {
-            $execution = $executionService->getDeliveryExecution(
-                $context->getTestExecutionUri()
-            );
-
-            if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-                $this->getLogger()->debug(
-                    sprintf('%s DeliveryExecution is Paused', self::class)
-                );
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function getDeliveryExecutionService(): ?TaoDeliveryServiceProxy
-    {
-        if (
-            $this->deliveryExecutionService === null
-            && class_exists(TaoDeliveryServiceProxy::class)
-        ) {
-            $this->deliveryExecutionService = TaoDeliveryServiceProxy::singleton();
-        }
-
-        return $this->deliveryExecutionService;
-    }
-
     /**
      * Returns that the Theme Switcher Plugin is enabled or not
      *
