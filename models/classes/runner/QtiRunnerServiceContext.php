@@ -48,6 +48,9 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\SectionPauseService;
 use oat\taoQtiTest\models\event\SelectAdaptiveNextItemEvent;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use qtism\data\AssessmentTest;
 use qtism\data\AssessmentItemRef;
 use qtism\data\ExtendedAssessmentItemRef;
@@ -147,6 +150,8 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @var string
      */
     private $userUri;
+
+    private ?ContainerInterface $container = null;
 
     /**
      * QtiRunnerServiceContext constructor.
@@ -1168,18 +1173,31 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     }
 
     /**
-     * @throws ServiceNotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function getSectionPauseService(): SectionPauseService
     {
-        return $this->getServiceManager()->get(SectionPauseService::SERVICE_ID);
+        return $this->getPsrContainer()->get(SectionPauseService::SERVICE_ID);
+        //return $this->getServiceManager()->get(SectionPauseService::SERVICE_ID);
     }
 
     /**
-     * @throws ServiceNotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function getCatService(): CatService
     {
-        return $this->getServiceManager()->get(CatService::SERVICE_ID);
+        return $this->getPsrContainer()->get(CatService::SERVICE_ID);
+        //return $this->getServiceManager()->get(CatService::SERVICE_ID);
+    }
+
+    private function getPsrContainer(): ContainerInterface
+    {
+        if (!$this->container instanceof ContainerInterface) {
+            $this->container = $this->getServiceManager()->getContainer();
+        }
+
+        return $this->container;
     }
 }

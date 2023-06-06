@@ -46,6 +46,21 @@ use qtism\runtime\tests\Route;
  */
 class QtiRunnerNavigation
 {
+    private static ?TaoDeliveryServiceProxy $deliveryExecutionServiceProxy;
+
+    private static ?common_Logger $logger;
+
+    public static function setDeliveryExecutionServiceProxy(
+        ?TaoDeliveryServiceProxy $serviceProxy
+    ): void {
+        self::$deliveryExecutionServiceProxy = $serviceProxy;
+    }
+
+    public static function setLogger(?common_Logger $logger)
+    {
+        self::$logger = $logger;
+    }
+
     /**
      * Gets a QTI runner navigator.
      *
@@ -89,7 +104,7 @@ class QtiRunnerNavigation
         $navigator = self::getNavigator($direction, $scope);
 
         if (self::isSessionSuspended($context) || self::isExecutionPaused($context)) {
-            common_Logger::singleton()->logDebug(
+            self::getLogger()->logDebug(
                 self::class . '::move session is suspended or execution paused'
             );
 
@@ -192,7 +207,7 @@ class QtiRunnerNavigation
 
         if ($session instanceof AssessmentTestSession) {
             if ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
-                common_Logger::singleton()->logDebug(
+                self::getLogger()->logDebug(
                     sprintf('%s DeliveryExecution is suspended', self::class)
                 );
 
@@ -213,7 +228,7 @@ class QtiRunnerNavigation
             );
 
             if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-                common_Logger::singleton()->logDebug(
+                self::getLogger()->logDebug(
                     sprintf('%s DeliveryExecution is Paused', self::class)
                 );
 
@@ -226,13 +241,27 @@ class QtiRunnerNavigation
 
     private static function getDeliveryExecutionService(): ?TaoDeliveryServiceProxy
     {
+        if (isset(self::$deliveryExecutionServiceProxy)) {
+            return self::$deliveryExecutionServiceProxy;
+        }
+
         return class_exists(TaoDeliveryServiceProxy::class)
             ? TaoDeliveryServiceProxy::singleton()
             : null;
     }
 
+    private static function getLogger(): common_Logger
+    {
+        if (!self::$logger instanceof common_Logger) {
+            self::$logger = common_Logger::singleton();
+        }
+
+        return self::$logger;
+    }
+
     private static function getEventManager(): EventManager
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ServiceManager::getServiceManager()->get(EventManager::SERVICE_ID);
     }
 }

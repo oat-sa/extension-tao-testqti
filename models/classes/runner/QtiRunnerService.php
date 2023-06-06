@@ -43,7 +43,6 @@ use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\theme\ThemeService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoDelivery\model\execution\DeliveryExecution;
-use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
 use oat\taoDelivery\model\RuntimeService;
@@ -140,7 +139,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     /**
      * @var ?TaoDeliveryServiceProxy
      */
-    private $deliveryExecutionService;
+    //private $deliveryExecutionService;
 
     /**
      * Get the data folder from a given item definition
@@ -1178,7 +1177,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $executionUri = $context->getTestExecutionUri();
         $userUri = common_session_SessionManager::getSession()->getUserUri();
 
-        $executionService = ServiceProxy::singleton();
+        $executionService = TaoDeliveryServiceProxy::singleton();
         $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
 
         if ($deliveryExecution->getUserIdentifier() == $userUri) {
@@ -1965,12 +1964,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             );
         }
         return $metadataElements;
-    }
-
-    public function setDeliveryExecutionService(
-        TaoDeliveryServiceProxy $deliveryExecutionService
-    ): void {
-        $this->deliveryExecutionService = $deliveryExecutionService;
     }
 
     /**
