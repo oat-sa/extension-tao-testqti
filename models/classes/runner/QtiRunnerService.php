@@ -47,7 +47,6 @@ use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
 use oat\taoDelivery\model\RuntimeService;
-use oat\taoProctoring\model\implementation\TestSessionService as ProctoringTestSessionService;
 use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
 use oat\taoQtiItem\model\portableElement\exception\PortableModelMissing;
 use oat\taoQtiItem\model\portableElement\PortableElementService;
@@ -114,7 +113,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     /**
      * @deprecated use SERVICE_ID
      */
-    public const CONFIG_ID = 'taoQtiTest/QtiRunnerService';
+    public const CONFIG_ID = self::SERVICE_ID;
 
     public const TOOL_ITEM_THEME_SWITCHER     = 'itemThemeSwitcher';
     public const TOOL_ITEM_THEME_SWITCHER_KEY = 'taoQtiTest/runner/plugins/tools/itemThemeSwitcher/itemThemeSwitcher';
@@ -1080,56 +1079,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         }
 
         return $result;
-    }
-
-    private function isSessionSuspended(RunnerServiceContext $context): bool
-    {
-        $session = $context->getTestSession();
-
-        if ($session instanceof AssessmentTestSession) {
-            if ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
-                $this->getLogger()->debug(
-                    sprintf('%s DeliveryExecution is suspended', self::class)
-                );
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function isExecutionPaused(RunnerServiceContext $context): bool
-    {
-        $executionService = $this->getDeliveryExecutionService();
-
-        if ($executionService !== null) {
-            $execution = $executionService->getDeliveryExecution(
-                $context->getTestExecutionUri()
-            );
-
-            if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-                $this->getLogger()->debug(
-                    sprintf('%s DeliveryExecution is Paused', self::class)
-                );
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function getDeliveryExecutionService(): ?TaoDeliveryServiceProxy
-    {
-        if (
-            $this->deliveryExecutionService === null
-            && class_exists(TaoDeliveryServiceProxy::class)
-        ) {
-            $this->deliveryExecutionService = TaoDeliveryServiceProxy::singleton();
-        }
-
-        return $this->deliveryExecutionService;
     }
 
     /**
@@ -2111,6 +2060,56 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     protected function getStateAfterExit()
     {
         return DeliveryExecution::STATE_FINISHED;
+    }
+
+    private function isSessionSuspended(RunnerServiceContext $context): bool
+    {
+        $session = $context->getTestSession();
+
+        if ($session instanceof AssessmentTestSession) {
+            if ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
+                $this->getLogger()->debug(
+                    sprintf('%s DeliveryExecution is suspended', self::class)
+                );
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isExecutionPaused(RunnerServiceContext $context): bool
+    {
+        $executionService = $this->getDeliveryExecutionService();
+
+        if ($executionService !== null) {
+            $execution = $executionService->getDeliveryExecution(
+                $context->getTestExecutionUri()
+            );
+
+            if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
+                $this->getLogger()->debug(
+                    sprintf('%s DeliveryExecution is Paused', self::class)
+                );
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function getDeliveryExecutionService(): ?TaoDeliveryServiceProxy
+    {
+        if (
+            $this->deliveryExecutionService === null
+            && class_exists(TaoDeliveryServiceProxy::class)
+        ) {
+            $this->deliveryExecutionService = TaoDeliveryServiceProxy::singleton();
+        }
+
+        return $this->deliveryExecutionService;
     }
 
     /**
