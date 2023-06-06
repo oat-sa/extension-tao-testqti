@@ -150,11 +150,11 @@ class QtiRunnerNavigation
         AssessmentSection $section,
         $nextPosition
     ): bool {
-        if (($nextPosition >= 0) && ($nextPosition < $route->count())) {
+        if ($nextPosition >= 0 && $nextPosition < $route->count()) {
             $nextSection = $route->getRouteItemAt($nextPosition);
             $nextSectionId = $nextSection->getAssessmentSection()->getIdentifier();
 
-            return ($section->getIdentifier() !== $nextSectionId);
+            return $section->getIdentifier() !== $nextSectionId;
         }
 
         return false;
