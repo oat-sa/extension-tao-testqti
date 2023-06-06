@@ -1087,7 +1087,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $session = $context->getTestSession();
 
         if ($session instanceof AssessmentTestSession) {
-            if ($session->getState() == AssessmentTestSessionState::SUSPENDED) {
+            if ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
                 $this->getLogger()->debug(
                     sprintf('%s DeliveryExecution is suspended', self::class)
                 );
@@ -1102,6 +1102,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     private function isExecutionPaused(RunnerServiceContext $context): bool
     {
         $executionService = $this->getDeliveryExecutionService();
+
         if ($executionService !== null) {
             $execution = $executionService->getDeliveryExecution(
                 $context->getTestExecutionUri()
@@ -1122,8 +1123,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     private function getDeliveryExecutionService(): ?TaoDeliveryServiceProxy
     {
         if (
-            ($this->deliveryExecutionService === null)
-            && (class_exists(TaoDeliveryServiceProxy::class))
+            $this->deliveryExecutionService === null
+            && class_exists(TaoDeliveryServiceProxy::class)
         ) {
             $this->deliveryExecutionService = TaoDeliveryServiceProxy::singleton();
         }
