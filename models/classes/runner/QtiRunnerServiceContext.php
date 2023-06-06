@@ -1179,7 +1179,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     private function getSectionPauseService(): SectionPauseService
     {
         return $this->getPsrContainer()->get(SectionPauseService::SERVICE_ID);
-        //return $this->getServiceManager()->get(SectionPauseService::SERVICE_ID);
     }
 
     /**
@@ -1189,7 +1188,6 @@ class QtiRunnerServiceContext extends RunnerServiceContext
     private function getCatService(): CatService
     {
         return $this->getPsrContainer()->get(CatService::SERVICE_ID);
-        //return $this->getServiceManager()->get(CatService::SERVICE_ID);
     }
 
     private function getPsrContainer(): ContainerInterface
