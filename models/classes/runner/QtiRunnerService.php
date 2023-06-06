@@ -126,15 +126,13 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
     /**
      * The test runner config
-     * @var RunnerConfig
      */
-    protected $testConfig;
+    protected ?RunnerConfig $testConfig = null;
 
     /**
      * Use to store retrieved item data, inside the same request
-     * @var array
      */
-    private $dataCache = [];
+    private array $dataCache = [];
 
     /**
      * Get the data folder from a given item definition
@@ -321,9 +319,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      */
     public function getTestConfig()
     {
-        if (is_null($this->testConfig)) {
+        if ($this->testConfig === null) {
             $this->testConfig = $this->getServiceManager()->get(QtiRunnerConfig::SERVICE_ID);
         }
+
         return $this->testConfig;
     }
 

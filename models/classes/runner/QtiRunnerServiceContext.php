@@ -43,7 +43,6 @@ use oat\taoQtiTest\models\CompilationDataService;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
 use oat\taoQtiTest\models\runner\session\TestSession;
-use oat\taoQtiTest\models\SessionStateService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\SectionPauseService;
@@ -57,6 +56,7 @@ use qtism\data\ExtendedAssessmentItemRef;
 use qtism\data\NavigationMode;
 use qtism\runtime\storage\binary\AbstractQtiBinaryStorage;
 use qtism\runtime\storage\binary\BinaryAssessmentTestSeeker;
+use qtism\runtime\storage\common\StorageException;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use qtism\runtime\tests\RouteItem;
@@ -86,70 +86,54 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 {
     /**
      * The session storage
-     * @var AbstractQtiBinaryStorage
      */
-    protected $storage;
+    protected ?AbstractQtiBinaryStorage $storage = null;
 
-    /**
-     * @var taoQtiTest_helpers_SessionManager
-     */
-    protected $sessionManager;
+    protected ?taoQtiTest_helpers_SessionManager $sessionManager = null;
 
     /**
      * The assessment test definition
-     * @var AssessmentTest
      */
-    protected $testDefinition;
+    protected ?AssessmentTest $testDefinition = null;
 
     /**
      * The path of the compilation directory.
      *
      * @var tao_models_classes_service_StorageDirectory[]
      */
-    protected $compilationDirectory;
+    protected ?array $compilationDirectory = null;
 
     /**
-     * The meta data about the test definition being executed.
-     *
-     * @var array
+     * The metadata about the test definition being executed.
      */
-    private $testMeta;
+    private ?array $testMeta = null;
 
     /**
      * The index of compiled items.
-     *
-     * @var QtiTestCompilerIndex
      */
-    private $itemIndex;
+    private QtiTestCompilerIndex $itemIndex;
 
     /**
      * The URI of the assessment test
-     * @var string
      */
-    protected $testDefinitionUri;
+    protected string $testDefinitionUri;
 
     /**
      * The URI of the compiled delivery
-     * @var string
      */
-    protected $testCompilationUri;
+    protected string $testCompilationUri;
 
     /**
      * The URI of the delivery execution
-     * @var string
      */
-    protected $testExecutionUri;
+    protected string $testExecutionUri;
 
     /**
      * Whether we are in synchronization mode
-     * @var boolean
      */
-    private $syncingMode = false;
+    private bool $syncingMode = false;
 
-    /**
-     * @var string
-     */
-    private $userUri;
+    private ?string $userUri;
 
     private ?ContainerInterface $container = null;
 
@@ -160,8 +144,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
      * @param string $testCompilationUri
      * @param string $testExecutionUri
      */
-    public function __construct($testDefinitionUri, $testCompilationUri, $testExecutionUri)
-    {
+    public function __construct(
+        string $testDefinitionUri,
+        string $testCompilationUri,
+        string $testExecutionUri
+    ) {
         $this->testDefinitionUri = $testDefinitionUri;
         $this->testCompilationUri = $testCompilationUri;
         $this->testExecutionUri = $testExecutionUri;
@@ -200,6 +187,9 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * Loads the storage
+     *
+     * @throws ServiceNotFoundException
+     * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_ext_ExtensionException
      */
@@ -222,7 +212,11 @@ class QtiRunnerServiceContext extends RunnerServiceContext
 
     /**
      * Loads the test session
+     *
+     * @throws StorageException
      * @throws common_exception_Error
+     * @throws common_exception_InvalidArgumentType
+     * @throws common_ext_ExtensionException
      */
     protected function initTestSession()
     {
