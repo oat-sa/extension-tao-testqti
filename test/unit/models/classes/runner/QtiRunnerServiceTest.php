@@ -22,17 +22,10 @@ class QtiRunnerServiceTest extends TestCase
 {
     public const TEST_THEME_ID = 'test';
 
-    /** @var QtiRunnerService */
-    private $qtiRunnerService;
-
-    /** @var common_ext_ExtensionsManager */
-    private $extensionsManagerMock;
-
-    /** @var FeatureFlagChecker */
-    private $featureFlagChecker;
-
-    /** @var LoggerInterface */
-    private $loggerMock;
+    private QtiRunnerService $qtiRunnerService;
+    private common_ext_ExtensionsManager $extensionsManagerMock;
+    private FeatureFlagChecker $featureFlagChecker;
+    private LoggerInterface $loggerMock;
 
     public function setUp(): void
     {
