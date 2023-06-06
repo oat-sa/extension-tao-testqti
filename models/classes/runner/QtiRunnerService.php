@@ -1063,10 +1063,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
     {
         $this->assertIsQtiRunnerServiceContext($context, __FUNCTION__);
 
-        if ($this->isSessionSuspended($context) || $this->isExecutionPaused($context)) {
-            return false;
-        }
-
         $result = true;
 
         try {

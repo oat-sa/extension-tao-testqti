@@ -24,13 +24,18 @@ use common_Exception;
 use common_exception_InconsistentData;
 use common_exception_InvalidArgumentType;
 use common_exception_NotImplemented;
+use common_Logger;
+use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
+use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
 use oat\taoQtiTest\models\event\QtiMoveEvent;
+use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use qtism\data\AssessmentSection;
 use oat\oatbox\service\ServiceManager;
 use oat\oatbox\event\EventManager;
 use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Route;
 
 /**
@@ -71,6 +76,7 @@ class QtiRunnerNavigation
      * @param RunnerServiceContext $context
      * @param integer $ref
      * @return boolean
+     * @throws QtiRunnerPausedException
      * @throws common_Exception
      * @throws common_exception_InvalidArgumentType
      * @throws common_exception_InconsistentData
@@ -81,6 +87,14 @@ class QtiRunnerNavigation
         /* @var ?AssessmentTestSession $session */
         $session = $context->getTestSession();
         $navigator = self::getNavigator($direction, $scope);
+
+        if (self::isSessionSuspended($context) || self::isExecutionPaused($context)) {
+            common_Logger::singleton()->logDebug(
+                self::class . '::move session is suspended or execution paused'
+            );
+
+            throw new QtiRunnerPausedException();
+        }
 
         if ($context instanceof QtiRunnerServiceContext) {
             $from = $session->isRunning() ? $session->getRoute()->current() : null;
@@ -170,6 +184,51 @@ class QtiRunnerNavigation
     private static function isAdaptive(RunnerServiceContext $context): bool
     {
         return $context instanceof QtiRunnerServiceContext && $context->isAdaptive();
+    }
+
+    private static function isSessionSuspended(RunnerServiceContext $context): bool
+    {
+        $session = $context->getTestSession();
+
+        if ($session instanceof AssessmentTestSession) {
+            if ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
+                common_Logger::singleton()->logDebug(
+                    sprintf('%s DeliveryExecution is suspended', self::class)
+                );
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static function isExecutionPaused(RunnerServiceContext $context): bool
+    {
+        $executionService = self::getDeliveryExecutionService();
+
+        if ($executionService !== null) {
+            $execution = $executionService->getDeliveryExecution(
+                $context->getTestExecutionUri()
+            );
+
+            if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
+                common_Logger::singleton()->logDebug(
+                    sprintf('%s DeliveryExecution is Paused', self::class)
+                );
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static function getDeliveryExecutionService(): ?TaoDeliveryServiceProxy
+    {
+        return class_exists(TaoDeliveryServiceProxy::class)
+            ? TaoDeliveryServiceProxy::singleton()
+            : null;
     }
 
     private static function getEventManager(): EventManager
