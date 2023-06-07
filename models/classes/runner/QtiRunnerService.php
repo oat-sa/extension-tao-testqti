@@ -748,7 +748,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      */
     public function parsesItemResponse(RunnerServiceContext $context, $itemRef, $response)
     {
-        $this->assertIsQtiRunnerServiceContext($context, 'parsesItemResponse');
+        $this->assertIsQtiRunnerServiceContext($context, 'storeItemResponse');
 
         /** @var TestSession $session */
         $session = $context->getTestSession();
@@ -1054,7 +1054,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      */
     public function move(RunnerServiceContext $context, $direction, $scope, $ref)
     {
-        $this->assertIsQtiRunnerServiceContext($context, __FUNCTION__);
+        $this->assertIsQtiRunnerServiceContext($context, 'move');
 
         $result = true;
 
