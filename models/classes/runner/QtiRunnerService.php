@@ -798,7 +798,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      */
     public function emptyResponse(RunnerServiceContext $context, $responses)
     {
-        $this->assertIsQtiRunnerServiceContext($context, 'emptyResponse');
+        $this->assertIsQtiRunnerServiceContext($context, 'storeItemResponse');
 
         $similar = 0;
 
