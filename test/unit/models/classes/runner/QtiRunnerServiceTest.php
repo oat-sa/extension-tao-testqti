@@ -2,6 +2,7 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner;
 
+use common_ext_Extension;
 use common_ext_ExtensionsManager;
 use oat\generis\test\TestCase;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
@@ -10,8 +11,8 @@ use oat\tao\model\theme\ThemeService;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
+use Psr\Log\LoggerInterface;
 use qtism\data\AssessmentTest;
 use qtism\data\ItemSessionControl;
 use qtism\data\SubmissionMode;
@@ -21,21 +22,18 @@ class QtiRunnerServiceTest extends TestCase
 {
     public const TEST_THEME_ID = 'test';
 
-    /** @var QtiRunnerService */
-    private $qtiRunnerService;
-
-    /** @var common_ext_ExtensionsManager */
-    private $extensionsManagerMock;
-
-    /** @var FeatureFlagChecker */
-    private $featureFlagChecker;
+    private QtiRunnerService $qtiRunnerService;
+    private common_ext_ExtensionsManager $extensionsManagerMock;
+    private FeatureFlagChecker $featureFlagChecker;
+    private LoggerInterface $loggerMock;
 
     public function setUp(): void
     {
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+
         $this->qtiRunnerService = $this->getMockBuilder(QtiRunnerService::class)
             ->setMethods(['getTestConfig'])
-            ->getMock()
-        ;
+            ->getMock();
 
         $qtiRunnerConfigMock = $this->getMockBuilder(QtiRunnerConfig::class)->getMock();
 
@@ -43,35 +41,29 @@ class QtiRunnerServiceTest extends TestCase
             ->method('getConfig')
             ->willReturn([
                 'plugins' => [],
-            ])
-        ;
+            ]);
 
         $this->qtiRunnerService
             ->method('getTestConfig')
-            ->willReturn($qtiRunnerConfigMock)
-        ;
+            ->willReturn($qtiRunnerConfigMock);
 
         $this->extensionsManagerMock = $this->getMockBuilder(common_ext_ExtensionsManager::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $themeServiceMock = $this->getMockBuilder(ThemeService::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $themeMock = $this->getMockBuilder(Theme::class)->getMock();
 
         $themeMock
             ->method('getId')
-            ->willReturn(self::TEST_THEME_ID)
-        ;
+            ->willReturn(self::TEST_THEME_ID);
 
         $themeServiceMock
             ->method('getTheme')
-            ->willReturn($themeMock)
-        ;
+            ->willReturn($themeMock);
 
         $this->featureFlagChecker = $this->createMock(FeatureFlagChecker::class);
 
@@ -82,11 +74,13 @@ class QtiRunnerServiceTest extends TestCase
         ]);
 
         $this->qtiRunnerService->setServiceLocator($serviceLocatorMock);
+
+        $this->qtiRunnerService->setLogger($this->loggerMock);
     }
 
     public function testGetDataWithThemeSwitcherEnabled()
     {
-        $extensionMock = $this->getMockBuilder(\common_ext_Extension::class)
+        $extensionMock = $this->getMockBuilder(common_ext_Extension::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -134,7 +128,7 @@ class QtiRunnerServiceTest extends TestCase
 
     public function testGetDataWithThemeSwitcherDisabled()
     {
-        $extensionMock = $this->getMockBuilder(\common_ext_Extension::class)
+        $extensionMock = $this->getMockBuilder(common_ext_Extension::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
