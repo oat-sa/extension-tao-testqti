@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint146\n"
-"PO-Revision-Date: 2021-01-20T12:36:08\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2023-06-14 15:57\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: pt-PT\n"
+"Language: pt\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: pt-PT\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Portuguese\n"
 
 msgid "%s to answer %s"
 msgstr ""
@@ -29,7 +36,7 @@ msgid "A QTI Test must contain at least one QTI Item to be compiled. None found.
 msgstr ""
 
 msgid "A qti testpackage"
-msgstr "Pacote de teste QTI"
+msgstr ""
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr ""
@@ -59,7 +66,7 @@ msgid "Add selected item(s) here."
 msgstr ""
 
 msgid "Add the source file"
-msgstr "Adicionar ficheiro font"
+msgstr ""
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
 msgstr ""
@@ -143,16 +150,16 @@ msgid "An invisible section with a parent that is subject to shuffling can speci
 msgstr ""
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr "Um item envolvido no teste não pode ser lido ou não está em conformidade com QTI"
+msgstr ""
 
 msgid "An item involved in the test cannot be written."
-msgstr "Um item envolvido no teste não pode ser escrito"
+msgstr ""
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
 msgstr ""
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr "Um erro desconhecido ocorreu quando compilava teste QTI '%s'."
+msgstr ""
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr ""
@@ -272,7 +279,7 @@ msgid "Click to speak"
 msgstr ""
 
 msgid "Close"
-msgstr ""
+msgstr "Fechar"
 
 msgid "Close Magnifier"
 msgstr ""
@@ -370,7 +377,7 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr ""
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr ""
 
 msgid "Download"
@@ -419,10 +426,10 @@ msgid "Enter a custom category"
 msgstr ""
 
 msgid "Error"
-msgstr "Erro"
+msgstr ""
 
 msgid "Error during file import"
-msgstr "Erro durante a importação do ficheiro"
+msgstr ""
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
@@ -561,7 +568,7 @@ msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
-msgstr "Importar"
+msgstr ""
 
 msgid "Import a QTI/APIP Content Package"
 msgstr ""
@@ -588,7 +595,7 @@ msgid "Inconsistency at line %1d:"
 msgstr ""
 
 msgid "Individual"
-msgstr "Individual"
+msgstr ""
 
 msgid "Informational Item Usage"
 msgstr ""
@@ -672,7 +679,7 @@ msgid "Line Reader"
 msgstr ""
 
 msgid "Linear"
-msgstr "Linear"
+msgstr ""
 
 msgid "Link durations to activate the guided navigation"
 msgstr ""
@@ -703,7 +710,7 @@ msgstr ""
 
 #, tao-public
 msgid "Manage tests"
-msgstr ""
+msgstr "Gerir testes"
 
 msgid "Manage Tests"
 msgstr ""
@@ -762,7 +769,7 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \\'id\\'"
 msgstr ""
 
 msgid "Missed test package file"
@@ -772,7 +779,7 @@ msgid "Missing required configuration option %s"
 msgstr ""
 
 msgid "Move"
-msgstr ""
+msgstr "Mover"
 
 msgid "Move Down"
 msgstr ""
@@ -823,7 +830,7 @@ msgid "No file found at location \"%s\"."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr "Não tem mais tentativas para o item '%s'"
+msgstr ""
 
 msgid "no outcome declaration found"
 msgstr ""
@@ -835,7 +842,7 @@ msgid "No reference to any IMS QTI Item found."
 msgstr ""
 
 msgid "Non Linear"
-msgstr "Não linear"
+msgstr ""
 
 msgid "None"
 msgstr ""
@@ -1033,7 +1040,7 @@ msgid "Rubric Blocks"
 msgstr ""
 
 msgid "Save"
-msgstr "Guardar"
+msgstr ""
 
 msgid "Saved"
 msgstr ""
@@ -1138,10 +1145,10 @@ msgid "Show/Hide the review screen"
 msgstr ""
 
 msgid "Shuffle"
-msgstr "Baralhar"
+msgstr ""
 
 msgid "Simultaneous"
-msgstr "Simultâneo"
+msgstr ""
 
 msgid "Skip"
 msgstr ""
@@ -1222,7 +1229,7 @@ msgid "technical"
 msgstr ""
 
 msgid "Test"
-msgstr "Teste"
+msgstr ""
 
 msgid "Test constructor"
 msgstr ""
@@ -1352,13 +1359,13 @@ msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None f
 msgstr ""
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr "O teste QTI não pode ser carregado correctamente."
+msgstr ""
 
 msgid "The QTI Test XML or one of its dependencies is malformed or empty."
 msgstr ""
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr "O teste QTI-XML não pode ser escrito correctamente."
+msgstr ""
 
 msgid "The reference."
 msgstr ""
