@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint146\n"
-"PO-Revision-Date: 2021-01-20T12:36:07\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2023-06-14 15:57\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: lt-LT\n"
+"Language: lt\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: lt-LT\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: lt\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Lithuanian\n"
 
 msgid "%s to answer %s"
 msgstr ""
@@ -23,136 +30,136 @@ msgid "(Visual) Highlight Text"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr "QTI Elementas dalyvaujantis QTI Teste '%s' negali būti surinktas."
+msgstr ""
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr "QTI Testas privalo turėti bent vieną QTI Elementą, kad būti surinktas. Niekas nebuvo surasta."
+msgstr ""
 
 msgid "A qti testpackage"
-msgstr "QTI testų paketas"
+msgstr ""
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr "Išorinio resurso nurodyto QTI teste „%s“ nepavyko atkurti."
+msgstr ""
 
 msgid "A response to every question in this item is required."
-msgstr "Atsakymas kiekvienam klausimui šitam elementui yra privalomas!"
+msgstr ""
 
 msgid "A response to this item is required."
-msgstr "Turite pateikti bent vieną atsakymą."
+msgstr ""
 
 msgid "A valid response to this item is required."
-msgstr "Pasitikrinkite ar teisingai įvedėte atsakymą."
+msgstr ""
 
 msgid "A visible section is one that is identifiable by the candidate."
-msgstr "Matomas skyrius yra kandidatui atpažįstamas."
+msgstr ""
 
 msgid "Activated"
-msgstr "Aktyvuota"
+msgstr ""
 
 msgid "add a new weight"
-msgstr "pridėti naują svorį"
+msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr "Pridėti ZIP failą turintį QTI/APIP testus ir elementus"
+msgstr ""
 
 msgid "Add selected item(s) here."
-msgstr "Įkelkite pažymėtus klausimus šioje vietoje"
+msgstr ""
 
 msgid "Add the source file"
-msgstr "Pridėti šaltinio failą."
+msgstr ""
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr "Po to, kai užbaigsite šį skyrių, bus neįmanoma grįžti atgal į šį skyrių, kad padaryti pakeitimus. Ar jūs tikrai norite užbaigti šį skyrių?"
+msgstr ""
 
 msgid "All"
-msgstr "Visi"
+msgstr ""
 
 msgid "Allow Comment"
-msgstr "Leisti Komentuoti"
+msgstr ""
 
 msgid "Allow Review"
-msgstr "Leisti Apžvalgą"
+msgstr ""
 
 msgid "Allow Section Skipping"
-msgstr "Leisti Praleisti Skyrių"
+msgstr ""
 
 msgid "Allow Skipping"
-msgstr "Leisti Praleidimą"
+msgstr ""
 
 msgid "Allow skipping of the current section."
-msgstr "Leisti galimybę praleisti dabartinį skyrių."
+msgstr ""
 
 msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
 msgstr ""
 
 msgid "Allow the candidate to review his answers."
-msgstr "Leisti kandidatui peržiūrėti savo atsakymus."
+msgstr ""
 
 msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
-msgstr "Leisti testo laikytojui eliminuoti / perbraukti atsakymus pasirinkimo užduotyse."
+msgstr ""
 
 msgid "Allow the test-taker to highlight parts of the item text."
-msgstr "Leisti testo laikytojui paryškinti dalis elemento tekste."
+msgstr ""
 
 msgid "Allow the test-taker to mask and unmask answers in choice interactions."
-msgstr "Leisti testo laikytojui slėpti ir rodyti atsakymus pasirinkimo užduotyse."
+msgstr ""
 
 msgid "Allow the test-taker to mask parts of the item with a movable mask."
-msgstr "Leisti testo laikytojui paslėpti testo dalis su perkeliama kauke."
+msgstr ""
 
 msgid "Allow the test-taker to use a basic calculator."
-msgstr "Leisti testo laikytojui naudoti paprastą skaičiuotuvą."
+msgstr ""
 
 msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
-msgstr "Leisti testo laikytojui naudotis skaičiuotuvu atsižvelgiant į veiklos tvarką (BODMAS)."
+msgstr ""
 
 msgid "Allow the test-taker to use a movable magnifier tool."
-msgstr "Leisti testo laikytojui naudoti perkeliamą didintuvo įrankį."
+msgstr ""
 
 msgid "Allow the test-taker to use a scientific calculator."
-msgstr "Leisti testo laikytojui naudotis moksliniu skaičiuotuvu."
+msgstr ""
 
 msgid "Allow the test-taker to visually isolate a line of text."
-msgstr "Leisti testo laikytojui vaizdiškai izoliuoti teksto liniją."
+msgstr ""
 
 msgid "Allows Test-taker to zoom in and out the item content."
-msgstr "Leisti Testo laikytojui priartinti ir atitolinti elemento turinį."
+msgstr ""
 
 msgid "Also compute the score per categories"
-msgstr "Taip pat apskaičiuoti balus kategorijose"
+msgstr ""
 
 msgid "An error occured while retrieving items"
-msgstr "Klaida įvyko gaunant elementus"
+msgstr ""
 
 msgid "An error occurred during results submission. Please retry."
-msgstr "Įvyko klaida pateikiant rezultatus. Prašome bandyti dar kartą."
+msgstr ""
 
 msgid "An error occurred during the test initialization!"
-msgstr "Įvyko klaida testo paleidimo metu!"
+msgstr ""
 
 msgid "An error occurred during the test, please content your administrator."
-msgstr "Įvyko klaida testo metu, prašome pranešti jūsų administratorių."
+msgstr ""
 
 msgid "An error occurred!"
-msgstr "Įvyko klaida!"
+msgstr ""
 
 msgid "An error occurs, please contact your administrator"
-msgstr "Įvyko klaida, praneškite jūsų administratoriui"
+msgstr ""
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
 msgstr ""
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr "Elementas dalyvaujantis teste negali būti nuskaitytas arba yra neatitinka QTI standarto."
+msgstr ""
 
 msgid "An item involved in the test cannot be written."
-msgstr "Elementas dalyvaujantis teste negali būti rašomas."
+msgstr ""
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr "Įvyko nežinoma klaida sukompiliavus „%s“ QTI Testą."
+msgstr ""
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr "Įvyko nežinoma klaida kompiliuojant „%s“ QTI Testą."
+msgstr ""
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr ""
@@ -161,40 +168,40 @@ msgid "and"
 msgstr ""
 
 msgid "and flagged %s of them"
-msgstr "ir pažymėti %s iš jų"
+msgstr ""
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr "ir jūs pažymėjote %s elementą(-us) kuriuos galite apžvelgti"
+msgstr ""
 
 msgid "Answer Eliminator"
-msgstr "Atsakymų Eliminavimas"
+msgstr ""
 
 msgid "Answer Masking"
-msgstr "Atsakymų Paslėpimas"
+msgstr ""
 
 msgid "Answered"
-msgstr "Atsakyta"
+msgstr ""
 
 msgid "APIP Text To Speech"
 msgstr ""
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
-msgstr "Ar jūs tikrai norite išvalyti atsakymus ir eiti į sekantį elementą? Jūs negalėsite grįžti atgal ir pateikti atsakymą."
+msgstr ""
 
 msgid "Are you sure you want to end the test?"
-msgstr "Ar jūs tikrai norite užbaigti darbą?"
+msgstr "Ar jūs tikrai norite užbaigti testą?"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
-msgstr "Ar jūs tikrai norite eiti į sekantį elementą? Jūs negalėsite grįžti atgal ir pakeisti atsakymą."
+msgstr ""
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
-msgstr "Ar jūs tikrai norite eiti į sekantį elementą? Jūs negalėsite grįžti atgal ir pateikti atsakymą."
+msgstr ""
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back."
-msgstr "Ar jūs tikrai norite eiti į sekantį elementą? Jūs negalėsite grįžti atgal."
+msgstr ""
 
 msgid "Area Masking"
-msgstr "Ploto Maskavimas"
+msgstr ""
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
 msgstr ""
@@ -206,10 +213,10 @@ msgid "At least one mandatory parameter was required but found missing in your r
 msgstr ""
 
 msgid "Author"
-msgstr "Autorius"
+msgstr ""
 
 msgid "Auxiliary file not found at location \"%s\"."
-msgstr "Būtinas failas nebuvo rastas \"%s\" vietoje."
+msgstr ""
 
 msgid "Black on Cream"
 msgstr ""
@@ -224,97 +231,97 @@ msgid "Black on White"
 msgstr ""
 
 msgid "Calculator"
-msgstr "Skaičiuotuvas"
+msgstr ""
 
 msgid "Calculator BODMAS"
-msgstr "Skaičiuotuvas BODMAS"
+msgstr ""
 
 msgid "Can not playback media file!"
 msgstr ""
 
 msgid "CANCEL"
-msgstr "ATŠAUKTI"
+msgstr ""
 
 msgid "Cancel"
 msgstr "Atšaukti"
 
 msgid "Candidate"
-msgstr "Kandidatas"
+msgstr ""
 
 msgid "Cardinality"
-msgstr "Kardinalumas"
+msgstr ""
 
 msgid "Categories"
-msgstr "Kategorijos"
+msgstr ""
 
 msgid "Category score"
-msgstr "Kategorijos balai"
+msgstr ""
 
 msgid "Change the current color preset"
-msgstr "Pakeisti dabartinę spalvą"
+msgstr ""
 
 msgid "Class"
-msgstr "Klasė"
+msgstr ""
 
 msgid "Class successfully created."
 msgstr "Klasė sėkmingai sukurta."
 
 msgid "Clear all active highlights"
-msgstr "Pašalinti visus aktyvius paryškinimus."
+msgstr ""
 
 msgid "Clear Highlights"
-msgstr "Pašalinti Paryškinimus."
+msgstr ""
 
-msgid "Click \"%s\" to continue."
+msgid "Click \"%s\" to continue"
 msgstr ""
 
 msgid "Click to speak"
-msgstr "Spausti kad kalbėti"
-
-msgid "Close"
 msgstr ""
 
+msgid "Close"
+msgstr "Uždaryti"
+
 msgid "Close Magnifier"
-msgstr "Uždaryti Didintuvą"
+msgstr ""
 
 msgid "Close the mask"
-msgstr "Uždaryti paslėpimus"
+msgstr ""
 
 msgid "Close this Section"
-msgstr "Uždaryti šį Skyrių"
+msgstr ""
 
 msgid "Collapse the review panel"
-msgstr "Suskleisti apžvalgos skydelį"
+msgstr ""
 
 msgid "Comment"
-msgstr "Komentaras"
+msgstr ""
 
 msgid "Completed items"
-msgstr "Atlikti elementai"
+msgstr ""
 
 msgid "Connected to server"
-msgstr "Prisijungta prie serverio"
+msgstr ""
 
 msgid "CONTINUE TO THE NEXT SECTION"
 msgstr ""
 
 msgid "Contrast"
-msgstr "Kontrastas"
+msgstr ""
 
 msgid "Controls the contribution of an individual item score to the overall test score."
-msgstr "Valdo dalyvavimą individualiam elemento įvertinimui visuotinam testo įvertinimui."
+msgstr ""
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
-msgstr "Valdomas maksimalus laikymų kiekis. 0 reiškia neribojamą."
+msgstr ""
 
 msgid "Covers parts of the item"
-msgstr "Uždengia dalis elemento"
+msgstr ""
 
 msgid "Custom"
-msgstr "Pasirinktina"
+msgstr ""
 
 msgid "custom categories"
-msgstr "pasirinktinos kategorijos"
+msgstr ""
 
 msgid "Custom outcome processing. No changes will be made to the existing rules."
 msgstr ""
@@ -326,51 +333,51 @@ msgid "Cut score (pass ratio)"
 msgstr ""
 
 msgid "Disable validation"
-msgstr "Išjungti validavimą"
+msgstr ""
 
 msgid "Disconnected from server"
-msgstr "Atsijungta nuo serverio"
+msgstr ""
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
-msgstr "Rodyti įspėjimą prieš testo laikytojui baigiant testo dalį, kai likę neatsakytų klausimų arba pažymėta atlitki apžvalgą."
+msgstr ""
 
 msgid "Display a warning before the test-taker ends the test part."
-msgstr "Rodyti įspėjimą prieš testo laikytojui baigiant testo dalį."
+msgstr ""
 
 msgid "Display a warning before the test-taker ends the test."
-msgstr "Rodyti įspėjimą prieš testo laikytojui baigiant testą."
+msgstr ""
 
 msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
-msgstr "Rodyti įspėjimą prieš testo laikytojui praleidžiant skyrių. Reikalingas Skyriaus Praleidimo pasirinkimas."
+msgstr ""
 
 msgid "Display End Test Warning"
-msgstr "Rodyti Testo Baigimo Įspėjimą"
+msgstr ""
 
 msgid "Display Next Part Warning"
-msgstr "Įspėti, kad pereinama į kitą testo dalį"
+msgstr ""
 
 msgid "Display Next Section Warning"
-msgstr "Įspėti, kad pereinama į kitą testo dalies skyrių"
+msgstr ""
 
 msgid "Display Unanswered Warning"
-msgstr "Rodyti Neatsakytų Klausimų Įspėjimą"
+msgstr ""
 
 msgid "Displayed label"
-msgstr "Rodomas pavadinimas"
+msgstr ""
 
 msgid "Displays a customisable magnifier"
-msgstr "Didinimo įrankis"
+msgstr ""
 
 msgid "Do not flag the current item for later review"
-msgstr "Nežymėti šio elemento vėlesnei apžvalgai"
+msgstr ""
 
 msgid "Do not rename it."
 msgstr ""
 
 msgid "Do not show alert on timeout"
-msgstr "Nėrodyti įspėjimo pasibaigus laikui"
+msgstr ""
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr ""
 
 msgid "Download"
@@ -380,117 +387,116 @@ msgid "Download the pupil responses and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
-msgstr "Eliminuoti pasirinkimus"
+msgstr ""
 
 msgid "Enable Mark for Review"
 msgstr ""
 
 msgid "Enable mark for review of items. Requires the Review Screen option."
-msgstr "Įgalinti žymėjimą elementai apžvalgai. Reikalingas Apžvalgos Ekrano pasirinkimas."
+msgstr ""
 
 msgid "Enable Review Screen"
-msgstr "Įjungti Ekrano Apžvalgą"
+msgstr ""
 
 msgid "Enable selection"
-msgstr "Įjungti pasirinktus"
+msgstr ""
 
 msgid "Enable Skipping Ahead"
-msgstr "Įgalinti praleidimą į priekį"
+msgstr ""
 
 msgid "Enable text to speech"
 msgstr ""
 
 msgid "Enable the item review screen / navigator."
-msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
+msgstr ""
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
-msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
+msgstr ""
 
 msgid "End test"
-msgstr "Baigti darbą"
+msgstr ""
 
 msgid "End Test"
-msgstr "Baigti darbą"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
 
 msgid "Enter a custom category"
-msgstr "Įvesti pasirinktiną kategoriją"
+msgstr ""
 
 msgid "Error"
-msgstr "Klaida"
+msgstr ""
 
 msgid "Error during file import"
-msgstr "Klaida failo importavimo metu"
+msgstr ""
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr "Rasta klaida IMS QTI Teste:\n"
-"%s"
+msgstr ""
 
 msgid "Expand the review panel"
-msgstr "Praplėsti apžvalgos skydelį"
+msgstr ""
 
 msgid "Export failed for the test \"%s"
-msgstr "Nepavyko testo \"%s eksportavimas"
+msgstr ""
 
 msgid "Export metadata"
 msgstr "Eksportuoti metaduomenis"
 
 msgid "Export QTI 2.1 Test Package"
-msgstr "Eksportuoti QTI 2.1 Testų Paketą"
+msgstr ""
 
 msgid "Export QTI 2.2 Test Package"
-msgstr "Eksportuoti QTI 2.2 Testų Paketą"
+msgstr ""
 
 msgid "Export successful for the test \"%s"
-msgstr "Pavyko testo \"%s eksportavimas"
+msgstr ""
 
 msgid "Feedback block"
-msgstr "Atsiliepimo blokas"
+msgstr ""
 
 msgid "File name"
 msgstr "Failo pavadinimas"
 
 msgid "File not found"
-msgstr "Failas nerastas"
+msgstr ""
 
 msgid "File not found!"
-msgstr "Failas nerastas!"
+msgstr ""
 
 msgid "Filter"
 msgstr "Filtras"
 
 msgid "Fixed"
-msgstr "Pastovus"
+msgstr ""
 
 msgid "Fixed position in a shuffled the selection."
-msgstr "Pastovi vieta maišant pasirinkimus."
+msgstr ""
 
 msgid "Flag for Review"
-msgstr "Pažymėti"
+msgstr ""
 
 msgid "Flag the current item for later review"
-msgstr "Pažymėti dabartinį klausimą vėlesniam peržiūrėjimui"
+msgstr ""
 
 msgid "Flagged"
-msgstr "Pažymėta"
+msgstr ""
 
 msgid "Flagged for review"
 msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
-msgstr "Priversti elementą būti informaciniu ir nebūti atsižvelgtam atsakytų / neatsakytų ir pažymėtų skaičiuoklėje."
+msgstr ""
 
 msgid "Go to next item"
-msgstr "Eiti į sekantį elementą"
+msgstr ""
 
 msgid "Go to the current question"
 msgstr ""
 
 msgid "Go to the next item?"
-msgstr "Eiti į sekantį elementą?"
+msgstr ""
 
 msgid "Go to the next question"
 msgstr ""
@@ -505,49 +511,49 @@ msgid "Gray on Green"
 msgstr ""
 
 msgid "Hide Review"
-msgstr "Slėpti apžvalgą"
+msgstr ""
 
 msgid "Hide the review screen"
-msgstr "Slėpti apžvalgos ekraną"
+msgstr ""
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
-msgstr "Slėpti automatiškai rodomą įspėjimą, kai testo laikytojas palieka paskirtos laiko trukmės sekciją."
+msgstr ""
 
 msgid "Hide Timed Section Warning"
-msgstr "Slėpti Laiko Skyriaus Įspėjimą"
+msgstr ""
 
 msgid "Hide timers"
-msgstr "Slėpti laiką"
+msgstr ""
 
 msgid "Highlight"
-msgstr "Paryškinti"
+msgstr ""
 
 msgid "Highlight Text"
-msgstr "Paryškinti Tekstą"
+msgstr ""
 
 msgid "Highlighter"
-msgstr "Žymeklis"
+msgstr ""
 
 msgid "hours"
 msgstr ""
 
 msgid "Html title"
-msgstr "Html pavadinimas"
+msgstr ""
 
 msgid "Identifier"
 msgstr "Identifikatorius"
 
 msgid "If required it must appear (at least once) in the selection."
-msgstr "Jeigu reikalaujama, privalo pasirodyti (bent kartui) pasirinkime."
+msgstr ""
 
 msgid "If required, it must appears at least once in the selection."
-msgstr "Jeigu reikalaujama, privalo pasirodyti, bent kartui, pasirinkime."
+msgstr ""
 
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
-msgstr "Jeigu nustatyta, tai išmaišo vaikų elementų eiliškumą. Kitu atveju naudojama eilė, kokia vaikų elementai yra numatyti."
+msgstr ""
 
 msgid "If the candidate can skip the item, without submitting a response (default is true)."
-msgstr "Jeigu kandidatas gali praleisti elementą be pateikto atsakymo (numatyta taip)."
+msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
 msgstr ""
@@ -568,82 +574,82 @@ msgid "Import a QTI/APIP Content Package"
 msgstr "Importuoti QTI/APIP Turinio Paketą"
 
 msgid "Import QTI TEST into \"%s"
-msgstr "Importuoti QTI TEST į \"%s"
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "IMS QTI Elementas nurodytas kaip \"%s\" IMS Manifesto faile negali būti importuojamas."
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "IMS QTI Elementas nurodytas kaip \"%s\" IMS Manifesto faile sėkmingai importuotas."
+msgstr ""
 
 msgid "IMS QTI Test Package successfully imported."
-msgstr "IMS QTI Testų Paketas sėkmingai importuotas."
+msgstr ""
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "IMS QTI Testas nurodytas kaip \"%s\" IMS Manifesto faile sėkmingai importuotas."
+msgstr ""
 
 msgid "In this part of the test navigation is not allowed."
-msgstr "Šioje vieto testo naršymas nėra leidžiamas."
+msgstr ""
 
 msgid "Inconsistency at line %1d:"
-msgstr "Neatitikimai %1d eilutėje:"
+msgstr ""
 
 msgid "Individual"
-msgstr "Individualus"
+msgstr ""
 
 msgid "Informational Item Usage"
-msgstr "Informacinis Elemento Naudojimas"
+msgstr ""
 
 msgid "Internal server error!"
-msgstr "Vidinė serverio klaida!"
+msgstr ""
 
 msgid "is already used in the test."
-msgstr "jau naudojamas teste."
+msgstr ""
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr "blogas identifikatorius (raidžiai, skaičiai, pabraukimo simbolis, brūkšnys ir taškai)"
+msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
-msgstr "blogas identifikatorius (viskas išskyrus tarpus)"
+msgstr ""
 
 msgid "It is not possible to save your responses while working offline."
 msgstr ""
 
 msgid "Item \"%s\" is completed."
-msgstr "Elementas \"%s\" yra atliktas."
+msgstr ""
 
 msgid "Item %d"
-msgstr "Klausimas %d"
+msgstr ""
 
 msgid "Item %d of %d"
-msgstr "%d/%d"
+msgstr ""
 
 msgid "Item %s loaded"
 msgstr ""
 
 msgid "Item Reference Properties"
-msgstr "Elemento Šaltinio Savybės"
+msgstr ""
 
 msgid "Item response identifier does not match current item"
 msgstr ""
 
 msgid "Item Session Control"
-msgstr "Elemento Sesijos Valdymas"
+msgstr ""
 
 msgid "items"
-msgstr "elementai"
+msgstr ""
 
 msgid "Items"
-msgstr "Elementai"
+msgstr "Klausimai"
 
 msgid "Items can optionally be assigned to one or more categories."
-msgstr "Elementai pasirinktinai gali būti paskirti vienai arba daugiau kategorijų."
+msgstr ""
 
 msgid "Items Compilation"
-msgstr "Elemento Rinkimas"
+msgstr ""
 
 msgid "Items marked for later review"
-msgstr "Elementai pažymėti vėlesnei peržiūrai"
+msgstr ""
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr ""
@@ -655,7 +661,7 @@ msgid "Jump to:"
 msgstr ""
 
 msgid "Keep Together"
-msgstr "Laikyti Kartu"
+msgstr ""
 
 msgid "Keyboard Navigation"
 msgstr ""
@@ -664,125 +670,125 @@ msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-
 msgstr ""
 
 msgid "Late submission allowed"
-msgstr "Vėluojamas pateikimas leidžiamas"
+msgstr ""
 
 msgid "Leave a comment"
-msgstr "Palikti komentarą"
+msgstr ""
 
 msgid "Line Reader"
-msgstr "Linijos Skaitytuvas"
+msgstr ""
 
 msgid "Linear"
-msgstr "Linijinis"
+msgstr ""
 
 msgid "Link durations to activate the guided navigation"
 msgstr ""
 
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
-msgstr "Užrakinta trukmė  : supažindinimo navigacija. Testo perėjimas į sekantį elementą, kai tik trukmė pasiekia 0."
+msgstr ""
 
 msgid "Magnifier"
-msgstr "Didintuvas"
+msgstr ""
 
 msgid "Magnify less"
-msgstr "Didinti mažiau"
+msgstr ""
 
 msgid "Magnify more"
-msgstr "Didinti daugiau"
+msgstr ""
 
 msgid "Magnifying Glass"
-msgstr "Didinimas"
+msgstr ""
 
 msgid "Main navigation"
 msgstr ""
 
 msgid "Manage Rubric Blocks"
-msgstr "Tvarkyti Rubrikos Blokus"
+msgstr ""
 
 msgid "Manage test properties"
-msgstr "Tvarkyti testo savybes"
+msgstr ""
 
 #, tao-public
 msgid "Manage tests"
 msgstr "Tvarkyti testus"
 
 msgid "Manage Tests"
-msgstr "Tvarkyti testus"
-
-msgid "Mark for review"
-msgstr "Žymėti apžvalgai"
-
-msgid "Masking"
-msgstr "Maskavimas"
-
-msgid "Match value"
-msgstr "Sutapimo reikšmė"
-
-msgid "Max Attempts"
-msgstr "Maks. Bandymai"
-
-msgid "Maximum Duration"
-msgstr "Maksimali Trukmė"
-
-msgid "Maximum duration : the items times out when the duration reaches 0."
-msgstr "Maksimali trukmė : elementų laikas baigiasi, kai trukmė pasiekia 0."
-
-msgid "Maximum duration for the all test."
-msgstr "Maksimali trukmė visam testui."
-
-msgid "Maximum duration for this item."
-msgstr "Maksimali trukmė šio testo daliai."
-
-msgid "Maximum duration for this section."
-msgstr "Maksimali trukmė šio testo daliai."
-
-msgid "Maximum duration for this test part."
-msgstr "Maksimali trukmė šio testo daliai."
-
-msgid "Metadata export is not available for test \"%s."
-msgstr "Negalimas meta duomenų eksportavimas \"%s testui."
-
-msgid "Minimum Duration"
-msgstr "Minimali Trukmė"
-
-msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
-msgstr "Minimali trukmė : priverčia testo laikytojui likti elemente nurodytai trukmei."
-
-msgid "Minimum duration for the test."
-msgstr "Minimali trukmė testui."
-
-msgid "Minimum duration for this item."
-msgstr "Minimali trukmė testui."
-
-msgid "Minimum duration for this section."
-msgstr "Minimali trukmė šio testo daliai."
-
-msgid "Minimum duration for this test part."
-msgstr "Minimali trukmė šio testo daliai."
-
-msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\'"
+msgid "Mark for review"
+msgstr ""
+
+msgid "Masking"
+msgstr ""
+
+msgid "Match value"
+msgstr ""
+
+msgid "Max Attempts"
+msgstr ""
+
+msgid "Maximum Duration"
+msgstr ""
+
+msgid "Maximum duration : the items times out when the duration reaches 0."
+msgstr ""
+
+msgid "Maximum duration for the all test."
+msgstr ""
+
+msgid "Maximum duration for this item."
+msgstr ""
+
+msgid "Maximum duration for this section."
+msgstr ""
+
+msgid "Maximum duration for this test part."
+msgstr ""
+
+msgid "Metadata export is not available for test \"%s."
+msgstr ""
+
+msgid "Minimum Duration"
+msgstr ""
+
+msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
+msgstr ""
+
+msgid "Minimum duration for the test."
+msgstr ""
+
+msgid "Minimum duration for this item."
+msgstr ""
+
+msgid "Minimum duration for this section."
+msgstr ""
+
+msgid "Minimum duration for this test part."
+msgstr ""
+
+msgid "minutes"
+msgstr "minutės"
+
+msgid "Missed required parameter \\'id\\'"
 msgstr ""
 
 msgid "Missed test package file"
-msgstr "Nesurastas testo paketo failas"
+msgstr ""
 
 msgid "Missing required configuration option %s"
 msgstr ""
 
 msgid "Move"
-msgstr ""
+msgstr "Perkelti"
 
 msgid "Move Down"
-msgstr "Perkelti Žemiau"
+msgstr ""
 
 msgid "Move Up"
-msgstr "Perkelti Aukščiau"
+msgstr ""
 
 msgid "Moving to the next item without time limit reached message."
-msgstr "Pranešimas perėjimui į sekantį elementą be laiko limito pasiekimo."
+msgstr ""
 
 msgid "name of the pupil"
 msgstr ""
@@ -794,25 +800,25 @@ msgid "Navigation shortcuts"
 msgstr ""
 
 msgid "Navigation Warnings"
-msgstr "Navigacijos Įspėjimai"
+msgstr ""
 
 msgid "network"
-msgstr "tinklas"
+msgstr ""
 
 msgid "New Rubric Block"
-msgstr "Naujas Rubrikos Blokas"
+msgstr ""
 
 msgid "New section"
 msgstr ""
 
 msgid "New test part"
-msgstr "Nauja testo dalis"
+msgstr ""
 
 msgid "Next"
 msgstr "Tęsti"
 
 msgid "Next Section"
-msgstr "Kitas skyrius"
+msgstr ""
 
 msgid "No"
 msgstr "Ne"
@@ -821,10 +827,10 @@ msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr ""
 
 msgid "No file found at location \"%s\"."
-msgstr "Joks failas nerastas \"%s\" vietoje."
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr "Daugiau nėra galimų bandymų \"%s\" elementui."
+msgstr ""
 
 msgid "no outcome declaration found"
 msgstr ""
@@ -833,16 +839,16 @@ msgid "No outcome processing. Erase the existing rules, if any."
 msgstr ""
 
 msgid "No reference to any IMS QTI Item found."
-msgstr "Joks šaltinis jokiam IMS QTI Elementui nerastas."
+msgstr ""
 
 msgid "Non Linear"
-msgstr "Ne Linijinis"
+msgstr ""
 
 msgid "None"
 msgstr "Nėra"
 
 msgid "Not all test could be exported"
-msgstr "Ne visas testas gali būti eksportuotas"
+msgstr ""
 
 msgid "Not answered"
 msgstr ""
@@ -851,7 +857,7 @@ msgid "Not seen"
 msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
-msgstr "Nemaišoma, vieta išlieka pastovi."
+msgstr ""
 
 msgid "Offline"
 msgstr ""
@@ -860,28 +866,28 @@ msgid "OK"
 msgstr "Gerai"
 
 msgid "Ok"
-msgstr "Gerai"
+msgstr ""
 
 msgid "OK & End test"
-msgstr "Gerai, baigti darbą"
+msgstr ""
 
 msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr "Kai tik uždarysite šį skyrių, jūs negalėsite sugrįžti ir pakeisti savo atsakymus."
+msgstr ""
 
 msgid "One or more dependent IMS QTI Items could not be imported."
-msgstr "Vienas arba daugiau priklausomų IMS QTI Elementų negali būti importuojamų."
+msgstr ""
 
 msgid "Online"
 msgstr ""
 
 msgid "Only display the items marked for review"
-msgstr "Rodyti tik pažymėtus apžvalgai elementus"
+msgstr ""
 
 msgid "Only display the unanswered items"
-msgstr "Rodyti tik neatsakytus elementus"
+msgstr ""
 
 msgid "Open Calculator"
-msgstr "Atidaryti Skaičiuotuvą"
+msgstr ""
 
 msgid "Open Keyboard Shortcuts"
 msgstr ""
@@ -896,10 +902,10 @@ msgid "or"
 msgstr ""
 
 msgid "Ordering"
-msgstr "Eiliškumas"
+msgstr ""
 
 msgid "Outcome"
-msgstr ""
+msgstr "Pasekmė"
 
 msgid "Outcome declarations"
 msgstr ""
@@ -908,10 +914,10 @@ msgid "Outcome processing"
 msgstr ""
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
-msgstr "Paketas teisingas, bet nerasta jokių testų. Patikrinkite ar pakete yra QTI testai."
+msgstr ""
 
 msgid "Part %d"
-msgstr "Dalis %d"
+msgstr ""
 
 msgid "Passage"
 msgstr ""
@@ -923,22 +929,22 @@ msgid "Pause the test"
 msgstr ""
 
 msgid "Play"
-msgstr "Leisti"
+msgstr ""
 
 msgid "Please confirm you want to leave the test."
-msgstr "Prašome patvirtinti, kad jūs norite palikti testą."
+msgstr ""
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
-msgstr "Prašome palaukti, kol mes bandome atstatyti ryšį."
-
-msgid "Preview"
 msgstr ""
 
+msgid "Preview"
+msgstr "Peržiūra"
+
 msgid "Preview the covered area"
-msgstr "Peržiūrėti padengtą plotą"
+msgstr ""
 
 msgid "Previous"
 msgstr "Grįžti"
@@ -950,43 +956,43 @@ msgid "Proctor"
 msgstr "Proktorius"
 
 msgid "Properties"
-msgstr "Savybės"
+msgstr ""
 
 msgid "QTI 2.1 Test Driver"
-msgstr "QTI 2.1 Testų Tvarkyklė"
+msgstr ""
 
 msgid "QTI Item Runner"
 msgstr "QTI Elemento Vykdytojas"
 
 msgid "QTI Test \"%s\" publishing failed."
-msgstr "QTI Testo \"%s\" paskelbimas nesėkmingas."
+msgstr ""
 
 msgid "QTI Test \"%s\" successfully published."
-msgstr "QTI Testas \"%s\" sėkmingai paskelbtas."
+msgstr ""
 
 msgid "QTI Test Package 2.1"
-msgstr "QTI Testo Paketas 2.1"
+msgstr ""
 
 msgid "QTI Test Package 2.2"
-msgstr "QTI Testo Paketas 2.2"
+msgstr ""
 
 msgid "QTI/APIP Test Content Package"
-msgstr "QTI/APIP Testo Turinio Paketas"
+msgstr ""
 
 msgid "question"
 msgstr ""
 
 msgid "Question"
-msgstr ""
+msgstr "Klausimas"
 
 msgid "questions"
 msgstr ""
 
 msgid "Reference"
-msgstr "Šaltinis"
+msgstr ""
 
 msgid "Regenerate"
-msgstr "Regeneruoti"
+msgstr ""
 
 msgid "Reload the page"
 msgstr ""
@@ -995,43 +1001,43 @@ msgid "remaining %s %s"
 msgstr ""
 
 msgid "Remove Item Reference"
-msgstr "Šalinti Elemento Šaltinį"
+msgstr ""
 
 msgid "Remove Rubric Block"
-msgstr "Pašalinti Rubrikos Bloką"
+msgstr ""
 
 msgid "Remove Section"
-msgstr "Pašalinti Skyrių"
+msgstr ""
 
 msgid "Remove Test Part"
 msgstr ""
 
 msgid "Required"
-msgstr "Reikalaujama"
+msgstr ""
 
 msgid "Required field"
-msgstr "Reikalaujamas laukas"
+msgstr ""
 
 msgid "Reset filters"
-msgstr "Atstatyti filtrus"
+msgstr ""
 
 msgid "Resource(s) successfully exported."
 msgstr "Resursas(-ai) sėkmingai eksportuoti."
 
 msgid "Review"
-msgstr "Apžvalga"
+msgstr ""
 
 msgid "Review my Answers"
-msgstr "Peržiūrėti mano Atsakymus"
+msgstr ""
 
 msgid "Rubric Block"
-msgstr "Rubrikos Blokas"
+msgstr ""
 
 msgid "Rubric Block Properties"
-msgstr "Rubriko Bloko Savybės"
+msgstr ""
 
 msgid "Rubric Blocks"
-msgstr "Rubrikos Blokai"
+msgstr ""
 
 msgid "Save"
 msgstr "Išsaugoti"
@@ -1040,37 +1046,37 @@ msgid "Saved"
 msgstr ""
 
 msgid "Scientific Calculator"
-msgstr "Mokslinis skaičiuotuvas"
+msgstr ""
 
 msgid "Scorer"
-msgstr "Verintojas"
+msgstr ""
 
 msgid "Scoring"
-msgstr "Įvertinimas"
+msgstr ""
 
 msgid "Scratch pad"
-msgstr "Juodraštis"
+msgstr ""
 
 msgid "Scratch Pad"
-msgstr "Juodraštis"
+msgstr ""
 
 msgid "Scratchpad"
-msgstr "Juodraštis"
+msgstr ""
 
 msgid "seconds"
 msgstr ""
 
 msgid "Section %d"
-msgstr "Skyrius %d"
+msgstr ""
 
 msgid "Section %d of %d"
-msgstr "Skyrius %d iš %d"
+msgstr ""
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
 msgstr ""
 
 msgid "Section Properties"
-msgstr "Skyriaus Savybės"
+msgstr ""
 
 msgid "Select"
 msgstr "Pasirinkti"
@@ -1079,25 +1085,25 @@ msgid "Select a blueprint"
 msgstr ""
 
 msgid "Select Items"
-msgstr "Pasirinkti Elementus"
+msgstr ""
 
 msgid "Select the way the responses of your test should be processed"
-msgstr "Pasirinkite kokiu būdu jūsų testo atsakymai turėtų būti apdorojami"
+msgstr ""
 
 msgid "Selection"
-msgstr "Pasirinkimas"
+msgstr ""
 
 msgid "Send"
-msgstr "Siųsti"
+msgstr ""
 
 msgid "Set outcome identifier the feedback block is related to"
 msgstr ""
 
 msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
-msgstr "Nustatyti dalinį balą (arba įvertinimo santykį) susietą su testu. Privalo būti tarp 0 ir 1."
+msgstr ""
 
 msgid "Set the rubric block as a feedback block"
-msgstr "Nustatyti rubrikos bloką, kaip atsiliepimo bloką"
+msgstr ""
 
 msgid "Set the value of the outcome that will activate the feedback block"
 msgstr ""
@@ -1106,67 +1112,67 @@ msgid "Set the weight identifier used to process the score"
 msgstr ""
 
 msgid "Set the XHTML-QTI class of the rubric block."
-msgstr "Nustatyti XHTML-QTI klasę rubrikos blokui."
+msgstr ""
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
-msgstr "Nustatyti XHTML-QTI identifikatorių rubrikos blokui."
+msgstr ""
 
 msgid "SetSynchronisationService successfully configured."
 msgstr ""
 
 msgid "Settings"
-msgstr "Nustatymai"
+msgstr ""
 
 msgid "Show Feedback"
-msgstr "Rodyti Atsiliepimą"
+msgstr ""
 
 msgid "Show Review"
-msgstr "Rodyti Apžvalgą"
+msgstr ""
 
 msgid "Show Solution"
-msgstr "Rodyti Sprendimą"
+msgstr ""
 
 msgid "Show the review screen"
-msgstr "Rodyti apžvalgos ekraną"
+msgstr ""
 
 msgid "Show the solution once the answer is submitted."
-msgstr "Rodyti sprendimą, kai atsakymas yra pateiktas."
+msgstr ""
 
 msgid "Show timers"
-msgstr "Rodyti laiką"
+msgstr ""
 
 msgid "Show/Hide the review screen"
-msgstr "Rodyti/Slėpti apžvalgos ekraną"
+msgstr ""
 
 msgid "Shuffle"
 msgstr "Maišyti"
 
 msgid "Simultaneous"
-msgstr "Vienalaikis"
+msgstr ""
 
 msgid "Skip"
-msgstr "Panaikinti atsakymą"
+msgstr ""
 
 msgid "Skip &amp; End Test"
-msgstr "Praleisti &amp; Baigti darbą"
+msgstr ""
 
 msgid "Skip and end test"
-msgstr "Praleisti ir baigti darbą"
+msgstr ""
 
 msgid "Skip and go to the end of the test"
-msgstr "Praleisti ir eiti į testo pabaigą"
+msgstr ""
 
 msgid "Skip and go to the next item"
-msgstr "Praleisti ir eiti į kitą elementą"
+msgstr ""
 
 msgid "Skip to the end of the test"
-msgstr "Praleisti iki testo pabaigos"
+msgstr ""
 
 msgid "Skip to the next item"
-msgstr "Panaikinkite atsakymą ir pereikite į kitą klausimą"
+msgstr ""
 
 msgid "Skip to the next section"
-msgstr "Pereiti į kitą skyrių"
+msgstr ""
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
@@ -1175,16 +1181,16 @@ msgid "Something unexpected happened."
 msgstr ""
 
 msgid "Something went wrong..."
-msgstr ""
+msgstr "Kažkas blogai nutiko..."
 
 msgid "Speech speed"
-msgstr "Kalbos greitis"
+msgstr ""
 
 msgid "Speed"
 msgstr ""
 
 msgid "Start Test-part"
-msgstr "Pradėti Testo dalį"
+msgstr ""
 
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
@@ -1196,43 +1202,43 @@ msgid "Step 3: Once you have downloaded the file you can close the browser windo
 msgstr ""
 
 msgid "Stop"
-msgstr "Stabdyti"
+msgstr ""
 
 msgid "Submission"
-msgstr "Pateikimas"
+msgstr ""
 
 msgid "Submit and go to the end of the test"
-msgstr "Pateikti ir eiti į testo pabaigą"
+msgstr ""
 
 msgid "Submit and go to the item %s"
-msgstr "Pateikti atsakymą ir pereiti prie %s klausimo"
+msgstr ""
 
 msgid "Submit and go to the next item"
-msgstr "Pateikite atsakymą ir pereikite į kitą klausimą"
+msgstr ""
 
 msgid "Submit and go to the previous item"
-msgstr "Pateikite atsakymą ir grįžkite į ankstesnį klausimo"
+msgstr ""
 
 msgid "SUBMIT THE TEST"
-msgstr "PATEIKTI SAVO TESTĄ"
+msgstr ""
 
 msgid "SUBMIT THIS PART"
 msgstr ""
 
 msgid "technical"
-msgstr "techninis"
+msgstr ""
 
 msgid "Test"
 msgstr "Testas"
 
 msgid "Test constructor"
-msgstr "Testuoti konstruktorių"
+msgstr ""
 
 msgid "Test metadata successfully exported."
-msgstr "Testo meta duomenys sėkmingai išeksportuoti."
+msgstr ""
 
 msgid "Test Navigation"
-msgstr "Testo Navigacija"
+msgstr ""
 
 msgid "Test Part Properties"
 msgstr ""
@@ -1241,10 +1247,10 @@ msgid "Test Preview is not installed, please contact to your administrator."
 msgstr ""
 
 msgid "Test Saved"
-msgstr "Testas Išsaugotas"
+msgstr ""
 
 msgid "Test status"
-msgstr "Testo būsena"
+msgstr ""
 
 msgid "Test status and review structure"
 msgstr ""
@@ -1253,17 +1259,17 @@ msgid "Test Status and Structure"
 msgstr ""
 
 msgid "Test-Taker Tools"
-msgstr "Testo Laikytojo Įrankiai"
+msgstr ""
 
 #, tao-public
 msgid "Tests"
 msgstr "Testai"
 
 msgid "Text content"
-msgstr "Teksto turinys"
+msgstr ""
 
 msgid "Text to Speech"
-msgstr "Tekstas Balsu"
+msgstr ""
 
 msgid "Text To Speech"
 msgstr ""
@@ -1272,70 +1278,70 @@ msgid "that was being taken."
 msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
-msgstr "Rastas „imsmanifest.xml“ failas archyve yra blogas."
+msgstr ""
 
 msgid "the assessment (LCL or Mathematics)"
 msgstr ""
 
 msgid "The assessment has been created but is not already running."
-msgstr "Vertinimas buvo sukurtas, bet vis dar nėra vykdomas."
+msgstr ""
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr "Vertinimas buvo suspenduotas autorizuoto proktoriaus. Jeigu norite tęsti vertinimą, prašome paleisti iš naujo ir jeigu reikia susisiekite su jūsų proktoriumi."
+msgstr ""
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
-msgstr "Jūsų vertinimas yra atidėtas. Kad tęsti jūsų įvertinimą, prašome pradėti iš naujo arba pranešti jūsų proktoriui, jeigu būtina."
+msgstr "Vertinimas buvo suspenduotas. Norint tęsti jūsų vertinimą, prašome paleisti iš naujo ir jeigu reikia susisiekite su jūsų proktoriumi."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr "Vertinimas buvo suspenduotas. Norint tęsti, prašome pradėti iš naujo."
+msgstr ""
 
 msgid "The assessment has been terminated."
-msgstr "Vertinimas buvo nutrauktas."
+msgstr ""
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "Vertinimas buvo nutrauktas. Jūs negalite tęsti jo daugiau."
+msgstr "Šis vertinimas buvo nutrauktas. Jūs negalite tęsti jo toliau."
 
 msgid "The assessment is still running."
-msgstr "Įvertinimas vis dar vykdomas."
+msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr "Kandidatui neleidžiama pateikti blogus atsakymus."
+msgstr ""
 
 msgid "The connection seems to be back, please proceed"
-msgstr "Ryšys atrodo, kad atsirado. Prašome tęsti"
+msgstr ""
 
 msgid "the current question"
 msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
-msgstr "IMS QTI priklausomybė AssessmentItemRef \"%s\" IMS Manifesto faile negalėjo būti išspręsta."
+msgstr ""
 
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr "Šie identifikatoriai nėra unikalūs visame teste : %s"
+msgstr ""
 
 msgid "The identifier of the item reference."
-msgstr "Elemento šaltinio identifikatorius."
+msgstr ""
 
 msgid "The identifier of the section."
-msgstr "Skyriaus identifikatorius."
+msgstr ""
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr "IMS QTI Elementas nurodytas kaip \"%s\" IMS Manifesto faile jau buvo patalpintas Elementų Banke."
+msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
-msgstr "IMS QTI Testo Paketas negali būti importuotas."
+msgstr ""
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "IMS QTI Elementas nurodytas kaip \"%s\" IMS Manifesto faile nepavyko importuoti."
+msgstr ""
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr ""
 
 msgid "The number of child elements to be selected."
-msgstr "Skaičius elementų vaikų pasirinkti."
+msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr ""
@@ -1344,28 +1350,28 @@ msgid "The outcomes have been regenerated!"
 msgstr ""
 
 msgid "The principle identifier of the test."
-msgstr "Pagrindinis testo identifikatorius."
+msgstr ""
 
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
-msgstr "Pateiktas archyvas yra blogas. Patikrinkite ar jis nesugadintas ir turi „imsmanifest.xml“ failą."
+msgstr ""
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr "QTI Testas '%s' surinkimui privalo turėti bent 1 QTI Elementą. Joks nebuvo surastas."
+msgstr ""
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr "QTI testas nebuvo atgautas teisingai."
+msgstr ""
 
 msgid "The QTI Test XML or one of its dependencies is malformed or empty."
-msgstr "QTI Testo XML arba vienas iš jo priklausomybių yra sugadinti arba tuščia."
+msgstr ""
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr "QTI-XML testas nebuvo įrašytas teisingai."
+msgstr ""
 
 msgid "The reference."
-msgstr "Šaltinis."
+msgstr ""
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr "Resursai susiję su IMS QTI Testu nurodyti kaip \"%s\" IMS Manifesto faile buvo atstatyti."
+msgstr ""
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
 msgstr ""
@@ -1374,19 +1380,19 @@ msgid "The score will be processed for the entire test. A sum of all SCORE outco
 msgstr ""
 
 msgid "The section title."
-msgstr "Skyriaus pavadinimas."
+msgstr ""
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr ""
 
 msgid "The test has been closed/suspended!"
-msgstr "Testas buvo uždarytas/sustabdytas!"
+msgstr ""
 
 msgid "The test has been paused, we are unable to connect to the server."
-msgstr "Testas buvo pristabdytas, mes negalime prisijungti prie serverio."
+msgstr ""
 
 msgid "The test has not been saved."
-msgstr "Testas nebuvo išsaugotas."
+msgstr ""
 
 msgid "The test has unsaved changes, are you sure you want to leave?"
 msgstr ""
@@ -1398,10 +1404,10 @@ msgid "The test needs to be saved before it can be previewed."
 msgstr ""
 
 msgid "The test part identifier."
-msgstr "Testo dalies identifikatorius."
+msgstr ""
 
 msgid "The test title."
-msgstr "Testo pavadinimas."
+msgstr ""
 
 msgid "The time limit has been reached for this part of the test."
 msgstr ""
@@ -1431,25 +1437,25 @@ msgid "This functionality is blocked. Please contact with your administrator for
 msgstr ""
 
 msgid "This test has been suspended"
-msgstr "Šis testas buvo sustabdytas"
+msgstr ""
 
 msgid "This test has been terminated"
-msgstr "Šis testas buvo nutrauktas"
+msgstr ""
 
 msgid "Time limit reached for item \"%s\"."
-msgstr "Laiko limitas pasiektas \"%s\" elementui."
+msgstr ""
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr "Testo atlikimo laikas baigėsi."
+msgstr ""
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr "Laiko limitas pasiektas, ši testo dalis pabaigta. Tačiau, jums galima atlikti dabartinį elementą."
+msgstr ""
 
 msgid "Time Limits"
-msgstr "Laiko Limitai"
+msgstr ""
 
 msgid "Time Remaining"
-msgstr "Liko Laiko"
+msgstr ""
 
 msgid "Title"
 msgstr "Pavadinimas"
@@ -1467,106 +1473,106 @@ msgid "Toolbox"
 msgstr ""
 
 msgid "Total score"
-msgstr "Galutinis rezultatas"
+msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
 
 msgid "Tutor"
-msgstr "Mokytojas"
+msgstr ""
 
 msgid "Type"
 msgstr "Tipas"
 
 msgid "Unanswered"
-msgstr "Neatsakyta"
+msgstr ""
 
 msgid "Unanswered items"
-msgstr "Neatsakyti elementai"
+msgstr ""
 
 msgid "Unflag for Review"
-msgstr "Atžymėti"
+msgstr ""
 
 msgid "Unknown error."
-msgstr "Nežinoma klaida."
+msgstr ""
 
 msgid "Unlink to use separated durations"
-msgstr "Atrišti, kad naudoti atskirtas trukmes"
+msgstr ""
 
 msgid "Unseen"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr "Įkelti QTI 2.1 Testo Paketo Failą"
+msgstr ""
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr "Naudoti Ctrl/Meta mygtukus arba kilpinę keliems pasirinkimams"
+msgstr ""
 
 msgid "Validate Responses"
-msgstr "Tikrinti Atsakymus"
+msgstr ""
 
 msgid "Value"
 msgstr "Reikšmė"
 
 msgid "Viewed"
-msgstr "Peržiūrėta"
+msgstr ""
 
 msgid "Viewed items"
-msgstr "Peržiūrėti elementai"
+msgstr ""
 
 msgid "Views"
-msgstr "Peržiūros"
+msgstr ""
 
 msgid "Visible"
-msgstr "Matoma"
+msgstr ""
 
 msgid "Volume"
-msgstr "Garsumas"
+msgstr ""
 
 msgid "Wait for your connection to come back online."
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr "Įspėjimas – Jums liko %s testui atlikti."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr "Įspėjimas – Jums liko %s testui atlikti."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr "Įspėjimas – Jums liko %s šiai testui daliai atlikti."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete this test part."
-msgstr "Įspėjimas – Jums liko %s šiai testui daliai atlikti."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr "Įspėjimas –– Jums yra likę %s, kad užbaigtumėte šį testą."
+msgstr ""
 
 msgid "We are unable to connect the server to submit your results."
-msgstr "Mes negalime prisijungti prie serverio, kad įkelti jūsų rezultatus."
+msgstr ""
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr "Neįmanoma susisiekti su serveriu ir atsiųsti kitą klausimą."
+msgstr ""
 
 msgid "Weight"
-msgstr "Svoris"
+msgstr ""
 
 msgid "Weights"
-msgstr "Svoriai"
+msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
-msgstr "Kai renkamasi vaikų elementus, kiekvienas elementas yra tinkamas vienkartiniam pasirinkimui."
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
-msgstr "Ar kandidato atsakymas ilgesnis negu maksimali elemento trukmė turėtų būti priimtas."
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
-msgstr "Nesvarbu, ar kandidato atsakymas, kuris yra daugiau negu maksimali skyriaus trukmė, galėtų būti priimta."
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
 msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
-msgstr "Nesvarbu, ar kandidato atsakymas, kuris yra daugiau negu maksimali trukmė, galėtų būti priimta."
+msgstr ""
 
 msgid "White on Black"
 msgstr ""
@@ -1575,13 +1581,13 @@ msgid "White on Blue (TAO standard theme)"
 msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
-msgstr "Kas gali peržiūrėti rubrikos bloką per pateiktį."
+msgstr ""
 
 msgid "With Replacement"
-msgstr "Su Pakeitimu"
+msgstr ""
 
 msgid "Wrong file mime type"
-msgstr "Blogas failo MIME tipas"
+msgstr ""
 
 msgid "XML Content"
 msgstr ""
@@ -1591,7 +1597,7 @@ msgid "XML Editor"
 msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
-msgstr "XML klaida eilutės %1$d stulpelyje %2$d \"%3$s\"."
+msgstr ""
 
 msgid "Yellow on Blue"
 msgstr ""
@@ -1603,28 +1609,28 @@ msgid "You answered %s of %s question(s) for this section of the test"
 msgstr ""
 
 msgid "You answered all %s question(s) in this section"
-msgstr "Jūs atsakėte į visus %s klausimus šiame teste"
+msgstr ""
 
 msgid "You answered all %s question(s) in this test"
-msgstr "Jūs atsakėte į visus %s klausimus šiame teste"
+msgstr ""
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr "Jūs atsakėte tik į %s iš %s klausimų šiame skyriuje"
+msgstr ""
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
-msgstr "Jūs ketinate pereiti į kitą elementą. Norėdami tęsti spauskite OK ir pereikite į kitą elementą."
+msgstr ""
 
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
-msgstr "Ar jūs tikrai ketinate grįžti prie ankstesnio elemento? Spauskite tęsti ir grįžkite."
+msgstr ""
 
 msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr "Jūs ketinate pateikti savo testą."
+msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "Jūs ketinate pateikti savo testą. Jūs negalėsite pasiekti šio testo, kai jis bus pateiktas. Spauskite Taip norėdami pateikti testą."
+msgstr ""
 
 msgid "You are about to submit this test part."
 msgstr ""
@@ -1633,7 +1639,7 @@ msgid "You are currently working offline."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr "Jūs turite užsitęsusius ryšio trūkčius."
+msgstr ""
 
 msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
 msgstr ""
@@ -1642,7 +1648,7 @@ msgid "You flagged %s item(s) that you can review now"
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
-msgstr "Turite %s klausimų(-us) pažymėję patikrinimui."
+msgstr ""
 
 msgid "You have %s left to answer remaining %s questions."
 msgstr ""
@@ -1651,29 +1657,29 @@ msgid "You have %s remaining to complete the current item."
 msgstr ""
 
 msgid "You have %s unanswered question(s)"
-msgstr "Liko neatsakyti %s klausimai(-ų)."
+msgstr ""
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr "Jūs turite %s neatsakytus klausimą(-us) ir turite %s elementą(-us) pažymėtus peržiūrai."
+msgstr ""
 
 msgid "You have %s unanswered question(s)."
-msgstr "Liko neatsakyti %s klausimai(-ų)."
+msgstr ""
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr "Jūs negalėsite pasiekti šio testo, kai jis bus pateiktas. Spauskite \"%s\" norėdami pateikti testą."
+msgstr ""
 
 msgid "Your comment…"
-msgstr "Tavo komentaras..."
+msgstr ""
 
 msgid "Your connection seems to be back, please proceed."
 msgstr ""
 
 msgid "Zoom"
-msgstr "Priartinimas"
+msgstr ""
 
 msgid "Zoom in"
-msgstr "Priartinti"
+msgstr ""
 
 msgid "Zoom out"
-msgstr "Atitolinti"
+msgstr ""
 
