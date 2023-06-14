@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint146\n"
-"PO-Revision-Date: 2021-01-20T12:36:00\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2023-06-14 15:57\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: en-GB\n"
+"Language: en_GB\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: en-GB\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: en-GB\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: English, United Kingdom\n"
 
 msgid "%s to answer %s"
 msgstr ""
@@ -29,7 +36,7 @@ msgid "A QTI Test must contain at least one QTI Item to be compiled. None found.
 msgstr ""
 
 msgid "A qti testpackage"
-msgstr "A QTI test package"
+msgstr ""
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr ""
@@ -122,7 +129,7 @@ msgid "Also compute the score per categories"
 msgstr ""
 
 msgid "An error occured while retrieving items"
-msgstr "An error occurred while retrieving items"
+msgstr ""
 
 msgid "An error occurred during results submission. Please retry."
 msgstr ""
@@ -149,10 +156,10 @@ msgid "An item involved in the test cannot be written."
 msgstr ""
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr "An unknown error occurred while compiled QTI Test '%s'."
+msgstr ""
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr "An unknown error occurred while compiling QTI test '%s'."
+msgstr ""
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr ""
@@ -251,7 +258,7 @@ msgid "Category score"
 msgstr ""
 
 msgid "Change the current color preset"
-msgstr "Change the current colour preset"
+msgstr ""
 
 msgid "Class"
 msgstr ""
@@ -370,7 +377,7 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr ""
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr ""
 
 msgid "Download"
@@ -501,7 +508,7 @@ msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
-msgstr "Grey on Green"
+msgstr ""
 
 msgid "Hide Review"
 msgstr ""
@@ -600,7 +607,7 @@ msgid "is already used in the test."
 msgstr ""
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr "is not a valid identifier (alphanumeric, underscore, dash and dots)"
+msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr ""
@@ -762,7 +769,7 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \\'id\\'"
 msgstr ""
 
 msgid "Missed test package file"
@@ -1066,7 +1073,7 @@ msgid "Section %d of %d"
 msgstr ""
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr "Section level category enables configuring the categories of its composing items all at once. A category in grey means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
 
 msgid "Section Properties"
 msgstr ""
@@ -1313,7 +1320,7 @@ msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr "The following identifiers are not unique across the test : %s"
+msgstr ""
 
 msgid "The identifier of the item reference."
 msgstr ""
@@ -1442,7 +1449,7 @@ msgid "Time limit reached, this part of the test has ended."
 msgstr ""
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr "Time limit reached; this part of the test has ended. However, you are allowed to finish the current item."
+msgstr ""
 
 msgid "Time Limits"
 msgstr ""
