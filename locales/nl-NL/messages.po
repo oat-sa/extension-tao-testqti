@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint155\n"
-"PO-Revision-Date: 2021-06-02T16:55:53\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2023-06-14 15:57\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: nl-NL\n"
+"Language: nl\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: nl-NL\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Dutch\n"
 
 msgid "%s to answer %s"
 msgstr ""
@@ -23,136 +30,136 @@ msgid "(Visual) Highlight Text"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr "Een QTI item in QTI Test '%s' kon niet worden gecompileerd."
+msgstr ""
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr "Een QTI toets moet minstens één QTI item bevatten om te compileren. Er is er geen gevonden."
+msgstr ""
 
 msgid "A qti testpackage"
-msgstr "Een qti toetspakket"
+msgstr ""
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr "Een externe bron waarnaar verwezen wordt in de QTI test '%s' kon niet worden gevonden."
+msgstr ""
 
 msgid "A response to every question in this item is required."
-msgstr "Op elke vraag in dit item moet een antwoord komen."
+msgstr ""
 
 msgid "A response to this item is required."
-msgstr "Een antwoord op dit item is verplicht."
+msgstr ""
 
 msgid "A valid response to this item is required."
-msgstr "Een geldig antwoord voor dit item is vereist."
+msgstr ""
 
 msgid "A visible section is one that is identifiable by the candidate."
-msgstr "Een zichtbare sectie is er een die herkenbaar is voor de kandidaat."
+msgstr ""
 
 msgid "Activated"
-msgstr "Geactiveerd"
+msgstr ""
 
 msgid "add a new weight"
-msgstr "voeg nieuw gewicht toe"
+msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr "Voeg een zip-bestand toe met QTI/APIP toetsen en items"
+msgstr ""
 
 msgid "Add selected item(s) here."
-msgstr "Voeg geselecteerde item(s) hier toe."
+msgstr ""
 
 msgid "Add the source file"
-msgstr "Voeg het bron bestand toe"
+msgstr ""
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr "Nadat u de sectie heeft afgesloten zal het onmogelijk zijn om terug te keren naar deze sectie om iets te wijzigen. Weet u zeker dat u deze sectie wilt afsluiten?"
+msgstr ""
 
 msgid "All"
-msgstr "Alle"
+msgstr ""
 
 msgid "Allow Comment"
-msgstr "Sta commentaar toe"
+msgstr ""
 
 msgid "Allow Review"
-msgstr "Sta een herziening toe"
+msgstr ""
 
 msgid "Allow Section Skipping"
-msgstr "Sta het overslaan van een sectie toe"
+msgstr ""
 
 msgid "Allow Skipping"
-msgstr "Sta overslaan toe"
+msgstr ""
 
 msgid "Allow skipping of the current section."
-msgstr "Sta het overslaan van de huidige sectie toe."
+msgstr ""
 
 msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
 msgstr ""
 
 msgid "Allow the candidate to review his answers."
-msgstr "Sta de kandidaat toe zijn antwoorden te herzien."
+msgstr ""
 
 msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
-msgstr "Sta de kandidaat toe om antwoorden te elimineren/door te strepen in keuze interacties."
+msgstr ""
 
 msgid "Allow the test-taker to highlight parts of the item text."
-msgstr "Sta de kandidaat toe om stukken van de item tekst te markeren"
+msgstr ""
 
 msgid "Allow the test-taker to mask and unmask answers in choice interactions."
-msgstr "Sta de kandidaat toe om antwoorden te bedekken en weer zichtbaar te maken in keuze interacties."
+msgstr ""
 
 msgid "Allow the test-taker to mask parts of the item with a movable mask."
-msgstr "Sta de kandidaat toe om stukken van het item te bedekken met een verplaatsbaar blok."
+msgstr ""
 
 msgid "Allow the test-taker to use a basic calculator."
-msgstr "Sta de kandidaat toe om een standaard rekenmachine te gebruiken."
+msgstr ""
 
 msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
-msgstr "Sta de kandidaat toe een rekenmachine gebruiken die de volgorde van de operaties (Hé, Mw. v/d Aorta) respecteert."
+msgstr ""
 
 msgid "Allow the test-taker to use a movable magnifier tool."
-msgstr "Sta de kandidaat toe om een beweegbaar vergrootglas te gebruiken."
+msgstr ""
 
 msgid "Allow the test-taker to use a scientific calculator."
-msgstr "Sta de kandidaat toe om een wetenschappelijke rekenmachine gebruiken."
+msgstr ""
 
 msgid "Allow the test-taker to visually isolate a line of text."
-msgstr "Sta de kandidaat toe om visueel een stuk tekst te isoleren."
+msgstr ""
 
 msgid "Allows Test-taker to zoom in and out the item content."
-msgstr "Sta de kandidaat toe om de inhoud van het item in- en uitzoomen."
+msgstr ""
 
 msgid "Also compute the score per categories"
-msgstr "Bereken ook de score per categorie."
+msgstr ""
 
 msgid "An error occured while retrieving items"
-msgstr "Er is een fout opgetreden bij het ophalen van items"
+msgstr ""
 
 msgid "An error occurred during results submission. Please retry."
-msgstr "Er is een fout opgetreden tijdens het versturen van de resultaten. Probeert u het a.u.b. opnieuw."
+msgstr ""
 
 msgid "An error occurred during the test initialization!"
-msgstr "Er is een fout opgetreden tijdens de testinitialisatie!"
+msgstr ""
 
 msgid "An error occurred during the test, please content your administrator."
-msgstr "Er is een fout opgetreden tijdens de test, neem contact op met uw beheerder."
+msgstr ""
 
 msgid "An error occurred!"
-msgstr "Er is een fout opgetreden!"
+msgstr ""
 
 msgid "An error occurs, please contact your administrator"
-msgstr "Er is een fout opgetreden. Raadpleegt u a.u.b. een beheerder"
+msgstr ""
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
-msgstr "Een onzichtbare sectie met een bovenliggend elementen die onderworpen is aan mixen kan specificeren of de onderliggende elementen, die getoond worden aan kandidaten alsof ze onderdeel zijn van de bovenliggende elementen, samen gemengd worden of gemengd worden met de andere onderliggende elementen van de bovenliggende sectie."
+msgstr ""
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr "Een item in de toets kan niet worden ingelezen of is niet QTI compliant."
+msgstr ""
 
 msgid "An item involved in the test cannot be written."
-msgstr "Een item in de toets kan niet worden weggeschreven."
+msgstr ""
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr "Er trad een onbekende fout op bij het compileren van QTI toets '%s'."
+msgstr ""
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr "Er trad een onbekende fout op bij het compileren van QTI toets '%s'."
+msgstr ""
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr ""
@@ -161,70 +168,70 @@ msgid "and"
 msgstr ""
 
 msgid "and flagged %s of them"
-msgstr "en %s gemarkeerd daarvan"
+msgstr ""
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr "en u heeft %s item(s) gemarkeerd die u nu kunt bekijken."
+msgstr ""
 
 msgid "Answer Eliminator"
-msgstr "Antwoord verwijderaar"
+msgstr ""
 
 msgid "Answer Masking"
-msgstr "Antwoord bedekker"
+msgstr ""
 
 msgid "Answered"
-msgstr "Beantwoord"
+msgstr ""
 
 msgid "APIP Text To Speech"
 msgstr ""
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
-msgstr "Weet u zeker dat u uw antwoord wilt wissen en naar het volgende item wilt gaan? U zult niet terug kunnen gaan en een antwoord geven."
+msgstr ""
 
 msgid "Are you sure you want to end the test?"
-msgstr "Weet u zeker dat u de toets wilt afsluiten?"
+msgstr "Weet u zeker dat u het examen wilt beëindigen?"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
-msgstr "Weet je zeker dat je naar het volgende item wilt gaan? U zult niet in staat zijn om terug te gaan en uw antwoord te veranderen."
+msgstr ""
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
-msgstr "Weet je zeker dat je naar het volgende item wilt gaan? U zult niet in staat zijn om terug te gaan en een antwoord te geven."
+msgstr ""
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back."
-msgstr "Weet u zeker dat u naar het volgende item wilt gaan? U kunt niet teruggaan."
+msgstr ""
 
 msgid "Area Masking"
-msgstr "Gebied bedekker"
+msgstr ""
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
-msgstr "Het verbinden van een blauwdruk aan een sectie geeft u de mogelijkheid om deze sectie te valideren tegen het gespecificeerde blauwdruk."
+msgstr ""
 
 msgid "Associate Blueprint"
-msgstr "Verbind blauwdruk"
+msgstr ""
 
 msgid "At least one mandatory parameter was required but found missing in your request"
-msgstr "Er mist op zijn minst één verplichte parameter in uw verzoek"
+msgstr ""
 
 msgid "Author"
-msgstr "Constructeur"
+msgstr ""
 
 msgid "Auxiliary file not found at location \"%s\"."
-msgstr "Hulp bestand niet gevonden op locatie \"%s\"."
+msgstr ""
 
 msgid "Black on Cream"
-msgstr "Zwart op Crème"
+msgstr ""
 
 msgid "Black on Light Blue"
-msgstr "Zwart op Lichtblauw"
+msgstr ""
 
 msgid "Black on Light Magenta"
-msgstr "Zwart op Paars"
+msgstr ""
 
 msgid "Black on White"
-msgstr "Zwart op Wit"
+msgstr ""
 
 msgid "Calculator"
-msgstr "Rekenmachine"
+msgstr ""
 
 msgid "Calculator BODMAS"
 msgstr ""
@@ -233,144 +240,144 @@ msgid "Can not playback media file!"
 msgstr ""
 
 msgid "CANCEL"
-msgstr "ANNULEREN"
+msgstr ""
 
 msgid "Cancel"
 msgstr "Annuleren"
 
 msgid "Candidate"
-msgstr "Kandidaat"
+msgstr ""
 
 msgid "Cardinality"
-msgstr "Kardinaalgetal"
+msgstr ""
 
 msgid "Categories"
-msgstr "Categorieën"
+msgstr ""
 
 msgid "Category score"
-msgstr "Categorie score"
+msgstr ""
 
 msgid "Change the current color preset"
-msgstr "Verander het kleurcontrast"
+msgstr ""
 
 msgid "Class"
-msgstr "Klasse"
+msgstr ""
 
 msgid "Class successfully created."
 msgstr "Klasse met succes gecreëerd."
 
 msgid "Clear all active highlights"
-msgstr "Verwijder alle tekstmarkeringen"
+msgstr ""
 
 msgid "Clear Highlights"
-msgstr "Markering verwijderen"
+msgstr ""
 
-msgid "Click \"%s\" to continue."
+msgid "Click \"%s\" to continue"
 msgstr ""
 
 msgid "Click to speak"
-msgstr "Klik om te spreken"
-
-msgid "Close"
 msgstr ""
 
+msgid "Close"
+msgstr "Sluiten"
+
 msgid "Close Magnifier"
-msgstr "Sluit vergrootglas"
+msgstr ""
 
 msgid "Close the mask"
-msgstr "Sluit de bedekker"
+msgstr ""
 
 msgid "Close this Section"
-msgstr "Sluit deze sectie"
+msgstr ""
 
 msgid "Collapse the review panel"
-msgstr "Minimaliseer het review paneel"
+msgstr ""
 
 msgid "Comment"
-msgstr "Commentaar"
+msgstr ""
 
 msgid "Completed items"
-msgstr "Beantwoorde vragen"
+msgstr ""
 
 msgid "Connected to server"
-msgstr "Verbonden met server"
+msgstr ""
 
 msgid "CONTINUE TO THE NEXT SECTION"
 msgstr ""
 
 msgid "Contrast"
-msgstr "Contrast"
+msgstr ""
 
 msgid "Controls the contribution of an individual item score to the overall test score."
-msgstr "Beheert de bijdrage van een individueel item ten opzichte van de totaalscore van de toets."
+msgstr ""
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
-msgstr "Stelt het maximum aantal keren dat geprobeerd mag worden in. 0 betekent oneindig."
+msgstr ""
 
 msgid "Covers parts of the item"
-msgstr "Bedek gedeelte(n) van het item"
+msgstr ""
 
 msgid "Custom"
-msgstr "Aangepast"
+msgstr ""
 
 msgid "custom categories"
-msgstr "Aangepaste categoriën"
+msgstr ""
 
 msgid "Custom outcome processing. No changes will be made to the existing rules."
-msgstr "Aangepast resultaat verwerking. Er wordt niets aangepast aan bestaande regels."
+msgstr ""
 
 msgid "Cut score"
-msgstr "Knip score"
+msgstr ""
 
 msgid "Cut score (pass ratio)"
 msgstr ""
 
 msgid "Disable validation"
-msgstr "Schakel validatie uit"
+msgstr ""
 
 msgid "Disconnected from server"
-msgstr "Ontkoppeld van server"
+msgstr ""
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
-msgstr "Laat een bericht zien voordat de kandidaat een toetsgedeelte afsluit, terwijl er nog items onbeantwoord of gemarkeerd voor herziening zijn."
+msgstr ""
 
 msgid "Display a warning before the test-taker ends the test part."
-msgstr "Laat een waarschuwing zien voordat de kandidaat een toetsgedeelte afsluit."
+msgstr ""
 
 msgid "Display a warning before the test-taker ends the test."
-msgstr "Laat een waarschuwing zien voordat de kandidaat de toets afsluit."
+msgstr ""
 
 msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
-msgstr "Laat een waarschuwing zien voordat de kandidaat een sectie overslaat. Benodigd de sla-sectie-over optie."
+msgstr ""
 
 msgid "Display End Test Warning"
-msgstr "Toon eindetoets waarschuwing"
+msgstr ""
 
 msgid "Display Next Part Warning"
-msgstr "Toon volgend deel waarschuwing."
+msgstr ""
 
 msgid "Display Next Section Warning"
-msgstr "Toon volgende sectie waarschuwing"
+msgstr ""
 
 msgid "Display Unanswered Warning"
-msgstr "Toon onbeantwoord waarschuwing"
+msgstr ""
 
 msgid "Displayed label"
-msgstr "Weergegeven naam"
+msgstr ""
 
 msgid "Displays a customisable magnifier"
-msgstr "Toont een aanpasbare vergroting"
+msgstr ""
 
 msgid "Do not flag the current item for later review"
-msgstr "Volg deze vraag niet meer op"
+msgstr ""
 
 msgid "Do not rename it."
 msgstr ""
 
 msgid "Do not show alert on timeout"
-msgstr "Toon geen waarschuwing op time-out"
+msgstr ""
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr ""
 
 msgid "Download"
@@ -380,19 +387,19 @@ msgid "Download the pupil responses and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
-msgstr "Elimineer keuzes"
+msgstr ""
 
 msgid "Enable Mark for Review"
-msgstr "Schakel markeer voor herziening in"
+msgstr ""
 
 msgid "Enable mark for review of items. Requires the Review Screen option."
-msgstr "Schakel markeer voor herziening in voor items. Benodigd de herzieningsscherm optie."
+msgstr ""
 
 msgid "Enable Review Screen"
-msgstr "Schakel herzieningsscherm optie in "
+msgstr ""
 
 msgid "Enable selection"
-msgstr "Schakel selectie in"
+msgstr ""
 
 msgid "Enable Skipping Ahead"
 msgstr ""
@@ -401,96 +408,95 @@ msgid "Enable text to speech"
 msgstr ""
 
 msgid "Enable the item review screen / navigator."
-msgstr "Schakel het item herzieningsscherm in / navigator."
+msgstr ""
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
-msgstr "Maakt het mogelijk om naar items binnen deze sectie over te gaan. Vereist de optie voor het beoordelingsscherm."
+msgstr ""
 
 msgid "End test"
-msgstr "Test beëindigen"
+msgstr ""
 
 msgid "End Test"
-msgstr "Eindig toets"
+msgstr ""
 
 msgid "Enter a blueprint"
-msgstr "Voer een blauwdruk in"
+msgstr ""
 
 msgid "Enter a custom category"
-msgstr "Voer een eigen categorie in"
+msgstr ""
 
 msgid "Error"
-msgstr "Fout"
+msgstr ""
 
 msgid "Error during file import"
-msgstr "Fout bij het importeren"
+msgstr ""
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr "Fout gevonden in de IMS QTI Toets:\n"
-"%s"
+msgstr ""
 
 msgid "Expand the review panel"
-msgstr "Vergroot het review paneel"
+msgstr ""
 
 msgid "Export failed for the test \"%s"
-msgstr "Export voor examen \"%s is mislukt"
+msgstr ""
 
 msgid "Export metadata"
-msgstr "Metadata exporteren"
+msgstr "Metagegevens exporteren"
 
 msgid "Export QTI 2.1 Test Package"
-msgstr "Exporteer QTI 2.1 toets pakket"
+msgstr ""
 
 msgid "Export QTI 2.2 Test Package"
-msgstr "Exporteer QTI 2.2 examen pakket"
+msgstr ""
 
 msgid "Export successful for the test \"%s"
-msgstr "Export voor het examen \"%s succesvol"
+msgstr ""
 
 msgid "Feedback block"
-msgstr "Feedback blok"
+msgstr ""
 
 msgid "File name"
 msgstr "Bestandsnaam"
 
 msgid "File not found"
-msgstr "Bestand niet gevonden"
+msgstr ""
 
 msgid "File not found!"
-msgstr "Bestand niet gevonden!"
+msgstr ""
 
 msgid "Filter"
-msgstr "Filter"
+msgstr ""
 
 msgid "Fixed"
-msgstr "Vast"
+msgstr ""
 
 msgid "Fixed position in a shuffled the selection."
-msgstr "Vaste positie in een niet vaste volgorde selectie"
+msgstr ""
 
 msgid "Flag for Review"
-msgstr "Markeer voor herziening"
+msgstr ""
 
 msgid "Flag the current item for later review"
-msgstr "Volg deze vraag op"
+msgstr ""
 
 msgid "Flagged"
-msgstr "Op te volgen"
+msgstr ""
 
 msgid "Flagged for review"
 msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
-msgstr "Forceer dat het item wordt beschouwd als informatie en niet wordt meegenomen bij de tellingen voor (niet) beantwoord of gemarkeerde items."
+msgstr ""
 
 msgid "Go to next item"
-msgstr "Ga naar het volgende item"
+msgstr ""
 
 msgid "Go to the current question"
 msgstr ""
 
 msgid "Go to the next item?"
-msgstr "Naar het volgende item gaan?"
+msgstr ""
 
 msgid "Go to the next question"
 msgstr ""
@@ -502,58 +508,58 @@ msgid "Go to the top of the page"
 msgstr ""
 
 msgid "Gray on Green"
-msgstr "Grijs op Groen"
+msgstr ""
 
 msgid "Hide Review"
-msgstr "Verberg herziening"
+msgstr ""
 
 msgid "Hide the review screen"
-msgstr "Verberg het overzichtsscherm"
+msgstr ""
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
-msgstr "Verwijder de automatisch getoonde waarschuwing voor wanneer een kandidaat een getimede sectie verlaat."
+msgstr ""
 
 msgid "Hide Timed Section Warning"
-msgstr "Verberg de getimede sectie waarschuwing"
+msgstr ""
 
 msgid "Hide timers"
-msgstr "Verberg resterende tijd"
+msgstr ""
 
 msgid "Highlight"
-msgstr "Markeer"
+msgstr ""
 
 msgid "Highlight Text"
-msgstr "Markeer tekst"
+msgstr ""
 
 msgid "Highlighter"
-msgstr "Markeerder"
+msgstr ""
 
 msgid "hours"
 msgstr ""
 
 msgid "Html title"
-msgstr "HTML titel"
+msgstr ""
 
 msgid "Identifier"
 msgstr "Naam"
 
 msgid "If required it must appear (at least once) in the selection."
-msgstr "Indien verplicht gesteld dan moet het minimaal een keer in de selectie voorkomen."
+msgstr ""
 
 msgid "If required, it must appears at least once in the selection."
-msgstr "Indien verplicht gesteld dan moet het minimaal een keer in de selectie voorkomen."
+msgstr ""
 
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
-msgstr "Indien ingeschakeld worden de onderliggende elementen in willekeurige volgorde gezet, anders wordt de volgorde gebruikt in welke de onderliggende elementen zijn gedefinieerd."
+msgstr ""
 
 msgid "If the candidate can skip the item, without submitting a response (default is true)."
-msgstr "Indien de kandidaat het item kan overslaan, zonder een antwoord te geven (default is waar)."
+msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
-msgstr "Indien de categorie optie is gezet, zal de score ook worden verwerkt per categorie en zal elk resultaat plaatsvinden in het PASS_xxx resultaat, waar xxx de naam van de categorie is."
+msgstr ""
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
-msgstr "Indien de categorie optie is gezet, zal de score ook worden verwerkt per categorie en zal elk resultaat plaatsvinden in het SCORE_xxx resultaat, waar xxx de naam van de categorie is."
+msgstr ""
 
 msgid "If the connection cannot be restored, see option B."
 msgstr ""
@@ -562,91 +568,91 @@ msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
-msgstr "Importeer"
+msgstr ""
 
 msgid "Import a QTI/APIP Content Package"
-msgstr "Importeer een QTI/APIP content pakket"
+msgstr ""
 
 msgid "Import QTI TEST into \"%s"
 msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "IMS QTI item aangegeven als \"%s\" in het IMS Manifest bestand kon niet worden geïmporteerd."
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "IMS QTI item aangegeven als \"%s\" in het IMS Manifest bestand is succesvol geïmporteerd."
+msgstr ""
 
 msgid "IMS QTI Test Package successfully imported."
-msgstr "IMS QTI toets pakket is succesvol geïmporteerd."
+msgstr ""
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "IMS QTI toets aangegeven als \"%s\" in het IMS Manifest bestand is succesvol geïmporteerd."
+msgstr ""
 
 msgid "In this part of the test navigation is not allowed."
-msgstr "In dit gedeelte van de toets is navigeren niet toegestaan."
+msgstr ""
 
 msgid "Inconsistency at line %1d:"
-msgstr "Inconsistentie op regel %1d:"
+msgstr ""
 
 msgid "Individual"
-msgstr "Individueel"
+msgstr ""
 
 msgid "Informational Item Usage"
-msgstr "Informatief item gebruik"
+msgstr ""
 
 msgid "Internal server error!"
-msgstr "Interne serverfout!"
+msgstr ""
 
 msgid "is already used in the test."
-msgstr "is al gebruikt in de toets"
+msgstr ""
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr "is geen geldige naam (alfanumeriek, laag streepje, streep en punten)"
+msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
-msgstr "is geen geldige naam (alles behalve spaties)"
+msgstr ""
 
 msgid "It is not possible to save your responses while working offline."
 msgstr ""
 
 msgid "Item \"%s\" is completed."
-msgstr "Item \"%s\" is gereed."
+msgstr ""
 
 msgid "Item %d"
-msgstr "Item %d"
+msgstr ""
 
 msgid "Item %d of %d"
-msgstr "Item %d van %d"
+msgstr ""
 
 msgid "Item %s loaded"
 msgstr ""
 
 msgid "Item Reference Properties"
-msgstr "Item referentie eigenschappen"
+msgstr ""
 
 msgid "Item response identifier does not match current item"
 msgstr ""
 
 msgid "Item Session Control"
-msgstr "Item sessie controle"
+msgstr ""
 
 msgid "items"
 msgstr ""
 
 msgid "Items"
-msgstr "Items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
-msgstr "Items kunnen optioneel worden toegewezen aan een of meer categorieën. "
+msgstr ""
 
 msgid "Items Compilation"
-msgstr "Item compilatie"
+msgstr ""
 
 msgid "Items marked for later review"
-msgstr "Op te volgen vragen"
+msgstr ""
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
-msgstr "Items met assessmentItemRef identifiers \"%s\" worden niet geregistreerd in het betreffende CAT-eindpunt."
+msgstr ""
 
 msgid "Jump Menu"
 msgstr ""
@@ -655,7 +661,7 @@ msgid "Jump to:"
 msgstr ""
 
 msgid "Keep Together"
-msgstr "Bijeenhouden"
+msgstr ""
 
 msgid "Keyboard Navigation"
 msgstr ""
@@ -664,125 +670,125 @@ msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-
 msgstr ""
 
 msgid "Late submission allowed"
-msgstr "Late inschrijvingen toegestaan"
+msgstr ""
 
 msgid "Leave a comment"
-msgstr "Laat een opmerking achter"
+msgstr ""
 
 msgid "Line Reader"
-msgstr "Regel lezer"
+msgstr ""
 
 msgid "Linear"
-msgstr "Lineair"
+msgstr ""
 
 msgid "Link durations to activate the guided navigation"
-msgstr "Link duur om de geleide navigatie te activeren"
+msgstr ""
 
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
-msgstr "Duur begrenst  : geleide navigatie. De test zal doorgaan naar het volgende item zodra de duur 0 is bereikt."
+msgstr ""
 
 msgid "Magnifier"
-msgstr "Vergrootglas"
+msgstr ""
 
 msgid "Magnify less"
-msgstr "Vergroot minder"
+msgstr ""
 
 msgid "Magnify more"
-msgstr "Vergroot meer"
+msgstr ""
 
 msgid "Magnifying Glass"
-msgstr "Vergrootglas"
+msgstr ""
 
 msgid "Main navigation"
 msgstr ""
 
 msgid "Manage Rubric Blocks"
-msgstr "Beheer rubriek blokken"
+msgstr ""
 
 msgid "Manage test properties"
-msgstr "beheer toets eigenschappen"
+msgstr ""
 
 #, tao-public
 msgid "Manage tests"
-msgstr "Beheer examens"
-
-msgid "Manage Tests"
 msgstr "Beheer toetsen"
 
+msgid "Manage Tests"
+msgstr ""
+
 msgid "Mark for review"
-msgstr "Markeer voor herziening"
+msgstr ""
 
 msgid "Masking"
-msgstr "Maskeren"
+msgstr ""
 
 msgid "Match value"
-msgstr "Zoek overeenkomende waarden"
+msgstr ""
 
 msgid "Max Attempts"
-msgstr "Maximum aantal pogingen"
+msgstr ""
 
 msgid "Maximum Duration"
-msgstr "Maximale duur"
+msgstr ""
 
 msgid "Maximum duration : the items times out when the duration reaches 0."
-msgstr "Maximale duur : het item times out wanneer de duur 0 bereikt."
+msgstr ""
 
 msgid "Maximum duration for the all test."
-msgstr "Maximale duur voor alle toetsen."
+msgstr ""
 
 msgid "Maximum duration for this item."
-msgstr "Maximale duur voor dit item"
+msgstr ""
 
 msgid "Maximum duration for this section."
-msgstr "Maximale duur voor deze sectie."
+msgstr ""
 
 msgid "Maximum duration for this test part."
-msgstr "Maximale duur voor dit toets deel. "
+msgstr ""
 
 msgid "Metadata export is not available for test \"%s."
 msgstr ""
 
 msgid "Minimum Duration"
-msgstr "Minimale duur"
-
-msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
-msgstr "Minimum duur : verplicht de kandidaat om op het item te blijven voor de gegeven duur."
-
-msgid "Minimum duration for the test."
-msgstr "Minimale duur voor de test."
-
-msgid "Minimum duration for this item."
-msgstr "Minimale duur voor dit item."
-
-msgid "Minimum duration for this section."
-msgstr "Minimale duur voor deze sectie."
-
-msgid "Minimum duration for this test part."
-msgstr "Minimale duur voor dit deel van de toets."
-
-msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
+msgstr ""
+
+msgid "Minimum duration for the test."
+msgstr ""
+
+msgid "Minimum duration for this item."
+msgstr ""
+
+msgid "Minimum duration for this section."
+msgstr ""
+
+msgid "Minimum duration for this test part."
+msgstr ""
+
+msgid "minutes"
+msgstr "minuten"
+
+msgid "Missed required parameter \\'id\\'"
 msgstr ""
 
 msgid "Missed test package file"
-msgstr "Miste een examen pakket bestand"
+msgstr ""
 
 msgid "Missing required configuration option %s"
 msgstr ""
 
 msgid "Move"
-msgstr ""
+msgstr "Verplaats"
 
 msgid "Move Down"
-msgstr "Naar beneden"
+msgstr ""
 
 msgid "Move Up"
-msgstr "Naar boven"
+msgstr ""
 
 msgid "Moving to the next item without time limit reached message."
-msgstr "Doorgaan naar het volgende item zonder de tijdslimiet bereikt mededeling."
+msgstr ""
 
 msgid "name of the pupil"
 msgstr ""
@@ -794,55 +800,55 @@ msgid "Navigation shortcuts"
 msgstr ""
 
 msgid "Navigation Warnings"
-msgstr "Navigatie-waarschuwing"
+msgstr ""
 
 msgid "network"
 msgstr ""
 
 msgid "New Rubric Block"
-msgstr "Nieuwe rubriek blok"
+msgstr ""
 
 msgid "New section"
 msgstr ""
 
 msgid "New test part"
-msgstr "Nieuw toets deel"
+msgstr ""
 
 msgid "Next"
-msgstr "Volgende"
+msgstr ""
 
 msgid "Next Section"
-msgstr "Volgende sectie"
+msgstr ""
 
 msgid "No"
 msgstr "Nee"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
-msgstr "Geen CAT-engine geconfigureerd voor CAT-eindpunt \"%s\"."
+msgstr ""
 
 msgid "No file found at location \"%s\"."
-msgstr "Geen bestand gevonden op locatie: \"%s\"."
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr "Geen pogingen meer toegestaan voor item \"%s\"."
+msgstr ""
 
 msgid "no outcome declaration found"
 msgstr ""
 
 msgid "No outcome processing. Erase the existing rules, if any."
-msgstr "Geen verwerking van resultaat. Verwijder de bestaande regels, indien aanwezig."
+msgstr ""
 
 msgid "No reference to any IMS QTI Item found."
-msgstr "Geen referentie gevonden naar enig IMS QTI item."
+msgstr ""
 
 msgid "Non Linear"
-msgstr "Niet lineair"
+msgstr ""
 
 msgid "None"
 msgstr "Geen"
 
 msgid "Not all test could be exported"
-msgstr "Niet alle examens konden worden geëxporteerd"
+msgstr ""
 
 msgid "Not answered"
 msgstr ""
@@ -851,37 +857,37 @@ msgid "Not seen"
 msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
-msgstr "Niet door elkaar gehaald, de posities blijven vast"
+msgstr ""
 
 msgid "Offline"
 msgstr ""
 
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 msgid "Ok"
-msgstr "Ok"
+msgstr ""
 
 msgid "OK & End test"
-msgstr "OK & beëindig test"
+msgstr ""
 
 msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr "Zodra u deze sectie sluit, kunt u er niet meer op terugkomen of uw antwoorden wijzigen."
+msgstr ""
 
 msgid "One or more dependent IMS QTI Items could not be imported."
-msgstr "Een of meerdere IMS QTI afhankelijke items konden niet worden geïmporteerd."
+msgstr ""
 
 msgid "Online"
 msgstr ""
 
 msgid "Only display the items marked for review"
-msgstr "Toon enkel de op te volgen vragen"
+msgstr ""
 
 msgid "Only display the unanswered items"
-msgstr "Toon enkel de onbeantwoorde vragen"
+msgstr ""
 
 msgid "Open Calculator"
-msgstr "Open rekenmachine"
+msgstr ""
 
 msgid "Open Keyboard Shortcuts"
 msgstr ""
@@ -896,28 +902,28 @@ msgid "or"
 msgstr ""
 
 msgid "Ordering"
-msgstr "Sorteervolgorde"
+msgstr ""
 
 msgid "Outcome"
 msgstr "Uitkomst"
 
 msgid "Outcome declarations"
-msgstr "Uitkomsten declaraties"
+msgstr ""
 
 msgid "Outcome processing"
-msgstr "Uitkomst verwerking"
+msgstr ""
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
-msgstr "Het pakket is geldig, maar er werden geen toetsen gevonden. Overtuig u ervan dat het geldige QTI toetsen bevat."
+msgstr ""
 
 msgid "Part %d"
-msgstr "Deel %d"
+msgstr ""
 
 msgid "Passage"
 msgstr ""
 
 msgid "Pause"
-msgstr ""
+msgstr "Pauzeer"
 
 msgid "Pause the test"
 msgstr ""
@@ -926,67 +932,67 @@ msgid "Play"
 msgstr ""
 
 msgid "Please confirm you want to leave the test."
-msgstr "Bevestig dat u de test wilt verlaten."
+msgstr ""
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
-msgstr "Wacht even terwijl we proberen de verbinding te herstellen."
-
-msgid "Preview"
 msgstr ""
 
+msgid "Preview"
+msgstr "Voorbeeld"
+
 msgid "Preview the covered area"
-msgstr "Toon het bedekte gebied in voorvertoning"
+msgstr ""
 
 msgid "Previous"
-msgstr "Vorige"
+msgstr ""
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
 msgid "Proctor"
-msgstr "Proctor"
+msgstr "Toezichthouder"
 
 msgid "Properties"
-msgstr "Eigenschappen"
+msgstr ""
 
 msgid "QTI 2.1 Test Driver"
-msgstr "QTI 2.1 Toets driver"
+msgstr ""
 
 msgid "QTI Item Runner"
-msgstr "QTI Item starter"
+msgstr "QTI item starter"
 
 msgid "QTI Test \"%s\" publishing failed."
-msgstr "Publiceren van QTI toets \"%s\" mislukt."
+msgstr ""
 
 msgid "QTI Test \"%s\" successfully published."
-msgstr "QTI toets \"%s\" succesvol gepubliceerd"
+msgstr ""
 
 msgid "QTI Test Package 2.1"
-msgstr "QTI Toets pakket 2.1"
+msgstr ""
 
 msgid "QTI Test Package 2.2"
-msgstr "QTI Examen pakket 2.2"
+msgstr ""
 
 msgid "QTI/APIP Test Content Package"
-msgstr "QTI/APIP Examen Content Pakket"
+msgstr ""
 
 msgid "question"
 msgstr ""
 
 msgid "Question"
-msgstr ""
+msgstr "Vraag"
 
 msgid "questions"
 msgstr ""
 
 msgid "Reference"
-msgstr "Verwijzing"
+msgstr ""
 
 msgid "Regenerate"
-msgstr "Regenereren"
+msgstr ""
 
 msgid "Reload the page"
 msgstr ""
@@ -995,43 +1001,43 @@ msgid "remaining %s %s"
 msgstr ""
 
 msgid "Remove Item Reference"
-msgstr "Verwijder item verwijzing"
+msgstr ""
 
 msgid "Remove Rubric Block"
-msgstr "Verwijder rubriek blok"
+msgstr ""
 
 msgid "Remove Section"
-msgstr "Verwijder sectie"
+msgstr ""
 
 msgid "Remove Test Part"
 msgstr ""
 
 msgid "Required"
-msgstr "Vereist"
+msgstr ""
 
 msgid "Required field"
-msgstr "Verplicht veld"
+msgstr ""
 
 msgid "Reset filters"
-msgstr "Filter resetten"
+msgstr ""
 
 msgid "Resource(s) successfully exported."
 msgstr "Resource(s) met succes geëxporteerd."
 
 msgid "Review"
-msgstr "Herzien"
+msgstr ""
 
 msgid "Review my Answers"
-msgstr "Mijn antwoorden bekijken"
+msgstr ""
 
 msgid "Rubric Block"
-msgstr "Rubriek blok"
+msgstr ""
 
 msgid "Rubric Block Properties"
-msgstr "Rubriek blok eigenschappen"
+msgstr ""
 
 msgid "Rubric Blocks"
-msgstr "Rubriek blokken"
+msgstr ""
 
 msgid "Save"
 msgstr "Opslaan"
@@ -1040,151 +1046,151 @@ msgid "Saved"
 msgstr ""
 
 msgid "Scientific Calculator"
-msgstr "Wetenschappelijke rekenmachine"
+msgstr ""
 
 msgid "Scorer"
-msgstr "Puntenteller"
+msgstr ""
 
 msgid "Scoring"
-msgstr "Scoring (Waardering)"
+msgstr ""
 
 msgid "Scratch pad"
-msgstr "Notitieboekje"
+msgstr ""
 
 msgid "Scratch Pad"
-msgstr "Notitieboekje"
+msgstr ""
 
 msgid "Scratchpad"
-msgstr "Notitieboekje"
+msgstr ""
 
 msgid "seconds"
 msgstr ""
 
 msgid "Section %d"
-msgstr "Sectie %d"
+msgstr ""
 
 msgid "Section %d of %d"
-msgstr "Sectie %d van %d"
+msgstr ""
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr "Selectie niveau categorie geeft de mogelijkheid om de categorieën van zijn samengestelde items in een keer te wijzigen, Een grijze categorie betekent dat alle items die categorie hebben. Een witte categorie betekent dat slechts enkele items die categorie hebben."
+msgstr ""
 
 msgid "Section Properties"
-msgstr "Sectie eigenschappen"
+msgstr ""
 
 msgid "Select"
-msgstr "Selecteer"
+msgstr ""
 
 msgid "Select a blueprint"
-msgstr "Selecteer een blauwdruk"
+msgstr ""
 
 msgid "Select Items"
-msgstr "Selecteer items"
+msgstr ""
 
 msgid "Select the way the responses of your test should be processed"
-msgstr "Selecteer de wijze waarop de antwoorden op uw examen verwerkt moeten worden"
+msgstr ""
 
 msgid "Selection"
-msgstr "Selectie"
+msgstr ""
 
 msgid "Send"
-msgstr "Verzenden"
+msgstr ""
 
 msgid "Set outcome identifier the feedback block is related to"
-msgstr "Zet de naam van de uitkomst waarmee het feedback blok is geassocieerd"
+msgstr ""
 
 msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
-msgstr "Stel de cutscore (of slaagpercentage) in die bij de test hoort. Het moet een float zijn tussen 0 en 1."
+msgstr ""
 
 msgid "Set the rubric block as a feedback block"
-msgstr "Stel de rubric blok als feedback blok in"
+msgstr ""
 
 msgid "Set the value of the outcome that will activate the feedback block"
-msgstr "Stel de waarde van de uitkomst in die het feedback blok activeert"
+msgstr ""
 
 msgid "Set the weight identifier used to process the score"
-msgstr "Stel de weging in die gebruikt moet worden bij berekening van de score"
+msgstr ""
 
 msgid "Set the XHTML-QTI class of the rubric block."
-msgstr "Stel de XHTML-QTI klasse in van het rubric blok"
+msgstr ""
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
-msgstr "Stel de XHTML-QTI naam in van het rubric blok"
+msgstr ""
 
 msgid "SetSynchronisationService successfully configured."
 msgstr ""
 
 msgid "Settings"
-msgstr "Instellingen"
+msgstr ""
 
 msgid "Show Feedback"
-msgstr "Feedback tonen"
+msgstr ""
 
 msgid "Show Review"
-msgstr "Toon beoordeling"
+msgstr ""
 
 msgid "Show Solution"
-msgstr "Oplossing tonen"
+msgstr ""
 
 msgid "Show the review screen"
-msgstr "Toon het overzichtsscherm"
+msgstr ""
 
 msgid "Show the solution once the answer is submitted."
-msgstr "Laat de oplossing zien nadat het antwoord is verzonden."
+msgstr ""
 
 msgid "Show timers"
-msgstr "Toon resterende tijd"
+msgstr ""
 
 msgid "Show/Hide the review screen"
-msgstr "Toon/verberg het voorbeeld scherm"
+msgstr ""
 
 msgid "Shuffle"
-msgstr "Schudden"
+msgstr "Willekeurig"
 
 msgid "Simultaneous"
-msgstr "Tegelijkertijd"
+msgstr ""
 
 msgid "Skip"
-msgstr "Overslaan"
+msgstr ""
 
 msgid "Skip &amp; End Test"
-msgstr "Sla &amp over; Einde toets"
+msgstr ""
 
 msgid "Skip and end test"
-msgstr "Sla over en beëindig examen"
+msgstr ""
 
 msgid "Skip and go to the end of the test"
-msgstr "Sla over en ga naar het einde van examen"
+msgstr ""
 
 msgid "Skip and go to the next item"
-msgstr "Overslaan en naar het volgende item gaan"
+msgstr ""
 
 msgid "Skip to the end of the test"
-msgstr "Ga naar het eind van de toets"
+msgstr ""
 
 msgid "Skip to the next item"
-msgstr "Ga naar het volgende item"
+msgstr ""
 
 msgid "Skip to the next section"
-msgstr "Ga naar de volgende sectie"
+msgstr ""
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
-msgstr "Sommige rubric blokken zijn geupdate om de veranderingen in de lijst van de uitkomsten weer te geven."
+msgstr ""
 
 msgid "Something unexpected happened."
 msgstr ""
 
 msgid "Something went wrong..."
-msgstr ""
+msgstr "Er ging iets mis..."
 
 msgid "Speech speed"
-msgstr "Vaart van de spraak"
+msgstr ""
 
 msgid "Speed"
 msgstr ""
 
 msgid "Start Test-part"
-msgstr "Start Toets deel"
+msgstr ""
 
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
@@ -1196,43 +1202,43 @@ msgid "Step 3: Once you have downloaded the file you can close the browser windo
 msgstr ""
 
 msgid "Stop"
-msgstr "Afbreken"
+msgstr ""
 
 msgid "Submission"
-msgstr "Bevestiging"
+msgstr ""
 
 msgid "Submit and go to the end of the test"
-msgstr "Beëindig de test"
+msgstr ""
 
 msgid "Submit and go to the item %s"
-msgstr "Dien in en ga naar het item %s"
+msgstr ""
 
 msgid "Submit and go to the next item"
-msgstr "Dien in en ga naar het volgende item"
+msgstr ""
 
 msgid "Submit and go to the previous item"
-msgstr "Dien in en ga naar het vorige item"
+msgstr ""
 
 msgid "SUBMIT THE TEST"
-msgstr "DE TEST INLEVEREN"
+msgstr ""
 
 msgid "SUBMIT THIS PART"
 msgstr ""
 
 msgid "technical"
-msgstr "technisch"
+msgstr ""
 
 msgid "Test"
 msgstr "Toets"
 
 msgid "Test constructor"
-msgstr "Toets constructeur"
+msgstr ""
 
 msgid "Test metadata successfully exported."
-msgstr "Test metagegevens met succes geëxporteerd."
+msgstr ""
 
 msgid "Test Navigation"
-msgstr "Examennavigatie"
+msgstr ""
 
 msgid "Test Part Properties"
 msgstr ""
@@ -1241,10 +1247,10 @@ msgid "Test Preview is not installed, please contact to your administrator."
 msgstr ""
 
 msgid "Test Saved"
-msgstr "Toets opgeslagen"
+msgstr ""
 
 msgid "Test status"
-msgstr "Status van de test"
+msgstr ""
 
 msgid "Test status and review structure"
 msgstr ""
@@ -1253,17 +1259,17 @@ msgid "Test Status and Structure"
 msgstr ""
 
 msgid "Test-Taker Tools"
-msgstr "Kandidaten hulpmiddelen"
+msgstr ""
 
 #, tao-public
 msgid "Tests"
-msgstr "Examens"
+msgstr "Toetsen"
 
 msgid "Text content"
-msgstr "Tekst inhoud"
+msgstr ""
 
 msgid "Text to Speech"
-msgstr "Tekst naar spraak"
+msgstr ""
 
 msgid "Text To Speech"
 msgstr ""
@@ -1272,121 +1278,121 @@ msgid "that was being taken."
 msgstr ""
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
-msgstr "Het 'imsmanifest.xml' bestand in het archief is niet geldig."
+msgstr ""
 
 msgid "the assessment (LCL or Mathematics)"
 msgstr ""
 
 msgid "The assessment has been created but is not already running."
-msgstr "Het assessment is gecreëerd maar is nog niet werkend."
+msgstr ""
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr "De examen is geschorst door een geautoriseerde toezichthouder. Herstart uw assessment en neem, indien nodig, contact op met uw toezichthouder indien u het wil hervatten."
+msgstr ""
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
-msgstr "De toets is opgeschort. Om uw toets te hervatten, gelieve deze opnieuw te starten en contact op te nemen met uw proctor indien nodig."
+msgstr "Het examen is geschorst. Herstart a.u.b. het examen en neem indien nodig contact op met de uw toezichthouder om uw examen te hervatten."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr "De assessment is geschorst door een geautoriseerde toezichthouder. Herstart uw assessment om het te hervatten."
+msgstr ""
 
 msgid "The assessment has been terminated."
-msgstr "Het assessment is beëindigt."
+msgstr ""
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "Het assessment is beëindigt. U kunt er niet meer mee verder gaan."
+msgstr "Het examen is beëindigd.U kunt er niet meer aan werken."
 
 msgid "The assessment is still running."
-msgstr "Het assessment is nog steeds in gang."
+msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr "De kandidaat mag geen ongeldige antwoorden indienen."
+msgstr ""
 
 msgid "The connection seems to be back, please proceed"
-msgstr "De verbinding lijkt terug te zijn, ga alstublieft verder"
+msgstr ""
 
 msgid "the current question"
 msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
-msgstr "De afhankelijkheid met het IMS QTI AssessmentItemRef \"%s\" in het IMS Manifest kon niet worden opgelost"
+msgstr ""
 
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr "De volgende identificaties zijn niet uniek voor de test: %s"
+msgstr ""
 
 msgid "The identifier of the item reference."
-msgstr "De naam van de item referentie"
+msgstr ""
 
 msgid "The identifier of the section."
-msgstr "De naam van de sectie"
+msgstr ""
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr "Het IMS QTI item, met referentie \"%s\" in het IMS Manifest bestand, was al opgeslagen in de itembank "
+msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
-msgstr "Het IMS QTI toets pakket kon niet worden geïmporteerd"
+msgstr ""
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "Het IMS QTI item, met referentie \"%s\" in het IMS Manifest bestand, kon niet worden geïmporteerd."
+msgstr ""
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
-msgstr "De navigatie modus bepaalt de algemene pad die een kandidaat kan nemen. Een lineaire modus zorgt ervoor dat een kandidaat elk item achter moet maken. Niet lineair heft deze restrictie op."
+msgstr ""
 
 msgid "The number of child elements to be selected."
-msgstr "Het aantal te selecteren onderliggende elementen"
+msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
-msgstr "De uitkomst \"%s\" bestaat niet, maar er wordt wel naar verwezen in een feedback blok!"
+msgstr ""
 
 msgid "The outcomes have been regenerated!"
-msgstr "The uitkomsten zijn gegenereerd!"
+msgstr ""
 
 msgid "The principle identifier of the test."
-msgstr "De hoofdnaam van de toets"
+msgstr ""
 
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
-msgstr "Het aangeleverde archief is ongeldig. Zorg ervoor dat het niet corrupt is en dat het een 'imsmanifest.xml' bestand bevat."
+msgstr ""
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr "De te compileren toets '%s' moet minstens één QTI item bevatten. Geen gevonden."
+msgstr ""
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr "De QTI toets kon niet correct worden opgehaald."
+msgstr ""
 
 msgid "The QTI Test XML or one of its dependencies is malformed or empty."
-msgstr "De QTI toets XML of een van zijn afhankelijkheden is misvormd of leeg."
+msgstr ""
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr "De QTI-XML kon niet correct worden weggeschreven."
+msgstr ""
 
 msgid "The reference."
-msgstr "De referentie."
+msgstr ""
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr "De bronnen gerelateerd aan de IMS QTI toets, met referentie \"%s\" in het IMS Manifest bestand, zijn teruggezet naar wat ze waren. "
+msgstr ""
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
-msgstr "De score wordt voor de gehele test verwerkt. Een som van alle SCORE-resultaten wordt berekend en gedeeld door de som van MAX SCORE, het resultaat wordt vergeleken met de cutscore (of slaagratio), vervolgens wordt de PASS_TOTAL-uitkomst overeenkomstig ingesteld."
+msgstr ""
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
-msgstr "De score zal worden verwerkt voor het gehele examen. Het totaal van alle SCORE uitkomsten zal worden berekend en geplaatst in de SCORE_TOTAL uitkomst."
+msgstr ""
 
 msgid "The section title."
-msgstr "De sectie titel."
+msgstr ""
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
-msgstr "De verzending modus bepaalt wanneer de antwoorden van een kandidaat worden verwerkt. Een testdeel in individuele modus vereist dat de kandidaat zijn antwoord op een item-voor-item basis verwerkt. In simultaan modus zullen de antwoorden van de kandidaat in een keer aan het eind van het testdeel worden verwerkt."
+msgstr ""
 
 msgid "The test has been closed/suspended!"
-msgstr "Het examen is gesloten/geschorst!"
+msgstr ""
 
 msgid "The test has been paused, we are unable to connect to the server."
-msgstr "De test is gepauzeerd, we kunnen geen verbinding maken met de server."
+msgstr ""
 
 msgid "The test has not been saved."
-msgstr "Het examen is niet opgeslagen"
+msgstr ""
 
 msgid "The test has unsaved changes, are you sure you want to leave?"
 msgstr ""
@@ -1398,10 +1404,10 @@ msgid "The test needs to be saved before it can be previewed."
 msgstr ""
 
 msgid "The test part identifier."
-msgstr "De testdeelnaam "
+msgstr ""
 
 msgid "The test title."
-msgstr "De toets titel."
+msgstr ""
 
 msgid "The time limit has been reached for this part of the test."
 msgstr ""
@@ -1419,37 +1425,37 @@ msgid "There is %s unanswered question in this part of the test"
 msgstr ""
 
 msgid "There is not outcomes!"
-msgstr "Er zijn geen uitkomsten!"
+msgstr ""
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
-msgstr "Deze beperking raakt de zichtbaarheid van de feedback aan het eind van de laatste poging."
+msgstr ""
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
-msgstr "Deze beperking bepaalt of de kandidaat al dan niet een opmerking in het item mag plaatsen gedurende de sessie. Commentaar is geen onderdeel van de te verwerken antwoorden."
+msgstr ""
 
 msgid "This functionality is blocked. Please contact with your administrator for more details."
 msgstr ""
 
 msgid "This test has been suspended"
-msgstr "Deze toets is uitgesteld"
+msgstr ""
 
 msgid "This test has been terminated"
-msgstr "Deze test is beëindigd "
+msgstr ""
 
 msgid "Time limit reached for item \"%s\"."
-msgstr "Tijdlimiet bereikt voor item \"%s\"."
+msgstr ""
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr "Tijdlimiet bereikt. Dit deel van de test is beëindigd."
+msgstr ""
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr "Tijdslimiet bereikt, dit deel van de test is afgelopen. U mag echter wel het huidige item afmaken."
+msgstr ""
 
 msgid "Time Limits"
-msgstr "Tijdslimieten"
+msgstr ""
 
 msgid "Time Remaining"
-msgstr "Resterende tijd"
+msgstr ""
 
 msgid "Title"
 msgstr "Titel"
@@ -1467,28 +1473,28 @@ msgid "Toolbox"
 msgstr ""
 
 msgid "Total score"
-msgstr "Totaal score"
+msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
 
 msgid "Tutor"
-msgstr "Leerkracht"
+msgstr ""
 
 msgid "Type"
-msgstr "Type"
+msgstr ""
 
 msgid "Unanswered"
-msgstr "Onbeantwoord"
+msgstr ""
 
 msgid "Unanswered items"
-msgstr "Onbeantwoorde vragen"
+msgstr ""
 
 msgid "Unflag for Review"
-msgstr "Markeer voor herziening opheffen"
+msgstr ""
 
 msgid "Unknown error."
-msgstr "Onbekende fout."
+msgstr ""
 
 msgid "Unlink to use separated durations"
 msgstr ""
@@ -1497,28 +1503,28 @@ msgid "Unseen"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr "Upload een QTI 2.1 Toets pakket bestand"
+msgstr ""
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr "Gebruik Ctrl/Meta toets of lasso om meerdere te selecteren"
+msgstr ""
 
 msgid "Validate Responses"
-msgstr "Geldige antwoorden"
+msgstr ""
 
 msgid "Value"
-msgstr "Waarde"
+msgstr ""
 
 msgid "Viewed"
-msgstr "Bekeken"
+msgstr ""
 
 msgid "Viewed items"
-msgstr "Bekeken pagina's"
+msgstr ""
 
 msgid "Views"
-msgstr "Weergaven"
+msgstr ""
 
 msgid "Visible"
-msgstr "Zichtbaar"
+msgstr ""
 
 msgid "Volume"
 msgstr ""
@@ -1527,61 +1533,61 @@ msgid "Wait for your connection to come back online."
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr "Waarschuwing – U heeft %s over om de toets af te maken."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr "Waarschuwing – U heeft nog %s over om dit item af te maken."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr "Waarschuwing – U heeft nog %s over om deze sectie af te maken."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete this test part."
-msgstr "Waarschuwing – U heeft nog %s over om dit examen gedeelte af te maken."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr "Waarschuwing - U heeft nog %s resterend om deze test af te ronden."
+msgstr ""
 
 msgid "We are unable to connect the server to submit your results."
-msgstr "We kunnen geen verbinding maken met de server om uw resultaten in te sturen."
+msgstr ""
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr "We kunnen geen verbinding maken met de server om het volgende item op te halen."
+msgstr ""
 
 msgid "Weight"
-msgstr "Gewicht"
+msgstr ""
 
 msgid "Weights"
-msgstr "Gewichten"
+msgstr ""
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
-msgstr "Wanneer u een onderliggend element selecteert is elk element normaal gesproken maar te gebruiken voor één selectie."
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
-msgstr "Of een antwoord van een kandidaat met een langere duur dan het maximum voor het item nog steeds wordt geaccepteerd."
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
-msgstr "Of een antwoord van een kandidaat met een langere duur dan het maximum voor de sectie nog steeds wordt geaccepteerd."
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
-msgstr "Of een antwoord van een kandidaat met een langere duur dan het maximum voor de toets nog steeds wordt geaccepteerd."
+msgstr ""
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
-msgstr "Of een antwoord van een kandidaat met een langere duur dan het maximum nog steeds wordt geaccepteerd."
+msgstr ""
 
 msgid "White on Black"
-msgstr "Wit op Zwart"
+msgstr ""
 
 msgid "White on Blue (TAO standard theme)"
-msgstr "Wit op Blauw (Standaard)"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
-msgstr "Wie kan rubriek blokken zien tijdens de levering."
+msgstr ""
 
 msgid "With Replacement"
-msgstr "Met vervanging"
+msgstr ""
 
 msgid "Wrong file mime type"
-msgstr "Verkeerde bestands mime type"
+msgstr ""
 
 msgid "XML Content"
 msgstr ""
@@ -1591,10 +1597,10 @@ msgid "XML Editor"
 msgstr ""
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
-msgstr "XML fout op regel %1$d kolom %2$d \"%3$s\"."
+msgstr ""
 
 msgid "Yellow on Blue"
-msgstr "Geel op Blauw"
+msgstr ""
 
 msgid "Yes"
 msgstr "Ja"
@@ -1603,28 +1609,28 @@ msgid "You answered %s of %s question(s) for this section of the test"
 msgstr ""
 
 msgid "You answered all %s question(s) in this section"
-msgstr "U heeft alle %s vraag(en) beantwoord in deze sectie"
+msgstr ""
 
 msgid "You answered all %s question(s) in this test"
-msgstr "U heeft alle %s vraag(en) beantwoord in deze test"
+msgstr ""
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr "U hebt slechts %s van de %s vraag of vragen in deze sectie beantwoord."
+msgstr ""
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
-msgstr "U staat op het punt naar het volgende item te gaan.Klik OK om door te gaan naar het volgende item"
+msgstr ""
 
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
-msgstr "U staat op het punt naar het vorige item te gaan.Klik OK om door te gaan naar het vorige item"
+msgstr ""
 
 msgid "You are about to leave this section."
 msgstr ""
 
 msgid "You are about to submit the test."
-msgstr "U staat op het punt om het examen te verzenden."
+msgstr ""
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "U staat op het punt om het examen te verzenden. Na het verzenden bent u niet meer in staat het examen te openen. Klik op OK om de test te verzenden."
+msgstr ""
 
 msgid "You are about to submit this test part."
 msgstr ""
@@ -1633,7 +1639,7 @@ msgid "You are currently working offline."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr "U heeft te kampen met een langdurig verlies van verbinding."
+msgstr ""
 
 msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
 msgstr ""
@@ -1642,7 +1648,7 @@ msgid "You flagged %s item(s) that you can review now"
 msgstr ""
 
 msgid "You have %s item(s) marked for review."
-msgstr "U heeft %s item(s) gemarkeerd voor herziening."
+msgstr ""
 
 msgid "You have %s left to answer remaining %s questions."
 msgstr ""
@@ -1651,19 +1657,19 @@ msgid "You have %s remaining to complete the current item."
 msgstr ""
 
 msgid "You have %s unanswered question(s)"
-msgstr "U hebt %s onbeantwoorde vraag/vragen"
+msgstr ""
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr "U heeft %s onbeantwoorde vra(a)g(en) en %s items gemarkeerd voor herziening."
+msgstr ""
 
 msgid "You have %s unanswered question(s)."
-msgstr "U heeft %s onbeantwoorde vra(a)g(en)."
+msgstr ""
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr "Na het verzenden bent u niet meer in staat het examen te openen. Klik op \"%s\" om de test te verzenden."
+msgstr ""
 
 msgid "Your comment…"
-msgstr "Uw commentaar…"
+msgstr ""
 
 msgid "Your connection seems to be back, please proceed."
 msgstr ""
@@ -1672,8 +1678,8 @@ msgid "Zoom"
 msgstr ""
 
 msgid "Zoom in"
-msgstr "Zoom in"
+msgstr ""
 
 msgid "Zoom out"
-msgstr "Zoom uit"
+msgstr ""
 
