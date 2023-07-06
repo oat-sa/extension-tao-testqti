@@ -128,7 +128,7 @@ class TestDeleter
     {
         if (
             !$this->mediaClassSpecification instanceof MediaClassSpecification
-            || $this->mediaService instanceof MediaService
+            || !$this->mediaService instanceof MediaService
         ) {
             $this->logger->debug('MediaManager not installed, cannot remove linked assets');
             return;
