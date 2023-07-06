@@ -28,7 +28,11 @@ use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
-use oat\taoQtiItem\model\qti\Service;
+use oat\tao\model\media\TaoMediaResolver;
+use oat\tao\model\resources\Service\ClassDeleter;
+use oat\taoMediaManager\model\Specification\MediaClassSpecification;
+use oat\taoQtiItem\model\qti\parser\ElementReferencesExtractor;
+use oat\taoQtiItem\model\qti\Service as QtiItemService;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
@@ -43,9 +47,12 @@ use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\test\TestDeleter;
 use oat\taoQtiTest\models\TestModelService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
+use taoItems_models_classes_ItemsService;
+use taoTests_models_classes_TestsService;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class TestQtiServiceProvider implements ContainerServiceProviderInterface
@@ -154,6 +161,20 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                 [
                     service(Ontology::SERVICE_ID),
                     service(TestModelService::SERVICE_ID),
+                ]
+            );
+
+        $services
+            ->set(TestDeleter::class, TestDeleter::class)
+            ->public()
+            ->args(
+                [
+                    service(LoggerService::SERVICE_ID),
+                    service(Ontology::SERVICE_ID),
+                    service(QtiItemService::class),
+                    service(ClassDeleter::class),
+                    service(ElementReferencesExtractor::class),
+                    service(MediaClassSpecification::class)->nullOnInvalid(),
                 ]
             );
     }

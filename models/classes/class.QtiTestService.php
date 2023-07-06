@@ -15,22 +15,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2018 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
- *
+ * Copyright (c) 2013-2023 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 use League\Flysystem\FileExistsException;
+use oat\generis\model\resource\Contract\ResourceDeleterInterface;
+use oat\generis\model\resource\exception\ResourceDeletionException;
+use oat\generis\model\resource\Service\ResourceDeleter;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\oatbox\service\ServiceNotFoundException;
+use oat\tao\model\media\TaoMediaException;
+use oat\tao\model\metadata\exception\MetadataImportException;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
+use oat\tao\model\resources\Service\ClassDeleter;
 use oat\tao\model\TaoOntology;
 use oat\taoBackOffice\model\tree\TreeService;
+use oat\taoMediaManager\model\relation\repository\rdf\RdfMediaRelationRepository;
+use oat\taoMediaManager\model\relation\service\IdDiscoverService;
+use oat\taoMediaManager\model\Specification\MediaClassSpecification;
+use oat\taoMediaManager\model\TaoMediaOntology;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
+use oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
+use oat\taoQtiItem\model\qti\parser\ElementReferencesExtractor;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
@@ -39,16 +51,21 @@ use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
+use oat\taoQtiTest\models\test\TestDeleter;
 use oat\taoTests\models\event\TestUpdatedEvent;
+use oat\taoMediaManager\model\MediaService;
+use Psr\Container\ContainerInterface;
 use qtism\common\utils\Format;
 use qtism\data\AssessmentItemRef;
 use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
 use qtism\data\storage\StorageException;
+use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use taoTests_models_classes_TestsService as TestService;
+
 
 /**
  * the QTI TestModel service.
@@ -57,7 +74,6 @@ use taoTests_models_classes_TestsService as TestService;
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @author Jerome Bogaerts <jerome@taotesting.com>
  * @package taoQtiTest
-
  */
 class taoQtiTest_models_classes_QtiTestService extends TestService
 {
@@ -341,6 +357,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @throws common_exception
      * @throws common_exception_Error
      * @throws common_exception_FileSystemError
+     * @throws oat\oatbox\service\ServiceNotFoundException
      */
     public function importMultipleTests(
         core_kernel_classes_Class $targetClass,
@@ -348,7 +365,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         bool $overwriteTest = false,
         ?string $itemClassUri = null
     ) {
-
         $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
         $validPackage = false;
@@ -362,7 +378,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $report->add($preprocessingReport);
         }
 
-        // Validate the given IMS Package itself (ZIP integrity, presence of an 'imsmanifest.xml' file.
+        // Validate the given IMS Package itself (ZIP integrity, presence of an 'imsmanifest.xml' file).
+        //
         // phpcs:disable Generic.Files.LineLength
         $invalidArchiveMsg = __("The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file.");
         // phpcs:enable Generic.Files.LineLength
@@ -375,8 +392,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $report->add(common_report_Report::createFailure($invalidArchiveMsg));
         }
 
-        // Validate the manifest (well formed XML, valid against the schema).
-        if ($validPackage === true) {
+        // Validate the manifest (well-formed XML, valid against the schema).
+        if ($validPackage) {
             $folder = $qtiPackageParser->extract();
 
             if (is_dir($folder) === false) {
@@ -394,9 +411,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         $tests = array_merge($tests, $qtiManifestParser->getResources($type));
                     }
 
-                    $testsFound = (count($tests) !== 0);
+                    $testsFound = (count($tests) > 0);
 
-                    if ($testsFound !== true) {
+                    if (!$testsFound) {
                         $report->add(
                             common_report_Report::createFailure(
                                 // phpcs:disable Generic.Files.LineLength
@@ -520,13 +537,21 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Import a QTI Test and its dependent Items into the TAO Platform.
      *
      * @param core_kernel_classes_Class $targetClass The RDFS Class where Ontology resources must be created.
-     * @param oat\taoQtiItem\model\qti\Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to
-     *                                                           be imported.
+     * @param Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
      * @param string $folder The absolute path to the folder where the IMS archive containing the test content
-     * @param oat\taoQtiItem\model\qti\Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored
-     *                                                                at import time.
+     * @param Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored at import time.
+     * @param bool $overwriteTest
+     * @param string|null $itemClassUri
+     *
      * @return common_report_Report A report about how the importation behaved.
+     *
+     * @throws ServiceNotFoundException
+     * @throws MetadataImportException
+     * @throws MarshallingException
+     * @throws common_Exception
+     * @throws common_exception_Error
+     * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     protected function importTest(
         core_kernel_classes_Class $targetClass,
@@ -613,14 +638,23 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 if ($overwriteTest) {
                     $testLabel = $testDefinition->getDocumentComponent()->getTitle();
                     $itemsClassLabel = $testLabel;
-                    /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $m */
-                    foreach ($reportCtx->testMetadata as $singleMetadata) {
-                        if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
-                            $testLabel = $singleMetadata->getValue();
+
+                    foreach ($reportCtx->testMetadata as $metadataValue) {
+                        /** @var SimpleMetadataValue $metadataValue */
+                        if (($metadataValue->getPath()[1] ?? '') === RDFS_LABEL) {
+                            $testLabel = $metadataValue->getValue();
                         }
                     }
 
-                    $this->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemClass);
+                    $deleter = $this->getPsrContainer()->get(TestDeleter::class);
+                    assert($deleter instanceof TestDeleter);
+
+                    $deleter->deleteTestsFromClassByLabel(
+                        $testLabel,
+                        $itemsClassLabel,
+                        $testClass,
+                        $itemClass
+                    );
                 }
 
                 $targetClass = $itemClass->createSubClass($testResource->getLabel());
@@ -727,7 +761,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                         // phpcs:enable Generic.Files.LineLength
                                     }
                                 } else {
-                                    // Ignored (possibily because imported in another test of the same package).
+                                    // Ignored (possibly because imported in another test of the same package).
                                     $reportCtx->items[$assessmentItemRefId] = $ignoreQtiResources[$resourceIdentifier];
                                     $report->add(
                                         new common_report_Report(
@@ -864,28 +898,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         return $report;
-    }
-
-    private function deleteTestsFromClassByLabel(
-        string $testLabel,
-        string $itemsClassLabel,
-        core_kernel_classes_Resource $testClass,
-        core_kernel_classes_Class $itemClass
-    ): void {
-        $testService = $this->getTestService();
-        $itemTreeService = $this->getItemTreeService();
-
-        foreach ($testClass->getInstances() as $testInstance) {
-            if ($testInstance->getLabel() === $testLabel) {
-                $testService->deleteTest($testInstance);
-            }
-        }
-
-        foreach ($itemClass->getSubClasses() as $subClass) {
-            if ($subClass->getLabel() === $itemsClassLabel) {
-                $itemTreeService->deleteClass($subClass);
-            }
-        }
     }
 
     /**
@@ -1454,13 +1466,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
     }
 
-    private function getItemTreeService(): taoItems_models_classes_ItemsService
+    private function getPsrContainer(): ContainerInterface
     {
-        return taoItems_models_classes_ItemsService::singleton();
-    }
-
-    private function getTestService(): taoTests_models_classes_TestsService
-    {
-        return taoTests_models_classes_TestsService::singleton();
+        return $this->getServiceLocator()->getContainer();
     }
 }
