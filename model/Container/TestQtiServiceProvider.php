@@ -28,7 +28,6 @@ use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
-use oat\tao\model\media\TaoMediaResolver;
 use oat\tao\model\resources\Service\ClassDeleter;
 use oat\taoMediaManager\model\Specification\MediaClassSpecification;
 use oat\taoQtiItem\model\qti\parser\ElementReferencesExtractor;
@@ -51,8 +50,6 @@ use oat\taoQtiTest\models\test\TestDeleter;
 use oat\taoQtiTest\models\TestModelService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-use taoItems_models_classes_ItemsService;
-use taoTests_models_classes_TestsService;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class TestQtiServiceProvider implements ContainerServiceProviderInterface
