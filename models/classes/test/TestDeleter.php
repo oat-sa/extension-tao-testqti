@@ -48,7 +48,6 @@ class TestDeleter
     private taoTests_models_classes_TestsService $testsService;
     private taoItems_models_classes_ItemsService $itemsService;
     private ElementReferencesExtractor $elementReferencesExtractor;
-
     private ?MediaClassSpecification $mediaClassSpecification;
     private ?MediaService $mediaService;
 
