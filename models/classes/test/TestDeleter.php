@@ -27,6 +27,8 @@ use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
 use oat\tao\model\media\TaoMediaException;
 use oat\tao\model\media\TaoMediaResolver;
+use oat\tao\model\resources\Exception\ClassDeletionException;
+use oat\tao\model\resources\Exception\PartialClassDeletionException;
 use oat\tao\model\resources\Service\ClassDeleter;
 use oat\taoMediaManager\model\MediaService;
 use oat\taoMediaManager\model\Specification\MediaClassSpecification;
@@ -119,27 +121,29 @@ class TestDeleter
             }
         }
 
-        $this->logger->debug(
-            sprintf('Will remove these assets: %s', implode(', ',  $assetIds))
-        );
-
-        if (
-            $this->mediaClassSpecification instanceof MediaClassSpecification
-            && $this->mediaService instanceof MediaService
-        ) {
-            $this->deleteAssets($assetIds);
-        }
+        $this->deleteAssets($assetIds);
     }
 
     private function deleteAssets(array $assetIds): void
     {
+        if (
+            !$this->mediaClassSpecification instanceof MediaClassSpecification
+            || $this->mediaService instanceof MediaService
+        ) {
+            $this->logger->debug('MediaManager not installed, cannot remove linked assets');
+            return;
+        }
+
+        $this->logger->debug(
+            sprintf('Will remove these assets: %s', implode(', ',  $assetIds))
+        );
+
         $classesToDelete = [];
 
         foreach ($assetIds as $assetId) {
             $uri = tao_helpers_Uri::decode($assetId);
 
             $this->logger->debug(sprintf('Remove asset: %s', $uri));
-
             $resource = $this->ontology->getResource($uri);
 
             if ($this->isMediaResource($resource)) {
@@ -149,11 +153,11 @@ class TestDeleter
 
                 $type = current($resource->getTypes());
 
-                if ($this->resourceClassHasNoMoreResources($resource)) {
+                if ($this->resourceHasNoSiblings($resource)) {
                     $this->logger->debug(
                         sprintf(
-                            'Class %s for media %s only contains the resource being deleted, '.
-                            'deferring deletion for the class as well',
+                            'Class %s for media %s only contains the resource being'.
+                            'deleted, deferring deletion for the class as well',
                             $type->getUri(),
                             $resource->getUri()
                         )
@@ -167,18 +171,34 @@ class TestDeleter
             }
         }
 
-        if (count($classesToDelete) > 0) {
+        $this->deleteClasses($classesToDelete);
+    }
+
+    /**
+     * @param core_kernel_classes_Class[] $classes
+     *
+     * @throws ClassDeletionException
+     * @throws PartialClassDeletionException
+     */
+    private function deleteClasses(array $classes): void
+    {
+        if (empty($classes)) {
+            return;
+        }
+
+        $this->logger->debug(
+            sprintf(
+                'Performing deferred deletions for %s empty classes',
+                count($classes)
+            )
+        );
+
+        foreach ($classes as $class) {
             $this->logger->debug(
-                sprintf('Performing %d deferred deletions for empty classes', count($classesToDelete))
+                sprintf('Deleting class %s [%s]', $class->getLabel(), $class->getUri())
             );
 
-            foreach ($classesToDelete as $class) {
-                $this->logger->debug(
-                    sprintf('Deleting class %s [%s]', $class->getLabel(), $class->getUri())
-                );
-
-                $this->classDeleter->delete($class);
-            }
+            $this->classDeleter->delete($class);
         }
     }
 
@@ -193,7 +213,7 @@ class TestDeleter
         return false;
     }
 
-    private function resourceClassHasNoMoreResources(core_kernel_classes_Resource $resource): bool
+    private function resourceHasNoSiblings(core_kernel_classes_Resource $resource): bool
     {
         $type = current($resource->getTypes());
 
@@ -205,11 +225,13 @@ class TestDeleter
 
     private function getItemTreeService(): taoItems_models_classes_ItemsService
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return taoItems_models_classes_ItemsService::singleton();
     }
 
     private function getTestService(): taoTests_models_classes_TestsService
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return taoTests_models_classes_TestsService::singleton();
     }
 }
