@@ -90,7 +90,6 @@ class TestDeleter
         foreach ($itemClass->getSubClasses() as $subClass) {
             if ($subClass->getLabel() === $itemsClassLabel) {
                 foreach ($subClass->getInstances(true) as $rdfItem) {
-                    //$qtiItem = $this->getQtiItemService()->getDataItemByRdfItem($rdfItem);
                     $qtiItem = $this->qtiItemService->getDataItemByRdfItem($rdfItem);
                     $itemReferences = $this->elementReferencesExtractor->extractAll($qtiItem);
                     $resourceReferences = array_merge(
