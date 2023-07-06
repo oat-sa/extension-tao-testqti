@@ -19,30 +19,19 @@
  */
 
 use League\Flysystem\FileExistsException;
-use oat\generis\model\resource\Contract\ResourceDeleterInterface;
-use oat\generis\model\resource\exception\ResourceDeletionException;
-use oat\generis\model\resource\Service\ResourceDeleter;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\service\ServiceNotFoundException;
-use oat\tao\model\media\TaoMediaException;
 use oat\tao\model\metadata\exception\MetadataImportException;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
-use oat\tao\model\resources\Service\ClassDeleter;
 use oat\tao\model\TaoOntology;
-use oat\taoBackOffice\model\tree\TreeService;
-use oat\taoMediaManager\model\relation\repository\rdf\RdfMediaRelationRepository;
-use oat\taoMediaManager\model\relation\service\IdDiscoverService;
-use oat\taoMediaManager\model\Specification\MediaClassSpecification;
-use oat\taoMediaManager\model\TaoMediaOntology;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
-use oat\taoQtiItem\model\qti\parser\ElementReferencesExtractor;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
@@ -53,7 +42,6 @@ use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoQtiTest\models\test\TestDeleter;
 use oat\taoTests\models\event\TestUpdatedEvent;
-use oat\taoMediaManager\model\MediaService;
 use Psr\Container\ContainerInterface;
 use qtism\common\utils\Format;
 use qtism\data\AssessmentItemRef;
@@ -646,10 +634,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         }
                     }
 
-                    $deleter = $this->getPsrContainer()->get(TestDeleter::class);
-                    assert($deleter instanceof TestDeleter);
-
-                    $deleter->deleteTestsFromClassByLabel(
+                    $this->getTestDeleter()->deleteTestsFromClassByLabel(
                         $testLabel,
                         $itemsClassLabel,
                         $testClass,
@@ -1464,6 +1449,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getQtiPackageImportPreprocessing()
     {
         return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
+    }
+
+    private function getTestDeleter(): TestDeleter
+    {
+        return $this->getPsrContainer()->get(TestDeleter::class);
     }
 
     private function getPsrContainer(): ContainerInterface
