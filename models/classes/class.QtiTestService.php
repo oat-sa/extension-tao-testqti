@@ -1504,14 +1504,4 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     {
         return taoTests_models_classes_TestsService::singleton();
     }
-
-    /*private function getTestDeleter(): TestDeleter
-    {
-        return $this->getPsrContainer()->get(TestDeleter::class);
-    }*/
-
-    private function getPsrContainer(): ContainerInterface
-    {
-        return $this->getServiceLocator()->getContainer();
-    }
 }
