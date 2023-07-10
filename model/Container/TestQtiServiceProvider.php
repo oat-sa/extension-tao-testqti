@@ -28,6 +28,7 @@ use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
+use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
@@ -44,6 +45,7 @@ use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\TestModelService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class TestQtiServiceProvider implements ContainerServiceProviderInterface
