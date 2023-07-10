@@ -364,7 +364,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         // Validate the given IMS Package itself (ZIP integrity, presence of an 'imsmanifest.xml' file.
-        //
         // phpcs:disable Generic.Files.LineLength
         $invalidArchiveMsg = __("The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file.");
         // phpcs:enable Generic.Files.LineLength
