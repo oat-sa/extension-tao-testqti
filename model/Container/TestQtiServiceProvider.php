@@ -29,7 +29,6 @@ use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
 use oat\tao\model\resources\Service\ClassDeleter;
-use oat\taoMediaManager\model\Specification\MediaClassSpecification;
 use oat\taoQtiItem\model\qti\parser\ElementReferencesExtractor;
 use oat\taoQtiItem\model\qti\Service as QtiItemService;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
@@ -50,6 +49,8 @@ use oat\taoQtiTest\models\test\TestDeleter;
 use oat\taoQtiTest\models\TestModelService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
+use taoItems_models_classes_ItemsService;
+use taoTests_models_classes_TestsService;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class TestQtiServiceProvider implements ContainerServiceProviderInterface
@@ -168,10 +169,15 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                 [
                     service(LoggerService::SERVICE_ID),
                     service(Ontology::SERVICE_ID),
-                    service(QtiItemService::class),
                     service(ClassDeleter::class),
                     service(ElementReferencesExtractor::class),
-                    service(MediaClassSpecification::class)->nullOnInvalid(),
+                    service(QtiItemService::class),
+
+                    // These are from extension declared as deps from this one, so
+                    // they should be always present
+                    //
+                    service(taoItems_models_classes_ItemsService::class),
+                    service(taoTests_models_classes_TestsService::class),
                 ]
             );
     }

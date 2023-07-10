@@ -25,18 +25,13 @@ namespace oat\taoQtiTest\models\test;
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
-use oat\tao\model\media\TaoMediaException;
-use oat\tao\model\media\TaoMediaResolver;
-use oat\tao\model\resources\Exception\ClassDeletionException;
-use oat\tao\model\resources\Exception\PartialClassDeletionException;
+use oat\oatbox\event\EventManager;
+use oat\oatbox\service\ServiceManager;
 use oat\tao\model\resources\Service\ClassDeleter;
-use oat\taoMediaManager\model\MediaService;
-use oat\taoMediaManager\model\Specification\MediaClassSpecification;
-use oat\taoMediaManager\model\TaoMediaOntology;
 use oat\taoQtiItem\model\qti\parser\ElementReferencesExtractor;
 use oat\taoQtiItem\model\qti\Service;
+use oat\taoQtiTest\models\event\QtiTestDeletedEvent;
 use Psr\Log\LoggerInterface;
-use tao_helpers_Uri;
 use taoItems_models_classes_ItemsService;
 use taoTests_models_classes_TestsService;
 
@@ -46,34 +41,27 @@ class TestDeleter
     private Ontology $ontology;
     private Service $qtiItemService;
     private ClassDeleter $classDeleter;
-    private TaoMediaResolver $taoMediaResolver;
     private taoTests_models_classes_TestsService $testsService;
     private taoItems_models_classes_ItemsService $itemsService;
     private ElementReferencesExtractor $elementReferencesExtractor;
-    private ?MediaClassSpecification $mediaClassSpecification;
-    private ?MediaService $mediaService;
 
     public function __construct(
         LoggerInterface $logger,
         Ontology $ontology,
-        Service $qtiItemService,
         ClassDeleter $classDeleter,
         ElementReferencesExtractor $elementReferencesExtractor,
-        ?MediaClassSpecification $mediaClassSpecification
+        Service $qtiItemService,
+        ?taoItems_models_classes_ItemsService $itemTreeService,
+        ?taoTests_models_classes_TestsService $testsService
     ) {
         $this->logger = $logger;
         $this->ontology = $ontology;
         $this->qtiItemService = $qtiItemService;
         $this->classDeleter = $classDeleter;
         $this->elementReferencesExtractor = $elementReferencesExtractor;
-        $this->mediaClassSpecification = $mediaClassSpecification;
 
-        $this->taoMediaResolver = new TaoMediaResolver();
-        $this->itemsService = $this->getItemTreeService();
-        $this->testsService = $this->getTestService();
-
-        /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-        $this->mediaService = MediaService::singleton();
+        $this->itemsService = $this->getItemTreeService($itemTreeService);
+        $this->testsService = $this->getTestService($testsService);
     }
 
     public function deleteTestsFromClassByLabel(
@@ -82,8 +70,12 @@ class TestDeleter
         core_kernel_classes_Resource $testClass,
         core_kernel_classes_Class $itemClass
     ): void {
+        $deletedTests = [];
+        $deletedItemClasses = [];
+
         foreach ($testClass->getInstances() as $testInstance) {
             if ($testInstance->getLabel() === $testLabel) {
+                $deletedTests[] = $testInstance->getUri();
                 $this->testsService->deleteTest($testInstance);
             }
         }
@@ -91,6 +83,7 @@ class TestDeleter
         $resourceReferences = [];
         foreach ($itemClass->getSubClasses() as $subClass) {
             if ($subClass->getLabel() === $itemsClassLabel) {
+                $deletedItemClasses[] = $subClass->getUri();
                 foreach ($subClass->getInstances(true) as $rdfItem) {
                     $qtiItem = $this->qtiItemService->getDataItemByRdfItem($rdfItem);
                     $itemReferences = $this->elementReferencesExtractor->extractAll($qtiItem);
@@ -104,134 +97,49 @@ class TestDeleter
             }
         }
 
-        $resourceReferences = array_unique($resourceReferences);
+        /** @var EventManager $eventManager */
+        $eventManager = $this->getServiceLocator()->get(EventManager::SERVICE_ID);
 
-        $assetIds = [];
-
-        foreach ($resourceReferences as $ref) {
-            try {
-                $asset = $this->taoMediaResolver->resolve($ref);
-                $assetIds[] = $asset->getMediaIdentifier();
-            } catch (TaoMediaException $e) {
-                // Happens with relative paths (like "assets/e951e5156361c85aeffac.svg",
-                // i.e. non-shared stimulus assets).
-                $this->logger->debug(
-                    sprintf('Unable to resolve "%s": %s', $ref, $e->getMessage())
-                );
-            }
-        }
-
-        $this->deleteAssets($assetIds);
-    }
-
-    private function deleteAssets(array $assetIds): void
-    {
-        if (
-            !$this->mediaClassSpecification instanceof MediaClassSpecification
-            || !$this->mediaService instanceof MediaService
-        ) {
-            $this->logger->debug('MediaManager not installed, cannot remove linked assets');
-            return;
-        }
-
-        $this->logger->debug(
-            sprintf('Will remove these assets: %s', implode(', ',  $assetIds))
-        );
-
-        $classesToDelete = [];
-
-        foreach ($assetIds as $assetId) {
-            $uri = tao_helpers_Uri::decode($assetId);
-
-            $this->logger->debug(sprintf('Remove asset: %s', $uri));
-            $resource = $this->ontology->getResource($uri);
-
-            if ($this->isMediaResource($resource)) {
-                $this->logger->debug(
-                    sprintf('isMedia=true, deleting %s', $resource->getUri())
-                );
-
-                $type = current($resource->getTypes());
-
-                if ($this->resourceHasNoSiblings($resource)) {
-                    $this->logger->debug(
-                        sprintf(
-                            'Class %s for media %s only contains the resource being'.
-                            'deleted, deferring deletion for the class as well',
-                            $type->getUri(),
-                            $resource->getUri()
-                        )
-                    );
-
-                    $classesToDelete[] = $type;
-                }
-
-                // Using mediaService in order to have the asset files removed as well
-                $this->mediaService->deleteResource($resource);
-            }
-        }
-
-        $this->deleteClasses($classesToDelete);
-    }
-
-    /**
-     * @param core_kernel_classes_Class[] $classes
-     *
-     * @throws ClassDeletionException
-     * @throws PartialClassDeletionException
-     */
-    private function deleteClasses(array $classes): void
-    {
-        if (empty($classes)) {
-            return;
-        }
-
-        $this->logger->debug(
-            sprintf(
-                'Performing deferred deletions for %s empty classes',
-                count($classes)
+        $eventManager->trigger(
+            new QtiTestDeletedEvent(
+                $deletedTests,
+                $deletedItemClasses,
+                $resourceReferences
             )
         );
-
-        foreach ($classes as $class) {
-            $this->logger->debug(
-                sprintf('Deleting class %s [%s]', $class->getLabel(), $class->getUri())
-            );
-
-            $this->classDeleter->delete($class);
-        }
     }
 
-    private function isMediaResource(core_kernel_classes_Resource $resource): bool
+    private function getItemTreeService(
+        ?taoItems_models_classes_ItemsService $itemTreeService
+    ): taoItems_models_classes_ItemsService
     {
-        foreach ($resource->getTypes() as $type) {
-            if ($this->mediaClassSpecification->isSatisfiedBy($type)) {
-                return true;
-            }
+        if ($itemTreeService instanceof taoItems_models_classes_ItemsService) {
+            return $itemTreeService;
         }
 
-        return false;
-    }
-
-    private function resourceHasNoSiblings(core_kernel_classes_Resource $resource): bool
-    {
-        $type = current($resource->getTypes());
-
-        return count($resource->getTypes()) == 1
-            && $type instanceof core_kernel_classes_Class
-            && $type->countInstances() == 1
-            && $type->getUri() !== TaoMediaOntology::CLASS_URI_MEDIA_ROOT;
-    }
-
-    private function getItemTreeService(): taoItems_models_classes_ItemsService
-    {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return taoItems_models_classes_ItemsService::singleton();
     }
 
-    private function getTestService(): taoTests_models_classes_TestsService
+    private function getTestService(
+        ?taoTests_models_classes_TestsService $testsService
+    ): taoTests_models_classes_TestsService
     {
+        if ($testsService instanceof taoTests_models_classes_TestsService) {
+            return $testsService;
+        }
+
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return taoTests_models_classes_TestsService::singleton();
+    }
+
+    /**
+     * Placeholder until the servicemanage is passed properly
+     *
+     * @return \oat\oatbox\service\ServiceManager
+     */
+    public function getServiceLocator()
+    {
+        return ServiceManager::getServiceManager();
     }
 }

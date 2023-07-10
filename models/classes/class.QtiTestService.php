@@ -621,7 +621,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         }
                     }
 
-                    $this->getTestDeleter()->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemClass);
+                    $this->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemClass);
                 }
 
                 $targetClass = $itemClass->createSubClass($testResource->getLabel());
@@ -865,6 +865,32 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         return $report;
+    }
+
+    private function deleteTestsFromClassByLabel(
+        string $testLabel,
+        string $itemsClassLabel,
+        core_kernel_classes_Resource $testClass,
+        core_kernel_classes_Class $itemClass
+    ): void {
+        $testService = $this->getTestService();
+        $itemTreeService = $this->getItemTreeService();
+
+        $this->getTestDeleter()->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemClass);
+
+        /*
+        foreach ($testClass->getInstances() as $testInstance) {
+            if ($testInstance->getLabel() === $testLabel) {
+                $testService->deleteTest($testInstance);
+            }
+        }
+
+        foreach ($itemClass->getSubClasses() as $subClass) {
+            if ($subClass->getLabel() === $itemsClassLabel) {
+                $itemTreeService->deleteClass($subClass);
+            }
+        }
+        */
     }
 
     /**
@@ -1431,6 +1457,16 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getQtiPackageImportPreprocessing()
     {
         return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
+    }
+
+    private function getItemTreeService(): taoItems_models_classes_ItemsService
+    {
+        return taoItems_models_classes_ItemsService::singleton();
+    }
+
+    private function getTestService(): taoTests_models_classes_TestsService
+    {
+        return taoTests_models_classes_TestsService::singleton();
     }
 
     private function getTestDeleter(): TestDeleter
