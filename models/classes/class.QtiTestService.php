@@ -623,12 +623,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         }
                     }
 
-                    $this->getTestDeleter()->deleteTestsFromClassByLabel(
-                        $testLabel,
-                        $itemsClassLabel,
-                        $testClass,
-                        $itemClass
-                    );
+                    $this->getTestDeleter()->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemClass);
                 }
 
                 $targetClass = $itemClass->createSubClass($testResource->getLabel());
