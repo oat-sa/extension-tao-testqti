@@ -363,7 +363,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $report->add($preprocessingReport);
         }
 
-        // Validate the given IMS Package itself (ZIP integrity, presence of an 'imsmanifest.xml' file).
+        // Validate the given IMS Package itself (ZIP integrity, presence of an 'imsmanifest.xml' file.
         //
         // phpcs:disable Generic.Files.LineLength
         $invalidArchiveMsg = __("The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file.");
@@ -396,9 +396,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         $tests = array_merge($tests, $qtiManifestParser->getResources($type));
                     }
 
-                    $testsFound = (count($tests) > 0);
+                    $testsFound = (count($tests) !== 0);
 
-                    if (!$testsFound) {
+                    if ($testsFound !== true) {
                         $report->add(
                             common_report_Report::createFailure(
                                 // phpcs:disable Generic.Files.LineLength
@@ -528,7 +528,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @param string $folder The absolute path to the folder where the IMS archive containing the test content
      * @param oat\taoQtiItem\model\qti\Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored
      *                                                                at import time.
-     *
      * @return common_report_Report A report about how the importation behaved.
      */
     protected function importTest(
