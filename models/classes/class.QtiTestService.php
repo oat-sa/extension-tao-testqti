@@ -48,12 +48,10 @@ use qtism\data\AssessmentItemRef;
 use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
 use qtism\data\storage\StorageException;
-use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use taoTests_models_classes_TestsService as TestService;
-
 
 /**
  * the QTI TestModel service.
@@ -345,7 +343,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @throws common_exception
      * @throws common_exception_Error
      * @throws common_exception_FileSystemError
-     * @throws oat\oatbox\service\ServiceNotFoundException
      */
     public function importMultipleTests(
         core_kernel_classes_Class $targetClass,
@@ -380,8 +377,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $report->add(common_report_Report::createFailure($invalidArchiveMsg));
         }
 
-        // Validate the manifest (well-formed XML, valid against the schema).
-        if ($validPackage) {
+        // Validate the manifest (well formed XML, valid against the schema).
+        if ($validPackage === true) {
             $folder = $qtiPackageParser->extract();
 
             if (is_dir($folder) === false) {
@@ -525,21 +522,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Import a QTI Test and its dependent Items into the TAO Platform.
      *
      * @param core_kernel_classes_Class $targetClass The RDFS Class where Ontology resources must be created.
-     * @param Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to be imported.
+     * @param oat\taoQtiItem\model\qti\Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to
+     *                                                           be imported.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
      * @param string $folder The absolute path to the folder where the IMS archive containing the test content
-     * @param Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored at import time.
-     * @param bool $overwriteTest
-     * @param string|null $itemClassUri
+     * @param oat\taoQtiItem\model\qti\Resource[] $ignoreQtiResources An array of QTI Manifest Resources to be ignored
+     *                                                                at import time.
      *
      * @return common_report_Report A report about how the importation behaved.
-     *
-     * @throws ServiceNotFoundException
-     * @throws MetadataImportException
-     * @throws MarshallingException
-     * @throws common_Exception
-     * @throws common_exception_Error
-     * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
     protected function importTest(
         core_kernel_classes_Class $targetClass,
@@ -626,11 +616,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 if ($overwriteTest) {
                     $testLabel = $testDefinition->getDocumentComponent()->getTitle();
                     $itemsClassLabel = $testLabel;
+                    /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $m */
 
-                    foreach ($reportCtx->testMetadata as $metadataValue) {
-                        /** @var SimpleMetadataValue $metadataValue */
-                        if (($metadataValue->getPath()[1] ?? '') === RDFS_LABEL) {
-                            $testLabel = $metadataValue->getValue();
+                    foreach ($reportCtx->testMetadata as $singleMetadata) {
+                        if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
+                            $testLabel = $singleMetadata->getValue();
                         }
                     }
 
@@ -746,7 +736,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                         // phpcs:enable Generic.Files.LineLength
                                     }
                                 } else {
-                                    // Ignored (possibly because imported in another test of the same package).
+                                    // Ignored (possibily because imported in another test of the same package).
                                     $reportCtx->items[$assessmentItemRefId] = $ignoreQtiResources[$resourceIdentifier];
                                     $report->add(
                                         new common_report_Report(
