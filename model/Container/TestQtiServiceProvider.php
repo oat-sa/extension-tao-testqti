@@ -161,24 +161,5 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(TestModelService::SERVICE_ID),
                 ]
             );
-
-        $services
-            ->set(TestDeleter::class, TestDeleter::class)
-            ->public()
-            ->args(
-                [
-                    service(LoggerService::SERVICE_ID),
-                    service(Ontology::SERVICE_ID),
-                    service(ClassDeleter::class),
-                    service(ElementReferencesExtractor::class),
-                    service(QtiItemService::class),
-
-                    // These are from extension declared as deps from this one, so
-                    // they should be always present
-                    //
-                    service(taoItems_models_classes_ItemsService::class),
-                    service(taoTests_models_classes_TestsService::class),
-                ]
-            );
     }
 }

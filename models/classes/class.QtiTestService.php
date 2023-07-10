@@ -19,6 +19,7 @@
  */
 
 use League\Flysystem\FileExistsException;
+use oat\oatbox\event\EventManager;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
@@ -32,11 +33,13 @@ use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
+use oat\taoQtiItem\model\qti\parser\ElementReferencesExtractor;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\event\QtiTestDeletedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
@@ -52,6 +55,7 @@ use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use taoTests_models_classes_TestsService as TestService;
+use oat\taoQtiItem\model\qti\Service as QtiItemService;
 
 /**
  * the QTI TestModel service.
@@ -876,21 +880,43 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $testService = $this->getTestService();
         $itemTreeService = $this->getItemTreeService();
 
-        $this->getTestDeleter()->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemClass);
+        $deletedTests = [];
+        $deletedItemClasses = [];
+        $resourceReferences = [];
 
-        /*
         foreach ($testClass->getInstances() as $testInstance) {
             if ($testInstance->getLabel() === $testLabel) {
+                $deletedTests[] = $testInstance->getUri();
                 $testService->deleteTest($testInstance);
             }
         }
 
         foreach ($itemClass->getSubClasses() as $subClass) {
             if ($subClass->getLabel() === $itemsClassLabel) {
+                $deletedItemClasses[] = $subClass->getUri();
+                foreach ($subClass->getInstances(true) as $rdfItem) {
+                    $qtiItem = $this->getQtiItemService()->getDataItemByRdfItem($rdfItem);
+                    $itemReferences = $this->getElementReferencesExtractor()->extractAll($qtiItem);
+                    $resourceReferences = array_merge(
+                        $resourceReferences,
+                        $itemReferences->getAllReferences()
+                    );
+                }
+
                 $itemTreeService->deleteClass($subClass);
             }
         }
-        */
+
+        /** @var EventManager $eventManager */
+        $eventManager = $this->getServiceLocator()->get(EventManager::SERVICE_ID);
+
+        $eventManager->trigger(
+            new QtiTestDeletedEvent(
+                $deletedTests,
+                $deletedItemClasses,
+                $resourceReferences
+            )
+        );
     }
 
     /**
@@ -1459,6 +1485,16 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
     }
 
+    private function getQtiItemService(): QtiItemService
+    {
+        return QtiItemService::singleton();
+    }
+
+    private function getElementReferencesExtractor()
+    {
+        return $this->getServiceLocator()->get(ElementReferencesExtractor::class);
+    }
+
     private function getItemTreeService(): taoItems_models_classes_ItemsService
     {
         return taoItems_models_classes_ItemsService::singleton();
@@ -1469,10 +1505,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return taoTests_models_classes_TestsService::singleton();
     }
 
-    private function getTestDeleter(): TestDeleter
+    /*private function getTestDeleter(): TestDeleter
     {
         return $this->getPsrContainer()->get(TestDeleter::class);
-    }
+    }*/
 
     private function getPsrContainer(): ContainerInterface
     {
