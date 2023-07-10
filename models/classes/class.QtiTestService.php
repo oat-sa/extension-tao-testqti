@@ -615,7 +615,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                     $testLabel = $testDefinition->getDocumentComponent()->getTitle();
                     $itemsClassLabel = $testLabel;
                     /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $m */
-
                     foreach ($reportCtx->testMetadata as $singleMetadata) {
                         if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
                             $testLabel = $singleMetadata->getValue();
