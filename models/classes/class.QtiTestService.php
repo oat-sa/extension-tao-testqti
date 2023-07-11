@@ -875,11 +875,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         core_kernel_classes_Class $itemClass
     ): void {
         $testService = $this->getTestService();
-        $itemTreeService = $this->getItemTreeService();
 
         $deletedTests = [];
         $deletedItemClasses = [];
-        $resourceReferences = [];
+        $refs = [];
 
         foreach ($testClass->getInstances() as $testInstance) {
             if ($testInstance->getLabel() === $testLabel) {
@@ -891,29 +890,31 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         foreach ($itemClass->getSubClasses() as $subClass) {
             if ($subClass->getLabel() === $itemsClassLabel) {
                 $deletedItemClasses[] = $subClass->getUri();
-                foreach ($subClass->getInstances(true) as $rdfItem) {
-                    $qtiItem = $this->getQtiItemService()->getDataItemByRdfItem($rdfItem);
-                    $itemReferences = $this->getElementReferencesExtractor()->extractAll($qtiItem);
-                    $resourceReferences = array_merge(
-                        $resourceReferences,
-                        $itemReferences->getAllReferences()
-                    );
-                }
-
-                $itemTreeService->deleteClass($subClass);
+                $refs = array_merge($refs, $this->deleteItemClass($subClass));
             }
         }
 
-        /** @var EventManager $eventManager */
-        $eventManager = $this->getServiceLocator()->get(EventManager::SERVICE_ID);
-
-        $eventManager->trigger(
-            new QtiTestDeletedEvent(
-                $deletedTests,
-                $deletedItemClasses,
-                $resourceReferences
-            )
+        $this->getEventManager()->trigger(
+            new QtiTestDeletedEvent($deletedTests, $deletedItemClasses, $refs)
         );
+    }
+
+    private function deleteItemClass(core_kernel_classes_Class $subClass): array
+    {
+        $resourceReferences = [];
+
+        foreach ($subClass->getInstances(true) as $rdfItem) {
+            $qtiItem = $this->getQtiItemService()->getDataItemByRdfItem($rdfItem);
+            $itemReferences = $this->getElementReferencesExtractor()->extractAll($qtiItem);
+            $resourceReferences = array_merge(
+                $resourceReferences,
+                $itemReferences->getAllReferences()
+            );
+        }
+
+        $this->getItemTreeService()->deleteClass($subClass);
+
+        return $resourceReferences;
     }
 
     /**
@@ -1501,4 +1502,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     {
         return taoTests_models_classes_TestsService::singleton();
     }
+
+    /*private function getEventManager(): EventManager
+    {
+        return $this->getServiceLocator()->get(EventManager::SERVICE_ID);
+    }*/
 }
