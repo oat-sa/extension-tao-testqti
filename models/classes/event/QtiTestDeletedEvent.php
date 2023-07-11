@@ -24,7 +24,10 @@ use oat\oatbox\event\Event;
 
 class QtiTestDeletedEvent implements Event
 {
+    /** @var string[] */
     private array $testUris;
+
+    /** @var string[] */
     private array $itemClassesUri;
 
     /** @var string[] */
@@ -35,9 +38,9 @@ class QtiTestDeletedEvent implements Event
         array $itemClassesUri,
         array $referencedResources
     ) {
-        $this->testUris = $testUris;
-        $this->itemClassesUri = $itemClassesUri;
-        $this->referencedResources = $referencedResources;
+        $this->testUris = array_values(array_unique($testUris));
+        $this->itemClassesUri = array_values(array_unique($itemClassesUri));
+        $this->referencedResources = array_values(array_unique($referencedResources));
     }
 
     /**
