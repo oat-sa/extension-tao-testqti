@@ -1502,9 +1502,4 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     {
         return taoTests_models_classes_TestsService::singleton();
     }
-
-    /*private function getEventManager(): EventManager
-    {
-        return $this->getServiceLocator()->get(EventManager::SERVICE_ID);
-    }*/
 }
