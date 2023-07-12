@@ -22,10 +22,10 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes;
 
-use oat\taoQtiTest\models\event\QtiTestDeletedEvent;
+use oat\taoQtiTest\models\event\QtiTestsDeletedEvent;
 use PHPUnit\Framework\TestCase;
 
-class QtiTestDeletedEventTest extends TestCase
+class QtiTestsDeletedEventTest extends TestCase
 {
     /**
      * @dataProvider removesDuplicatesDataProvider
@@ -38,13 +38,13 @@ class QtiTestDeletedEventTest extends TestCase
         array $itemClassesUris,
         array $referencedResources
     ): void {
-        $event = new QtiTestDeletedEvent(
+        $event = new QtiTestsDeletedEvent(
             $testUris,
             $itemClassesUris,
             $referencedResources
         );
 
-        $this->assertEquals(QtiTestDeletedEvent::class, $event->getName());
+        $this->assertEquals(QtiTestsDeletedEvent::class, $event->getName());
         $this->assertEquals(
             $expectedTestUris,
             $event->getTestUris()

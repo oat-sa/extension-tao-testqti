@@ -38,7 +38,7 @@ use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
-use oat\taoQtiTest\models\event\QtiTestDeletedEvent;
+use oat\taoQtiTest\models\event\QtiTestsDeletedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
@@ -885,30 +885,48 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
         /** @var string[] $deletedTestsUris */
         $deletedTestsUris = [];
-        $testService = $this->getTestService();
         foreach ($testClass->getInstances() as $testInstance) {
             /** @var core_kernel_classes_Resource $testInstance */
             if ($testInstance->getLabel() === $testLabel) {
-                $testService->deleteTest($testInstance);
                 $deletedTestsUris[] = $testInstance->getUri();
             }
         }
 
         /** @var string[] $deletedItemClassesUris */
         $deletedItemClassesUris = [];
-        $itemTreeService = $this->getItemTreeService();
         foreach ($itemClassesToDelete as $subClass) {
-            $itemTreeService->deleteClass($subClass);
             $deletedItemClassesUris[] = $subClass->getUri();
         }
 
+        // Trigger the deletion event so extensions holding references to
+        // the deleted test or items can remove them first.
+        //
         $this->getEventManager()->trigger(
-            new QtiTestDeletedEvent(
+            new QtiTestsDeletedEvent(
                 $deletedTestsUris,
                 $deletedItemClassesUris,
                 $refs
             )
         );
+
+        // Actually delete the items (if this crashes the tests will
+        // hold refs to items that don't exist anymore).
+        //
+        $itemTreeService = $this->getItemTreeService();
+        foreach ($itemClassesToDelete as $subClass) {
+            $itemTreeService->deleteClass($subClass);
+        }
+
+        // Actually delete the tests, which already hold refs to
+        // non-existing items.
+        //
+        $testService = $this->getTestService();
+        foreach ($testClass->getInstances() as $testInstance) {
+            /** @var core_kernel_classes_Resource $testInstance */
+            if ($testInstance->getLabel() === $testLabel) {
+                $testService->deleteTest($testInstance);
+            }
+        }
     }
 
     /**

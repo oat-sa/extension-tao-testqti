@@ -24,7 +24,7 @@ namespace oat\taoQtiTest\models\event;
 
 use oat\oatbox\event\Event;
 
-class QtiTestDeletedEvent implements Event
+class QtiTestsDeletedEvent implements Event
 {
     /** @var string[] */
     private array $testUris;
