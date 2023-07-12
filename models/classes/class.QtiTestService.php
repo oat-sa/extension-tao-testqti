@@ -878,28 +878,33 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         core_kernel_classes_Class $itemClass
     ): void {
         $itemClassesToDelete = $this->getSubclassesByLabel($itemClass, $itemsClassLabel);
+
+        /** @var string[] $refs */
         $refs = $this->collectResourceReferences($itemClassesToDelete);
 
-        $deletedTests = [];
+        /** @var string[] $deletedTestsUris */
+        $deletedTestsUris = [];
         $testService = $this->getTestService();
         foreach ($testClass->getInstances() as $testInstance) {
+            /** @var core_kernel_classes_Resource $testInstance */
             if ($testInstance->getLabel() === $testLabel) {
                 $testService->deleteTest($testInstance);
-                $deletedTests[] = $testInstance->getUri();
+                $deletedTestsUris[] = $testInstance->getUri();
             }
         }
 
-        $deletedItemClasses = [];
+        /** @var string[] $deletedItemClassesUris */
+        $deletedItemClassesUris = [];
         $itemTreeService = $this->getItemTreeService();
         foreach ($itemClassesToDelete as $subClass) {
             $itemTreeService->deleteClass($subClass);
-            $deletedItemClasses[] = $subClass->getUri();
+            $deletedItemClassesUris[] = $subClass->getUri();
         }
 
         $this->getEventManager()->trigger(
             new QtiTestDeletedEvent(
-                $deletedTests,
-                $deletedItemClasses,
+                $deletedTestsUris,
+                $deletedItemClassesUris,
                 $refs
             )
         );
