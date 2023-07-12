@@ -884,16 +884,16 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $testService = $this->getTestService();
         foreach ($testClass->getInstances() as $testInstance) {
             if ($testInstance->getLabel() === $testLabel) {
-                $deletedTests[] = $testInstance->getUri();
                 $testService->deleteTest($testInstance);
+                $deletedTests[] = $testInstance->getUri();
             }
         }
 
         $deletedItemClasses = [];
         $itemTreeService = $this->getItemTreeService();
         foreach ($itemClassesToDelete as $subClass) {
-            $deletedItemClasses[] = $subClass->getUri();
             $itemTreeService->deleteClass($subClass);
+            $deletedItemClasses[] = $subClass->getUri();
         }
 
         $this->getEventManager()->trigger(
