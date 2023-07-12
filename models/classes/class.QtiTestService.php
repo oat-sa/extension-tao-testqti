@@ -1470,20 +1470,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     private function collectResourceReferences(array $itemClasses): array
     {
-        $resourceReferences = [];
+        $refs = [];
 
         foreach ($itemClasses as $itemClass) {
             foreach ($itemClass->getInstances(true) as $rdfItem) {
                 $qtiItem = $this->getQtiItemService()->getDataItemByRdfItem($rdfItem);
                 $itemReferences = $this->getElementReferencesExtractor()->extractAll($qtiItem);
-                $resourceReferences = array_merge(
-                    $resourceReferences,
-                    $itemReferences->getAllReferences()
-                );
+                $refs = array_merge($refs, $itemReferences->getAllReferences());
             }
         }
 
-        return $resourceReferences;
+        return $refs;
     }
 
     private function getSubclassesByLabel(core_kernel_classes_Class $root, string $label)
