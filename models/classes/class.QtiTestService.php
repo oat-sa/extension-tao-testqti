@@ -868,18 +868,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $report;
     }
 
+    /**
+     * @throws common_Exception
+     */
     private function deleteTestsFromClassByLabel(
         string $testLabel,
         string $itemsClassLabel,
         core_kernel_classes_Resource $testClass,
         core_kernel_classes_Class $itemClass
     ): void {
-        $testService = $this->getTestService();
+        $itemClassesToDelete = $this->getSubclassesByLabel($itemClass, $itemsClassLabel);
+        $refs = $this->collectResourceReferences($itemClassesToDelete);
 
         $deletedTests = [];
-        $deletedItemClasses = [];
-        $refs = [];
-
+        $testService = $this->getTestService();
         foreach ($testClass->getInstances() as $testInstance) {
             if ($testInstance->getLabel() === $testLabel) {
                 $deletedTests[] = $testInstance->getUri();
@@ -887,34 +889,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             }
         }
 
-        foreach ($itemClass->getSubClasses() as $subClass) {
-            if ($subClass->getLabel() === $itemsClassLabel) {
-                $deletedItemClasses[] = $subClass->getUri();
-                $refs = array_merge($refs, $this->deleteItemClass($subClass));
-            }
+        $deletedItemClasses = [];
+        $itemTreeService = $this->getItemTreeService();
+        foreach ($itemClassesToDelete as $subClass) {
+            $deletedItemClasses[] = $subClass->getUri();
+            $itemTreeService->deleteClass($subClass);
         }
 
         $this->getEventManager()->trigger(
-            new QtiTestDeletedEvent($deletedTests, $deletedItemClasses, $refs)
+            new QtiTestDeletedEvent(
+                $deletedTests,
+                $deletedItemClasses,
+                $refs
+            )
         );
-    }
-
-    private function deleteItemClass(core_kernel_classes_Class $subClass): array
-    {
-        $resourceReferences = [];
-
-        foreach ($subClass->getInstances(true) as $rdfItem) {
-            $qtiItem = $this->getQtiItemService()->getDataItemByRdfItem($rdfItem);
-            $itemReferences = $this->getElementReferencesExtractor()->extractAll($qtiItem);
-            $resourceReferences = array_merge(
-                $resourceReferences,
-                $itemReferences->getAllReferences()
-            );
-        }
-
-        $this->getItemTreeService()->deleteClass($subClass);
-
-        return $resourceReferences;
     }
 
     /**
@@ -1473,6 +1461,39 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         $this->getSecureResourceService()->validatePermissions($ids, ['READ']);
+    }
+
+    /**
+     * @param core_kernel_classes_Class[] $itemClasses
+     * @throws common_Exception
+     * @return string[]
+     */
+    private function collectResourceReferences(array $itemClasses): array
+    {
+        $resourceReferences = [];
+
+        foreach ($itemClasses as $itemClass) {
+            foreach ($itemClass->getInstances(true) as $rdfItem) {
+                $qtiItem = $this->getQtiItemService()->getDataItemByRdfItem($rdfItem);
+                $itemReferences = $this->getElementReferencesExtractor()->extractAll($qtiItem);
+                $resourceReferences = array_merge(
+                    $resourceReferences,
+                    $itemReferences->getAllReferences()
+                );
+            }
+        }
+
+        return $resourceReferences;
+    }
+
+    private function getSubclassesByLabel(core_kernel_classes_Class $root, string $label)
+    {
+        return array_filter(
+            $root->getSubClasses(),
+            function (core_kernel_classes_Class $subClass) use ($label) {
+                return $subClass->getLabel() === $label;
+            }
+        );
     }
 
     /**
