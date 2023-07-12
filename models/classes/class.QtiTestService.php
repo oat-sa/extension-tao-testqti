@@ -43,6 +43,7 @@ use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoTests\models\event\TestUpdatedEvent;
+use Psr\Container\ContainerInterface;
 use qtism\common\utils\Format;
 use qtism\data\AssessmentItemRef;
 use qtism\data\QtiComponentCollection;
@@ -1498,31 +1499,33 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         );
     }
 
-    /**
-     * @return QtiPackageImportPreprocessing
-     */
-    private function getQtiPackageImportPreprocessing()
+    private function getQtiPackageImportPreprocessing(): QtiPackageImportPreprocessing
     {
-        return $this->getServiceLocator()->get(QtiPackageImportPreprocessing::SERVICE_ID);
+        return $this->getPsrContainer()->get(QtiPackageImportPreprocessing::SERVICE_ID);
     }
 
     private function getQtiItemService(): QtiItemService
     {
-        return QtiItemService::singleton();
+        return $this->getPsrContainer()->get(QtiItemService::class);
     }
 
     private function getElementReferencesExtractor()
     {
-        return $this->getServiceLocator()->get(ElementReferencesExtractor::class);
+        return $this->getPsrContainer()->get(ElementReferencesExtractor::class);
     }
 
     private function getItemTreeService(): taoItems_models_classes_ItemsService
     {
-        return taoItems_models_classes_ItemsService::singleton();
+        return $this->getPsrContainer()->get(taoItems_models_classes_ItemsService::class);
     }
 
     private function getTestService(): taoTests_models_classes_TestsService
     {
-        return taoTests_models_classes_TestsService::singleton();
+        return $this->getPsrContainer()->get(taoTests_models_classes_TestsService::class);
+    }
+
+    private function getPsrContainer(): ContainerInterface
+    {
+        return $this->getServiceLocator()->getContainer();
     }
 }
