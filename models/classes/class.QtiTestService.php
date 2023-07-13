@@ -872,21 +872,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         core_kernel_classes_Resource $testClass,
         core_kernel_classes_Class $itemClass
     ): void {
-        $itemTreeService = $this->getItemTreeService();
         $testService = $this->getTestService();
 
-        $itemClassesToDelete = $this->getSubclassesByLabel($itemClass, $itemsClassLabel);
-
-        foreach ($itemClassesToDelete as $subClass) {
-            foreach ($subClass->getInstances(true) as $instance) {
-                $itemTreeService->delete([
-                    'resource' => $instance,
-                    'deleteAssets' => true,
-                ]);
-            }
-
-            $itemTreeService->deleteClass($subClass);
-        }
+        $this->deleteItemSubclassesByLabel($itemClass, $itemsClassLabel);
 
         foreach ($testClass->getInstances() as $testInstance) {
             if ($testInstance->getLabel() === $testLabel) {
@@ -1453,14 +1441,24 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $this->getSecureResourceService()->validatePermissions($ids, ['READ']);
     }
 
-    private function getSubclassesByLabel(core_kernel_classes_Class $root, string $label)
-    {
-        return array_filter(
-            $root->getSubClasses(),
-            function (core_kernel_classes_Class $subClass) use ($label) {
-                return $subClass->getLabel() === $label;
+    private function deleteItemSubclassesByLabel(
+        core_kernel_classes_Class $root,
+        string $label
+    ): void {
+        $itemTreeService = $this->getItemTreeService();
+
+        foreach ($root->getSubClasses() as $subClass) {
+            if ($subClass->getLabel() === $label) {
+                foreach ($subClass->getInstances(true) as $instance) {
+                    $itemTreeService->delete([
+                        'resource' => $instance,
+                        'deleteAssets' => true,
+                    ]);
+                }
             }
-        );
+
+            $itemTreeService->deleteClass($subClass);
+        }
     }
 
     private function getQtiPackageImportPreprocessing(): QtiPackageImportPreprocessing
