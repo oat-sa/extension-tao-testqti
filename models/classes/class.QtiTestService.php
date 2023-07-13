@@ -19,12 +19,9 @@
  */
 
 use League\Flysystem\FileExistsException;
-use oat\oatbox\event\EventManager;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
-use oat\oatbox\service\ServiceNotFoundException;
-use oat\tao\model\metadata\exception\MetadataImportException;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
@@ -32,13 +29,11 @@ use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
-use oat\taoQtiItem\model\qti\parser\ElementReferencesExtractor;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
-use oat\taoQtiTest\models\event\QtiTestsDeletedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
@@ -53,7 +48,6 @@ use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use taoTests_models_classes_TestsService as TestService;
-use oat\taoQtiItem\model\qti\Service as QtiItemService;
 
 /**
  * the QTI TestModel service.
@@ -878,34 +872,19 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         core_kernel_classes_Resource $testClass,
         core_kernel_classes_Class $itemClass
     ): void {
-        $deletedTestsUris = [];
-        $deletedItemClassesUris = [];
         $itemTreeService = $this->getItemTreeService();
         $testService = $this->getTestService();
 
         $itemClassesToDelete = $this->getSubclassesByLabel($itemClass, $itemsClassLabel);
 
-        $refs = $this->collectResourceReferences($itemClassesToDelete);
-
-        foreach ($testClass->getInstances() as $testInstance) {
-            if ($testInstance->getLabel() === $testLabel) {
-                $deletedTestsUris[] = $testInstance->getUri();
+        foreach ($itemClassesToDelete as $subClass) {
+            foreach ($subClass->getInstances(true) as $instance) {
+                $itemTreeService->delete([
+                    'resource' => $instance,
+                    'deleteAssets' => true,
+                ]);
             }
-        }
 
-        foreach ($itemClassesToDelete as $subClass) {
-            $deletedItemClassesUris[] = $subClass->getUri();
-        }
-
-        $this->getEventManager()->trigger(
-            new QtiTestsDeletedEvent(
-                $deletedTestsUris,
-                $deletedItemClassesUris,
-                $refs
-            )
-        );
-
-        foreach ($itemClassesToDelete as $subClass) {
             $itemTreeService->deleteClass($subClass);
         }
 
@@ -1474,29 +1453,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $this->getSecureResourceService()->validatePermissions($ids, ['READ']);
     }
 
-    /**
-     * @param core_kernel_classes_Class[] $itemClasses
-     * @throws common_Exception
-     * @return string[]
-     */
-    private function collectResourceReferences(array $itemClasses): array
-    {
-        $qtiItemService = $this->getQtiItemService();
-        $elementReferencesExtractor = $this->getElementReferencesExtractor();
-
-        $refs = [];
-
-        foreach ($itemClasses as $itemClass) {
-            foreach ($itemClass->getInstances(true) as $rdfItem) {
-                $qtiItem = $qtiItemService->getDataItemByRdfItem($rdfItem);
-                $itemReferences = $elementReferencesExtractor->extractAll($qtiItem);
-                $refs = array_merge($refs, $itemReferences->getAllReferences());
-            }
-        }
-
-        return $refs;
-    }
-
     private function getSubclassesByLabel(core_kernel_classes_Class $root, string $label)
     {
         return array_filter(
@@ -1510,16 +1466,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getQtiPackageImportPreprocessing(): QtiPackageImportPreprocessing
     {
         return $this->getPsrContainer()->get(QtiPackageImportPreprocessing::SERVICE_ID);
-    }
-
-    private function getQtiItemService(): QtiItemService
-    {
-        return $this->getPsrContainer()->get(QtiItemService::class);
-    }
-
-    private function getElementReferencesExtractor()
-    {
-        return $this->getPsrContainer()->get(ElementReferencesExtractor::class);
     }
 
     private function getItemTreeService(): taoItems_models_classes_ItemsService
