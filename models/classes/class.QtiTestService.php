@@ -878,29 +878,25 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         core_kernel_classes_Resource $testClass,
         core_kernel_classes_Class $itemClass
     ): void {
+        $deletedTestsUris = [];
+        $deletedItemClassesUris = [];
+        $itemTreeService = $this->getItemTreeService();
+        $testService = $this->getTestService();
+
         $itemClassesToDelete = $this->getSubclassesByLabel($itemClass, $itemsClassLabel);
 
-        /** @var string[] $refs */
         $refs = $this->collectResourceReferences($itemClassesToDelete);
 
-        /** @var string[] $deletedTestsUris */
-        $deletedTestsUris = [];
         foreach ($testClass->getInstances() as $testInstance) {
-            /** @var core_kernel_classes_Resource $testInstance */
             if ($testInstance->getLabel() === $testLabel) {
                 $deletedTestsUris[] = $testInstance->getUri();
             }
         }
 
-        /** @var string[] $deletedItemClassesUris */
-        $deletedItemClassesUris = [];
         foreach ($itemClassesToDelete as $subClass) {
             $deletedItemClassesUris[] = $subClass->getUri();
         }
 
-        // Trigger the deletion event so extensions holding references to
-        // the deleted test or items can remove them first.
-        //
         $this->getEventManager()->trigger(
             new QtiTestsDeletedEvent(
                 $deletedTestsUris,
@@ -909,20 +905,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             )
         );
 
-        // Actually delete the items (if this crashes the tests will
-        // hold refs to items that don't exist anymore).
-        //
-        $itemTreeService = $this->getItemTreeService();
         foreach ($itemClassesToDelete as $subClass) {
             $itemTreeService->deleteClass($subClass);
         }
 
-        // Actually delete the tests, which already hold refs to
-        // non-existing items.
-        //
-        $testService = $this->getTestService();
         foreach ($testClass->getInstances() as $testInstance) {
-            /** @var core_kernel_classes_Resource $testInstance */
             if ($testInstance->getLabel() === $testLabel) {
                 $testService->deleteTest($testInstance);
             }
@@ -1494,12 +1481,15 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     private function collectResourceReferences(array $itemClasses): array
     {
+        $qtiItemService = $this->getQtiItemService();
+        $elementReferencesExtractor = $this->getElementReferencesExtractor();
+
         $refs = [];
 
         foreach ($itemClasses as $itemClass) {
             foreach ($itemClass->getInstances(true) as $rdfItem) {
-                $qtiItem = $this->getQtiItemService()->getDataItemByRdfItem($rdfItem);
-                $itemReferences = $this->getElementReferencesExtractor()->extractAll($qtiItem);
+                $qtiItem = $qtiItemService->getDataItemByRdfItem($rdfItem);
+                $itemReferences = $elementReferencesExtractor->extractAll($qtiItem);
                 $refs = array_merge($refs, $itemReferences->getAllReferences());
             }
         }
