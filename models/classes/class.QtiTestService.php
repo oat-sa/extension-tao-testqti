@@ -1448,13 +1448,15 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $itemTreeService = $this->getItemTreeService();
 
         foreach ($root->getSubClasses() as $subClass) {
-            if ($subClass->getLabel() === $label) {
-                foreach ($subClass->getInstances(true) as $instance) {
-                    $itemTreeService->delete([
-                        'resource' => $instance,
-                        'deleteAssets' => true,
-                    ]);
-                }
+            if ($subClass->getLabel() !== $label) {
+                continue;
+            }
+
+            foreach ($subClass->getInstances(true) as $instance) {
+                $itemTreeService->delete([
+                    'resource' => $instance,
+                    'deleteAssets' => true,
+                ]);
             }
 
             $itemTreeService->deleteClass($subClass);
