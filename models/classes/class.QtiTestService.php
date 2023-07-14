@@ -25,6 +25,7 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
+use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
@@ -1453,10 +1454,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             }
 
             foreach ($subClass->getInstances(true) as $instance) {
-                $itemTreeService->delete([
-                    'resource' => $instance,
-                    'deleteAssets' => true,
-                ]);
+                $itemTreeService->delete(new DeleteItemCommand($instance, true));
             }
 
             $itemTreeService->deleteClass($subClass);
