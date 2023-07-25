@@ -65,7 +65,7 @@
     "qtism/qtism": ">=0.28.3",
     "oat-sa/generis" : ">=15.22",
     "oat-sa/tao-core": ">=53.0.0",
-    "oat-sa/extension-tao-item" : ">=12.0.0",
+    "oat-sa/extension-tao-item" : ">=12.1.0",
     "oat-sa/extension-tao-itemqti" : ">=30.0.0",
     "oat-sa/extension-tao-test" : ">=16.0.0",
     "oat-sa/extension-tao-delivery" : ">=15.0.0",

@@ -1,9 +1,28 @@
 <?php
 
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2020-2023 (original work) Open Assessment Technologies SA.
+ */
+
 namespace oat\taoQtiTest\test\unit\models\classes\xml;
 
 use core_kernel_classes_Resource;
 use oat\generis\test\TestCase;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\models\xmlEditor\XmlEditor;
 use PHPUnit\Framework\MockObject\MockObject;
 use qtism\data\storage\xml\XmlDocument;
@@ -16,33 +35,40 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class XmlEditorTest extends TestCase
 {
-    /**
-     * @var XmlDocument
-     */
+    /** @var XmlDocument */
     private $xmlDoc;
-    /**
-     * @var core_kernel_classes_Resource|MockObject
-     */
+
+    /** @var core_kernel_classes_Resource|MockObject */
     private $testResourceMock;
-    /**
-     * @var ServiceLocatorInterface
-     */
+
+    /** @var ServiceLocatorInterface */
     private $serviceLocatorMock;
-    /**
-     * @var MockObject|taoQtiTest_models_classes_QtiTestService
-     */
+
+    /** @var taoQtiTest_models_classes_QtiTestService|MockObject */
     private $qtiTestServiceMock;
+
+    /** @var FeatureFlagChecker|MockObject */
+    private $featureFlagCheckerMock;
 
     public function setUp(): void
     {
         $doc = new XmlDocument();
         $doc->load(__DIR__ . '/../../../../samples/xml/test.xml');
         $this->xmlDoc = $doc;
+
         $this->testResourceMock = $this->createMock(core_kernel_classes_Resource::class);
+
         $this->qtiTestServiceMock = $this->createMock(taoQtiTest_models_classes_QtiTestService::class);
-        $this->qtiTestServiceMock->method('getDoc')->with($this->testResourceMock)->willReturn($this->xmlDoc);
+        $this->qtiTestServiceMock
+            ->method('getDoc')
+            ->with($this->testResourceMock)
+            ->willReturn($this->xmlDoc);
+
+        $this->featureFlagCheckerMock = $this->createMock(FeatureFlagChecker::class);
+
         $this->serviceLocatorMock = $this->getServiceLocatorMock([
-            taoQtiTest_models_classes_QtiTestService::class => $this->qtiTestServiceMock
+            taoQtiTest_models_classes_QtiTestService::class => $this->qtiTestServiceMock,
+            FeatureFlagChecker::class => $this->featureFlagCheckerMock,
         ]);
     }
 
@@ -145,6 +171,13 @@ EOL;
     public function testIsLocked()
     {
         $service = new XmlEditor([XmlEditor::OPTION_XML_EDITOR_LOCK => false]);
+        $service->setServiceLocator($this->serviceLocatorMock);
+
+        $this->featureFlagCheckerMock
+            ->method('isEnabled')
+            ->with('XML_EDITOR_ENABLED')
+            ->willReturn(true);
+
         $this->assertEquals(false, $service->isLocked());
     }
 }
