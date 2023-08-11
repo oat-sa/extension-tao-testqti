@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-06-14 15:57\n"
+"PO-Revision-Date: 2023-08-11 13:25\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl\n"
@@ -30,10 +30,10 @@ msgid "(Visual) Highlight Text"
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr ""
+msgstr "Een QTI-item in de QTI Test '%s' kon niet worden gecompileerd."
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr ""
+msgstr "Een QTI Test moet ten minste één QTI Item bevatten om gecompileerd te kunnen worden. Geen gevonden."
 
 msgid "A qti testpackage"
 msgstr ""
