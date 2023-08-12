@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-08-11 13:25\n"
+"PO-Revision-Date: 2023-08-12 13:48\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl\n"
@@ -42,10 +42,10 @@ msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr ""
 
 msgid "A response to every question in this item is required."
-msgstr ""
+msgstr "Een antwoord op elke vraag in dit item is verplicht."
 
 msgid "A response to this item is required."
-msgstr ""
+msgstr "Een antwoord voor dit item is verplicht."
 
 msgid "A valid response to this item is required."
 msgstr ""
@@ -60,7 +60,7 @@ msgid "add a new weight"
 msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr ""
+msgstr "Een zip-bestand met QTI/APIP-tests en items toevoegen"
 
 msgid "Add selected item(s) here."
 msgstr ""
@@ -69,7 +69,7 @@ msgid "Add the source file"
 msgstr ""
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr ""
+msgstr "Nadat je de sectie hebt voltooid, is het onmogelijk om terug te keren naar deze sectie om wijzigingen aan te brengen. Weet je zeker dat je de sectie wilt beëindigen?"
 
 msgid "All"
 msgstr ""
@@ -162,7 +162,7 @@ msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr ""
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
-msgstr ""
+msgstr "Er is een niet-herstelbare fout opgetreden. Uw testsessie wordt gepauzeerd."
 
 msgid "and"
 msgstr ""
