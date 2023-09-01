@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-06-14 15:57\n"
+"PO-Revision-Date: 2023-09-01 08:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -426,7 +426,7 @@ msgid "Enter a custom category"
 msgstr ""
 
 msgid "Error"
-msgstr ""
+msgstr "エラー"
 
 msgid "Error during file import"
 msgstr ""
