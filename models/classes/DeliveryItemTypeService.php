@@ -23,9 +23,9 @@ namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
 
-class DeliveryItemTypeRepository extends ConfigurableService
+class DeliveryItemTypeService extends ConfigurableService
 {
-    public const SERVICE_ID = 'taoQtiTest/DeliveryItemTypeRepository';
+    public const SERVICE_ID = 'taoQtiTest/DeliveryItemTypeService';
 
     private const OPTION_DEFAULT_ITEM_TYPE = 'defaultItemType';
 
