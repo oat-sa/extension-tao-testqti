@@ -19,6 +19,7 @@
  */
 
 use League\Flysystem\FileExistsException;
+use oat\generis\model\data\event\ResourceCreated;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
@@ -853,6 +854,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $msg = __("IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported.", $qtiTestResource->getIdentifier());
             // phpcs:enable Generic.Files.LineLength
             $report->setMessage($msg);
+            $this->getEventManager()->trigger(new ResourceCreated($testResource));
         } else {
             $report->setType(common_report_Report::TYPE_ERROR);
             // phpcs:disable Generic.Files.LineLength
