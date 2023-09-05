@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-09-01 08:21\n"
+"PO-Revision-Date: 2023-09-05 09:12\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -815,7 +815,7 @@ msgid "New test part"
 msgstr ""
 
 msgid "Next"
-msgstr ""
+msgstr "次へ"
 
 msgid "Next Section"
 msgstr ""
@@ -863,7 +863,7 @@ msgid "Offline"
 msgstr ""
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Ok"
 msgstr ""
@@ -947,7 +947,7 @@ msgid "Preview the covered area"
 msgstr ""
 
 msgid "Previous"
-msgstr ""
+msgstr "前へ"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
@@ -1181,7 +1181,7 @@ msgid "Something unexpected happened."
 msgstr ""
 
 msgid "Something went wrong..."
-msgstr ""
+msgstr "何か問題が発生しました。"
 
 msgid "Speech speed"
 msgstr ""
@@ -1603,7 +1603,7 @@ msgid "Yellow on Blue"
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr ""
