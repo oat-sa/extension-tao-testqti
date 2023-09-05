@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -191,10 +193,10 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         if (isset($tag)) {
             $tags = is_array($tag) ? $tag : [$tag];
         }
-        
+
         // create a another instance of the same class
         $subset = new static();
-        
+
         // fill the new instance with filtered TimePoint
         foreach ($this->points as $idx => $point) {
             if ($point->match($tags, $target, $type)) {
@@ -219,7 +221,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         if (isset($tag)) {
             $tags = is_array($tag) ? $tag : [$tag];
         }
-        
+
         // gather filterer TimePoint
         $points = [];
         foreach ($this->points as $point) {
@@ -244,17 +246,17 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         if (!$lastTimestamp) {
             $lastTimestamp = microtime(true);
         }
-        
+
         // either get all points or only a subset according to the provided criteria
         if (!$tag && $target == TimePoint::TARGET_ALL) {
             $points = $this->getPoints();
         } else {
             $points = $this->find($tag, $target, TimePoint::TYPE_ALL);
         }
-        
+
         // we need a ordered list of points
         TimePoint::sort($points);
-        
+
         // gather points by ranges, relying on the points references
         $ranges = [];
         foreach ($points as $point) {
@@ -264,7 +266,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
         $this->sortRanges($ranges);
 
         // compute the total duration by summing all gathered ranges
-        // this loop can throw exceptions 
+        // this loop can throw exceptions
         $duration = 0;
         foreach ($ranges as $rangeKey => $range) {
             $nextTimestamp = $lastTimestamp;
@@ -273,14 +275,14 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             }
             // the last range could be still open, or some range could be malformed due to connection issues...
             $range = $this->fixRange($range, $nextTimestamp);
-            
+
             // compute the duration of the range, an exception may be thrown if the range is malformed
             // possible errors are (but should be avoided by the `fixRange()` method):
             // - unclosed range: should be autoclosed by fixRange
             // - unsorted points or nested/blended ranges: should be corrected by fixRange
             $duration += $this->computeRange($range);
         }
-        
+
         return $duration;
     }
 
@@ -307,7 +309,9 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             if ($this->isStartPoint($point)) {
                 // we cannot have the START TimePoint twice
                 if ($start) {
-                    throw new MalformedRangeException('A time range must be defined by a START and a END TimePoint! Twice START found.');
+                    throw new MalformedRangeException(
+                        'A time range must be defined by a START and a END TimePoint! Twice START found.'
+                    );
                 }
                 $start = $point;
             }
@@ -316,7 +320,9 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
             if ($this->isEndPoint($point)) {
                 // we cannot have the END TimePoint twice
                 if ($end) {
-                    throw new MalformedRangeException('A time range must be defined by a START and a END TimePoint! Twice END found.');
+                    throw new MalformedRangeException(
+                        'A time range must be defined by a START and a END TimePoint! Twice END found.'
+                    );
                 }
                 $end = $point;
             }
@@ -328,7 +334,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
                 $end = null;
             }
         }
-        
+
         return $duration;
     }
 
@@ -352,7 +358,7 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
                     $fixedRange[] = $this->cloneTimePoint($point, TimePoint::TYPE_END);
                 }
                 $open = true;
-            } else if ($this->isEndPoint($point)) {         // end of range
+            } elseif ($this->isEndPoint($point)) {         // end of range
                 // this range could not be started...
                 if (!$open) {
                     $fixedRange[] = $this->cloneTimePoint($last ? $last : $point, TimePoint::TYPE_START);
@@ -365,9 +371,12 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
 
         // the last range could be still open...
         if ($last && $open) {
+            $lastTimestamp = $lastTimestamp < $last->getTimestamp()
+                ? $last->getTimestamp()
+                : $lastTimestamp;
             $fixedRange[] = $this->cloneTimePoint($last, TimePoint::TYPE_END, $lastTimestamp);
         }
-        
+
         return $fixedRange;
     }
 
@@ -436,12 +445,11 @@ class QtiTimeLine implements TimeLine, ArraySerializable, \Serializable, \JsonSe
      */
     private function sortRanges(array &$ranges)
     {
-        usort($ranges, function(array $a, array $b) {
+        usort($ranges, function (array $a, array $b) {
             if ($a[0]->getTimestamp() === $b[0]->getTimestamp()) {
                 return 0;
             }
             return ($a[0]->getTimestamp() < $b[0]->getTimestamp()) ? -1 : 1;
-
         });
         return $ranges;
     }

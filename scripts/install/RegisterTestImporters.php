@@ -24,13 +24,11 @@ use oat\oatbox\extension\AbstractAction;
 use oat\tao\model\import\ImportersService;
 use oat\taoQtiTest\models\import\QtiTestImporter;
 
-
 /**
  * @author Aleh Hutnikau, <hutnikau@1pt.com>
  */
 class RegisterTestImporters extends AbstractAction
 {
-
     public function __invoke($params)
     {
         /** @var ImportersService $importersService */

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,12 +56,16 @@ class SyncChannelInstaller extends InstallAction
 
         $channels = $service->getOption(QtiCommunicationService::OPTION_CHANNELS);
         if (isset($channels[QtiCommunicationService::CHANNEL_TYPE_INPUT][SyncChannel::CHANNEL_NAME])) {
-            return \common_report_Report::createSuccess('Channel "' . (new SyncChannel())->getName() . '" already installed.');
+            return \common_report_Report::createSuccess(
+                'Channel "' . (new SyncChannel())->getName() . '" already installed.'
+            );
         }
 
         $service->attachChannel(new SyncChannel(), QtiCommunicationService::CHANNEL_TYPE_INPUT);
         $this->registerService(QtiCommunicationService::SERVICE_ID, $service);
 
-        return \common_report_Report::createSuccess('Channel "' . (new SyncChannel())->getName() . '" successfully installed.');
+        return \common_report_Report::createSuccess(
+            'Channel "' . (new SyncChannel())->getName() . '" successfully installed.'
+        );
     }
 }

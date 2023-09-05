@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +41,7 @@ class QtiTimeStorageTest extends GenerisPhpUnitTestRunner
      * @var string
      */
     protected $testSessionId = 'fake_session_id';
-    
+
     /**
      * @var string
      */
@@ -49,7 +50,7 @@ class QtiTimeStorageTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -116,9 +117,11 @@ class QtiTimeStorageTest extends GenerisPhpUnitTestRunner
         $prophecy->get(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return $buffer[$args[0]][$args[1]];
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            $buffer[$args[0]][$args[1]] = $args[2];
-        });
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->will(function ($args) use (&$buffer) {
+                $buffer[$args[0]][$args[1]] = $args[2];
+            });
         $storage->setStorageService($prophecy->reveal());
         $storage->setStorageFormat(new QtiTimeStorageJsonFormat());
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,12 +81,15 @@ class GetDeliveryExecutionsItems
         $routeCount = $route->count();
 
         for ($i = 0; $i < $routeCount; $i++) {
-
             $routeItem =  $route->getRouteItemAt($i);
             $mainItemRef = $routeItem->getAssessmentItemRef();
 
             if ($this->catService->isAdaptivePlaceholder($mainItemRef)) {
-                $seenCatItems = $this->catService->getPreviouslySeenCatItemIds($this->assessmentTestSession, $this->directoryStorage, $routeItem);
+                $seenCatItems = $this->catService->getPreviouslySeenCatItemIds(
+                    $this->assessmentTestSession,
+                    $this->directoryStorage,
+                    $routeItem
+                );
                 $itemIds = array_merge($itemIds, $seenCatItems);
             } else {
                 $itemIds[] = $mainItemRef->getIdentifier();
@@ -115,9 +119,10 @@ class GetDeliveryExecutionsItems
     protected function getTestFile(\core_kernel_classes_Resource $delivery)
     {
         $parameters = tao_models_classes_service_ServiceCallHelper::getInputValues(
-            $this->runTimeService->getRuntime($delivery->getUri()),[]
+            $this->runTimeService->getRuntime($delivery->getUri()),
+            []
         );
-        list($private, $public) = explode('|',$parameters['QtiTestCompilation']);
+        list($private, $public) = explode('|', $parameters['QtiTestCompilation']);
         return $private;
     }
 }

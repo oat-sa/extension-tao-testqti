@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +32,7 @@ class KvToolsStateStorage extends ToolsStateStorage
     /**
      * Key prefix for states in the global key-value storage
      */
-    const PREFIX_STATES = 'ToolsStateStorage:states';
+    public const PREFIX_STATES = 'ToolsStateStorage:states';
 
     /**
      * @return \common_persistence_AdvKeyValuePersistence

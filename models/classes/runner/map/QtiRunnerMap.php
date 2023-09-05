@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,19 +25,21 @@
 namespace oat\taoQtiTest\models\runner\map;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\cat\CatUtils;
+use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
-use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\time\QtiTimeConstraint;
+use qtism\data\AssessmentItemRef;
 use qtism\data\NavigationMode;
 use qtism\data\QtiComponent;
-use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\RouteItem;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
-use oat\taoQtiTest\models\cat\CatUtils;
 
 /**
  * Class QtiRunnerMap
@@ -44,7 +47,7 @@ use oat\taoQtiTest\models\cat\CatUtils;
  */
 class QtiRunnerMap extends ConfigurableService implements RunnerMap
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerMap';
+    public const SERVICE_ID = 'taoQtiTest/QtiRunnerMap';
 
     /**
      * Fallback index in case of the delivery was compiled without the index of item href
@@ -61,7 +64,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
     protected function getItemHrefIndexFile(QtiRunnerServiceContext $context, $itemIdentifier)
     {
         $compilationDirectory = $context->getCompilationDirectory()['private'];
-        return $compilationDirectory->getFile(\taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath($itemIdentifier));
+        return $compilationDirectory->getFile(\taoQtiTest_models_classes_QtiTestCompiler::buildHrefIndexPath(
+            $itemIdentifier
+        ));
     }
 
     /**
@@ -77,10 +82,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         // we are 100% sure it produced Item Href Index Files.
         if ($context->isAdaptive()) {
             return true;
-        } else {
-            $indexFile = $this->getItemHrefIndexFile($context, $itemIdentifier);
-            return $indexFile->exists();
         }
+
+        return $this->getItemHrefIndexFile($context, $itemIdentifier)->exists();
     }
 
     /**
@@ -90,7 +94,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      *
      * @param QtiRunnerServiceContext $context
      * @param string $itemIdentifier
-     * @return boolean|string The href value corresponding to the given $identifier. If no corresponding href is found, false is returned.
+     * @return boolean|string The href value corresponding to the given $identifier. If no corresponding href is found,
+     *                        false is returned.
      */
     public function getItemHref(QtiRunnerServiceContext $context, $itemIdentifier)
     {
@@ -158,10 +163,17 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         $forceInformationalTitles = !empty($reviewConfig['forceInformationalTitle']);
         $useTitle = !empty($reviewConfig['useTitle']);
         $uniqueTitle = isset($reviewConfig['itemTitle']) ? $reviewConfig['itemTitle'] : '%d';
-        $uniqueInformationalTitle = isset($reviewConfig['informationalItemTitle']) ? $reviewConfig['informationalItemTitle'] : 'Instructions';
-        $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle']) ? (bool) $reviewConfig['displaySubsectionTitle'] : true;
+        $uniqueInformationalTitle = isset($reviewConfig['informationalItemTitle'])
+            ? $reviewConfig['informationalItemTitle']
+            : 'Instructions';
+        $displaySubsectionTitle = isset($reviewConfig['displaySubsectionTitle'])
+            ? (bool) $reviewConfig['displaySubsectionTitle']
+            : true;
+        $partiallyAnsweredIsAnswered = isset($reviewConfig['partiallyAnsweredIsAnswered'])
+            ? (bool) $reviewConfig['partiallyAnsweredIsAnswered']
+            : true;
 
-        /* @var AssessmentTestSession $session */
+        /* @var TestSession $session */
         $session = $context->getTestSession();
         $extendedStorage = $this->getServiceLocator()->get(ExtendedStateService::SERVICE_ID);
         $testDefinition = $context->getTestDefinition();
@@ -170,11 +182,11 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $route         = $session->getRoute();
             $store         = $session->getAssessmentItemSessionStore();
 
-            switch($scope){
-                case RunnerMap::SCOPE_SECTION :
+            switch ($scope) {
+                case RunnerMap::SCOPE_SECTION:
                     $routeItems = $route->getRouteItemsByAssessmentSection($session->getCurrentAssessmentSection());
                     break;
-                case RunnerMap::SCOPE_PART :
+                case RunnerMap::SCOPE_PART:
                     $routeItems = $route->getRouteItemsByTestPart($session->getCurrentTestPart());
                     break;
                 case RunnerMap::SCOPE_TEST:
@@ -197,12 +209,16 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
 
             // fallback index in case of the delivery was compiled without the index of item href
             $this->itemHrefIndex = [];
-            $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile($context, $session->getCurrentAssessmentItemRef()->getIdentifier());
-            \common_Logger::t('Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package'));
+            $shouldBuildItemHrefIndex = !$this->hasItemHrefIndexFile(
+                $context,
+                $session->getCurrentAssessmentItemRef()->getIdentifier()
+            );
+            \common_Logger::t(
+                'Store index ' . ($shouldBuildItemHrefIndex ? 'must be built' : 'is part of the package')
+            );
 
             /** @var \qtism\runtime\tests\RouteItem $routeItem */
             foreach ($routeItems as $routeItem) {
-
                 $catSession = false;
                 $itemRefs = $this->getRouteItemAssessmentItemRefs($context, $routeItem, $catSession);
                 $previouslySeenItems = ($catSession) ? $context->getPreviouslySeenCatItemIds($routeItem) : [];
@@ -211,10 +227,14 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                     $occurrence = ($catSession !== false) ? 0 : $routeItem->getOccurence();
 
                     // get the jump definition
-                    $itemSession = ($catSession !== false) ? false : $store->getAssessmentItemSession($itemRef, $occurrence);
+                    $itemSession = ($catSession !== false)
+                        ? false
+                        : $store->getAssessmentItemSession($itemRef, $occurrence);
 
                     // load item infos
-                    $isItemInformational = ($itemSession) ? TestRunnerUtils::isItemInformational($routeItem, $itemSession) : false;
+                    $isItemInformational = ($itemSession)
+                        ? TestRunnerUtils::isItemInformational($routeItem, $itemSession)
+                        : false;
                     $testPart = $routeItem->getTestPart();
                     $partId = $testPart->getIdentifier();
                     $navigationMode = $testPart->getNavigationMode();
@@ -238,10 +258,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $label = $uniqueInformationalTitle === false
                             ? $this->getItemLabel($context, $itemUri, $useTitle)
                             : $uniqueInformationalTitle;
-
                     } elseif ($forceTitles) {
                         $label = __($uniqueTitle, $offsetSection + 1);
-
                     } else {
                         $itemUri = strstr($itemRef->getHref(), '|', true);
                         $label = $this->getItemLabel($context, $itemUri, $useTitle);
@@ -258,17 +276,21 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         'position' => $offset,
                         'occurrence' => $occurrence,
                         'remainingAttempts' => ($itemSession) ? $itemSession->getRemainingAttempts() : -1,
-                        'answered' => ($itemSession) ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession) : in_array($itemId, $previouslySeenItems),
+                        'answered' => ($itemSession)
+                            ? TestRunnerUtils::isItemCompleted($routeItem, $itemSession, $partiallyAnsweredIsAnswered)
+                            : in_array($itemId, $previouslySeenItems),
                         'flagged' => $extendedStorage->getItemFlag($session->getSessionId(), $itemId),
-                        'viewed' => ($itemSession) ? $itemSession->isPresented() : in_array($itemId, $previouslySeenItems),
-                        'categories' => $itemRef->getCategories()->getArrayCopy()
+                        'viewed' => ($itemSession)
+                            ? $itemSession->isPresented()
+                            : in_array($itemId, $previouslySeenItems),
+                        'categories' => array_values($this->getAvailableCategories($itemRef)),
                     ];
 
                     if ($checkInformational) {
                         $itemInfos['informational'] = $isItemInformational;
                     }
 
-                    if($itemRef->hasTimeLimits()){
+                    if ($itemRef->hasTimeLimits()) {
                         $itemInfos['timeConstraint'] = $this->getTimeConstraint($session, $itemRef, $navigationMode);
                     }
 
@@ -278,39 +300,50 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
                         $map['parts'][$partId]['position'] = $offset;
                         $map['parts'][$partId]['isLinear'] = $navigationMode == NavigationMode::LINEAR;
 
-                        if($testPart->hasTimeLimits()){
-                            $map['parts'][$partId]['timeConstraint'] =  $this->getTimeConstraint($session, $testPart, $navigationMode);
+                        if ($testPart->hasTimeLimits()) {
+                            $map['parts'][$partId]['timeConstraint'] =  $this->getTimeConstraint(
+                                $session,
+                                $testPart,
+                                $navigationMode
+                            );
                         }
                     }
 
                     if (!isset($map['parts'][$partId]['sections'][$sectionId])) {
                         $map['parts'][$partId]['sections'][$sectionId]['id'] = $sectionId;
                         $map['parts'][$partId]['sections'][$sectionId]['label'] = $section->getTitle();
+                        $map['parts'][$partId]['sections'][$sectionId]['visible'] = $section->isVisible();
+                        // phpcs:disable Generic.Files.LineLength
                         $map['parts'][$partId]['sections'][$sectionId]['isCatAdaptive'] = CatUtils::isAssessmentSectionAdaptive($section);
+                        // phpcs:enable Generic.Files.LineLength
                         $map['parts'][$partId]['sections'][$sectionId]['position'] = $offset;
 
-                        if($section->hasTimeLimits()){
-                            $map['parts'][$partId]['sections'][$sectionId]['timeConstraint'] = $this->getTimeConstraint($session, $section, $navigationMode);
+                        if ($section->hasTimeLimits()) {
+                            $map['parts'][$partId]['sections'][$sectionId]['timeConstraint'] = $this->getTimeConstraint(
+                                $session,
+                                $section,
+                                $navigationMode
+                            );
                         }
                     }
 
                     $map['parts'][$partId]['sections'][$sectionId]['items'][$itemId] = $itemInfos;
 
                     // update the stats
-                    if($scope == RunnerMap::SCOPE_TEST) {
+                    if ($scope == RunnerMap::SCOPE_TEST) {
                         $this->updateStats($map, $itemInfos);
                         $this->updateStats($map['parts'][$partId], $itemInfos);
                         $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
                     }
-                    if($scope == RunnerMap::SCOPE_PART) {
+                    if ($scope == RunnerMap::SCOPE_PART) {
                         $this->updateStats($map['parts'][$partId], $itemInfos);
                         $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
                     }
-                    if($scope == RunnerMap::SCOPE_SECTION) {
+                    if ($scope == RunnerMap::SCOPE_SECTION) {
                         $this->updateStats($map['parts'][$partId]['sections'][$sectionId], $itemInfos);
                     }
 
-                    $offset ++;
+                    $offset++;
                     if (!$forceInformationalTitles || ($forceInformationalTitles && !$isItemInformational)) {
                         $offsetSection++;
                     };
@@ -377,7 +410,9 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
      *
      * @param RunnerServiceContext $context
      * @param RouteItem $routeItem
-     * @param mixed $catSession A reference to a variable that will be fed with the CatSession object related to the $routeItem. In case the $routeItem is not bound to a CatSession object, $catSession will be set with false.
+     * @param mixed $catSession A reference to a variable that will be fed with the CatSession object related to the
+     *                          $routeItem. In case the $routeItem is not bound to a CatSession object, $catSession will
+     *                          be set with false.
      * @return array An array of AssessmentItemRef objects.
      */
     protected function getRouteItemAssessmentItemRefs(RunnerServiceContext $context, RouteItem $routeItem, &$catSession)
@@ -410,8 +445,8 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
       * @param RouteItem $routeItem
       * @return int the offset position
       */
-     protected function getOffsetPosition(RunnerServiceContext $context, RouteItem $currentRouteItem)
-     {
+    protected function getOffsetPosition(RunnerServiceContext $context, RouteItem $currentRouteItem)
+    {
         $session = $context->getTestSession();
         $route = $session->getRoute();
         $routeCount = $route->count();
@@ -481,5 +516,53 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             $label = $item->getLabel();
         }
         return $label;
+    }
+
+    /**
+     * @param AssessmentItemRef $itemRef
+     * @return array
+     */
+    protected function getAvailableCategories(AssessmentItemRef $itemRef)
+    {
+        $categoriesMap = array_flip($itemRef->getCategories()->getArrayCopy());
+
+        foreach ($this->getOverriddenOptionsRepository()->findAll() as $option) {
+            $categoryId = QtiRunnerConfig::CATEGORY_OPTION_PREFIX . $option->getId();
+
+            if ($option->isEnabled()) {
+                $categoriesMap[$categoryId] = true;
+            } else {
+                $categoriesMap = $this->removeFuzzyMatchedCategories($categoriesMap, $categoryId);
+            }
+        }
+
+        return array_keys($categoriesMap);
+    }
+
+    private function getOverriddenOptionsRepository(): OverriddenOptionsRepositoryInterface
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(OverriddenOptionsRepositoryInterface::SERVICE_ID);
+    }
+
+    /**
+     * Tool/option activation status in frontend is checked by fuzzy matched categories. This step was added
+     * in order to have the same behavior for tool/option deactivation through overrides
+     */
+    private function removeFuzzyMatchedCategories(array $categoriesMap, string $categoryId): array
+    {
+        $prefix = QtiRunnerConfig::CATEGORY_OPTION_PREFIX;
+        foreach (array_keys($categoriesMap) as $key) {
+            if (
+                strcasecmp(
+                    preg_replace('/[-_\s]/', '', str_replace($prefix, '', $key)),
+                    preg_replace('/[-_\s]/', '', str_replace($prefix, '', $categoryId))
+                ) === 0
+            ) {
+                unset($categoriesMap[$key]);
+            }
+        }
+
+        return $categoriesMap;
     }
 }

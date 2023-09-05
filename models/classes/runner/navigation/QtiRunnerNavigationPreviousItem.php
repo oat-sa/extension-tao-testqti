@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -42,15 +44,15 @@ class QtiRunnerNavigationPreviousItem implements RunnerNavigation
         /* @var AssessmentTestSession $session */
         $session = $context->getTestSession();
         $nextPosition = $session->getRoute()->getPosition() - 1;
-        
+
         if ($context->isAdaptive()) {
             $shadowTest = $context->getShadowTest();
             $currentCatItemId = $context->getCurrentCatItemId();
             $search = array_search($currentCatItemId, $shadowTest);
-            
+
             // Consider potential changes in the selected items.
             $context->selectAdaptiveNextItem();
-            
+
             if ($search === 0) {
                 QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
                 $session->moveBack();
@@ -61,7 +63,7 @@ class QtiRunnerNavigationPreviousItem implements RunnerNavigation
             QtiRunnerNavigation::checkTimedSectionExit($context, $nextPosition);
             $session->moveBack();
         }
-        
+
         return true;
     }
 }

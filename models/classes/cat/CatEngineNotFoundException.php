@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +23,7 @@ namespace oat\taoQtiTest\models\cat;
 
 /**
  * CAT Engine Not Found Exception.
- * 
+ *
  * This Exception must be thrown in case a CAT Engine is requested but
  * not endpoint configuration could be found for it.
  */
@@ -30,12 +31,12 @@ class CatEngineNotFoundException extends CatException
 {
     /** @var string The requested endpoint URL. */
     private $requestedEndpoint;
-    
+
     /**
      * New CatEngineNotFoundException object.
-     * 
+     *
      * Creates a new CatEngineNotFoundException object to be thrown.
-     * 
+     *
      * @param string $message
      * @param string $requestedEndpoint The requested endpoint URL that made the exception occuring.
      * @param integer $code
@@ -46,24 +47,24 @@ class CatEngineNotFoundException extends CatException
         parent::__construct($message, $code, $previous);
         $this->setRequestedEndpoint($requestedEndpoint);
     }
-    
+
     /**
      * Get Requested Endpoint.
-     * 
+     *
      * Get the requested endpoint URL.
-     * 
+     *
      * @return string
      */
     public function getRequestedEndpoint()
     {
         return $this->requestedEndpoint;
     }
-    
+
     /**
      * Set Requested Endpoint.
-     * 
+     *
      * Set the requested endpoint URL.
-     * 
+     *
      * @param string $requestedEndpoint
      */
     private function setRequestedEndpoint($requestedEndpoint)

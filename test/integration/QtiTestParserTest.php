@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\integration;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
@@ -35,18 +37,17 @@ use common_report_Report;
  */
 class QtiTestParserTest extends GenerisPhpUnitTestRunner
 {
-
-    static public function dataDir()
+    public static function dataDir()
     {
         return dirname(__FILE__) . '/data/';
     }
 
-    static public function samplesDir()
+    public static function samplesDir()
     {
         return dirname(__FILE__) . '/../samples/';
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::initTest();
     }
@@ -59,13 +60,13 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
     {
         $objParser = new taoQtiTest_models_classes_ManifestParser($this->dataDir() . 'imsmanifest_mapping_1.xml');
         $this->assertNotNull($objParser);
-        
+
         return $objParser;
     }
 
     /**
      * @depends testManifestParserObject
-     * 
+     *
      * @param $objParser
      * @return void
      */
@@ -76,48 +77,54 @@ class QtiTestParserTest extends GenerisPhpUnitTestRunner
 
     /**
      * @depends testManifestParserObject
-     * 
+     *
      * @param $objParser
      * @return void
      */
     public function testManifestParserGetResources($objParser)
     {
-        $idResources = $objParser->getResources(null, taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_IDENTIFIER);
+        $idResources = $objParser->getResources(
+            null,
+            taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_IDENTIFIER
+        );
         $this->assertEquals(4, count($idResources));
-        
-        $typeResources = $objParser->getResources('imsqti_test_xmlv2p1', taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE);
+
+        $typeResources = $objParser->getResources(
+            'imsqti_test_xmlv2p1',
+            taoQtiTest_models_classes_ManifestParser::FILTER_RESOURCE_TYPE
+        );
         $this->assertEquals(1, count($typeResources));
-        
+
         $typeResourcesDefault = $objParser->getResources('imsqti_test_xmlv2p1');
         $this->assertEquals(1, count($typeResourcesDefault));
     }
 
     /**
      * Initialize the compiler
-     * 
+     *
      * @return \taoQtiTest_models_classes_QtiTestCompiler
      */
     public function testQtiTestCreateCompiler()
     {
         $content = new core_kernel_classes_Resource($this->dataDir() . 'qtitest.xml');
-        
+
         $storage = tao_models_classes_service_FileStorage::singleton();
-        
+
         $this->assertIsA($content, core_kernel_classes_Resource::class);
         $this->assertIsA($storage, tao_models_classes_service_FileStorage::class);
-        
+
         $compiler = new taoQtiTest_models_classes_QtiTestCompiler($content, $storage);
         $this->assertIsA($compiler, taoQtiTest_models_classes_QtiTestCompiler::class);
-        
+
         return $compiler;
     }
 
-    
-    
+
+
     /**
      * @depends testQtiTestCreateCompiler
-     * 
-     * @param \taoQtiTest_models_classes_QtiTestCompiler $compiler            
+     *
+     * @param \taoQtiTest_models_classes_QtiTestCompiler $compiler
      * @return void
      */
     public function testQtiTextCompilerCompile($compiler)

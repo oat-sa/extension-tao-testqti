@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +31,7 @@ use oat\taoTests\models\import\AbstractTestImporter;
  */
 class QtiTestImporter extends AbstractTestImporter
 {
-    const IMPORTER_ID = 'taoQtiTest';
+    public const IMPORTER_ID = 'taoQtiTest';
 
     /**
      * @param File $file
@@ -41,9 +42,26 @@ class QtiTestImporter extends AbstractTestImporter
      * @param bool $itemMustBeOverwritten
      * @return \common_report_Report
      */
-    public function import(File $file, \core_kernel_classes_Class $class = null, $enableMetadataGuardians = true, $enableValidators = true, $itemMustExist = false, $itemMustBeOverwritten = false)
-    {
+    public function import(
+        File $file,
+        \core_kernel_classes_Class $class = null,
+        $enableMetadataGuardians = true,
+        $enableValidators = true,
+        $itemMustExist = false,
+        $itemMustBeOverwritten = false,
+        bool $overwriteTest = false,
+        ?string $itemClassUri = null
+    ) {
         $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
-        return $service->importQtiTest($file, $class, $enableMetadataGuardians, $enableValidators, $itemMustExist, $itemMustBeOverwritten);
+        return $service->importQtiTest(
+            $file,
+            $class,
+            $enableMetadataGuardians,
+            $enableValidators,
+            $itemMustExist,
+            $itemMustBeOverwritten,
+            $overwriteTest,
+            $itemClassUri
+        );
     }
 }

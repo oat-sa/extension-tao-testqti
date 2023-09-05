@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,10 +30,10 @@ class RdsToolsStateStorage extends ToolsStateStorage
      * Constants for the database creation and data access
      *
      */
-    const TABLE_NAME = 'runner_tool_states';
-    const COLUMN_DELIVERY_EXECUTION_ID = 'delivery_execution_id';
-    const COLUMN_TOOL_NAME = 'tool_name';
-    const COLUMN_TOOL_STATE = 'tool_state';
+    public const TABLE_NAME = 'runner_tool_states';
+    public const COLUMN_DELIVERY_EXECUTION_ID = 'delivery_execution_id';
+    public const COLUMN_TOOL_NAME = 'tool_name';
+    public const COLUMN_TOOL_STATE = 'tool_state';
 
     /**
      * @return \common_persistence_SqlPersistence
@@ -41,7 +42,10 @@ class RdsToolsStateStorage extends ToolsStateStorage
     protected function getPersistence()
     {
         $persistenceId = $this->getOption(self::OPTION_PERSISTENCE) ?: 'default';
-        return $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_ID)->getPersistenceById($persistenceId);
+        return $this
+            ->getServiceLocator()
+            ->get(\common_persistence_Manager::SERVICE_ID)
+            ->getPersistenceById($persistenceId);
     }
 
     /**
@@ -68,8 +72,8 @@ class RdsToolsStateStorage extends ToolsStateStorage
         $qb = $this->getQueryBuilder()
             ->update(self::TABLE_NAME)
             ->set(self::COLUMN_TOOL_STATE, ':state')
-            ->where(self::COLUMN_DELIVERY_EXECUTION_ID .' = :delivery_execution_id')
-            ->andWhere(self::COLUMN_TOOL_NAME .' = :tool_name')
+            ->where(self::COLUMN_DELIVERY_EXECUTION_ID . ' = :delivery_execution_id')
+            ->andWhere(self::COLUMN_TOOL_NAME . ' = :tool_name')
             ->setParameter('state', $state)
             ->setParameter('delivery_execution_id', $deliveryExecutionId)
             ->setParameter('tool_name', $toolName);

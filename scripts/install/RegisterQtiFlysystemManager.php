@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,4 +37,3 @@ class RegisterQtiFlysystemManager extends \common_ext_action_InstallAction
         $serviceManager->register(QtiFlysystemFileManager::SERVICE_ID, $service);
     }
 }
-

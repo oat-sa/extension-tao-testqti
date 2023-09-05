@@ -10,16 +10,109 @@
         "http"
     ],
     "produces": [
-        "application/json"
+        "application/json",
+        "application/xml",
+        "text/xml"
     ],
     "basePath": "/",
     "tags": [
         {
             "name": "test",
             "description": "Operations about tests"
+        },
+        {
+            "name": "export",
+            "description": "Operations about test export"
         }
     ],
     "paths": {
+        "/taoQtiTest/RestQtiTests/exportQtiPackage": {
+            "get": {
+                "description": "Download a QTI Package for given delivery",
+                "tags": [
+                    "export"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request was correctly handled, qti package was exported",
+                        "schema": {
+                            "title": "response",
+                            "format": "json",
+                            "type": "object",
+                            "required": [
+                                "success",
+                                "version",
+                                "data"
+                            ],
+                            "properties": {
+                                "success": {
+                                    "type": "boolean",
+                                    "description": "True on success"
+                                },
+                                "version": {
+                                    "type": "string",
+                                    "description": "Tao version"
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/qtiPackageData"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "At least one mandatory parameter was required but found missing in your request",
+                                "version": "3.1.0"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "You don't have permission to access this resource.",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error, if class-parent-uri is not a valid test class.",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "testUri",
+                        "in": "query",
+                        "description": "Test resource URI",
+                        "type": "string",
+                        "required": true
+                    }
+                ]
+            }
+        },
         "/taoQtiTest/RestQtiTests/import": {
             "post": {
                 "description": "Import a QTI test package into the TAO platform. Available since Tao 3.1.",
@@ -112,31 +205,45 @@
                         "required": false
                     },
                     {
+                        "name": "itemClassUri",
+                        "in": "formData",
+                        "description": "Class uri where exported items are placed. If not specified root class will be used",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "overwriteTest",
+                        "in": "formData",
+                        "description": "Flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class. 'true' value counts as true, 'false' as false",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
                         "name": "enableMetadataGuardians",
                         "in": "formData",
-                        "description": "Boolean flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default.",
-                        "type": "boolean",
+                        "description": "Flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "enableMetadataValidators",
                         "in": "formData",
-                        "description": "Boolean flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default.",
-                        "type": "boolean",
+                        "description": "Flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "itemMustExist",
                         "in": "formData",
-                        "description": "Boolean flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. Default value is false.",
-                        "type": "boolean",
+                        "description": "Flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. 'true' value counts as true, 'false' as false. Default value is false.",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "itemMustBeOverwritten",
                         "in": "formData",
-                        "description": "Boolean flag that indicates whether items found by guardians should be overwritten. Default value is false.",
-                        "type": "boolean",
+                        "description": "Flag that indicates whether items found by guardians should be overwritten. 'true' value counts as true, 'false' as false. Default value is false.",
+                        "type": "string",
                         "required": false
                     }
                 ],
@@ -237,31 +344,45 @@
                         "required": false
                     },
                     {
+                        "name": "itemClassUri",
+                        "in": "formData",
+                        "description": "Class uri where exported items are placed. If not specified root class will be used",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "overwriteTest",
+                        "in": "formData",
+                        "description": "Flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class. 'true' value counts as true, 'false' as false",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
                         "name": "enableMetadataGuardians",
                         "in": "formData",
-                        "description": "Boolean flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default.",
-                        "type": "boolean",
+                        "description": "Flag that indicates to use or not metadata guardians during the import. If parameter not specified, metadata guardians will be used by default. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "enableMetadataValidators",
                         "in": "formData",
-                        "description": "Boolean flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default.",
-                        "type": "boolean",
+                        "description": "Flag that indicates to use or not metadata validators during the import. If parameter not specified, metadata guardians will be used by default. 'true' value counts as true, 'false' as false",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "itemMustExist",
                         "in": "formData",
-                        "description": "Boolean flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. Default value is false.",
-                        "type": "boolean",
+                        "description": "Flag that indicates whether items must be found by one metadata guardian. In case of the item is not found by a metadata guardian, the import will fail. 'true' value counts as true, 'false' as false. Default value is false.",
+                        "type": "string",
                         "required": false
                     },
                     {
                         "name": "itemMustBeOverwritten",
                         "in": "formData",
-                        "description": "Boolean flag that indicates whether items found by guardians should be overwritten. Default value is false.",
-                        "type": "boolean",
+                        "description": "Flag that indicates whether items found by guardians should be overwritten. 'true' value counts as true, 'false' as false. Default value is false.",
+                        "type": "string",
                         "required": false
                     }
                 ],
@@ -473,6 +594,181 @@
                     }
                 }
             }
+        },
+        "/taoQtiTest/RestQtiTests/getItems": {
+            "get": {
+                "description": "Get list of test items id. Available since Tao 3.1.",
+                "tags": [
+                    "test", "items"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request was correctly handled, test waw found, test items were found",
+                        "schema": {
+                            "title": "response",
+                            "format": "json",
+                            "type": "object",
+                            "required": [
+                                "success",
+                                "version",
+                                "data"
+                            ],
+                            "properties": {
+                                "success": {
+                                    "type": "boolean",
+                                    "description": "True on success"
+                                },
+                                "version": {
+                                    "type": "string",
+                                    "description": "Tao version"
+                                },
+                                "data": {
+                                    "description": "List of items identifiers",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/definitions/item"
+                                    }
+                                }
+                            }
+                        },
+                        "examples": {
+                            "application/json": {
+                                "success": true,
+                                "data": [
+                                    {
+                                        "itemUri": "http://tao.local/mytao.rdf#xxxxxxxxxxxxx"
+                                    }
+                                ],
+                                "version": "3.1.0"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Required data was not provided",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "404": {
+                        "description": "Test with given id was not found",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error (should not occur)",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "testUri",
+                        "in": "query",
+                        "description": "Test identifier",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ]
+            }
+        },
+        "/taoQtiTest/RestQtiTests/updateMetadata": {
+            "post": {
+                "description": "Update the metadata of a given test",
+                "tags": [
+                    "test"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The metadata that has to be updated",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/metadataEntity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/updateMetadataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if you send invalid parameters.",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "At least one mandatory parameter was required but found missing in your request",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "You don't have permission to access this resource.",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "examples": {
+                            "application/json": {
+                                "success": false,
+                                "errorCode": 0,
+                                "errorMsg": "Exception error description",
+                                "version": "3.1.0"
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -505,12 +801,22 @@
                 }
             }
         },
+        "qtiPackageData": {
+            "description": "Qti Package data",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/qtiPackage"
+            }
+        },
         "data": {
             "description": "output user data",
             "type": "array",
             "items": {
                 "$ref": "#/definitions/test"
             }
+        },
+        "qtiPackage": {
+            "type": "string"
         },
         "test": {
             "type": "object",
@@ -526,6 +832,60 @@
                     "type": "array",
                     "items": {
                         "type": "string"
+                    }
+                }
+            }
+        },
+        "item": {
+            "type": "object",
+            "required": [
+                "itemUri"
+            ],
+            "properties": {
+                "itemUri": {
+                    "type": "string"
+                }
+            }
+        },
+        "metadataEntity": {
+            "type": "object",
+            "required": [
+                "resourceUri",
+                "propertyUri",
+                "value"
+            ],
+            "properties": {
+                "resourceUri": {
+                    "type": "string",
+                    "description": "The Test URI where the Metadata Belongs to",
+                    "example": "https://tao.local/ontologies/tao.rdf#my-test-uri"
+                },
+                "propertyUri": {
+                    "type": "string",
+                    "description": "The Property URI where the Metadata value is related",
+                    "example": "https://tao.local/ontologies/tao.rdf#my-property-uri"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "The value of the metadata",
+                    "example": "This is a metadata update"
+                }
+            }
+        },
+        "updateMetadataResponse": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "success",
+                    "data"
+                ],
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "$ref": "#/definitions/metadataEntity"
                     }
                 }
             }

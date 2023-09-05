@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +30,7 @@ class SetupPhpSerializationCompilation extends InstallAction
 {
     /**
      * Invoke script.
-     * 
+     *
      * @param $params
      */
     public function __invoke($params)
@@ -39,7 +40,10 @@ class SetupPhpSerializationCompilation extends InstallAction
             PhpSerializationCompilationDataService::SERVICE_ID,
             new PhpSerializationCompilationDataService()
         );
-        
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, "PHP Serialization for QTI-SDK components enabled.");
+
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            "PHP Serialization for QTI-SDK components enabled."
+        );
     }
 }

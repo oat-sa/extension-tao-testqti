@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,16 +39,15 @@ use tao_helpers_form_FormElement;
  */
 class QtiTestImportTest extends GenerisPhpUnitTestRunner
 {
-
     private $dataDir = '';
-    
+
     private $tmpDir = '';
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::initTest();
         $this->dataDir = dirname(__FILE__) . '/data/';
-        
+
         $this->tmpDir = sys_get_temp_dir() . '/' ;
     }
 
@@ -65,8 +65,8 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-	 * test import form create
-	 *
+     * test import form create
+     *
      * @depends testInitImport
      * @param  \taoQtiTest_models_classes_import_TestImport $testImport
      * @return \tao_helpers_form_Form
@@ -82,8 +82,8 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-	 * test import form validators
-	 *
+     * test import form validators
+     *
      * @depends testImportFormCreate
      * @param  \tao_helpers_form_Form $form
      * @return void
@@ -94,8 +94,8 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-	 * test import form values
-	 *
+     * test import form values
+     *
      * @depends testImportFormCreate
      * @param  \tao_helpers_form_Form $form
      * @return void
@@ -107,15 +107,15 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
         $elmSource = $form->getElement('source');
         $this->assertInstanceOf(tao_helpers_form_FormElement::class, $elmSource);
 
-        $elmSource->setValue(array(
+        $elmSource->setValue([
             'uploaded_file' => $this->dataDir . 'qtitest.xml'
-        ));
+        ]);
         $this->assertFalse($form->isValid());
 
         copy($this->dataDir . 'qti_package.zip', $this->tmpDir . 'qti_package_copy.zip');
-        $elmSource->setValue(array(
+        $elmSource->setValue([
             'uploaded_file' => $this->tmpDir . 'qti_package_copy.zip'
-        ));
+        ]);
 
         $elmSentQti = $form->getElement('import_sent_qti');
         $this->assertInstanceOf(tao_helpers_form_FormElement::class, $elmSentQti);
@@ -123,8 +123,8 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-	 * test import form validate
-	 *
+     * test import form validate
+     *
      * @depends testImportFormCreate
      * @param  \tao_helpers_form_Form $form
      * @return void
@@ -138,12 +138,12 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(1, $value);
     }
 
-    
 
-    
+
+
     /**
-	 * test import
-	 *
+     * test import
+     *
      * @depends testInitImport
      * @depends testImportFormCreate
      * @param  \taoQtiTest_models_classes_import_TestImport $testImport
@@ -159,12 +159,11 @@ class QtiTestImportTest extends GenerisPhpUnitTestRunner
         $testImport->setServiceLocator($serviceLocatorMock);
 
         $class = new core_kernel_classes_Class(TaoOntology::TEST_CLASS_URI);
-        
+
         $report = $testImport->import($class, $form);
         $this->assertInstanceOf(common_report_Report::class, $report);
 
         // As the QTI Package has no test into it, the report has to be TYPE_ERROR.
         $this->assertEquals($report->getType(), common_report_Report::TYPE_ERROR);
     }
-
 }

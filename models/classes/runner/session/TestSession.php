@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +28,9 @@ use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoTests\models\runner\time\TimePoint;
-use qtism\common\datatypes\Duration;
 use qtism\common\datatypes\QtiDuration;
+use qtism\data\AssessmentSection;
+use qtism\data\TestPart;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentTestPlace;
 use qtism\runtime\tests\AssessmentTestSessionException;
@@ -201,7 +203,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         // try to close existing time range if any, in order to be sure the test will start or restart a new range.
         // if the range is already closed, a message will be added to the log
         $tags = $this->getItemTags($this->getCurrentRouteItem());
-        $this->getTimer()->start($tags, $timestamp)->save();
+        $this->getTimer()->end($tags, $timestamp)->save();
     }
 
     /**
@@ -248,21 +250,23 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
                 $duration = floatval($duration);
             }
             try {
+                $this->logInfo(sprintf('[%s] - test session timer adjustment', $this->getSessionId()));
                 $timer->adjust($tags, $duration);
             } catch (\oat\taoTests\models\runner\time\TimeException $e) {
-                $this->logAlert($e->getMessage().'; Test session identifier: '.$this->getSessionId());
+                $this->logAlert($e->getMessage() . '; Test session identifier: ' . $this->getSessionId());
             }
         }
         $constraints = $this->getTimeConstraints();
 
         $maxTime = 0;
-        /** @var TimeConstraint $constraint */
+        /** @var QtiTimeConstraint $constraint */
         foreach ($constraints as $constraint) {
-            if ($constraint->getSource()->getTimeLimits() && $constraint->getSource()->getTimeLimits()->getMaxTime()) {
-                $maxTime = $constraint->getSource()->getTimeLimits()->getMaxTime()->getSeconds(true);
+            if (($maximumTime = $constraint->getAdjustedMaxTime()) !== null) {
+                $maxTime = $maximumTime->getSeconds(true);
             }
         }
         $this->getTimer()->getConsumedExtraTime($tags, $maxTime);
+        $this->updateCurrentDurationCache();
         $timer->save();
     }
 
@@ -270,8 +274,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Gets the timer duration for a particular identifier
      * @param string|array $identifier
      * @param int $target
-     * @return Duration
-     * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
+     * @return QtiDuration
+     * @throws \oat\taoTests\models\runner\time\TimeException
      */
     public function getTimerDuration($identifier, $target = 0)
     {
@@ -279,6 +283,23 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             $target = $this->getTimerTarget();
         }
 
+        $durationKey = $this->getDurationKey($identifier, $target);
+
+        if (!isset($this->durationCache[$durationKey])) {
+            $this->updateDurationCache($identifier, $target);
+        }
+
+        return $this->durationCache[$durationKey];
+    }
+
+    /**
+     * Gets the timer duration key for a particular identifier
+     * @param string|array $identifier
+     * @param int $target
+     * @return string
+     */
+    protected function getDurationKey($identifier, int $target): string
+    {
         $durationKey = $target . '-';
         if (is_array($identifier)) {
             sort($identifier);
@@ -287,18 +308,50 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             $durationKey .= $identifier;
         }
 
-        if (!isset($this->durationCache[$durationKey])) {
-            $duration = round($this->getTimer()->compute($identifier, $target), 6);
-            $this->durationCache[$durationKey] = new QtiDuration('PT' . $duration . 'S');
-        }
+        return $durationKey;
+    }
 
-        return $this->durationCache[$durationKey];
+    /**
+     * Updates the duration cache for a particular identifier
+     * @param string|array $identifier
+     * @param int $target
+     * @return float
+     * @throws \oat\taoTests\models\runner\time\TimeException
+     */
+    protected function updateDurationCache($identifier, int $target): float
+    {
+        $duration = round($this->getTimer()->compute($identifier, $target), 6);
+        $durationKey = $this->getDurationKey($identifier, $target);
+
+        $this->durationCache[$durationKey] = new QtiDuration('PT' . $duration . 'S');
+
+        return $duration;
+    }
+
+    /**
+     * Updates the duration cache for all identifiers from the current context
+     * @throws \oat\taoTests\models\runner\time\TimeException
+     */
+    protected function updateCurrentDurationCache()
+    {
+        $target = $this->getTimerTarget();
+        $routeItem = $this->getCurrentRouteItem();
+        $sources = [
+            $routeItem->getAssessmentTest(),
+            $this->getCurrentTestPart(),
+            $this->getCurrentAssessmentSection(),
+            $routeItem->getAssessmentItemRef(),
+        ];
+
+        foreach ($sources as $source) {
+            $this->updateDurationCache($source->getIdentifier(), $target);
+        }
     }
 
     /**
      * Gets the total duration for the current item in the TestSession
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function computeItemTime($target = 0)
@@ -310,7 +363,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     /**
      * Gets the total duration for the current section in the TestSession
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function computeSectionTime($target = 0)
@@ -324,7 +377,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     /**
      * Gets the total duration for the current test part in the TestSession
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function computeTestPartTime($target = 0)
@@ -337,7 +390,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     /**
      * Gets the total duration for the whole assessment test
      * @param int $target
-     * @return Duration
+     * @return QtiDuration
      * @throws \oat\taoTests\models\runner\time\InconsistentCriteriaException
      */
     public function computeTestTime($target = 0)
@@ -384,7 +437,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Builds the time constraints running for the current testPart or/and current assessmentSection
      * or/and assessmentItem. Takes care of the extra time if needed.
      *
-     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration.
+     *                        If the null value is given, all places will be taken into account.
      * @param boolean $applyExtraTime Allow to take care of extra time
      * @return TimeConstraintCollection A collection of TimeConstraint objects.
      * @qtism-test-duration-update
@@ -393,7 +447,12 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     {
         if ($places === null) {
             // Get the constraints from all places in the Assessment Test.
-            $places = (AssessmentTestPlace::ASSESSMENT_TEST | AssessmentTestPlace::TEST_PART | AssessmentTestPlace::ASSESSMENT_SECTION | AssessmentTestPlace::ASSESSMENT_ITEM);
+            $places = (
+                AssessmentTestPlace::ASSESSMENT_TEST
+                | AssessmentTestPlace::TEST_PART
+                | AssessmentTestPlace::ASSESSMENT_SECTION
+                | AssessmentTestPlace::ASSESSMENT_ITEM
+            );
         }
 
         $constraints = new TimeConstraintCollection();
@@ -401,20 +460,45 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         $routeItem = $this->getCurrentRouteItem();
         $considerMinTime = $this->mustConsiderMinTime();
 
-        if ($places & AssessmentTestPlace::ASSESSMENT_TEST) {
-            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentTest(), $navigationMode, $considerMinTime, $applyExtraTime);
+        if (($places & AssessmentTestPlace::ASSESSMENT_TEST) && ($routeItem instanceof RouteItem)) {
+            $constraints[] = $this->getTimeConstraint(
+                $routeItem->getAssessmentTest(),
+                $navigationMode,
+                $considerMinTime,
+                $applyExtraTime
+            );
         }
 
-        if ($places & AssessmentTestPlace::TEST_PART) {
-            $constraints[] = $this->getTimeConstraint($this->getCurrentTestPart(), $navigationMode, $considerMinTime, $applyExtraTime);
+        $currentTestPart = $this->getCurrentTestPart();
+        if (($places & AssessmentTestPlace::TEST_PART) && ($currentTestPart instanceof TestPart)) {
+            $constraints[] = $this->getTimeConstraint(
+                $currentTestPart,
+                $navigationMode,
+                $considerMinTime,
+                $applyExtraTime
+            );
         }
 
-        if ($places & AssessmentTestPlace::ASSESSMENT_SECTION) {
-            $constraints[] = $this->getTimeConstraint($this->getCurrentAssessmentSection(), $navigationMode, $considerMinTime, $applyExtraTime);
+        $currentAssessmentSection = $this->getCurrentAssessmentSection();
+        if (
+            ($places & AssessmentTestPlace::ASSESSMENT_SECTION)
+            && ($currentAssessmentSection instanceof AssessmentSection)
+        ) {
+            $constraints[] = $this->getTimeConstraint(
+                $currentAssessmentSection,
+                $navigationMode,
+                $considerMinTime,
+                $applyExtraTime
+            );
         }
 
-        if ($places & AssessmentTestPlace::ASSESSMENT_ITEM) {
-            $constraints[] = $this->getTimeConstraint($routeItem->getAssessmentItemRef(), $navigationMode, $considerMinTime, $applyExtraTime);
+        if (($places & AssessmentTestPlace::ASSESSMENT_ITEM) && ($routeItem instanceof RouteItem)) {
+            $constraints[] = $this->getTimeConstraint(
+                $routeItem->getAssessmentItemRef(),
+                $navigationMode,
+                $considerMinTime,
+                $applyExtraTime
+            );
         }
 
         return $constraints;
@@ -424,7 +508,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Get the time constraints running for the current testPart or/and current assessmentSection
      * or/and assessmentItem. The extra time is taken into account.
      *
-     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration.
+     *                        If the null value is given, all places will be taken into account.
      * @return TimeConstraintCollection A collection of TimeConstraint objects.
      * @qtism-test-duration-update
      */
@@ -437,7 +522,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * Get the regular time constraints running for the current testPart or/and current assessmentSection
      * or/and assessmentItem, without taking care of the extra time.
      *
-     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration. If the null value is given, all places will be taken into account.
+     * @param integer $places A composition of values (use | operator) from the AssessmentTestPlace enumeration.
+     *                        If the null value is given, all places will be taken into account.
      * @return TimeConstraintCollection A collection of TimeConstraint objects.
      * @qtism-test-duration-update
      */
@@ -477,7 +563,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      *
      * @param AssessmentItemSession $itemSession The lastly updated AssessmentItemSession.
      * @param integer $occurrence The occurrence number of the item bound to $assessmentItemSession.
-     * @throws AssessmentTestSessionException With error code RESULT_SUBMISSION_ERROR if an error occurs while transmitting results.
+     * @throws AssessmentTestSessionException With error code RESULT_SUBMISSION_ERROR if an error occurs
+     *                                        while transmitting results.
      */
     public function submitItemResults(AssessmentItemSession $itemSession, $occurrence = 0)
     {
@@ -505,7 +592,8 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
      * in order to send the LtiOutcome
      *
      * @see http://www.imsglobal.org/lis/ Outcome Management Service
-     * @throws \taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs whil transmitting/processing the result.
+     * @throws \taoQtiTest_helpers_TestSessionException If the session is already ended or if an error occurs while
+     *                                                  transmitting/processing the result.
      */
     public function endTestSession()
     {

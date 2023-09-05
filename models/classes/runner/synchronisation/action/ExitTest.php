@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2022 (original work) Open Assessment Technologies SA ;
  */
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
@@ -24,8 +25,9 @@ use common_exception_Error;
 use common_exception_InconsistentData;
 use common_Logger;
 use Exception;
+use oat\taoQtiTest\model\Service\ExitTestCommand;
+use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
-use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
 /**
  * Exit the current test abruptly
@@ -42,37 +44,34 @@ class ExitTest extends TestRunnerAction
      * Save item response and wrap the move to runner service.
      * Start next timer.
      *
-     * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 
         try {
-            /** @var QtiRunnerServiceContext $serviceContext */
-            $serviceContext = $this->getServiceContext();
+            $command = new ExitTestCommand($this->getServiceContext());
 
-            $this->saveToolStates();
+            $this->setNavigationContextToCommand($command);
+            $this->setItemContextToCommand($command);
+            $this->setToolsStateContextToCommand($command);
 
-            if (!$this->getRunnerService()->isTerminated($serviceContext)) {
-                $this->endItemTimer($this->getTime());
-                $this->saveItemState();
-            }
+            /** @var ExitTestService $exitTest */
+            $exitTest = $this->getPsrContainer()->get(ExitTestService::class);
 
-            $this->initServiceContext();
-            $this->saveItemResponses();
+            $response = $exitTest($command);
 
-            $response = [
-                'success' => $this->getRunnerService()->exitTest($serviceContext),
-            ];
+            return $response->toArray();
         } catch (Exception $e) {
-            common_Logger::e($e->getMessage());
-            $response = $this->getErrorResponse($e);
-        }
+            common_Logger::e(
+                $e->getMessage(),
+                ['deliveryExecutionId' => $this->getServiceContext()->getTestExecutionUri()]
+            );
 
-        return $response;
+            return $this->getErrorResponse($e);
+        }
     }
 }

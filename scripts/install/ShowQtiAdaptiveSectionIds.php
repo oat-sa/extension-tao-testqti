@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,26 +20,29 @@
 
 namespace oat\taoQtiTest\scripts\install;
 
+use common_report_Report as Report;
+use oat\generis\model\OntologyAwareTrait;
 use oat\generis\model\WidgetRdf;
 use oat\oatbox\extension\InstallAction;
-use oat\tao\model\WidgetDefinitions;
 use oat\taoQtiTest\models\cat\CatService;
-use \common_report_Report as Report;
+use tao_helpers_form_elements_JsonObject as JsonObject;
 
 /**
  * Class ShowQtiAdaptiveSectionIds
- * 
+ *
  * Show the QTI CAT Adaptive Section IDs on the Graphical User Interface.
- * 
+ *
  * @package oat\taoQtiTest\scripts\install
  */
 class ShowQtiAdaptiveSectionIds extends InstallAction
 {
+    use OntologyAwareTrait;
+
     public function __invoke($params)
     {
-        $adaptiveSectionIdsProperty = new \core_kernel_classes_Property(CatService::CAT_ADAPTIVE_IDS_PROPERTY);
-        $widgetProperty = new \core_kernel_classes_Property(WidgetRdf::PROPERTY_WIDGET);
-        $adaptiveSectionIdsProperty->editPropertyValues($widgetProperty, WidgetDefinitions::PROPERTY_JSONOBJECT);
+        $adaptiveSectionIdsProperty = $this->getProperty(CatService::CAT_ADAPTIVE_IDS_PROPERTY);
+        $widgetProperty = $this->getProperty(WidgetRdf::PROPERTY_WIDGET);
+        $adaptiveSectionIdsProperty->editPropertyValues($widgetProperty, JsonObject::WIDGET_ID);
 
         return new Report(Report::TYPE_SUCCESS, 'QTI CAT Adaptive Section IDs are now visible in the GUI.');
     }

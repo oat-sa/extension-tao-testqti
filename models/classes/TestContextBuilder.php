@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,12 +40,23 @@ interface TestContextBuilder
      *
      * @param array $context A reference to the context to extend
      * @param AssessmentTestSession $session A given AssessmentTestSession object.
-     * @param array $testMeta An associative array containing meta-data about the test definition taken by the candidate.
-     * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge base.
-     * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge base.
+     * @param array $testMeta An associative array containing meta-data about the test definition taken by the
+     *                        candidate.
+     * @param string $qtiTestDefinitionUri The URI of a reference to an Assessment Test definition in the knowledge
+     *                                     base.
+     * @param string $qtiTestCompilationUri The Uri of a reference to an Assessment Test compilation in the knowledge
+     *                                      base.
      * @param string $standalone
      * @param array $compilationDirs An array containing respectively the private and public compilation directories.
      * @return array The context of the candidate session.
      */
-    public function extendAssessmentTestContext(array &$context, AssessmentTestSession $session, array $testMeta, $qtiTestDefinitionUri, $qtiTestCompilationUri, $standalone, $compilationDirs);
+    public function extendAssessmentTestContext(
+        array &$context,
+        AssessmentTestSession $session,
+        array $testMeta,
+        $qtiTestDefinitionUri,
+        $qtiTestCompilationUri,
+        $standalone,
+        $compilationDirs
+    );
 }

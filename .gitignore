@@ -6,3 +6,4 @@ composer.lock
 var/
 phpunit.xml
 node_modules
+.idea

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +31,10 @@ class DisableAllowShortcut extends InstallAction
      */
     public function __invoke($params)
     {
-        $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+        $extension = $this
+            ->getServiceManager()
+            ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+            ->getExtensionById('taoQtiTest');
         $config = $extension->getConfig('testRunner');
         $config['allow-shortcuts'] = false;
         $extension->setConfig('testRunner', $config);

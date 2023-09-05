@@ -32,7 +32,6 @@ use oat\taoTests\models\runner\providers\TestProvider;
  */
 class RegisterTestRunnerProviders extends InstallAction
 {
-
     public static $providers = [
     //runner
         [
@@ -46,7 +45,7 @@ class RegisterTestRunnerProviders extends InstallAction
             'tags'        => [ 'core', 'qti', 'runner' ]
         ],
 
-    //communicator
+        //communicator
         [
             'id'       => 'request',
             'name'     => 'request communicator',
@@ -79,8 +78,8 @@ class RegisterTestRunnerProviders extends InstallAction
         $registry = ProviderRegistry::getRegistry();
         $count = 0;
 
-        foreach(self::$providers as $provider) {
-            if( $registry->register(TestProvider::fromArray($provider)) ) {
+        foreach (self::$providers as $provider) {
+            if ($registry->register(TestProvider::fromArray($provider))) {
                 $count++;
             }
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +26,7 @@ use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoQtiTest\models\runner\StorageManager;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStorageJsonFormat;
+use oat\taoQtiTest\models\TestSessionService;
 use oat\taoTests\models\runner\time\Timer;
 use oat\taoTests\models\runner\time\TimerStrategyInterface;
 use oat\taoTests\models\runner\time\TimeStorage;
@@ -36,11 +38,11 @@ use oat\taoTests\models\runner\time\TimeStorage;
  */
 class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDelete
 {
-    const SERVICE_ID = 'taoQtiTest/QtiTimerFactory';
-    
-    const OPTION_TIMER_CLASS = 'timer-class';
-    const OPTION_STORAGE_CLASS = 'storage-class';
-    const OPTION_STORAGE_FORMAT_CLASS = 'storage-format';
+    public const SERVICE_ID = 'taoQtiTest/QtiTimerFactory';
+
+    public const OPTION_TIMER_CLASS = 'timer-class';
+    public const OPTION_STORAGE_CLASS = 'storage-class';
+    public const OPTION_STORAGE_FORMAT_CLASS = 'storage-format';
 
     /**
      * @return string
@@ -90,12 +92,12 @@ class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDe
         $storageClass = $this->getStorageClass();
         $timerStorage = new $storageClass($testSessionId, $userUri);
         $timerStorage->setStorageService($this->getServiceLocator()->get(StorageManager::SERVICE_ID));
-        
+
         if ($timerStorage instanceof QtiTimeStorageFormatAware) {
             $storageFormatClass = $this->getStorageFormatClass();
             $timerStorage->setStorageFormat(new $storageFormatClass());
         }
-        
+
         /* @var Timer $timer */
         $timerClass = $this->getTimerClass();
         $timer = new $timerClass();
@@ -110,11 +112,7 @@ class QtiTimerFactory extends ConfigurableService implements DeliveryExecutionDe
      */
     public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
     {
-        if ($request->getSession() === null) {
-            $sessionId = $request->getDeliveryExecution()->getIdentifier();
-        } else {
-            $sessionId = $request->getSession()->getSessionId();
-        }
+        $sessionId = $request->getDeliveryExecution()->getIdentifier();
         $timer = $this->getTimer($sessionId, $request->getDeliveryExecution()->getUserIdentifier());
         return $timer->delete();
     }

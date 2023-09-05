@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,11 +37,11 @@ class TestModelTest extends GenerisPhpUnitTestRunner
     {
         $resourceMock = $this->getMockBuilder('core_kernel_classes_Resource')
         ->setMockClassName('FakeResource')
-        ->setConstructorArgs(array(
+        ->setConstructorArgs([
             $uri
-        ))
+        ])
         ->getMock();
-    
+
         return $resourceMock;
     }
 
@@ -59,30 +60,30 @@ class TestModelTest extends GenerisPhpUnitTestRunner
         $url = $model->getAuthoringUrl($resourceMock);
         $this->assertEquals(1, preg_match('/uri=' . urlencode($fakeUri) . '/', $url));
     }
-    
+
 
     /**
      * Verify that TestModel import handlers are known and tested
      */
     public function testTestModelImportHandlers()
     {
-        $model = new TestModelService(['importHandlers' => array(
+        $model = new TestModelService(['importHandlers' => [
             new \taoQtiTest_models_classes_import_TestImport()
-        )]);
+        ]]);
         $handlers = $model->getImportHandlers();
         $this->assertCount(1, $handlers);
         $handler = reset($handlers);
         $this->assertInstanceOf('taoQtiTest_models_classes_import_TestImport', $handler);
     }
-    
+
     /**
      * Verify that TestModel export handlers are known and tested
      */
     public function testTestModelExportHandlers()
     {
-        $model = new TestModelService(['exportHandlers' => array(
+        $model = new TestModelService(['exportHandlers' => [
             new \taoQtiTest_models_classes_export_TestExport()
-        )]);
+        ]]);
         $handlers = $model->getExportHandlers();
         $this->assertCount(1, $handlers);
         $handler = reset($handlers);

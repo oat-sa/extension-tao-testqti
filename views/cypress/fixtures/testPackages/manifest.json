@@ -1,0 +1,20 @@
+{
+    "testPackages": [
+        {
+            "key": "basicLinearTest",
+            "package": "basic-linear-test.zip"
+        },
+        {
+            "key": "basicNonLinearTest",
+            "package": "basic-nonlinear-test.zip"
+        },
+        {
+            "key": "studentToolTest",
+            "package": "student-tool-test.zip"
+        },
+        {
+            "key": "warningMessagesTest",
+            "package": "warning-messages-test.zip"
+        }
+    ]
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +20,7 @@
 
 namespace oat\taoQtiTest\test\integration\runner\communicator;
 
+use common_exception_InconsistentData;
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\runner\communicator\CommunicationChannel as CommunicationChannelInterface;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -35,7 +37,6 @@ use oat\generis\test\MockObject;
  */
 class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
 {
-
     /**
      * Test CommunicationChannel::processInput
      */
@@ -68,7 +69,7 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
     /**
      * @param $input
      * @param $expectedException
-     * @throws \common_exception_InconsistentData
+     * @throws common_exception_InconsistentData
      *
      * @dataProvider dataProviderTestProcessInputThrowsException
      */
@@ -146,11 +147,9 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
         );
     }
 
-    /**
-     * @expectedException \common_exception_InconsistentData
-     */
     public function testAttachChannelException()
     {
+        $this->expectException(common_exception_InconsistentData::class);
         $service = new QtiCommunicationService([]);
         $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
@@ -172,18 +171,60 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
         $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_INPUT);
         $service->attachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
 
-        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
-        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
+        $this->assertEquals(
+            2,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
+        $this->assertEquals(
+            2,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
 
         $service->detachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_OUTPUT);
 
-        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
-        $this->assertEquals(2, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
+        $this->assertEquals(
+            1,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
+        $this->assertEquals(
+            2,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
 
         $service->detachChannel($channel2, QtiCommunicationService::CHANNEL_TYPE_INPUT);
 
-        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]));
-        $this->assertEquals(1, count($service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]));
+        $this->assertEquals(
+            1,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_OUTPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
+        $this->assertEquals(
+            1,
+            count(
+                // phpcs:disable Generic.Files.LineLength
+                $service->getOption(QtiCommunicationService::OPTION_CHANNELS)[QtiCommunicationService::CHANNEL_TYPE_INPUT]
+                // phpcs:enable Generic.Files.LineLength
+            )
+        );
 
         $this->assertEquals(
             [
@@ -194,11 +235,9 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
         );
     }
 
-    /**
-     * @expectedException \common_exception_InconsistentData
-     */
     public function testDetachChannelException()
     {
+        $this->expectException(common_exception_InconsistentData::class);
         $service = new QtiCommunicationService([]);
         $service->setServiceLocator($this->getServiceLocatorMock());
         $channel = new CommunicationChannel();
@@ -231,15 +270,16 @@ class QtiCommunicationServiceTest extends GenerisPhpUnitTestRunner
      *
      * @return array
      */
-    public function dataProviderTestProcessInputThrowsException() {
+    public function dataProviderTestProcessInputThrowsException()
+    {
         return [
             'Without message' => [
                 'input' => ['channel' => 'TestChannel'],
-                'expectedException' => \common_exception_InconsistentData::class
+                'expectedException' => common_exception_InconsistentData::class
             ],
             'Without channel' => [
                 'input' => ['message' => 'foo'],
-                'expectedException' => \common_exception_InconsistentData::class
+                'expectedException' => common_exception_InconsistentData::class
             ]
         ];
     }

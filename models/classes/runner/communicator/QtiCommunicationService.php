@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,12 +17,14 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
 
 namespace oat\taoQtiTest\models\runner\communicator;
 
+use common_exception_InconsistentData;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
@@ -34,40 +37,44 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
  */
 class QtiCommunicationService extends ConfigurableService implements CommunicationService
 {
-    const SERVICE_ID = 'taoQtiTest/QtiCommunicationService';
+    public const SERVICE_ID = 'taoQtiTest/QtiCommunicationService';
 
     /**
      * @deprecated use SERVICE_ID
      */
-    const CONFIG_ID = 'taoQtiTest/QtiCommunicationService';
+    public const CONFIG_ID = 'taoQtiTest/QtiCommunicationService';
 
-    const OPTION_CHANNELS = 'channels';
-    const OPTION_LOG_INPUT = 'log_input';
+    public const OPTION_CHANNELS = 'channels';
+    public const OPTION_LOG_INPUT = 'log_input';
 
     /**
      * Processes the input messages
      * @param QtiRunnerServiceContext $context - Needs the current runner context
-     * @param array $input - Accept a list of input, each one is represented by a channel's name that is a string and a message that can be any type
+     * @param array $input - Accept a list of input, each one is represented by a channel's name that is a string and a
+     *                     message that can be any type
      * @return array - Returns a list of responses in the same order as the input list
-     * @throws \common_exception_InconsistentData
+     * @throws common_exception_InconsistentData
      */
-    public function processInput(QtiRunnerServiceContext $context, array $input)
+    public function processInput(QtiRunnerServiceContext $context, array $input): array
     {
         $responses = [];
 
         if ($this->islogInputEnabled()) {
-            $this->logInfo('Test runner message: '.json_encode($input));
+            $this->logInfo('Test runner message: ' . json_encode($input));
         }
 
         foreach ($input as $data) {
-            if (!is_array($data) || !isset($data['channel']) || !isset($data['message'])) {
-                throw new \common_exception_InconsistentData('Wrong message chunk received by the bidirectional communication service: either channel or message content is missing!');
+            if (!is_array($data) || !isset($data['channel'], $data['message'])) {
+                throw new common_exception_InconsistentData(
+                    'Wrong message chunk received by the bidirectional communication service: either channel '
+                    . 'or message content is missing!'
+                );
             }
 
             if ($this->hasChannel($data['channel'], self::CHANNEL_TYPE_INPUT)) {
                 $channel = $this->getChannel($data['channel'], self::CHANNEL_TYPE_INPUT);
                 // known channel, forward...
-                $responses[] = $this->processChannel($channel, $context,  $data['message']);
+                $responses[] = $this->processChannel($channel, $context, $data['message']);
             } else {
                 // unknown channel, fallback!
                 $responses[] = $this->fallback($data['channel'], $context, $data['message']);
@@ -80,9 +87,10 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     /**
      * Builds the list of output messages
      * @param QtiRunnerServiceContext $context - Needs the current runner context
-     * @return array - Returns a list of output, each one is represented by a channel's name that is a string and a message that can be any type
+     * @return array - Returns a list of output, each one is represented by a channel's name that is a string and a
+     *               message that can be any type
      */
-    public function processOutput(QtiRunnerServiceContext $context)
+    public function processOutput(QtiRunnerServiceContext $context): array
     {
         $messages = [];
         $channels = $this->getOption(self::OPTION_CHANNELS);
@@ -104,12 +112,14 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     /**
      * @param CommunicationChannel $channel
      * @param integer $channelType
-     * @throws \common_exception_InconsistentData
+     * @throws common_exception_InconsistentData
      */
-    public function attachChannel(CommunicationChannel $channel, $channelType)
+    public function attachChannel(CommunicationChannel $channel, $channelType): void
     {
         if ($this->hasChannel($channel->getName(), $channelType)) {
-            throw new \common_exception_InconsistentData('Channel ' . $channel->getName() . ' already registered in ' . __CLASS__);
+            throw new common_exception_InconsistentData(
+                'Channel ' . $channel->getName() . ' already registered in ' . __CLASS__
+            );
         }
 
         $channels = $this->getOption(self::OPTION_CHANNELS);
@@ -121,12 +131,14 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
     /**
      * @param CommunicationChannel $channel
      * @param integer $channelType
-     * @throws \common_exception_InconsistentData
+     * @throws common_exception_InconsistentData
      */
-    public function detachChannel(CommunicationChannel $channel, $channelType)
+    public function detachChannel(CommunicationChannel $channel, $channelType): void
     {
         if (!$this->hasChannel($channel->getName(), $channelType)) {
-            throw new \common_exception_InconsistentData('Channel ' . $channel->getName() . 'is not registered in ' . __CLASS__);
+            throw new common_exception_InconsistentData(
+                'Channel ' . $channel->getName() . 'is not registered in ' . __CLASS__
+            );
         }
 
         $channels = $this->getOption(self::OPTION_CHANNELS);
@@ -140,7 +152,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
      * @param integer $channelType
      * @return bool
      */
-    protected function hasChannel($channelName, $channelType)
+    protected function hasChannel($channelName, $channelType): bool
     {
         $channels = $this->getOption(self::OPTION_CHANNELS);
         return isset($channels[$channelType][$channelName]);
@@ -151,19 +163,19 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
      * @param integer $channelType
      * @return CommunicationChannel
      */
-    protected function getChannel($channelName, $channelType)
+    protected function getChannel($channelName, $channelType): CommunicationChannel
     {
         $channels = $this->getOption(self::OPTION_CHANNELS);
-        $channel = new $channels[$channelType][$channelName];
+        $channel = new $channels[$channelType][$channelName]();
         $this->propagate($channel);
 
         return $channel;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    private function islogInputEnabled()
+    private function islogInputEnabled(): bool
     {
         if (!$this->hasOption(self::OPTION_LOG_INPUT)) {
             return false;
@@ -175,7 +187,6 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
      * @param QtiRunnerServiceContext $context
      * @param CommunicationChannel $channel
      * @param array $data
-     * @throws \common_exception_InconsistentData
      * @return mixed channel response
      */
     protected function processChannel(CommunicationChannel $channel, QtiRunnerServiceContext $context, array $data = [])
@@ -190,7 +201,7 @@ class QtiCommunicationService extends ConfigurableService implements Communicati
      * @param mixed $message
      * @return mixed
      */
-    protected function fallback($channel, QtiRunnerServiceContext $context,  $message)
+    protected function fallback($channel, QtiRunnerServiceContext $context, $message)
     {
         // do nothing by default, need to be overwritten
         return null;

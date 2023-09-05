@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,6 +21,7 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\toolsStates;
 
+use common_persistence_AdvKeyValuePersistence;
 use oat\taoQtiTest\models\runner\toolsStates\KvToolsStateStorage;
 use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
 use Prophecy\Argument;
@@ -36,9 +38,9 @@ class KvToolsStateStorageTest extends ToolsStateStorageTestCase
         return $this->storage;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
-        $persistence = new \common_persistence_AdvKeyValuePersistence([], new \common_persistence_InMemoryAdvKvDriver());
+        $persistence = new common_persistence_AdvKeyValuePersistence([], new \common_persistence_InMemoryAdvKvDriver());
 
         $this->storage = new KvToolsStateStorage();
         $this->storage->setOption(KvToolsStateStorage::OPTION_PERSISTENCE, $persistence);

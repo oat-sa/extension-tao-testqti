@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,8 +30,8 @@ use oat\oatbox\event\Event;
  */
 class QtiMoveEvent implements Event
 {
-    const CONTEXT_BEFORE = 'before';
-    const CONTEXT_AFTER = 'after';
+    public const CONTEXT_BEFORE = 'before';
+    public const CONTEXT_AFTER = 'after';
 
     private $from;
     private $to;
@@ -91,5 +92,4 @@ class QtiMoveEvent implements Event
     {
         return $this->to;
     }
-
 }

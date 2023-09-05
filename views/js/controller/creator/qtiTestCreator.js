@@ -87,8 +87,13 @@ define([
 
             getModelOverseer: function getModelOverseer() {
                 return loadModelOverseer();
+            },
+
+            isTestHasErrors: function isTestHasErrors() {
+                return $container.find('.test-creator-props').find('span.validate-error').length > 0;
             }
         };
+
         return eventifier(testCreator);
     }
 

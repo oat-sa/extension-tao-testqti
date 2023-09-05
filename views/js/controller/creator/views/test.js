@@ -19,14 +19,33 @@
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
 define([
-    'jquery', 'lodash', 'i18n', 'ui/hider', 'ui/feedback',
+    'jquery',
+    'lodash',
+    'i18n',
+    'ui/hider',
+    'ui/feedback',
+    'services/features',
+    'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/testpart',
     'taoQtiTest/controller/creator/templates/index',
-    'taoQtiTest/controller/creator/helpers/qtiTest'
-],
-function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHelper){
-    'use strict';
+    'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/featureVisibility'
+], function (
+    $,
+    _,
+    __,
+    hider,
+    feedback,
+    features,
+    defaults,
+    actions,
+    testPartView,
+    templates,
+    qtiTestHelper,
+    featureVisibility
+) {
+    ('use strict');
 
     /**
      * The TestView setup test related components and behavior
@@ -34,26 +53,32 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
      * @exports taoQtiTest/controller/creator/views/test
      * @param {Object} creatorContext
      */
-    function testView (creatorContext) {
+    function testView(creatorContext) {
+        const defaultsConfigs = defaults();
         var modelOverseer = creatorContext.getModelOverseer();
         var testModel = modelOverseer.getModel();
+
+        //add feature visibility properties to testModel
+        featureVisibility.addTestVisibilityProps(testModel);
 
         actions.properties($('.test-creator-test > h1'), 'test', testModel, propHandler);
         testParts();
         addTestPart();
 
+        //add feature visibility props to model
+
         /**
          * set up the existing test part views
          * @private
          */
-        function testParts () {
-            if(!testModel.testParts){
+        function testParts() {
+            if (!testModel.testParts) {
                 testModel.testParts = [];
             }
-            $('.testpart').each(function(){
+            $('.testpart').each(function () {
                 var $testPart = $(this);
                 var index = $testPart.data('bind-index');
-                if(!testModel.testParts[index]){
+                if (!testModel.testParts[index]) {
                     testModel.testParts[index] = {};
                 }
 
@@ -68,7 +93,6 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
          * @fires modelOverseer#scoring-change
          */
         function propHandler(propView) {
-
             var $view = propView.getView();
             var $categoryScoreLine = $('.test-category-score', $view);
             var $cutScoreLine = $('.test-cut-score', $view);
@@ -101,7 +125,7 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
             function updateOutcomes() {
                 var $panel = $('.outcome-declarations', $view);
 
-                $panel.html(templates.outcomes(modelOverseer.getOutcomesList()));
+                $panel.html(templates.outcomes({ outcomes: modelOverseer.getOutcomesList() }));
             }
 
             $('[name=test-outcome-processing]', $view).select2({
@@ -109,14 +133,16 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
                 width: '100%'
             });
 
-            $generate.on('click', function() {
+            $generate.on('click', function () {
                 $generate.addClass('disabled').attr('disabled', true);
                 modelOverseer
-                    .on('scoring-write.regenerate', function() {
+                    .on('scoring-write.regenerate', function () {
                         modelOverseer.off('scoring-write.regenerate');
-                        feedback().success(__('The outcomes have been regenerated!')).on('destroy', function() {
-                            $generate.removeClass('disabled').removeAttr('disabled');
-                        });
+                        feedback()
+                            .success(__('The outcomes have been regenerated!'))
+                            .on('destroy', function () {
+                                $generate.removeClass('disabled').removeAttr('disabled');
+                            });
                     })
                     .trigger('scoring-change');
             });
@@ -141,28 +167,40 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
          * @private
          * @fires modelOverseer#part-add
          */
-        function addTestPart () {
-
+        function addTestPart() {
             $('.testpart-adder').adder({
                 target: $('.testparts'),
-                content : templates.testpart,
-                templateData : function(cb){
-
+                content: templates.testpart,
+                templateData: function (cb) {
                     //create an new testPart model object to be bound to the template
                     var testPartIndex = $('.testpart').length;
                     cb({
-                        'qti-type' : 'testPart',
-                        identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'testPart'),
-                        index  : testPartIndex,
-                        navigationMode : 0,
-                        submissionMode : 0,
-                        assessmentSections : [{
-                            'qti-type' : 'assessmentSection',
-                            identifier : qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentSection', 'section'),
-                            title : 'Section 1',
-                            index : 0,
-                            sectionParts : []
-                        }]
+                        'qti-type': 'testPart',
+                        identifier: qtiTestHelper.getAvailableIdentifier(
+                            modelOverseer.getModel(),
+                            'testPart',
+                            defaultsConfigs.partIdPrefix
+                        ),
+                        index: testPartIndex,
+                        navigationMode: defaultsConfigs.navigationMode,
+                        submissionMode: defaultsConfigs.submissionMode,
+                        assessmentSections: [
+                            {
+                                'qti-type': 'assessmentSection',
+                                identifier: qtiTestHelper.getAvailableIdentifier(
+                                    modelOverseer.getModel(),
+                                    'assessmentSection',
+                                    defaultsConfigs.sectionIdPrefix
+                                ),
+                                title: defaultsConfigs.sectionTitlePrefix,
+                                index: 0,
+                                sectionParts: [],
+                                visible: true,
+                                itemSessionControl: {
+                                    maxAttempts: defaultsConfigs.maxAttempts
+                                }
+                            }
+                        ]
                     });
                 }
             });
@@ -170,13 +208,15 @@ function($, _, __, hider, feedback, actions, testPartView, templates, qtiTestHel
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
             $(document)
                 .off('add.binder', '.testparts')
-                .on ('add.binder', '.testparts', function(e, $testPart, added){
+                .on('add.binder', '.testparts', function (e, $testPart, added) {
                     var partModel;
-                    if(e.namespace === 'binder' && $testPart.hasClass('testpart')){
+                    if (e.namespace === 'binder' && $testPart.hasClass('testpart')) {
                         partModel = testModel.testParts[added.index];
 
                         //initialize the new test part
                         testPartView.setUp(creatorContext, partModel, $testPart);
+                        // set index for new section
+                        actions.updateTitleIndex($('.section', $testPart));
 
                         /**
                          * @event modelOverseer#part-add

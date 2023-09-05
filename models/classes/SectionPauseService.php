@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,13 +22,12 @@
 
 namespace oat\taoQtiTest\models;
 
-
 use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\runner\session\TestSession;
 
 class SectionPauseService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/SectionPauseService';
+    public const SERVICE_ID = 'taoQtiTest/SectionPauseService';
 
     /**
      * Checked the given session could be paused at some point

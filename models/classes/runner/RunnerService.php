@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,9 +17,11 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
+
 namespace oat\taoQtiTest\models\runner;
 
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
@@ -34,11 +37,16 @@ use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDelete;
  */
 interface RunnerService extends DeliveryExecutionDelete
 {
-    const INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
+    public const INSTANCE_TEST_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner';
 
-    const INSTANCE_TEST_ITEM_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner';
+    // phpcs:disable Generic.Files.LineLength
+    public const INSTANCE_TEST_ITEM_RUNNER_SERVICE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner';
+    // phpcs:enable Generic.Files.LineLength
 
-    const INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId';
+    // phpcs:disable Generic.Files.LineLength
+    public const INSTANCE_FORMAL_PARAM_TEST_ITEM_RUNNER_PARENT_CALL_ID = 'http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId';
+    // phpcs:enable Generic.Files.LineLength
+
     /**
      * Initializes the delivery execution session
      * @param RunnerServiceContext $context
@@ -275,7 +283,6 @@ interface RunnerService extends DeliveryExecutionDelete
      */
     public function getItemPortableElements(RunnerServiceContext $context, $itemRef);
 
-
     /**
      * Get the list of metadata elements used in the item
      * @param $itemRef
@@ -283,4 +290,55 @@ interface RunnerService extends DeliveryExecutionDelete
      */
     public function getItemMetadataElements($itemRef);
 
+    /**
+     * Gets AssessmentItemRef's Href by AssessmentItemRef Identifier.
+     * @param RunnerServiceContext $context
+     * @param string $itemRef
+     * @return string
+     */
+    public function getItemHref(RunnerServiceContext $context, string $itemRef): string;
+
+    /**
+     * Get the base url to the item public directory
+     * @param RunnerServiceContext $context
+     * @param string $itemRef
+     * @return string
+     */
+    public function getItemPublicUrl(RunnerServiceContext $context, string $itemRef): string;
+
+    /**
+     * Starts the timer for the current item in the TestSession
+     * @param RunnerServiceContext $context
+     * @param float|null $timestamp allow to start the timer at a specific time, or use current when it's null
+     * @return bool
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function startTimer(RunnerServiceContext $context, ?float $timestamp = null): bool;
+
+    /**
+     * Ends the timer for the current item in the TestSession
+     * @param RunnerServiceContext $context
+     * @param float|null $duration The client side duration to adjust the timer
+     * @param float|null $timestamp allow to end the timer at a specific time, or use current when it's null
+     * @return bool
+     * @throws \common_exception_InvalidArgumentType
+     */
+    public function endTimer(RunnerServiceContext $context, ?float $duration = null, ?float $timestamp = null): bool;
+
+    /**
+     * Stores trace variable related to an item, a test or a section
+     *
+     * @param RunnerServiceContext $context
+     * @param string|null $itemUri
+     * @param string $variableIdentifier
+     * @param mixed $variableValue
+     * @return boolean
+     * @throws \common_Exception
+     */
+    public function storeTraceVariable(
+        RunnerServiceContext $context,
+        ?string $itemUri,
+        string $variableIdentifier,
+        $variableValue
+    ): bool;
 }

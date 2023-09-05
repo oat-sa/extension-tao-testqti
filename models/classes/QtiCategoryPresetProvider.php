@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,8 +17,8 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
-namespace oat\taoQtiTest\models;
 
+namespace oat\taoQtiTest\models;
 
 class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
 {
@@ -50,7 +51,9 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'id'            => 'informational',
                     'label'         => __('Informational Item Usage'),
                     'qtiCategory'   => 'x-tao-itemusage-informational',
+                    // phpcs:disable Generic.Files.LineLength
                     'description'   => __('Force the item to be considered as informational and not taken into account in (un)answered / flagged counters.'),
+                    // phpcs:enable Generic.Files.LineLength
                     'order'         => 300,
                     'pluginId'      => 'review'
                 ]),
@@ -89,7 +92,9 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'id'            => 'nextSectionWarning',
                     'label'         => __('Display Next Section Warning'),
                     'qtiCategory'   => 'x-tao-option-nextSectionWarning',
+                    // phpcs:disable Generic.Files.LineLength
                     'description'   => __('Display a warning before the test-taker skips the section. Requires the Section Skipping option.'),
+                    // phpcs:enable Generic.Files.LineLength
                     'order'         => 300,
                     'pluginId'      => 'nextSection'
                 ]),
@@ -97,7 +102,9 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'id'            => 'noExitTimedSectionWarning',
                     'label'         => __('Hide Timed Section Warning'),
                     'qtiCategory'   => 'x-tao-option-noExitTimedSectionWarning',
+                    // phpcs:disable Generic.Files.LineLength
                     'description'   => __('Hide the warning automatically displayed when a test-taker exit a timed section.'),
+                    // phpcs:enable Generic.Files.LineLength
                     'order'         => 400,
                     'pluginId'      => 'next'
                 ]),
@@ -105,7 +112,9 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'id'            => 'unansweredWarning',
                     'label'         => __('Display Unanswered Warning'),
                     'qtiCategory'   => 'x-tao-option-unansweredWarning',
+                    // phpcs:disable Generic.Files.LineLength
                     'description'   => __('Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review.'),
+                    // phpcs:enable Generic.Files.LineLength
                     'order'         => 500,
                     'pluginId'      => 'next'
                 ]),
@@ -127,7 +136,9 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'id'            => 'eliminator',
                     'label'         => __('Answer Eliminator'),
                     'qtiCategory'   => 'x-tao-option-eliminator',
+                    // phpcs:disable Generic.Files.LineLength
                     'description'   => __('Allow the test-taker to eliminate / strikethrough answers in choice interactions.'),
+                    // phpcs:enable Generic.Files.LineLength
                     'order'         => 100,
                     'pluginId'      => 'eliminator'
                 ]),
@@ -159,7 +170,9 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'id'            => 'calculatorBodmas',
                     'label'         => __('Calculator BODMAS'),
                     'qtiCategory'   => 'x-tao-option-calculatorBodmas',
+                    // phpcs:disable Generic.Files.LineLength
                     'description'   => __('Allow the test-taker to use a calculator respecting the order of operations (BODMAS).'),
+                    // phpcs:enable Generic.Files.LineLength
                     'order'         => 400,
                     'pluginId'      => 'calculator'
                 ]),
@@ -207,10 +220,22 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'id'            => 'apiptts',
                     'label'         => __('APIP Text To Speech'),
                     'qtiCategory'   => 'x-tao-option-apiptts',
+                    // phpcs:disable Generic.Files.LineLength
                     'description'   => __('Allow Test-taker to playback media files associated according to APIP protocol to item content.'),
+                    // phpcs:enable Generic.Files.LineLength
                     'order'         => 900,
                     'pluginId'      => 'apiptts'
-              ])
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'textToSpeech',
+                    'label'         => __('Text To Speech'),
+                    'qtiCategory'   => 'x-tao-option-tts',
+                    // phpcs:disable Generic.Files.LineLength
+                    'description'   => __('Accessibility tool that enables Test Taker to have the item content read aloud.'),
+                    // phpcs:enable Generic.Files.LineLength
+                    'order'         => 950,
+                    'featureFlag'   => 'enable-read-aloud-text-to-speech'
+                ]),
             ]
         );
 
@@ -219,7 +244,8 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
         $extManager = $presetService->getServiceLocator()->get(\common_ext_ExtensionsManager::SERVICE_ID);
         $testRunnerConfig = $extManager->getExtensionById('taoQtiTest')->getConfig('testRunner');
 
-        $isSkipaheadEnabled = isset($testRunnerConfig['test-taker-review-skipahead']) && $testRunnerConfig['test-taker-review-skipahead'];
+        $isSkipaheadEnabled = isset($testRunnerConfig['test-taker-review-skipahead'])
+            && $testRunnerConfig['test-taker-review-skipahead'];
         if ($isSkipaheadEnabled) {
             $presetService->register(
                 TestCategoryPresetProvider::GROUP_NAVIGATION,
@@ -228,7 +254,9 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                         'id'            => 'skipAhead',
                         'label'         => __('Enable Skipping Ahead'),
                         'qtiCategory'   => 'x-tao-option-review-skipahead',
+                        // phpcs:disable Generic.Files.LineLength
                         'description'   => __('Enables skipping to items within this section. Requires the review screen option.'),
+                        // phpcs:enable Generic.Files.LineLength
                         'order'         => 250,
                         'pluginId'      => 'review',
                         'featureFlag'   => 'skip-ahead'
@@ -237,5 +265,4 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
             );
         }
     }
-
 }

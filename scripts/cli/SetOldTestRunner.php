@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +23,7 @@ namespace oat\taoQtiTest\scripts\cli;
 use oat\oatbox\extension\AbstractAction;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\compilation\CompilationService;
+
 /**
  * Class SetOldTestRunner
  *

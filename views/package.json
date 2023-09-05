@@ -1,14 +1,14 @@
 {
-  "name": "@oat-sa/tao-testqti",
-  "version": "1.0.0",
-  "description": "Tao Test Qti",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/oat-sa/extension-tao-testqti.git"
-  },
-  "license": "GPL-2.0",
-  "dependencies": {
-    "@oat-sa/tao-test-runner": "oat-sa/tao-test-runner-fe#breaking/TDR-9/handlebars-4-upgrade",
-    "@oat-sa/tao-test-runner-qti": "oat-sa/tao-test-runner-qti-fe#breaking/TDR-9/handlebars-4-upgrade"
-  }
+    "name": "@oat-sa/tao-testqti",
+    "version": "1.0.0",
+    "description": "Tao Test Qti",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/oat-sa/extension-tao-testqti.git"
+    },
+    "license": "GPL-2.0",
+    "dependencies": {
+        "@oat-sa/tao-test-runner": "oat-sa/tao-test-runner-fe#breaking/TDR-9/handlebars-4-upgrade",
+        "@oat-sa/tao-test-runner-qti": "oat-sa/tao-test-runner-qti-fe#breaking/TDR-9/handlebars-4-upgrade"
+    }
 }

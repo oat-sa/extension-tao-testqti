@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint114\n"
-"PO-Revision-Date: 2019-10-25T09:07:46\n"
+"Project-Id-Version: TAO 3.4.0-sprint146\n"
+"PO-Revision-Date: 2021-01-20T12:36:01\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: en-US\n"
@@ -12,6 +12,15 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s to answer %s"
+msgstr ""
+
+msgid "(Visual) Clear all active highlights"
+msgstr ""
+
+msgid "(Visual) Highlight Text"
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr ""
@@ -71,6 +80,9 @@ msgid "Allow Skipping"
 msgstr ""
 
 msgid "Allow skipping of the current section."
+msgstr ""
+
+msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
 msgstr ""
 
 msgid "Allow the candidate to review his answers."
@@ -142,6 +154,12 @@ msgstr ""
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr ""
 
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
+
+msgid "and"
+msgstr ""
+
 msgid "and flagged %s of them"
 msgstr ""
 
@@ -155,6 +173,9 @@ msgid "Answer Masking"
 msgstr ""
 
 msgid "Answered"
+msgstr ""
+
+msgid "APIP Text To Speech"
 msgstr ""
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
@@ -190,22 +211,28 @@ msgstr ""
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr ""
 
-msgid "Black on cream"
+msgid "Black on Cream"
 msgstr ""
 
-msgid "Black on light blue"
+msgid "Black on Light Blue"
 msgstr ""
 
-msgid "Black on magenta"
+msgid "Black on Light Magenta"
 msgstr ""
 
-msgid "Black on white"
+msgid "Black on White"
 msgstr ""
 
 msgid "Calculator"
 msgstr ""
 
 msgid "Calculator BODMAS"
+msgstr ""
+
+msgid "Can not playback media file!"
+msgstr ""
+
+msgid "CANCEL"
 msgstr ""
 
 msgid "Cancel"
@@ -238,7 +265,13 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
+msgid "Click \"%s\" to continue"
+msgstr ""
+
 msgid "Click to speak"
+msgstr ""
+
+msgid "Close"
 msgstr ""
 
 msgid "Close Magnifier"
@@ -260,6 +293,9 @@ msgid "Completed items"
 msgstr ""
 
 msgid "Connected to server"
+msgstr ""
+
+msgid "CONTINUE TO THE NEXT SECTION"
 msgstr ""
 
 msgid "Contrast"
@@ -325,19 +361,22 @@ msgstr ""
 msgid "Displays a customisable magnifier"
 msgstr ""
 
-msgid "DO NOT CHANGE THE NAME OF THE FILE."
+msgid "Do not flag the current item for later review"
 msgstr ""
 
-msgid "Do not flag the current item for later review"
+msgid "Do not rename it."
 msgstr ""
 
 msgid "Do not show alert on timeout"
 msgstr ""
 
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Download"
 msgstr ""
 
-msgid "Download the file and submit manually."
+msgid "Download the pupil responses and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
@@ -356,6 +395,9 @@ msgid "Enable selection"
 msgstr ""
 
 msgid "Enable Skipping Ahead"
+msgstr ""
+
+msgid "Enable text to speech"
 msgstr ""
 
 msgid "Enable the item review screen / navigator."
@@ -387,9 +429,6 @@ msgid "Error found in the IMS QTI Test:\n"
 msgstr ""
 
 msgid "Expand the review panel"
-msgstr ""
-
-msgid "Export"
 msgstr ""
 
 msgid "Export failed for the test \"%s"
@@ -437,19 +476,31 @@ msgstr ""
 msgid "Flagged"
 msgstr ""
 
+msgid "Flagged for review"
+msgstr ""
+
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
 
 msgid "Go to next item"
 msgstr ""
 
+msgid "Go to the current question"
+msgstr ""
+
 msgid "Go to the next item?"
 msgstr ""
 
-msgid "Gray on Green"
+msgid "Go to the next question"
 msgstr ""
 
-msgid "Gray on green (low contrast option)"
+msgid "Go to the previous question"
+msgstr ""
+
+msgid "Go to the top of the page"
+msgstr ""
+
+msgid "Gray on Green"
 msgstr ""
 
 msgid "Hide Review"
@@ -476,6 +527,9 @@ msgstr ""
 msgid "Highlighter"
 msgstr ""
 
+msgid "hours"
+msgstr ""
+
 msgid "Html title"
 msgstr ""
 
@@ -500,7 +554,10 @@ msgstr ""
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
 msgstr ""
 
-msgid "If you need help, please contact us."
+msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
@@ -548,6 +605,9 @@ msgstr ""
 msgid "is not a valid identifier (everything except spaces)"
 msgstr ""
 
+msgid "It is not possible to save your responses while working offline."
+msgstr ""
+
 msgid "Item \"%s\" is completed."
 msgstr ""
 
@@ -555,6 +615,9 @@ msgid "Item %d"
 msgstr ""
 
 msgid "Item %d of %d"
+msgstr ""
+
+msgid "Item %s loaded"
 msgstr ""
 
 msgid "Item Reference Properties"
@@ -584,16 +647,25 @@ msgstr ""
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr ""
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
+msgstr ""
+
+msgid "Keyboard Navigation"
+msgstr ""
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr ""
 
 msgid "Late submission allowed"
 msgstr ""
 
 msgid "Leave a comment"
-msgstr ""
-
-msgid "Light yellow on royal blue"
 msgstr ""
 
 msgid "Line Reader"
@@ -620,16 +692,20 @@ msgstr ""
 msgid "Magnifying Glass"
 msgstr ""
 
+msgid "Main navigation"
+msgstr ""
+
 msgid "Manage Rubric Blocks"
 msgstr ""
 
 msgid "Manage test properties"
 msgstr ""
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr ""
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr ""
 
 msgid "Mark for review"
@@ -683,10 +759,19 @@ msgstr ""
 msgid "Minimum duration for this test part."
 msgstr ""
 
+msgid "minutes"
+msgstr ""
+
+msgid "Missed required parameter \'id\'"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr ""
 
 msgid "Missing required configuration option %s"
+msgstr ""
+
+msgid "Move"
 msgstr ""
 
 msgid "Move Down"
@@ -698,7 +783,13 @@ msgstr ""
 msgid "Moving to the next item without time limit reached message."
 msgstr ""
 
+msgid "name of the pupil"
+msgstr ""
+
 msgid "Navigation"
+msgstr ""
+
+msgid "Navigation shortcuts"
 msgstr ""
 
 msgid "Navigation Warnings"
@@ -708,6 +799,9 @@ msgid "network"
 msgstr ""
 
 msgid "New Rubric Block"
+msgstr ""
+
+msgid "New section"
 msgstr ""
 
 msgid "New test part"
@@ -749,10 +843,16 @@ msgstr ""
 msgid "Not all test could be exported"
 msgstr ""
 
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
+
 msgid "Not shuffled, the position remains fixed."
 msgstr ""
 
-msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
+msgid "Offline"
 msgstr ""
 
 msgid "OK"
@@ -770,6 +870,9 @@ msgstr ""
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr ""
 
+msgid "Online"
+msgstr ""
+
 msgid "Only display the items marked for review"
 msgstr ""
 
@@ -779,10 +882,16 @@ msgstr ""
 msgid "Open Calculator"
 msgstr ""
 
-msgid "or"
+msgid "Open Keyboard Shortcuts"
 msgstr ""
 
-msgid "OR"
+msgid "Option A"
+msgstr ""
+
+msgid "Option B"
+msgstr ""
+
+msgid "or"
 msgstr ""
 
 msgid "Ordering"
@@ -803,7 +912,13 @@ msgstr ""
 msgid "Part %d"
 msgstr ""
 
+msgid "Passage"
+msgstr ""
+
 msgid "Pause"
+msgstr ""
+
+msgid "Pause the test"
 msgstr ""
 
 msgid "Play"
@@ -812,16 +927,13 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
-msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
-msgstr ""
-
-msgid "Please continue waiting while we try to restore the connection."
-msgstr ""
-
-msgid "Please stay on this screen."
+msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
+msgstr ""
+
+msgid "Preview"
 msgstr ""
 
 msgid "Preview the covered area"
@@ -830,7 +942,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-msgid "Proceed & End Test"
+msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
 msgid "Proctor"
@@ -860,10 +972,25 @@ msgstr ""
 msgid "QTI/APIP Test Content Package"
 msgstr ""
 
+msgid "question"
+msgstr ""
+
+msgid "Question"
+msgstr ""
+
+msgid "questions"
+msgstr ""
+
 msgid "Reference"
 msgstr ""
 
 msgid "Regenerate"
+msgstr ""
+
+msgid "Reload the page"
+msgstr ""
+
+msgid "remaining %s %s"
 msgstr ""
 
 msgid "Remove Item Reference"
@@ -873,6 +1000,9 @@ msgid "Remove Rubric Block"
 msgstr ""
 
 msgid "Remove Section"
+msgstr ""
+
+msgid "Remove Test Part"
 msgstr ""
 
 msgid "Required"
@@ -905,6 +1035,9 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+msgid "Saved"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr ""
 
@@ -921,6 +1054,9 @@ msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"
+msgstr ""
+
+msgid "seconds"
 msgstr ""
 
 msgid "Section %d"
@@ -972,6 +1108,9 @@ msgid "Set the XHTML-QTI class of the rubric block."
 msgstr ""
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
+msgstr ""
+
+msgid "SetSynchronisationService successfully configured."
 msgstr ""
 
 msgid "Settings"
@@ -1031,10 +1170,28 @@ msgstr ""
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr ""
 
+msgid "Something unexpected happened."
+msgstr ""
+
+msgid "Something went wrong..."
+msgstr ""
+
 msgid "Speech speed"
 msgstr ""
 
+msgid "Speed"
+msgstr ""
+
 msgid "Start Test-part"
+msgstr ""
+
+msgid "Step 1: Download the file (see below when available)."
+msgstr ""
+
+msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
+msgstr ""
+
+msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
 msgstr ""
 
 msgid "Stop"
@@ -1046,19 +1203,25 @@ msgstr ""
 msgid "Submit and go to the end of the test"
 msgstr ""
 
+msgid "Submit and go to the item %s"
+msgstr ""
+
 msgid "Submit and go to the next item"
 msgstr ""
 
 msgid "Submit and go to the previous item"
 msgstr ""
 
+msgid "SUBMIT THE TEST"
+msgstr ""
+
+msgid "SUBMIT THIS PART"
+msgstr ""
+
 msgid "technical"
 msgstr ""
 
 msgid "Test"
-msgstr ""
-
-msgid "Test 1"
 msgstr ""
 
 msgid "Test constructor"
@@ -1070,15 +1233,28 @@ msgstr ""
 msgid "Test Navigation"
 msgstr ""
 
+msgid "Test Part Properties"
+msgstr ""
+
+msgid "Test Preview is not installed, please contact to your administrator."
+msgstr ""
+
 msgid "Test Saved"
 msgstr ""
 
 msgid "Test status"
 msgstr ""
 
+msgid "Test status and review structure"
+msgstr ""
+
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr ""
 
+#, tao-public
 msgid "Tests"
 msgstr ""
 
@@ -1088,7 +1264,16 @@ msgstr ""
 msgid "Text to Speech"
 msgstr ""
 
+msgid "Text To Speech"
+msgstr ""
+
+msgid "that was being taken."
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
+msgstr ""
+
+msgid "the assessment (LCL or Mathematics)"
 msgstr ""
 
 msgid "The assessment has been created but is not already running."
@@ -1118,16 +1303,13 @@ msgstr ""
 msgid "The connection seems to be back, please proceed"
 msgstr ""
 
-msgid "The connection seems to be back, please proceed."
+msgid "the current question"
 msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr ""
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr ""
-
-msgid "The file will save into the Downloads folder on your PC."
 msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
@@ -1205,10 +1387,34 @@ msgstr ""
 msgid "The test has not been saved."
 msgstr ""
 
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr ""
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr ""
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr ""
+
 msgid "The test part identifier."
 msgstr ""
 
 msgid "The test title."
+msgstr ""
+
+msgid "The time limit has been reached for this part of the test."
+msgstr ""
+
+msgid "There are %s unanswered questions"
+msgstr ""
+
+msgid "There are %s unanswered questions in this part of the test"
+msgstr ""
+
+msgid "There is %s unanswered question"
+msgstr ""
+
+msgid "There is %s unanswered question in this part of the test"
 msgstr ""
 
 msgid "There is not outcomes!"
@@ -1218,6 +1424,9 @@ msgid "This constraint affects the visibility of feedback after the end of the l
 msgstr ""
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
+msgstr ""
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
 msgstr ""
 
 msgid "This test has been suspended"
@@ -1244,7 +1453,22 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
+msgid "Toggle playback"
+msgstr ""
+
+msgid "Toggle start from here mode"
+msgstr ""
+
+msgid "Tool box and flagging for review"
+msgstr ""
+
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
+msgstr ""
+
+msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
 
 msgid "Tutor"
@@ -1266,6 +1490,9 @@ msgid "Unknown error."
 msgstr ""
 
 msgid "Unlink to use separated durations"
+msgstr ""
+
+msgid "Unseen"
 msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
@@ -1293,6 +1520,9 @@ msgid "Visible"
 msgstr ""
 
 msgid "Volume"
+msgstr ""
+
+msgid "Wait for your connection to come back online."
 msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
@@ -1325,9 +1555,6 @@ msgstr ""
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr ""
 
-msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
-msgstr ""
-
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr ""
 
@@ -1340,7 +1567,10 @@ msgstr ""
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr ""
 
-msgid "White on black"
+msgid "White on Black"
+msgstr ""
+
+msgid "White on Blue (TAO standard theme)"
 msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
@@ -1352,13 +1582,23 @@ msgstr ""
 msgid "Wrong file mime type"
 msgstr ""
 
+msgid "XML Content"
+msgstr ""
+
+#, tao-public
+msgid "XML Editor"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
+msgstr ""
+
+msgid "Yellow on Blue"
 msgstr ""
 
 msgid "Yes"
 msgstr ""
 
-msgid "You answered all %s question(s)"
+msgid "You answered %s of %s question(s) for this section of the test"
 msgstr ""
 
 msgid "You answered all %s question(s) in this section"
@@ -1376,16 +1616,37 @@ msgstr ""
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
 msgstr ""
 
+msgid "You are about to leave this section."
+msgstr ""
+
+msgid "You are about to submit the test."
+msgstr ""
+
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
 msgstr ""
 
-msgid "You are encountering a prolonged connectivity loss."
+msgid "You are about to submit this test part."
+msgstr ""
+
+msgid "You are currently working offline."
 msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr ""
 
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
+msgstr ""
+
+msgid "You flagged %s item(s) that you can review now"
+msgstr ""
+
 msgid "You have %s item(s) marked for review."
+msgstr ""
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
 msgstr ""
 
 msgid "You have %s unanswered question(s)"
@@ -1397,7 +1658,13 @@ msgstr ""
 msgid "You have %s unanswered question(s)."
 msgstr ""
 
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
+msgstr ""
+
 msgid "Your comment…"
+msgstr ""
+
+msgid "Your connection seems to be back, please proceed."
 msgstr ""
 
 msgid "Zoom"

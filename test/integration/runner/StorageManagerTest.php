@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +37,7 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -111,7 +112,9 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $prophet = new Prophet();
         $prophecy = $prophet->prophesize(StateStorage::class);
         $prophecy->get(Argument::type('string'), Argument::type('string'))->willReturn(null);
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->willThrow(new \Exception('Set() should not be called!'));
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->willThrow(new \Exception('Set() should not be called!'));
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
@@ -154,7 +157,9 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->willThrow(new \Exception('Set() should not be called!'));
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->willThrow(new \Exception('Set() should not be called!'));
         $mockStorage = $prophecy->reveal();
 
         $storageManager = new StorageManager([]);
@@ -199,8 +204,12 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->willThrow(new \Exception('Set() should not be called!'));
-        $prophecy->del(Argument::type('string'), Argument::type('string'))->willThrow(new \Exception('Del() should not be called!'));
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->willThrow(new \Exception('Set() should not be called!'));
+        $prophecy
+            ->del(Argument::type('string'), Argument::type('string'))
+            ->willThrow(new \Exception('Del() should not be called!'));
 
         $mockStorage = $prophecy->reveal();
 
@@ -266,10 +275,12 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
             }
             return null;
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            $buffer[$args[0]][$args[1]] = $args[2];
-            return true;
-        });
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->will(function ($args) use (&$buffer) {
+                $buffer[$args[0]][$args[1]] = $args[2];
+                return true;
+            });
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });
@@ -291,7 +302,7 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $storageManager->setServiceLocator($this->getServiceLocatorMock([
             StateStorage::SERVICE_ID => $mockStorage
         ]));
-        
+
         $this->assertEquals(true, $storageManager->has($userId, $callId));
         $this->assertEquals($data1, $storageManager->get($userId, $callId));
 
@@ -346,7 +357,7 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
                 'bar' => 'foo bar'
             ]
         ];
-        
+
         $expectedBuffer2 = [
             $userId => [
                 $callId => $data2
@@ -370,10 +381,12 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
             }
             return null;
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            $buffer[$args[0]][$args[1]] = $args[2];
-            return true;
-        });
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->will(function ($args) use (&$buffer) {
+                $buffer[$args[0]][$args[1]] = $args[2];
+                return true;
+            });
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });
@@ -423,7 +436,7 @@ class StorageManagerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals(true, $storageManager->persist($userId, $callId));
 
         $this->assertEquals($expectedBuffer2, $buffer);
-        
+
         $this->assertEquals(true, $storageManager->persist());
 
         $this->assertEquals($expectedBuffer3, $buffer);

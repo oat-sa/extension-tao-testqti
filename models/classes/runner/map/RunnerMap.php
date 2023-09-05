@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -32,12 +34,12 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
 interface RunnerMap
 {
     //available scopes
-    const SCOPE_TEST    = 'test';
-    const SCOPE_PART    = 'part';
-    const SCOPE_SECTION = 'section';
-    const MAP_ATTRIBUTE_PARTS = 'parts';
-    const MAP_ATTRIBUTE_SECTIONS = 'sections';
-    const MAP_ATTRIBUTE_ITEMS = 'items';
+    public const SCOPE_TEST    = 'test';
+    public const SCOPE_PART    = 'part';
+    public const SCOPE_SECTION = 'section';
+    public const MAP_ATTRIBUTE_PARTS = 'parts';
+    public const MAP_ATTRIBUTE_SECTIONS = 'sections';
+    public const MAP_ATTRIBUTE_ITEMS = 'items';
 
     /**
      * Builds the map of an assessment test
@@ -55,5 +57,4 @@ interface RunnerMap
      * @return mixed
      */
     public function getScopedMap(RunnerServiceContext $context, RunnerConfig $config, $scope = self::SCOPE_SECTION);
-
 }

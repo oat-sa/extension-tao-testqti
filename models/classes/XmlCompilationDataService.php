@@ -17,11 +17,11 @@
  *
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA;
  */
+
 namespace oat\taoQtiTest\models;
 
 use qtism\data\QtiComponent;
 use qtism\data\storage\xml\XmlCompactDocument;
-
 
 /**
  * XML Serialization Compilation Data Service.
@@ -31,22 +31,28 @@ use qtism\data\storage\xml\XmlCompactDocument;
  */
 class XmlCompilationDataService extends CompilationDataService
 {
-    const OUTPUT_FILE_TYPE = 'xml';
+    public const OUTPUT_FILE_TYPE = 'xml';
 
-    public function writeCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, QtiComponent $object)
-    {
+    public function writeCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        QtiComponent $object
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $compactDoc = new XmlCompactDocument();
         $compactDoc->setDocumentComponent($object);
-        
+
         $compilationDirectory->write(
             $path,
             $compactDoc->saveToString()
         );
     }
-    
-    public function readCompilationData(\tao_models_classes_service_StorageDirectory $compilationDirectory, $path, $cacheInfo = '')
-    {
+
+    public function readCompilationData(
+        \tao_models_classes_service_StorageDirectory $compilationDirectory,
+        $path,
+        $cacheInfo = ''
+    ) {
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $compactDoc = new XmlCompactDocument();
         $compactDoc->loadFromString($compilationDirectory->read($path));

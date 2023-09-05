@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
@@ -24,30 +24,45 @@ define([
     'lodash',
     'uri',
     'i18n',
+    'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/itemref',
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/categorySelector',
+    'taoQtiTest/controller/creator/helpers/testPartCategory',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
-    'taoQtiTest/controller/creator/helpers/sectionBlueprints'
-],
-function(
+    'taoQtiTest/controller/creator/helpers/sectionBlueprints',
+    'taoQtiTest/controller/creator/views/subsection',
+    'ui/dialog/confirm',
+    'taoQtiTest/controller/creator/helpers/subsection',
+    'taoQtiTest/controller/creator/helpers/validators',
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
+    'services/features'
+], function (
     $,
     _,
     uri,
     __,
+    defaults,
     actions,
     itemRefView,
     rubricBlockView,
     templates,
     qtiTestHelper,
     categorySelectorFactory,
+    testPartCategory,
     sectionCategory,
-    sectionBlueprint
-){
-    'use strict';
+    sectionBlueprint,
+    subsectionView,
+    confirmDialog,
+    subsectionsHelper,
+    validators,
+    featureVisibility,
+    servicesFeatures
+) {
+    ('use strict');
 
     /**
      * Set up a section: init action behaviors. Called for each section.
@@ -55,48 +70,70 @@ function(
      * @param {Object} creatorContext
      * @param {Object} sectionModel - the data model to bind to the test section
      * @param {Object} partModel - the parent data model to inherit
-     * @param {jQueryElement} $section - the section to set up
+     * @param {jQuery} $section - the section to set up
      */
-    function setUp (creatorContext, sectionModel, partModel, $section) {
+    function setUp(creatorContext, sectionModel, partModel, $section) {
+        const defaultsConfigs = defaults();
+        // select elements for section, to avoid selecting the same elements in subsections
+        const $itemRefsWrapper = $section.children('.itemrefs-wrapper');
+        const $rubBlocks = $section.children('.rublocks');
+        const $titleWithActions = $section.children('h2');
 
-        var $actionContainer = $('h2', $section);
-        var modelOverseer = creatorContext.getModelOverseer();
-        var config = modelOverseer.getConfig();
+        const modelOverseer = creatorContext.getModelOverseer();
+        const config = modelOverseer.getConfig();
 
         // set item session control to use test part options if section level isn't set
         if (!sectionModel.itemSessionControl) {
             sectionModel.itemSessionControl = {};
         }
+        if (!sectionModel.categories) {
+            // inherit the parent testPart's propagated categories
+            const partCategories = testPartCategory.getCategories(partModel);
+            sectionModel.categories = _.clone(partCategories.propagated || defaultsConfigs.categories);
+        }
         _.defaults(sectionModel.itemSessionControl, partModel.itemSessionControl);
 
-        if(!_.isEmpty(config.routes.blueprintsById)){
+        if (!_.isEmpty(config.routes.blueprintsById)) {
             sectionModel.hasBlueprint = true;
         }
-        actions.properties($actionContainer, 'section', sectionModel, propHandler);
-        actions.move($actionContainer, 'sections', 'section');
+        sectionModel.isSubsection = false;
+        sectionModel.hasSelectionWithReplacement = servicesFeatures.isVisible(
+            'taoQtiTest/creator/properties/selectionWithReplacement',
+            false
+        );
+
+        //add feature visibility properties to sectionModel
+        featureVisibility.addSectionVisibilityProps(sectionModel);
+
+        actions.properties($titleWithActions, 'section', sectionModel, propHandler);
+        actions.move($titleWithActions, 'sections', 'section');
+        actions.displayItemWrapper($section);
+
+        subsections();
         itemRefs();
         acceptItemRefs();
         rubricBlocks();
         addRubricBlock();
-
-        //trigger for the case the section is added an a selection is ongoing
+        addSubsection();
 
         /**
          * Perform some binding once the property view is create
          * @param {propView} propView - the view object
          */
-        function propHandler (propView) {
-
-            var $title;
-            var $view = propView.getView();
+        function propHandler(propView) {
+            const $view = propView.getView();
 
             //enable/disable selection
-            var $selectionSwitcher = $('[name=section-enable-selection]', $view);
-            var $selectionSelect = $('[name=section-select]', $view);
-            var $selectionWithRep = $('[name=section-with-replacement]', $view);
+            const $selectionSwitcher = $('[name=section-enable-selection]', $view);
+            const $selectionSelect = $('[name=section-select]', $view);
+            const $selectionWithRep = $('[name=section-with-replacement]', $view);
 
-            var switchSelection = function switchSelection(){
-                if($selectionSwitcher.prop('checked') === true){
+            // sectionModel.selection will be filled by bound values from template section-props.tpl
+            // if sectionModel.selection from server response it has 'qti-type'
+            const isSelectionFromServer = !!(sectionModel.selection && sectionModel.selection['qti-type']);
+
+            const switchSelection = function switchSelection() {
+                if ($selectionSwitcher.prop('checked') === true) {
                     $selectionSelect.incrementer('enable');
                     $selectionWithRep.removeClass('disabled');
                 } else {
@@ -105,61 +142,89 @@ function(
                 }
             };
             $selectionSwitcher.on('change', switchSelection);
-            $selectionSwitcher.on('change', function updateModel(){
-                if(!$selectionSwitcher.prop('checked')){
+            $selectionSwitcher.on('change', function updateModel() {
+                if (!$selectionSwitcher.prop('checked')) {
                     $selectionSelect.val(0);
                     $selectionWithRep.prop('checked', false);
                     delete sectionModel.selection;
                 }
             });
 
-            $selectionSwitcher.prop('checked', !!sectionModel.selection).trigger('change');
+            $selectionSwitcher.prop('checked', isSelectionFromServer).trigger('change');
 
             //listen for databinder change to update the test part title
-            $title =  $('[data-bind=title]', $section);
-            $view.on('change.binder', function(e){
-                if(e.namespace === 'binder' && sectionModel['qti-type'] === 'assessmentSection'){
+            const $title = $('[data-bind=title]', $titleWithActions);
+            $view.on('change.binder', function (e) {
+                if (e.namespace === 'binder' && sectionModel['qti-type'] === 'assessmentSection') {
                     $title.text(sectionModel.title);
                 }
             });
 
-            $section.parents('.testpart').on('deleted.deleter', removePropHandler);
-            $section.on('deleted.deleter', removePropHandler);
+            // deleted.deleter event fires only on the parent nodes (testparts, sections, etc)
+            // Since it "bubles" we can subscribe only to the highest parent node
+            $section.parents('.testparts').on('deleted.deleter', removePropHandler);
 
             //section level category configuration
             categoriesProperty($view);
 
-            if(typeof sectionModel.hasBlueprint !== 'undefined'){
+            if (typeof sectionModel.hasBlueprint !== 'undefined') {
                 blueprintProperty($view);
             }
 
-            function removePropHandler(){
-                if(propView !== null){
+            actions.displayCategoryPresets($section);
+
+            function removePropHandler(e, $deletedNode) {
+                const validIds = [$section.parents('.testpart').attr('id'), $section.attr('id')];
+
+                const deletedNodeId = $deletedNode.attr('id');
+                // We have to check id of a deleted node, because
+                // 1. Event fires after child node was deleted, but e.stopPropagation doesn't help
+                // because currentTarget is always document
+                // 2. We have to subscribe to the parent node and it's possible that another section was removed even from another testpart
+                // Subscription to the .sections selector event won't help because sections element might contain several children.
+
+                if (propView !== null && validIds.includes(deletedNodeId)) {
                     propView.destroy();
                 }
             }
         }
 
         /**
+         * Set up subsections that already belongs to the section
+         * @private
+         */
+        function subsections() {
+            if (!sectionModel.sectionParts) {
+                sectionModel.sectionParts = [];
+            }
+
+            subsectionsHelper.getSubsections($section).each(function () {
+                const $subsection = $(this);
+                const index = $subsection.data('bind-index');
+                if (!sectionModel.sectionParts[index]) {
+                    sectionModel.sectionParts[index] = {};
+                }
+
+                subsectionView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, $subsection);
+            });
+        }
+        /**
          * Set up the item refs that already belongs to the section
          * @private
          */
-        function itemRefs(){
-
-            if(!sectionModel.sectionParts){
+        function itemRefs() {
+            if (!sectionModel.sectionParts) {
                 sectionModel.sectionParts = [];
             }
-            $('.itemref', $section).each(function(){
-                var $itemRef = $(this);
-                var index = $itemRef.data('bind-index');
-                if(!sectionModel.sectionParts[index]){
+            $('.itemref', $itemRefsWrapper).each(function () {
+                const $itemRef = $(this);
+                const index = $itemRef.data('bind-index');
+                if (!sectionModel.sectionParts[index]) {
                     sectionModel.sectionParts[index] = {};
                 }
 
                 itemRefView.setUp(creatorContext, sectionModel.sectionParts[index], sectionModel, partModel, $itemRef);
-                $itemRef.find('.title').text(
-                    config.labels[uri.encode($itemRef.data('uri'))]
-                );
+                $itemRef.find('.title').text(config.labels[uri.encode($itemRef.data('uri'))]);
             });
         }
 
@@ -168,91 +233,105 @@ function(
          * @private
          * @fires modelOverseer#item-add
          */
-        function acceptItemRefs(){
-            var $itemsPanel = $('.test-creator-items .item-selection');
+        function acceptItemRefs() {
+            const $itemsPanel = $('.test-creator-items .item-selection');
 
             //the item selector trigger a select event
-            $itemsPanel.on('itemselect.creator', function(e, selection){
+            $itemsPanel.on('itemselect.creator', function (e, selection) {
+                const $placeholder = $('.itemref-placeholder', $itemRefsWrapper);
+                const $placeholders = $('.itemref-placeholder');
 
-                var $placeholder = $('.itemref-placeholder', $section);
-                var $placeholders = $('.itemref-placeholder');
+                if (_.size(selection) > 0) {
+                    $placeholder
+                        .show()
+                        .off('click')
+                        .on('click', function () {
+                            //prepare the item data
+                            const defaultItemData = {};
 
-                if(_.size(selection) > 0){
-                    $placeholder.show().off('click').on('click', function(){
-
-                        //prepare the item data
-                        var categories,
-                            defaultItemData = {};
-
-                        if(sectionModel.itemSessionControl && !_.isUndefined(sectionModel.itemSessionControl.maxAttempts)){
-
-                            //for a matter of consistency, the itemRef will "inherit" the itemSessionControl configuration from its parent section
-                            defaultItemData.itemSessionControl = _.clone(sectionModel.itemSessionControl);
-                        }
-
-                        //the itemRef should also "inherit" the categories set at the item level
-                        categories = sectionCategory.getCategories(sectionModel);
-                        defaultItemData.categories = _.clone(categories.propagated) || [];
-
-                        _.forEach(selection, function(item){
-                            var itemData = _.defaults({
-                                href        : item.uri,
-                                label       : item.label,
-                                'qti-type'  : 'assessmentItemRef'
-                            }, defaultItemData);
-
-                            if(_.isArray(item.categories)){
-                                itemData.categories = item.categories.concat(itemData.categories);
+                            if (
+                                sectionModel.itemSessionControl &&
+                                !_.isUndefined(sectionModel.itemSessionControl.maxAttempts)
+                            ) {
+                                //for a matter of consistency, the itemRef will "inherit" the itemSessionControl configuration from its parent section
+                                defaultItemData.itemSessionControl = _.clone(sectionModel.itemSessionControl);
                             }
 
-                            addItemRef($('.itemrefs', $section), null, itemData);
+                            //the itemRef should also "inherit" default categories set at the item level
+                            defaultItemData.categories = _.clone(defaultsConfigs.categories) || [];
+
+                            _.forEach(selection, function (item) {
+                                const itemData = _.defaults(
+                                    {
+                                        href: item.uri,
+                                        label: item.label,
+                                        'qti-type': 'assessmentItemRef'
+                                    },
+                                    defaultItemData
+                                );
+
+                                if (_.isArray(item.categories)) {
+                                    itemData.categories = item.categories.concat(itemData.categories);
+                                }
+
+                                addItemRef($('.itemrefs', $itemRefsWrapper), null, itemData);
+                            });
+
+                            $itemsPanel.trigger('itemselected.creator');
+
+                            $placeholders.hide().off('click');
                         });
-
-                        $itemsPanel.trigger('itemselected.creator');
-
-                        $placeholders.hide().off('click');
-                    });
                 } else {
                     $placeholders.hide().off('click');
                 }
             });
 
-
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
+            // jquery issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
             $(document)
-                .off('add.binder', '#' + $section.attr('id') + ' .itemrefs')
-                .on('add.binder', '#' + $section.attr('id') + ' .itemrefs', function(e, $itemRef){
-                    var index, itemRefModel;
-                    if(e.namespace === 'binder' && $itemRef.hasClass('itemref')){
-                        index = $itemRef.data('bind-index');
-                        itemRefModel = sectionModel.sectionParts[index];
+                .off('add.binder', `[id="${$section.attr('id')}"] > .itemrefs-wrapper .itemrefs`)
+                .on(
+                    'add.binder',
+                    `[id="${$section.attr('id')}"] > .itemrefs-wrapper .itemrefs`,
+                    function (e, $itemRef) {
+                        if (
+                            e.namespace === 'binder' &&
+                            $itemRef.hasClass('itemref') &&
+                            !$itemRef.parents('.subsection').length
+                        ) {
+                            const index = $itemRef.data('bind-index');
+                            const itemRefModel = sectionModel.sectionParts[index];
 
-                        //initialize the new item ref
-                        itemRefView.setUp(creatorContext, itemRefModel, sectionModel, partModel, $itemRef);
+                            //initialize the new item ref
+                            itemRefView.setUp(creatorContext, itemRefModel, sectionModel, partModel, $itemRef);
 
-                        /**
-                         * @event modelOverseer#item-add
-                         * @param {Object} itemRefModel
-                         */
-                        modelOverseer.trigger('item-add', itemRefModel);
+                            /**
+                             * @event modelOverseer#item-add
+                             * @param {Object} itemRefModel
+                             */
+                            modelOverseer.trigger('item-add', itemRefModel);
+                        }
                     }
-                });
+                );
         }
 
         /**
          * Add a new item ref to the section
-         * @param {jQueryElement} $refList - the element to add the item to
+         * @param {jQuery} $refList - the element to add the item to
          * @param {Number} [index] - the position of the item to add
          * @param {Object} [itemData] - the data to bind to the new item ref
          */
-        function addItemRef($refList, index, itemData){
-            var $itemRef;
-            var $items = $refList.children('li');
+        function addItemRef($refList, index, itemData) {
+            const $items = $refList.children('li');
             index = index || $items.length;
-            itemData.identifier = qtiTestHelper.getAvailableIdentifier(modelOverseer.getModel(), 'assessmentItemRef', 'item');
+            itemData.identifier = qtiTestHelper.getAvailableIdentifier(
+                modelOverseer.getModel(),
+                'assessmentItemRef',
+                'item'
+            );
             itemData.index = index + 1;
-            $itemRef = $(templates.itemref(itemData));
-            if(index > 0){
+            const $itemRef = $(templates.itemref(itemData));
+            if (index > 0) {
                 $itemRef.insertAfter($items.eq(index - 1));
             } else {
                 $itemRef.appendTo($refList);
@@ -260,19 +339,18 @@ function(
             $refList.trigger('add', [$itemRef, itemData]);
         }
 
-
         /**
          * Set up the rubric blocks that already belongs to the section
          * @private
          */
-        function rubricBlocks () {
-            if(!sectionModel.rubricBlocks){
+        function rubricBlocks() {
+            if (!sectionModel.rubricBlocks) {
                 sectionModel.rubricBlocks = [];
             }
-            $('.rubricblock', $section).each(function(){
-                var $rubricBlock = $(this);
-                var index = $rubricBlock.data('bind-index');
-                if(!sectionModel.rubricBlocks[index]){
+            $('.rubricblock', $rubBlocks).each(function () {
+                const $rubricBlock = $(this);
+                const index = $rubricBlock.data('bind-index');
+                if (!sectionModel.rubricBlocks[index]) {
                     sectionModel.rubricBlocks[index] = {};
                 }
 
@@ -280,8 +358,8 @@ function(
             });
 
             //opens the rubric blocks section if they are there.
-            if(sectionModel.rubricBlocks.length > 0){
-                $('.rub-toggler', $section).trigger('click');
+            if (sectionModel.rubricBlocks.length > 0) {
+                $('.rub-toggler', $titleWithActions).trigger('click');
             }
         }
 
@@ -290,58 +368,72 @@ function(
          * @private
          * @fires modelOverseer#rubric-add
          */
-        function addRubricBlock () {
-
-            $('.rublock-adder', $section).adder({
-                target: $('.rubricblocks', $section),
-                content : templates.rubricblock,
-                templateData : function(cb){
+        function addRubricBlock() {
+            $('.rublock-adder', $rubBlocks).adder({
+                target: $('.rubricblocks', $rubBlocks),
+                content: templates.rubricblock,
+                templateData: function (cb) {
                     cb({
-                        'qti-type' : 'rubricBlock',
-                        index  : $('.rubricblock', $section).length,
-                        content : [],
-                        views : [1]
+                        'qti-type': 'rubricBlock',
+                        index: $('.rubricblock', $rubBlocks).length,
+                        content: [],
+                        views: [1]
                     });
                 }
             });
 
             //we listen the event not from the adder but  from the data binder to be sure the model is up to date
-            $(document).on('add.binder', '#' + $section.attr('id') + ' .rubricblocks', function(e, $rubricBlock){
-                var index, rubricModel;
-                if(e.namespace === 'binder' && $rubricBlock.hasClass('rubricblock')){
-                    index = $rubricBlock.data('bind-index');
-                    rubricModel = sectionModel.rubricBlocks[index] || {};
+            // jquery issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
+            $(document)
+                .off('add.binder', `[id="${$section.attr('id')}"] > .rublocks .rubricblocks`)
+                .on(
+                    'add.binder',
+                    `[id="${$section.attr('id')}"] > .rublocks .rubricblocks`,
+                    function (e, $rubricBlock) {
+                        if (
+                            e.namespace === 'binder' &&
+                            $rubricBlock.hasClass('rubricblock') &&
+                            !$rubricBlock.parents('.subsection').length
+                        ) {
+                            const index = $rubricBlock.data('bind-index');
+                            const rubricModel = sectionModel.rubricBlocks[index] || {};
 
-                    $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
-                    rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
+                            $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
+                            rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
 
-                    /**
-                     * @event modelOverseer#rubric-add
-                     * @param {Object} rubricModel
-                     */
-                    modelOverseer.trigger('rubric-add', rubricModel);
-                }
-            });
+                            /**
+                             * @event modelOverseer#rubric-add
+                             * @param {Object} rubricModel
+                             */
+                            modelOverseer.trigger('rubric-add', rubricModel);
+                        }
+                    }
+                );
         }
 
         /**
          * Set up the category property
          * @private
-         * @param {jQueryElement} $view - the $view object containing the $select
+         * @param {jQuery} $view - the $view object containing the $select
          * @fires modelOverseer#category-change
          */
-        function categoriesProperty($view){
-            var categories = sectionCategory.getCategories(sectionModel),
+        function categoriesProperty($view) {
+            const categories = sectionCategory.getCategories(sectionModel),
                 categorySelector = categorySelectorFactory($view);
 
-            categorySelector.createForm(categories.all);
+            categorySelector.createForm(categories.all, 'section');
             updateFormState(categorySelector);
 
-            $view.on('propopen.propview', function(){
+            $view.on('propopen.propview', function () {
                 updateFormState(categorySelector);
             });
 
-            categorySelector.on('category-change', function(selected, indeterminate) {
+            $view.on('set-default-categories', function () {
+                sectionModel.categories = defaultsConfigs.categories;
+                updateFormState(categorySelector);
+            });
+
+            categorySelector.on('category-change', function (selected, indeterminate) {
                 sectionCategory.setCategories(sectionModel, selected, indeterminate);
 
                 modelOverseer.trigger('category-change');
@@ -349,47 +441,49 @@ function(
         }
 
         function updateFormState(categorySelector) {
-            var categories = sectionCategory.getCategories(sectionModel);
+            const categories = sectionCategory.getCategories(sectionModel);
             categorySelector.updateFormState(categories.propagated, categories.partial);
         }
 
         /**
          * Set up the Blueprint property
          * @private
-         * @param {jQueryElement} $view - the $view object containing the $select
+         * @param {jQuery} $view - the $view object containing the $select
          */
-        function blueprintProperty($view){
-            var $select = $('[name=section-blueprint]', $view);
-            $select.select2({
-                ajax:{
-                    url: config.routes.blueprintsById,
-                    dataType: 'json',
-                    delay: 350,
-                    method: 'POST',
-                    data: function (params) {
-                        return {
-                            identifier: params // search term
-                        };
+        function blueprintProperty($view) {
+            const $select = $('[name=section-blueprint]', $view);
+            $select
+                .select2({
+                    ajax: {
+                        url: config.routes.blueprintsById,
+                        dataType: 'json',
+                        delay: 350,
+                        method: 'POST',
+                        data: function (params) {
+                            return {
+                                identifier: params // search term
+                            };
+                        },
+                        results: function (data) {
+                            return data;
+                        }
                     },
-                    results: function (data) {
-                        return data;
-                    }
-                },
-                minimumInputLength: 3,
-                width: '100%',
-                multiple : false,
-                allowClear: true,
-                placeholder: __('Select a blueprint'),
-                formatNoMatches : function(){
-                    return __('Enter a blueprint');
-                },
-                maximumInputLength : 32
-            }).on('change', function(e){
-                setBlueprint(e.val);
-            });
+                    minimumInputLength: 3,
+                    width: '100%',
+                    multiple: false,
+                    allowClear: true,
+                    placeholder: __('Select a blueprint'),
+                    formatNoMatches: function () {
+                        return __('Enter a blueprint');
+                    },
+                    maximumInputLength: 32
+                })
+                .on('change', function (e) {
+                    setBlueprint(e.val);
+                });
 
             initBlueprint();
-            $view.on('propopen.propview', function(){
+            $view.on('propopen.propview', function () {
                 initBlueprint();
             });
 
@@ -397,16 +491,15 @@ function(
              * Start the blueprint editing
              * @private
              */
-            function initBlueprint(){
-
-                if(typeof sectionModel.blueprint === 'undefined'){
+            function initBlueprint() {
+                if (typeof sectionModel.blueprint === 'undefined') {
                     sectionBlueprint
                         .getBlueprint(config.routes.blueprintByTestSection, sectionModel)
-                        .success(function(data){
-                            if(!_.isEmpty(data)){
-                                if(sectionModel.blueprint !== ""){
+                        .success(function (data) {
+                            if (!_.isEmpty(data)) {
+                                if (sectionModel.blueprint !== '') {
                                     sectionModel.blueprint = data.uri;
-                                    $select.select2('data', {id: data.uri, text: data.text});
+                                    $select.select2('data', { id: data.uri, text: data.text });
                                     $select.trigger('change');
                                 }
                             }
@@ -416,65 +509,202 @@ function(
 
             /**
              * save the categories into the model
+             * @param {Object} blueprint
              * @private
              */
-            function setBlueprint(blueprint){
+            function setBlueprint(blueprint) {
                 sectionBlueprint.setBlueprint(sectionModel, blueprint);
             }
+        }
 
+        function addSubsection() {
+            const optionsConfirmDialog = {
+                buttons: {
+                    labels: {
+                        ok: __('Yes'),
+                        cancel: __('No')
+                    }
+                }
+            };
+
+            $('.add-subsection', $titleWithActions).adder({
+                target: $section.children('.subsections'),
+                content: templates.subsection,
+                templateData: function (cb) {
+                    //create a new subsection model object to be bound to the template
+                    let sectionParts = [];
+                    if ($section.data('movedItems')) {
+                        sectionParts = $section.data('movedItems');
+                        $section.removeData('movedItems');
+                    }
+                    cb({
+                        'qti-type': 'assessmentSection',
+                        identifier: qtiTestHelper.getAvailableIdentifier(
+                            modelOverseer.getModel(),
+                            'assessmentSection',
+                            'subsection'
+                        ),
+                        title: defaultsConfigs.sectionTitlePrefix,
+                        index: 0,
+                        sectionParts,
+                        visible: true,
+                        itemSessionControl: {
+                            maxAttempts: defaultsConfigs.maxAttempts
+                        }
+                    });
+                },
+                checkAndCallAdd: function (executeAdd) {
+                    if (
+                        sectionModel.sectionParts[0] &&
+                        qtiTestHelper.filterQtiType(sectionModel.sectionParts[0], 'assessmentItemRef')
+                    ) {
+                        // section has item(s)
+                        const $parent = $section.parents('.sections');
+                        const index = $('.section', $parent).index($section);
+                        const confirmMessage = __(
+                            'The items contained in <b>%s %s</b> will be moved into the new <b>%s %s</b>. Do you wish to proceed?',
+                            `${index + 1}.`,
+                            sectionModel.title,
+                            `${index + 1}.1.`,
+                            defaultsConfigs.sectionTitlePrefix
+                        );
+                        const acceptFunction = () => {
+                            // trigger deleted event for each itemfer to run removePropHandler and remove propView
+                            $('.itemrefs .itemref', $itemRefsWrapper).each(function () {
+                                $section.parents('.testparts').trigger('deleted.deleter', [$(this)]);
+                            });
+                            setTimeout(() => {
+                                // remove all itemrefs
+                                $('.itemrefs', $itemRefsWrapper).empty();
+                                // check itemrefs identifiers
+                                // because validation is build on <span id="props-{identifier}">
+                                // and each item should have valid and unique id
+                                sectionModel.sectionParts.forEach(itemRef => {
+                                    if (!validators.checkIfItemIdValid(itemRef.identifier, modelOverseer)) {
+                                        itemRef.identifier = qtiTestHelper.getAvailableIdentifier(
+                                            modelOverseer.getModel(),
+                                            'assessmentItemRef',
+                                            'item'
+                                        );
+                                    }
+                                });
+                                $section.data('movedItems', _.clone(sectionModel.sectionParts));
+                                sectionModel.sectionParts = [];
+                                executeAdd();
+                            }, 0);
+                        };
+                        confirmDialog(confirmMessage, acceptFunction, () => {}, optionsConfirmDialog)
+                            .getDom()
+                            .find('.buttons')
+                            .css('display', 'flex')
+                            .css('flex-direction', 'row-reverse');
+                    } else {
+                        if (!sectionModel.sectionParts.length && sectionModel.categories.length) {
+                            $section.data('movedCategories', _.clone(sectionModel.categories));
+                        }
+                        executeAdd();
+                    }
+                }
+            });
+
+            //we listen the event not from the adder but  from the data binder to be sure the model is up to date
+            // jquery issue to select id with dot by '#ab.cd', should be used [id="ab.cd"]
+            $(document)
+                .off('add.binder', `[id="${$section.attr('id')}"] > .subsections`)
+                .on('add.binder', `[id="${$section.attr('id')}"] > .subsections`, function (e, $subsection) {
+                    if (
+                        e.namespace === 'binder' &&
+                        $subsection.hasClass('subsection') &&
+                        !$subsection.parents('.subsection').length
+                    ) {
+                        // first level of subsection
+                        const subsectionIndex = $subsection.data('bind-index');
+                        const subsectionModel = sectionModel.sectionParts[subsectionIndex];
+
+                        if ($section.data('movedCategories')) {
+                            subsectionModel.categories = $section.data('movedCategories');
+                            $section.removeData('movedCategories');
+                        }
+
+                        //initialize the new subsection
+                        subsectionView.setUp(creatorContext, subsectionModel, sectionModel, $subsection);
+                        // hide 'Items' block and category-presets for current section
+                        actions.displayItemWrapper($section);
+                        actions.displayCategoryPresets($section);
+                        // set index for new subsection
+                        actions.updateTitleIndex($subsection);
+
+                        /**
+                         * @event modelOverseer#section-add
+                         * @param {Object} subsectionModel
+                         */
+                        modelOverseer.trigger('section-add', subsectionModel);
+                    }
+                });
         }
     }
 
     /**
      * Listen for state changes to enable/disable . Called globally.
      */
-    function listenActionState (){
-
-        var $sections;
-
-        $('.sections').each(function(){
-            $sections = $('.section', $(this));
+    function listenActionState() {
+        $('.sections').each(function () {
+            const $sections = $('.section', $(this));
 
             actions.removable($sections, 'h2');
             actions.movable($sections, 'section', 'h2');
+            actions.updateTitleIndex($sections);
         });
 
         $(document)
-            .on('delete', function(e){
-                var $parent;
-                var $target = $(e.target);
-                if($target.hasClass('section')){
+            .on('delete', function (e) {
+                let $parent;
+                const $target = $(e.target);
+                if ($target.hasClass('section')) {
                     $parent = $target.parents('.sections');
                     actions.disable($parent.find('.section'), 'h2');
+                    setTimeout(() => {
+                        // element detached after event
+                        const $sectionsAndsubsections = $('.section,.subsection', $parent);
+                        actions.updateTitleIndex($sectionsAndsubsections);
+                    }, 100);
                 }
             })
-            .on('add change undo.deleter deleted.deleter', function(e){
-                var $target = $(e.target);
-                if($target.hasClass('section') || $target.hasClass('sections')){
-                    $sections = $('.section', $target.hasClass('sections') ? $target : $target.parents('.sections'));
+            .on('add change undo.deleter deleted.deleter', function (e) {
+                const $target = $(e.target);
+                if ($target.hasClass('section') || $target.hasClass('sections')) {
+                    const $sectionsContainer = $target.hasClass('sections') ? $target : $target.parents('.sections');
+                    const $sections = $('.section', $sectionsContainer);
                     actions.removable($sections, 'h2');
                     actions.movable($sections, 'section', 'h2');
+                    if (e.type === 'undo' || e.type === 'change') {
+                        const $sectionsAndsubsections = $('.section,.subsection', $sectionsContainer);
+                        actions.updateTitleIndex($sectionsAndsubsections);
+                    } else if (e.type === 'add') {
+                        const $newSection = $('.section:last', $sectionsContainer);
+                        actions.updateTitleIndex($newSection);
+                    }
                 }
             })
-            .on('open.toggler', '.rub-toggler', function(e){
-                if(e.namespace === 'toggler'){
+            .on('open.toggler', '.rub-toggler', function (e) {
+                if (e.namespace === 'toggler') {
                     $(this).parents('h2').addClass('active');
                 }
             })
-            .on('close.toggler', '.rub-toggler', function(e){
-                if(e.namespace === 'toggler'){
+            .on('close.toggler', '.rub-toggler', function (e) {
+                if (e.namespace === 'toggler') {
                     $(this).parents('h2').removeClass('active');
                 }
             });
     }
 
     /**
-     * The sectionView setup section related components and beahvior
+     * The sectionView setup section related components and behavior
      *
      * @exports taoQtiTest/controller/creator/views/section
      */
     return {
-        setUp : setUp,
+        setUp: setUp,
         listenActionState: listenActionState
     };
 });

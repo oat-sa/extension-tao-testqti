@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\models\creator;
 
 use oat\generis\model\OntologyAwareTrait;
@@ -32,16 +34,16 @@ class CreatorItems extends ConfigurableService
 {
     use OntologyAwareTrait;
 
-    const SERVICE_ID = 'taoQtiTest/CreatorItems';
+    public const SERVICE_ID = 'taoQtiTest/CreatorItems';
 
-    const ITEM_ROOT_CLASS_URI       = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
-    const PROPERTY_ITEM_CONTENT_URI = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemContent';
-    const PROPERTY_ITEM_MODEL_URI   = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemModel';
-    const ITEM_MODEL_QTI_URI        = 'http://www.tao.lu/Ontologies/TAOItem.rdf#QTI';
-    const LABEL_URI                 = 'http://www.w3.org/2000/01/rdf-schema#label';
+    public const ITEM_ROOT_CLASS_URI       = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
+    public const PROPERTY_ITEM_CONTENT_URI = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemContent';
+    public const PROPERTY_ITEM_MODEL_URI   = 'http://www.tao.lu/Ontologies/TAOItem.rdf#ItemModel';
+    public const ITEM_MODEL_QTI_URI        = 'http://www.tao.lu/Ontologies/TAOItem.rdf#QTI';
+    public const LABEL_URI                 = 'http://www.w3.org/2000/01/rdf-schema#label';
 
-    const ITEM_MODEL_SEARCH_OPTION  = 'itemModel';
-    const ITEM_CONTENT_SEARCH_OPTION= 'itemContent';
+    public const ITEM_MODEL_SEARCH_OPTION  = 'itemModel';
+    public const ITEM_CONTENT_SEARCH_OPTION = 'itemContent';
 
     /**
      * The different lookup formats
@@ -67,26 +69,39 @@ class CreatorItems extends ConfigurableService
      * @param int $limit  for paging
      * @return array the items
      */
-    public function getQtiItems(\core_kernel_classes_Class $itemClass, $format = 'list', $search = '', $offset = 0, $limit = 30)
-    {
+    public function getQtiItems(
+        \core_kernel_classes_Class $itemClass,
+        $format = 'list',
+        $search = '',
+        $offset = 0,
+        $limit = 30
+    ) {
         $propertyFilters = [];
 
-        if($this->hasOption(self::ITEM_MODEL_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false){
+        if (
+            $this->hasOption(self::ITEM_MODEL_SEARCH_OPTION)
+            && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false
+        ) {
             $propertyFilters[self::PROPERTY_ITEM_MODEL_URI] = $this->getOption(self::ITEM_MODEL_SEARCH_OPTION);
         }
 
-        if($this->hasOption(self::ITEM_CONTENT_SEARCH_OPTION) && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false){
+        if (
+            $this->hasOption(self::ITEM_CONTENT_SEARCH_OPTION)
+            && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false
+        ) {
             $propertyFilters[self::PROPERTY_ITEM_CONTENT_URI] = '*';
         }
 
-        if(is_string($search) && strlen(trim($search)) > 0){
+        if (is_string($search) && strlen(trim($search)) > 0) {
             $propertyFilters[self::LABEL_URI] = $search;
         }
-        if(is_array($search)){
-            foreach($search as $uri => $value){
-                if( is_string($uri) &&
+        if (is_array($search)) {
+            foreach ($search as $uri => $value) {
+                if (
+                    is_string($uri) &&
                     (is_string($value) && strlen(trim($value)) > 0) ||
-                    (is_array($value) && count($value) > 0) ) {
+                    (is_array($value) && count($value) > 0)
+                ) {
                     $propertyFilters[$uri] = $value;
                 }
             }
@@ -95,11 +110,10 @@ class CreatorItems extends ConfigurableService
         $result = [];
 
         //whitelisting's mandatory to prevent hijacking the dependency injection
-        if(in_array($format, self::$formats)){
-
+        if (in_array($format, self::$formats)) {
             //load the lookup dynamically using the format
             $itemLookup = $this->getServiceLocator()->get(self::SERVICE_ID . '/' . $format);
-            if(!is_null($itemLookup) && $itemLookup instanceof ItemLookup){
+            if (!is_null($itemLookup) && $itemLookup instanceof ItemLookup) {
                 $result = $itemLookup->getItems($itemClass, $propertyFilters, $offset, $limit);
             }
         }

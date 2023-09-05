@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,6 +19,7 @@
  */
 
 namespace oat\taoQtiTest\scripts\install;
+
 use oat\oatbox\extension\InstallAction;
 use oat\tao\model\ClientLibRegistry;
 use oat\tao\model\asset\AssetService;
@@ -35,7 +37,8 @@ class RegisterFrontendPaths extends InstallAction
     public function __invoke($params)
     {
         $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
-        $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
+        $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest')
+            . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
         $clientLibRegistry = ClientLibRegistry::getRegistry();
         $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
 

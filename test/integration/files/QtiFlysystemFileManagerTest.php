@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,23 +31,25 @@ class QtiFlysystemFileManagerTest extends GenerisPhpUnitTestRunner
     protected $serviceLocator;
     protected $fileManager;
     protected $fileSystem;
-    
-    public function setUp()
+
+    public function setUp(): void
     {
         $this->serviceLocator = ServiceManager::getServiceManager();
-        $this->filesystem = $this->serviceLocator->get(FileSystemService::SERVICE_ID)->getFileSystem('taoQtiTestSessionFilesystem');
+        $this->filesystem = $this->serviceLocator
+            ->get(FileSystemService::SERVICE_ID)
+            ->getFileSystem('taoQtiTestSessionFilesystem');
         $this->fileManager = new QtiFlysystemFileManager();
         $this->fileManager->setFilePrefix('unittest');
         $this->fileManager->setServiceLocator($this->serviceLocator);
-        
+
         $this->cleanUp();
     }
-    
-    public function tearDown()
+
+    public function tearDown(): void
     {
         $this->cleanUp();
     }
-    
+
     public function cleanUp()
     {
         foreach ($this->filesystem->listContents('/', true) as $file) {
@@ -56,11 +59,11 @@ class QtiFlysystemFileManagerTest extends GenerisPhpUnitTestRunner
             }
         }
     }
-    
+
     public function testCreateFromDataWithFilename()
     {
         $file = $this->fileManager->createFromData('pouet', 'text/plain', 'myfile.txt');
-        
+
         $this->assertInstanceOf(QtiFlysystemFile::class, $file);
         $this->assertEquals('pouet', $file->getData());
         $this->assertEquals('text/plain', $file->getMimeType());
@@ -68,7 +71,7 @@ class QtiFlysystemFileManagerTest extends GenerisPhpUnitTestRunner
         $this->assertEquals('myfile.txt', $file->getFilename());
         $this->assertInternalType('resource', $file->getStream());
     }
-    
+
     /**
      * @depends testCreateFromDataWithFilename
      */
@@ -76,12 +79,12 @@ class QtiFlysystemFileManagerTest extends GenerisPhpUnitTestRunner
     {
         $file = $this->fileManager->createFromData('pouet', 'text/plain', 'myfile.txt');
         $file2 = $this->fileManager->retrieve($file->getIdentifier());
-        
+
         $this->assertEquals($file->getIdentifier(), $file2->getIdentifier());
         $this->assertEquals($file->getMimeType(), $file->getMimeType());
         $this->assertEquals($file->getFilename(), $file->getFilename());
     }
-    
+
     /**
      * @depends testCreateFromDataWithFilename
      */
@@ -89,7 +92,7 @@ class QtiFlysystemFileManagerTest extends GenerisPhpUnitTestRunner
     {
         $file = $this->fileManager->createFromData('check', 'text/plain', 'myfile.txt');
         $this->assertTrue($this->filesystem->has($file->getIdentifier()));
-        
+
         $this->fileManager->delete($file);
         $this->assertFalse($this->filesystem->has($file->getIdentifier()));
     }

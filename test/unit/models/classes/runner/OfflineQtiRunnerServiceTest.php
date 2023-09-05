@@ -22,7 +22,7 @@ class OfflineQtiRunnerServiceTest extends TestCase
     /**
      * @throws \common_exception_Error
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->offlineQtiRunnerService = new OfflineQtiRunnerService();
 

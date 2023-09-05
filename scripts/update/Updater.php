@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,100 +20,115 @@
 
 namespace oat\taoQtiTest\scripts\update;
 
+use oat\libCat\custom\EchoAdaptEngine;
+use oat\oatbox\filesystem\FileSystemService;
+use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\service\ServiceNotFoundException;
-use oat\tao\model\ClientLibConfigRegistry;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
+use oat\tao\model\asset\AssetService;
+use oat\tao\model\ClientLibConfigRegistry;
+use oat\tao\model\ClientLibRegistry;
+use oat\tao\model\import\ImportersService;
 use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\tao\model\user\TaoRoles;
+use oat\tao\scripts\update\OntologyUpdater;
+use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
+use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\compilation\CompilationService;
+use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\creator\CreatorItems;
+use oat\taoQtiTest\models\export\Formats\Metadata\TestPackageExport;
+use oat\taoQtiTest\models\export\Formats\Package2p1\TestPackageExport as TestPackageExport2p1;
+use oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport as TestPackageExport2p2;
+use oat\taoQtiTest\models\ExtendedStateService;
+use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
+use oat\taoQtiTest\models\import\QtiTestImporter;
+use oat\taoQtiTest\models\PhpCodeCompilationDataService;
+use oat\taoQtiTest\models\QtiTestListenerService;
+use oat\taoQtiTest\models\QtiTestUtils;
+use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
+use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
+use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
+use oat\taoQtiTest\models\runner\config\DataAccess\Repository\NoopOverriddenOptionsRepository;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\OfflineQtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\StorageManager;
-use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\action\NextItemData;
+use oat\taoQtiTest\models\runner\synchronisation\action\Pause;
 use oat\taoQtiTest\models\runner\synchronisation\SynchronisationService;
 use oat\taoQtiTest\models\runner\TestDefinitionSerializerService;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorage;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\runner\time\TimerLabelFormatterService;
 use oat\taoQtiTest\models\runner\time\TimerStrategyService;
 use oat\taoQtiTest\models\runner\toolsStates\NoStorage;
 use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\SectionPauseService;
-use oat\taoQtiTest\models\export\metadata\TestMetadataByClassExportHandler;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
-use oat\taoQtiTest\models\ExtendedStateService;
-use oat\taoQtiTest\models\QtiTestListenerService;
-use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
-use oat\taoQtiTest\models\export\metadata\TestExporter;
-use oat\taoQtiTest\models\export\metadata\TestMetadataExporter;
-use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\TestCategoryPresetRegistry;
-use oat\taoQtiTest\models\TestModelService;
-use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\TestCategoryRulesGenerator;
+use oat\taoQtiTest\models\TestCategoryRulesService;
+use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestRunnerClientConfigRegistry;
-use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
-use oat\taoQtiTest\models\runner\communicator\TestStateChannel;
 use oat\taoQtiTest\models\TestSessionService;
+use oat\taoQtiTest\models\xmlEditor\XmlEditor;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
+use oat\taoQtiTest\scripts\install\RegisterQtiPackageExporter;
 use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 use oat\taoTests\models\runner\plugins\TestPlugin;
-use oat\taoQtiTest\models\PhpCodeCompilationDataService;
-use oat\tao\scripts\update\OntologyUpdater;
-use oat\oatbox\filesystem\FileSystemService;
-use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
-use oat\tao\model\import\ImportersService;
-use oat\taoQtiTest\models\import\QtiTestImporter;
-use oat\taoDelivery\model\container\delivery\DeliveryContainerRegistry;
-use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
-use oat\taoQtiTest\models\cat\CatService;
-use oat\libCat\custom\EchoAdaptEngine;
 use oat\taoTests\models\runner\providers\ProviderRegistry;
 use oat\taoTests\models\runner\providers\TestProvider;
-use oat\taoQtiTest\models\compilation\CompilationService;
-use oat\tao\model\ClientLibRegistry;
-use oat\tao\model\asset\AssetService;
 use oat\taoTests\models\runner\time\TimerStrategyInterface;
 
 /**
  *
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
+ * @deprecated use migrations instead. See https://github.com/oat-sa/generis/wiki/Tao-Update-Process
  */
-class Updater extends \common_ext_ExtensionUpdater {
-
+class Updater extends \common_ext_ExtensionUpdater
+{
     /**
      *
      * @param string $initialVersion
      * @return string $versionUpdatedTo
      */
-    public function update($initialVersion) {
+    public function update($initialVersion)
+    {
 
         if ($this->isBetween('0.0.0', '2.23.0')) {
-            throw new \common_exception_NotImplemented('Updates from versions prior to Tao 3.1 are not longer supported, please update to Tao 3.1 first');
+            throw new \common_exception_NotImplemented(
+                'Updates from versions prior to Tao 3.1 are not longer supported, please update to Tao 3.1 first'
+            );
         }
-        $this->skip('2.23.0','2.24.2');
+        $this->skip('2.23.0', '2.24.2');
 
         if ($this->isVersion('2.24.2')) {
             $className = \taoQtiTest_helpers_SessionManager::DEFAULT_TEST_SESSION;
             try {
-                $deliveryConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery')->getConfig('deliveryServer');
+                $deliveryConfig = \common_ext_ExtensionsManager::singleton()
+                    ->getExtensionById('taoDelivery')
+                    ->getConfig('deliveryServer');
                 if ($deliveryConfig) {
                     $deliveryContainer = $deliveryConfig->getOption('deliveryContainer');
                     if (false !== strpos($deliveryContainer, 'DeliveryClientContainer')) {
                         $className = 'oat\\taoQtiTest\\models\\runner\\session\\TestSession';
                     }
                 }
-            } catch(\common_ext_ExtensionException $e) {
+            } catch (\common_ext_ExtensionException $e) {
             }
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -138,12 +154,14 @@ class Updater extends \common_ext_ExtensionUpdater {
             $serviceExtension = 'taoQtiTest';
             $serviceController = 'Runner';
             try {
-                $deliveryConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoDelivery')->getConfig('testRunner');
+                $deliveryConfig = \common_ext_ExtensionsManager::singleton()
+                    ->getExtensionById('taoDelivery')
+                    ->getConfig('testRunner');
                 if ($deliveryConfig) {
                     $serviceExtension = $deliveryConfig['serviceExtension'];
                     $serviceController = $deliveryConfig['serviceController'];
                 }
-            } catch(\common_ext_ExtensionException $e) {
+            } catch (\common_ext_ExtensionException $e) {
             }
 
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
@@ -175,7 +193,9 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('2.28.0')) {
-            $testRunnerConfig = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $testRunnerConfig = \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
 
             if (array_key_exists('timerWarning', $testRunnerConfig)) {
                 foreach ($testRunnerConfig['timerWarning'] as &$value) {
@@ -184,7 +204,9 @@ class Updater extends \common_ext_ExtensionUpdater {
                     }
                 }
 
-                \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('testRunner', $testRunnerConfig);
+                \common_ext_ExtensionsManager::singleton()
+                    ->getExtensionById('taoQtiTest')
+                    ->setConfig('testRunner', $testRunnerConfig);
             }
 
             $this->setVersion('2.29.0');
@@ -218,8 +240,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('2.31.0')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
-            if (!isset($config['bootstrap']) || (isset($config['bootstrap']['timeout']) && count($config['bootstrap']) == 1)) {
-
+            if (
+                !isset($config['bootstrap'])
+                || (isset($config['bootstrap']['timeout']) && count($config['bootstrap']) == 1)
+            ) {
                 $config['bootstrap'] = array_merge($config['bootstrap'], [
                     'serviceExtension' => 'taoQtiTest',
                     'serviceController' => 'Runner',
@@ -254,11 +278,16 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('3.1.0', '3.4.0');
 
         if ($this->isVersion('3.4.0')) {
-            $ext = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $ext = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $uri = $ext->getConfig(\taoQtiTest_models_classes_QtiTestService::CONFIG_QTITEST_FILESYSTEM);
             $fileResource = new \core_kernel_classes_Resource($uri);
             if ($fileResource->exists()) {
-                $fileSystem = $fileResource->getOnePropertyValue(new \core_kernel_classes_Property('http://www.tao.lu/Ontologies/generis.rdf#FileRepository'));
+                $fileSystem = $fileResource->getOnePropertyValue(
+                    new \core_kernel_classes_Property('http://www.tao.lu/Ontologies/generis.rdf#FileRepository')
+                );
                 if (!empty($fileSystem) && $fileSystem instanceof \core_kernel_classes_Literal) {
                     \taoQtiTest_models_classes_QtiTestService::singleton()->setQtiTestFileSystem((string) $fileSystem);
                 }
@@ -269,16 +298,23 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('4.0.0', '4.6.0');
 
         if ($this->isVersion('4.6.0')) {
-
             $registry = TestRunnerClientConfigRegistry::getRegistry();
             $runnerConfig = $registry->get(TestRunnerClientConfigRegistry::RUNNER);
-            if(isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins']) ) {
-                foreach($runnerConfig['plugins'] as $plugin){
+            if (isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins'])) {
+                foreach ($runnerConfig['plugins'] as $plugin) {
                     //if the plugin is registered
-                    if($plugin['module'] == 'taoQtiTest/runner/plugins/controls/disableRightClick'){
+                    if ($plugin['module'] == 'taoQtiTest/runner/plugins/controls/disableRightClick') {
                         //we migrate the category
-                        $registry->removePlugin('taoQtiTest/runner/plugins/controls/disableRightClick', 'controls', null);
-                        $registry->registerPlugin('taoQtiTest/runner/plugins/security/disableRightClick', 'security', null);
+                        $registry->removePlugin(
+                            'taoQtiTest/runner/plugins/controls/disableRightClick',
+                            'controls',
+                            null
+                        );
+                        $registry->registerPlugin(
+                            'taoQtiTest/runner/plugins/security/disableRightClick',
+                            'security',
+                            null
+                        );
                         break;
                     }
                 }
@@ -290,7 +326,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('4.7.0', '4.8.2');
 
         if ($this->isVersion('4.8.2')) {
-
             //regsiter the core plugins into taoTests
             $registerCorePlugins = new RegisterTestRunnerPlugins();
             $registerCorePlugins([]);
@@ -300,11 +335,10 @@ class Updater extends \common_ext_ExtensionUpdater {
             //list the installed plugins
             $oldRegistry = TestRunnerClientConfigRegistry::getRegistry();
             $runnerConfig = $oldRegistry->get(TestRunnerClientConfigRegistry::RUNNER);
-            if(isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins']) ) {
-                foreach($runnerConfig['plugins'] as $plugin){
-
+            if (isset($runnerConfig['plugins']) && is_array($runnerConfig['plugins'])) {
+                foreach ($runnerConfig['plugins'] as $plugin) {
                     //if they are not yet in the config, migrate them automatically
-                    if( ! $registry->isRegistered($plugin['module']) ) {
+                    if (! $registry->isRegistered($plugin['module'])) {
                         $pluginId = basename($plugin['module']);
                         $pluginName = ucfirst(join(preg_split('/(?=[A-Z])/', $pluginId), ' '));
                         $registry->register(TestPlugin::fromArray([
@@ -329,7 +363,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.0.0', '5.4.0');
 
         if ($this->isVersion('5.4.0')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['plugins']['collapser'] = [
@@ -345,7 +378,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.5.0', '5.5.3');
 
         if ($this->isVersion('5.5.3')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -373,15 +405,15 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         if ($this->isVersion('5.8.4')) {
             OntologyUpdater::syncModels();
-            $testModelService = new TestModelService(array(
-                'exportHandlers' => array(
-                    new \taoQtiTest_models_classes_export_TestExport(),
-                    new \taoQtiTest_models_classes_export_TestExport22()
-                ),
-                'importHandlers' => array(
+            $testModelService = new TestModelService([
+                'exportHandlers' => [
+                    new TestPackageExport2p1(),
+                    new TestPackageExport2p2(),
+                ],
+                'importHandlers' => [
                     new \taoQtiTest_models_classes_import_TestImport()
-                )
-            ));
+                ]
+            ]);
             $testModelService->setServiceManager($this->getServiceManager());
 
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
@@ -418,29 +450,30 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.12.0', '5.16.2');
 
         if ($this->isVersion('5.16.2')) {
-            $service = new TestExporter();
-            $service->setServiceManager($this->getServiceManager());
-            $this->getServiceManager()->register(TestMetadataExporter::SERVICE_ID, $service);
+            // Note! This service was removed, new structure at oat\taoQtiTest\models\export\Formats
+            // $service = $this->propagate(new TestExporter());
+            // $this->getServiceManager()->register(TestMetadataExporter::SERVICE_ID, $service);
             $this->setVersion('5.17.0');
         }
 
         $this->skip('5.17.0', '5.17.3');
 
         if ($this->isVersion('5.17.3')) {
-
-            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', array(
-                'enable-category-rules-generation' => false
-            ));
+            \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->setConfig('TestCompiler', ['enable-category-rules-generation' => false]);
 
             $categoryRulesService = new TestCategoryRulesService(
-                array(
+                [
                     'score-variable-identifier' => 'SCORE',
                     'weight-identifier' => 'WEIGHT',
-                    'category-exclusions' => array(
+                    'category-exclusions' => [
                         '/x-tao-/'
-                    ),
-                    'flags' => TestCategoryRulesGenerator::COUNT | TestCategoryRulesGenerator::CORRECT | TestCategoryRulesGenerator::SCORE
-                )
+                    ],
+                    'flags' => TestCategoryRulesGenerator::COUNT
+                        | TestCategoryRulesGenerator::CORRECT
+                        | TestCategoryRulesGenerator::SCORE
+                ]
             );
             $categoryRulesService->setServiceManager($this->getServiceManager());
 
@@ -467,7 +500,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.23.1', '5.25.1');
 
         if ($this->isVersion('5.25.1')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -494,7 +526,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('5.27.0')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -508,7 +539,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.28.0', '5.30.1');
 
         if ($this->isVersion('5.30.1')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -522,7 +552,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.31.0', '5.31.1');
 
         if ($this->isVersion('5.31.1')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -554,7 +583,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.32.0', '5.32.1');
 
         if ($this->isVersion('5.32.1')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -572,7 +600,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('5.33.0')) {
-
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id' => 'responsesAccess',
@@ -614,7 +641,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('5.37.0')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -649,7 +675,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.38.2', '5.40.0');
 
         if ($this->isVersion('5.40.0')) {
-
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
             $registry->register(TestPlugin::fromArray([
@@ -742,13 +767,12 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('5.47.0')) {
-
             $qtiTest = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $qtiTest->getConfig('testRunner');
-            $config = array_merge($config, array(
+            $config = array_merge($config, [
                 'test-taker-review-show-legend' => true,
                 'test-taker-review-default-open' => true,
-            ));
+            ]);
             $qtiTest->setConfig('testRunner', $config);
 
             $this->setVersion('5.48.0');
@@ -757,7 +781,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('5.48.0', '5.49.0');
 
         if ($this->isVersion('5.49.0')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -821,7 +844,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('5.59.0', '6.0.0');
 
-        if($this->isVersion('6.0.0')){
+        if ($this->isVersion('6.0.0')) {
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
             $registry->register(TestPlugin::fromArray([
@@ -839,7 +862,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('6.1.0', '6.3.0');
 
         if ($this->isVersion('6.3.0')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
 
             $config = $extension->getConfig('testRunner');
@@ -866,7 +888,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('6.5.0', '6.9.0');
 
         if ($this->isVersion('6.9.0')) {
-
             //removes the shortcut from dialog
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
@@ -877,7 +898,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('6.10.0')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['test-session-storage'] = '\taoQtiTest_helpers_TestSessionStorage';
@@ -907,7 +927,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('6.14.0', '6.16.0');
 
-        if($this->isVersion('6.16.0')){
+        if ($this->isVersion('6.16.0')) {
             // Register line reader plugin
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/content/accessibility/responsesAccess');
@@ -947,7 +967,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('6.18.0', '7.4.1');
 
-        if($this->isVersion('7.4.1')){
+        if ($this->isVersion('7.4.1')) {
             // Register item trace variables plugin
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/controls/trace/itemTraceVariables');
@@ -976,7 +996,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('7.6.0', '8.0.0');
 
-        if($this->isVersion('8.0.0')){
+        if ($this->isVersion('8.0.0')) {
             // Register answer masking plugin
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
@@ -1002,10 +1022,10 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('8.1.0', '9.1.3');
 
-        if($this->isVersion('9.1.3')){
+        if ($this->isVersion('9.1.3')) {
             $registry = PluginRegistry::getRegistry();
-            foreach($registry->getMap() as $module => $plugin){
-                if(preg_match("/^taoQtiTest/", $module) && is_null($plugin['bundle'])){
+            foreach ($registry->getMap() as $module => $plugin) {
+                if (preg_match("/^taoQtiTest/", $module) && is_null($plugin['bundle'])) {
                     $plugin['bundle'] = 'taoQtiTest/loader/testPlugins.min';
                     $registry->register(TestPlugin::fromArray($plugin));
                 }
@@ -1017,7 +1037,10 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         if ($this->isVersion('9.3.2')) {
             if (!$this->getServiceManager()->has(TestCategoryPresetProvider::SERVICE_ID)) {
-                $this->getServiceManager()->register(TestCategoryPresetProvider::SERVICE_ID, new TestCategoryPresetProvider());
+                $this->getServiceManager()->register(
+                    TestCategoryPresetProvider::SERVICE_ID,
+                    new TestCategoryPresetProvider()
+                );
             }
             $this->setVersion('9.3.3');
         }
@@ -1026,7 +1049,10 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         // display 'item x' instead of 'item x of y' in the progress bar
         if ($this->isVersion('9.5.0')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['progress-indicator-show-total'] = true;
             $extension->setConfig('testRunner', $config);
@@ -1044,10 +1070,11 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('9.10.0', '9.11.2');
 
         if ($this->isVersion('9.11.2')) {
-
             $testModelService = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
             $exportHandlers = $testModelService->getOption('exportHandlers');
-            array_unshift($exportHandlers, new TestMetadataByClassExportHandler());
+
+            array_unshift($exportHandlers, new TestPackageExport());
+
             $testModelService->setOption('exportHandlers', $exportHandlers);
             $this->getServiceManager()->register(TestModelService::SERVICE_ID, $testModelService);
 
@@ -1074,8 +1101,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('9.18.0', '9.19.0');
 
-        if( $this->isVersion('9.19.0') ){
-
+        if ($this->isVersion('9.19.0')) {
             $registry = PluginRegistry::getRegistry();
             $registry->register(TestPlugin::fromArray([
                 'id'          => 'preventSkipping',
@@ -1096,7 +1122,10 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->getServiceManager()->propagate($service);
             $this->getServiceManager()->register(QtiRunnerMap::SERVICE_ID, $service);
 
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['item-cache-size'] = 3;
             $extension->setConfig('testRunner', $config);
@@ -1116,7 +1145,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('10.4.0', '10.5.1');
 
         if ($this->isVersion('10.5.1')) {
-
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/tools/highlighter/plugin');
             $registry->remove('taoQtiTest/runner/plugins/tools/magnifier/magnifier');
@@ -1184,7 +1212,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('10.11.0')) {
-
             $registry = PluginRegistry::getRegistry();
             $registry->remove('taoQtiTest/runner/plugins/tools/zoom');
             $registry->register(TestPlugin::fromArray([
@@ -1203,7 +1230,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('10.11.1', '10.14.1');
 
         if ($this->isVersion('10.14.1')) {
-
             // Default is now EchoAdapt. This should change in the futre.
             $catService = new CatService([
                 CatService::OPTION_ENGINE_ENDPOINTS => [
@@ -1278,7 +1304,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('11.6.0', '11.8.1');
 
-        if($this->isVersion('11.8.1')){
+        if ($this->isVersion('11.8.1')) {
             $registry = PluginRegistry::getRegistry();
 
             $registry->register(TestPlugin::fromArray([
@@ -1313,12 +1339,12 @@ class Updater extends \common_ext_ExtensionUpdater {
                                 'client_secret' => '',
                                 'resource_owner_details_url' => false,
                                 'authorize_url' => false,
-                                'http_client_options' => array(),
+                                'http_client_options' => [],
                                 'token_url' => '',
                                 'token_key' => '',
-                                'tokenParameters' => array(
+                                'tokenParameters' => [
                                     'audience' => ''
-                                ),
+                                ],
                                 'token_storage' => 'cache'
                             ]
                         ],
@@ -1336,19 +1362,26 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('12.0.0', '13.1.0');
 
         if ($this->isVersion('13.1.0')) {
-            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('TestCompiler');
+            $config = \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('TestCompiler');
             $config['enable-rubric-block-stylesheet-scoping'] = true;
-            \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->setConfig('TestCompiler', $config);
+            \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->setConfig('TestCompiler', $config);
 
             $this->setVersion('13.2.0');
         }
 
         $this->skip('13.2.0', '14.1.4');
 
-        if($this->isVersion('14.1.4')) {
+        if ($this->isVersion('14.1.4')) {
             /** @var CreatorItems $creatorItemsService */
             $creatorItemsService = $this->getServiceManager()->get(CreatorItems::SERVICE_ID);
-            $creatorItemsService->setOption(CreatorItems::ITEM_MODEL_SEARCH_OPTION, CreatorItems::ITEM_MODEL_QTI_URI);
+            $creatorItemsService->setOption(
+                CreatorItems::ITEM_MODEL_SEARCH_OPTION,
+                CreatorItems::ITEM_MODEL_QTI_URI
+            );
             $creatorItemsService->setOption(CreatorItems::ITEM_CONTENT_SEARCH_OPTION, '*');
 
             $this->getServiceManager()->register(CreatorItems::SERVICE_ID, $creatorItemsService);
@@ -1358,8 +1391,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('14.1.5', '16.0.1');
 
-        if($this->isVersion('16.0.1')) {
-
+        if ($this->isVersion('16.0.1')) {
             // Update the synchronisation service
             $this->runExtensionScript(SetSynchronisationService::class);
 
@@ -1396,7 +1428,13 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('17.1.0')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
-            $config['bootstrap']['communication']['syncActions'] = ['move', 'skip', 'storeTraceData', 'timeout', 'exitTest'];
+            $config['bootstrap']['communication']['syncActions'] = [
+                'move',
+                'skip',
+                'storeTraceData',
+                'timeout',
+                'exitTest',
+            ];
             $extension->setConfig('testRunner', $config);
             $this->setVersion('17.2.0');
         }
@@ -1404,7 +1442,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('17.2.0', '17.5.1');
 
         if ($this->isVersion('17.5.1')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['bootstrap']['communication']['syncActions'][] = 'getNextItemData';
             $extension->setConfig('testRunner', $config);
@@ -1422,7 +1463,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('17.6.0', '17.7.1');
 
         if ($this->isVersion('17.7.1')) {
-
             $registry = PluginRegistry::getRegistry();
             $registry->register(
                 TestPlugin::fromArray(
@@ -1452,7 +1492,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('17.10.0', '17.16.0');
 
         if ($this->isVersion('17.16.0')) {
-
             $synchronisationService = $this->getServiceManager()->get(SynchronisationService::SERVICE_ID);
             $actions = $synchronisationService->getAvailableActions();
             $actions['pause'] = Pause::class;
@@ -1465,7 +1504,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('17.17.0', '17.17.6');
 
         if ($this->isVersion('17.17.6')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['catEngineWarning'] = [
                 'echoDelayUpdate' => 15,
@@ -1480,7 +1522,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('17.18.0', '17.18.2');
 
         if ($this->isVersion('17.18.2')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             unset($config['catEngineWarning']);
             $extension->setConfig('testRunner', $config);
@@ -1491,7 +1536,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('17.19.0', '18.5.1');
 
         if ($this->isVersion('18.5.1')) {
-
             $registry = ProviderRegistry::getRegistry();
             $registry->register(
                 TestProvider::fromArray(
@@ -1514,14 +1558,19 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('18.6.0', '18.9.4');
 
         if ($this->isVersion('18.9.4')) {
-            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole', array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+            AclProxy::applyRule(
+                new AccessRule(
+                    'grant',
+                    'http://www.tao.lu/Ontologies/TAOTest.rdf#TestsManagerRole',
+                    ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']
+                )
+            );
             $this->setVersion('18.9.5');
         }
 
         $this->skip('18.9.5', '23.2.0');
 
         if ($this->isVersion('23.2.0')) {
-
             $registry = PluginRegistry::getRegistry();
             if ($registry->isRegistered('taoQtiTest/runner/plugins/tools/textToSpeech/plugin')) {
                 $registry->remove('taoQtiTest/runner/plugins/tools/textToSpeech/plugin');
@@ -1533,7 +1582,6 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('23.2.1', '23.4.0');
 
         if ($this->isVersion('23.4.0')) {
-
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['guidedNavigation'] = false;
@@ -1560,14 +1608,23 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('24.0.0', '24.1.0');
 
         if ($this->isVersion('24.1.0')) {
-            AclProxy::applyRule(new AccessRule('grant', TaoRoles::REST_PUBLISHER, array('ext'=>'taoQtiTest', 'mod' => 'RestQtiTests')));
+            AclProxy::applyRule(
+                new AccessRule(
+                    'grant',
+                    TaoRoles::REST_PUBLISHER,
+                    ['ext' => 'taoQtiTest', 'mod' => 'RestQtiTests']
+                )
+            );
             $this->setVersion('24.2.0');
         }
 
         $this->skip('24.2.0', '24.7.0');
 
         if ($this->isVersion('24.7.0')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
 
             $config['progress-indicator-renderer'] = 'percentage';
@@ -1585,7 +1642,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('24.8.0', '24.8.4');
 
         if ($this->isVersion('24.8.4')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['progress-categories'] = [];
             $extension->setConfig('testRunner', $config);
@@ -1610,7 +1670,7 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
         $this->skip('25.2.0', '25.5.1');
 
-        if ($this->isVersion('25.5.1')){
+        if ($this->isVersion('25.5.1')) {
             $timerLabel = new TimerLabelFormatterService([
                 TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL => 'Time Remaining'
             ]);
@@ -1625,7 +1685,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         if ($this->isVersion('25.7.2')) {
             /** @var TimerLabelFormatterService $timerLabel */
             $timerLabel = $this->getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
-            $timerLabel->setOption(TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL, 'timer_name_translation_token');
+            $timerLabel->setOption(
+                TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL,
+                'timer_name_translation_token'
+            );
 
             $this->getServiceManager()->register(TimerLabelFormatterService::SERVICE_ID, $timerLabel);
             $this->setVersion('25.7.3');
@@ -1634,7 +1697,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('25.7.3', '25.7.5');
 
         if ($this->isVersion('25.7.5')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['enable-allow-skipping'] = true;
             $extension->setConfig('testRunner', $config);
@@ -1648,7 +1714,10 @@ class Updater extends \common_ext_ExtensionUpdater {
             /** @var TaskLogInterface|ConfigurableService $taskLogService */
             $taskLogService = $this->getServiceManager()->get(TaskLogInterface::SERVICE_ID);
 
-            $taskLogService->linkTaskToCategory(ImportQtiTest::class, TaskLogInterface::CATEGORY_IMPORT);
+            $taskLogService->linkTaskToCategory(
+                ImportQtiTest::class,
+                TaskLogInterface::CATEGORY_IMPORT
+            );
 
             $this->getServiceManager()->register(TaskLogInterface::SERVICE_ID, $taskLogService);
 
@@ -1659,7 +1728,10 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         // test compiler settings refactoring
         if ($this->isVersion('25.9.2')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('TestCompiler');
 
             $model = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
@@ -1671,7 +1743,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         }
 
         if ($this->isVersion('25.10.0')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['restore-timer-from-client'] = true;
             $extension->setConfig('testRunner', $config);
@@ -1681,7 +1756,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('25.10.1', '26.1.1');
 
-        if ($this->isVersion('26.1.1')){
+        if ($this->isVersion('26.1.1')) {
             /** @var TimerLabelFormatterService $timerLabel */
             $timerLabel = $this->getServiceManager()->get(TimerLabelFormatterService::SERVICE_ID);
             $timerLabel->setOption(TimerLabelFormatterService::OPTION_DEFAULT_TIMER_LABEL, '');
@@ -1694,7 +1769,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('26.1.2', '29.6.1');
 
         if ($this->isVersion('29.6.1')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['test-taker-review-skipahead'] = false;
             $extension->setConfig('testRunner', $config);
@@ -1710,7 +1788,10 @@ class Updater extends \common_ext_ExtensionUpdater {
                 new NoStorage([])
             );
 
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['tool-state-server-storage'] = [];
             $extension->setConfig('testRunner', $config);
@@ -1733,7 +1814,10 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'tags' => [ ]
             ]));
 
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['force-enable-linear-next-item-warning'] = false;
             $config['enable-linear-next-item-warning-checkbox'] = true;
@@ -1745,7 +1829,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('30.5.0', '30.5.3');
 
         if ($this->isVersion('30.5.3')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['plugins']['calculator']['degree'] = true;
             $extension->setConfig('testRunner', $config);
@@ -1756,7 +1843,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('30.6.0', '30.6.1');
 
         if ($this->isVersion('30.6.1')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['plugins']['dialog']['alert']['focus'] = 'ok';
             $config['plugins']['dialog']['confirm']['focus'] = 'ok';
@@ -1768,15 +1858,27 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('30.7.0', '32.0.0');
 
         if ($this->isVersion('32.0.0')) {
-            AclProxy::applyRule(new AccessRule('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('ext'=>'taoQtiTest', 'mod' => 'OfflineRunner')));
+            AclProxy::applyRule(
+                new AccessRule(
+                    'grant',
+                    'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole',
+                    ['ext' => 'taoQtiTest', 'mod' => 'OfflineRunner']
+                )
+            );
 
             $offlineQtiRunnerService = new OfflineQtiRunnerService();
             $testDefinitionSerializerService = new TestDefinitionSerializerService();
 
             $offlineQtiRunnerService->setServiceManager($this->getServiceManager());
             $testDefinitionSerializerService->setServiceManager($this->getServiceManager());
-            $this->getServiceManager()->register(OfflineQtiRunnerService::SERVICE_ID, $offlineQtiRunnerService);
-            $this->getServiceManager()->register(TestDefinitionSerializerService::SERVICE_ID, $testDefinitionSerializerService);
+            $this->getServiceManager()->register(
+                OfflineQtiRunnerService::SERVICE_ID,
+                $offlineQtiRunnerService
+            );
+            $this->getServiceManager()->register(
+                TestDefinitionSerializerService::SERVICE_ID,
+                $testDefinitionSerializerService
+            );
 
             $this->setVersion('32.1.0');
         }
@@ -1784,7 +1886,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('32.1.0', '32.7.1');
 
         if ($this->isVersion('32.7.1')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['plugins']['keyNavigation']['contentNavigatorType'] = 'default';
             $extension->setConfig('testRunner', $config);
@@ -1794,7 +1899,10 @@ class Updater extends \common_ext_ExtensionUpdater {
         $this->skip('32.8.0', '32.10.1');
 
         if ($this->isVersion('32.10.1')) {
-            $extension = $this->getServiceManager()->get(\common_ext_ExtensionsManager::SERVICE_ID)->getExtensionById('taoQtiTest');
+            $extension = $this
+                ->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoQtiTest');
             $config = $extension->getConfig('testRunner');
             $config['plugins']['validateResponses']['validateOnPreviousMove'] = true;
             $extension->setConfig('testRunner', $config);
@@ -1808,8 +1916,7 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('33.9.0');
         }
 
-	if ($this->isVersion('33.9.0')) {
-
+        if ($this->isVersion('33.9.0')) {
             $providerRegistry = ProviderRegistry::getRegistry();
             $providerRegistry->register(
                 TestProvider::fromArray([
@@ -1823,12 +1930,12 @@ class Updater extends \common_ext_ExtensionUpdater {
             );
             $providerRegistry->register(
                 TestProvider::fromArray([
-                    'id'       => 'poll',
-                    'name'     => 'poll communicator',
-                    'module'   => "core/communicator/poll",
-                    'category' => 'communicator',
-                    'active'   => true,
-                    'tags'     => [ ]
+                'id'       => 'poll',
+                'name'     => 'poll communicator',
+                'module'   => "core/communicator/poll",
+                'category' => 'communicator',
+                'active'   => true,
+                'tags'     => [ ]
                 ])
             );
 
@@ -1838,24 +1945,23 @@ class Updater extends \common_ext_ExtensionUpdater {
                 $registeredProxy = $clientLibRegistry->get('taoQtiTest/runner/proxy/loader');
                 $providerRegistry->register(
                     TestProvider::fromArray([
-                        'id'       => $registeredProxy['providerName'],
-                        'module'   => $registeredProxy['module'],
-                        'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
-                        'category' => 'proxy',
-                        'active'   => true,
-                        'tags'     => [ ]
+                    'id'       => $registeredProxy['providerName'],
+                    'module'   => $registeredProxy['module'],
+                    'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
+                    'category' => 'proxy',
+                    'active'   => true,
+                    'tags'     => [ ]
                     ])
                 );
-
             } else {
                 $providerRegistry->register(
                     TestProvider::fromArray([
-                        'id'       => 'qtiServiceProxy',
-                        'module'   => 'taoQtiTest/runner/proxy/qtiServiceProxy',
-                        'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
-                        'category' => 'proxy',
-                        'active'   => true,
-                        'tags'     => [ ]
+                    'id'       => 'qtiServiceProxy',
+                    'module'   => 'taoQtiTest/runner/proxy/qtiServiceProxy',
+                    'bundle'   => 'taoQtiTest/loader/taoQtiTestRunner.min',
+                    'category' => 'proxy',
+                    'active'   => true,
+                    'tags'     => [ ]
                     ])
                 );
             }
@@ -1865,8 +1971,7 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         $this->skip('33.10.0', '33.10.1');
 
-        if( $this->isVersion('33.10.1') ) {
-
+        if ($this->isVersion('33.10.1')) {
             $providerRegistry = ProviderRegistry::getRegistry();
             $providerRegistry->remove('taoQtiTest/runner/provider/qti');
             $providerRegistry->register(
@@ -1900,7 +2005,8 @@ class Updater extends \common_ext_ExtensionUpdater {
 
         if ($this->isVersion('33.10.3')) {
             $assetService = $this->getServiceManager()->get(AssetService::SERVICE_ID);
-            $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest') . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
+            $taoTestRunnerQtiDir = $assetService->getJsBaseWww('taoQtiTest')
+                . 'node_modules/@oat-sa/tao-test-runner-qti/dist';
             $clientLibRegistry = ClientLibRegistry::getRegistry();
             $clientLibRegistry->register('taoQtiTest/runner', $taoTestRunnerQtiDir);
             $this->setVersion('34.0.0');
@@ -1949,7 +2055,8 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'name'        => 'APIP Text To Speech',
                 'module'      => 'taoQtiTest/runner/plugins/tools/apipTextToSpeech/plugin',
                 'bundle'      => 'taoQtiTest/loader/testPlugins.min',
-                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to item content.',
+                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to '
+                    . 'item content.',
                 'category'    => 'tools',
                 'active'      => false,
                 'tags'        => [  ]
@@ -1980,7 +2087,8 @@ class Updater extends \common_ext_ExtensionUpdater {
                 'name'        => 'APIP Text To Speech',
                 'module'      => 'taoQtiTest/runner/plugins/tools/apipTextToSpeech/plugin',
                 'bundle'      => 'taoQtiTest/loader/testPlugins.min',
-                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to item content.',
+                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to '
+                    . 'item content.',
                 'category'    => 'tools',
                 'active'      => true,
                 'tags'        => [  ]
@@ -1989,6 +2097,179 @@ class Updater extends \common_ext_ExtensionUpdater {
             $this->setVersion('35.6.0');
         }
 
-        $this->skip('35.6.0', '36.0.0');
+        $this->skip('35.6.0', '35.10.2.2');
+
+        if ($this->isBetween('35.10.2', '35.10.2.2')) {
+            $this->getServiceManager()->register(QtiTestUtils::SERVICE_ID, new QtiTestUtils([]));
+            $this->setVersion('35.11.0');
+        }
+
+        $this->skip('35.11.0', '35.13.3');
+
+        if ($this->isVersion('35.13.3')) {
+            $registry = PluginRegistry::getRegistry();
+            $registry->remove('taoQtiTest/runner/plugins/content/accessibility/keyNavigation');
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'keyNavigation',
+                'name' => 'Keyboard Navigation',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Provide a way to navigate within the test runner with the keyboard',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ 'core', 'qti' ]
+            ]));
+
+            $this->setVersion('36.0.0');
+        }
+
+        $this->skip('36.0.0', '37.0.1');
+
+        if ($this->isVersion('37.0.1')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+            $config['plugins']['dialog']['alert']['focus'] = 'navigable-modal-body';
+            $config['plugins']['dialog']['confirm']['focus'] = 'navigable-modal-body';
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('37.0.2');
+        }
+
+        $this->skip('37.0.2', '37.0.4');
+
+        if ($this->isVersion('37.0.4')) {
+            $this->getServiceManager()->register(
+                OverriddenOptionsRepositoryInterface::SERVICE_ID,
+                new NoopOverriddenOptionsRepository()
+            );
+
+            $this->setVersion('37.1.0');
+        }
+
+        $this->skip('37.1.0', '37.2.1');
+
+        if ($this->isVersion('37.2.1')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+              'id' => 'jumplinks',
+              'name' => 'Jump links',
+              'module' => 'taoQtiTest/runner/plugins/content/accessibility/jumplinks/plugin',
+              'bundle' => 'taoQtiTest/loader/testPlugins.min',
+              'description' => 'Provide a jump links to fastest keyboard navigation',
+              'category' => 'content',
+              'active' => false,
+              'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.3.0');
+        }
+
+        $this->skip('37.3.0', '37.4.2');
+
+        if ($this->isversion('37.4.2')) {
+            $this->getServiceManager()->register(
+                TimerAdjustmentServiceInterface::SERVICE_ID,
+                new TimerAdjustmentService()
+            );
+            $this->setVersion('37.5.0');
+        }
+
+        $this->skip('37.5.0', '37.9.3');
+
+        if ($this->isVersion('37.9.3')) {
+            $registry = PluginRegistry::getRegistry();
+
+            $registry->register(TestPlugin::fromArray([
+                'id' => 'mainLandmark',
+                'name' => 'Main landmark',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/mainLandmark/header',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Landmark header for the test runner main',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
+            ]));
+
+            $this->setVersion('37.10.2');
+        }
+
+        $this->skip('37.10.2', '38.1.1');
+
+        if ($this->isVersion('38.1.1')) {
+            // Register accessibility shortcuts
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
+            $config = $extension->getConfig('testRunner');
+
+            $config['shortcuts']['next'] = [
+                'trigger' => 'J',
+                'triggerAccessibility' => 'Alt+Shift+N'
+            ];
+
+            $config['shortcuts']['previous'] = [
+                'trigger' => 'K',
+                'triggerAccessibility' => 'Alt+Shift+P'
+            ];
+
+            $config['shortcuts']['jumplinks'] = [
+                'goToQuestion' => 'Alt+Shift+Q',
+                'goToTop' => 'Alt+Shift+T'
+            ];
+
+            $extension->setConfig('testRunner', $config);
+
+            $this->setVersion('38.2.0');
+        }
+
+        $this->skip('38.2.0', '38.5.0');
+
+        if ($this->isVersion('38.5.0')) {
+            OntologyUpdater::syncModels();
+
+            AclProxy::applyRule(
+                new AccessRule(
+                    'deny',
+                    'http://www.tao.lu/Ontologies/TAOTest.rdf#TaoQtiManagerRole',
+                    ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']
+                )
+            );
+            AclProxy::applyRule(
+                new AccessRule(
+                    'grant',
+                    XmlEditorInterface::XML_EDITOR_ROLE,
+                    ['ext' => 'taoQtiTest', 'mod' => 'XmlEditor']
+                )
+            );
+
+            $this->setVersion('38.6.0');
+        }
+
+        $this->skip('38.6.0', '38.6.1');
+
+        if ($this->isversion('38.6.1')) {
+            $this->getServiceManager()->register(
+                XmlEditorInterface::SERVICE_ID,
+                new XmlEditor([
+                    XmlEditor::OPTION_XML_EDITOR_LOCK => true
+                ])
+            );
+
+            $this->setVersion('38.7.0');
+        }
+
+        $this->skip('38.7.0', '38.12.2');
+
+        if ($this->isVersion('38.12.2')) {
+            $this->runExtensionScript(RegisterQtiPackageExporter::class);
+            $this->setVersion('38.13.0');
+        }
+
+        $this->skip('38.13.0', '38.14.0');
+
+
+        //Updater files are deprecated. Please use migrations.
+        //See: https://github.com/oat-sa/generis/wiki/Tao-Update-Process
+
+        $this->setVersion($this->getExtension()->getManifest()->getVersion());
     }
 }

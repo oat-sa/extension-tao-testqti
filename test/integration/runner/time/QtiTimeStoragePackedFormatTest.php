@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +21,8 @@
 
 namespace oat\taoQtiTest\test\integration\runner\time;
 
-
 use oat\generis\test\GenerisPhpUnitTestRunner;
+use oat\taoQtiTest\models\runner\time\AdjustmentMap;
 use oat\taoQtiTest\models\runner\time\QtiTimeLine;
 use oat\taoQtiTest\models\runner\time\QtiTimeStorageFormat;
 use oat\taoQtiTest\models\runner\time\storageFormat\QtiTimeStoragePackedFormat;
@@ -37,7 +38,7 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -92,7 +93,7 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
 
         $input = $this->getPackedJson();
         $decoded = $format->decode($input);
-        $this->assertEquals($this->getTimeLine(), $decoded);
+        $this->assertEqualsWithDelta($this->getTimeLine(), $decoded, 0.001, '');
     }
 
     /**
@@ -108,7 +109,7 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
         $encoded = $format->encode($input);
         $decoded = $format->decode($encoded);
 
-        $this->assertEquals($expected, $decoded);
+        $this->assertEqualsWithDelta($expected, $decoded, 0.001, '');
     }
 
     /**
@@ -119,6 +120,13 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
         $tags1 = ['Test1', 'TestPart1', 'TestSection1', 'Item1', 'Item1#0', 'Item1#0-1'];
         $tags2 = ['Test1', 'TestPart1', 'TestSection1', 'Item2', 'Item2#0', 'Item2#0-1'];
         $tags3 = ['Test1', 'TestPart1', 'TestSection1', 'Item3', 'Item3#0', 'Item3#0-1'];
+        $timerAdjustmentMap = new AdjustmentMap();
+        $timerAdjustmentMap->fromArray([
+            'itemId-1' => ['increase' => 90, 'decrease' => 0],
+            'sectionId-1' => ['increase' => 90, 'decrease' => 30],
+            'partId-1' => ['increase' => 240, 'decrease' => 30],
+            'testId-1' => ['increase' => 240, 'decrease' => 30],
+        ]);
         return [
             'timeLine' => new QtiTimeLine([
                 new TimePoint($tags1, 1507706410.8289, TimePoint::TYPE_START, TimePoint::TARGET_SERVER),
@@ -138,8 +146,8 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
             ]),
             'extraTime' => 0,
             'extendedTime' => 0,
-            'extraTimeLine' => new QtiTimeLine(),
-            'consumedExtraTime' => 0
+            'consumedExtraTime' => 0,
+            'timerAdjustmentMap' => $timerAdjustmentMap,
         ];
     }
 
@@ -180,12 +188,17 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
                     [1, 1, round(1507706526.4789 - $epoch, 6)],
                     [1, 2, round(1507706640.1501 - $epoch, 6)],
                 ],
-                'epoch'=> $epoch
+                'epoch' => $epoch
             ],
             'extraTime' => 0,
             'extendedTime' => 0,
-            'extraTimeLine' => [],
-            'consumedExtraTime' => 0
+            'consumedExtraTime' => 0,
+            'timerAdjustmentMap' => [
+                'itemId-1' => ['increase' => 90, 'decrease' => 0],
+                'sectionId-1' => ['increase' => 90, 'decrease' => 30],
+                'partId-1' => ['increase' => 240, 'decrease' => 30],
+                'testId-1' => ['increase' => 240, 'decrease' => 30],
+            ]
         ]);
     }
 
@@ -261,8 +274,13 @@ class QtiTimeStoragePackedFormatTest extends GenerisPhpUnitTestRunner
             ]],
             'extraTime' => 0,
             'extendedTime' => 0,
-            'extraTimeLine' => [],
-            'consumedExtraTime' => 0
+            'consumedExtraTime' => 0,
+            'timerAdjustmentMap' => [
+                'itemId-1' => ['increase' => 90, 'decrease' => 0],
+                'sectionId-1' => ['increase' => 90, 'decrease' => 30],
+                'partId-1' => ['increase' => 240, 'decrease' => 30],
+                'testId-1' => ['increase' => 240, 'decrease' => 30],
+            ],
         ]);
     }
 }

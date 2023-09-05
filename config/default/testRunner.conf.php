@@ -1,5 +1,4 @@
 <?php
-use oat\taoQtiTest\models\runner\session\TestSession;
 
 /**
  * This program is free software; you can redistribute it and/or
@@ -19,10 +18,12 @@ use oat\taoQtiTest\models\runner\session\TestSession;
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA;
  */
 
+use oat\taoQtiTest\models\runner\session\TestSession;
+
 /**
  * Default test runner config
  */
-return array(
+return [
     /**
      * Show warning messages if time remaining less than defined (in seconds) in key.
      * Also you should define type of warning message in value.
@@ -35,20 +36,22 @@ return array(
      * Available warning types: info (blue), warning (yellow), danger (red orange)
      * @type array
      */
-    'timerWarning' => array(
+    'timerWarning' => [
         'assessmentItemRef' => null,
         'assessmentSection' => null,
         'testPart'          => null,
         'assessmentTest'    => null
-    ),
+    ],
 
     /**
      * Tells what type of progress bar to use? Can be:
      * - percentage : Classic progress bar displaying the percentage of answered items
      * - position : Progress bar displaying the position of the current item within the test session
-     * - questions : Progress bar displaying the position of the last viewed question (informational items will be ignored)
+     * - questions : Progress bar displaying the position of the last viewed question
+     *               (informational items will be ignored)
      * - sections : Progress bar displaying the position of the last reached answerable section
-     * - categories : Progress bar displaying the position of the last reached item only for defined categories (in the 'categories' configuration)
+     * - categories : Progress bar displaying the position of the last reached item only for defined categories
+     *                (in the 'categories' configuration)
      * @type string
      */
     'progress-indicator' => 'percentage',
@@ -203,6 +206,13 @@ return array(
     'test-taker-review-skipahead' => false,
 
     /**
+     * Determines whether partially answered items (example: an item containing 2 interactions, where only 1 is
+     * answered) are shown as answered or unanswered in the review
+     * @type boolean
+     */
+    'test-taker-review-partially-answered-is-answered' => true,
+
+    /**
      * Enable/Disable warning message about unanswered items at the end of the test.
      * @type boolean
      */
@@ -338,7 +348,8 @@ return array(
          */
         'calculator' => [
             /**
-             * The optional amd path to an alternative template, e.g. myExtension/runner/plugins/tool/calculator/template.tpl
+             * The optional amd path to an alternative template, e.g.
+             * myExtension/runner/plugins/tool/calculator/template.tpl
              */
             'template' => '',
             /**
@@ -361,7 +372,7 @@ return array(
                  * Which button to focus by default
                  * @type string
                  */
-                'focus' => 'ok'
+                'focus' => 'navigable-modal-body'
             ],
             /**
              * Config for confirm dialogs
@@ -372,7 +383,7 @@ return array(
                  * Which button to focus by default
                  * @type string
                  */
-                'focus' => 'ok'
+                'focus' => 'navigable-modal-body'
             ]
         ],
 
@@ -383,11 +394,36 @@ return array(
             /**
              * The type of content navigation. For now only two modes are supported:
              * - `default`: the regular navigation mode
-             * - `linear`: a linear navigation mode, where the user can navigation linearly between choices using the tab key
+             * - `linear`: a linear navigation mode, where the user can navigation linearly between choices using the
+             *             tab key
              * @type string
              */
             'contentNavigatorType' => 'default'
         ],
+        /**
+         * The plugin renders review panel for test taker
+         */
+        'review' => [
+            /**
+             * Review panel layouts for test taker
+             * - `default`: the regular layout
+             * - `fizzy`: simplified layout aligned with NextGen styling
+             * @type string
+             */
+            'reviewLayout' => 'default',
+            /**
+             * Display section titles or not
+             * (Applies only to `fizzy` layout)
+             * @type boolean
+             */
+            'displaySectionTitles' => true,
+            /**
+             * Show item title as a tooltip
+             * (Applies only to `fizzy` layout)
+             * @type boolean
+             */
+            'displayItemTooltip' => false
+        ]
     ],
 
     /**
@@ -406,9 +442,10 @@ return array(
          * This config tells on which TimeLine to rely to compute the assessment test durations.
          * Caution, if the server TimeLine is always filled, the client TimeLine must be explicitly
          * provided by the implementation. If the client TimeLine is missing, the durations will be zeroed.
+         * The default QTI implementation is supplying the item duration on every move.
          * @type string
          */
-        'target' => 'server'
+        'target' => 'client'
     ],
 
     /**
@@ -583,35 +620,41 @@ return array(
             'next' => 'Tab'
         ],
         'next' => [
-            'trigger' => 'J'
+            'trigger' => 'J',
+            'triggerAccessibility' => 'Alt+Shift+N'
         ],
         'previous' => [
-            'trigger' => 'K'
+            'trigger' => 'K',
+            'triggerAccessibility' => 'Alt+Shift+P'
         ],
         'dialog' => [],
-        'magnifier' => array(
+        'magnifier' => [
             'toggle' => 'L',
             'in' => 'Shift+I',
             'out' => 'Shift+O',
             'close' => 'esc'
-        ),
-        'highlighter' => array(
+        ],
+        'highlighter' => [
             'toggle' => 'Shift+U'
-        ),
-        'area-masking' => array(
+        ],
+        'area-masking' => [
             'toggle' => 'Y'
-        ),
-        'line-reader' => array(
+        ],
+        'line-reader' => [
             'toggle' => 'G'
-        ),
-        'answer-masking' => array(
+        ],
+        'answer-masking' => [
             'toggle' => 'D'
-        ),
-        'apiptts' => array(
+        ],
+        'apiptts' => [
             'enterTogglePlayback' => 'Enter',
             'togglePlayback' => 'P',
             'spaceTogglePlayback' => 'Space'
-        ),
+        ],
+        'jumplinks' => [
+            'goToQuestion' => 'Alt+Shift+Q',
+            'goToTop' => 'Alt+Shift+T'
+        ]
     ],
 
     /**
@@ -628,6 +671,14 @@ return array(
      */
     'item-cache-size' => 3,
 
+    /**
+     * Defines the TimeToLive of items in the cache, in seconds.
+     * This is required for caching scenarios.
+     * The value must be lower than the typical TTL applied to the assets URL,
+     * defined in `config/tao/websource_NNNNNNNN.conf.php`, where `NNNNNNNN` is a random identifier.
+     * @type integer
+     */
+    'item-store-ttl' => 15 * 60,
 
     /**
      * Enables to run automatic navigation on items when timeLimits.minTime = timeLimits.maxTime
@@ -653,4 +704,16 @@ return array(
      */
     'enable-linear-next-item-warning-checkbox' => true,
 
-);
+    /**
+     * If 'enable-read-aloud-text-to-speech' is true, the Test Authoring Test Taker Tools panel on Sections and Items
+     * contains a checkbox to enable Text-To-Speech Tool on test. Note:This is not the APIP Text To Speech tool.
+     * @type boolean
+     */
+    'enable-read-aloud-text-to-speech' => false,
+
+    /**
+     * If 'skip-paused-assessment-dialog' is true, the pause message is not displayed when pausing the test.
+     * @type boolean
+     */
+    'skip-paused-assessment-dialog' => false,
+];

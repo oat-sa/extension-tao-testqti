@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2019 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2014-2020 (original work) Open Assessment Technologies SA;
  */
 
 /**
@@ -33,10 +33,18 @@ module.exports = function(grunt) {
                     outputDir : 'loader',
                     paths: require('./paths.json'),
                     dependencies : ['taoItems', 'taoQtiItem', 'taoTests'],
+                    packages: [
+                        {
+                            name: 'codemirror',
+                            location: '../../../tao/views/node_modules/codemirror',
+                            main: 'lib/codemirror'
+                        }
+                    ],
                     bundles : [{
                         name : 'taoQtiTest',
                         default : true,
-                        babel : true
+                        babel : true,
+                        excludeNested: ['taoQtiTest/controller/content/edit']
                     }, {
                         name : 'taoQtiTestRunner',
                         entryPoint : 'taoQtiTest/controller/runner/runner',
@@ -59,8 +67,12 @@ module.exports = function(grunt) {
                             'taoQtiTest/runner/plugins/**/*'
                         ],
                         dependencies : []
-                    }]
-                }
+                    }, {
+                        name: 'taoQtiTestXMLEditor',
+                        entryPoint: 'taoQtiTest/controller/content/edit',
+                        babel: true
+                    }
+                ]}
             }
         }
     });

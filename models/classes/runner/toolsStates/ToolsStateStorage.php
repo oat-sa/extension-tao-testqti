@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,9 +31,9 @@ use oat\oatbox\service\ConfigurableService;
  */
 abstract class ToolsStateStorage extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/ToolsStateStorage';
+    public const SERVICE_ID = 'taoQtiTest/ToolsStateStorage';
 
-    const OPTION_PERSISTENCE = 'persistence';
+    public const OPTION_PERSISTENCE = 'persistence';
 
     /**
      * @return \common_persistence_Persistence
@@ -40,7 +41,10 @@ abstract class ToolsStateStorage extends ConfigurableService
     protected function getPersistence()
     {
         $persistenceId = $this->getOption(self::OPTION_PERSISTENCE) ?: 'default';
-        return $this->getServiceLocator()->get(\common_persistence_Manager::SERVICE_ID)->getPersistenceById($persistenceId);
+        return $this
+            ->getServiceLocator()
+            ->get(\common_persistence_Manager::SERVICE_ID)
+            ->getPersistenceById($persistenceId);
     }
 
     /**

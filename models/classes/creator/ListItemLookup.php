@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,10 +18,12 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\models\creator;
 
+use common_exception_Error;
+use core_kernel_classes_Class;
 use oat\generis\model\OntologyAwareTrait;
-use oat\generis\model\OntologyRdfs;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\resources\ListResourceLookup;
 use oat\taoItems\model\CategoryService;
@@ -33,15 +36,60 @@ use oat\taoItems\model\CategoryService;
 class ListItemLookup extends ConfigurableService implements ItemLookup
 {
     use OntologyAwareTrait;
+    use PermissionLookupTrait;
 
-    const SERVICE_ID = 'taoQtiTest/CreatorItems/list';
+    public const SERVICE_ID = 'taoQtiTest/CreatorItems/list';
 
     /**
-     * Get the CategoryService
+     * Retrieve QTI Items for the given parameters.
+     *
+     * @param core_kernel_classes_Class $itemClass       the item class
+     * @param array                     $propertyFilters the lookup format
+     * @param int                       $offset          for paging
+     * @param int                       $limit           for paging
+     *
+     * @return array the items
+     * @throws common_exception_Error
      */
-    public function getCategoryService()
-    {
-        return $this->getServiceLocator()->get(CategoryService::SERVICE_ID);
+    public function getItems(
+        core_kernel_classes_Class $itemClass,
+        array $propertyFilters = [],
+        $offset = 0,
+        $limit = 30
+    ): array {
+        $result = $this->getListResourceLookupService()->getResources(
+            $itemClass,
+            [],
+            $propertyFilters,
+            $offset,
+            $limit
+        );
+
+        if (empty($result['nodes'])) {
+            return $result;
+        }
+
+        $nodeIds = array_map(
+            static function (array $node): string {
+                return $node['uri'];
+            },
+            $result['nodes']
+        );
+
+        foreach ($result['nodes'] as $i => &$node) {
+            if (!in_array($node['uri'], $nodeIds, true)) {
+                unset($result['nodes'][$i]);
+                $result['total']--;
+
+                continue;
+            }
+
+            $node['categories'] = $this->getCategoryService()->getItemCategories($this->getResource($node['uri']));
+        }
+        unset($node);
+
+        $result['nodes'] = $this->fillPermissions($result['nodes']);
+        return $result;
     }
 
     /**
@@ -52,24 +100,9 @@ class ListItemLookup extends ConfigurableService implements ItemLookup
         return $this->getServiceLocator()->get(ListResourceLookup::SERVICE_ID);
     }
 
-    /**
-     * Retrieve QTI Items for the given parameters.
-     * @param \core_kernel_classes_Class $itemClass the item class
-     * @param array $propertyFilters the lookup format
-     * @param int    $offset for paging
-     * @param int    $limit  for paging
-     * @return array the items
-     */
-    public function getItems(\core_kernel_classes_Class $itemClass, array $propertyFilters = [], $offset = 0, $limit = 30)
+    private function getCategoryService(): CategoryService
     {
-        $result = $this->getListResourceLookupService()->getResources($itemClass, [], $propertyFilters, $offset, $limit);
-
-        array_map(function($item){
-            return array_merge($item, [
-                'categories' => $this->getCategoryService()->getItemCategories($this->getResource($item['uri']))
-            ]);
-        }, $result['nodes']);
-
-        return $result;
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceLocator()->get(CategoryService::SERVICE_ID);
     }
 }

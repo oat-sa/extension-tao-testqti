@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,26 +34,25 @@ use qtism\data\storage\xml\XmlDocument;
  */
 class IdentifierReplacementPreProcessor extends ConfigurableService implements AssessmentItemRefPreProcessor
 {
-
     public function process(XmlDocument $testDocument)
     {
         /** @var \qtism\data\AssessmentItemRefCollection $assessmentItemRefs */
         $assessmentItemRefs = $testDocument->getDocumentComponent()->getComponentsByClassName('assessmentItemRef');
         /** @var \qtism\data\AssessmentItemRef $assessmentItemRef */
         $items = [];
-        foreach ($assessmentItemRefs as $assessmentItemRef){
+        foreach ($assessmentItemRefs as $assessmentItemRef) {
             $item = new \core_kernel_classes_Resource($assessmentItemRef->getHref());
 
-            if($item->exists()){
+            if ($item->exists()) {
                 $itemRdf  = Service::singleton()
                     ->getDataItemByRdfItem($item);
                 $identifier = $itemRdf->getIdentifier();
                 $identifier = Format::sanitizeIdentifier($identifier);
                 $count = 0;
                 $newId = $identifier;
-                while(isset($items[$newId])){
+                while (isset($items[$newId])) {
                     $count++;
-                    $appender = '-'.$count;
+                    $appender = '-' . $count;
                     $newId = $identifier . $appender;
                 }
                 $identifier = $newId;

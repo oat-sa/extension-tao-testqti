@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,12 +43,11 @@ use common_report_Report;
  */
 class QtiTestExporterTest extends GenerisPhpUnitTestRunner
 {
-
     private $dataDir = '';
     private $outputDir;
-    
 
-    public function setUp()
+
+    public function setUp(): void
     {
         parent::initTest();
         $this->testService = taoQtiTest_models_classes_QtiTestService::singleton();
@@ -95,8 +95,8 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-	 * test export form create
-	 *
+     * test export form create
+     *
      * @depends testInitExport
      * @depends testCreateInstance
      * @param  \taoQtiTest_models_classes_export_TestExport $testExport
@@ -113,8 +113,8 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-	 * test export form validators
-	 *
+     * test export form validators
+     *
      * @depends testExportFormCreate
      * @param  \tao_helpers_form_Form $form
      * @return void
@@ -125,12 +125,12 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-	 * test export form values
-	 *
+     * test export form values
+     *
      * @depends testExportFormCreate
-	 * @depends testCreateInstance
+     * @depends testCreateInstance
      * @param \tao_helpers_form_Form $form
-	 * @param  \core_kernel_classes_Resource $qtiTest
+     * @param  \core_kernel_classes_Resource $qtiTest
      * @return void
      */
     public function testExportFormValues($form, $qtiTest)
@@ -145,18 +145,18 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
         $this->assertInstanceOf(tao_helpers_form_FormElement::class, $elmInstance);
 
         $uri = tao_helpers_Uri::encode($qtiTest->getUri());
-        $elmInstance->setOptions(array(
+        $elmInstance->setOptions([
             $uri => $qtiTest->getLabel()
-        ));
+        ]);
     }
 
     /**
-	 * test export form validate
-	 *
+     * test export form validate
+     *
      * @depends testExportFormCreate
-	 * @depends testCreateInstance
+     * @depends testCreateInstance
      * @param \tao_helpers_form_Form $form
-	 * @param  \core_kernel_classes_Resource $qtiTest
+     * @param  \core_kernel_classes_Resource $qtiTest
      * @return void
      */
     public function testExportFormValidate($form, $qtiTest)
@@ -171,14 +171,36 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     }
 
     /**
-	 * test export
-	 *
+     * test export
+     *
      * @depends testInitExport
      * @depends testExportFormCreate
-	 * @depends testCreateInstance
+     * @depends testCreateInstance
+     *
+     * @param taoQtiTest_models_classes_export_TestExport $testExport
+     * @param tao_helpers_form_Form $form
+     *
+     * @throws \common_Exception
+     * @throws \common_exception_Error
+     */
+    public function testExportFormSubmitWithMissingClassUri($testExport, $form)
+    {
+        $formValues = $form->getValues();
+
+        $report = $testExport->export($formValues, $this->outputDir);
+        $this->assertInstanceOf(common_report_Report::class, $report);
+        $this->assertTrue($report->containsError());
+    }
+
+    /**
+     * test export
+     *
+     * @depends testInitExport
+     * @depends testExportFormCreate
+     * @depends testCreateInstance
      * @param \taoQtiTest_models_classes_export_TestExport $testExport
      * @param \tao_helpers_form_Form                       $form
-	 * @param  \core_kernel_classes_Resource $qtiTest
+     * @param  \core_kernel_classes_Resource $qtiTest
      * @return void
      */
     public function testExportFormSubmit($testExport, $form)
@@ -194,15 +216,15 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
         $this->assertFileExists($file['path']);
         $this->assertStringStartsWith($this->outputDir, $file['path']);
 
-        $this->assertContains('qti_unit_test', $file['path']);
+        $this->assertStringContainsString('qti_unit_test', $file['path']);
         unlink($file['path']);
     }
 
     /**
-	 * test QtiTestExporter alone
-	 *
-	 * @depends testCreateInstance
-	 * @param  \core_kernel_classes_Resource $qtiTest
+     * test QtiTestExporter alone
+     *
+     * @depends testCreateInstance
+     * @param  \core_kernel_classes_Resource $qtiTest
      * @return void
      */
     public function testQtiTestExporter($qtiTest)
@@ -213,7 +235,9 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
         $this->assertTrue($zip->open($file, ZipArchive::CREATE));
 
         $qtiTestExporter = new taoQtiTest_models_classes_export_QtiTestExporter(
-            $qtiTest, $zip, taoQtiTest_helpers_Utils::emptyImsManifest()
+            $qtiTest,
+            $zip,
+            taoQtiTest_helpers_Utils::emptyImsManifest()
         );
         $qtiTestExporter->export();
         $zip->close();
@@ -234,8 +258,11 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     public function testQtiTestExporterWithTestWithLongPaths()
     {
         // import
-        $testFile = __DIR__ . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
-        $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter'));
+        $testFile = __DIR__
+            . '/samples/archives/QTI 2.2/exportWithoutLongPaths/test_with_long_path_and_shared_stimulus.zip';
+        $class = \taoTests_models_classes_TestsService::singleton()
+            ->getRootclass()
+            ->createSubClass(uniqid('test-exporter'));
         $report = \taoQtiTest_models_classes_QtiTestService::singleton()
             ->importMultipleTests($class, $testFile);
 
@@ -256,7 +283,9 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
         $this->assertTrue($zip->open($file, ZipArchive::CREATE));
 
         $qtiTestExporter = new taoQtiTest_models_classes_export_QtiTestExporter(
-            new \core_kernel_classes_Resource($uri), $zip, taoQtiTest_helpers_Utils::emptyImsManifest()
+            new \core_kernel_classes_Resource($uri),
+            $zip,
+            taoQtiTest_helpers_Utils::emptyImsManifest()
         );
         $qtiTestExporter->export();
         $zip->close();
@@ -300,8 +329,11 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
     {
         // import
         $label = 'this label should be persisted';
-        $testFile = __DIR__ . '/samples/archives/QTI 2.2/test_label_is_persisted.zip'; // contains label 'QTI Example Te2211111st (LABEL)'
-        $class = \taoTests_models_classes_TestsService::singleton()->getRootclass()->createSubClass(uniqid('test-exporter'));
+        // contains label 'QTI Example Te2211111st (LABEL)'
+        $testFile = __DIR__ . '/samples/archives/QTI 2.2/test_label_is_persisted.zip';
+        $class = \taoTests_models_classes_TestsService::singleton()
+            ->getRootclass()
+            ->createSubClass(uniqid('test-exporter'));
         $report = \taoQtiTest_models_classes_QtiTestService::singleton()
             ->importMultipleTests($class, $testFile);
 
@@ -322,7 +354,9 @@ class QtiTestExporterTest extends GenerisPhpUnitTestRunner
         $this->assertTrue($zip->open($file, ZipArchive::CREATE));
 
         $qtiTestExporter = new taoQtiTest_models_classes_export_QtiTestExporter(
-            new \core_kernel_classes_Resource($resource->getUri()), $zip, taoQtiTest_helpers_Utils::emptyImsManifest()
+            new \core_kernel_classes_Resource($resource->getUri()),
+            $zip,
+            taoQtiTest_helpers_Utils::emptyImsManifest()
         );
         $qtiTestExporter->export();
         $zip->close();

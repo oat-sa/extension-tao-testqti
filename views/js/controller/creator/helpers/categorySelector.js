@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2017-2023 (original work) Open Assessment Technologies SA;
  */
 /**
  * This helper manages the category selection UI:
@@ -30,54 +30,53 @@ define([
     'core/eventifier',
     'ui/tooltip',
     'taoQtiTest/controller/creator/templates/index',
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
     'select2'
-], function($, _, __, eventifier, tooltip, templates) {
+], function ($, _, __, eventifier, tooltip, templates, featureVisibility) {
     'use strict';
 
-    var allPresets = [],
+    let allPresets = [],
         allQtiCategoriesPresets = [];
 
-
     function categorySelectorFactory($container) {
-        var categorySelector,
-
-            $presetsContainer = $container.find('.category-presets'),
-            $presetsCheckboxes,
-            $customCategoriesSelect = $container.find('[name=category-custom]');
+        const $presetsContainer = $container.find('.category-presets');
+        const $customCategoriesSelect = $container.find('[name=category-custom]');
 
         /**
          * Read the form state from the DOM and trigger an event with the result, so the listeners can update the item/section model
          * @fires categorySelector#category-change
          */
         function updateCategories() {
-            var selectedCategories,
-                indeterminatedCategories,
-
-                presetSelected = $container
+            const presetSelected = $container
                     .find('.category-preset input:checked')
                     .toArray()
-                    .map(function(categoryEl) {
+                    .map(function (categoryEl) {
                         return categoryEl.value;
                     }),
                 presetIndeterminate = $container
                     .find('.category-preset input:indeterminate')
                     .toArray()
-                    .map(function(categoryEl) {
+                    .map(function (categoryEl) {
                         return categoryEl.value;
                     }),
-                customSelected = $customCategoriesSelect.siblings('.select2-container').find('.select2-search-choice').not('.partial')
+                customSelected = $customCategoriesSelect
+                    .siblings('.select2-container')
+                    .find('.select2-search-choice')
+                    .not('.partial')
                     .toArray()
-                    .map(function(categoryEl) {
+                    .map(function (categoryEl) {
                         return categoryEl.textContent && categoryEl.textContent.trim();
                     }),
-                customIndeterminate = $customCategoriesSelect.siblings('.select2-container').find('.select2-search-choice.partial')
+                customIndeterminate = $customCategoriesSelect
+                    .siblings('.select2-container')
+                    .find('.select2-search-choice.partial')
                     .toArray()
-                    .map(function(categoryEl) {
+                    .map(function (categoryEl) {
                         return categoryEl.textContent && categoryEl.textContent.trim();
                     });
 
-            selectedCategories = presetSelected.concat(customSelected);
-            indeterminatedCategories = presetIndeterminate.concat(customIndeterminate);
+            const selectedCategories = presetSelected.concat(customSelected);
+            const indeterminatedCategories = presetIndeterminate.concat(customIndeterminate);
 
             /**
              * @event categorySelector#category-change
@@ -87,50 +86,50 @@ define([
             this.trigger('category-change', selectedCategories, indeterminatedCategories);
         }
 
-        categorySelector = {
+        const categorySelector = {
             /**
              * Create the category selection form
              *
              * @param {Array} [currentCategories] - all categories currently associated to the item. If applied to a section,
              * contains all the categories applied to at least one item of the section.
+             * @param {string} [level] one of the values `testPart`, `section` or `itemRef`
              */
-            createForm: function createForm(currentCategories) {
-                var self = this,
+            createForm: function createForm(currentCategories, level) {
+                const self = this,
                     presetsTpl = templates.properties.categorypresets,
                     customCategories = _.difference(currentCategories, allQtiCategoriesPresets);
 
+                const filteredPresets = featureVisibility.filterVisiblePresets(allPresets, level);
                 // add preset checkboxes
-                $presetsContainer.append(
-                    presetsTpl(allPresets)
-                );
+                $presetsContainer.append(presetsTpl({ presetGroups: filteredPresets }));
 
-                $presetsContainer.on('click', function(e) {
-                    var $preset = $(e.target).closest('.category-preset'),
-                        $checkbox;
-
+                $presetsContainer.on('click', function (e) {
+                    const $preset = $(e.target).closest('.category-preset');
                     if ($preset.length) {
-                        $checkbox = $preset.find('input');
+                        const $checkbox = $preset.find('input');
                         $checkbox.prop('indeterminate', false);
 
-                        _.defer(function() {
+                        _.defer(function () {
                             updateCategories.call(self);
                         });
                     }
                 });
 
                 // init custom categories field
-                $customCategoriesSelect.select2({
-                    width: '100%',
-                    tags : customCategories,
-                    multiple : true,
-                    tokenSeparators: [",", " ", ";"],
-                    formatNoMatches : function(){
-                        return __('Enter a custom category');
-                    },
-                    maximumInputLength : 32
-                }).on('change', function(){
-                    updateCategories.call(self);
-                });
+                $customCategoriesSelect
+                    .select2({
+                        width: '100%',
+                        tags: customCategories,
+                        multiple: true,
+                        tokenSeparators: [',', ' ', ';'],
+                        formatNoMatches: function () {
+                            return __('Enter a custom category');
+                        },
+                        maximumInputLength: 32
+                    })
+                    .on('change', function () {
+                        updateCategories.call(self);
+                    });
 
                 // enable help tooltips
                 tooltip.lookup($container);
@@ -142,17 +141,15 @@ define([
              * @param {String[]} [indeterminate] - categories in an indeterminate state at a section level
              */
             updateFormState: function updateFormState(selected, indeterminate) {
-                var customCategories;
-
                 indeterminate = indeterminate || [];
 
-                customCategories = _.difference(selected.concat(indeterminate), allQtiCategoriesPresets);
+                const customCategories = _.difference(selected.concat(indeterminate), allQtiCategoriesPresets);
 
                 // Preset categories
 
-                $presetsCheckboxes = $container.find('.category-preset input');
-                $presetsCheckboxes.each(function() {
-                    var category = this.value;
+                const $presetsCheckboxes = $container.find('.category-preset input');
+                $presetsCheckboxes.each(function () {
+                    const category = this.value;
 
                     this.indeterminate = false;
                     this.checked = false;
@@ -168,13 +165,16 @@ define([
 
                 $customCategoriesSelect.select2('val', customCategories);
 
-                $customCategoriesSelect.siblings('.select2-container').find('.select2-search-choice').each(function(){
-                    var $li = $(this);
-                    var content = $li.find('div').text();
-                    if(indeterminate.indexOf(content) !== -1){
-                        $li.addClass('partial');
-                    }
-                });
+                $customCategoriesSelect
+                    .siblings('.select2-container')
+                    .find('.select2-search-choice')
+                    .each(function () {
+                        const $li = $(this);
+                        const content = $li.find('div').text();
+                        if (indeterminate.indexOf(content) !== -1) {
+                            $li.addClass('partial');
+                        }
+                    });
             }
         };
 
@@ -195,7 +195,7 @@ define([
      *              label: 'Next Part Warning',
      *              qtiCategory : 'x-tao-option-nextPartWarning',
      *              description : 'Displays a warning before the user finishes a part'
- *              },
+     *          },
      *          ...
      *      ]
      *  },
@@ -215,7 +215,7 @@ define([
      */
     function extractCategoriesFromPresets() {
         return allPresets.reduce(function (prev, current) {
-            var groupIds = _.pluck(current.presets, 'qtiCategory');
+            const groupIds = _.pluck(current.presets, 'qtiCategory');
             return prev.concat(groupIds);
         }, []);
     }

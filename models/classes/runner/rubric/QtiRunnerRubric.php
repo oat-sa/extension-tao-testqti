@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +39,7 @@ use taoQtiTest_models_classes_QtiTestService;
  */
 class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerRubric';
+    public const SERVICE_ID = 'taoQtiTest/QtiRunnerRubric';
 
     /**
      * Gets the rubrics according to the current session state
@@ -83,11 +84,9 @@ class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
         $rubrics = [];
 
         if ($routeItem) {
-
             $rubricRefs = $routeItem->getRubricBlockRefs();
 
             if (count($rubricRefs) > 0) {
-
                 // -- variables used in the included rubric block templates.
                 // base path (base URI to be used for resource inclusion).
                 $basePathVarName = taoQtiTest_models_classes_QtiTestService::TEST_BASE_PATH_NAME;
@@ -99,7 +98,7 @@ class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
 
                 // views name (the variable to be accessed for the visibility of rubric blocks).
                 $viewsName = taoQtiTest_models_classes_QtiTestService::TEST_VIEWS_NAME;
-                $$viewsName = array(View::CANDIDATE);
+                $$viewsName = [View::CANDIDATE];
 
                 $tmpDir = \tao_helpers_File::createTempDir();
                 ob_start();

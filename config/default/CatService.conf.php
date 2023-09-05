@@ -1,4 +1,5 @@
 <?php
+
 use oat\taoQtiTest\models\cat\CatService;
 use oat\libCat\custom\EchoAdaptEngine;
 use oat\tao\model\api\ApiClientConnector;

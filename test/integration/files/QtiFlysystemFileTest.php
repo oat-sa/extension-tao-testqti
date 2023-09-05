@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,46 +31,48 @@ class QtiFlysystemFileTest extends GenerisPhpUnitTestRunner
 {
     protected $serviceLocator;
     protected $filesystem;
-    
-    public function setUp()
+
+    public function setUp(): void
     {
         $this->serviceLocator = ServiceManager::getServiceManager();
-        $this->filesystem = $this->serviceLocator->get(FileSystemService::SERVICE_ID)->getFileSystem('taoQtiTestSessionFilesystem');
-        
+        $this->filesystem = $this->serviceLocator
+            ->get(FileSystemService::SERVICE_ID)
+            ->getFileSystem('taoQtiTestSessionFilesystem');
+
         $this->cleanUp();
     }
-    
-    public function tearDown()
+
+    public function tearDown(): void
     {
         $this->cleanUp();
     }
-    
+
     private function cleanUp()
     {
         if ($this->filesystem->has('unittest')) {
             $this->filesystem->delete('unittest');
         }
-        
+
         if ($this->filesystem->has('unittest' . QtiFlysystemFile::FILENAME_MD_PREFIX)) {
             $this->filesystem->delete('unittest' . QtiFlysystemFile::FILENAME_MD_PREFIX);
         }
     }
-    
+
     public function testSimpleInstantiationNonExistingFile()
     {
         $file = new QtiFlysystemFile('taoQtiTestSessionFilesystem', 'unittest');
         $file->setServiceLocator($this->serviceLocator);
         $this->assertFalse($file->exists());
     }
-    
+
     public function testSimpleInstantiationExistingFileWithFileName()
     {
         $this->filesystem->write('unittest', 'text');
         $this->filesystem->write('unittest' . QtiFlysystemFile::FILENAME_MD_PREFIX, 'filename.txt');
-        
+
         $file = new QtiFlysystemFile('taoQtiTestSessionFilesystem', 'unittest');
         $file->setServiceLocator($this->serviceLocator);
-        
+
         $this->assertTrue($file->exists());
         $this->assertEquals('text/plain', $file->getMimeType());
         $this->assertTrue($file->hasFilename());
@@ -78,19 +81,19 @@ class QtiFlysystemFileTest extends GenerisPhpUnitTestRunner
         $this->assertEquals('unittest', $file->getIdentifier());
         $this->assertEquals(BaseType::FILE, $file->getBaseType());
         $this->assertEquals(Cardinality::SINGLE, $file->getCardinality());
-        $this->assertInternalType('resource', $file->getStream());
+        $this->assertIsResource($file->getStream());
     }
-    
+
     /**
      * @depends testSimpleInstantiationExistingFileWithFileName
      */
     public function testSimpleInstantiationExistingFileWithoutFileName()
     {
         $this->filesystem->write('unittest', 'text');
-        
+
         $file = new QtiFlysystemFile('taoQtiTestSessionFilesystem', 'unittest');
         $file->setServiceLocator($this->serviceLocator);
-        
+
         $this->assertTrue($file->exists());
         $this->assertFalse($file->hasFilename());
         $this->assertEquals('', $file->getFilename());

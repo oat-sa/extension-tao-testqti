@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,7 +18,6 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  *
  */
-
 
 namespace oat\taoQtiTest\test\integration\runner;
 
@@ -38,7 +38,7 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
     /**
      * @throws \common_ext_ExtensionException
      */
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -161,7 +161,7 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
         $eventData = ['foo' => 'bar'];
         $eventId = $extendedState->addEvent($eventName, $eventData);
 
-        $this->assertInternalType('string', $eventId);
+        $this->assertIsString($eventId);
 
         $events = $extendedState->getEvents();
         $this->assertEquals(1, count($events));
@@ -234,7 +234,7 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
                 ]
             ],
             ExtendedState::VAR_STORE_ID => $storeId
-        ];        
+        ];
         $storedJSON = json_encode($JSON);
         $storedJSON2 = json_encode($JSON2);
         $storageKey = ExtendedState::getStorageKeyFromTestSessionId($testSessionId);
@@ -252,10 +252,12 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
             }
             return null;
         });
-        $prophecy->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
-            $buffer[$args[0]][$args[1]] = $args[2];
-            return true;
-        });
+        $prophecy
+            ->set(Argument::type('string'), Argument::type('string'), Argument::type('string'))
+            ->will(function ($args) use (&$buffer) {
+                $buffer[$args[0]][$args[1]] = $args[2];
+                return true;
+            });
         $prophecy->has(Argument::type('string'), Argument::type('string'))->will(function ($args) use (&$buffer) {
             return isset($buffer[$args[0]]) && isset($buffer[$args[0]][$args[1]]);
         });
@@ -278,14 +280,14 @@ class ExtendedStateTest extends GenerisPhpUnitTestRunner
             StateStorage::SERVICE_ID => $mockStorage
         ]));
 
-        
+
         $extendedState = new ExtendedState($testSessionId, $userId);
         $extendedState->setServiceLocator($this->getServiceLocatorMock([
             StorageManager::SERVICE_ID => $storageManager
         ]));
 
         $this->assertTrue($extendedState->load());
-        
+
         $this->assertTrue($extendedState->getItemFlag($itemId));
         $this->assertFalse($extendedState->getItemFlag('bar'));
         $this->assertFalse($extendedState->getStoreId());

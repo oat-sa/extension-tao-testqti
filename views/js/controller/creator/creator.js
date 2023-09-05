@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -24,6 +24,7 @@ define([
     'lodash',
     'helpers',
     'i18n',
+    'services/features',
     'ui/feedback',
     'core/databindcontroller',
     'taoQtiTest/controller/creator/qtiTestCreator',
@@ -37,13 +38,19 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/categorySelector',
-    'ui/validator/validators'
-], function(
+    'taoQtiTest/controller/creator/helpers/validators',
+    'taoQtiTest/controller/creator/helpers/changeTracker',
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
+    'taoTests/previewer/factory',
+    'core/logger',
+    'taoQtiTest/controller/creator/views/subsection'
+], function (
     module,
     $,
     _,
     helpers,
     __,
+    features,
     feedback,
     DataBindController,
     qtiTestCreatorFactory,
@@ -57,9 +64,15 @@ define([
     qtiTestHelper,
     scoringHelper,
     categorySelector,
-    validators
-){
-    'use strict';
+    validators,
+    changeTracker,
+    featureVisibility,
+    previewerFactory,
+    loggerFactory,
+    subsectionView
+) {
+    ('use strict');
+    const logger = loggerFactory('taoQtiTest/controller/creator');
 
     /**
      * The test creator controller is the main entry point
@@ -67,21 +80,22 @@ define([
      * @exports creator/controller
      */
     const Controller = {
+        routes: {},
 
-        routes : {},
-
-         /**
-          * Start the controller, main entry method.
-          * @public
-          * @param {Object} options
-          * @param {Object} options.labels - the list of item's labels to give to the ItemView
-          * @param {Object} options.routes - action's urls
-          * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
-          * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
-          */
-        start(options){
+        /**
+         * Start the controller, main entry method.
+         * @public
+         * @param {Object} options
+         * @param {Object} options.labels - the list of item's labels to give to the ItemView
+         * @param {Object} options.routes - action's urls
+         * @param {Object} options.categoriesPresets - predefined category that can be set at the item or section level
+         * @param {Boolean} [options.guidedNavigation=false] - feature flag for the guided navigation
+         */
+        start(options) {
             const $container = $('#test-creator');
             const $saver = $('#saver');
+            const $previewer = $('#previewer');
+            const $back = $('#authoringBack');
 
             let creatorContext;
             let binder;
@@ -93,25 +107,42 @@ define([
             options = _.merge(module.config(), options || {});
             options.routes = options.routes || {};
             options.labels = options.labels || {};
-            options.categoriesPresets = options.categoriesPresets || {};
+            options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
             options.guidedNavigation = options.guidedNavigation === true;
 
             categorySelector.setPresets(options.categoriesPresets);
 
             //back button
-            $('#authoringBack').on('click', e => {
+            $back.on('click', e => {
                 e.preventDefault();
-                if (creatorContext) {
-                    creatorContext.trigger('creatorclose');
-                }
-                window.history.back();
+                creatorContext.trigger('creatorclose');
             });
+
+            //preview button
+            if (!Object.keys(options.labels).length) {
+                $previewer.attr('disabled', true).addClass('disabled');
+            }
+            $previewer.on('click', e => {
+                e.preventDefault();
+                if (!$previewer.hasClass('disabled')) {
+                    creatorContext.trigger('preview');
+                }
+            });
+            const isTestContainsItems = () => {
+                if ($container.find('.test-content').find('.itemref').length) {
+                    $previewer.attr('disabled', false).removeClass('disabled');
+                    return true;
+                } else {
+                    $previewer.attr('disabled', true).addClass('disabled');
+                    return false;
+                }
+            };
 
             //set up the ItemView, give it a configured loadItems ref
             itemView($('.test-creator-items .item-selection', $container));
 
             // forwards some binder events to the model overseer
-            $container.on('change.binder delete.binder',  (e, model) => {
+            $container.on('change.binder delete.binder', (e, model) => {
                 if (e.namespace === 'binder' && model && modelOverseer) {
                     modelOverseer.trigger(e.type, model);
                 }
@@ -119,15 +150,15 @@ define([
 
             //Data Binding options
             binderOptions = _.merge(options.routes, {
-                filters : {
-                    isItemRef : value => qtiTestHelper.filterQtiType(value, 'assessmentItemRef'),
-                    isSection : value => qtiTestHelper.filterQtiType(value, 'assessmentSection')
+                filters: {
+                    isItemRef: value => qtiTestHelper.filterQtiType(value, 'assessmentItemRef'),
+                    isSection: value => qtiTestHelper.filterQtiType(value, 'assessmentSection')
                 },
-                encoders : {
-                    'dom2qti' : Dom2QtiEncoder
+                encoders: {
+                    dom2qti: Dom2QtiEncoder
                 },
-                templates : templates,
-                beforeSave(model){
+                templates: templates,
+                beforeSave(model) {
                     //ensure the qti-type is present
                     qtiTestHelper.addMissingQtiType(model);
 
@@ -136,10 +167,10 @@ define([
 
                     //validate the model
                     try {
-                        qtiTestHelper.validateModel(model);
-                    } catch(err) {
+                        validators.validateModel(model);
+                    } catch (err) {
                         $saver.attr('disabled', false).removeClass('disabled');
-                        feedback().error(__('The test has not been saved.') + ` ${err}`);
+                        feedback().error(`${__('The test has not been saved.')} + ${err}`);
                         return false;
                     }
                     return true;
@@ -147,57 +178,83 @@ define([
             });
 
             //set up the databinder
-            binder = DataBindController
-                .takeControl($container, binderOptions)
-                .get( model => {
+            binder = DataBindController.takeControl($container, binderOptions).get(model => {
+                creatorContext = qtiTestCreatorFactory($container, {
+                    uri: options.uri,
+                    labels: options.labels,
+                    routes: options.routes,
+                    guidedNavigation: options.guidedNavigation
+                });
+                creatorContext.setTestModel(model);
+                modelOverseer = creatorContext.getModelOverseer();
 
-                    creatorContext = qtiTestCreatorFactory($container, {
-                        uri : options.uri,
-                        labels : options.labels,
-                        routes : options.routes,
-                        guidedNavigation : options.guidedNavigation
-                    });
-                    creatorContext.setTestModel(model);
-                    modelOverseer = creatorContext.getModelOverseer();
+                //detect the scoring mode
+                scoringHelper.init(modelOverseer);
 
-                    //detect the scoring mode
-                    scoringHelper.init(modelOverseer);
+                //register validators
+                validators.registerValidators(modelOverseer);
 
-                    //register validators
-                    validators.register('idFormat', qtiTestHelper.idFormatValidator());
-                    validators.register('testIdFormat', qtiTestHelper.testidFormatValidator());
-                    validators.register('testIdAvailable', qtiTestHelper.idAvailableValidator(modelOverseer), true);
+                //once model is loaded, we set up the test view
+                testView(creatorContext);
 
-                    //once model is loaded, we set up the test view
-                    testView(creatorContext);
+                //listen for changes to update available actions
+                testPartView.listenActionState();
+                sectionView.listenActionState();
+                subsectionView.listenActionState();
+                itemrefView.listenActionState();
 
-                    //listen for changes to update available actions
-                    testPartView.listenActionState();
-                    sectionView.listenActionState();
-                    itemrefView.listenActionState();
-                    itemrefView.resize();
+                changeTracker($container.get()[0], creatorContext, '.content-wrap');
 
-                    $(window)
-                        .off('resize.qti-test-creator')
-                        .on('resize.qti-test-creator', () => itemrefView.resize() );
+                creatorContext.on('save', function () {
+                    if (!$saver.hasClass('disabled')) {
+                        $saver.prop('disabled', true).addClass('disabled');
+                        binder.save(
+                            function () {
+                                $saver.prop('disabled', false).removeClass('disabled');
+                                feedback().success(__('Test Saved'));
+                                isTestContainsItems();
+                                creatorContext.trigger('saved');
+                            },
+                            function () {
+                                $saver.prop('disabled', false).removeClass('disabled');
+                            }
+                        );
+                    }
                 });
 
+                creatorContext.on('preview', function () {
+                    if (isTestContainsItems() && !creatorContext.isTestHasErrors()) {
+                        const saveUrl = options.routes.save;
+                        const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
+                        const config = module.config();
+                        return previewerFactory(config.provider, decodeURIComponent(testUri), {
+                            readOnly: false,
+                            fullPage: true,
+                            pluginsOptions: config.pluginsOptions
+                        }).catch(err => {
+                            logger.error(err);
+                            feedback().error(
+                                __('Test Preview is not installed, please contact to your administrator.')
+                            );
+                        });
+                    }
+                });
+
+                creatorContext.on('creatorclose', () => {
+                    creatorContext.trigger('exit');
+                    window.history.back();
+                });
+            });
+
             //the save button triggers binder's save action.
-            $saver.on('click', function(event){
-                event.preventDefault();
-
-                if(!$saver.hasClass('disabled')){
-                    $saver.attr('disabled', true).addClass('disabled');
-                    binder.save(function(){
-
-                        $saver.attr('disabled', false).removeClass('disabled');
-
-                        feedback().success(__('Test Saved'));
-
-                    }, function(){
-
-                        $saver.attr('disabled', false).removeClass('disabled');
-                    });
+            $saver.on('click', function (event) {
+                if (creatorContext.isTestHasErrors()) {
+                    event.preventDefault();
+                    feedback().warning(
+                        __('The test cannot be saved because it currently contains invalid settings.\nPlease fix the invalid settings and try again.')
+                    );
+                } else {
+                    creatorContext.trigger('save');
                 }
             });
         }

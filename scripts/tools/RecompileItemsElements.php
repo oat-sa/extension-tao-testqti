@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,11 +17,11 @@
  *
  * Copyright (c) 2018 (original work) Open Assessment Technologies SA;
  */
- 
+
 namespace oat\taoQtiTest\scripts\tools;
 
 use oat\generis\model\OntologyAwareTrait;
-use \common_report_Report as Report;
+use common_report_Report as Report;
 use oat\taoDelivery\model\AssignmentAggregator\UnionAssignmentService;
 use oat\taoDeliveryRdf\model\DeliveryAssemblyService;
 use oat\taoQtiItem\model\QtiJsonItemCompiler;
@@ -55,7 +56,8 @@ class RecompileItemsElements extends ScriptAction
      */
     protected function provideDescription()
     {
-        return 'Update every deliveries in order to add the metadata of AssessmentItemRef\'s by AssessmentItemRef Identifier.';
+        return 'Update every deliveries in order to add the metadata of AssessmentItemRef\'s by AssessmentItemRef '
+            . 'Identifier.';
     }
 
     /**
@@ -94,7 +96,7 @@ class RecompileItemsElements extends ScriptAction
      */
     protected function init()
     {
-        $this->wetRun = (boolean) $this->getOption('wetRun');
+        $this->wetRun = (bool) $this->getOption('wetRun');
         $this->report = new Report(Report::TYPE_INFO, 'Starting recompile deliveries');
     }
 
@@ -156,7 +158,8 @@ class RecompileItemsElements extends ScriptAction
         $this->report->add(
             new Report(
                 Report::TYPE_INFO,
-                "Starting to recompile items for delivery {$compiledDelivery->getLabel()} with identifier {$compiledDelivery->getUri()}:"
+                "Starting to recompile items for delivery {$compiledDelivery->getLabel()} with "
+                    . "identifier {$compiledDelivery->getUri()}:"
             )
         );
 
@@ -177,7 +180,7 @@ class RecompileItemsElements extends ScriptAction
                     $this->getProperty(\taoItems_models_classes_ItemsService::PROPERTY_ITEM_CONTENT)
                 );
                 foreach ($languages as $lang) {
-                    $path = $lang.DIRECTORY_SEPARATOR.QtiJsonItemCompiler::METADATA_FILE_NAME;
+                    $path = $lang . DIRECTORY_SEPARATOR . QtiJsonItemCompiler::METADATA_FILE_NAME;
                     if (!$directory->has($path)) {
                         $this->writeMetadata($item, $directory, $path, $properties);
                         $count++;
@@ -211,14 +214,16 @@ class RecompileItemsElements extends ScriptAction
             $this->report->add(
                 new Report(
                     Report::TYPE_SUCCESS,
-                    "Metadata for assessmentItemRef '{$item->getLabel()}' with identifier '{$item->getUri()}' was successfully compiled."
+                    "Metadata for assessmentItemRef '{$item->getLabel()}' with identifier '{$item->getUri()}' "
+                        . "was successfully compiled."
                 )
             );
         } else {
             $this->report->add(
                 new Report(
                     Report::TYPE_SUCCESS,
-                    "Metadata for assessmentItemRef '{$item->getLabel()}' with identifier '{$item->getUri()}' will successfully compiled."
+                    "Metadata for assessmentItemRef '{$item->getLabel()}' with identifier '{$item->getUri()}' "
+                        . "will successfully compiled."
                 )
             );
         }

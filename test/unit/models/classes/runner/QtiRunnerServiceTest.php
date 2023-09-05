@@ -2,30 +2,38 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner;
 
+use common_ext_Extension;
+use common_ext_ExtensionsManager;
 use oat\generis\test\TestCase;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\theme\Theme;
 use oat\tao\model\theme\ThemeService;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\session\TestSession;
+use Psr\Log\LoggerInterface;
 use qtism\data\AssessmentTest;
+use qtism\data\ItemSessionControl;
+use qtism\data\SubmissionMode;
+use qtism\runtime\tests\AssessmentItemSession;
 
 class QtiRunnerServiceTest extends TestCase
 {
-    const TEST_THEME_ID = 'test';
+    public const TEST_THEME_ID = 'test';
 
-    /** @var QtiRunnerService */
-    private $qtiRunnerService;
+    private QtiRunnerService $qtiRunnerService;
+    private common_ext_ExtensionsManager $extensionsManagerMock;
+    private FeatureFlagChecker $featureFlagChecker;
+    private LoggerInterface $loggerMock;
 
-    /** @var \common_ext_ExtensionsManager */
-    private $extensionsManagerMock;
-
-    public function setUp()
+    public function setUp(): void
     {
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+
         $this->qtiRunnerService = $this->getMockBuilder(QtiRunnerService::class)
             ->setMethods(['getTestConfig'])
-            ->getMock()
-        ;
+            ->getMock();
 
         $qtiRunnerConfigMock = $this->getMockBuilder(QtiRunnerConfig::class)->getMock();
 
@@ -33,47 +41,46 @@ class QtiRunnerServiceTest extends TestCase
             ->method('getConfig')
             ->willReturn([
                 'plugins' => [],
-            ])
-        ;
+            ]);
 
         $this->qtiRunnerService
             ->method('getTestConfig')
-            ->willReturn($qtiRunnerConfigMock)
-        ;
+            ->willReturn($qtiRunnerConfigMock);
 
-        $this->extensionsManagerMock = $this->getMockBuilder(\common_ext_ExtensionsManager::class)
+        $this->extensionsManagerMock = $this->getMockBuilder(common_ext_ExtensionsManager::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $themeServiceMock = $this->getMockBuilder(ThemeService::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $themeMock = $this->getMockBuilder(Theme::class)->getMock();
 
         $themeMock
             ->method('getId')
-            ->willReturn(self::TEST_THEME_ID)
-        ;
+            ->willReturn(self::TEST_THEME_ID);
 
         $themeServiceMock
             ->method('getTheme')
-            ->willReturn($themeMock)
-        ;
+            ->willReturn($themeMock);
+
+        $this->featureFlagChecker = $this->createMock(FeatureFlagChecker::class);
 
         $serviceLocatorMock = $this->getServiceLocatorMock([
-            \common_ext_ExtensionsManager::SERVICE_ID => $this->extensionsManagerMock,
+            common_ext_ExtensionsManager::SERVICE_ID => $this->extensionsManagerMock,
             ThemeService::SERVICE_ID => $themeServiceMock,
+            FeatureFlagChecker::class => $this->featureFlagChecker
         ]);
 
         $this->qtiRunnerService->setServiceLocator($serviceLocatorMock);
+
+        $this->qtiRunnerService->setLogger($this->loggerMock);
     }
 
     public function testGetDataWithThemeSwitcherEnabled()
     {
-        $extensionMock = $this->getMockBuilder(\common_ext_Extension::class)
+        $extensionMock = $this->getMockBuilder(common_ext_Extension::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -108,18 +115,20 @@ class QtiRunnerServiceTest extends TestCase
 
         $testData = $this->qtiRunnerService->getTestData($qtiRunnerServiceContextMock);
 
+        // phpcs:disable Generic.Files.LineLength
         $this->assertTrue(
-            array_key_exists('config',$testData)
+            array_key_exists('config', $testData)
             && array_key_exists('plugins', $testData['config'])
             && array_key_exists(QtiRunnerService::TOOL_ITEM_THEME_SWITCHER, $testData['config']['plugins'])
             && array_key_exists('activeNamespace', $testData['config']['plugins'][QtiRunnerService::TOOL_ITEM_THEME_SWITCHER])
             && self::TEST_THEME_ID === $testData['config']['plugins'][QtiRunnerService::TOOL_ITEM_THEME_SWITCHER]['activeNamespace']
         );
+        // phpcs:enable Generic.Files.LineLength
     }
 
     public function testGetDataWithThemeSwitcherDisabled()
     {
-        $extensionMock = $this->getMockBuilder(\common_ext_Extension::class)
+        $extensionMock = $this->getMockBuilder(common_ext_Extension::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -155,5 +164,117 @@ class QtiRunnerServiceTest extends TestCase
             && array_key_exists('plugins', $testData['config'])
             && !array_key_exists(QtiRunnerService::TOOL_ITEM_THEME_SWITCHER, $testData['config']['plugins'])
         );
+    }
+
+    public function testDoNotDisplayFeedbacksForSimultaneousSubmissionMode(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+
+        $context->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentSubmissionMode')
+            ->willReturn(SubmissionMode::SIMULTANEOUS);
+
+        $this->assertFalse($this->qtiRunnerService->displayFeedbacks($context));
+    }
+
+    public function testDisplayFeedbacksForNewTestCompilationVersion(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $itemSessionControl = $this->createMock(ItemSessionControl::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+
+        $context->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $context->expects($this->once())
+            ->method('getTestCompilationVersion')
+            ->willReturn(1);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentSubmissionMode')
+            ->willReturn(SubmissionMode::INDIVIDUAL);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentAssessmentItemSession')
+            ->willReturn($assessmentItemSession);
+
+        $assessmentItemSession->expects($this->once())
+            ->method('getItemSessionControl')
+            ->willReturn($itemSessionControl);
+
+        $itemSessionControl->expects($this->once())
+            ->method('mustShowFeedback')
+            ->willReturn(true);
+
+        $this->assertTrue($this->qtiRunnerService->displayFeedbacks($context));
+    }
+
+    public function testDisplayFeedbacksForOldCompilationVersionIfFeatureFlagIsEnabled(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+
+        $context->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $context->expects($this->once())
+            ->method('getTestCompilationVersion')
+            ->willReturn(0);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentSubmissionMode')
+            ->willReturn(SubmissionMode::INDIVIDUAL);
+
+        $this->featureFlagChecker->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $this->assertTrue($this->qtiRunnerService->displayFeedbacks($context));
+    }
+
+    public function testDisplayFeedbacksForOldCompilationVersionIfFeatureFlagIsDisabled(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $itemSessionControl = $this->createMock(ItemSessionControl::class);
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+
+        $context->expects($this->once())
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        $context->expects($this->once())
+            ->method('getTestCompilationVersion')
+            ->willReturn(0);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentSubmissionMode')
+            ->willReturn(SubmissionMode::INDIVIDUAL);
+
+        $this->featureFlagChecker->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(false);
+
+        $testSession->expects($this->once())
+            ->method('getCurrentAssessmentItemSession')
+            ->willReturn($assessmentItemSession);
+
+        $assessmentItemSession->expects($this->once())
+            ->method('getItemSessionControl')
+            ->willReturn($itemSessionControl);
+
+        $itemSessionControl->expects($this->once())
+            ->method('mustShowFeedback')
+            ->willReturn(true);
+
+        $this->assertTrue($this->qtiRunnerService->displayFeedbacks($context));
     }
 }

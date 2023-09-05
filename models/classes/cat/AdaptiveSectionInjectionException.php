@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +30,6 @@ namespace oat\taoQtiTest\models\cat;
  */
 class AdaptiveSectionInjectionException extends CatException
 {
-
     private $invalidItemIdentifiers;
 
     /**
@@ -37,7 +37,8 @@ class AdaptiveSectionInjectionException extends CatException
      *
      * @param string $message A human readable message explaining the error.
      * @param array $invalidItemIdentifiers An array of string containing the invalid items identifiers.
-     * @param int $code (optional) A machine understandable error code. This should be used by very specific implementations only.
+     * @param int $code (optional) A machine understandable error code. This should be used by very specific
+     *                  implementations only.
      * @param \Exception $previous A previous caught exception that led to this one.
      */
     public function __construct($message, array $invalidItemIdentifiers, $code = 0, \Exception $previous = null)
@@ -45,12 +46,12 @@ class AdaptiveSectionInjectionException extends CatException
         parent::__construct($message, $code, $previous);
         $this->setInvalidItemIdentifiers($invalidItemIdentifiers);
     }
-    
+
     public function getInvalidItemIdentifiers()
     {
         return $this->invalidItemIdentifiers;
     }
-    
+
     private function setInvalidItemIdentifiers(array $invalidItemIdentifiers)
     {
         $this->invalidItemIdentifiers = $invalidItemIdentifiers;

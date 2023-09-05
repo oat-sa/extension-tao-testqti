@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,16 +20,16 @@
 
 namespace oat\taoQtiTest\models\runner\synchronisation;
 
+use Laminas\ServiceManager\ServiceLocatorAwareInterface;
+use Laminas\ServiceManager\ServiceLocatorAwareTrait;
 use oat\oatbox\event\EventManager;
-use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\event\ItemOfflineEvent;
 use oat\taoQtiTest\models\runner\QtiRunnerClosedException;
 use oat\taoQtiTest\models\runner\QtiRunnerMessageService;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\RunnerParamParserTrait;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class TestRunnerAction
@@ -41,7 +42,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     use RunnerParamParserTrait;
     use RunnerToolStates;
 
-    const OFFLINE_VARIABLE = 'OFFLINE_ITEM';
+    public const OFFLINE_VARIABLE = 'OFFLINE_ITEM';
 
     /** @var double The timestamp of current action */
     protected $time;
@@ -55,12 +56,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
     /** @var array Parameters of the current action */
     protected $parameters;
 
-    /**
-     * Main method to process the action
-     *
-     * @return mixed
-     */
-    abstract public function process();
+    abstract public function process(): array;
 
     /**
      * Method to set a trace variable telling that the item was offline
@@ -74,7 +70,7 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
             ? $this->getRequestParameter('itemDefinition')
             : null;
 
-        if(!is_null($itemRef)){
+        if (!is_null($itemRef)) {
             $event = new ItemOfflineEvent($serviceContext->getTestSession(), $itemRef);
             $this->getServiceLocator()->get(EventManager::SERVICE_ID)->trigger($event);
             return true;
@@ -203,7 +199,9 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
         $requiredFields = array_unique($this->getRequiredFields());
         $isValid = ($requiredFields == array_unique(array_intersect($requiredFields, array_keys($this->parameters))));
         if (!$isValid) {
-            throw new \common_exception_InconsistentData('Some parameters are missing. Required parameters are : ' . implode(', ', $requiredFields));
+            throw new \common_exception_InconsistentData(
+                'Some parameters are missing. Required parameters are : ' . implode(', ', $requiredFields)
+            );
         }
     }
 
@@ -213,7 +211,8 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
      * @param Exception [$e] Optional exception from which extract the error context
      * @return array
      */
-    protected function getErrorResponse($e = null) {
+    protected function getErrorResponse($e = null)
+    {
         $response = [
             'success' => false,
             'type' => 'error',
@@ -236,7 +235,9 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
                 case $e instanceof QtiRunnerPausedException:
                     if ($this->serviceContext) {
                         $messageService = $this->getServiceLocator()->get(QtiRunnerMessageService::SERVICE_ID);
+                        // phpcs:disable Generic.Files.LineLength
                         $response['message'] = __($messageService->getStateMessage($this->getServiceContext()->getTestSession()));
+                        // phpcs:enable Generic.Files.LineLength
                     }
                     $response['type'] = 'TestState';
                     break;
@@ -253,5 +254,10 @@ abstract class TestRunnerAction implements ServiceLocatorAwareInterface
         }
 
         return $response;
+    }
+
+    protected function getPsrContainer(): ContainerInterface
+    {
+        return $this->getServiceLocator()->getContainer();
     }
 }

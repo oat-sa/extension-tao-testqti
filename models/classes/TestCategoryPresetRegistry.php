@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
+
 /**
  * A registry of category presets providers (not of preset themselves)
  *
@@ -30,7 +32,6 @@ use oat\oatbox\AbstractRegistry;
 
 class TestCategoryPresetRegistry extends AbstractRegistry
 {
-
     /**
      * Specify in which extensions the config will be stored
      *
@@ -50,6 +51,4 @@ class TestCategoryPresetRegistry extends AbstractRegistry
     {
         return 'test_category_preset_registry';
     }
-
-
 }

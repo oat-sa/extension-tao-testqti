@@ -1,0 +1,1767 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TAO 2023.02 LTS\n"
+"PO-Revision-Date: 2023-02-14T10:14:22\n"
+"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
+"MIME-Version: 1.0\n"
+"Language: nb-NO\n"
+"sourceLanguage: en-US\n"
+"targetLanguage: nb-NO\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ../../\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: .\n"
+
+msgid "%s to answer %s"
+msgstr "%s for å svare på %s"
+
+msgid "(Visual) Clear all active highlights"
+msgstr "(Visuell) Fjern alle aktive uthevinger"
+
+msgid "(Visual) Highlight Text"
+msgstr "(Visuell) Uthev tekst"
+
+msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
+msgstr "En QTI-oppgave som er med i QTI-prøven '%s' kunne ikke kompileres."
+
+msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
+msgstr "En QTI-prøve må inneholde minst en QTI-oppgave som skal kompileres. Ingen funnet."
+
+msgid "A qti testpackage"
+msgstr "En QTI prøvepakke"
+
+msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
+msgstr "En ekstern ressurs referert til i QTI-prøven '%s' kunne ikke hentes."
+
+msgid "A response to every question in this item is required."
+msgstr "Du må angi et svar på hvert spørsmål i denne oppgaven."
+
+msgid "A response to this item is required."
+msgstr "Du må svare på denne oppgaven."
+
+msgid "A valid response to this item is required."
+msgstr "Det kreves et gyldig svar på denne oppgaven."
+
+msgid "A visible section is one that is identifiable by the candidate."
+msgstr "En synlig seksjon er en som kan identifiseres av eleven."
+
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
+
+msgid "Activated"
+msgstr "Aktivert"
+
+msgid "add a new weight"
+msgstr "legg til ny vekting"
+
+msgid "Add a zip file containing QTI/APIP tests and items"
+msgstr "Legg til en zip-fil som inneholder QTI/APIP-prøver og oppgaver"
+
+msgid "Add selected item(s) here."
+msgstr "Legg til valgt(e) oppgave(r) her."
+
+msgid "Add Subsection"
+msgstr ""
+
+msgid "Add the source file"
+msgstr "Legg til kildefilen"
+
+msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
+msgstr "Etter at du har fullført delen, er det umulig å gå tilbake for å gjøre endringer. Er du sikker på at du vil avslutte?"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "Allow Comment"
+msgstr "Tillat kommentarer"
+
+msgid "Allow Review"
+msgstr "Tillat å se gjennom"
+
+msgid "Allow Section Skipping"
+msgstr "Tillat å gå videre"
+
+msgid "Allow Skipping"
+msgstr "Tillat å gå videre"
+
+msgid "Allow skipping of the current section."
+msgstr "Tillat å gå videre til neste seksjon."
+
+msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
+msgstr "Tillat eleven å spille av mediefiler som er tilknyttet APIP-protokollen, til oppgavens innhold."
+
+msgid "Allow the candidate to review his answers."
+msgstr "Tillat eleven å se gjennom besvarelsen sin."
+
+msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
+msgstr "Tillat eleven å fjerne/gjennomgå svarene i oppgaven."
+
+msgid "Allow the test-taker to highlight parts of the item text."
+msgstr "Tillat eleven å markere deler av oppgaveteksten."
+
+msgid "Allow the test-taker to mask and unmask answers in choice interactions."
+msgstr "Tillat eleven å markere og fjerne markering i oppgaven."
+
+msgid "Allow the test-taker to mask parts of the item with a movable mask."
+msgstr "Tillat eleven å markere deler av oppgaven som kan fjernes etterpå."
+
+msgid "Allow the test-taker to use a basic calculator."
+msgstr "Tillat eleven å bruke en enkel kalkulator."
+
+msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
+msgstr "Tillat eleven å bruke en kalkulator som følger operasjonsrekkefølgen (BODMAS)."
+
+msgid "Allow the test-taker to use a movable magnifier tool."
+msgstr "Tillat eleven å bruke et forstørrelsesverktøy."
+
+msgid "Allow the test-taker to use a scientific calculator."
+msgstr "Tillat eleven å bruke en vitenskapelig kalkulator."
+
+msgid "Allow the test-taker to visually isolate a line of text."
+msgstr "Tillat eleven å visuelt isolere en tekstlinje."
+
+msgid "Allows Test-taker to zoom in and out the item content."
+msgstr "Tillat eleven å zoome inn og ut oppgaveinnholdet."
+
+msgid "Also compute the score per categories"
+msgstr "Beregn poengsum per kategori"
+
+msgid "An error occured while retrieving items"
+msgstr "Det oppstod en feil under henting av oppgaver"
+
+msgid "An error occurred during results submission. Please retry."
+msgstr "Det oppstod en feil under levering av prøven. Prøv på nytt."
+
+msgid "An error occurred during the test initialization!"
+msgstr "Det oppstod en feil under prøvenitialiseringen!"
+
+msgid "An error occurred during the test, please content your administrator."
+msgstr "Det oppstod en feil under prøven. Kontakt administrator."
+
+msgid "An error occurred!"
+msgstr "Det oppstod en feil!"
+
+msgid "An error occurs, please contact your administrator"
+msgstr "Det oppstår en feil. Ta kontakt med administrator"
+
+msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
+msgstr ""
+
+msgid "An item involved in the test cannot be read or is not QTI compliant."
+msgstr "En oppgave i prøvesettet kan ikke leses eller er ikke QTI-kompatibel."
+
+msgid "An item involved in the test cannot be written."
+msgstr "Et oppgave som finnes i testen kan ikke skrives."
+
+msgid "An unknown error occured while compiled QTI Test '%s'."
+msgstr "Det oppstod en ukjent feil under kompilering av QTI-prøven '%s'."
+
+msgid "An unknown error occured while compiling QTI test '%s'."
+msgstr "Det oppstod en ukjent feil under kompilering av QTI-prøven '%s'."
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr "Det oppstod en feil som ikke kan gjenopprettes. Prøvegjennomføringen din blir satt på pause."
+
+msgid "and"
+msgstr "og"
+
+msgid "and flagged %s of them"
+msgstr "og flagget %s av dem"
+
+msgid "and you flagged %s item(s) that you can review now"
+msgstr "og du flagget %s oppgaver(er) som du kan se gjennom nå"
+
+msgid "Answer Eliminator"
+msgstr "Svareliminator"
+
+msgid "Answer Masking"
+msgstr "Merking av svar"
+
+msgid "Answered"
+msgstr "Svart"
+
+msgid "APIP Text To Speech"
+msgstr "APIP Tekst til tale"
+
+msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
+msgstr "Er du sikker på at du vil slette svaret ditt og gå til neste oppgave? Du kan ikke gå tilbake i oppgavesettet."
+
+msgid "Are you sure you want to end the test?"
+msgstr "Vil du avslutte prøven?"
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
+msgstr "Er du sikker på at du vil gå til neste oppgave? Du vil ikke kunne gå tilbake igjen og endre svaret ditt."
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
+msgstr "Er du sikker på at du vil gå til neste oppgave? Du vil ikke kunne gå tilbake og avgi et svar."
+
+msgid "Are you sure you want to go to the next item? You will not be able to go back."
+msgstr "Er du sikker på at du vil gå til neste oppgave? Du vil ikke kunne gå tilbake."
+
+msgid "Area Masking"
+msgstr "Markering av område"
+
+msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
+msgstr "Knytte en kopi til en seksjon lar deg validere denne delen mot den angitte kopien."
+
+msgid "Associate Blueprint"
+msgstr "Koble en kopi"
+
+msgid "At least one mandatory parameter was required but found missing in your request"
+msgstr "Minst én obligatorisk parameter var påkrevd, men det ble funnet mangler i forespørselen din"
+
+msgid "Author"
+msgstr "Forfatter"
+
+msgid "Auxiliary file not found at location \"%s\"."
+msgstr "Hjelpefile ble ikke funnet på \"%s\"."
+
+msgid "Black on Cream"
+msgstr "Svart på kremfarge"
+
+msgid "Black on Light Blue"
+msgstr "Svart på lyseblå"
+
+msgid "Black on Light Magenta"
+msgstr "Svart på lys magenta"
+
+msgid "Black on White"
+msgstr "Svart på hvit"
+
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
+msgid "Bookmarked question %s"
+msgstr ""
+
+msgid "Calculator"
+msgstr "Kalkulator"
+
+msgid "Calculator BODMAS"
+msgstr "BODMAS kalkulator"
+
+msgid "Can not playback media file!"
+msgstr "Kan ikke spille av mediefil!"
+
+msgid "CANCEL"
+msgstr "AVBRYT"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Candidate"
+msgstr "Elev"
+
+msgid "Cardinality"
+msgstr "Kardinalitet"
+
+msgid "Categories"
+msgstr "Kategorier"
+
+msgid "Category score"
+msgstr "Kategoriskår"
+
+msgid "Change the current color preset"
+msgstr "Endre gjeldende fargeinnstilling"
+
+msgid "Class"
+msgstr "Mappe"
+
+msgid "Class successfully created."
+msgstr "Mappe ble opprettet."
+
+msgid "Clear all active highlights"
+msgstr "Nullstill alle aktive uthevinger"
+
+msgid "Clear Highlights"
+msgstr "Nullstill utheving"
+
+msgid "Click \"%s\" to continue."
+msgstr "Klikk \"%s\" for å fortsette."
+
+msgid "Click to speak"
+msgstr "Klikk for å snakke"
+
+msgid "Close"
+msgstr "Lukk"
+
+msgid "Close Magnifier"
+msgstr "Lukk forstørrelsesglass"
+
+msgid "Close the mask"
+msgstr "Lukk maskering"
+
+msgid "Close this Section"
+msgstr "Lukk denne seksjonen"
+
+msgid "Collapse the review panel"
+msgstr "Skjul vinduet for å se gjennom oppgaver"
+
+msgid "Comment"
+msgstr "Kommentar"
+
+msgid "Completed items"
+msgstr "Fullførte oppgaver"
+
+msgid "Connected to server"
+msgstr "Koblet til server"
+
+msgid "CONTINUE TO THE NEXT SECTION"
+msgstr "FORTSETT TIL NESTE SEKSJON"
+
+msgid "Contrast"
+msgstr "Kontrast"
+
+msgid "Controls the contribution of an individual item score to the overall test score."
+msgstr "Kontrollerer individuell oppgaveskår opp mot det totale prøveresultatet."
+
+msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
+msgstr "Kontrollerer maksimalt antall tillatte forsøk. 0 betyr ubegrenset antall."
+
+msgid "Covers parts of the item"
+msgstr "Dekker deler av oippgaven"
+
+msgid "Custom"
+msgstr "Egendefinert skåring"
+
+msgid "custom categories"
+msgstr "egendefinerte kategorier"
+
+msgid "Custom outcome processing. No changes will be made to the existing rules."
+msgstr "Egendefinert instilling. Det vil ikke bli gjort endringer i de eksisterende reglene."
+
+msgid "Cut score"
+msgstr "Poengsum"
+
+msgid "Cut score (pass ratio)"
+msgstr "Poengsum (bestått)"
+
+msgid "Disable validation"
+msgstr "Deaktiver validering"
+
+msgid "Disconnected from server"
+msgstr "Frakoblet fra server"
+
+msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
+msgstr "Vis en advarsel dersom eleven avslutter en prøve, og det er fortsatt gjenstår ubesvarte oppgaver eller oppgaver som er merket."
+
+msgid "Display a warning before the test-taker ends the test part."
+msgstr "Vis en advarsel før eleven avslutter en prøvedel."
+
+msgid "Display a warning before the test-taker ends the test."
+msgstr "Vis en advarsel før eleven avslutter prøven."
+
+msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
+msgstr "Vis en advarsel når eleven hopper over en prøvedel. Krever at alternativet Hopp over prøvedel er aktivert."
+
+msgid "Display End Test Warning"
+msgstr "Vis advarsel om at eleven er i ferd med å avslutte prøven"
+
+msgid "Display Next Part Warning"
+msgstr "Vis advarsel om at eleven nå går til neste del av prøven"
+
+msgid "Display Next Section Warning"
+msgstr "Vis advarsel om at eleven nå går til neste seksjon av prøven"
+
+msgid "Display Unanswered Warning"
+msgstr "Vis advarsel om at eleven har ubesvarte oppgaver"
+
+msgid "Displayed label"
+msgstr "Vist navn"
+
+msgid "Displays a customisable magnifier"
+msgstr "Viser en forstørrelsesglass som kan tilpasses"
+
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
+msgid "Do not flag the current item for later review"
+msgstr "Ikke flagg oppgaven for å se gjennom senere"
+
+msgid "Do not rename it."
+msgstr "Ikke gi nytt navn."
+
+msgid "Do not show alert on timeout"
+msgstr "Ikke vis varsel ved timeout"
+
+msgid "Don't save"
+msgstr "Ikke lagre"
+
+msgid "Don\'t save"
+msgstr ""
+
+msgid "Download"
+msgstr "Last ned"
+
+msgid "Download the pupil responses and submit manually."
+msgstr "Last ned elevbesvarelsene og lever manuelt."
+
+msgid "Eliminate choices"
+msgstr "Fjern valgene"
+
+msgid "Enable Mark for Review"
+msgstr "Aktiver mulighet for bokmerke"
+
+msgid "Enable mark for review of items. Requires the Review Screen option."
+msgstr "Aktiver mulighet for bokmerke på oppgaver. Krever aktivert oversiktsknapp."
+
+msgid "Enable Review Screen"
+msgstr "Aktiver oversiktsknapp"
+
+msgid "Enable selection"
+msgstr "Aktiver utvalg"
+
+msgid "Enable Skipping Ahead"
+msgstr "Aktiver gå videre"
+
+msgid "Enable text to speech"
+msgstr "Aktiver tekst-til-tale"
+
+msgid "Enable the item review screen / navigator."
+msgstr "Aktiver oppgavegjennomgang/navigering på skjerm."
+
+msgid "Enables skipping to items within this section. Requires the review screen option."
+msgstr "Aktiver muligheten til å  gå videre i oppgavesettet innen gitt oppgaveseksjon. Krever at valget se gjennom oppgavene på skjerm er aktivert."
+
+msgid "End test"
+msgstr "Avslutt prøven"
+
+msgid "End Test"
+msgstr "Avslutt prøven"
+
+msgid "Enter a blueprint"
+msgstr "Skriv inn en kopi"
+
+msgid "Enter a custom category"
+msgstr "Skriv inn en kategori"
+
+msgid "Error"
+msgstr "Feil"
+
+msgid "Error during file import"
+msgstr "Filimport feilet"
+
+msgid "Error found in the IMS QTI Test:\n"
+"%s"
+msgstr "Feil funnet i IMS QTI-prøven: %s"
+
+msgid "Expand the review panel"
+msgstr "Utvid se gjennom oppgave-panelet"
+
+msgid "Export"
+msgstr ""
+
+msgid "Export failed for the test \"%s"
+msgstr "Eksport mislyktes for testen \"%s"
+
+msgid "Export failed. Key uri nor classUri in formValues are not defined"
+msgstr ""
+
+msgid "Export metadata"
+msgstr "Eksporter metadata"
+
+msgid "Export QTI %s Test Package"
+msgstr ""
+
+msgid "Export QTI 2.1 Test Package"
+msgstr "Eksporter QTI 2.1 Testpakke"
+
+msgid "Export QTI 2.2 Test Package"
+msgstr "Eksporter QTI 2.2 Testpakke"
+
+msgid "Export successful for the test \"%s"
+msgstr "Oppgavesett \"%s ble eksportert"
+
+msgid "Feedback block"
+msgstr "Tilbakemeldingsboks"
+
+msgid "File name"
+msgstr "Filnavn"
+
+msgid "File not found"
+msgstr "Filen ble ikke funnet"
+
+msgid "File not found!"
+msgstr "Filen ble ikke funnet!"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Fixed"
+msgstr "Fast"
+
+msgid "Fixed position in a shuffled the selection."
+msgstr "Fast posisjon i et blandet utvalg."
+
+msgid "Flag for Review"
+msgstr "Flagg for å se gjennom"
+
+msgid "Flag the current item for later review"
+msgstr "Flagg denne oppgaven for senere å kunne se gjennom"
+
+msgid "Flagged"
+msgstr "Flagget"
+
+msgid "Flagged for review"
+msgstr "Flagget for å kunne se gjennom"
+
+msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr "Sett denne oppgaven som en informasjonsside som ikke skal tas med i opptellingen av (u)besvarte/.flaggede oppgaver."
+
+msgid "Go to next item"
+msgstr "Gå til neste oppgave"
+
+msgid "Go to the current question"
+msgstr "Gå til det aktuelle spørsmålet"
+
+msgid "Go to the next item?"
+msgstr "Gå til neste oppgave?"
+
+msgid "Go to the next question"
+msgstr "Gå til neste spørsmål"
+
+msgid "Go to the previous question"
+msgstr "Gå til forrige spørsmål"
+
+msgid "Go to the top of the page"
+msgstr "Gå til toppen av siden"
+
+msgid "Gray on Green"
+msgstr "Grå på grønn"
+
+msgid "Hide Review"
+msgstr "Skjul å se gjennom"
+
+msgid "Hide test overview panel"
+msgstr ""
+
+msgid "Hide the review screen"
+msgstr "Skjul å se gjennom på skjerm"
+
+msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
+msgstr "Skjul advarselen som vises automatisk når eleven forlater en tidsbestemt seksjon."
+
+msgid "Hide Timed Section Warning"
+msgstr "Skjul advarsel om tidsbestemt seksjon"
+
+msgid "Hide timers"
+msgstr "Skjul tidtaker"
+
+msgid "Highlight"
+msgstr "Markering"
+
+msgid "Highlight Text"
+msgstr "Markert tekst"
+
+msgid "Highlighter"
+msgstr "Markeringspenn"
+
+msgid "hours"
+msgstr "timer"
+
+msgid "Html title"
+msgstr "Html tittel"
+
+msgid "Identifier"
+msgstr "Identifikator"
+
+msgid "If required it must appear (at least once) in the selection."
+msgstr "Om nødvendig må det vises (minst en gang) i utvalget."
+
+msgid "If required, it must appears at least once in the selection."
+msgstr "Om nødvendig, må det vises minst en gang i utvalget."
+
+msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
+msgstr "Hvis den er angitt, forårsaker den at rekkefølgen på underelementene blir randomisert, ellers bruker den rekkefølgen som underelementene er definert i."
+
+msgid "If the candidate can skip the item, without submitting a response (default is true)."
+msgstr "Hvis eleven kan hoppe over oppgaven, uten å angi et svar (så er standardinnstilling riktig)."
+
+msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
+msgstr "Hvis kategorialternativet er angitt, blir skåren også behandlet per kategori, og hvert resultat vil finnes i PASS_xxx, der xxx er navnet på kategorien."
+
+msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
+msgstr "Hvis kategorialternativet er angitt, blir skåren også behandlet per kategori, og hvert resultat vil finnes i resultatet SCORE_xxx, der xxx er navnet på kategorien."
+
+msgid "If the connection cannot be restored, see option B."
+msgstr "Hvis tilkoblingen ikke kan gjenopprettes, se alternativ B."
+
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr ""
+
+msgid "If you need help, please contact our Helpline on 0330 088 4171."
+msgstr ""
+
+msgid "Import"
+msgstr "Import"
+
+msgid "Import a QTI/APIP Content Package"
+msgstr "Importer en QTI/APIP-innholdspakke"
+
+msgid "Import QTI TEST into \"%s"
+msgstr "Importer QTI PRØVE til \"%s"
+
+msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgstr "IMS QTI-oppgaven referert til som \"%s\" i IMS dokument-filen kunne ikke importeres."
+
+msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
+msgstr "IMS QTI-oppgaven referert til som \"%s\" i IMS dokument-filen ble importert."
+
+msgid "IMS QTI Test Package successfully imported."
+msgstr "IMS QTI-prøvepakke ble importert."
+
+msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
+msgstr "IMS QTI-prøve referert til som \"%s\" i IMS dokument-filen ble importert."
+
+msgid "In this part of the test navigation is not allowed."
+msgstr "I denne delen av prøven er navigasjon ikke tillatt."
+
+msgid "Inconsistency at line %1d:"
+msgstr "Inkonsekvens i linje %1d:"
+
+msgid "Individual"
+msgstr "Individuell"
+
+msgid "Informational item"
+msgstr ""
+
+msgid "Informational Item Usage"
+msgstr "Informasjonsside"
+
+msgid "Internal server error!"
+msgstr "Intern serverfeil!"
+
+msgid "is already used in the test."
+msgstr "er allerede brukt i prøven."
+
+msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
+msgstr "er ikke en gyldig identifikator (alfanumeriske tegn, understreking, bindestrek og prikker)"
+
+msgid "is not a valid identifier (everything except spaces)"
+msgstr "er ikke en gyldig identifikator (alt unntatt mellomrom)"
+
+msgid "It is not possible to save your responses while working offline."
+msgstr "Det er ikke mulig å lagre svarene dine når du jobber offline."
+
+msgid "Item \"%s\" is completed."
+msgstr "Oppgave \"%s\" er fullført."
+
+msgid "Item %d"
+msgstr "Oppgave %d"
+
+msgid "Item %d of %d"
+msgstr "Oppgave %d av %d"
+
+msgid "Item %s loaded"
+msgstr "Oppgave %s er lastet inn"
+
+msgid "Item Reference Properties"
+msgstr "Oppgaveegenskaper"
+
+msgid "Item response identifier does not match current item"
+msgstr "Oppgavens svaridentifikator samsvarer ikke med gjeldende oppgave"
+
+msgid "Item Session Control"
+msgstr "Innstilling for gjennomføring"
+
+msgid "items"
+msgstr "oppgaver"
+
+msgid "Items"
+msgstr "Oppgaver"
+
+msgid "Items can optionally be assigned to one or more categories."
+msgstr "Oppgaver kan tilordnes en eller flere kategorier."
+
+msgid "Items Compilation"
+msgstr "Oppgavesamling"
+
+msgid "Items marked for later review"
+msgstr "Oppgaver merket for senere å kunne se gjennom"
+
+msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
+msgstr "Oppgaver med assessmentItemRef-identifikatorer \"%s\" er ikke registrert i det relaterte CAT-endepunktet."
+
+msgid "Jump Menu"
+msgstr "Pop-up meny"
+
+msgid "Jump to:"
+msgstr "Gå til:"
+
+msgid "Keep Together"
+msgstr "Hold sammen"
+
+msgid "Keyboard Navigation"
+msgstr "Tastaturnavigasjon"
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr "Tastatursnarveier for tilgjengelighetsverktøy er tilgjengelige for eleven."
+
+msgid "Late submission allowed"
+msgstr "Sen levering tillatt"
+
+msgid "Leave a comment"
+msgstr "Legg igjen en kommentar"
+
+msgid "Line Reader"
+msgstr "Linjeleser"
+
+msgid "Linear"
+msgstr "Lineær"
+
+msgid "Link durations to activate the guided navigation"
+msgstr "Lenkevarighet for å aktivere den guidede navigasjonen"
+
+msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
+msgstr "Låst varighet: guidet navigasjon. Prøveovergangen til neste oppgave når varigheten når 0."
+
+msgid "Magnifier"
+msgstr "Forstørrelsesglass"
+
+msgid "Magnify less"
+msgstr "Forstørre mindre"
+
+msgid "Magnify more"
+msgstr "Forstørre mer"
+
+msgid "Magnifying Glass"
+msgstr "Forstørrelsesglass"
+
+msgid "Main navigation"
+msgstr "Hovednavigasjoin"
+
+msgid "Manage Rubric Blocks"
+msgstr "Administrer rubrikkbokser"
+
+msgid "Manage test properties"
+msgstr "Administrer prøveegenskaper"
+
+msgid "Manage Tests"
+msgstr "Administrer Oppgavesett"
+
+#, tao-public
+msgid "Manage tests"
+msgstr "Administrer oppgavesett"
+
+msgid "Mark for review"
+msgstr "Marker for å se gjennom"
+
+msgid "Masking"
+msgstr "Markering"
+
+msgid "Match value"
+msgstr "Lik verdi"
+
+msgid "Max Attempts"
+msgstr "Maks forsøk"
+
+msgid "Maximum Duration"
+msgstr "Maksimal Varighet"
+
+msgid "Maximum duration : the items times out when the duration reaches 0."
+msgstr "Maksimal varighet: oppgavene forsvinner når varigheten når 0."
+
+msgid "Maximum duration for the all test."
+msgstr "Maksimal varighet for hele prøven."
+
+msgid "Maximum duration for this item."
+msgstr "Maksimal varighet for denne oppgaven."
+
+msgid "Maximum duration for this section."
+msgstr "Maksimal varighet for denne seksjonen."
+
+msgid "Maximum duration for this test part."
+msgstr "Maksimal varighet for denne prøvedelen."
+
+msgid "Metadata export is not available for test \"%s."
+msgstr "Metadataeksport er ikke tilgjengelig for prøve \"%s."
+
+msgid "Minimum Duration"
+msgstr "Minste Varighet"
+
+msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
+msgstr "Minste varighet: tvinger eleven til å bli værende på oppgaven til angitt varighet utløper."
+
+msgid "Minimum duration for the test."
+msgstr "Minste varighet for prøven."
+
+msgid "Minimum duration for this item."
+msgstr "Minste varighet for denne oppgaven."
+
+msgid "Minimum duration for this section."
+msgstr "Minste varighet for denne seksjonen."
+
+msgid "Minimum duration for this test part."
+msgstr "Minste varighet for denne prøvedelen."
+
+msgid "minutes"
+msgstr "minutter"
+
+msgid "Missed required parameter \'id"
+msgstr "Manglet nødvendig parameter \'id"
+
+msgid "Missed required parameter \'id\"
+msgstr ""
+
+msgid "Missed test package file"
+msgstr "Manglet prøvepakke fil"
+
+msgid "Missing filename for QTI Test export"
+msgstr ""
+
+msgid "Missing required configuration option %s"
+msgstr "Mangler nødvendig konfigurasjonsalternativ %s"
+
+msgid "Move"
+msgstr "Flytt"
+
+msgid "Move Down"
+msgstr "Flytte Ned"
+
+msgid "Move Up"
+msgstr "Flytte Opp"
+
+msgid "Moving to the next item without time limit reached message."
+msgstr "Flytter til neste oppgave uten melding om at tidsbegrensning er nådd."
+
+msgid "name of the pupil"
+msgstr "elevens navn"
+
+msgid "Navigation"
+msgstr "Navigasjon"
+
+msgid "Navigation shortcuts"
+msgstr "Snarveier for navigasjon"
+
+msgid "Navigation Warnings"
+msgstr "Navigasjonsadvarsler"
+
+msgid "network"
+msgstr "vettverk"
+
+msgid "New Rubric Block"
+msgstr "Ny rubrikkboks"
+
+msgid "New section"
+msgstr "Ny seksjon"
+
+msgid "New test part"
+msgstr "Ny prøvedel"
+
+msgid "Next"
+msgstr "Neste"
+
+msgid "Next Section"
+msgstr "Neste seksjon"
+
+msgid "No"
+msgstr "Ingen"
+
+msgid "NO"
+msgstr ""
+
+msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
+msgstr "Ingen CAT-motor er konfigurert for CAT-endepunkt \"%s\"."
+
+msgid "No file found at location \"%s\"."
+msgstr "Fant ingen fil på stedet \"%s\"."
+
+msgid "No instance in form to export"
+msgstr ""
+
+msgid "No more attempts allowed for item \"%s\"."
+msgstr "Ingen flere tillatte forsøk for oppgave \"%s\"."
+
+msgid "no outcome declaration found"
+msgstr "ingen resultater funnet"
+
+msgid "No outcome processing. Erase the existing rules, if any."
+msgstr "Ingen resultatbehandling. Slett eventuelle eksisterende regler."
+
+msgid "No reference to any IMS QTI Item found."
+msgstr "Ingen referanse til noen IMS QTI-oppgave ble funnet."
+
+msgid "Non Linear"
+msgstr "Ikke lineær"
+
+msgid "None"
+msgstr "Ingen"
+
+msgid "Not all test could be exported"
+msgstr "Ikke alle prøver kunne eksporteres"
+
+msgid "Not answered"
+msgstr "Ikke besvart"
+
+msgid "Not seen"
+msgstr "Ikke sett"
+
+msgid "Not shuffled, the position remains fixed."
+msgstr "Ikke blandet, posisjonen forblir fast."
+
+msgid "Offline"
+msgstr "Offline"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "OK & End test"
+msgstr "OK og avslutt prøve"
+
+msgid "Once you close this section, you cannot return to it or change your answers."
+msgstr "Når du lukker denne delen, kan du ikke gå tilbake eller endre svarene dine."
+
+msgid "One or more dependent IMS QTI Items could not be imported."
+msgstr "En eller flere avhengige IMS QTI-oppgaver kunne ikke importeres."
+
+msgid "Online"
+msgstr "Online"
+
+msgid "Only display the items marked for review"
+msgstr "Vis bare oppgavene som er merket for å se gjennom"
+
+msgid "Only display the unanswered items"
+msgstr "Vis bare de ubesvarte oppgavene"
+
+msgid "Open Calculator"
+msgstr "Åpne kalkulator"
+
+msgid "Open Keyboard Shortcuts"
+msgstr "Åpne tastatursnarveier"
+
+msgid "Option A"
+msgstr "Valg A"
+
+msgid "Option B"
+msgstr "Valg B"
+
+msgid "or"
+msgstr "eller"
+
+msgid "Ordering"
+msgstr "Rekkefølge på oppgaver"
+
+msgid "Outcome"
+msgstr "Resultat"
+
+msgid "Outcome declarations"
+msgstr "Skåringsvariabler"
+
+msgid "Outcome processing"
+msgstr "Resultatprosessering"
+
+msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
+msgstr "Pakken er gyldig, men ingen prøver ble funnet. Sørg for at den inneholder gyldige QTI-prøver."
+
+msgid "Part %d"
+msgstr "Del %d"
+
+msgid "Passage"
+msgstr "Innhold"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Pause the test"
+msgstr "Sett prøven på pause"
+
+msgid "Play"
+msgstr "Spille"
+
+msgid "Please confirm you want to leave the test."
+msgstr "Bekreft at du vil avslutte prøven."
+
+msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
+msgstr "Prøv å laste inn siden på nytt eller sett prøven på pause. Hvis du setter den på pause, vil du kunne fortsette prøven fra denne siden."
+
+msgid "Please wait while we try to restore the connection."
+msgstr "Vent mens vi prøver å gjenopprette tilkoblingen."
+
+msgid "Preview"
+msgstr "Forhåndsvis"
+
+msgid "Preview the covered area"
+msgstr "Forhåndsvis merket området"
+
+msgid "Previous"
+msgstr "Forrige"
+
+msgid "PROCEED & END ASSESSMENT"
+msgstr "FORTSETT OG AVSLUTT VURDERING"
+
+msgid "Proctor"
+msgstr "Proktor"
+
+msgid "Properties"
+msgstr "Egenskaper"
+
+msgid "QTI 2.1 Test Driver"
+msgstr "QTI 2.1 Test Driver"
+
+msgid "QTI Item Runner"
+msgstr "QTI Item Runner"
+
+msgid "QTI Test \"%s\" publishing failed."
+msgstr "QTI Prøve \"%s\" publisering mislyktes."
+
+msgid "QTI Test \"%s\" successfully published."
+msgstr "QTI-prøven \"%s\" ble publisert."
+
+msgid "QTI Test Metadata"
+msgstr ""
+
+msgid "QTI Test Package %s"
+msgstr ""
+
+msgid "QTI Test Package 2.1"
+msgstr "QTI-prøvepakke 2.1"
+
+msgid "QTI Test Package 2.2"
+msgstr "QTI-prøvepakke 2.2"
+
+msgid "QTI/APIP Test Content Package"
+msgstr "Innholdspakke for QTI/APIP-prøve"
+
+msgid "Question"
+msgstr "Spørsmål"
+
+msgid "question"
+msgstr "spørsmål"
+
+msgid "Question %s"
+msgstr ""
+
+msgid "questions"
+msgstr "spørsmål"
+
+msgid "Reference"
+msgstr "Referanse"
+
+msgid "Regenerate"
+msgstr "Regenerere"
+
+msgid "Reload the page"
+msgstr "Last siden på nytt"
+
+msgid "remaining %s %s"
+msgstr "gjenværende %s %s"
+
+msgid "Remove Item Reference"
+msgstr "Fjern oppgavereferanse"
+
+msgid "Remove Rubric Block"
+msgstr "Fjern Rubrikkboks"
+
+msgid "Remove Section"
+msgstr "Fjern seksjon"
+
+msgid "Remove Subsection"
+msgstr ""
+
+msgid "Remove Test Part"
+msgstr "Fjern prøvedel"
+
+msgid "Required"
+msgstr "Obligatorisk"
+
+msgid "Required field"
+msgstr "Obligatorisk felt"
+
+msgid "Reset filters"
+msgstr "Tilbakestill filtre"
+
+msgid "Resource(s) successfully exported."
+msgstr "Ressurs(er) ble eksportert."
+
+msgid "ResultTransmission event successfully registered"
+msgstr ""
+
+msgid "Review"
+msgstr "Se gjennom"
+
+msgid "Review my Answers"
+msgstr "Se gjennom svarene mine"
+
+msgid "Rubric Block"
+msgstr "Rubrikkboks"
+
+msgid "Rubric Block Properties"
+msgstr "Egenskaper for rubrikkboks"
+
+msgid "Rubric Blocks"
+msgstr "Rubrikkbokser"
+
+msgid "Save"
+msgstr "Lagre"
+
+msgid "Saved"
+msgstr "Lagret"
+
+msgid "Scientific Calculator"
+msgstr "Vitenskapelig kalkulator"
+
+msgid "Scorer"
+msgstr "Skårer"
+
+msgid "Scoring"
+msgstr "Skåring"
+
+msgid "Scratch pad"
+msgstr "Tegnebrett"
+
+msgid "Scratch Pad"
+msgstr "Tegnebrett"
+
+msgid "Scratchpad"
+msgstr "Tegnebrett"
+
+msgid "seconds"
+msgstr "sekunder"
+
+msgid "Section %d"
+msgstr "Seksjon %d"
+
+msgid "Section %d of %d"
+msgstr "Seksjon %d av %d"
+
+msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr "Seksjonskategorinivåene gjør det mulig å konfigurere kategoriene for oppgavene samtidig. En kategori i grått betyr at alle oppgavene har den kategorien. En kategori i hvitt betyr at bare noen få oppgaver har den kategorien."
+
+msgid "Section Properties"
+msgstr "Egenskaper for seksjon"
+
+msgid "Select"
+msgstr "Velge"
+
+msgid "Select a blueprint"
+msgstr "Velg en kopi"
+
+msgid "Select Items"
+msgstr "Velg oppgaver"
+
+msgid "Select the way the responses of your test should be processed"
+msgstr "Velg måten svarene på prøven din skal behandles på"
+
+msgid "Selection"
+msgstr "Utvalg"
+
+msgid "Send"
+msgstr "Send"
+
+msgid "Set outcome identifier the feedback block is related to"
+msgstr "Angi resultatidentifikator som tilbakemelding er relatert til"
+
+msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
+msgstr "Angi poengsum (eller beståttgrense) knyttet til prøven. Det må være en flyt mellom 0 og 1."
+
+msgid "Set the rubric block as a feedback block"
+msgstr "Angi rubrikkboksen som en tilbakemeldingsboks"
+
+msgid "Set the value of the outcome that will activate the feedback block"
+msgstr "Angi verdien av svaret som vil aktivere tilbakemeldingsboksen"
+
+msgid "Set the weight identifier used to process the score"
+msgstr "Angi vektidentifikatoren som brukes til å behandle skåren"
+
+msgid "Set the XHTML-QTI class of the rubric block."
+msgstr "Angi XHTML-QTI-mappen for rubrikkboksen."
+
+msgid "Set the XHTML-QTI identifier of the rubric block."
+msgstr "Angi XHTML-QTI-identifikatoren for rubrikkboksen."
+
+msgid "SetSynchronisationService successfully configured."
+msgstr "SetSynchronisationService ble konfigurert."
+
+msgid "Settings"
+msgstr "Innstillinger"
+
+msgid "Show Feedback"
+msgstr "Vis tilbakemelding"
+
+msgid "Show Review"
+msgstr "Vis å se gjennom"
+
+msgid "Show Solution"
+msgstr "Vis løsning"
+
+msgid "Show test overview panel"
+msgstr ""
+
+msgid "Show the review screen"
+msgstr "Vis å se gjennom på skjerm"
+
+msgid "Show the solution once the answer is submitted."
+msgstr "Vis løsningen når besvarelsen er levert."
+
+msgid "Show timers"
+msgstr "Vis tidtakere"
+
+msgid "Show/Hide the review screen"
+msgstr "Vis/skjul å se gjennom-bildet"
+
+msgid "Shuffle"
+msgstr "Blande"
+
+msgid "Simultaneous"
+msgstr "Samtidig"
+
+msgid "Skip"
+msgstr "Hopp over"
+
+msgid "Skip &amp; End Test"
+msgstr "Hopp over & amp; Avslutt Prøve"
+
+msgid "Skip and end test"
+msgstr "Hopp over og avslutt prøve"
+
+msgid "Skip and go to the end of the test"
+msgstr "Hopp over og gå til slutten av prøven"
+
+msgid "Skip and go to the next item"
+msgstr "Hopp over og gå til neste oppgave"
+
+msgid "Skip to the end of the test"
+msgstr "Gå til slutten av prøven"
+
+msgid "Skip to the next item"
+msgstr "Gå til neste oppgave"
+
+msgid "Skip to the next section"
+msgstr "Gå til neste seksjon"
+
+msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
+msgstr "Noen rubrikkbokser er oppdatert for å gjenspeile endringene i resultatlisten."
+
+msgid "Something unexpected happened."
+msgstr "En uventet handling oppstod."
+
+msgid "Something went wrong..."
+msgstr "Noe gikk galt..."
+
+msgid "Speech speed"
+msgstr "Talehastighet"
+
+msgid "Speed"
+msgstr "Hastighet"
+
+msgid "Start Test-part"
+msgstr "Start prøvedel"
+
+msgid "Step 1: Download the file (see below when available)."
+msgstr "Trinn 1: Last ned filen (se nedenfor når den er tilgjengelig)"
+
+msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
+msgstr "Trinn 2: Når du er online igjen, vennligst send den nedlastede filen til receptionbaseline@nfer.ac.uk sammen med "
+
+msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
+msgstr "Trinn 3: Når du har lastet ned filen, kan du lukke nettleservinduet. Ikke gjør noe med vurderingen mens det vises \"pågår\"; statusen oppdateres når hjelpelinjen har lastet opp filen."
+
+msgid "Stop"
+msgstr "Stopp"
+
+msgid "Submission"
+msgstr "Innlevering"
+
+msgid "Submit and go to the end of the test"
+msgstr "Avgi svar og gå til slutten av prøven"
+
+msgid "Submit and go to the item %s"
+msgstr "Avgi svar og gå til oppgave %s"
+
+msgid "Submit and go to the next item"
+msgstr "Avgi svar og gå til neste oppgave"
+
+msgid "Submit and go to the previous item"
+msgstr "Avgi svar og gå til forrrige oppgave"
+
+msgid "SUBMIT THE TEST"
+msgstr "LEVER PRØVEN"
+
+msgid "SUBMIT THIS PART"
+msgstr "LEVER DENNE PRØVEDELEN"
+
+msgid "technical"
+msgstr "teknisk"
+
+msgid "Test"
+msgstr "Prøve"
+
+msgid "Test constructor"
+msgstr "Prøveutvikler"
+
+msgid "Test metadata successfully exported."
+msgstr "Prøvemetadata ble eksportert."
+
+msgid "Test Navigation"
+msgstr "Testnavigasjon"
+
+msgid "Test overview"
+msgstr ""
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr "I kategorier på prøvedelen er det mulig å konfigurere kategoriene på alle oppgavene i prøvedelen. En grå kategori betyr at alle oppgavene har kategorien. En hvit kategori betyr at bare noen av oppgavene har kategorien."
+
+msgid "Test Part Properties"
+msgstr "Egenskaper for prøvedel"
+
+msgid "Test Preview is not installed, please contact to your administrator."
+msgstr "Forhåndsvisning av prøve er ikke installert. Ta kontakt med administrator."
+
+msgid "Test Saved"
+msgstr "Oppgavesett lagret"
+
+msgid "Test status"
+msgstr "Pørvestatus"
+
+msgid "Test status and review structure"
+msgstr "Prøvestatus og se gjennom struktur"
+
+msgid "Test Status and Structure"
+msgstr "Prøvestatus og struktur"
+
+msgid "Test-Taker Tools"
+msgstr "Elevverktøy"
+
+#, tao-public
+msgid "Tests"
+msgstr "Oppgavesett"
+
+msgid "Text content"
+msgstr "Tekstinnhold"
+
+msgid "Text to Speech"
+msgstr "Tekst-til-tale"
+
+msgid "Text To Speech"
+msgstr "Tekst-til-tale"
+
+msgid "that was being taken."
+msgstr "som ble tatt."
+
+msgid "The 'imsmanifest.xml' file found in the archive is not valid."
+msgstr "Filen 'imsmanifest.xml' som finnes i arkivet er ikke gyldig."
+
+msgid "the assessment (LCL or Mathematics)"
+msgstr "vurderingen (LCL eller matematikk)"
+
+msgid "The assessment has been created but is not already running."
+msgstr "Vurderingen har blitt opprettet, men kjører ikke."
+
+msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
+msgstr ""
+
+msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
+msgstr ""
+
+msgid "The assessment has been terminated."
+msgstr ""
+
+msgid "The assessment has been terminated. You cannot interact with it anymore."
+msgstr ""
+
+msgid "The assessment is still running."
+msgstr ""
+
+msgid "The candidate is not allowed to submit invalid responses."
+msgstr "Eleven kan ikke levere ugyldige svar."
+
+msgid "The connection seems to be back, please proceed"
+msgstr "Tilkoblingen ser ut til å være tilbake. Fortsett arbeidet"
+
+msgid "the current question"
+msgstr "det aktuelle spørsmålet"
+
+msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
+msgstr "Avhengigheten til IMS QTI AssessmentItemRef \"%s\" i IMS Dokument-filen kunne ikke løses."
+
+msgid "The download will be available in <strong>%d</strong> seconds"
+msgstr "Nedlastingen vil være tilgjengelig om <strong>%d </strong> sekunder"
+
+msgid "The following identifiers are not unique accross the test : %s"
+msgstr "Følgende identifikatorer er ikke unike i testen: %s"
+
+msgid "The identifier of the item reference."
+msgstr "Identifikatoren for oppgavereferansen."
+
+msgid "The identifier of the section."
+msgstr "Identifikatoren for seksjonen."
+
+msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
+msgstr "IMS QTI-oppgaven referert til som \"%s\" i IMS Dokument-filen var allerede lagret i oppgavebanken."
+
+msgid "The IMS QTI Test Package could not be imported."
+msgstr "IMS QTI-prøvepakken kunne ikke importeres."
+
+msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgstr "IMS QTI \\-prøven referert til som \"%s\" i IMS Dokument-filen kunne ikke importeres."
+
+msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
+msgstr "Navigasjonsmodusen bestemmer mulighetene som eleven har for å navigere i oppgavesettet. En lineær modell begrenser eleven til å besvare hver oppgave etter tur. Ikke-lineær modell fjerner denne begrensningen."
+
+msgid "The number of child elements to be selected."
+msgstr "Antall underelementer som skal velges."
+
+msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
+msgstr "Resultatet \"%s\" finnes ikke, men det refereres til i en tilbakemeldingsboks!"
+
+msgid "The outcomes have been regenerated!"
+msgstr "Resultatene har blitt regenerert!"
+
+msgid "The principle identifier of the test."
+msgstr "Prøvens hovedidentifikator."
+
+msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
+msgstr "Det oppgitte arkivet er ugyldig. Sørg for at det ikke er ødelagt og at det inneholder en 'imsmanifest.xml'-fil."
+
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
+
+msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
+msgstr "QTI-prøven '%s' som skal kompileres, må inneholde minst 1 QTI-oppgave. Ingen funnet."
+
+msgid "The QTI test could not be retrieved correctly."
+msgstr "QTI-prøven kunne ikke hentes."
+
+msgid "The QTI Test XML or one of its dependencies is malformed or empty."
+msgstr "QTI-prøven XML eller en av dens avhengigheter er ugyldig eller uten innhold."
+
+msgid "The QTI-XML test could not be written correctly."
+msgstr "QTI-XML-prøven kunne ikke skrives riktig."
+
+msgid "The reference."
+msgstr "Referansen."
+
+msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
+msgstr ""
+
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
+msgstr "Skåren vil bli behandlet for hele prøven. En sum av alle SKÅR-utfallene vil bli beregnet og delt med summen av MAX SKÅR, resultatet vil bli sammenlignet med poengsum(eller bestått), deretter vil PASS_TOTAL-resultatet settes."
+
+msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
+msgstr "Skåren vil bli behandlet for hele prøven. En sum av alle SKÅR-utfallene vil bli beregnet, resultatet vil finnes i SKÅR _TOTAL -utfallet."
+
+msgid "The section title."
+msgstr "Seksjonens tittel."
+
+msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
+msgstr "Innleveringsmodusen avgjør når elevens svar blir sendt til vurdering. En prøvedel i individuell modus krever at eleven leverer svarene sine enkeltvis. I samtidig modus sendes alleelevenes svar sammen på slutten av prøvedelen."
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
+msgstr ""
+
+msgid "The test has been closed/suspended!"
+msgstr "Prøven er avsluttet!"
+
+msgid "The test has been paused, we are unable to connect to the server."
+msgstr "Prøven er satt på pause, du har ikke kontakt med server."
+
+msgid "The test has not been saved."
+msgstr "Prøven er ikke lagret."
+
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr "Du har gjort endringer som ikke er lagret. Er du sikker på at du vil avslutte?"
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr "Prøven har endringer som ikke er lagret. Vil du lagre endringene?"
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr "Prøven må lagres før den kan forhåndsvises."
+
+msgid "The test part identifier."
+msgstr "Prøvedelens indifikator."
+
+msgid "The test title."
+msgstr "Prøvenavn."
+
+msgid "The time limit has been reached for this part of the test."
+msgstr "Tidsbegrensningen er nådd for denne prøvedelen."
+
+msgid "There are %s unanswered questions"
+msgstr "Det er %s ubesvarte spørsmål"
+
+msgid "There are %s unanswered questions in this part of the test"
+msgstr "Det er %s ubesvarte spørsmål i denne prøvedelen"
+
+msgid "There is %s unanswered question"
+msgstr "Det er %s ubesvart spørsmål"
+
+msgid "There is %s unanswered question in this part of the test"
+msgstr "Det er %s ubesvart spørsmål i denne prøvedelen"
+
+msgid "There is not outcomes!"
+msgstr "Det er ikke noe resultat!"
+
+msgid "This constraint affects the visibility of feedback after the end of the last attempt."
+msgstr "Denne begrensningen påvirker synligheten av tilbakemeldinger etter det siste forsøket."
+
+msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
+msgstr "Denne begrensningen styrer hvorvidt eleven har lov til å gi en kommentar til oppgaven under gjennomføringen. Kommentarer er ikke en del av svaret som skal vurderes."
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
+msgstr "Denne funksjonaliteten er ikke tilgjengelig. Ta kontakt med administrator for mer informasjon."
+
+msgid "This test has been suspended"
+msgstr "Denne prøven er suspendert"
+
+msgid "This test has been terminated"
+msgstr "Denne prøven er avsluttet"
+
+msgid "Time limit reached for item \"%s\"."
+msgstr "Tidsbegrensningen er nådd for oppgave \"%s\"."
+
+msgid "Time limit reached, this part of the test has ended."
+msgstr "Tidsbegrensningen er nådd, denne delen av prøven er avsluttet."
+
+msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
+msgstr "Tidsbegrensningen er nådd, denne delen av testen er avsluttet. Du kan fullføre gjeldende oppgave."
+
+msgid "Time Limits"
+msgstr "Tidsbegrensninger"
+
+msgid "Time Remaining"
+msgstr "Gjenstående tid"
+
+msgid "Title"
+msgstr "Tittel"
+
+msgid "Toggle playback"
+msgstr "Slå av og på avspilling"
+
+msgid "Toggle start from here mode"
+msgstr "Bytt til start her-modus"
+
+msgid "Tool box and flagging for review"
+msgstr "Verktøykasse og flagging for å se gjennom"
+
+msgid "Toolbox"
+msgstr "Verktøykasse"
+
+msgid "Total score"
+msgstr "Totalskår"
+
+msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
+msgstr "Prøv å koble maskinen til internett via kabel, eller flytt til et område med et bedre wifi-dekning."
+
+msgid "Tutor"
+msgstr "Veileder"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Unanswered"
+msgstr "Ubesvart"
+
+msgid "Unanswered items"
+msgstr "Ubesvarte oppgaver"
+
+msgid "Unflag for Review"
+msgstr "Fjern markering for å se gjennom"
+
+msgid "Unknown error."
+msgstr "Ukjent feil."
+
+msgid "Unlink to use separated durations"
+msgstr "Fjern koblingen for å bruke adskilte tider"
+
+msgid "Unseen"
+msgstr "Usette"
+
+msgid "Upload a QTI 2.1 Test Package File"
+msgstr "Last opp en QTI 2.1 testpakkefil"
+
+msgid "Use Ctrl/Meta key or Lasso for multiple selection"
+msgstr "Bruk Ctrl/Meta-tasten eller løkke for flere utvalg"
+
+msgid "Validate Responses"
+msgstr "Valider svar"
+
+msgid "Value"
+msgstr "Verdi"
+
+msgid "Viewed"
+msgstr "Vist"
+
+msgid "Viewed items"
+msgstr "Viste oppgaver"
+
+msgid "Views"
+msgstr "Visninger"
+
+msgid "Visible"
+msgstr "Synlige"
+
+msgid "Volume"
+msgstr "Volum"
+
+msgid "Wait for your connection to come back online."
+msgstr "Vent til tilkoblingen din kommer tilbake."
+
+msgid "Warning – You have %s remaining to complete the test."
+msgstr "Advarsel - Du har %s igjen til å fullføre prøven."
+
+msgid "Warning – You have %s remaining to complete this item."
+msgstr "Advarsel - Du har %s igjen til å fullføre denne oppgaven."
+
+msgid "Warning – You have %s remaining to complete this section."
+msgstr "Advarsel - Du har %s igjen til å fullføre denne seksjonen."
+
+msgid "Warning – You have %s remaining to complete this test part."
+msgstr "Advarsel - Du har %s igjen til å fullføre denne prøvedelen."
+
+msgid "Warning – You have %s remaining to complete this test."
+msgstr "Advarsel - Du har %s igjen til å fullføre denne prøven."
+
+msgid "We are unable to connect the server to submit your results."
+msgstr "Du kan ikke levere prøven din da du ikke har kontakt med server."
+
+msgid "We are unable to connect to the server to retrieve the next item."
+msgstr "Du kan ikke gå til neste oppgave da du ikke har kontakt med server."
+
+msgid "Weight"
+msgstr "Vekting"
+
+msgid "Weights"
+msgstr "Vekting"
+
+msgid "When selecting child elements each element is normally eligible for selection once only."
+msgstr "Når du velger underordnede elementer, er hvert element bare kvalifisert for valg én gang."
+
+msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
+msgstr "Hvorvidt en elev sitt svar som går utover oppgavens maksimale varighet, fortsatt bør godkjennes."
+
+msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
+msgstr "Hvorvidt en elev sitt svar som går utenfor seksjonens maksimale varighet, fortsatt bør godkjennes."
+
+msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
+msgstr "Hvorvidt en elev sitt svar som er utenfor prøvedelens maksimale varighet, fortsatt bør godkjennes."
+
+msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
+msgstr "Hvorvidt en elev sitt svar som er utenfor maksimal varighet, fortsatt bør godkjennes."
+
+msgid "White on Black"
+msgstr "Hvit på svart"
+
+msgid "White on Blue (TAO standard theme)"
+msgstr "Hvitt på blått"
+
+msgid "Who can view the rubric block during the delivery."
+msgstr "Hvem kan se rubrikkboksen under levering."
+
+msgid "With Replacement"
+msgstr "Med erstatning"
+
+msgid "Wrong file mime type"
+msgstr "Feil filtype"
+
+msgid "XML Content"
+msgstr "XML innhold"
+
+#, tao-public
+msgid "XML Editor"
+msgstr "XML editor"
+
+msgid "XML error at line %1$d column %2$d \"%3$s\"."
+msgstr "XML-feil på linje %1$d kolonne %2 $ d \" %3 $ s\"."
+
+msgid "Yellow on Blue"
+msgstr "Gul på blå"
+
+msgid "YES"
+msgstr ""
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "You answered %s of %s question(s) for this section of the test"
+msgstr "Du svarte %s av %s spørsmål på denne seksjonen av prøven"
+
+msgid "You answered all %s question(s) in this section"
+msgstr "Du svarte på alle %s spørsmål(ene) i denne seksjonen"
+
+msgid "You answered all %s question(s) in this test"
+msgstr "Du svarte på alle %s spørsmål(ene) i denne prøven"
+
+msgid "You answered only %s of the %s question(s) in this section"
+msgstr "Du svarte bare %s av %s spørsmål i denne seksjonen"
+
+msgid "You are about to go to the next item. Click OK to continue and go to the next item."
+msgstr "Du er i ferd med å gå til neste oppgave. Klikk OK for å fortsette og gå til neste oppgave."
+
+msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
+msgstr "Du er i ferd med å gå tilbake til forrige oppgave. Klikk OK for å fortsette og gå til forrige oppgave."
+
+msgid "You are about to leave this section."
+msgstr "Du er i ferd med å forlate denne seksjonen."
+
+msgid "You are about to submit the test."
+msgstr "Du er i ferd med å levere prøven."
+
+msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgstr "Du er i ferd med å levere prøven. Du får ikke tilgang til prøven når den er levert. Klikk OK for å levere."
+
+msgid "You are about to submit this test part."
+msgstr "Du er i ferd med å levere denne prøvedelen."
+
+msgid "You are currently working offline."
+msgstr "Du jobber for tiden uten å være på nett."
+
+msgid "You are encountering a prolonged connectivity loss. "
+msgstr "Du har mistet nettilgangen. "
+
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
+msgstr "Du kan forstørre innholdet med opptil 200%. Sjekk nettleserinnstillingene for å finne ut hvordan du gjør det."
+
+msgid "You flagged %s item(s) that you can review now"
+msgstr "Du har flagget %s element(er) som du kan se gjennom nå"
+
+msgid "You have %s item(s) marked for review."
+msgstr "Du har %s element(er) merket for å se gjennom."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr "Du har %s igjen for å svare på de resterende %s spørsmål."
+
+msgid "You have %s remaining to complete the current item."
+msgstr "Du har %s igjen for å fullføre gjeldende oppgave."
+
+msgid "You have %s unanswered question(s)"
+msgstr "Du har %s ubesvart(e) spørsmål"
+
+msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
+msgstr "Du har %s ubesvart(e) spørsmål og %s oppgave(r) merket for å se gjennom."
+
+msgid "You have %s unanswered question(s)."
+msgstr "Du har %s ubesvart(e) spørsmål."
+
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
+msgstr "Du får ikke tilgang til denne prøven når den er levert. Klikk \"%s\" for å levere prøven."
+
+msgid "Your comment…"
+msgstr "Din kommentar..."
+
+msgid "Your connection seems to be back, please proceed."
+msgstr "Tilkoblingen din ser ut til å være tilbake. Fortsett."
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Zoom in"
+msgstr "Zoom inn"
+
+msgid "Zoom out"
+msgstr "Zoom ut"
+

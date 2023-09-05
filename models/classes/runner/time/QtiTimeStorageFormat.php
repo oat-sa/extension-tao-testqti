@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,14 +23,20 @@ namespace oat\taoQtiTest\models\runner\time;
 
 /**
  * Interface QtiTimeStorageFormat.
- * 
+ *
  * Defines a filter that encode/decode a dataset with a particular format.
- * 
+ *
  * @package oat\taoQtiTest\models\runner\time
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 interface QtiTimeStorageFormat
 {
+    public const STORAGE_KEY_TIME_LINE = 'timeLine';
+    public const STORAGE_KEY_EXTRA_TIME = 'extraTime';
+    public const STORAGE_KEY_EXTENDED_TIME = 'extendedTime';
+    public const STORAGE_KEY_CONSUMED_EXTRA_TIME = 'consumedExtraTime';
+    public const STORAGE_KEY_TIMER_ADJUSTMENT_MAP = 'timerAdjustmentMap';
+
     /**
      * Encode a dataset with the managed format.
      * @param mixed $data
@@ -42,5 +49,5 @@ interface QtiTimeStorageFormat
      * @param string $data
      * @return mixed
      */
-    public function decode($data); 
+    public function decode($data);
 }

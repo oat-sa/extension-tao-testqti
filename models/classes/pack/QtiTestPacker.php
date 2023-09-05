@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,10 +24,10 @@ use oat\oatbox\service\ServiceManager;
 use oat\taoItems\model\pack\Packer;
 use oat\taoTests\models\pack\Packable;
 use oat\taoTests\models\pack\TestPack;
-use \taoQtiTest_models_classes_QtiTestService;
-use \core_kernel_classes_Resource;
-use \InvalidArgumentException;
-use \common_Exception;
+use taoQtiTest_models_classes_QtiTestService;
+use core_kernel_classes_Resource;
+use InvalidArgumentException;
+use common_Exception;
 use Exception;
 
 /**
@@ -39,7 +40,6 @@ use Exception;
  */
 class QtiTestPacker implements Packable
 {
-
     /**
      * The test type identifier
      * @var string
@@ -57,20 +57,19 @@ class QtiTestPacker implements Packable
         $testPack = null;
 
         try {
-
             $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 
             $doc            = $qtiTestService->getDoc($test);
             $converter      = new \taoQtiTest_models_classes_QtiTestConverter($doc);
-            $items          = array();
-            foreach($qtiTestService->getItems($test) as $item){
+            $items          = [];
+            foreach ($qtiTestService->getItems($test) as $item) {
                 $items[$item->getUri()] = (new Packer($item, ''))
                     ->setServiceLocator(ServiceManager::getServiceManager())
                     ->pack();
             }
             $testPack       = new TestPack(self::$testType, $converter->toArray(), $items);
-        } catch(Exception $e){
-            throw new common_Exception('Unable to pack test '. $test->getUri() . ' : ' . $e->getMessage());
+        } catch (Exception $e) {
+            throw new common_Exception('Unable to pack test ' . $test->getUri() . ' : ' . $e->getMessage());
         }
 
         return $testPack;

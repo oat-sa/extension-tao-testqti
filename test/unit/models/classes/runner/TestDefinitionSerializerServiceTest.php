@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\unit\models\classes\runner;
 
 use oat\generis\test\TestCase;
@@ -28,7 +30,8 @@ use oat\generis\test\MockObject;
 
 class TestDefinitionSerializerServiceTest extends TestCase
 {
-    const TEST_DEFINITION = '<?xml version="1.0" encoding="UTF-8"?>
+    // phpcs:disable Generic.Files.LineLength
+    public const TEST_DEFINITION = '<?xml version="1.0" encoding="UTF-8"?>
         <assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="Test-1" title="Test 1" toolName="tao" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd">
             <testPart identifier="testPart-1" navigationMode="linear" submissionMode="individual">
                 <itemSessionControl allowSkipping="true" validateResponses="false"/>
@@ -40,6 +43,7 @@ class TestDefinitionSerializerServiceTest extends TestCase
                 </assessmentSection>
             </testPart>
         </assessmentTest>';
+    // phpcs:enable Generic.Files.LineLength
 
     /**
      * @var array
@@ -107,7 +111,7 @@ class TestDefinitionSerializerServiceTest extends TestCase
     /** @var QtiRunnerServiceContext|MockObject */
     private $qtiRunnerServiceContext;
 
-    public function setUp ()
+    public function setUp(): void
     {
         $this->testDefinitionSerializerService = new TestDefinitionSerializerService();
 
@@ -156,7 +160,7 @@ class TestDefinitionSerializerServiceTest extends TestCase
         $this->testDefinitionSerializerService->setServiceLocator($serviceLocatorMock);
     }
 
-    public function testGetSerializedTestDefinition ()
+    public function testGetSerializedTestDefinition()
     {
         $this->fileStorageServiceMock
             ->expects($this->once())

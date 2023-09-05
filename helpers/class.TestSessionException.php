@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +24,12 @@ use qtism\runtime\tests\AssessmentTestSessionException;
 /**
  * The TestSessionException class represents an error that occurs
  * while interacting with a taoQtiTest_helpers_TestSession object.
- * 
+ *
  * @author Jérôme Bogaerts <jerome@taotesting.com>
  *
  */
-class taoQtiTest_helpers_TestSessionException extends AssessmentTestSessionException {
-    
+class taoQtiTest_helpers_TestSessionException extends AssessmentTestSessionException
+{
     /**
      * Create a new taoQtiTest_helpers_TestSessionException object.
      *
@@ -36,7 +37,8 @@ class taoQtiTest_helpers_TestSessionException extends AssessmentTestSessionExcep
      * @param integer $code A code to enable client-code to identify the error programatically.
      * @param Exception $previous An optional previous exception.
      */
-    public function __construct($message, $code = 0, Exception $previous = null) {
+    public function __construct($message, $code = 0, Exception $previous = null)
+    {
         parent::__construct($message, $code, $previous);
     }
 }

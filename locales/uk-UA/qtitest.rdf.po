@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint114\n"
-"PO-Revision-Date: 2019-10-25T09:07:51\n"
+"Project-Id-Version: TAO 3.4.0-sprint146\n"
+"PO-Revision-Date: 2021-01-20T12:36:10\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: uk-UA\n"
@@ -48,5 +48,15 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.1 test"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "Test XML Editor"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "The Test XML Editor Role"
 msgstr ""
 

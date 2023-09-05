@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +22,7 @@
 namespace oat\taoQtiTest\models;
 
 use oat\tao\model\ClientLibConfigRegistry;
+
 /**
  * Description of TestRunnerConfigRegistry
  *
@@ -30,18 +32,17 @@ use oat\tao\model\ClientLibConfigRegistry;
  */
 class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
 {
-
-    const AMD = 'taoQtiTest/controller/runtime/testRunner';
+    public const AMD = 'taoQtiTest/controller/runtime/testRunner';
 
     /**
      * Path to the runner controller module
      */
-    const RUNNER = 'taoQtiTest/controller/runner/runner';
+    public const RUNNER = 'taoQtiTest/controller/runner/runner';
 
     /**
      * Path to the runner controller module in production mode
      */
-    const RUNNER_PROD = 'taoQtiTest/qtiTestRunner.min';
+    public const RUNNER_PROD = 'taoQtiTest/qtiTestRunner.min';
 
     /**
      * Register a qti tools in the client lib config registry
@@ -49,8 +50,9 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
      * @param string $name
      * @param array $toolConfig
      */
-    public function registerQtiTools($name, $toolConfig){
-        $newConfig = array('qtiTools' => array());
+    public function registerQtiTools($name, $toolConfig)
+    {
+        $newConfig = ['qtiTools' => []];
         //@todo validate tool config structure before registration
         $newConfig['qtiTools'][$name] = $toolConfig;
         $this->register(self::AMD, $newConfig);
@@ -63,7 +65,8 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
      * @param string|int $position
      * @throws \common_exception_InvalidArgumentType
      */
-    public function registerPlugin($module, $category, $position = null){
+    public function registerPlugin($module, $category, $position = null)
+    {
         if (!is_string($module)) {
             throw new \common_exception_InvalidArgumentType('The module path must be a string!');
         }
@@ -84,7 +87,7 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
 
         $plugins = [];
         if (isset($config['plugins'])) {
-            foreach($config['plugins'] as $plugin) {
+            foreach ($config['plugins'] as $plugin) {
                 if ($plugin['module'] != $module) {
                     $plugins[] = $plugin;
                 }
@@ -114,7 +117,7 @@ class TestRunnerClientConfigRegistry extends ClientLibConfigRegistry
     {
         $config = [];
         $registry = self::getRegistry();
-        
+
         if ($registry->isRegistered(self::RUNNER)) {
             $config = $registry->get(self::RUNNER);
         }

@@ -32,7 +32,6 @@ use oat\taoTests\models\runner\plugins\TestPlugin;
  */
 class RegisterTestRunnerPlugins extends InstallAction
 {
-
     public static $plugins = [
         'content' => [
             [
@@ -56,7 +55,7 @@ class RegisterTestRunnerPlugins extends InstallAction
             ], [
                 'id' => 'dialog',
                 'name' => 'Dialog',
-                'module' =>'taoQtiTest/runner/plugins/content/dialog/dialog',
+                'module' => 'taoQtiTest/runner/plugins/content/dialog/dialog',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Display popups that require user interactions',
                 'category' => 'content',
@@ -109,8 +108,8 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'tags' => [ 'core', 'qti', 'required' ]
             ], [
                 'id' => 'keyNavigation',
-                'name' => 'Using key to navigate test runner',
-                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation',
+                'name' => 'Keyboard Navigation',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/keyNavigation/plugin',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Provide a way to navigate within the test runner with the keyboard',
                 'category' => 'content',
@@ -135,6 +134,33 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'category' => 'content',
                 'active' => true,
                 'tags' => []
+            ], [
+                'id' => 'jumplinks',
+                'name' => 'Jump links',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/jumplinks/plugin',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Provide a jump links to fastest keyboard navigation',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
+            ], [
+                'id' => 'mainLandmark',
+                'name' => 'Main landmark',
+                'module' => 'taoQtiTest/runner/plugins/content/accessibility/mainLandmark/header',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Landmark header for the test runner main',
+                'category' => 'content',
+                'active' => false,
+                'tags' => [ ]
+            ], [
+                'id' => 'itemScrolling',
+                'name' => 'Item Scrolling',
+                'module' => 'taoQtiTest/runner/plugins/content/itemScrolling/itemScrolling',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Add behavior from enable/disable scrolling option',
+                'category' => 'content',
+                'active' => true,
+                'tags' => [ ]
             ]
         ],
         'controls' => [
@@ -173,6 +199,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'description' => 'Pause the test when the network loose the connection',
                 'category' => 'controls',
                 'active' => true,
+                'tags' => [ 'core', 'technical' ]
+            ], [
+                'id' => 'pauseOnError',
+                'name' => 'Reacts to errors',
+                'module' => 'taoQtiTest/runner/plugins/controls/connectivity/pauseOnError',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'When an error occurs, lets the user pause the test or reload the page',
+                'category' => 'controls',
+                'active' => false,
                 'tags' => [ 'core', 'technical' ]
             ], [
                 'id' => 'testState',
@@ -291,7 +326,7 @@ class RegisterTestRunnerPlugins extends InstallAction
             ], [
                 'id' => 'calculator',
                 'name' => 'Caculator tool',
-                'module' =>'taoQtiTest/runner/plugins/tools/calculator',
+                'module' => 'taoQtiTest/runner/plugins/tools/calculator',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Gives the student access to a basic calculator',
                 'category' => 'tools',
@@ -300,7 +335,7 @@ class RegisterTestRunnerPlugins extends InstallAction
             ], [
                 'id' => 'zoom',
                 'name' => 'Zoom',
-                'module' =>'taoQtiTest/runner/plugins/tools/zoom',
+                'module' => 'taoQtiTest/runner/plugins/tools/zoom',
                 'bundle' => 'taoQtiTest/loader/testPlugins.min',
                 'description' => 'Zoom in and out the item content',
                 'category' => 'tools',
@@ -383,7 +418,8 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'name'        => 'APIP Text To Speech',
                 'module'      => 'taoQtiTest/runner/plugins/tools/apipTextToSpeech/plugin',
                 'bundle'      => 'taoQtiTest/loader/testPlugins.min',
-                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to item content.',
+                'description' => 'Allow Test-taker to playback media files associated according to APIP protocol to '
+                    . 'item content.',
                 'category'    => 'tools',
                 'active'      => true,
                 'tags'        => [  ]
@@ -408,9 +444,9 @@ class RegisterTestRunnerPlugins extends InstallAction
         $registry = PluginRegistry::getRegistry();
         $count = 0;
 
-        foreach(self::$plugins as $categoryPlugins) {
-            foreach($categoryPlugins as $pluginData){
-                if( $registry->register(TestPlugin::fromArray($pluginData)) ) {
+        foreach (self::$plugins as $categoryPlugins) {
+            foreach ($categoryPlugins as $pluginData) {
+                if ($registry->register(TestPlugin::fromArray($pluginData))) {
                     $count++;
                 }
             }

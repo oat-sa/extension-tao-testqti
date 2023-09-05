@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  *
  */
+
 namespace oat\taoQtiTest\models;
 
 use JsonSerializable;
@@ -74,15 +76,15 @@ class TestCategoryPreset implements JsonSerializable
      * @param array $data - optional parameters
      * @throws common_exception_InconsistentData
      */
-    public function __construct ($id, $label, $qtiCategory, $data)
+    public function __construct($id, $label, $qtiCategory, $data)
     {
-        if(! is_string($id) || empty($id)) {
+        if (! is_string($id) || empty($id)) {
             throw new common_exception_InconsistentData('The category preset needs an id');
         }
-        if(! is_string($label) || empty($label)) {
+        if (! is_string($label) || empty($label)) {
             throw new common_exception_InconsistentData('The category preset needs a label');
         }
-        if(! is_string($qtiCategory) || empty($qtiCategory)) {
+        if (! is_string($qtiCategory) || empty($qtiCategory)) {
             throw new common_exception_InconsistentData('The category preset needs a qti category');
         }
 
@@ -90,16 +92,16 @@ class TestCategoryPreset implements JsonSerializable
         $this->label        = (string) $label;
         $this->qtiCategory  = (string) $qtiCategory;
 
-        if(isset($data['description'])) {
+        if (isset($data['description'])) {
             $this->description = (string) $data['description'];
         }
-        if(isset($data['order'])) {
-            $this->order = (integer) $data['order'];
+        if (isset($data['order'])) {
+            $this->order = (int) $data['order'];
         }
-        if(isset($data['pluginId'])) {
+        if (isset($data['pluginId'])) {
             $this->pluginId = (string) $data['pluginId'];
         }
-        if(isset($data['featureFlag'])) {
+        if (isset($data['featureFlag'])) {
             $this->featureFlag = (string) $data['featureFlag'];
         }
     }
@@ -170,10 +172,12 @@ class TestCategoryPreset implements JsonSerializable
      * @return TestCategoryPreset the new instance
      * @throws common_exception_InconsistentData
      */
-    public static function fromArray( array $data )
+    public static function fromArray(array $data)
     {
-        if( !isset($data['id']) || !isset($data['label']) || !isset($data['qtiCategory']) ) {
-            throw new common_exception_InconsistentData('The test category preset requires an id, a label and a qtiCategory');
+        if (!isset($data['id']) || !isset($data['label']) || !isset($data['qtiCategory'])) {
+            throw new common_exception_InconsistentData(
+                'The test category preset requires an id, a label and a qtiCategory'
+            );
         }
 
         return new self(
@@ -183,5 +187,4 @@ class TestCategoryPreset implements JsonSerializable
             $data
         );
     }
-
 }

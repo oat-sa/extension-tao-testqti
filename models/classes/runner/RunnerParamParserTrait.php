@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +20,9 @@
 
 namespace oat\taoQtiTest\models\runner;
 
+use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
+use oat\taoQtiTest\model\Service\NavigationContextAwareInterface;
+use oat\taoQtiTest\model\Service\ToolsStateAwareInterface;
 use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
@@ -84,13 +88,14 @@ trait RunnerParamParserTrait
     protected function getServiceContext()
     {
         if (!$this->serviceContext) {
-
             $testExecution = $this->getRequestParameter('serviceCallId');
             $testDefinition  = $this->getRequestParameter('testDefinition');
             $testCompilation = $this->getRequestParameter('testCompilation');
 
             $this->serviceContext = $this->getRunnerService()->getServiceContext(
-                $testDefinition, $testCompilation, $testExecution
+                $testDefinition,
+                $testCompilation,
+                $testExecution
             );
         }
 
@@ -114,7 +119,7 @@ trait RunnerParamParserTrait
      */
     protected function endItemTimer($timestamp = null)
     {
-        if($this->getRequestParameter('itemDuration')){
+        if ($this->hasRequestParameter('itemDuration')) {
             $serviceContext    = $this->getServiceContext();
             $itemDuration      = $this->getRequestParameter('itemDuration');
             return $this->getRunnerService()->endTimer($serviceContext, $itemDuration, $timestamp);
@@ -134,7 +139,9 @@ trait RunnerParamParserTrait
         if ($this->getRequestParameter('itemDefinition') && $this->getRequestParameter('itemState')) {
             $serviceContext = $this->getServiceContext();
             $itemIdentifier = $this->getRequestParameter('itemDefinition');
-            $state = $this->getRequestParameter('itemState') ? json_decode($this->getRequestParameter('itemState'), true) : new \stdClass();
+            $state = $this->getRequestParameter('itemState')
+                ? json_decode($this->getRequestParameter('itemState'), true)
+                : new \stdClass();
 
             return $this->getRunnerService()->setItemState($serviceContext, $itemIdentifier, $state);
         }
@@ -154,14 +161,17 @@ trait RunnerParamParserTrait
     protected function saveItemResponses($emptyAllowed = true)
     {
         if ($this->getRequestParameter('itemDefinition') && $this->getRequestParameter('itemResponse')) {
-
             $itemDefinition = $this->getRequestParameter('itemDefinition');
             $serviceContext = $this->getServiceContext();
             $itemResponse = $this->getRequestParameter('itemResponse')
                 ? json_decode($this->getRequestParameter('itemResponse'), true)
                 : null;
 
-            if ($serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemDefinition) {
+            $currentAssessmentItemRef = $serviceContext->getCurrentAssessmentItemRef();
+            if (
+                $currentAssessmentItemRef
+                && $serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemDefinition
+            ) {
                 throw new QtiRunnerItemResponseException(__('Item response identifier does not match current item'));
             }
 
@@ -174,7 +184,8 @@ trait RunnerParamParserTrait
                 if (
                     !$emptyAllowed
                     && $this->getRunnerService()->getTestConfig()->getConfigValue('enableAllowSkipping')
-                    && !TestRunnerUtils::doesAllowSkipping($serviceContext->getTestSession())) {
+                    && !TestRunnerUtils::doesAllowSkipping($serviceContext->getTestSession())
+                ) {
                     if ($this->getRunnerService()->emptyResponse($serviceContext, $responses)) {
                         throw new QtiRunnerEmptyResponsesException();
                     }
@@ -198,5 +209,65 @@ trait RunnerParamParserTrait
         /** @var QtiRunnerMap $mapService */
         $mapService = $this->getServiceLocator()->get(QtiRunnerMap::SERVICE_ID);
         return $mapService->getItemHref($serviceContext, $itemIdentifier);
+    }
+
+    protected function setNavigationContextToCommand(NavigationContextAwareInterface $command): void
+    {
+        $command->setNavigationContext(
+            $this->getRequestParameter('direction'),
+            $this->getRequestParameter('scope'),
+            $this->getRequestParameter('ref')
+        );
+    }
+
+    protected function setItemContextToCommand(ItemContextAwareInterface $command): void
+    {
+        if (empty($this->getRequestParameter('itemDefinition'))) {
+            return;
+        }
+
+        $command->setItemContext(
+            $this->getRequestParameter('itemDefinition'),
+            $this->getItemState(),
+            $this->getItemDuration(),
+            $this->getItemResponse(),
+            $this->getTime()
+        );
+    }
+
+    protected function setToolsStateContextToCommand(ToolsStateAwareInterface $command): void
+    {
+        $command->setToolsState($this->getToolStatesFromRequest());
+    }
+
+    private function getItemDuration(): ?float
+    {
+        if (!$this->hasRequestParameter('itemDuration')) {
+            return null;
+        }
+
+        return (float)$this->getRequestParameter('itemDuration');
+    }
+
+    private function getItemState(): ?array
+    {
+        $itemState = $this->getRequestParameter('itemState');
+
+        if (empty($itemState)) {
+            return null;
+        }
+
+        return (array)json_decode($itemState, true);
+    }
+
+    private function getItemResponse(): ?array
+    {
+        $itemResponse = $this->getRequestParameter('itemResponse');
+
+        if (empty($itemResponse)) {
+            return null;
+        }
+
+        return (array)json_decode($itemResponse, true);
     }
 }

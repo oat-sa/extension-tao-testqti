@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
  */
+
 namespace oat\taoQtiTest\scripts\cli;
 
 use oat\taoQtiItem\model\ItemModel;
@@ -24,6 +26,7 @@ use oat\oatbox\extension\AbstractAction;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\compilation\CompilationService;
 use common_report_Report as Report;
+
 /**
  * Class TestRunnerVersion
  *
@@ -115,7 +118,11 @@ class TestRunnerVersion extends AbstractAction
         } elseif ($this->isClass($deliveryContainerClass, $oldRunnerClass)) {
             $result = $this->resultData('Default Container: Old TestRunner', false, true);
         } else {
-            $result = $this->resultData('Default Container: Unknown version / bad config (' . $deliveryContainerClass . ')', false, false);
+            $result = $this->resultData(
+                'Default Container: Unknown version / bad config (' . $deliveryContainerClass . ')',
+                false,
+                false
+            );
         }
         return $result;
     }
@@ -157,7 +164,11 @@ class TestRunnerVersion extends AbstractAction
         } elseif ($this->isClass($compilerClass, $oldRunnerClass)) {
             $result = $this->resultData('No Runner set, fallback item compiler class: Old TestRunner', false, true);
         } else {
-            $result = $this->resultData('No Runner set, fallback item compiler class: Unknown version / bad config (' . $compilerClass . ')', false, false);
+            $result = $this->resultData(
+                'No Runner set, fallback item compiler class: Unknown version / bad config (' . $compilerClass . ')',
+                false,
+                false
+            );
         }
         return $result;
     }
@@ -181,13 +192,18 @@ class TestRunnerVersion extends AbstractAction
         } elseif ($this->isClass($testSessionClass, $oldRunnerClass)) {
             $result = $this->resultData('Test Session: Old TestRunner', false, true);
         } else {
-            $result = $this->resultData('Test Session: Unknown version / bad config (' . $testSessionClass . ')', false, false);
+            $result = $this->resultData(
+                'Test Session: Unknown version / bad config (' . $testSessionClass . ')',
+                false,
+                false
+            );
         }
 
         return $result;
     }
 
-    private function haserror($checks) {
+    private function haserror($checks)
+    {
         $error = false;
         foreach ($checks as $check) {
             if (!$check['correct']) {
@@ -202,7 +218,8 @@ class TestRunnerVersion extends AbstractAction
      * @param array $checks
      * @return boolean
      */
-    private function isMixed($checks) {
+    private function isMixed($checks)
+    {
         $someOld = false;
         $someNew = false;
         foreach ($checks as $check) {
@@ -215,7 +232,8 @@ class TestRunnerVersion extends AbstractAction
         return !($someNew xor $someOld);
     }
 
-    private function isNew($checks) {
+    private function isNew($checks)
+    {
         $isNew = false;
         foreach ($checks as $check) {
             if (!is_null($check['new'])) {

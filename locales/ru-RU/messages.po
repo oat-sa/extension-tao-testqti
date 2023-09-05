@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint114\n"
-"PO-Revision-Date: 2019-10-25T09:07:50\n"
+"Project-Id-Version: TAO 3.4.0-sprint146\n"
+"PO-Revision-Date: 2021-01-20T12:36:09\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -12,6 +12,15 @@ msgstr ""
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+
+msgid "%s to answer %s"
+msgstr ""
+
+msgid "(Visual) Clear all active highlights"
+msgstr ""
+
+msgid "(Visual) Highlight Text"
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Невозможно скомпоновать элемент QTI, включенный в тест QTI «%s»."
@@ -72,6 +81,9 @@ msgstr "Разрешить пропуск"
 
 msgid "Allow skipping of the current section."
 msgstr "Разрешить пропуск текущего раздела."
+
+msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
+msgstr ""
 
 msgid "Allow the candidate to review his answers."
 msgstr "Разрешить кандидату пересматривать свои ответы."
@@ -142,6 +154,12 @@ msgstr "Во время компоновки теста QTI «%s» возник�
 msgid "An unknown error occured while compiling QTI test '%s'."
 msgstr "Во время компоновки теста QTI «%s» возникла неизвестная ошибка."
 
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr ""
+
+msgid "and"
+msgstr ""
+
 msgid "and flagged %s of them"
 msgstr "и помечены %s из них"
 
@@ -156,6 +174,9 @@ msgstr "Скрытие ответов"
 
 msgid "Answered"
 msgstr "Ответ указан"
+
+msgid "APIP Text To Speech"
+msgstr ""
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
 msgstr "Вы действительно желаете очистить свои ответы и перейти к следующему элементу? Впоследствии вы не сможете вернуться и указать свой ответ."
@@ -190,23 +211,29 @@ msgstr "Автор"
 msgid "Auxiliary file not found at location \"%s\"."
 msgstr "По расположению «%s» не найден вспомогательный файл."
 
-msgid "Black on cream"
-msgstr "Черный на кремовом"
+msgid "Black on Cream"
+msgstr ""
 
-msgid "Black on light blue"
-msgstr "Черный на голубом"
+msgid "Black on Light Blue"
+msgstr ""
 
-msgid "Black on magenta"
-msgstr "Черный на пурпурном"
+msgid "Black on Light Magenta"
+msgstr ""
 
-msgid "Black on white"
-msgstr "Черный на белом"
+msgid "Black on White"
+msgstr ""
 
 msgid "Calculator"
 msgstr "Калькулятор"
 
 msgid "Calculator BODMAS"
 msgstr "Калькулятор BODMAS"
+
+msgid "Can not playback media file!"
+msgstr ""
+
+msgid "CANCEL"
+msgstr "ОТМЕНА"
 
 msgid "Cancel"
 msgstr "Отмена"
@@ -238,8 +265,14 @@ msgstr "Очистить все активное выделение"
 msgid "Clear Highlights"
 msgstr "Очистить выделение"
 
+msgid "Click \"%s\" to continue."
+msgstr "Нажмите \"%s\", чтобы продолжить."
+
 msgid "Click to speak"
 msgstr "Нажмите, чтобы говорить"
+
+msgid "Close"
+msgstr ""
 
 msgid "Close Magnifier"
 msgstr "Закрыть лупу"
@@ -261,6 +294,9 @@ msgstr "Завершенные элементы"
 
 msgid "Connected to server"
 msgstr "Подключено к серверу"
+
+msgid "CONTINUE TO THE NEXT SECTION"
+msgstr ""
 
 msgid "Contrast"
 msgstr "Контраст"
@@ -325,19 +361,22 @@ msgstr "Отображаемая метка"
 msgid "Displays a customisable magnifier"
 msgstr "Отображает настраиваемую лупу"
 
-msgid "DO NOT CHANGE THE NAME OF THE FILE."
-msgstr ""
-
 msgid "Do not flag the current item for later review"
 msgstr "Не помечать текущий элемент для дальнейшего пересмотра"
+
+msgid "Do not rename it."
+msgstr ""
 
 msgid "Do not show alert on timeout"
 msgstr "Не отображать оповещение во время ожидания"
 
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Download"
 msgstr "Загрузить"
 
-msgid "Download the file and submit manually."
+msgid "Download the pupil responses and submit manually."
 msgstr ""
 
 msgid "Eliminate choices"
@@ -357,6 +396,9 @@ msgstr "Включить выделение"
 
 msgid "Enable Skipping Ahead"
 msgstr "Включить пропуск наперед"
+
+msgid "Enable text to speech"
+msgstr ""
 
 msgid "Enable the item review screen / navigator."
 msgstr "Включить экран пересмотра элемента/навигатор."
@@ -388,9 +430,6 @@ msgstr ""
 
 msgid "Expand the review panel"
 msgstr "Развернуть панель пересмотра"
-
-msgid "Export"
-msgstr "Экспорт"
 
 msgid "Export failed for the test \"%s"
 msgstr "Ошибка экспорта для теста «%s"
@@ -437,20 +476,32 @@ msgstr "Пометить текущий элемент для дальнейше
 msgid "Flagged"
 msgstr "Помечено"
 
+msgid "Flagged for review"
+msgstr ""
+
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Принудительно пометить элемент как информационный, чтобы он не учитывался счетчиками (не)отвеченных/помеченных в учетной записи."
 
 msgid "Go to next item"
 msgstr "Перейти к следующему элементу"
 
+msgid "Go to the current question"
+msgstr ""
+
 msgid "Go to the next item?"
 msgstr "Перейти к следующему элементу?"
 
-msgid "Gray on Green"
+msgid "Go to the next question"
 msgstr ""
 
-msgid "Gray on green (low contrast option)"
-msgstr "Серый на зеленом (опция низкого контраста)"
+msgid "Go to the previous question"
+msgstr ""
+
+msgid "Go to the top of the page"
+msgstr ""
+
+msgid "Gray on Green"
+msgstr ""
 
 msgid "Hide Review"
 msgstr "Скрыть панель просмотра"
@@ -476,6 +527,9 @@ msgstr "Выделенный текст"
 msgid "Highlighter"
 msgstr "Инструмент выделения"
 
+msgid "hours"
+msgstr ""
+
 msgid "Html title"
 msgstr "Заголовок HTML"
 
@@ -500,7 +554,10 @@ msgstr "Если задана опция категории, балл будет
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
 msgstr "Если задана опция категории, балл будет также обрабатываться по категориям, а все результаты будут включены в результат SCORE_xxx, где xxx — наименование категории."
 
-msgid "If you need help, please contact us."
+msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
@@ -548,6 +605,9 @@ msgstr "не является допустимым идентификаторо�
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "не является допустимым идентификатором (допускаются любые символы кроме пробелов)"
 
+msgid "It is not possible to save your responses while working offline."
+msgstr ""
+
 msgid "Item \"%s\" is completed."
 msgstr "Элемент «%s» завершен."
 
@@ -556,6 +616,9 @@ msgstr "Элемент %d"
 
 msgid "Item %d of %d"
 msgstr "Элемент %d из %d"
+
+msgid "Item %s loaded"
+msgstr ""
 
 msgid "Item Reference Properties"
 msgstr "Свойства ссылки на элемент"
@@ -584,17 +647,26 @@ msgstr "Элементы, помеченные для дальнейшего п�
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
 msgstr "Элементы с идентификаторами ссылок на элементы оценок «%s» не регистрируются в соответствующей конечной точке CAT."
 
+msgid "Jump Menu"
+msgstr ""
+
+msgid "Jump to:"
+msgstr ""
+
 msgid "Keep Together"
 msgstr "Не разрывать"
+
+msgid "Keyboard Navigation"
+msgstr ""
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr ""
 
 msgid "Late submission allowed"
 msgstr "Поздняя отправка разрешена"
 
 msgid "Leave a comment"
 msgstr "Оставить комментарий"
-
-msgid "Light yellow on royal blue"
-msgstr "Светло-желтый на ярко-синем"
 
 msgid "Line Reader"
 msgstr "Построчное чтение"
@@ -620,16 +692,20 @@ msgstr "Увеличить больше"
 msgid "Magnifying Glass"
 msgstr "Увеличительная лупа"
 
+msgid "Main navigation"
+msgstr ""
+
 msgid "Manage Rubric Blocks"
 msgstr "Управление тематическими блоками"
 
 msgid "Manage test properties"
 msgstr "Управление свойствами тестов"
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr "Управление тестами"
 
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "Управление тестами"
 
 msgid "Mark for review"
@@ -683,10 +759,19 @@ msgstr "Минимальная длительность для данного р
 msgid "Minimum duration for this test part."
 msgstr "Минимальная длительность для этой части теста."
 
+msgid "minutes"
+msgstr ""
+
+msgid "Missed required parameter \'id\"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr "Пропущен файл с пакетом для тестирования"
 
 msgid "Missing required configuration option %s"
+msgstr ""
+
+msgid "Move"
 msgstr ""
 
 msgid "Move Down"
@@ -698,8 +783,14 @@ msgstr "Переместить вверх"
 msgid "Moving to the next item without time limit reached message."
 msgstr "Перемещение к следующему элементу без сообщения о достижении временного лимита."
 
+msgid "name of the pupil"
+msgstr ""
+
 msgid "Navigation"
 msgstr "Навигация"
+
+msgid "Navigation shortcuts"
+msgstr ""
 
 msgid "Navigation Warnings"
 msgstr "Предупреждения касательно навигации"
@@ -709,6 +800,9 @@ msgstr "сеть"
 
 msgid "New Rubric Block"
 msgstr "Новый тематический блок"
+
+msgid "New section"
+msgstr ""
 
 msgid "New test part"
 msgstr "Новая часть теста"
@@ -749,10 +843,16 @@ msgstr "Нет"
 msgid "Not all test could be exported"
 msgstr "Не все тесты могут экспортироваться"
 
+msgid "Not answered"
+msgstr ""
+
+msgid "Not seen"
+msgstr ""
+
 msgid "Not shuffled, the position remains fixed."
 msgstr "Не перемешано, позиция остается фиксированной."
 
-msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
+msgid "Offline"
 msgstr ""
 
 msgid "OK"
@@ -770,6 +870,9 @@ msgstr "Как только вы закроете этот раздел, вы н
 msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "Не удалось импортировать один или несколько зависимых элементов IMS QTI."
 
+msgid "Online"
+msgstr ""
+
 msgid "Only display the items marked for review"
 msgstr "Отображать только элементы, помеченные на пересмотр"
 
@@ -779,11 +882,17 @@ msgstr "Показывать только элементы без ответов
 msgid "Open Calculator"
 msgstr "Открыть калькулятор"
 
+msgid "Open Keyboard Shortcuts"
+msgstr ""
+
+msgid "Option A"
+msgstr ""
+
+msgid "Option B"
+msgstr ""
+
 msgid "or"
 msgstr "или"
-
-msgid "OR"
-msgstr ""
 
 msgid "Ordering"
 msgstr "Упорядочение"
@@ -803,8 +912,14 @@ msgstr "Пакет является действительным, однако �
 msgid "Part %d"
 msgstr "Часть %d"
 
+msgid "Passage"
+msgstr ""
+
 msgid "Pause"
 msgstr "Приостановить"
+
+msgid "Pause the test"
+msgstr ""
 
 msgid "Play"
 msgstr "Воспроизвести"
@@ -812,17 +927,14 @@ msgstr "Воспроизвести"
 msgid "Please confirm you want to leave the test."
 msgstr "Подтвердите, что желаете покинуть тест."
 
-msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
-msgstr ""
-
-msgid "Please continue waiting while we try to restore the connection."
-msgstr ""
-
-msgid "Please stay on this screen."
+msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
 msgstr "Подождите, мы пытаемся восстановить подключение."
+
+msgid "Preview"
+msgstr ""
 
 msgid "Preview the covered area"
 msgstr "Предварительный просмотр покрываемой области"
@@ -830,8 +942,8 @@ msgstr "Предварительный просмотр покрываемой �
 msgid "Previous"
 msgstr "Назад"
 
-msgid "Proceed & End Test"
-msgstr "Продолжить и завершить тест"
+msgid "PROCEED & END ASSESSMENT"
+msgstr ""
 
 msgid "Proctor"
 msgstr "Наблюдатель"
@@ -860,11 +972,26 @@ msgstr "Пакет для тестирования QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Пакет содержимого для тестирования QTI/APIP"
 
+msgid "question"
+msgstr ""
+
+msgid "Question"
+msgstr ""
+
+msgid "questions"
+msgstr ""
+
 msgid "Reference"
 msgstr "Ссылка"
 
 msgid "Regenerate"
 msgstr "Регенерировать"
+
+msgid "Reload the page"
+msgstr ""
+
+msgid "remaining %s %s"
+msgstr ""
 
 msgid "Remove Item Reference"
 msgstr "Удалить ссылку на объект"
@@ -874,6 +1001,9 @@ msgstr "Удалить тематический блок"
 
 msgid "Remove Section"
 msgstr "Удалить раздел"
+
+msgid "Remove Test Part"
+msgstr ""
 
 msgid "Required"
 msgstr "Обязательно"
@@ -905,6 +1035,9 @@ msgstr "Тематические блоки"
 msgid "Save"
 msgstr "Сохранить"
 
+msgid "Saved"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr "Инженерный калькулятор"
 
@@ -922,6 +1055,9 @@ msgstr "Блокнот"
 
 msgid "Scratchpad"
 msgstr "Блокнот"
+
+msgid "seconds"
+msgstr ""
 
 msgid "Section %d"
 msgstr "Раздел %d"
@@ -973,6 +1109,9 @@ msgstr "Задать класс XHTML-QTI для тематического бл
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
 msgstr "Задать идентификатор XHTML-QTI для тематического блока."
+
+msgid "SetSynchronisationService successfully configured."
+msgstr ""
 
 msgid "Settings"
 msgstr "Настройки"
@@ -1031,11 +1170,29 @@ msgstr "Пропустить до следующего раздела"
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
 msgstr "Некоторые тематические блоки были обновлены, они теперь отображают изменения в списке результатов."
 
+msgid "Something unexpected happened."
+msgstr ""
+
+msgid "Something went wrong..."
+msgstr ""
+
 msgid "Speech speed"
 msgstr "Скорость речи"
 
+msgid "Speed"
+msgstr ""
+
 msgid "Start Test-part"
 msgstr "Начать часть теста"
+
+msgid "Step 1: Download the file (see below when available)."
+msgstr ""
+
+msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
+msgstr ""
+
+msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
+msgstr ""
 
 msgid "Stop"
 msgstr "Остановить"
@@ -1046,20 +1203,26 @@ msgstr "Отправка"
 msgid "Submit and go to the end of the test"
 msgstr "Отправить и перейти в конец теста"
 
+msgid "Submit and go to the item %s"
+msgstr "Отправить и перейти к элементу %s"
+
 msgid "Submit and go to the next item"
 msgstr "Отправить и перейти к следующему элементу"
 
 msgid "Submit and go to the previous item"
 msgstr "Отправить и перейти к предыдущему элементу"
 
+msgid "SUBMIT THE TEST"
+msgstr "ОТПРАВИТЬ ТЕСТ"
+
+msgid "SUBMIT THIS PART"
+msgstr ""
+
 msgid "technical"
 msgstr "техническ."
 
 msgid "Test"
 msgstr "Тест"
-
-msgid "Test 1"
-msgstr ""
 
 msgid "Test constructor"
 msgstr "Составитель теста"
@@ -1070,15 +1233,28 @@ msgstr "Метаданные теста успешно экспортирова�
 msgid "Test Navigation"
 msgstr "Навигация по тесту"
 
+msgid "Test Part Properties"
+msgstr ""
+
+msgid "Test Preview is not installed, please contact to your administrator."
+msgstr ""
+
 msgid "Test Saved"
 msgstr "Тест сохранен"
 
 msgid "Test status"
 msgstr "Статус теста"
 
+msgid "Test status and review structure"
+msgstr ""
+
+msgid "Test Status and Structure"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Средства тестируемого"
 
+#, tao-public
 msgid "Tests"
 msgstr "Тесты"
 
@@ -1088,8 +1264,17 @@ msgstr "Текстовое содержимое"
 msgid "Text to Speech"
 msgstr "Текст в речь"
 
+msgid "Text To Speech"
+msgstr ""
+
+msgid "that was being taken."
+msgstr ""
+
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
 msgstr "Файл imsmanifest.xml, обнаруженный в архиве, недействителен."
+
+msgid "the assessment (LCL or Mathematics)"
+msgstr ""
 
 msgid "The assessment has been created but is not already running."
 msgstr "Оценка создана, однако еще не запущена."
@@ -1118,17 +1303,14 @@ msgstr "Кандидату не разрешено отправлять недо
 msgid "The connection seems to be back, please proceed"
 msgstr "Похоже, подключение восстановлено, продолжайте"
 
-msgid "The connection seems to be back, please proceed."
-msgstr "Похоже, подключение восстановлено. Продолжайте."
+msgid "the current question"
+msgstr ""
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
 msgstr "Невозможно обработать зависимость для ссылки на элемент оценки IMS QTI «%s» в файле манифеста IMS."
 
 msgid "The download will be available in <strong>%d</strong> seconds"
 msgstr "Загрузка будет доступна через <strong>%d</strong> секунд (-ы)"
-
-msgid "The file will save into the Downloads folder on your PC."
-msgstr ""
 
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Следующие идентификаторы не уникальны в пределах теста: %s"
@@ -1205,11 +1387,35 @@ msgstr "Тест приостановлен из-за того, что не уд
 msgid "The test has not been saved."
 msgstr "Тест не был сохранен."
 
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr ""
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr ""
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr ""
+
 msgid "The test part identifier."
 msgstr "Идентификатор части теста."
 
 msgid "The test title."
 msgstr "Название теста."
+
+msgid "The time limit has been reached for this part of the test."
+msgstr "Время установленное для данной части теста истекло."
+
+msgid "There are %s unanswered questions"
+msgstr "У вас осталось %s неотвеченных вопросов"
+
+msgid "There are %s unanswered questions in this part of the test"
+msgstr "У вас осталось %s неотвеченных вопросов для данной части теста"
+
+msgid "There is %s unanswered question"
+msgstr "У вас остался %s неотвеченный вопрос"
+
+msgid "There is %s unanswered question in this part of the test"
+msgstr "У вас остался %s неотвеченный вопрос для данной части теста"
 
 msgid "There is not outcomes!"
 msgstr "Нет результатов!"
@@ -1219,6 +1425,9 @@ msgstr "Это ограничение влияет на видимость от�
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
 msgstr "Это ограничение определяет, разрешено ли кандидату оставлять комментарий по поводу элемента во время сеанса. Комментарии не входят в оцениваемую часть ответов."
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
+msgstr ""
 
 msgid "This test has been suspended"
 msgstr "Тест приостановлен"
@@ -1244,8 +1453,23 @@ msgstr "Оставшееся время"
 msgid "Title"
 msgstr "Название"
 
+msgid "Toggle playback"
+msgstr ""
+
+msgid "Toggle start from here mode"
+msgstr ""
+
+msgid "Tool box and flagging for review"
+msgstr ""
+
+msgid "Toolbox"
+msgstr ""
+
 msgid "Total score"
 msgstr "Суммарный балл"
+
+msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
+msgstr ""
 
 msgid "Tutor"
 msgstr "Преподаватель"
@@ -1267,6 +1491,9 @@ msgstr "Неизвестная ошибка."
 
 msgid "Unlink to use separated durations"
 msgstr "Отменить связь для применения отдельных длительностей"
+
+msgid "Unseen"
+msgstr ""
 
 msgid "Upload a QTI 2.1 Test Package File"
 msgstr "Выгрузка файла пакета для тестирования QTI 2.1"
@@ -1294,6 +1521,9 @@ msgstr "Видим."
 
 msgid "Volume"
 msgstr "Громкость"
+
+msgid "Wait for your connection to come back online."
+msgstr ""
 
 msgid "Warning – You have %s remaining to complete the test."
 msgstr "Предупреждение: у вас осталось %s на завершение теста."
@@ -1325,9 +1555,6 @@ msgstr "Весовые коэффициенты"
 msgid "When selecting child elements each element is normally eligible for selection once only."
 msgstr "При выборе дочерних элементов каждый элемент обычно доступен для выбора только один раз."
 
-msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
-msgstr ""
-
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
 msgstr "Определяет, может ли приниматься ответ кандидата, по которому превышена максимальная длительность, заданная для элемента."
 
@@ -1340,8 +1567,11 @@ msgstr "Определяет, может ли приниматься ответ 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
 msgstr "Определяет, может ли приниматься ответ кандидата, по которому превышена максимальная длительность."
 
-msgid "White on black"
-msgstr "Белый на черном"
+msgid "White on Black"
+msgstr ""
+
+msgid "White on Blue (TAO standard theme)"
+msgstr ""
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Определяет, кто может просматривать тематический блок во время выдачи."
@@ -1352,14 +1582,24 @@ msgstr "С заменой"
 msgid "Wrong file mime type"
 msgstr "Неправильный формат MIME файла"
 
+msgid "XML Content"
+msgstr ""
+
+#, tao-public
+msgid "XML Editor"
+msgstr ""
+
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "Ошибка XML, строка %1$d, столбец %2$d, «%3$s»."
+
+msgid "Yellow on Blue"
+msgstr ""
 
 msgid "Yes"
 msgstr "Да"
 
-msgid "You answered all %s question(s)"
-msgstr "Вы ответили на все вопросы (%s)"
+msgid "You answered %s of %s question(s) for this section of the test"
+msgstr ""
 
 msgid "You answered all %s question(s) in this section"
 msgstr "Вы ответили на все вопросы (%s) в данном разделе"
@@ -1376,17 +1616,38 @@ msgstr "Вы собираетесь перейти к следующему эл�
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
 msgstr "Вы собираетесь перейти к предыдущему элементу. Нажмите OK, чтобы продолжить и перейти к предыдущему элементу."
 
-msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "Вы собираетесь отправить тест. После отправки вы уже не будете иметь доступ к этому тесту. Нажмите OK, чтобы продолжить и отправить тест."
+msgid "You are about to leave this section."
+msgstr ""
 
-msgid "You are encountering a prolonged connectivity loss."
-msgstr "Подключение прерывается уже в течение длительного времени."
+msgid "You are about to submit the test."
+msgstr "Вы собираетесь отправить тест."
+
+msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
+msgstr "Вы собираетесь отправить тест. После отправки вы уже не будете иметь доступ к этому тесту. Нажмите \"Отправить\", чтобы продолжить и отправить тест."
+
+msgid "You are about to submit this test part."
+msgstr ""
+
+msgid "You are currently working offline."
+msgstr ""
 
 msgid "You are encountering a prolonged connectivity loss. "
 msgstr "Подключение прерывается уже в течение длительного времени."
 
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
+msgstr ""
+
+msgid "You flagged %s item(s) that you can review now"
+msgstr ""
+
 msgid "You have %s item(s) marked for review."
 msgstr "У вас имеется элементов, помеченных на пересмотр: %s."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr ""
+
+msgid "You have %s remaining to complete the current item."
+msgstr ""
 
 msgid "You have %s unanswered question(s)"
 msgstr "У вас имеется вопросов без ответов: %s"
@@ -1397,8 +1658,14 @@ msgstr "У вас имеется вопросов без ответов: %s; э�
 msgid "You have %s unanswered question(s)."
 msgstr "У вас имеется вопросов без ответов: %s."
 
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
+msgstr "После отправки вы уже не будете иметь доступ к этому тесту. Нажмите \"%s\", чтобы продолжить и отправить тест."
+
 msgid "Your comment…"
 msgstr "Ваш комментарий…"
+
+msgid "Your connection seems to be back, please proceed."
+msgstr ""
 
 msgid "Zoom"
 msgstr "Масштабирование"

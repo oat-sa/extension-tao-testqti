@@ -19,6 +19,7 @@
  *
  *
  */
+
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
@@ -33,18 +34,21 @@ use oat\tao\model\service\ServiceFileStorage;
  * @author Joel Bout, <joel.bout@tudor.lu>
  * @package taoQtiTest
  */
-class TestModelService extends ConfigurableService implements TestModel, \tao_models_classes_import_ImportProvider, \tao_models_classes_export_ExportProvider
+class TestModelService extends ConfigurableService implements
+    TestModel,
+    \tao_models_classes_import_ImportProvider,
+    \tao_models_classes_export_ExportProvider
 {
+    public const SERVICE_ID = 'taoQtiTest/TestModel';
 
-    const SERVICE_ID = 'taoQtiTest/TestModel';
-
-    const SUBSERVICE_COMPILATION = 'CompilationService';
+    public const SUBSERVICE_COMPILATION = 'CompilationService';
 
     /**
      * {@inheritDoc}
      * @see \taoTests_models_classes_TestModel::prepareContent()
      */
-    public function prepareContent( \core_kernel_classes_Resource $test, $items = array()) {
+    public function prepareContent(\core_kernel_classes_Resource $test, $items = [])
+    {
         $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         $service->save($test, $items);
     }
@@ -53,7 +57,8 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
      * {@inheritDoc}
      * @see \taoTests_models_classes_TestModel::deleteContent()
      */
-    public function deleteContent( \core_kernel_classes_Resource $test) {
+    public function deleteContent(\core_kernel_classes_Resource $test)
+    {
         $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         $service->deleteContent($test);
     }
@@ -62,7 +67,8 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
      * {@inheritDoc}
      * @see \taoTests_models_classes_TestModel::getItems()
      */
-    public function getItems( \core_kernel_classes_Resource $test) {
+    public function getItems(\core_kernel_classes_Resource $test)
+    {
         $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         return $service->getItems($test);
     }
@@ -71,16 +77,18 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
      * {@inheritDoc}
      * @see \taoTests_models_classes_TestModel::onChangeTestLabel()
      */
-    public function onChangeTestLabel( \core_kernel_classes_Resource $test) {
-    	// do nothing
+    public function onChangeTestLabel(\core_kernel_classes_Resource $test)
+    {
+        // do nothing
     }
 
     /**
      * {@inheritDoc}
      * @see \taoTests_models_classes_TestModel::getAuthoringUrl()
      */
-    public function getAuthoringUrl( \core_kernel_classes_Resource $test) {
-        return _url('index', 'Creator', 'taoQtiTest', array('uri' => $test->getUri()));
+    public function getAuthoringUrl(\core_kernel_classes_Resource $test)
+    {
+        return _url('index', 'Creator', 'taoQtiTest', ['uri' => $test->getUri()]);
     }
 
     /**
@@ -96,9 +104,9 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
         $destinationDir = $service->getQtiTestDir($destination, false);
 
         if ($existingDir->exists()) {
-            $iterator = $existingDir->getFlyIterator(Directory::ITERATOR_FILE|Directory::ITERATOR_RECURSIVE);
+            $iterator = $existingDir->getFlyIterator(Directory::ITERATOR_FILE | Directory::ITERATOR_RECURSIVE);
             /** @var File $file */
-            foreach($iterator as $file) {
+            foreach ($iterator as $file) {
                 $destinationDir->getFile($existingDir->getRelPath($file))->write($file->readStream());
             }
         } else {
@@ -106,19 +114,21 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
         }
     }
 
-    public function getImportHandlers() {
-        if ($this->hasOption('importHandlers')){
+    public function getImportHandlers()
+    {
+        if ($this->hasOption('importHandlers')) {
             return $this->getOption('importHandlers');
         } else {
-            return array();
+            return [];
         }
     }
 
-    public function getExportHandlers() {
-        if ($this->hasOption('exportHandlers')){
+    public function getExportHandlers()
+    {
+        if ($this->hasOption('exportHandlers')) {
             return $this->getOption('exportHandlers');
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -132,12 +142,14 @@ class TestModelService extends ConfigurableService implements TestModel, \tao_mo
         return $service->getCompiler($test, $storage);
     }
 
-    public function getCompilerClass() {
+    public function getCompilerClass()
+    {
         return $this->getSubService(self::SUBSERVICE_COMPILATION)->getCompilerClass();
     }
 
 
-    public function getPackerClass() {
+    public function getPackerClass()
+    {
         return 'oat\\taoQtiTest\\models\\pack\\QtiTestPacker';
     }
 }

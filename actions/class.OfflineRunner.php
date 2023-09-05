@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Péter Halász <peter@taotesting.com>
  */
@@ -48,7 +50,7 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
         } catch (\Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
-                $this->getErrorCode($e)
+                $this->getStatusCodeFromException($e)
             );
         }
     }
@@ -65,7 +67,9 @@ class taoQtiTest_actions_OfflineRunner extends taoQtiTest_actions_Runner
      */
     private function attachBranchingRulesToResponse(array $testMap, QtiRunnerServiceContext $serviceContext)
     {
-        $serializedTestDefinition = $this->getTestDefinitionSerializerService()->getSerializedTestDefinition($serviceContext);
+        $serializedTestDefinition = $this->getTestDefinitionSerializerService()->getSerializedTestDefinition(
+            $serviceContext
+        );
         $branchRuleExtender = new TestMapBranchRuleExtender();
 
         return $branchRuleExtender->getTestMapWithBranchRules($testMap, $serializedTestDefinition);

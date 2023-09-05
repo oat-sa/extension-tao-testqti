@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2015 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\models;
 
 use oat\oatbox\service\ConfigurableService;
@@ -47,16 +49,16 @@ use qtism\runtime\tests\RouteItem;
  */
 class SessionStateService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/SessionStateService';
-    
-    const OPTION_STATE_FORMAT = 'stateFormat';
-    
+    public const SERVICE_ID = 'taoQtiTest/SessionStateService';
+
+    public const OPTION_STATE_FORMAT = 'stateFormat';
+
     /**
      * @var ServiceProxy
      */
     private $deliveryExecutionService;
 
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->deliveryExecutionService = ServiceProxy::singleton();
         parent::__construct($options);
@@ -67,7 +69,8 @@ class SessionStateService extends ConfigurableService
      * @param AssessmentTestSession $session
      * @return boolean success
      */
-    public function pauseSession(AssessmentTestSession $session) {
+    public function pauseSession(AssessmentTestSession $session)
+    {
         $session->updateDuration();
         return $this->getDeliveryExecution($session)->setState(DeliveryExecution::STATE_PAUSED);
     }
@@ -76,7 +79,8 @@ class SessionStateService extends ConfigurableService
      * Resume delivery execution
      * @param AssessmentTestSession $session
      */
-    public function resumeSession(AssessmentTestSession $session) {
+    public function resumeSession(AssessmentTestSession $session)
+    {
         $deliveryExecutionState = $this->getSessionState($session);
         if ($deliveryExecutionState === DeliveryExecution::STATE_PAUSED) {
             $this->updateTimeReference($session);
@@ -89,7 +93,8 @@ class SessionStateService extends ConfigurableService
      * @param AssessmentTestSession $session
      * @return string
      */
-    public function getSessionState(AssessmentTestSession $session) {
+    public function getSessionState(AssessmentTestSession $session)
+    {
         $deliveryExecution = $this->getDeliveryExecution($session);
         return $deliveryExecution->getState()->getUri();
     }
@@ -102,7 +107,8 @@ class SessionStateService extends ConfigurableService
      * @param AssessmentTestSession $session
      * @param \DateTime|null $time Time to be specified. Current time by default. Make sure that $time has UTC timezone.
      */
-    public function updateTimeReference(AssessmentTestSession $session, \DateTime $time = null) {
+    public function updateTimeReference(AssessmentTestSession $session, \DateTime $time = null)
+    {
         if ($time === null) {
             $time = new \DateTime('now', new \DateTimeZone('UTC'));
         }
@@ -119,7 +125,8 @@ class SessionStateService extends ConfigurableService
      * @param AssessmentTestSession $session
      * @return DeliveryExecution
      */
-    private function getDeliveryExecution(AssessmentTestSession $session) {
+    private function getDeliveryExecution(AssessmentTestSession $session)
+    {
         return $this->deliveryExecutionService->getDeliveryExecution($session->getSessionId());
     }
 
@@ -130,32 +137,35 @@ class SessionStateService extends ConfigurableService
      *
      * @return string
      */
-    public function getClientImplementation($resetTimerAfterResume = false){
+    public function getClientImplementation($resetTimerAfterResume = false)
+    {
         if ($resetTimerAfterResume) {
             return 'taoQtiTest/testRunner/resumingStrategy/keepAfterResume';
         }
         return 'taoQtiTest/testRunner/resumingStrategy/resetAfterResume';
     }
-    
+
     /**
      * Return a description of the test session
-     *  
+     *
      * @return string
      */
     public function getSessionDescription(\taoQtiTest_helpers_TestSession $session)
     {
         if ($session->isRunning()) {
-            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config = \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
             $progressScope = isset($config['progress-indicator-scope']) ? $config['progress-indicator-scope'] : 'test';
             $progress = $this->getSessionProgress($session);
             $itemPosition = $progress[$progressScope];
             $itemCount = $progress[$progressScope . 'Length'];
 
-            $map = array(
+            $map = [
                 'title' => $session->getCurrentAssessmentSection()->getTitle(),
                 'itemPosition' => $itemPosition,
                 'itemCount' => $itemCount
-            );
+            ];
             return json_encode($map);
         }
         return json_encode(['title' => 'finished']);
@@ -169,7 +179,9 @@ class SessionStateService extends ConfigurableService
     protected function getSessionProgress(\taoQtiTest_helpers_TestSession $session)
     {
         if ($session->isRunning() !== false) {
-            $config = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest')->getConfig('testRunner');
+            $config = \common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
             $categories = [];
             if (isset($config['progress-indicator']) && $config['progress-indicator'] == 'categories') {
                 $categories = $config['progress-categories'];
@@ -196,7 +208,7 @@ class SessionStateService extends ConfigurableService
                 if ($lastPart != $partId) {
                     $offsetPart = 0;
                     $lastPart = $partId;
-                    $partIndex ++;
+                    $partIndex++;
                 }
 
                 $section = $routeItem->getAssessmentSection();
@@ -204,18 +216,18 @@ class SessionStateService extends ConfigurableService
                 if ($lastSection != $sectionId) {
                     $offsetSection = 0;
                     $lastSection = $sectionId;
-                    $sectionIndex ++;
+                    $sectionIndex++;
                 }
 
-                $offset ++;
-                $offsetSection ++;
+                $offset++;
+                $offsetSection++;
 
                 if ($categories && $config['progress-indicator-scope'] == 'testPart') {
                     /** @var AssessmentItemRef $assessmentItemRef */
                     $assessmentItemRef = $routeItem->getAssessmentItemRef();
                     $assessmenCategories = $assessmentItemRef->getCategories()->getArrayCopy();
                     if (array_intersect($categories, $assessmenCategories)) {
-                        $offsetPart ++;
+                        $offsetPart++;
                     }
                 }
                 $lengthParts[$partIndex] = $offsetPart;
@@ -237,10 +249,18 @@ class SessionStateService extends ConfigurableService
             if ($catService->isAdaptive($session, $currentItem->getAssessmentItemRef())) {
                 $testSessionService = $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
                 $testSessionData = $testSessionService->getTestSessionDataById($session->getSessionId());
-                $sectionItems = $catService->getShadowTest($session, $testSessionData['compilation']['private'], $currentItem);
-                $currentItem = $catService->getCurrentCatItemId($session, $testSessionData['compilation']['private'], $currentItem);
+                $sectionItems = $catService->getShadowTest(
+                    $session,
+                    $testSessionData['compilation']['private'],
+                    $currentItem
+                );
+                $currentItem = $catService->getCurrentCatItemId(
+                    $session,
+                    $testSessionData['compilation']['private'],
+                    $currentItem
+                );
                 $positionInSection = array_search($currentItem, $sectionItems);
-                
+
                 // When in an adaptive section, the actual section is just a placeholder that is dynamically
                 // replaced by the adaptive content. To set the right position, just grab the offset within
                 // this dynamic content and add it to the placeholder position.

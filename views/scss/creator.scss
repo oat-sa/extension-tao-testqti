@@ -34,6 +34,8 @@
     $propsColor: $uiOverlay;
     $testPartColor: $websiteBorder;
     $sectionColor: $darkBlueGrey;
+    $subsectionColor: #d2e9f3;
+    $sub2sectionColor: #d4d5d7;
     $rubColor: whiten($info, 0.3);
 
     position: relative;
@@ -270,14 +272,12 @@
         color: $textColor;
 
         h1, h2, li {
-            & > span:first-child {
-                float: left;
-            }
             .actions {
                 position: absolute;
                 right: 0;
                 top: 0;
-                display: inline-block;
+                display: inline-table;
+                width: auto;
                 max-width: 300px;
                 height: 39px;
                 z-index: 100;
@@ -323,9 +323,21 @@
             }
         }
 
-
+        .button-add {
+            background-color: transparent;
+            color: #266d9c;
+            text-shadow: none;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            & > span {
+                padding: 0;
+                font-size: 1.6rem;
+                text-shadow: none;
+            }
+        }
         .test-content {
-            padding: 0 0 0 10px;
+            padding: 0 18px 0 18px;
             height: calc(100% - 65px);
             overflow-y : auto;
             h1, h2 {
@@ -337,31 +349,49 @@
 
         .testpart-content {
             & > button{
-                margin-left: 10px;
+                margin-left: 13px;
             }
         }
 
         .testpart {
             color: $textColor;
-            border-left: solid 5px $testPartColor;
-            padding: 0 5px;
-            margin: 10px 0;
+            border: solid 1px $uiGeneralContentBorder;
+            padding: 0;
+            margin: 16px 0;
+            padding-bottom: 10px;
+            @include border-radius(3);
 
             & > h1 {
-                background-color: whiten($testPartColor, 0.2);
-                padding: 0 5px;
-                margin-right: 5px;
+                font-size: 1.25em;
+                display: flex;
+                align-items: center;
+                background-color: $uiClickableDefaultBg;
+                padding: 25px;
                 margin-top: 0;
-                color: $textHighlight;
-                @include border-radius;
+                color: $textColor;
+                font-weight: bold;
+                border-radius: 2px 2px 0 0;
+                border: solid 1px $uiGeneralContentBorder;
                 & > .toggler {
                     position: absolute;
-                    right: 15px;
-                    color: $textHighlight;
+                    left: 5px;
+                    top: 15px;
+                    color: $textColor;
+                    text-decoration: none;
+                    transform: rotate(180deg);
+                }
+                & > .closed {
+                    transform: rotate(-90deg);
                 }
             }
+            .actions {
+                top: 6px;
+                right: 10px;
 
-
+            }
+            .actions .tlb-group {
+                min-width: 126px;
+            }
         }
 
         .sections {
@@ -372,20 +402,46 @@
             color: $textColor;
             border-left: solid 5px $sectionColor;
             padding: 0 5px 0 15px;
-            margin: 10px 0 10px 10px;
+            margin: 10px 16px 10px 16px;
 
             & > h2 {
-                color: blacken($sectionColor, 0.4);
+                font-size: 1.25em;
+                color: black;
+                font-weight: bold;
             }
 
             &:last-child{
                 margin-bottom: 0;
             }
+
+            .actions {
+                top: 0;
+                right: -4px;
+            }
+            .actions .tlb-group {
+                min-width: 157px;
+            }
+        }
+        .section-error{
+            border-left: solid 5px $error;
+        }
+
+        .subsection {
+            & > h2 {
+                font-size: 1.25em;
+                color: black;
+                font-weight: bold;
+            }
+            border-left: solid 5px $subsectionColor;
+            padding: 0 0 0 15px;
+            .subsection {
+                border-left-color: $sub2sectionColor;
+            }
         }
 
         .rublocks{
             border-left: solid 5px $rubColor;
-            padding: 0 5px 0 15px;
+            padding: 0 5px 16px 20px;
             margin: 0px 0 10px 0px;
             h3 {
                 color: $rubColor;
@@ -448,14 +504,19 @@
                     color: $uiGeneralContentBorder;
                 }
                 & > li {
-                   position: relative;
-                   height: 39px;
-                   line-height: 39px;
-                   padding: 2px ;
-                   clear: both;
-                   &:nth-child(even){
-                        background-color: $uiClickableDefaultBg;
-                   }
+                    position: relative;
+                    height: 39px;
+                    line-height: 39px;
+                    padding: 2px ;
+                    clear: both;
+                    &:nth-child(even){
+                         background-color: $uiClickableDefaultBg;
+                    }
+                    .actions {
+                        .tlb-group {
+                            min-width: 124px;
+                        }
+                    }
                 }
             }
             .itemref-placeholder {
@@ -655,7 +716,7 @@
         }
         .locker {
             position: absolute;
-            border: solid 1px $websiteBorder; 
+            border: solid 1px $websiteBorder;
             border-left-color: transparent;
             @include border-radius(4);
             top: 14px;
@@ -666,7 +727,7 @@
         }
 
         button {
-            background-color: $uiClickableDefaultBg; 
+            background-color: $uiClickableDefaultBg;
             position: absolute;
             z-index: 450;
             padding: 0;
@@ -708,4 +769,19 @@
 
         }
     }
+    span.icon-warning {
+        color: $error;
+        margin-left: 0.5em;
+        display: none;
+        font-size: 1.80rem;
+    }
 }
+
+.feedback-warning {
+    border-color: $errorBorderColor !important;
+    background-color: $errorBgColor !important;
+    span.icon-warning {
+        color: $error !important;
+    }
+}
+

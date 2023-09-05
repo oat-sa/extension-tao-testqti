@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,11 +32,11 @@ use oat\taoTests\models\runner\time\TimeStorage;
 class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
 {
     use QtiTimeStorageFormatAwareTrait;
-    
+
     /**
      * Prefix used to identify the data slot in the storage
      */
-    const STORAGE_PREFIX = 'timer_';
+    public const STORAGE_PREFIX = 'timer_';
 
     /**
      * Local cache used to maintain data in memory while the request is running
@@ -54,7 +55,7 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
      * @var string
      */
     protected $userId;
-    
+
     /**
      * @var StateStorage
      */
@@ -79,12 +80,12 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
     {
         return self::getStorageKeyFromTestSessionId($this->testSessionId);
     }
-    
+
     /**
      * Storage Key from Test Session Id
-     * 
+     *
      * Returns the Storage Key corresponding to a fiven $testSessionId
-     * 
+     *
      * @param string $testSessionId
      * @return string
      */
@@ -132,7 +133,7 @@ class QtiTimeStorage implements TimeStorage, QtiTimeStorageFormatAware
     {
         $this->cache[$this->testSessionId] = &$data;
         $encodedData = $this->getStorageFormat()->encode($data);
-        
+
         $this->getStorageService()->set($this->getUserKey(), $this->getStorageKey(), $encodedData);
         \common_Logger::d(sprintf('QtiTimer: Stored %d bytes into state storage', strlen($encodedData)));
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +33,7 @@ use oat\taoQtiTest\models\runner\StorageManager;
  */
 class ExtendedStateService extends ConfigurableService implements DeliveryExecutionDelete
 {
-    const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
+    public const SERVICE_ID = 'taoQtiTest/ExtendedStateService';
 
     protected $cache = [];
     protected $deliveryExecutions = [];
@@ -295,11 +296,7 @@ class ExtendedStateService extends ConfigurableService implements DeliveryExecut
      */
     public function deleteDeliveryExecutionData(DeliveryExecutionDeleteRequest $request)
     {
-        if ($request->getSession() === null) {
-            $sessionId = $request->getDeliveryExecution()->getIdentifier();
-        } else {
-            $sessionId = $request->getSession()->getSessionId();
-        }
+        $sessionId = $request->getDeliveryExecution()->getIdentifier();
         $extendedState = $this->getExtendedState($sessionId);
         $extendedState->deleteDeliveryExecutionData($request);
 

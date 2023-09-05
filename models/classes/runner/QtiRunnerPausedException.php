@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -32,16 +34,18 @@ class QtiRunnerPausedException extends \common_Exception implements \common_exce
      * @param string $message A technical infiormation message.
      * @param integer $code A code to explicitely identify the nature of the error.
      */
-    public function __construct($message = 'The test has been suspended', $code = AssessmentTestSessionState::SUSPENDED) {
+    public function __construct($message = 'The test has been suspended', $code = AssessmentTestSessionState::SUSPENDED)
+    {
         parent::__construct($message, $code);
     }
-    
+
     /**
      * Returns a translated human-readable message destinated to the end-user.
      *
      * @return string A human-readable message.
      */
-    public function getUserMessage() {
+    public function getUserMessage()
+    {
         return __('This test has been suspended');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -31,7 +32,6 @@ use oat\taoDelivery\model\execution\ServiceProxy;
 */
 class TraceVariableStored implements Event
 {
-
     private $deliveryExecutionId;
     private $traceData;
 
@@ -52,7 +52,7 @@ class TraceVariableStored implements Event
      */
     public function getDeliveryExecution()
     {
-        if(is_null($this->deliveryExecution)){
+        if (is_null($this->deliveryExecution)) {
             $this->deliveryExecution = ServiceProxy::singleton()->getDeliveryExecution($this->deliveryExecutionId);
         }
         return $this->deliveryExecution;
@@ -80,5 +80,4 @@ class TraceVariableStored implements Event
     {
         return __CLASS__;
     }
-
 }

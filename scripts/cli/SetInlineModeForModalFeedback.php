@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +22,6 @@
 
 namespace oat\taoQtiTest\scripts\cli;
 
-
 use oat\oatbox\action\Action;
 use oat\tao\model\ClientLibConfigRegistry;
 
@@ -43,11 +43,14 @@ class SetInlineModeForModalFeedback implements Action
 
         ClientLibConfigRegistry::getRegistry()->register(
             'taoQtiTest/runner/plugins/content/modalFeedback/modalFeedback',
-            array(
+            [
                 'inlineModalFeedback' => $inlineModel
-            )
+            ]
         );
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, $inlineModel ? 'Inline mode was set' : 'Inline mode was unset');
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            $inlineModel ? 'Inline mode was set' : 'Inline mode was unset'
+        );
     }
 }

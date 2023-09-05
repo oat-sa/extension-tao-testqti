@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,28 +20,26 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\synchronisation\action;
 
+use common_exception_InconsistentData;
 use Exception;
 use oat\generis\test\TestCase;
 use oat\oatbox\event\EventManager;
+use oat\taoQtiTest\model\Service\ActionResponse;
+use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\models\event\ItemOfflineEvent;
-use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\Move;
-use oat\generis\test\MockObject;
-use qtism\runtime\tests\Route;
-use qtism\runtime\tests\RouteItem;
-use qtism\data\ExtendedAssessmentItemRef;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class MoveTest extends TestCase
 {
     /** @var QtiRunnerService|MockObject */
-    private $qtiRunnerService;
+    private $runnerService;
 
     /** @var QtiRunnerServiceContext|MockObject */
-    private $qtiRunnerServiceContext;
+    private $runnerServiceContext;
 
     /** @var TestSession|MockObject */
     private $testSession;
@@ -48,335 +47,130 @@ class MoveTest extends TestCase
     /** @var EventManager|MockObject */
     private $eventManager;
 
-    protected function setUp()
+    /** @var MoveService|MockObject */
+    private $moveService;
+
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->qtiRunnerService = $this->createMock(QtiRunnerService::class);
-        $this->qtiRunnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
+        $this->moveService = $this->createMock(MoveService::class);
+        $this->runnerService = $this->createMock(QtiRunnerService::class);
+        $this->runnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->testSession = $this->createMock(TestSession::class);
         $this->eventManager = $this->createMock(EventManager::class);
-        $itemRef = $this->createMock(ExtendedAssessmentItemRef::class);
-        $itemRef
-            ->method('getIdentifier')
-            ->willReturn('expectedItemDefinition');
 
-        $this->qtiRunnerService
+        $this->runnerService
             ->method('getServiceContext')
-            ->willReturn($this->qtiRunnerServiceContext);
+            ->willReturn($this->runnerServiceContext);
 
-        $this->qtiRunnerServiceContext
+        $this->runnerServiceContext
             ->method('getTestSession')
             ->willReturn($this->testSession);
-
-        $this->qtiRunnerServiceContext
-            ->method('getCurrentAssessmentItemRef')
-            ->willReturn($itemRef);
     }
 
-    /**
-     * @expectedException \common_exception_InconsistentData
-     * @expectedExceptionMessage Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, direction, scope
-     */
-    public function testValidationExceptionIfRequestParametersAreMissing()
+    public function testReturnsSuccessfulResponse(): void
     {
-        $this->createSubjectWithParameters(['missing parameters'])->process();
+        $expectedActionResponse = ActionResponse::success(['itemIdentifier' => 'item-1']);
+        $this->expectActionResponse($expectedActionResponse);
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedActionResponse->toArray(), $subject->process());
     }
 
-    public function testUnsuccessfulResponse()
+    public function testReturnsUnsuccessfulResponseWhenServiceReturnsEmptyResponse(): void
     {
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('move')
-            ->willReturn(false);
+        $this->expectActionResponse(ActionResponse::empty());
 
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
 
         $this->assertEquals(['success' => false], $subject->process());
     }
 
-    public function testErrorResponse()
+    public function testReturnsErrorResponseWhenServiceThrows(): void
     {
-        $this->qtiRunnerService
-            ->method('getServiceContext')
-            ->willThrowException(new Exception('Error message', 100));
+        $this->expectServiceThrows(new Exception('Error message', 100));
 
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
-
-        $this->assertEquals([
+        $expectedResponse = [
             'success' => false,
             'type' => 'exception',
             'code' => 100,
             'message' => 'An error occurred!',
-        ], $subject->process());
+        ];
+
+        $subject = $this->createSubject($this->getRequiredRequestParameters());
+
+        $this->assertEquals($expectedResponse, $subject->process());
     }
 
-    public function testSuccessfulResponse()
+    public function testThrowsWhenValidationFails(): void
     {
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('move')
-            ->willReturn(true);
+        $this->expectException(common_exception_InconsistentData::class);
+        $this->expectExceptionMessage(
+            'Some parameters are missing. Required parameters are : testDefinition, testCompilation, serviceCallId, '
+                . 'direction, scope'
+        );
 
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
-
-        $this->assertEquals([
-            'success' => true,
-            'testContext' => null,
-        ], $subject->process());
+        $this->createSubject(['missing parameters'])
+            ->process();
     }
 
-    public function testItReturnsTestContextWithSuccessfulResponse()
+    public function testTriggersItemOfflineEvent(): void
     {
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('move')
-            ->willReturn(true);
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('getTestContext')
-            ->with($this->qtiRunnerServiceContext)
-            ->willReturn(['expectedTestContext']);
-
-        $this->assertEquals([
-            'success' => true,
-            'testContext' => ['expectedTestContext'],
-        ], $subject->process());
-    }
-
-    public function testItReturnsTestMapWhenServiceContextContainsAdaptiveContent()
-    {
-        $subject = $this->createSubjectWithParameters($this->getRequiredRequestParameters());
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('move')
-            ->willReturn(true);
-
-        $this->qtiRunnerServiceContext
-            ->expects($this->once())
-            ->method('containsAdaptive')
-            ->willReturn(true);
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('getTestMap')
-            ->with($this->qtiRunnerServiceContext)
-            ->willReturn(['expectedTestMap']);
-
-        $this->assertEquals([
-            'success' => true,
-            'testContext' => null,
-            'testMap' => ['expectedTestMap'],
-        ], $subject->process());
-    }
-
-    public function testItTriggersItemOfflineEvent()
-    {
-        $requestParameters = [
-            'offline' => true,
-            'itemDefinition' => 'expectedItemDefinition',
-        ] + $this->getRequiredRequestParameters();
+        $requestParameters = array_merge(
+            $this->getRequiredRequestParameters(),
+            [
+                'offline' => true,
+                'itemDefinition' => 'expectedItemDefinition',
+            ]
+        );
 
         $this->eventManager
             ->expects($this->once())
             ->method('trigger')
-            ->willReturnCallback(
-                function (ItemOfflineEvent $itemOfflineEvent) {
-                    return $itemOfflineEvent->getName() === 'expectedItemDefinition'
-                        && $itemOfflineEvent->getSession() === $this->testSession;
-                }
+            ->with(
+                $this->isInstanceOf(ItemOfflineEvent::class)
             );
 
-        $this->createSubjectWithParameters($requestParameters)->process();
+        $this->createSubject($requestParameters)
+            ->process();
     }
 
-    public function testItSavesToolStates()
-    {
-        $rawToolStates = [
-            ['testTool1' => 'testStatus1'],
-            ['testTool2' => 'testStatus2'],
-        ];
-
-        $requestParameters = $this->getRequiredRequestParameters();
-        $requestParameters['toolStates'] = json_encode($rawToolStates);
-
-        $expectedToolStates = [
-            json_encode(['testTool1' => 'testStatus1']),
-            json_encode(['testTool2' => 'testStatus2']),
-        ];
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('setToolsStates')
-            ->willReturnCallback(
-                function (RunnerServiceContext $runnerServiceContext, $toolStates) use ($expectedToolStates) {
-                    return $runnerServiceContext === $this->qtiRunnerServiceContext
-                        && $toolStates === $expectedToolStates;
-                }
-            );
-
-        $this->createSubjectWithParameters($requestParameters)->process();
-    }
-
-    public function testItMovesItemWithExpectedParameters()
-    {
-        $requestParameters = $this->getRequiredRequestParameters(
-            'testDefinition',
-            'testCompilation',
-            'testServiceCallId',
-            'expectedDirection',
-            'expectedScope'
-        ) + ['ref' => 'expectedRef'];
-
-        $expectedTime = microtime(true);
-        $subject = $this->createSubjectWithParameters($requestParameters);
-
-        $subject->setTime($expectedTime);
-
-        $this->testSession
-            ->expects($this->once())
-            ->method('initItemTimer')
-            ->with($expectedTime);
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('move')
-            ->with($this->qtiRunnerServiceContext, 'expectedDirection', 'expectedScope', 'expectedRef');
-
-        $subject->process();
-    }
-
-    public function testItEndsTimerAndSavesItemStateIfRunnerIsNotTerminated()
-    {
-        $expectedDecodedItemState = ['item' => 'expectedItemState'];
-        $requestParameters = [
-            'itemDuration' => 1000,
-            'itemDefinition' => 'expectedItemDefinition',
-            'itemState' => json_encode($expectedDecodedItemState),
-        ] + $this->getRequiredRequestParameters();
-
-        $subject = $this->createSubjectWithParameters($requestParameters);
-
-        $expectedTime = microtime(true);
-        $subject->setTime($expectedTime);
-
-        $this->qtiRunnerService
-            ->method('isTerminated')
-            ->willReturn(false);
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('endTimer')
-            ->with($this->qtiRunnerServiceContext, 1000, $expectedTime);
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('setItemState')
-            ->with($this->qtiRunnerServiceContext, 'expectedItemDefinition', $expectedDecodedItemState);
-
-        $subject->process();
-    }
-
-    public function testItSavesItemResponses()
-    {
-        $expectedItemResponse = ['item' => 'response'];
-        $requestParameters = [
-            'itemDefinition' => 'expectedItemDefinition',
-            'itemResponse' => json_encode($expectedItemResponse),
-        ] + $this->getRequiredRequestParameters();
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('parsesItemResponse')
-            ->with($this->qtiRunnerServiceContext, 'expectedItemDefinition', $expectedItemResponse)
-            ->willReturn($expectedItemResponse);
-
-        $runnerConfig = $this->createMock(RunnerConfig::class);
-        $runnerConfig
-            ->expects($this->once())
-            ->method('getConfigValue')
-            ->with('enableAllowSkipping')
-            ->willReturn(true);
-
-        $this->qtiRunnerService
-            ->method('getTestConfig')
-            ->willReturn($runnerConfig);
-
-        $routeItem = $this->createMock(RouteItem::class);
-
-        $route = $this->createMock(Route::class);
-        $route
-            ->expects($this->once())
-            ->method('current')
-            ->willReturn($routeItem);
-
-        $this->testSession
-            ->method('getRoute')
-            ->willReturn($route);
-
-        $this->qtiRunnerService
-            ->expects($this->once())
-            ->method('storeItemResponse')
-            ->with($this->qtiRunnerServiceContext, 'expectedItemDefinition', $expectedItemResponse);
-
-        $this->createSubjectWithParameters($requestParameters)->process();
-    }
-
-    public function testWrongCurrentItem()
-    {
-        $expectedItemResponse = ['item' => 'response'];
-        $requestParameters = [
-                'itemDefinition' => 'wrongItemDefinition',
-                'itemResponse' => json_encode($expectedItemResponse),
-            ] + $this->getRequiredRequestParameters();
-
-        $response = $this->createSubjectWithParameters($requestParameters)->process();
-        $this->assertFalse($response['success']);
-    }
-
-    /**
-     * @param array $requestParameters
-     *
-     * @return Move
-     */
-    private function createSubjectWithParameters($requestParameters = [])
+    private function createSubject(array $requestParameters = []): Move
     {
         $subject = new Move('test', microtime(), $requestParameters);
 
         $services = [
-            QtiRunnerService::SERVICE_ID => $this->qtiRunnerService,
+            QtiRunnerService::SERVICE_ID => $this->runnerService,
             EventManager::SERVICE_ID => $this->eventManager,
+            MoveService::class => $this->moveService,
         ];
 
         return $subject->setServiceLocator($this->getServiceLocatorMock($services));
     }
 
-    /**
-     * @param mixed $testDefinition
-     * @param mixed $testCompilation
-     * @param mixed $serviceCallId
-     * @param mixed $direction
-     * @param mixed $scope
-     *
-     * @return array
-     */
-    private function getRequiredRequestParameters(
-        $testDefinition = null,
-        $testCompilation = null,
-        $serviceCallId = null,
-        $direction = null,
-        $scope = null
-    ) {
+    private function getRequiredRequestParameters(): array
+    {
         return [
-            'testDefinition' => $testDefinition,
-            'testCompilation' => $testCompilation,
-            'serviceCallId' => $serviceCallId,
-            'direction' => $direction,
-            'scope' => $scope,
+            'testDefinition' => null,
+            'testCompilation' => null,
+            'serviceCallId' => null,
+            'direction' => null,
+            'scope' => null,
         ];
+    }
+
+    private function expectActionResponse(ActionResponse $actionResponse): void
+    {
+        $this->moveService->method('__invoke')
+            ->willReturn($actionResponse);
+    }
+
+    private function expectServiceThrows(Exception $exception)
+    {
+        $this->moveService
+            ->method('__invoke')
+            ->willThrowException($exception);
     }
 }

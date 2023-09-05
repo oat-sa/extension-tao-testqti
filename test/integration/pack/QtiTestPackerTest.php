@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,10 +20,9 @@
 
 namespace oat\taoQtiTest\test\integration\pack;
 
-use \core_kernel_classes_Resource;
+use core_kernel_classes_Resource;
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use oat\taoQtiTest\models\pack\QtiTestPacker;
-
 
 /**
  * Test the class {@link TestPack}
@@ -32,8 +32,7 @@ use oat\taoQtiTest\models\pack\QtiTestPacker;
  */
 class QtiTestPackerTest extends GenerisPhpUnitTestRunner
 {
-
-    public function setUp()
+    public function setUp(): void
     {
         \common_ext_ExtensionsManager::singleton()->getExtensionById('taoQtiTest');
     }
@@ -41,7 +40,8 @@ class QtiTestPackerTest extends GenerisPhpUnitTestRunner
     /**
      * Test creating a QtiTestPacker
      */
-    public function testConstructor(){
+    public function testConstructor()
+    {
         $testPacker = new QtiTestPacker();
         $this->assertInstanceOf('oat\taoTests\models\pack\Packable', $testPacker);
     }
@@ -50,7 +50,8 @@ class QtiTestPackerTest extends GenerisPhpUnitTestRunner
     /**
      * Test the exception when a wrong content is given to the parser
      */
-    public function testWrongContentToPack(){
+    public function testWrongContentToPack()
+    {
         $this->expectException(\common_Exception::class);
 
         $testPacker = new QtiTestPacker();

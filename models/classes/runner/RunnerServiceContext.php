@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -61,14 +63,14 @@ class RunnerServiceContext implements ServiceLocatorAwareInterface
 
     /**
      * Sets the test runner config
-     * 
+     *
      * @param RunnerConfig $testConfig
      */
     public function setTestConfig(RunnerConfig $testConfig)
     {
         $this->testConfig = $testConfig;
     }
-    
+
 
     /**
      * Gets the test session
@@ -112,6 +114,5 @@ class RunnerServiceContext implements ServiceLocatorAwareInterface
      */
     public function init()
     {
-        
     }
 }

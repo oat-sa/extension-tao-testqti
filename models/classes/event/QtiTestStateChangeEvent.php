@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,8 +27,7 @@ namespace oat\taoQtiTest\models\event;
  */
 class QtiTestStateChangeEvent extends QtiTestChangeEvent
 {
-
-    const EVENT_NAME = __CLASS__;
+    public const EVENT_NAME = __CLASS__;
 
     /**
      * @return string

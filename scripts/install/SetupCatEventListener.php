@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +35,10 @@ class SetupCatEventListener extends InstallAction
     public function __invoke($params)
     {
         $this->registerEvent(QtiContinueInteractionEvent::class, [CatService::SERVICE_ID, 'onQtiContinueInteraction']);
-        
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, "CAT Event Listener successfully configured.");
+
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            "CAT Event Listener successfully configured."
+        );
     }
 }

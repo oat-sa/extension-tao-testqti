@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,9 +25,9 @@ use oat\oatbox\service\ConfigurableService;
 
 class TimerLabelFormatterService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/TimerLabelFormatter';
+    public const SERVICE_ID = 'taoQtiTest/TimerLabelFormatter';
 
-    const OPTION_DEFAULT_TIMER_LABEL = 'defaultTimerLabel';
+    public const OPTION_DEFAULT_TIMER_LABEL = 'defaultTimerLabel';
 
     /**
      * @param string $potentialLabel
@@ -35,7 +36,7 @@ class TimerLabelFormatterService extends ConfigurableService
     public function format($potentialLabel = '')
     {
         $token = (string) $this->getOption(static::OPTION_DEFAULT_TIMER_LABEL);
-        if (empty($token)){
+        if (empty($token)) {
             return $potentialLabel;
         }
 

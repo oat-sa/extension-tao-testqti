@@ -10,7 +10,7 @@ class TestMapBranchRuleExtenderTest extends TestCase
     /** @var TestMapBranchRuleExtender */
     private $testMapBranchRuleExtender;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->testMapBranchRuleExtender = new TestMapBranchRuleExtender();
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2022 (original work) Open Assessment Technologies SA ;
  */
 
 namespace oat\taoQtiTest\models\runner\synchronisation\action;
@@ -24,13 +25,10 @@ use common_exception_Error;
 use common_exception_InconsistentData;
 use common_Logger;
 use Exception;
-use oat\oatbox\event\EventManager;
-use oat\taoQtiTest\models\event\TraceVariableStored;
+use oat\taoQtiTest\model\Service\StoreTraceVariablesCommand;
+use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
 
-/**
- * @package oat\taoQtiTest\models\runner\synchronisation\action
- */
 class StoreTraceData extends TestRunnerAction
 {
     /**
@@ -40,58 +38,44 @@ class StoreTraceData extends TestRunnerAction
      * Store trace data through runner service.
      * Trigger TraceVariableStored event.
      *
-     * @return array
      * @throws common_Exception
      * @throws common_exception_Error
      * @throws common_exception_InconsistentData
      */
-    public function process()
+    public function process(): array
     {
         $this->validate();
 
-        $itemRef = $this->hasRequestParameter('itemDefinition')
-            ? $this->getItemRef($this->getRequestParameter('itemDefinition'))
-            : null;
-
-        $traceData = json_decode(html_entity_decode($this->getRequestParameter('traceData')), true);
-
         try {
-            $serviceContext = $this->getServiceContext();
-            $stored = 0;
-            $size = count($traceData);
+            $traceVariables = json_decode(
+                html_entity_decode($this->getRequestParameter('traceData')),
+                true
+            );
 
-            foreach ($traceData as $variableIdentifier => $variableValue) {
-                if ($this
-                    ->getRunnerService()
-                    ->storeTraceVariable($serviceContext, $itemRef, $variableIdentifier, $variableValue)
-                ) {
-                    $stored++;
-                }
-            }
+            $command = new StoreTraceVariablesCommand(
+                $this->getServiceContext(),
+                $traceVariables,
+                $this->getRequestParameter('itemDefinition') ?: null
+            );
 
-            $response = [
-                'success' => $stored == $size
-            ];
+            /** @var StoreTraceVariablesService $storeTraceVariables */
+            $storeTraceVariables = $this->getPsrContainer()->get(StoreTraceVariablesService::class);
 
-            common_Logger::d('Stored "' . $stored . '/' . $size . '" trace variables');
-            /** @var EventManager $eventManager */
-            $eventManager = $this->getServiceLocator()->get(EventManager::SERVICE_ID);
-            $event = new TraceVariableStored($serviceContext->getTestSession()->getSessionId(), $traceData);
-            $eventManager->trigger($event);
+            $response = $storeTraceVariables($command);
 
+            common_Logger::d('Stored ' . count($traceVariables) . ' trace variables');
+
+            return $response->toArray();
         } catch (Exception $e) {
-            $response = $this->getErrorResponse($e);
+            common_Logger::e(
+                $e->getMessage(),
+                ['deliveryExecutionId' => $this->getServiceContext()->getTestExecutionUri()]
+            );
+            return $this->getErrorResponse($e);
         }
-
-        return $response;
     }
 
-    /**
-     * traceData field is required.
-     *
-     * @return array
-     */
-    protected function getRequiredFields()
+    protected function getRequiredFields(): array
     {
         return array_merge(parent::getRequiredFields(), ['traceData']);
     }

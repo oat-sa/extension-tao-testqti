@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Open Assessment Technologies, S.A.
  */
@@ -15,6 +16,9 @@ class RegisterQtiCategoryPresetProviders extends InstallAction
         $registry = TestCategoryPresetRegistry::getRegistry();
         $registry->set('taoQtiTest', '\oat\taoQtiTest\models\QtiCategoryPresetProvider');
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, 'Qti category preset provider has been successfully registered');
+        return new \common_report_Report(
+            \common_report_Report::TYPE_SUCCESS,
+            'Qti category preset provider has been successfully registered'
+        );
     }
 }

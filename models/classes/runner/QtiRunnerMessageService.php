@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +18,7 @@
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
  *
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
@@ -29,14 +31,14 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 
 /**
  * Class QtiRunnerMessageService
- * 
+ *
  * Defines a service that will provide messages for the test runner
- * 
+ *
  * @package oat\taoQtiTest\models
  */
 class QtiRunnerMessageService extends ConfigurableService implements RunnerMessageService
 {
-    const SERVICE_ID = 'taoQtiTest/QtiRunnerMessageService';
+    public const SERVICE_ID = 'taoQtiTest/QtiRunnerMessageService';
 
     /**
      * Gets a message related to the state of the assessment test session
@@ -50,16 +52,16 @@ class QtiRunnerMessageService extends ConfigurableService implements RunnerMessa
             switch ($testSession->getState()) {
                 case AssessmentTestSessionState::SUSPENDED:
                     return $this->getPausedStateMessage($testSession);
-                    
+
                 case AssessmentTestSessionState::CLOSED:
                     return $this->getTerminatedStateMessage($testSession);
-                    
+
                 case AssessmentTestSessionState::INITIAL:
                     return $this->getInitialStateMessage($testSession);
-                    
+
                 default:
                     return $this->getRunningStateMessages($testSession);
-            }             
+            }
         } else {
             throw new \common_exception_InvalidArgumentType(
                 'QtiRunnerMessageService',

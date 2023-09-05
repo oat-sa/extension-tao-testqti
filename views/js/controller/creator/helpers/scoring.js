@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2023 (original work) Open Assessment Technologies SA ;
  */
 /**
  * Basic helper that is intended to manage the score processing declaration in a test model.
@@ -90,46 +90,52 @@ define([
         total: {
             key: 'total',
             signature: /^SCORE_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
-            outcomes: [{
-                writer: 'total',
-                identifier: 'SCORE_TOTAL',
-                weighted: 'SCORE_TOTAL_WEIGHTED',
-                categoryIdentifier: 'SCORE_CATEGORY_%s',
-                categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_%s'
-            }, {
-                writer: 'max',
-                identifier: 'SCORE_TOTAL_MAX',
-                weighted: 'SCORE_TOTAL_MAX_WEIGHTED',
-                categoryIdentifier: 'SCORE_CATEGORY_MAX_%s',
-                categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_MAX_%s'
-            }, {
-                writer: 'ratio',
-                identifier: 'SCORE_RATIO',
-                weighted: 'SCORE_RATIO_WEIGHTED',
-                scoreIdentifier: {
-                    total : 'SCORE_TOTAL',
-                    max : 'SCORE_TOTAL_MAX'
+            outcomes: [
+                {
+                    writer: 'total',
+                    identifier: 'SCORE_TOTAL',
+                    weighted: 'SCORE_TOTAL_WEIGHTED',
+                    categoryIdentifier: 'SCORE_CATEGORY_%s',
+                    categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_%s'
                 },
-                scoreWeighted : {
-                    total : 'SCORE_TOTAL_WEIGHTED',
-                    max : 'SCORE_TOTAL_MAX_WEIGHTED',
+                {
+                    writer: 'max',
+                    identifier: 'SCORE_TOTAL_MAX',
+                    weighted: 'SCORE_TOTAL_MAX_WEIGHTED',
+                    categoryIdentifier: 'SCORE_CATEGORY_MAX_%s',
+                    categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_MAX_%s'
                 },
-            }],
+                {
+                    writer: 'ratio',
+                    identifier: 'SCORE_RATIO',
+                    weighted: 'SCORE_RATIO_WEIGHTED',
+                    scoreIdentifier: {
+                        total: 'SCORE_TOTAL',
+                        max: 'SCORE_TOTAL_MAX'
+                    },
+                    scoreWeighted: {
+                        total: 'SCORE_TOTAL_WEIGHTED',
+                        max: 'SCORE_TOTAL_MAX_WEIGHTED'
+                    }
+                }
+            ],
             clean: true
         },
         cut: {
             key: 'cut',
             include: 'total',
             signature: /^PASS_([a-zA-Z][a-zA-Z0-9_\.-]*)$/,
-            outcomes: [{
-                writer: 'cut',
-                identifier: 'PASS_ALL',
-                feedback: 'PASS_ALL_RENDERING',
-                feedbackOk: "passed",
-                feedbackFailed: "not_passed",
-                categoryIdentifier: 'PASS_CATEGORY_%s',
-                categoryFeedback: 'PASS_CATEGORY_%s_RENDERING'
-            }],
+            outcomes: [
+                {
+                    writer: 'cut',
+                    identifier: 'PASS_ALL',
+                    feedback: 'PASS_ALL_RENDERING',
+                    feedbackOk: 'passed',
+                    feedbackFailed: 'not_passed',
+                    categoryIdentifier: 'PASS_CATEGORY_%s',
+                    categoryFeedback: 'PASS_CATEGORY_%s_RENDERING'
+                }
+            ],
             clean: true
         }
     };
@@ -145,11 +151,21 @@ define([
          * @param {Object} scoring
          * @param {Object} outcomes
          */
-        ratio : function writerRatio(descriptor, scoring, outcomes){
-            addRatioOutcomes(outcomes, descriptor.identifier, descriptor.scoreIdentifier.total, descriptor.scoreIdentifier.max);
-            if(scoring.weightIdentifier){
+        ratio: function writerRatio(descriptor, scoring, outcomes) {
+            addRatioOutcomes(
+                outcomes,
+                descriptor.identifier,
+                descriptor.scoreIdentifier.total,
+                descriptor.scoreIdentifier.max
+            );
+            if (scoring.weightIdentifier) {
                 //add weighted ratio outcome only when the scoring outcome processing rule uses a weight
-                addRatioOutcomes(outcomes, descriptor.weighted, descriptor.scoreWeighted.total, descriptor.scoreWeighted.max);
+                addRatioOutcomes(
+                    outcomes,
+                    descriptor.weighted,
+                    descriptor.scoreWeighted.total,
+                    descriptor.scoreWeighted.max
+                );
             }
         },
 
@@ -170,9 +186,21 @@ define([
             // create an outcome per categories
             if (descriptor.categoryIdentifier && categories) {
                 _.forEach(categories, function (category) {
-                    addTotalScoreOutcomes(outcomes, scoring, formatCategoryOutcome(category, descriptor.categoryIdentifier), false, category);
+                    addTotalScoreOutcomes(
+                        outcomes,
+                        scoring,
+                        formatCategoryOutcome(category, descriptor.categoryIdentifier),
+                        false,
+                        category
+                    );
                     if (descriptor.categoryWeighted && scoring.weightIdentifier) {
-                        addTotalScoreOutcomes(outcomes, scoring, formatCategoryOutcome(category, descriptor.categoryWeighted), true, category);
+                        addTotalScoreOutcomes(
+                            outcomes,
+                            scoring,
+                            formatCategoryOutcome(category, descriptor.categoryWeighted),
+                            true,
+                            category
+                        );
                     }
                 });
             }
@@ -195,9 +223,21 @@ define([
             // create an outcome per categories
             if (descriptor.categoryIdentifier && categories) {
                 _.forEach(categories, function (category) {
-                    addMaxScoreOutcomes(outcomes, scoring, formatCategoryOutcome(category, descriptor.categoryIdentifier), false, category);
+                    addMaxScoreOutcomes(
+                        outcomes,
+                        scoring,
+                        formatCategoryOutcome(category, descriptor.categoryIdentifier),
+                        false,
+                        category
+                    );
                     if (descriptor.categoryWeighted && scoring.weightIdentifier) {
-                        addMaxScoreOutcomes(outcomes, scoring, formatCategoryOutcome(category, descriptor.categoryWeighted), true, category);
+                        addMaxScoreOutcomes(
+                            outcomes,
+                            scoring,
+                            formatCategoryOutcome(category, descriptor.categoryWeighted),
+                            true,
+                            category
+                        );
                     }
                 });
             }
@@ -209,13 +249,14 @@ define([
          * @param {Object} scoring
          * @param {Object} outcomes
          * @param {Array} [categories]
+         * @returns {Object} outcomes
          */
         cut: function writerCut(descriptor, scoring, outcomes, categories) {
             var cutScore = scoring.cutScore;
             var totalModeOutcomes = outcomesRecipes.total.outcomes;
-            var total = _.find(totalModeOutcomes, {writer: 'total'});
-            var max = _.find(totalModeOutcomes, {writer: 'max'});
-            var ratio = _.find(totalModeOutcomes, {writer: 'ratio'});
+            var total = _.find(totalModeOutcomes, { writer: 'total' });
+            var max = _.find(totalModeOutcomes, { writer: 'max' });
+            var ratio = _.find(totalModeOutcomes, { writer: 'ratio' });
             var whichOutcome = scoring.weightIdentifier ? 'weighted' : 'identifier';
             var ratioIdentifier = ratio[whichOutcome];
 
@@ -241,7 +282,13 @@ define([
                     var categoryScoreIdentifier = formatCategoryOutcome(category, total[categoryOutcome]);
                     var categoryCountIdentifier = formatCategoryOutcome(category, max[categoryOutcome]);
 
-                    addCutScoreOutcomes(outcomes, categoryOutcomeIdentifier, categoryScoreIdentifier, categoryCountIdentifier, cutScore);
+                    addCutScoreOutcomes(
+                        outcomes,
+                        categoryOutcomeIdentifier,
+                        categoryScoreIdentifier,
+                        categoryCountIdentifier,
+                        cutScore
+                    );
 
                     if (descriptor.categoryFeedback) {
                         addFeedbackScoreOutcomes(
@@ -274,7 +321,7 @@ define([
             var model;
 
             if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
-                throw new TypeError("You must provide a valid modelOverseer");
+                throw new TypeError('You must provide a valid modelOverseer');
             }
 
             model = modelOverseer.getModel();
@@ -322,7 +369,7 @@ define([
             var model, scoring, outcomes, outcomeRecipe, recipes, categories;
 
             if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
-                throw new TypeError("You must provide a valid modelOverseer");
+                throw new TypeError('You must provide a valid modelOverseer');
             }
 
             model = modelOverseer.getModel();
@@ -333,7 +380,6 @@ define([
             if (scoring) {
                 outcomeRecipe = outcomesRecipes[scoring.outcomeProcessing];
                 if (outcomeRecipe) {
-
                     if (outcomeRecipe.clean) {
                         // erase the existing rules, they will be replaced by those that are defined here
                         removeScoring(outcomes);
@@ -348,13 +394,12 @@ define([
                     }
 
                     // will generate outcomes based of the defined recipe
-                    _.forEach(recipes, function(recipe) {
+                    _.forEach(recipes, function (recipe) {
                         var writer = outcomesWriters[recipe.writer];
                         writer(recipe, scoring, outcomes, categories);
                     });
-
                 } else {
-                    throw new Error('Unknown score processing mode: ' + scoring.outcomeProcessing);
+                    throw new Error(`Unknown score processing mode: ${scoring.outcomeProcessing}`);
                 }
             }
 
@@ -373,9 +418,15 @@ define([
      */
     function addTotalScoreOutcomes(model, scoring, identifier, weight, category) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
-        var processingRule = processingRuleHelper.setOutcomeValue(identifier,
+        var processingRule = processingRuleHelper.setOutcomeValue(
+            identifier,
             processingRuleHelper.sum(
-                processingRuleHelper.testVariables(scoring.scoreIdentifier, -1, weight && scoring.weightIdentifier, category)
+                processingRuleHelper.testVariables(
+                    scoring.scoreIdentifier,
+                    -1,
+                    weight && scoring.weightIdentifier,
+                    category
+                )
             )
         );
 
@@ -393,7 +444,8 @@ define([
      */
     function addMaxScoreOutcomes(model, scoring, identifier, weight, category) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
-        var processingRule = processingRuleHelper.setOutcomeValue(identifier,
+        var processingRule = processingRuleHelper.setOutcomeValue(
+            identifier,
             processingRuleHelper.sum(
                 processingRuleHelper.testVariables('MAXSCORE', -1, weight && scoring.weightIdentifier, category)
             )
@@ -404,24 +456,24 @@ define([
     /**
      * Create an outcome and the rule that process the score ratio
      *
-     * @param model
-     * @param identifier
-     * @param identifierTotal
-     * @param identifierMax
+     * @param {Object} model
+     * @param {String} identifier
+     * @param {String} identifierTotal
+     * @param {String} identifierMax
      */
     function addRatioOutcomes(model, identifier, identifierTotal, identifierMax) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
         var outcomeCondition = processingRuleHelper.outcomeCondition(
             processingRuleHelper.outcomeIf(
-                processingRuleHelper.isNull(
-                    processingRuleHelper.variable(identifierMax)
-                ),
-                processingRuleHelper.setOutcomeValue(identifier,
+                processingRuleHelper.isNull(processingRuleHelper.variable(identifierMax)),
+                processingRuleHelper.setOutcomeValue(
+                    identifier,
                     processingRuleHelper.baseValue(0, baseTypeHelper.FLOAT)
                 )
             ),
             processingRuleHelper.outcomeElse(
-                processingRuleHelper.setOutcomeValue(identifier,
+                processingRuleHelper.setOutcomeValue(
+                    identifier,
                     processingRuleHelper.divide(
                         processingRuleHelper.variable(identifierTotal),
                         processingRuleHelper.variable(identifierMax)
@@ -445,7 +497,8 @@ define([
      */
     function addCutScoreOutcomes(model, identifier, scoreIdentifier, countIdentifier, cutScore) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.BOOLEAN);
-        var processingRule = processingRuleHelper.setOutcomeValue(identifier,
+        var processingRule = processingRuleHelper.setOutcomeValue(
+            identifier,
             processingRuleHelper.gte(
                 processingRuleHelper.divide(
                     processingRuleHelper.variable(scoreIdentifier),
@@ -463,13 +516,13 @@ define([
      *
      * @param {Object} model
      * @param {String} identifier
-     * @param {String} scoreIdentifier
-     * @param {String} countIdentifier
+     * @param {String} ratioIdentifier
      * @param {String|Number} cutScore
      */
     function addGlobalCutScoreOutcomes(model, identifier, ratioIdentifier, cutScore) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.BOOLEAN);
-        var processingRule = processingRuleHelper.setOutcomeValue(identifier,
+        var processingRule = processingRuleHelper.setOutcomeValue(
+            identifier,
             processingRuleHelper.gte(
                 processingRuleHelper.variable(ratioIdentifier),
                 processingRuleHelper.baseValue(cutScore, baseTypeHelper.FLOAT)
@@ -497,14 +550,10 @@ define([
                     processingRuleHelper.variable(variable),
                     processingRuleHelper.baseValue(true, baseTypeHelper.BOOLEAN)
                 ),
-                processingRuleHelper.setOutcomeValue(identifier,
-                    processingRuleHelper.baseValue(passed, type)
-                )
+                processingRuleHelper.setOutcomeValue(identifier, processingRuleHelper.baseValue(passed, type))
             ),
             processingRuleHelper.outcomeElse(
-                processingRuleHelper.setOutcomeValue(identifier,
-                    processingRuleHelper.baseValue(notPassed, type)
-                )
+                processingRuleHelper.setOutcomeValue(identifier, processingRuleHelper.baseValue(notPassed, type))
             )
         );
 
@@ -534,10 +583,12 @@ define([
         if (recipe.signature && recipe.signature.test(identifier)) {
             match = true;
             if (onlyCategories) {
-                _.forEach(recipe.outcomes, function(outcome) {
-                    if (outcome.identifier === identifier ||
+                _.forEach(recipe.outcomes, function (outcome) {
+                    if (
+                        outcome.identifier === identifier ||
                         (outcome.weighted && outcome.weighted === identifier) ||
-                        (outcome.feedback && outcome.feedback === identifier)) {
+                        (outcome.feedback && outcome.feedback === identifier)
+                    ) {
                         match = false;
                         return false;
                     }
@@ -564,23 +615,30 @@ define([
 
             // first level, the signature must match
             if (recipe.signature && recipe.signature.test(identifier)) {
-                _.forEach(recipe.outcomes, function(outcome) {
+                _.forEach(recipe.outcomes, function (outcome) {
                     // second level, the main identifier must match
-                    if (outcome.identifier !== identifier &&
+                    if (
+                        outcome.identifier !== identifier &&
                         (!outcome.weighted || (outcome.weighted && outcome.weighted !== identifier)) &&
-                        (!outcome.feedback || (outcome.feedback && outcome.feedback !== identifier))) {
-
+                        (!outcome.feedback || (outcome.feedback && outcome.feedback !== identifier))
+                    ) {
                         if (categories) {
                             // third level, a category must match
-                            _.forEach(categories, function(category) {
-                                if (outcome.categoryIdentifier &&
-                                    identifier === formatCategoryOutcome(category, outcome.categoryIdentifier)) {
+                            _.forEach(categories, function (category) {
+                                if (
+                                    outcome.categoryIdentifier &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryIdentifier)
+                                ) {
                                     outcomeMatch = true;
-                                } else if (outcome.categoryWeighted &&
-                                    identifier === formatCategoryOutcome(category, outcome.categoryWeighted)) {
+                                } else if (
+                                    outcome.categoryWeighted &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryWeighted)
+                                ) {
                                     outcomeMatch = true;
-                                } else if (outcome.categoryFeedback &&
-                                    identifier === formatCategoryOutcome(category, outcome.categoryFeedback)) {
+                                } else if (
+                                    outcome.categoryFeedback &&
+                                    identifier === formatCategoryOutcome(category, outcome.categoryFeedback)
+                                ) {
                                     outcomeMatch = true;
                                 }
                                 // found something?
@@ -608,9 +666,9 @@ define([
         }
 
         // only check the outcomes that are related to the scoring mode
-        _.forEach(outcomes, function(identifier) {
+        _.forEach(outcomes, function (identifier) {
             var signatureMatch = false;
-            _.forEach(signatures, function(signature) {
+            _.forEach(signatures, function (signature) {
                 if (signature.test(identifier)) {
                     signatureMatch = true;
                     return false;
@@ -638,7 +696,7 @@ define([
         var signatures = [];
 
         // list the signatures for each processing mode, taking care of includes
-        while(recipe) {
+        while (recipe) {
             if (recipe.signature) {
                 signatures.push(recipe.signature);
             }
@@ -657,7 +715,7 @@ define([
         var descriptors = [];
 
         // get the recipes that define the outcomes, include sub-recipes if any
-        while(recipe) {
+        while (recipe) {
             if (recipe.outcomes) {
                 descriptors = [].concat(recipe.outcomes, descriptors);
             }
@@ -736,9 +794,13 @@ define([
      * @returns {Number}
      */
     function getCutScore(model) {
-        var values = _(outcomeHelper.getOutcomeProcessingRules(model)).map(function (outcome) {
-            return outcomeHelper.getProcessingRuleProperty(outcome, 'setOutcomeValue.gte.baseValue.value');
-        }).compact().uniq().value();
+        var values = _(outcomeHelper.getOutcomeProcessingRules(model))
+            .map(function (outcome) {
+                return outcomeHelper.getProcessingRuleProperty(outcome, 'setOutcomeValue.gte.baseValue.value');
+            })
+            .compact()
+            .uniq()
+            .value();
         if (_.isEmpty(values)) {
             values = [defaultCutScore];
         }
@@ -791,7 +853,7 @@ define([
                 if (count > 1) {
                     // several modes detected, try to reduce the list by detecting includes
                     included = [];
-                    _.forEach(declarations, function(mode) {
+                    _.forEach(declarations, function (mode) {
                         if (outcomesRecipes[mode] && outcomesRecipes[mode].include) {
                             included.push(outcomesRecipes[mode].include);
                         }
@@ -805,7 +867,13 @@ define([
                     outcomeProcessing = processing[0];
 
                     // check if all outcomes are strictly related to the detected mode
-                    if (!matchRecipe(outcomesRecipes[outcomeProcessing], modelOverseer.getOutcomesNames(), modelOverseer.getCategories())) {
+                    if (
+                        !matchRecipe(
+                            outcomesRecipes[outcomeProcessing],
+                            modelOverseer.getOutcomesNames(),
+                            modelOverseer.getCategories()
+                        )
+                    ) {
                         outcomeProcessing = 'custom';
                     }
                 }
@@ -841,7 +909,7 @@ define([
             return outcome;
         });
 
-        outcomeHelper.removeOutcomes(model, function(outcome) {
+        outcomeHelper.removeOutcomes(model, function (outcome) {
             var match = false;
 
             function browseExpressions(processingRule) {

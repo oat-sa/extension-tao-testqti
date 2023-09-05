@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,9 +44,13 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      */
     public function get()
     {
-        $items = array();
-        $propertyFilters = array(taoItems_models_classes_ItemsService::PROPERTY_ITEM_MODEL => taoItems_models_classes_itemModel::CLASS_URI_QTI);
-        $options = array('recursive' => true, 'like' => true, 'limit' => 50);
+        $items = [];
+        $propertyFilters = [
+            // phpcs:disable Generic.Files.LineLength
+            taoItems_models_classes_ItemsService::PROPERTY_ITEM_MODEL => taoItems_models_classes_itemModel::CLASS_URI_QTI
+            // phpcs:enable Generic.Files.LineLength
+        ];
+        $options = ['recursive' => true, 'like' => true, 'limit' => 50];
         $notEmpty = filter_var($this->getRequestParameter('notempty'), FILTER_VALIDATE_BOOLEAN);
 
         if (($pattern = $this->getRequestParameter('pattern')) !== null && $pattern !== '') {
@@ -59,10 +64,10 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
         foreach ($result as $qtiItem) {
             if (!$notEmpty || $itemsService->hasItemContent($qtiItem)) {
-                $items[] = array(
+                $items[] = [
                     'uri' => $qtiItem->getUri(),
                     'label' => $qtiItem->getLabel()
-                );
+                ];
             }
         }
 
@@ -76,8 +81,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     {
         try {
             $data = $this->getCreatorItemsService()->getItemClasses();
-        } catch(\common_Exception $e){
-
+        } catch (\common_Exception $e) {
             return $this->returnFailure($e);
         }
 
@@ -94,8 +98,6 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     public function getItems()
     {
         try {
-            $this->validateCsrf();
-
             if (!$this->hasRequestParameter('classUri')) {
                 throw new \InvalidArgumentException('Missing parameter classUri');
             }
@@ -109,16 +111,16 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
             $limit    = $this->hasRequestParameter('limit') ? $this->getRequestParameter('limit') : 30;
             $offset   = $this->hasRequestParameter('offset') ? $this->getRequestParameter('offset') : 0;
 
-            if(! empty($search) ){
+            if (! empty($search)) {
                 $decodedSearch = json_decode($search, true);
-                if(is_array($decodedSearch) && count($decodedSearch) > 0){
+                if (is_array($decodedSearch) && count($decodedSearch) > 0) {
                     $search = $decodedSearch;
                 }
             }
 
             $itemClass = new \core_kernel_classes_Class($classUri);
             $data = $this->getCreatorItemsService()->getQtiItems($itemClass, $format, $search, $offset, $limit);
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             return $this->returnFailure($e);
         }
 
@@ -138,13 +140,16 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     public function getCategories()
     {
         if (!$this->hasRequestParameter('uris')) {
-            $this->returnJson(__("At least one mandatory parameter was required but found missing in your request"), 412);
+            $this->returnJson(
+                __("At least one mandatory parameter was required but found missing in your request"),
+                412
+            );
             return;
         }
 
         $categories = [];
         $uris = $this->getRequestParameter('uris');
-        $uris = (!is_array($uris)) ? array($uris) : $uris;
+        $uris = (!is_array($uris)) ? [$uris] : $uris;
 
         $items = $this->getQtiItems($uris);
 
@@ -153,11 +158,11 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
             $itemsCategories = $service->getItemsCategories($items);
 
             //filter all values that wouldn't be valid XML identifiers
-            foreach ($itemsCategories as $itemUri => $itemCategories){
-                $filtered = array_filter($itemCategories, function($categorie){
+            foreach ($itemsCategories as $itemUri => $itemCategories) {
+                $filtered = array_filter($itemCategories, function ($categorie) {
                     return Format::isIdentifier($categorie);
                 });
-                if(count($filtered) > 0){
+                if (count($filtered) > 0) {
                     $categories[$itemUri] = $filtered;
                 }
             }
@@ -172,11 +177,11 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      */
     private function getQtiItems(array $itemUris)
     {
-        $items = array();
+        $items = [];
 
         foreach ($itemUris as $uri) {
             $item = new \core_kernel_classes_Resource($uri);
-            if ($this->getItemService()->hasItemModel($item, array(\oat\taoQtiItem\model\ItemModel::MODEL_URI))) {
+            if ($this->getItemService()->hasItemModel($item, [\oat\taoQtiItem\model\ItemModel::MODEL_URI])) {
                 $items[$uri] = $item;
             }
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -31,6 +33,7 @@ use oat\taoTests\models\runner\time\InvalidTimerStrategyException;
 use oat\taoTests\models\runner\time\TimeException;
 use oat\taoTests\models\runner\time\TimeLine;
 use oat\taoTests\models\runner\time\TimePoint;
+use oat\taoTests\models\runner\time\TimerAdjustmentMapInterface;
 use oat\taoTests\models\runner\time\TimerStrategyInterface;
 use oat\taoTests\models\runner\time\TimeStorage;
 use oat\taoTests\models\runner\time\Timer;
@@ -42,28 +45,11 @@ use oat\taoTests\models\runner\time\Timer;
 class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 {
     /**
-     * The name of the storage key for the TimeLine
-     */
-    const STORAGE_KEY_TIME_LINE = 'timeLine';
-
-    /**
-     * The name of the storage key for the extra time
-     */
-    const STORAGE_KEY_EXTRA_TIME = 'extraTime';
-
-    const STORAGE_KEY_EXTENDED_TIME = 'extendedTime';
-
-    /**
-     * The name of the storage key for the consumed extra time
-     */
-    const STORAGE_KEY_CONSUMED_EXTRA_TIME = 'consumedExtraTime';
-    
-    /**
      * The TimeLine used to compute the duration
      * @var TimeLine
      */
     protected $timeLine;
-    
+
     /**
      * The storage used to maintain the data
      * @var TimeStorage
@@ -94,11 +80,17 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     protected $consumedExtraTime = 0.0;
 
     /**
+     * @var AdjustmentMap
+     */
+    protected $adjustmentMap;
+
+    /**
      * QtiTimer constructor.
      */
     public function __construct()
     {
         $this->timeLine = new QtiTimeLine();
+        $this->adjustmentMap = new AdjustmentMap();
     }
 
     /**
@@ -114,7 +106,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         if (!is_numeric($timestamp) || $timestamp < 0) {
             throw new InvalidDataException('start() needs a valid timestamp!');
         }
-        
+
         // extract the TimePoint identification from the provided item, and find existing range
         $range = $this->getRange($tags);
 
@@ -123,7 +115,12 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             // unclosed range found, auto closing
             // auto generate the timestamp for the missing END point, one microsecond earlier
             \common_Logger::t('Missing END TimePoint in QtiTimer, auto add an arbitrary value');
-            $point = new TimePoint($tags, $timestamp - (1 / TimePoint::PRECISION), TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
+            $point = new TimePoint(
+                $tags,
+                $timestamp - (1 / TimePoint::PRECISION),
+                TimePoint::TYPE_END,
+                TimePoint::TARGET_SERVER
+            );
             $this->timeLine->add($point);
             $range[] = $point;
         }
@@ -159,7 +156,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 
             // append the new END TimePoint
             $point = new TimePoint($tags, $timestamp, TimePoint::TYPE_END, TimePoint::TARGET_SERVER);
-            $this->timeLine->add($point);    
+            $this->timeLine->add($point);
         } else {
             // already closed range found, just log the info
             \common_Logger::t('Range already closed, or missing START TimePoint in QtiTimer, continue anyway');
@@ -218,10 +215,10 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         if ($length) {
             $last = end($points)->getTimestamp();
         }
-        
+
         return $last;
     }
-    
+
     /**
      * Adds "client start" and "client end" TimePoint based on the provided duration for a particular ItemRef
      * @param string|array $tags
@@ -243,7 +240,9 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         // validate the data consistence
         $rangeLength = count($range);
         if (!$rangeLength || ($rangeLength % 2)) {
-            throw new InconsistentRangeException('The time range does not seem to be consistent, the range is not complete!');
+            throw new InconsistentRangeException(
+                'The time range does not seem to be consistent, the range is not complete!'
+            );
         }
 
         $serverDuration = $itemTimeLine->compute();
@@ -256,17 +255,21 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
             $clientDuration = 0;
             try {
                 $clientDuration = $clientTimeLine->compute();
-            } catch(TimeException $e) {
+            } catch (TimeException $e) {
                 \common_Logger::t('Handled client range error');
             }
 
             if (is_null($duration)) {
                 if ($clientDuration) {
                     $duration = $clientDuration;
-                    \common_Logger::t("No client duration provided to adjust the timer, but a range already exist: ${duration}");
+                    \common_Logger::t(
+                        "No client duration provided to adjust the timer, but a range already exist: ${duration}"
+                    );
                 } else {
                     $duration = $serverDuration;
-                    \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
+                    \common_Logger::t(
+                        "No client duration provided to adjust the timer, fallback to server duration: ${duration}"
+                    );
                 }
             }
 
@@ -281,9 +284,13 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         // check if the client side duration is bound by the server side duration
         if (is_null($duration)) {
             $duration = $serverDuration;
-            \common_Logger::t("No client duration provided to adjust the timer, fallback to server duration: ${duration}");
-        } else if ($duration > $serverDuration) {
-            \common_Logger::w("A client duration must not be larger than the server time range! (${duration} > ${serverDuration})");
+            \common_Logger::t(
+                "No client duration provided to adjust the timer, fallback to server duration: ${duration}"
+            );
+        } elseif ($duration > $serverDuration) {
+            \common_Logger::w(
+                "A client duration must not be larger than the server time range! (${duration} > ${serverDuration})"
+            );
             $duration = $serverDuration;
         }
 
@@ -295,10 +302,15 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         // adjust the range by inserting the client duration between the server overall time range boundaries
         $overallDuration = $serverEnd->getTimestamp() - $serverStart->getTimestamp();
         $delay = ($overallDuration - $duration) / 2;
-        
-        $start = new TimePoint($tags, $serverStart->getTimestamp() + $delay, TimePoint::TYPE_START, TimePoint::TARGET_CLIENT);
+
+        $start = new TimePoint(
+            $tags,
+            $serverStart->getTimestamp() + $delay,
+            TimePoint::TYPE_START,
+            TimePoint::TARGET_CLIENT
+        );
         $this->timeLine->add($start);
-        
+
         $end = new TimePoint($tags, $serverEnd->getTimestamp() - $delay, TimePoint::TYPE_END, TimePoint::TARGET_CLIENT);
         $this->timeLine->add($end);
 
@@ -316,9 +328,9 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     {
         // cannot compute a duration across different targets
         if (!$this->onlyOneFlag($target)) {
-            throw new InconsistentCriteriaException('Cannot compute a duration across different targets!');    
+            throw new InconsistentCriteriaException('Cannot compute a duration across different targets!');
         }
-        
+
         return $this->timeLine->compute($tags, $target);
     }
 
@@ -372,10 +384,11 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
     public function toArray()
     {
         return [
-            self::STORAGE_KEY_TIME_LINE => $this->timeLine,
-            self::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
-            self::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
-            self::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
+            QtiTimeStorageFormat::STORAGE_KEY_TIME_LINE => $this->timeLine,
+            QtiTimeStorageFormat::STORAGE_KEY_EXTRA_TIME => $this->extraTime,
+            QtiTimeStorageFormat::STORAGE_KEY_EXTENDED_TIME => $this->extendedTime,
+            QtiTimeStorageFormat::STORAGE_KEY_CONSUMED_EXTRA_TIME => $this->consumedExtraTime,
+            QtiTimeStorageFormat::STORAGE_KEY_TIMER_ADJUSTMENT_MAP => $this->adjustmentMap,
         ];
     }
 
@@ -401,7 +414,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         if (!$this->storage) {
             throw new InvalidStorageException('A storage must be defined in order to store the data!');
         }
-        
+
         $this->storage->store($this->toArray());
         return $this;
     }
@@ -418,8 +431,20 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         } else {
             $timeLine = $data;
         }
-        
+
         return $timeLine;
+    }
+
+    protected function unserializeAdjustmentMap($data)
+    {
+        $map = new AdjustmentMap();
+        if (is_array($data)) {
+            $map->fromArray($data);
+        } elseif ($data instanceof TimerAdjustmentMapInterface) {
+            $map = $data;
+        }
+
+        return $map;
     }
 
     /**
@@ -439,31 +464,39 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         if (isset($data)) {
             if (!is_array($data)) {
                 $data = [
-                    self::STORAGE_KEY_TIME_LINE => $data,
+                    QtiTimeStorageFormat::STORAGE_KEY_TIME_LINE => $data,
                 ];
             }
 
-            if (isset($data[self::STORAGE_KEY_TIME_LINE])) {
-                $this->timeLine = $this->unserializeTimeLine($data[self::STORAGE_KEY_TIME_LINE]);
+            if (isset($data[QtiTimeStorageFormat::STORAGE_KEY_TIME_LINE])) {
+                $this->timeLine = $this->unserializeTimeLine($data[QtiTimeStorageFormat::STORAGE_KEY_TIME_LINE]);
             } else {
                 $this->timeLine = new QtiTimeLine();
             }
 
-            if (isset($data[self::STORAGE_KEY_EXTRA_TIME])) {
-                $this->extraTime = $data[self::STORAGE_KEY_EXTRA_TIME];
+            if (isset($data[QtiTimeStorageFormat::STORAGE_KEY_EXTRA_TIME])) {
+                $this->extraTime = $data[QtiTimeStorageFormat::STORAGE_KEY_EXTRA_TIME];
             } else {
                 $this->extraTime = 0;
             }
 
-            if (isset($data[self::STORAGE_KEY_EXTENDED_TIME])) {
-                $this->extendedTime = $data[self::STORAGE_KEY_EXTENDED_TIME];
+            if (isset($data[QtiTimeStorageFormat::STORAGE_KEY_EXTENDED_TIME])) {
+                $this->extendedTime = $data[QtiTimeStorageFormat::STORAGE_KEY_EXTENDED_TIME];
             } else {
                 $this->extendedTime = 0;
             }
-            if (isset($data[self::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
-                $this->consumedExtraTime = $data[self::STORAGE_KEY_CONSUMED_EXTRA_TIME];
+            if (isset($data[QtiTimeStorageFormat::STORAGE_KEY_CONSUMED_EXTRA_TIME])) {
+                $this->consumedExtraTime = $data[QtiTimeStorageFormat::STORAGE_KEY_CONSUMED_EXTRA_TIME];
             } else {
                 $this->consumedExtraTime = 0;
+            }
+
+            if (isset($data[QtiTimeStorageFormat::STORAGE_KEY_TIMER_ADJUSTMENT_MAP])) {
+                $this->adjustmentMap = $this->unserializeAdjustmentMap(
+                    $data[QtiTimeStorageFormat::STORAGE_KEY_TIMER_ADJUSTMENT_MAP]
+                );
+            } else {
+                $this->adjustmentMap = new AdjustmentMap();
             }
 
             if (!$this->timeLine instanceof TimeLine) {
@@ -480,14 +513,10 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 
     /**
      * Gets the added extra time
-     * @param int $maxTime
      * @return float
      */
-    public function getExtraTime($maxTime = 0)
+    public function getExtraTime()
     {
-        if ($maxTime && $this->getExtendedTime()) {
-            $this->setExtraTime($this->timerStrategy->getExtraTime($maxTime, $this->getExtendedTime()));
-        }
         return $this->extraTime;
     }
 
@@ -558,7 +587,15 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     public function getRemainingExtraTime($tags = null, $maxTime = 0, $target = TimePoint::TARGET_SERVER)
     {
-        return max(0, $this->getExtraTime($maxTime) - $this->getConsumedExtraTime($tags, $maxTime, $target));
+        return max(0, $this->getExtraTime() - $this->getConsumedExtraTime($tags, $maxTime, $target));
+    }
+
+    /**
+     * @return AdjustmentMap
+     */
+    public function getAdjustmentMap()
+    {
+        return $this->adjustmentMap;
     }
 
     /**
@@ -566,8 +603,8 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     public function delete()
     {
-       $storage = $this->getStorage();
-       return $storage->delete();
+        $storage = $this->getStorage();
+        return $storage->delete();
     }
 
     /**
@@ -578,7 +615,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      */
     protected function checkTimestampCoherence($points, $timestamp)
     {
-        foreach($points as $point) {
+        foreach ($points as $point) {
             if ($point->getTimestamp() > $timestamp) {
                 throw new InconsistentRangeException('A new TimePoint cannot be set before an existing one!');
             }
@@ -610,7 +647,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
 
         return $range;
     }
-    
+
     /**
      * Checks if a binary flag contains exactly one flag set
      * @param $value

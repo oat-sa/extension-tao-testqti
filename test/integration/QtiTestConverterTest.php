@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,48 +18,49 @@
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  */
+
 namespace oat\taoQtiTest\test\integration;
 
 use oat\generis\test\GenerisPhpUnitTestRunner;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\XmlDocument;
-use \taoQtiTest_models_classes_QtiTestConverter;
+use ReflectionClass;
+use taoQtiTest_models_classes_QtiTestConverter;
 
 /**
  * Integration test of the {@link taoQtiTest_models_classes_QtiTestConverter} class.
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @package taoQtiTest
- 
+
  */
 class QtiTestConverterTest extends GenerisPhpUnitTestRunner
 {
-
     /**
-     * Data provider 
+     * Data provider
      * @return array[] the parameters
      */
     public function dataProvider()
     {
         $dataPath = __DIR__ . '/data/';
-        
-        return array(
-            array(
+
+        return [
+            [
                 $dataPath . 'qtitest.xml',
                 json_encode(json_decode(file_get_contents($dataPath . 'qtitest.json')))
-            ),
-            array(
+            ],
+            [
                 $dataPath . 'branching/test.xml',
                 json_encode(json_decode(file_get_contents($dataPath . 'branching/test.json')))
 
-            )
-        );
+            ]
+        ];
     }
 
     /**
      * Test {@link taoQtiTest_models_classes_QtiTestConverter::toJson}
      * @dataProvider dataProvider
-     * 
+     *
      * @param string $testPath
      *            the path of the QTI test to convert
      * @param string $expected
@@ -72,7 +74,7 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
         } catch (StorageException $e) {
             $this->fail($e->getMessage());
         }
-        
+
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $result = $converter->toJson();
 
@@ -82,36 +84,51 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
     /**
      * Test {@link taoQtiTest_models_classes_QtiTestConverter::fromJson}
      * @dataProvider dataProvider
-     * 
-     * @param string $testPath            
-     * @param string $json            
+     *
+     * @param string $testPath
+     * @param string $json
      */
     public function testFromJson($testPath, $json)
     {
         $doc = new XmlDocument('2.1');
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $converter->fromJson($json);
-        
-        $result = preg_replace(array(
+
+        $result = preg_replace([
             '/ {2,}/',
             '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'
-        ), array(
+        ], [
             ' ',
             ''
-        ), $doc->saveToString())
+        ], $doc->saveToString())
 
         ;
-        $expected = preg_replace(array(
+        $expected = preg_replace([
             '/ {2,}/',
             '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'
-        ), array(
+        ], [
             ' ',
             ''
-        ), file_get_contents($testPath))
+        ], file_get_contents($testPath))
 
         ;
-        
+
         $this->assertEquals($result, $expected);
     }
 
+    public function testLookupClass()
+    {
+        $class = new ReflectionClass(taoQtiTest_models_classes_QtiTestConverter::class);
+        $lookupClassMethod = $class->getMethod('lookupClass');
+        $lookupClassMethod->setAccessible(true);
+
+        $doc = new XmlDocument('2.1');
+        $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+
+        $result = $lookupClassMethod->invoke($converter, 'or');
+        $this->assertEquals($result, 'qtism\data\expressions\operators\OrOperator');
+
+        $result = $lookupClassMethod->invoke($converter, 'lt');
+        $this->assertEquals($result, 'qtism\data\expressions\operators\Lt');
+    }
 }

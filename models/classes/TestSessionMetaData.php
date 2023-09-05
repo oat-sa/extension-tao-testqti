@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,19 +32,21 @@ use qtism\runtime\tests\RouteItem;
 
 /**
  * Class manages test session metadata such as section or test exit codes and other.
- * 
+ *
  * Data will be stored as trace variable {@link \taoResultServer_models_classes_TraceVariable}.
- * 
- * Section level data stored as test variable {@link \taoResultServer_models_classes_ResultServerStateFull::storeTestVariable()}
- * prefixed with session identifier e.g. <i>SECTION_EXIT_CODE</i> will be stored as <i>SECTION_EXIT_CODE_assessmentSection-1</i>
- * 
- * 
+ *
+ * Section level data stored as test variable
+ * {@link \taoResultServer_models_classes_ResultServerStateFull::storeTestVariable()}
+ * prefixed with session identifier e.g. <i>SECTION_EXIT_CODE</i> will be stored as
+ * <i>SECTION_EXIT_CODE_assessmentSection-1</i>
+ *
+ *
  * Usage example:
  * <pre>
  * $sessionMetaData = new TestSessionMetaData($session);
  * $metaData = array(
  *   //Test level metadata
- *   'TEST' => array( 
+ *   'TEST' => array(
  *      'TEST_EXIT_CODE' => TEST_CODE_COMPLETE,
  *   ),
  *   //Section level metadata
@@ -57,7 +60,7 @@ use qtism\runtime\tests\RouteItem;
  * )
  * $sessionMetaData->save($metaData);
  * </pre>
- * 
+ *
  * @author Aleh Hutnikau <hutnikau@1pt.com>
  *
  */
@@ -65,7 +68,7 @@ class TestSessionMetaData
 {
     /**
      * Test session instance
-     * @var AssessmentTestSession 
+     * @var AssessmentTestSession
      */
     private $session;
 
@@ -73,13 +76,14 @@ class TestSessionMetaData
      * Constructor.
      * @param \taoQtiTest_helpers_TestSession $session Test session instance.
      */
-    public function __construct(\taoQtiTest_helpers_TestSession $session) {
-       $this->session = $session;
+    public function __construct(\taoQtiTest_helpers_TestSession $session)
+    {
+        $this->session = $session;
     }
-        
+
     /**
      * Save session metadata.
-     * 
+     *
      * @param array $metaData Meta data array to be saved.
      * @param RouteItem $routeItem item for which data will be saved
      * @param string $assessmentSectionId section id for which data will be saved
@@ -105,8 +109,8 @@ class TestSessionMetaData
 
                 if (strcasecmp($type, 'ITEM') === 0) {
                     if ($routeItem === null) {
-                    $itemRef = $this->session->getCurrentAssessmentItemRef();
-                    $occurence = $this->session->getCurrentAssessmentItemRefOccurence();
+                        $itemRef = $this->session->getCurrentAssessmentItemRef();
+                        $occurence = $this->session->getCurrentAssessmentItemRefOccurence();
                     } else {
                         $itemRef = $routeItem->getAssessmentItemRef();
                         $occurence = $routeItem->getOccurence();
@@ -138,7 +142,7 @@ class TestSessionMetaData
     public function getData()
     {
         $request = Context::getInstance()->getRequest();
-        $data = $request->hasParameter('metaData') ? $request->getParameter('metaData') : array();
+        $data = $request->hasParameter('metaData') ? $request->getParameter('metaData') : [];
 
         return $data;
     }

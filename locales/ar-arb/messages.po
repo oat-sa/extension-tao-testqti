@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint114\n"
-"PO-Revision-Date: 2019-10-25T09:07:44\n"
+"Project-Id-Version: TAO 3.4.0-sprint160\n"
+"PO-Revision-Date: 2021-12-29 12:39+0100\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ar-arb\n"
@@ -9,1403 +9,1670 @@ msgstr ""
 "targetLanguage: ar-arb\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Basepath: ../../\n"
+"X-Poedit-Basepath: ../..\n"
 "X-Poedit-KeywordsList: __\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"POT-Creation-Date: \n"
+"X-Generator: Poedit 2.4.3\n"
 "X-Poedit-SearchPath-0: .\n"
 
+msgid "%s to answer %s"
+msgstr " %s للإجابة على %s"
+
+msgid "(Visual) Clear all active highlights"
+msgstr "(مرئي) امسح كل الإضاءات النشطة"
+
+msgid "(Visual) Highlight Text"
+msgstr "(بصري) تمييز النص"
+
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr ""
+msgstr "تعذر تجميع بند QTI المتضمن في رائز QTI '%s'"
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr ""
+msgstr "يجب أن يحتوي رائز QTI على بند QTI واحد على الأقل ليتم تجميعه. لا شيء وجد."
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "حزمة روائز qti"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr ""
+msgstr "تعذر استرداد مورد بعيد مشار إليه في رائز QTI '%s'."
 
 msgid "A response to every question in this item is required."
-msgstr ""
+msgstr "مطلوب إجابة على كل سؤال في هذا البند."
 
 msgid "A response to this item is required."
-msgstr ""
+msgstr "مطلوب الإجابة عن هذا البند."
 
 msgid "A valid response to this item is required."
-msgstr ""
+msgstr "مطلوب جواب صحيح عن هذا البند."
 
 msgid "A visible section is one that is identifiable by the candidate."
-msgstr ""
+msgstr "القسم المرئي هو القسم الذي يمكن للمرشح تحديده."
 
 msgid "Activated"
-msgstr ""
+msgstr "مفعل"
 
 msgid "add a new weight"
-msgstr ""
+msgstr "إضافة وزن جديد"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr ""
+msgstr "أضف ملفًا مضغوطًا يحتوي على روائز وبنود QTI / APIP"
 
 msgid "Add selected item(s) here."
-msgstr ""
+msgstr "أضف البنود المحددة هنا."
 
 msgid "Add the source file"
-msgstr ""
+msgstr "أضف مصدر الملف"
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr ""
+msgstr "بعد إكمال هذا الجزء ، سيكون من المستحيل العودة إليه لإجراء تغييرات. هل أنت متأكد أنك تريد إنهاء هذا الجزء?"
 
 msgid "All"
-msgstr ""
+msgstr "الكل"
 
 msgid "Allow Comment"
-msgstr ""
+msgstr "السماح بالتعليق"
 
 msgid "Allow Review"
-msgstr ""
+msgstr "السماح بالمراجعة"
 
 msgid "Allow Section Skipping"
-msgstr ""
+msgstr "السماح بتخطي الجزء"
 
 msgid "Allow Skipping"
-msgstr ""
+msgstr "السماح بالتخطي"
 
 msgid "Allow skipping of the current section."
-msgstr ""
+msgstr "السماح بتخطي الجزء الحالي."
+
+msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
+msgstr "اسمح للمتقدمللرائز بتشغيل ملفات الوسائط المرتبطة وفقًا لبروتوكول APIP لمحتوى البند."
 
 msgid "Allow the candidate to review his answers."
-msgstr ""
+msgstr "اسمح للمرشح بمراجعة إجاباته."
 
 msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
-msgstr ""
+msgstr "اسمح للمتقدم للرائز بإزالة / يتوسطه خط في الإجابات في تفاعلات الاختيار."
 
 msgid "Allow the test-taker to highlight parts of the item text."
-msgstr ""
+msgstr "اسمح للمتقدم للرائز بتمييز أجزاء من نص البند."
 
 msgid "Allow the test-taker to mask and unmask answers in choice interactions."
-msgstr ""
+msgstr "اسمح  للمتقدم للرائز بإخفاء وكشف الإجابات في تفاعلات الرائز."
 
 msgid "Allow the test-taker to mask parts of the item with a movable mask."
-msgstr ""
+msgstr "اسمح  للمتقدم للرائز بإخفاء أجزاء من البند بقناع متحرك."
 
 msgid "Allow the test-taker to use a basic calculator."
-msgstr ""
+msgstr "اسمح للمتقدم للرائز باستخدام الآلة الحاسبة الأساسية."
 
 msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
-msgstr ""
+msgstr "اسمح للمتقدم للرائز باستخدام آلة حاسبة تحترم ترتيب العمليات (BODMAS)."
 
 msgid "Allow the test-taker to use a movable magnifier tool."
-msgstr ""
+msgstr "اسمح للمتقدم للرائز باستخدام أداة المكبر المتحركة."
 
 msgid "Allow the test-taker to use a scientific calculator."
-msgstr ""
+msgstr "اسمح باستخدام الآلة الحاسبة العلمية."
 
 msgid "Allow the test-taker to visually isolate a line of text."
-msgstr ""
+msgstr "اسمح  بعزل سطر من النص بصريًا."
 
 msgid "Allows Test-taker to zoom in and out the item content."
-msgstr ""
+msgstr "يسمح بتكبير وتصغير محتوى البند."
 
 msgid "Also compute the score per categories"
-msgstr ""
+msgstr "احسب أيضًا النتيجة لكل فئة"
 
 msgid "An error occured while retrieving items"
-msgstr ""
+msgstr "حدث خطأ أثناء استرداد البنود"
 
 msgid "An error occurred during results submission. Please retry."
-msgstr ""
+msgstr "حدث خطأ أثناء تقديم النتائج. الرجاء اعادة المحاولة."
 
 msgid "An error occurred during the test initialization!"
-msgstr ""
+msgstr "حدث خطأ أثناء بدء الرائز!"
 
 msgid "An error occurred during the test, please content your administrator."
-msgstr ""
+msgstr "حدث خطأ أثناء الرائز، يرجى مراجعة المسؤول الخاص بك."
 
 msgid "An error occurred!"
-msgstr ""
+msgstr "حدث خطأ!"
 
 msgid "An error occurs, please contact your administrator"
-msgstr ""
+msgstr "حدث خطأ ، يرجى الاتصال بالمسؤول"
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
-msgstr ""
+msgstr "يمكن للجزء غير المرئي مع أحد الوالدين الخاضع للخلط أن يحدد ما إذا كان أطفاله ، الذين سيظهرون للمرشح كما لو كانوا جزءًا من الوالد ، قد تم خلطهم ككتلة أو خلطهم مع الأطفال الآخرين للقسم الأصلي أم لا ."
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr ""
+msgstr "لا يمكن قراءة عنصر مشمول في الرائز أو أنه غير متوافق مع QTI."
 
 msgid "An item involved in the test cannot be written."
-msgstr ""
+msgstr "لا يمكن كتابة عنصر مشترك في الرائز."
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr ""
+msgstr "حدث خطأ غير معروف أثناء تجميع الرائز QTI '%s' برمجيًا."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr ""
+msgstr "حدث خطأ غير معروف أثناء تجميع الرائز QTI '%s'."
+
+msgid "An unrecoverable error occurred. Your test session will be paused."
+msgstr "حدث خطأ لا يمكن إصلاحه. سيتم إيقاف جلسة الرائز الخاصة بك مؤقتًا."
+
+msgid "and"
+msgstr "و"
 
 msgid "and flagged %s of them"
-msgstr ""
+msgstr "وعلمت %s منهم"
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr ""
+msgstr "وقمت بوضع علامة على %s عنصر (عناصر) يمكنك مراجعتها الآن"
 
 msgid "Answer Eliminator"
-msgstr ""
+msgstr "الجواب المحذوف"
 
 msgid "Answer Masking"
-msgstr ""
+msgstr "إخفاء الجواب"
 
 msgid "Answered"
-msgstr ""
+msgstr "تمت الإجابة"
+
+msgid "APIP Text To Speech"
+msgstr "نص  للحديث APIP"
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
-msgstr ""
+msgstr "هل أنت متأكد أنك تريد مسح إجابتك والانتقال إلى البند التالي؟ لن تتمكن من العودة وتقديم إجابة."
 
 msgid "Are you sure you want to end the test?"
-msgstr ""
+msgstr "هل أنت متأكد أنك تريد إنهاء الرائز?"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
-msgstr ""
+msgstr "هل أنت متأكد أنك تريد الانتقال إلى البند التالي؟ لن تتمكن من العودة وتغيير إجابتك."
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
-msgstr ""
+msgstr "هل أنت متأكد أنك تريد الانتقال إلى البند التالي؟ لن تتمكن من العودة وتقديم إجابة."
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back."
-msgstr ""
+msgstr "هل أنت متأكد أنك تريد الانتقال إلى البند التالي؟ لن تتمكن من العودة."
 
 msgid "Area Masking"
-msgstr ""
+msgstr "اخفاء الحيز"
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
-msgstr ""
+msgstr "يتيح لك إقران مخطط بجزء التحقق من صحة هذا الجزء مقابل المخطط المحدد."
 
 msgid "Associate Blueprint"
-msgstr ""
+msgstr "مخطط مشارك"
 
 msgid "At least one mandatory parameter was required but found missing in your request"
-msgstr ""
+msgstr "مطلوب معلمة إلزامية واحدة على الأقل ولكن تم العثور عليها مفقودة في طلبك"
 
 msgid "Author"
-msgstr ""
+msgstr "كاتب"
 
 msgid "Auxiliary file not found at location \"%s\"."
-msgstr ""
+msgstr "لم يتم العثور على الملف الإضافي في الموقع \"%s\"."
 
-msgid "Black on cream"
-msgstr ""
+msgid "Black on Cream"
+msgstr "أسود على كريم"
 
-msgid "Black on light blue"
-msgstr ""
+msgid "Black on Light Blue"
+msgstr "أسود على أزرق فاتح "
 
-msgid "Black on magenta"
-msgstr ""
+msgid "Black on Light Magenta"
+msgstr "أسود على أرجواني فاتح"
 
-msgid "Black on white"
-msgstr ""
+msgid "Black on White"
+msgstr "أسود على خلفية بيضاء"
 
 msgid "Calculator"
-msgstr ""
+msgstr "آلة حاسبة"
 
 msgid "Calculator BODMAS"
-msgstr ""
+msgstr "آلة حاسبة BODMAS"
+
+msgid "Can not playback media file!"
+msgstr "لا يمكن تشغيل ملف الوسائط!"
+
+msgid "CANCEL"
+msgstr "إلغاء"
 
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 msgid "Candidate"
-msgstr ""
+msgstr "مرشح"
 
 msgid "Cardinality"
-msgstr ""
+msgstr "عدد عناصر مجموعة"
 
 msgid "Categories"
-msgstr ""
+msgstr "فئات"
 
 msgid "Category score"
-msgstr ""
+msgstr "نتيجة فئة"
 
 msgid "Change the current color preset"
-msgstr ""
+msgstr "قم بتغيير الإعداد المسبق للون الحالي"
 
 msgid "Class"
-msgstr ""
+msgstr "قسم"
 
 msgid "Class successfully created."
-msgstr ""
+msgstr "تم إنشاء الفصل بنجاح."
 
 msgid "Clear all active highlights"
-msgstr ""
+msgstr "(مرئي) امسح كل الإضاءات النشطة"
 
 msgid "Clear Highlights"
-msgstr ""
+msgstr "مسح النقاط البارزة"
+
+msgid "Click \"%s\" to continue."
+msgstr "انقر فوق \"%s\" للمتابعة"
 
 msgid "Click to speak"
-msgstr ""
+msgstr "انقر للتحدث"
+
+msgid "Close"
+msgstr "أغلق"
 
 msgid "Close Magnifier"
-msgstr ""
+msgstr "أغلق المكبر"
 
 msgid "Close the mask"
-msgstr ""
+msgstr "أغلق القناع"
 
 msgid "Close this Section"
-msgstr ""
+msgstr "أغلق هذا الجزء"
 
 msgid "Collapse the review panel"
-msgstr ""
+msgstr "تصغير لوحة المراجعة"
 
 msgid "Comment"
-msgstr ""
+msgstr "تعليق"
 
 msgid "Completed items"
-msgstr ""
+msgstr "البنود المكتملة"
 
 msgid "Connected to server"
-msgstr ""
+msgstr "متصل بالخادم"
+
+msgid "CONTINUE TO THE NEXT SECTION"
+msgstr "تابع الجزء التالي"
 
 msgid "Contrast"
-msgstr ""
+msgstr "تباين"
 
 msgid "Controls the contribution of an individual item score to the overall test score."
-msgstr ""
+msgstr "يتحكم في مساهمة بند فردي في نتيجة الرائز الإجمالية.."
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
-msgstr ""
+msgstr "يتحكم في الحد الأقصى لعدد المحاولات المسموح بها. 0 يعني غير محدود."
 
 msgid "Covers parts of the item"
-msgstr ""
+msgstr "يغطي أجزاء من البند"
 
 msgid "Custom"
-msgstr ""
+msgstr "العادة"
 
 msgid "custom categories"
-msgstr ""
+msgstr "فئات مخصصة"
 
 msgid "Custom outcome processing. No changes will be made to the existing rules."
-msgstr ""
+msgstr "معالجة النتائج المخصصة. لن يتم إجراء أي تغييرات على القواعد الحالية."
 
 msgid "Cut score"
-msgstr ""
+msgstr "قطع النتيجة"
 
 msgid "Cut score (pass ratio)"
-msgstr ""
+msgstr "قطع الدرجة (نسبة النجاح)"
 
 msgid "Disable validation"
-msgstr ""
+msgstr "تعطيل التحقق من الصحة"
 
 msgid "Disconnected from server"
-msgstr ""
+msgstr "مفصول عن الخادم"
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
-msgstr ""
+msgstr "اعرض تحذيرًا قبل أن ينهي المتقدم للرائز جزءًا منه ولا تزال هناك بنود لم تتم الإجابة عنها أو تم وضع علامة عليها للمراجعة.."
 
 msgid "Display a warning before the test-taker ends the test part."
-msgstr ""
+msgstr "عرض تحذير قبل أن ينهي المتقدم للرائز جزء منه."
 
 msgid "Display a warning before the test-taker ends the test."
-msgstr ""
+msgstr "عرض تحذير قبل أن ينهي المتقدم للرائز الاختبار.."
 
 msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
-msgstr ""
+msgstr "عرض تحذير قبل أن يتخطى المتقدم للرائز الجزء الذي هو بصدده. يطلب الانتقال للجزء التالي."
 
 msgid "Display End Test Warning"
-msgstr ""
+msgstr "عرض تحذير نهاية الرائز"
 
 msgid "Display Next Part Warning"
-msgstr ""
+msgstr "عرض تحذير القسم التالي"
 
 msgid "Display Next Section Warning"
-msgstr ""
+msgstr "عرض تحذير القسم التالي"
 
 msgid "Display Unanswered Warning"
-msgstr ""
+msgstr "عرض تحذير لم يتم الرد عليها"
 
 msgid "Displayed label"
-msgstr ""
+msgstr "التسمية المعروضة"
 
 msgid "Displays a customisable magnifier"
-msgstr ""
-
-msgid "DO NOT CHANGE THE NAME OF THE FILE."
-msgstr ""
+msgstr "يعرض المكبر القابل للتخصيص"
 
 msgid "Do not flag the current item for later review"
-msgstr ""
+msgstr "لا تضع علامة على البند الحالي للمراجعة لاحقًا"
+
+msgid "Do not rename it."
+msgstr "لا تقم بإعادة تسميته."
 
 msgid "Do not show alert on timeout"
-msgstr ""
+msgstr "لا تظهر تنبيه عند انتهاء المهلة"
+
+msgid "Don\'t save"
+msgstr "لا تحفظ"
 
 msgid "Download"
-msgstr ""
+msgstr "تحميل"
 
-msgid "Download the file and submit manually."
-msgstr ""
+msgid "Download the pupil responses and submit manually."
+msgstr "قم بتنزيلأجوبة التلميذ وإرسالها يدويًا."
 
 msgid "Eliminate choices"
-msgstr ""
+msgstr "تخلص من الاختيارات"
 
 msgid "Enable Mark for Review"
-msgstr ""
+msgstr "تمكين وضع علامة للمراجعة"
 
 msgid "Enable mark for review of items. Requires the Review Screen option."
-msgstr ""
+msgstr "تمكين علامة لمراجعة البنود. يتطلب خيار شاشة المراجعة."
 
 msgid "Enable Review Screen"
-msgstr ""
+msgstr "تمكين شاشة المراجعة"
 
 msgid "Enable selection"
-msgstr ""
+msgstr "تمكين الاختيار"
 
 msgid "Enable Skipping Ahead"
-msgstr ""
+msgstr "تمكين التخطي للأمام"
+
+msgid "Enable text to speech"
+msgstr "تمكين تحويل النص إلى كلام باستخدام إعدادات الجهاز"
 
 msgid "Enable the item review screen / navigator."
-msgstr ""
+msgstr "قم بتمكين شاشة استعراض البند / المتصفح."
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
-msgstr ""
+msgstr "تمكن من التخطي إلى البنود داخل هذا الجزء. يتطلب خيار شاشة المراجعة."
 
 msgid "End test"
-msgstr ""
+msgstr "نهاية الرائز"
 
 msgid "End Test"
-msgstr ""
+msgstr "نهاية الرائز"
 
 msgid "Enter a blueprint"
-msgstr ""
+msgstr "أدخل مخططًا"
 
 msgid "Enter a custom category"
-msgstr ""
+msgstr "أدخل فئة مخصصة"
 
 msgid "Error"
-msgstr ""
+msgstr "خطأ"
 
 msgid "Error during file import"
-msgstr ""
+msgstr "خطأ أثناء استيراد الملف"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr ""
+msgstr "تم العثور على خطأ في اختبار : IMS QTI\n"
+"%s"
 
 msgid "Expand the review panel"
-msgstr ""
-
-msgid "Export"
-msgstr ""
+msgstr "قم بتوسيع لوحة المراجعة"
 
 msgid "Export failed for the test \"%s"
-msgstr ""
+msgstr "فشل تصدير الرائز \"%s"
 
 msgid "Export metadata"
-msgstr ""
+msgstr "تصدير البيانات الوصفية"
 
 msgid "Export QTI 2.1 Test Package"
-msgstr ""
+msgstr "تصدير حزمةروائز QTI 2.1"
 
 msgid "Export QTI 2.2 Test Package"
-msgstr ""
+msgstr "تصدير حزمة روائز QTI 2.2"
 
 msgid "Export successful for the test \"%s"
-msgstr ""
+msgstr "تم التصدير بنجاح للرائز \"%s"
 
 msgid "Feedback block"
-msgstr ""
+msgstr "حظر التعليقات"
 
 msgid "File name"
-msgstr ""
+msgstr "اسم الملف"
 
 msgid "File not found"
-msgstr ""
+msgstr "لم يتم العثور على الملف"
 
 msgid "File not found!"
-msgstr ""
+msgstr "لم يتم العثور على الملف!"
 
 msgid "Filter"
-msgstr ""
+msgstr "مرشح"
 
 msgid "Fixed"
-msgstr ""
+msgstr "مثبت"
 
 msgid "Fixed position in a shuffled the selection."
-msgstr ""
+msgstr "موقف ثابت في اختيار عشوائي."
 
 msgid "Flag for Review"
-msgstr ""
+msgstr "علامة للمراجعة"
 
 msgid "Flag the current item for later review"
-msgstr ""
+msgstr "ضع علامة على البند الحالي للمراجعة لاحقًا"
 
 msgid "Flagged"
-msgstr ""
+msgstr "وضع علامة"
+
+msgid "Flagged for review"
+msgstr "تم وضع علامة للمراجعة"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
-msgstr ""
+msgstr "إجبار البند على اعتباره إعلاميًا ولا يؤخذ في الاعتبار في (عدم) الرد / العدادات التي تم وضع علامة عليها."
 
 msgid "Go to next item"
-msgstr ""
+msgstr "انتقل إلى البند التالي"
+
+msgid "Go to the current question"
+msgstr "ما هو مسموح به"
 
 msgid "Go to the next item?"
-msgstr ""
+msgstr "انتقل إلى البند التالي?"
+
+msgid "Go to the next question"
+msgstr "إنتقل للسؤال التالي"
+
+msgid "Go to the previous question"
+msgstr "انتقل إلى السؤال السابق"
+
+msgid "Go to the top of the page"
+msgstr "إذهب إلى أعلى الصفحة"
 
 msgid "Gray on Green"
-msgstr ""
-
-msgid "Gray on green (low contrast option)"
-msgstr ""
+msgstr "رمادي على أخضر"
 
 msgid "Hide Review"
-msgstr ""
+msgstr "إخفاء المراجعة"
 
 msgid "Hide the review screen"
-msgstr ""
+msgstr "إخفاء شاشة المراجعة"
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
-msgstr ""
+msgstr "إخفاء التحذير المعروض أتوماتيكيا عندما ينهي المتقدم للرائز جزء منه محدد بوقت."
 
 msgid "Hide Timed Section Warning"
-msgstr ""
+msgstr "إخفاء تحذير جزء المحدد بوقت"
 
 msgid "Hide timers"
-msgstr ""
+msgstr "إخفاء ضبط الوقت"
 
 msgid "Highlight"
-msgstr ""
+msgstr "تسليط الضوء"
 
 msgid "Highlight Text"
-msgstr ""
+msgstr "تسليط الضوء"
 
 msgid "Highlighter"
-msgstr ""
+msgstr "التسطير على نص"
+
+msgid "hours"
+msgstr "ساعات"
 
 msgid "Html title"
-msgstr ""
+msgstr "عنوان Html"
 
 msgid "Identifier"
-msgstr ""
+msgstr "المعرف"
 
 msgid "If required it must appear (at least once) in the selection."
-msgstr ""
+msgstr "إذا لزم الأمر ، يجب أن يظهر (مرة واحدة على الأقل) في الجزء."
 
 msgid "If required, it must appears at least once in the selection."
-msgstr ""
+msgstr "إذا لزم الأمر ، يجب أن يظهر مرة واحدة على الأقل في الجزء."
 
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
-msgstr ""
+msgstr "إذا تم تعيينه ، فإنه يتسبب في ترتيب العناصر الفرعية بشكل عشوائي ، وإلا فإنه يستخدم الترتيب الذي يتم تحديد العناصر الفرعية به."
 
 msgid "If the candidate can skip the item, without submitting a response (default is true)."
-msgstr ""
+msgstr "إذا كان بإمكان المرشح تخطي البند ، دون إرسال رد (الإعداد الافتراضي هو true)."
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
-msgstr ""
+msgstr "إذا تم تعيين خيار الفئة ، فستتم معالجة النتيجة أيضًا لكل فئة ، وستحدث كل نتيجة في نتيجة PASS_xxx ، حيث xxx هو اسم الفئة."
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
-msgstr ""
+msgstr "إذا تم تعيين خيار الفئة ، فستتم معالجة النتيجة أيضًا لكل فئة ، وستحدث كل نتيجة في نتيجة SCORE_xxx ، حيث xxx هو اسم الفئة."
 
-msgid "If you need help, please contact us."
-msgstr ""
+msgid "If the connection cannot be restored, see option B."
+msgstr "إذا تعذر استعادة الاتصال ، فراجع الخيار ب."
+
+msgid "If you need help, please contact our Helpline on 0330 088 4171."
+msgstr "إذا كنت بحاجة إلى مساعدة ، يرجى الاتصال بخط المساعدة الخاص بنا على 033088 4171."
 
 msgid "Import"
-msgstr ""
+msgstr "يستورد"
 
 msgid "Import a QTI/APIP Content Package"
-msgstr ""
+msgstr "قم باستيراد حزمة محتوى QTI / APIP"
 
 msgid "Import QTI TEST into \"%s"
-msgstr ""
+msgstr "استيراد رائز QTI إلى \"%s"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr ""
+msgstr "تعذر استيراد بند IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest."
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr ""
+msgstr "تم استيراد بند IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest بنجاح."
 
 msgid "IMS QTI Test Package successfully imported."
-msgstr ""
+msgstr "تم استيراد حزمة الروائز IMS QTI بنجاح."
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr ""
+msgstr "تم استيراد الرائز IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest بنجاح."
 
 msgid "In this part of the test navigation is not allowed."
-msgstr ""
+msgstr "في هذا الجزء من الرائز التنقل غير مسموح به."
 
 msgid "Inconsistency at line %1d:"
-msgstr ""
+msgstr "عدم تناسق في السطر  %1d:"
 
 msgid "Individual"
-msgstr ""
+msgstr "فردي"
 
 msgid "Informational Item Usage"
-msgstr ""
+msgstr "استخدام بند إعلاميائي"
 
 msgid "Internal server error!"
-msgstr ""
+msgstr "خطأ في الخادم الداخلي!"
 
 msgid "is already used in the test."
-msgstr ""
+msgstr "مستخدم بالفعل في الرائز."
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr ""
+msgstr "ليس معرّفًا مضبوطا (أبجدي رقمي وشرطة سفلية وشرطة ونقاط)"
 
 msgid "is not a valid identifier (everything except spaces)"
-msgstr ""
+msgstr "ليس معرّفًا صالحًا (كل شيء ما عدا المسافات)"
+
+msgid "It is not possible to save your responses while working offline."
+msgstr "لا يمكن حفظ ردودك أثناء العمل دون اتصال."
 
 msgid "Item \"%s\" is completed."
-msgstr ""
+msgstr "تم إكمال البند  \"%s\""
 
 msgid "Item %d"
-msgstr ""
+msgstr "البند  %d"
 
 msgid "Item %d of %d"
-msgstr ""
+msgstr "البند %d من %d"
+
+msgid "Item %s loaded"
+msgstr "تم تحميل البند %s"
 
 msgid "Item Reference Properties"
-msgstr ""
+msgstr "خصائص مرجع البند"
 
 msgid "Item response identifier does not match current item"
-msgstr ""
+msgstr "معرّف جواب البند لا يتطابق مع البند الحالي"
 
 msgid "Item Session Control"
-msgstr ""
+msgstr "عنصر التحكم في دورة البند"
 
 msgid "items"
-msgstr ""
+msgstr "بنود"
 
 msgid "Items"
-msgstr ""
+msgstr "بنود"
 
 msgid "Items can optionally be assigned to one or more categories."
-msgstr ""
+msgstr "يمكن تخصيص البنود اختياريًا لفئة واحدة أو أكثر."
 
 msgid "Items Compilation"
-msgstr ""
+msgstr "تجميع البنود"
 
 msgid "Items marked for later review"
-msgstr ""
+msgstr "البنود المحددة للمراجعة لاحقًا"
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
-msgstr ""
+msgstr "لم يتم تسجيل العناصر التي تحتوي على معرفات من طراز \"%s\" في نقطة نهاية CAT ذات الصلة."
+
+msgid "Jump Menu"
+msgstr "قائمة الانتقال"
+
+msgid "Jump to:"
+msgstr "انتقل إلى:"
 
 msgid "Keep Together"
-msgstr ""
+msgstr "الاحتفاظ معا"
+
+msgid "Keyboard Navigation"
+msgstr "التنقل باستخدام لوحة المفاتيح"
+
+msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr "اختصارات لوحة المفاتيح الخاصة بأدوات إمكانية الوصول متاحة للمتقدم للرائز."
 
 msgid "Late submission allowed"
-msgstr ""
+msgstr "يُسمح بالتقديم المتأخر"
 
 msgid "Leave a comment"
-msgstr ""
-
-msgid "Light yellow on royal blue"
-msgstr ""
+msgstr "اترك تعليقا"
 
 msgid "Line Reader"
-msgstr ""
+msgstr "قارئ الخط"
 
 msgid "Linear"
-msgstr ""
+msgstr "خطي"
 
 msgid "Link durations to activate the guided navigation"
-msgstr ""
+msgstr "فترات الارتباط لتنشيط التنقل الموجه عبر الأنترنيت"
 
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
-msgstr ""
+msgstr "مدة التأمين: التنقل الإرشادي. ينتقل  الرائز إلى البند التالي بمجرد وصول المدة إلى 0."
 
 msgid "Magnifier"
-msgstr ""
+msgstr "المكبر"
 
 msgid "Magnify less"
-msgstr ""
+msgstr "تكبير أقل"
 
 msgid "Magnify more"
-msgstr ""
+msgstr "تكبير أكثر"
 
 msgid "Magnifying Glass"
-msgstr ""
+msgstr "عدسة مكبرة"
+
+msgid "Main navigation"
+msgstr "التنقل الرئيسي عبر الأنترنيت"
 
 msgid "Manage Rubric Blocks"
-msgstr ""
+msgstr "إدارة مجموعات المواد"
 
 msgid "Manage test properties"
-msgstr ""
-
-msgid "Manage Tests"
-msgstr ""
+msgstr "إدارة خصائص الرائز"
 
 msgid "Manage tests"
-msgstr ""
+msgstr "إدارة الروائز"
+
+msgid "Manage Tests"
+msgstr "إدارة الروائز"
 
 msgid "Mark for review"
-msgstr ""
+msgstr "وضع علامة للمراجعة"
 
 msgid "Masking"
-msgstr ""
+msgstr "إخفاء"
 
 msgid "Match value"
-msgstr ""
+msgstr "قيمة المقارنة"
 
 msgid "Max Attempts"
-msgstr ""
+msgstr "أقصى عدد من المحاولات"
 
 msgid "Maximum Duration"
-msgstr ""
+msgstr "المدة القصوى"
 
 msgid "Maximum duration : the items times out when the duration reaches 0."
-msgstr ""
+msgstr "المدة القصوى: تنتهي مهلة البنود عندما تصل المدة إلى 0."
 
 msgid "Maximum duration for the all test."
-msgstr ""
+msgstr "المدة القصوى لجميع الروائز."
 
 msgid "Maximum duration for this item."
-msgstr ""
+msgstr "المدة القصوى لهذا البند."
 
 msgid "Maximum duration for this section."
-msgstr ""
+msgstr "المدة القصوى لهذا الجزء."
 
 msgid "Maximum duration for this test part."
-msgstr ""
+msgstr "المدة القصوى لهذا الجزء من الرائز."
 
 msgid "Metadata export is not available for test \"%s."
-msgstr ""
+msgstr "تصدير بيانات التعريف غير متاح للرائز \"%s."
 
 msgid "Minimum Duration"
-msgstr ""
+msgstr "المدة الدنيا"
 
 msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
-msgstr ""
+msgstr "الحد الأدنى للمدة: يفرض على المتقدم للرائز البقاء على البند طوال المدة المحددة."
 
 msgid "Minimum duration for the test."
-msgstr ""
+msgstr "المدة الدنيا للرائز."
 
 msgid "Minimum duration for this item."
-msgstr ""
+msgstr "المدة الدنيا لهذا البند."
 
 msgid "Minimum duration for this section."
-msgstr ""
+msgstr "المدة الدنيا لهذا الجزء."
 
 msgid "Minimum duration for this test part."
-msgstr ""
+msgstr "المدة الدنيا لهذا الجزء من الرائز ."
+
+msgid "minutes"
+msgstr "دقائق"
+
+msgid "Missed required parameter 'id\\"
+msgstr "تم فقدان المعلم المطلوب 'id \\"
 
 msgid "Missed test package file"
-msgstr ""
+msgstr "ملف حزمة الرائز مفقود"
 
 msgid "Missing required configuration option %s"
-msgstr ""
+msgstr "خيار التكوين المطلوب مفقود %s"
+
+msgid "Move"
+msgstr "حرك"
 
 msgid "Move Down"
-msgstr ""
+msgstr "تحرك لأسفل"
 
 msgid "Move Up"
-msgstr ""
+msgstr "تحرك صعودا"
 
 msgid "Moving to the next item without time limit reached message."
-msgstr ""
+msgstr "الانتقال إلى البند التالي دون الوصول إلى حد زمني الرسالة."
+
+msgid "name of the pupil"
+msgstr "اسم التلميذ"
 
 msgid "Navigation"
-msgstr ""
+msgstr "التنقل عبر الانترنيت"
+
+msgid "Navigation shortcuts"
+msgstr "اختصارات التنقل عبر الأنترنيت"
 
 msgid "Navigation Warnings"
-msgstr ""
+msgstr "تحذيرات التنقل عبر الأنترنيت"
 
 msgid "network"
-msgstr ""
+msgstr "شبكة الاتصال"
 
 msgid "New Rubric Block"
-msgstr ""
+msgstr "كتلة قواعد جديدة"
+
+msgid "New section"
+msgstr "جزء جديد"
 
 msgid "New test part"
-msgstr ""
+msgstr "جزء جديد من الرائز"
 
 msgid "Next"
-msgstr ""
+msgstr "التالي"
 
 msgid "Next Section"
-msgstr ""
+msgstr "الجزء التالي"
 
 msgid "No"
-msgstr ""
+msgstr "لا"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
-msgstr ""
+msgstr "لم يتم تكوين محرك CAT لنقطة نهاية \"%s\"."
 
 msgid "No file found at location \"%s\"."
-msgstr ""
+msgstr "لم يتم العثور على ملف في الموقع \"%s\"."
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr ""
+msgstr "لا مزيد من المحاولات المسموح بها للبند \"%s\"."
 
 msgid "no outcome declaration found"
-msgstr ""
+msgstr "لم يتم العثور على إعلان النتيجة"
 
 msgid "No outcome processing. Erase the existing rules, if any."
-msgstr ""
+msgstr "لا توجد معالجة للنتائج. امسح القواعد الحالية ، إن وجدت."
 
 msgid "No reference to any IMS QTI Item found."
-msgstr ""
+msgstr "لم يتم العثور على أي إشارة إلى أي بند IMS QTI."
 
 msgid "Non Linear"
-msgstr ""
+msgstr "غير خطي"
 
 msgid "None"
-msgstr ""
+msgstr "لا أحد"
 
 msgid "Not all test could be exported"
-msgstr ""
+msgstr "لا يمكن تصدير كافة الاختبارات"
+
+msgid "Not answered"
+msgstr "بلا جواب"
+
+msgid "Not seen"
+msgstr "لم ير"
 
 msgid "Not shuffled, the position remains fixed."
-msgstr ""
+msgstr "لا يتم خلطه ، يظل الموضع ثابتًا."
 
-msgid "Note the name of the child you were assessing. Do not try to re-access the assessment for that child until it no longer shows as ‘in progress’."
-msgstr ""
+msgid "Offline"
+msgstr "غير متصل على الانترنت"
 
 msgid "OK"
-msgstr ""
+msgstr "نعم"
 
 msgid "Ok"
-msgstr ""
+msgstr "نعم"
 
 msgid "OK & End test"
-msgstr ""
+msgstr "موافق وإنهاء الرائز"
 
 msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr ""
+msgstr "بمجرد إغلاق هذا الجزء ، لا يمكنك العودة إليه أو تغيير إجاباتك."
 
 msgid "One or more dependent IMS QTI Items could not be imported."
-msgstr ""
+msgstr "تعذر استيراد بند IMS QTI تابع واحد أو أكثر."
+
+msgid "Online"
+msgstr "Online"
 
 msgid "Only display the items marked for review"
-msgstr ""
+msgstr "عرض فقط البنود المحددة للمراجعة"
 
 msgid "Only display the unanswered items"
-msgstr ""
+msgstr "اعرض فقط البنود التي لم يتم الرد عليها"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "افتح الحاسبة"
+
+msgid "Open Keyboard Shortcuts"
+msgstr "افتح اختصارات لوحة المفاتيح"
+
+msgid "Option A"
+msgstr "الخيار أ"
+
+msgid "Option B"
+msgstr "الخيار ب"
 
 msgid "or"
-msgstr ""
-
-msgid "OR"
-msgstr ""
+msgstr "أو"
 
 msgid "Ordering"
-msgstr ""
+msgstr "يأمر"
 
 msgid "Outcome"
-msgstr ""
+msgstr "حصيلة"
 
 msgid "Outcome declarations"
-msgstr ""
+msgstr "حصيلة التصريحات"
 
 msgid "Outcome processing"
-msgstr ""
+msgstr "حصيلة معالجة النتائج"
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
-msgstr ""
+msgstr "الحزمة صالحة ولكن لم يتم العثور على اختبارات. تأكد من احتوائه على اختبارات QTI صالحة."
 
 msgid "Part %d"
-msgstr ""
+msgstr "الجزء %d"
+
+msgid "Passage"
+msgstr "مقطع"
 
 msgid "Pause"
-msgstr ""
+msgstr "وقفة"
+
+msgid "Pause the test"
+msgstr "إيقاف الرائز"
 
 msgid "Play"
-msgstr ""
+msgstr "شغل"
 
 msgid "Please confirm you want to leave the test."
-msgstr ""
+msgstr "يرجى تأكيد رغبتك في ترك الرائز."
 
-msgid "Please connect the machine to the internet via a cable or move to an area with better wifi signal."
-msgstr ""
-
-msgid "Please continue waiting while we try to restore the connection."
-msgstr ""
-
-msgid "Please stay on this screen."
-msgstr ""
+msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
+msgstr "يرجى محاولة إعادة تحميل الصفحة أو إيقاف الرائز مؤقتًا. إذا توقفت مؤقتًا ، فستتمكن من استئناف الرائز من هذه الصفحة."
 
 msgid "Please wait while we try to restore the connection."
-msgstr ""
+msgstr "الرجاء الانتظار بينما نحاول استعادة الاتصال."
+
+msgid "Preview"
+msgstr "معاينة"
 
 msgid "Preview the covered area"
-msgstr ""
+msgstr "معاينة المنطقة المغطاة"
 
 msgid "Previous"
-msgstr ""
+msgstr "السابق"
 
-msgid "Proceed & End Test"
-msgstr ""
+msgid "PROCEED & END ASSESSMENT"
+msgstr "التقييم النهائي"
 
 msgid "Proctor"
-msgstr ""
+msgstr "مراقب"
 
 msgid "Properties"
-msgstr ""
+msgstr "خصائص"
 
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "QTI 2.1 اختبار برنامج التشغيل"
 
 msgid "QTI Item Runner"
-msgstr ""
+msgstr "عداء بند QTI"
 
 msgid "QTI Test \"%s\" publishing failed."
-msgstr ""
+msgstr "فشل نشر الرائز \"%s\""
 
 msgid "QTI Test \"%s\" successfully published."
-msgstr ""
+msgstr "تم نشر الرائز  \"%s\" بنجاح."
 
 msgid "QTI Test Package 2.1"
-msgstr ""
+msgstr "حزمة الرائز QTI 2.1"
 
 msgid "QTI Test Package 2.2"
-msgstr ""
+msgstr "حزمة الرائز QTI 2.2"
 
 msgid "QTI/APIP Test Content Package"
-msgstr ""
+msgstr "حزمة محتوى الرائز QTI/APIP"
+
+msgid "question"
+msgstr "سؤال"
+
+msgid "Question"
+msgstr "سؤال"
+
+msgid "questions"
+msgstr "أسئلة"
 
 msgid "Reference"
-msgstr ""
+msgstr "مرجع"
 
 msgid "Regenerate"
-msgstr ""
+msgstr "تجديد"
+
+msgid "Reload the page"
+msgstr "أعد تحميل الصفحة"
+
+msgid "remaining %s %s"
+msgstr "المتبقي %s %s"
 
 msgid "Remove Item Reference"
-msgstr ""
+msgstr "إزالة مرجع البند"
 
 msgid "Remove Rubric Block"
-msgstr ""
+msgstr "إزالة قالب القاعدة"
 
 msgid "Remove Section"
-msgstr ""
+msgstr "إزالة الجزء"
+
+msgid "Remove Test Part"
+msgstr "إزالة جزء الرائز"
 
 msgid "Required"
-msgstr ""
+msgstr "مطلوب"
 
 msgid "Required field"
-msgstr ""
+msgstr "مجال مطلوب"
 
 msgid "Reset filters"
-msgstr ""
+msgstr "إعادة تعيين المفرزات"
 
 msgid "Resource(s) successfully exported."
-msgstr ""
+msgstr "تم تصدير المورد (الموارد) بنجاح."
 
 msgid "Review"
-msgstr ""
+msgstr "مراجعة"
 
 msgid "Review my Answers"
-msgstr ""
+msgstr "مراجعة جوابي"
 
 msgid "Rubric Block"
-msgstr ""
+msgstr "كتلة القاعدة"
 
 msgid "Rubric Block Properties"
-msgstr ""
+msgstr "خصائص كتلة القواعد"
 
 msgid "Rubric Blocks"
-msgstr ""
+msgstr "كتلة القواعد"
 
 msgid "Save"
-msgstr ""
+msgstr "احفظ"
+
+msgid "Saved"
+msgstr "تم الحفظ"
 
 msgid "Scientific Calculator"
-msgstr ""
+msgstr "الحاسبة العلمية"
 
 msgid "Scorer"
-msgstr ""
+msgstr "تنقيط"
 
 msgid "Scoring"
-msgstr ""
+msgstr "تنقيط"
 
 msgid "Scratch pad"
-msgstr ""
+msgstr "الذاكرة"
 
 msgid "Scratch Pad"
-msgstr ""
+msgstr "الذاكرة"
 
 msgid "Scratchpad"
-msgstr ""
+msgstr "الذاكرة"
+
+msgid "seconds"
+msgstr "ثواني"
 
 msgid "Section %d"
-msgstr ""
+msgstr "قسم %d"
 
 msgid "Section %d of %d"
-msgstr ""
+msgstr "المقطع %d من %d"
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr ""
+msgstr "تتيح فئة مستوى القسم تكوين فئات البنود المكونة لها دفعة واحدة. تعني الفئة باللون الرمادي أن كل البنود بها تلك الفئة. تعني الفئة باللون الأبيض أن عددًا قليلاً فقط من البنود بها هذه الفئة."
 
 msgid "Section Properties"
-msgstr ""
+msgstr "خصائص الجزء"
 
 msgid "Select"
-msgstr ""
+msgstr "اختر"
 
 msgid "Select a blueprint"
-msgstr ""
+msgstr "اختر الطباعة الزرقاء"
 
 msgid "Select Items"
-msgstr ""
+msgstr "اختر البنود"
 
 msgid "Select the way the responses of your test should be processed"
-msgstr ""
+msgstr "حدد الطريقة التي يجب أن تتم بها معالجة أجوبة الرائز"
 
 msgid "Selection"
-msgstr ""
+msgstr "اختيار"
 
 msgid "Send"
-msgstr ""
+msgstr "أرسل"
 
 msgid "Set outcome identifier the feedback block is related to"
-msgstr ""
+msgstr "تعيين معرف النتيجة التي تتعلق بها حزمة التعليقات"
 
 msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
-msgstr ""
+msgstr "قم بتعيين درجة القطع (أو نسبة النجاح) المرتبطة بالاختبار. يجب أن يكون عددًا عشريًا بين 0 و 1."
 
 msgid "Set the rubric block as a feedback block"
-msgstr ""
+msgstr "قم بتعيين قالب المعيار غير القياسي ككتلة ردود فعل"
 
 msgid "Set the value of the outcome that will activate the feedback block"
-msgstr ""
+msgstr "قم بتعيين قيمة النتيجة التي ستعمل على تنشيط كتلة التعليقات"
 
 msgid "Set the weight identifier used to process the score"
-msgstr ""
+msgstr "قم بتعيين معرف الوزن المستخدم لمعالجة النتيجة"
 
 msgid "Set the XHTML-QTI class of the rubric block."
-msgstr ""
+msgstr "قم بتعيين فئة XHTML-QTI لكتلة القاعدة."
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
-msgstr ""
+msgstr "قم بتعيين معرف XHTML-QTI لكتلة القاعدة."
+
+msgid "SetSynchronisationService successfully configured."
+msgstr "تم تكوين SetSynchronisationService بنجاح."
 
 msgid "Settings"
-msgstr ""
+msgstr "إعدادات"
 
 msgid "Show Feedback"
-msgstr ""
+msgstr "إظهار التغذية الراجعة"
 
 msgid "Show Review"
-msgstr ""
+msgstr "إظهار المراجعة"
 
 msgid "Show Solution"
-msgstr ""
+msgstr "إظهار الحل"
 
 msgid "Show the review screen"
-msgstr ""
+msgstr "إظهار مراجعة الشاشة"
 
 msgid "Show the solution once the answer is submitted."
-msgstr ""
+msgstr "اعرض الحل بمجرد تقديم الإجابة."
 
 msgid "Show timers"
-msgstr ""
+msgstr "عرض ضبط الوقت"
 
 msgid "Show/Hide the review screen"
-msgstr ""
+msgstr "إظهار / إخفاء شاشة المراجعة"
 
 msgid "Shuffle"
-msgstr ""
+msgstr "عدل"
 
 msgid "Simultaneous"
-msgstr ""
+msgstr "متزامنة"
 
 msgid "Skip"
-msgstr ""
+msgstr "تخطى"
 
 msgid "Skip &amp; End Test"
-msgstr ""
+msgstr "تخطي ونهاية الرائز"
 
 msgid "Skip and end test"
-msgstr ""
+msgstr "تخطي ونهاية الرائز"
 
 msgid "Skip and go to the end of the test"
-msgstr ""
+msgstr "تخطى وأنهي الرائز"
 
 msgid "Skip and go to the next item"
-msgstr ""
+msgstr "تخطى وانتقل إلى البند الموالي"
 
 msgid "Skip to the end of the test"
-msgstr ""
+msgstr "تخطي إلى نهاية الرائز"
 
 msgid "Skip to the next item"
-msgstr ""
+msgstr "تخطى وانتقل إلى الجزء الموالي"
 
 msgid "Skip to the next section"
-msgstr ""
+msgstr "تخطى وانتقل إلى القسم الموالي"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
-msgstr ""
+msgstr "تم تحديث بعض مجموعات قواعد التقييم لتعكس التغييرات في قائمة النتائج."
+
+msgid "Something unexpected happened."
+msgstr "حدث شيء غير متوقع."
+
+msgid "Something went wrong..."
+msgstr "هناك خطأ ما..."
 
 msgid "Speech speed"
-msgstr ""
+msgstr "سرعة الكلام"
+
+msgid "Speed"
+msgstr "سرعة"
 
 msgid "Start Test-part"
-msgstr ""
+msgstr "ابدأ جزء الرائز"
+
+msgid "Step 1: Download the file (see below when available)."
+msgstr "الخطوة 1: قم بتنزيل الملف (انظر أدناه عندما يكون ذلك متاحًا)."
+
+msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
+msgstr "الخطوة 2: عندما تكون متصلاً بالإنترنت مرة أخرى ، يرجى إرسال الملف الذي تم تنزيله إلى Receptionbaseline@nfer.ac.uk "
+
+msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
+msgstr "الخطوة 3: بمجرد تنزيل الملف ، يمكنك إغلاق نافذة المتصفح. لا تفعل أي شيء آخر فيما يتعلق بالتقييم عندما يظهر على أنه \"قيد التقدم\" ؛ سيتم تحديث الحالة بمجرد أن يقوم خط المساعدة بتحميل الملف."
 
 msgid "Stop"
-msgstr ""
+msgstr "قف"
 
 msgid "Submission"
-msgstr ""
+msgstr "تسليم"
 
 msgid "Submit and go to the end of the test"
-msgstr ""
+msgstr "أرسل وانتقل إلى نهايةالرائز"
+
+msgid "Submit and go to the item %s"
+msgstr "أرسل وانتقل إلى البند %s"
 
 msgid "Submit and go to the next item"
-msgstr ""
+msgstr "أرسل وانتقل إلى البند التالي"
 
 msgid "Submit and go to the previous item"
-msgstr ""
+msgstr "إرسال والرجوع إلى البند السابق"
+
+msgid "SUBMIT THE TEST"
+msgstr "قم بإرسال الرائز"
+
+msgid "SUBMIT THIS PART"
+msgstr "قم بإرسال هذا  الجزء من الرائز"
 
 msgid "technical"
-msgstr ""
+msgstr "تقني"
 
 msgid "Test"
-msgstr ""
-
-msgid "Test 1"
-msgstr ""
+msgstr "رائز"
 
 msgid "Test constructor"
-msgstr ""
+msgstr "معد الرائز"
 
 msgid "Test metadata successfully exported."
-msgstr ""
+msgstr "تم تصدير بيانات تعريف  الرائز بنجاح."
 
 msgid "Test Navigation"
-msgstr ""
+msgstr "اختبار التصفح"
+
+msgid "Test Part Properties"
+msgstr "اختبار خصائص الجزء"
+
+msgid "Test Preview is not installed, please contact to your administrator."
+msgstr "لم يتم تثبيت Test Preview ، يرجى الاتصال بالمسؤول."
 
 msgid "Test Saved"
-msgstr ""
+msgstr "تم حفظ الرائز"
 
 msgid "Test status"
-msgstr ""
+msgstr "حالة الرائز"
+
+msgid "Test status and review structure"
+msgstr "حالة الرائز وبنية المراجعة"
+
+msgid "Test Status and Structure"
+msgstr "حالة الرائز وبنية المراجعة"
 
 msgid "Test-Taker Tools"
-msgstr ""
+msgstr "أدوات الرائز"
 
 msgid "Tests"
-msgstr ""
+msgstr "الروائز"
 
 msgid "Text content"
-msgstr ""
+msgstr "مصمون النص"
 
 msgid "Text to Speech"
-msgstr ""
+msgstr "نص للقراءة"
+
+msgid "Text To Speech"
+msgstr "نص للقراءة"
+
+msgid "that was being taken."
+msgstr "التي تم اتخاذها."
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
-msgstr ""
+msgstr "الملف \"imsmanifest.xml\" الموجود في الأرشيف غير صالح."
+
+msgid "the assessment (LCL or Mathematics)"
+msgstr "التقييم (LCL أو الرياضيات)"
 
 msgid "The assessment has been created but is not already running."
-msgstr ""
+msgstr "تم إنشاء التقييم ولكنه ليس قيد التشغيل بالفعل."
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
+msgstr "تم تعليق التقييم من قبل مراقب معتمد. إذا كنت ترغب في استئناف التقييم ، يرجى إعادة إطلاقه والاتصال بالمراقب الخاص بك إذا لزم الأمر."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
+msgstr "تم تعليق التقييم. لاستئناف التقييم ، يرجى إعادة إطلاقه والاتصال بالمراقب إذا لزم الأمر."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr ""
+msgstr "تم تعليق التقييم. لاستئناف التقييم الخاص بك ، يرجى إعادة إطلاقه."
 
 msgid "The assessment has been terminated."
-msgstr ""
+msgstr "تم إنهاء التقييم."
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr ""
+msgstr "تم إنهاء التقييم. لا يمكنك التفاعل معه بعد الآن."
 
 msgid "The assessment is still running."
-msgstr ""
+msgstr "التقييم لا يزال قيد التشغيل."
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr ""
+msgstr "لا يسمح للمرشح بتقديم ردود غير صحيحة."
 
 msgid "The connection seems to be back, please proceed"
-msgstr ""
+msgstr "يبدو أن الاتصال قد عاد ، يرجى المتابعة"
 
-msgid "The connection seems to be back, please proceed."
-msgstr ""
+msgid "the current question"
+msgstr "السؤال الحالي"
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
-msgstr ""
+msgstr "تعذر حل تبعية \"%s\" لـ IMS QTI AssessmentItemRef   في ملف IMS Manifest."
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr ""
-
-msgid "The file will save into the Downloads folder on your PC."
-msgstr ""
+msgstr "سيكون التنزيل متاحًا في غضون <strong>%d</strong> ثانية"
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr ""
+msgstr "المعرفات التالية ليست فريدة عبر الروائز: %s"
 
 msgid "The identifier of the item reference."
-msgstr ""
+msgstr "معرّف مرجع البند."
 
 msgid "The identifier of the section."
-msgstr ""
+msgstr "معرّف القسم."
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr ""
+msgstr "تم تخزين بند IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest بالفعل في Item Bank."
 
 msgid "The IMS QTI Test Package could not be imported."
-msgstr ""
+msgstr "تعذر استيراد حزمة الرائز IMS QTI."
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr ""
+msgstr "تعذر استيراد الرائز IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest."
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
-msgstr ""
+msgstr "يحدد وضع التنقل المسارات العامة التي قد يسلكها المرشح. يقيد النموذج الخطي المرشح لمحاولة كل عنصر بدوره. غير الخطية إزالة هذا القيد."
 
 msgid "The number of child elements to be selected."
-msgstr ""
+msgstr "عدد العناصر الفرعية المطلوب تحديدها."
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
-msgstr ""
+msgstr "النتيجة \"%s\" غير موجودة ، ولكن تمت الإشارة إليها بواسطة كتلة ملاحظات!"
 
 msgid "The outcomes have been regenerated!"
-msgstr ""
+msgstr "تم تجديد النتائج!"
 
 msgid "The principle identifier of the test."
-msgstr ""
+msgstr "المعرف الأساسي للرائز."
 
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
-msgstr ""
+msgstr "الأرشيف المقدم غير مضبوط. تأكد من أنه غير تالف وأنه يحتوي على ملف \"imsmanifest.xml\"."
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr ""
+msgstr "يجب أن يحتوي رائز QTI '%s' المراد ترجمته على بند QTI واحد على الأقل. لا شيء وجد."
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr ""
+msgstr "لا يمكن استرجاع الرائز QTI بشكل صحيح."
 
 msgid "The QTI Test XML or one of its dependencies is malformed or empty."
-msgstr ""
+msgstr "ملف XML لاختبار QTI أو أحد تبعياته غير صحيح أو فارغ."
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr ""
+msgstr "تعذر كتابة الرائز QTI-XML بشكل صحيح."
 
 msgid "The reference."
-msgstr ""
+msgstr "المرجع."
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr ""
+msgstr "تم إرجاع الموارد المتعلقة بالرائز IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest."
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
-msgstr ""
+msgstr "ستتم معالجة النتيجة للرائز بأكمله. سيتم حساب مجموع جميع نتائج SCORE وقسمتها على مجموع MAX SCORE ، وستتم مقارنة النتيجة بنتيجة القطع (أو نسبة النجاح) ، ثم سيتم تعيين نتيجة PASS_TOTAL وفقًا لذلك."
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
-msgstr ""
+msgstr "ستتم معالجة النتيجة للرائز بأكمله. سيتم حساب مجموع جميع نتائج SCORE ، وستحدث النتيجة في نتيجة SCORE_TOTAL."
 
 msgid "The section title."
-msgstr ""
+msgstr "عنوان القسم."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
-msgstr ""
+msgstr "يحدد وضع الإرسال وقت إرسال أجوبة المرشح لمعالجتها. يتطلب قسم من الرائز في الوضع الفردي من المرشح إرسال أجوبته على أساس كل بند على حدة. في الوضع المتزامن ، يتم تقديم جميع أجوبة المرشح معًا في نهايةقسم من الرائز.."
 
 msgid "The test has been closed/suspended!"
-msgstr ""
+msgstr "تم إغلاق  الرائز!"
 
 msgid "The test has been paused, we are unable to connect to the server."
-msgstr ""
+msgstr "تم إيقاف الرائز مؤقتًا ، يتعذر علينا الاتصال بالخادم."
 
 msgid "The test has not been saved."
-msgstr ""
+msgstr "لم يتم حفظ الرائز."
+
+msgid "The test has unsaved changes, are you sure you want to leave?"
+msgstr "يحتوي الرائز على تغييرات غير محفوظة ، هل أنت متأكد أنك تريد المغادرة?"
+
+msgid "The test has unsaved changes, would you like to save it?"
+msgstr "يحتوي الرائز على تغييرات غير محفوظة ، هل ترغب في حفظه?"
+
+msgid "The test needs to be saved before it can be previewed."
+msgstr "يجب حفظ الرائز قبل أن يمكن معاينته."
 
 msgid "The test part identifier."
-msgstr ""
+msgstr "معرّف جزء الرائز."
 
 msgid "The test title."
-msgstr ""
+msgstr "عنوان الرائز."
+
+msgid "The time limit has been reached for this part of the test."
+msgstr "تم الوصول إلى الحد الزمني لهذا الجزء من الرائز."
+
+msgid "There are %s unanswered questions"
+msgstr "هناك %s من الأسئلة التي لم يتم الرد عليها"
+
+msgid "There are %s unanswered questions in this part of the test"
+msgstr "يوجد %s أسئلة لم تتم الإجابة عليها في هذا الجزء من الرائز"
+
+msgid "There is %s unanswered question"
+msgstr "يوجد %s سؤال بدون إجابة"
+
+msgid "There is %s unanswered question in this part of the test"
+msgstr "يوجد %s سؤال لم تتم الإجابة عليه في هذا الجزء من الرائز"
 
 msgid "There is not outcomes!"
-msgstr ""
+msgstr "لا توجد نتائج!"
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
-msgstr ""
+msgstr "يؤثر هذا القيد على رؤية التعليقات بعد نهاية المحاولة الأخيرة."
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
-msgstr ""
+msgstr "يتحكم هذا القيد في ما إذا كان يُسمح للمرشح بتقديم تعليق على البند أثناء الجلسة أم لا. التعليقات ليست جزءًا من الردود التي تم تقييمها."
+
+msgid "This functionality is blocked. Please contact with your administrator for more details."
+msgstr "تم حظر هذه الوظيفة. يرجى الاتصال بالمسؤول للحصول على مزيد من التفاصيل."
 
 msgid "This test has been suspended"
-msgstr ""
+msgstr "تم تعليق هذا الرائز"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "تم إنهاء هذا الرائز"
 
 msgid "Time limit reached for item \"%s\"."
-msgstr ""
+msgstr "تم بلوغ الحد الزمني للبند \"%s\"."
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr ""
+msgstr "تم بلوغ الحد الزمني ، وانتهى هذا الجزء من الرائز.."
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr ""
+msgstr "تم بلوغ الحد الزمني ، وانتهى هذا الجزء من الرائز. ومع ذلك ، يُسمح لك بإنهاء البند الحالي."
 
 msgid "Time Limits"
-msgstr ""
+msgstr "حدود الوقت"
 
 msgid "Time Remaining"
-msgstr ""
+msgstr "الوقت المتبقي"
 
 msgid "Title"
-msgstr ""
+msgstr "عنوان"
+
+msgid "Toggle playback"
+msgstr "تبديل التشغيل"
+
+msgid "Toggle start from here mode"
+msgstr "تبديل البدء من هنا الوضع"
+
+msgid "Tool box and flagging for review"
+msgstr "مربع الأدوات والإبلاغ للمراجعة"
+
+msgid "Toolbox"
+msgstr "صندوق الأدوات"
 
 msgid "Total score"
-msgstr ""
+msgstr "مجموع النقاط"
+
+msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
+msgstr "حاول توصيل الجهاز بالإنترنت عبر الكابل ، أو انتقل إلى منطقة بها إشارة wifi أفضل."
 
 msgid "Tutor"
-msgstr ""
+msgstr "مدرس خاص"
 
 msgid "Type"
-msgstr ""
+msgstr "نمط"
 
 msgid "Unanswered"
-msgstr ""
+msgstr "لم يتم الرد عليها"
 
 msgid "Unanswered items"
-msgstr ""
+msgstr "البنود التي لم يتم الرد عليها"
 
 msgid "Unflag for Review"
-msgstr ""
+msgstr "Unflag للمراجعة"
 
 msgid "Unknown error."
-msgstr ""
+msgstr "خطأ غير معروف."
 
 msgid "Unlink to use separated durations"
-msgstr ""
+msgstr "إلغاء الارتباط لاستخدام فترات منفصلة"
+
+msgid "Unseen"
+msgstr "غير مرئي"
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr ""
+msgstr "قم بتحميل ملف حزمة الروائز QTI 2.1"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "استخدم مفتاح Ctrl / Meta أو Lasso للاختيار المتعدد"
 
 msgid "Validate Responses"
-msgstr ""
+msgstr "تحقق من صحة الردود"
 
 msgid "Value"
-msgstr ""
+msgstr "قيمة"
 
 msgid "Viewed"
-msgstr ""
+msgstr "تمت معاينته"
 
 msgid "Viewed items"
-msgstr ""
+msgstr "البنود التي تم عرضها"
 
 msgid "Views"
-msgstr ""
+msgstr "الآراء"
 
 msgid "Visible"
-msgstr ""
+msgstr "مرئي"
 
 msgid "Volume"
-msgstr ""
+msgstr "حجم"
+
+msgid "Wait for your connection to come back online."
+msgstr "انتظر اتصالك بالإنترنت مرة أخرى."
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr ""
+msgstr "تحذير - لديك %s متبقية لإكمال الرائز."
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr ""
+msgstr "تحذير - لديك %s متبقية لإكمال هذا البند."
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr ""
+msgstr "تحذير - لديك %s متبقية لإكمال هذا الجزء."
 
 msgid "Warning – You have %s remaining to complete this test part."
-msgstr ""
+msgstr "تحذير - لديك %s  متبقية لإكمال جزء الرائز هذا."
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr ""
+msgstr "تحذير - لديك %s  متبقية لإكمال هذا الرائز."
 
 msgid "We are unable to connect the server to submit your results."
-msgstr ""
+msgstr "لا يمكننا الاتصال بالخادم لإرسال نتائجك."
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr ""
+msgstr "لا يمكننا الاتصال بالخدوم لاسترداد البند التالي."
 
 msgid "Weight"
-msgstr ""
+msgstr "وزن"
 
 msgid "Weights"
-msgstr ""
+msgstr "أوزان"
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
-msgstr ""
-
-msgid "When you have a network connection, navigate to the download folder, select the file and email it to your teacher"
-msgstr ""
+msgstr "عند تحديد العناصر الفرعية ، يكون كل عنصر مؤهلاً عادةً للاختيار مرة واحدة فقط."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
-msgstr ""
+msgstr "ما إذا كان لا يزال يتعين قبول استجابة المرشح التي تتجاوز الحد الأقصى لمدة البند."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
-msgstr ""
+msgstr "ما إذا كان يجب قبول إجابة المرشح التي تتجاوز الحد الأقصى لمدة القسم."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
-msgstr ""
+msgstr "ما إذا كان ينبغي قبول استجابة المرشح التي تتجاوز الحد الأقصى لمدة جزء من الرائز."
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
-msgstr ""
+msgstr "ما إذا كان يجب قبول استجابة المرشح التي تتجاوز الحد الأقصى للمدة."
 
-msgid "White on black"
-msgstr ""
+msgid "White on Black"
+msgstr "أبيض على أسود"
+
+msgid "White on Blue (TAO standard theme)"
+msgstr "أبيض على أزرق (سمة قياسية لـ TAO)"
 
 msgid "Who can view the rubric block during the delivery."
-msgstr ""
+msgstr "من يمكنه عرض قالب التقييم أثناء التسليم."
 
 msgid "With Replacement"
-msgstr ""
+msgstr "مع الاستبدال"
 
 msgid "Wrong file mime type"
-msgstr ""
+msgstr "نوع الملف الخاطئ mime"
+
+msgid "XML Content"
+msgstr "محتوى XML"
+
+msgid "XML Editor"
+msgstr "محرر XML"
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
-msgstr ""
+msgstr "خطأ XML في السطر %1$d العمود %2$d \"%3$s\"."
+
+msgid "Yellow on Blue"
+msgstr "أصفر على أزرق"
 
 msgid "Yes"
-msgstr ""
+msgstr "نعم"
 
-msgid "You answered all %s question(s)"
-msgstr ""
+msgid "You answered %s of %s question(s) for this section of the test"
+msgstr "لقد أجبت على %s  من %s  سؤال (أسئلة) لهذا المقطع من الاختبار"
 
 msgid "You answered all %s question(s) in this section"
-msgstr ""
+msgstr "لقد أجبت على كافة %s سؤال (أسئلة) في هذا الجزء"
 
 msgid "You answered all %s question(s) in this test"
-msgstr ""
+msgstr "لقد أجبت على كافة %s سؤال (أسئلة) في هذا الرائز"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr ""
+msgstr "لقد أجبت على %s فقط من %s سؤال (أسئلة) في هذا الجزء"
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
-msgstr ""
+msgstr "أنت على وشك الانتقال إلى البند التالي. انقر فوق \"موافق\" للمتابعة والانتقال إلى البند التالي."
 
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
-msgstr ""
+msgstr "أنت على وشك الذهاب إلى البند السابق. انقر فوق \"موافق\" للمتابعة والانتقال إلى البند السابق."
+
+msgid "You are about to leave this section."
+msgstr "أنت على وشك مغادرة هذا القسم."
+
+msgid "You are about to submit the test."
+msgstr "أنت على وشك تقديم الرائز."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
+msgstr "أنت على وشك تقديم الرائز. لن تتمكن من الوصول إلى هذا الرائز بمجرد إرساله. انقر فوق \"موافق\" للمتابعة وإرسال الرائز."
 
-msgid "You are encountering a prolonged connectivity loss."
-msgstr ""
+msgid "You are about to submit this test part."
+msgstr "أنت على وشك إرسال جزء من هذا الرائز."
+
+msgid "You are currently working offline."
+msgstr "أنت تعمل حاليا دون اتصال."
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr ""
+msgstr "أنت تواجه فقدان اتصال مباشر"
+
+msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
+msgstr "يمكنك تكبير المحتوى بنسبة تصل إلى %200. تحقق من إعدادات المتصفح الخاص بك لمعرفة كيفية القيام بذلك."
+
+msgid "You flagged %s item(s) that you can review now"
+msgstr "لقد قمت بوضع علامة على %s عنصر (عناصر) يمكنك مراجعتها الآن"
 
 msgid "You have %s item(s) marked for review."
-msgstr ""
+msgstr "تم تعليم %s عنصرًا للمراجعة."
+
+msgid "You have %s left to answer remaining %s questions."
+msgstr "بقي لديك %s للإجابة على أسئلة %s المتبقية."
+
+msgid "You have %s remaining to complete the current item."
+msgstr "لديك %s متبقية لإكمال البند الحالي."
 
 msgid "You have %s unanswered question(s)"
-msgstr ""
+msgstr "لديك %s سؤال (أسئلة) لم يتم الرد عليها"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr ""
+msgstr "لديك %s سؤال (أسئلة) لم يتم الرد عليها وتم وضع علامة على٪ s بند (بنود) للمراجعة."
 
 msgid "You have %s unanswered question(s)."
-msgstr ""
+msgstr "لديك %s سؤال (أسئلة) لم يتم الرد عليها."
+
+msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
+msgstr "لن تتمكن من الوصول إلى هذا الاختبار بمجرد إرساله. انقر فوق \"%s\" للمتابعة وإرسال الاختبار."
 
 msgid "Your comment…"
-msgstr ""
+msgstr "تعليقك... "
+
+msgid "Your connection seems to be back, please proceed."
+msgstr "يبدو أن الاتصال قد عاد ، يرجى المتابعة."
 
 msgid "Zoom"
-msgstr ""
+msgstr "تكبير"
 
 msgid "Zoom in"
-msgstr ""
+msgstr "تكبير في"
 
 msgid "Zoom out"
-msgstr ""
-
+msgstr "تكبير خارج"

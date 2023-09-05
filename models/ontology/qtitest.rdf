@@ -5,6 +5,8 @@
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:test="http://www.tao.lu/Ontologies/TAOTest.rdf#"
 	xmlns:wf="http://www.tao.lu/middleware/wfEngine.rdf#"
+    xmlns:generis="http://www.tao.lu/Ontologies/generis.rdf#"
+    xmlns:tao="http://www.tao.lu/Ontologies/TAO.rdf#">
 >
 
   <rdf:Description rdf:about="http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel">
@@ -36,5 +38,13 @@
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition"/>
     <wf:PropertyServiceDefinitionsFormalParameterIn rdf:resource="http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation"/>
   </rdf:Description>
+
+  <!-- XML Editor Role -->
+    <rdf:Description rdf:about="http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor">
+      <rdf:type rdf:resource="http://www.tao.lu/Ontologies/generis.rdf#UserRole"/>
+      <rdfs:label xml:lang="en-US"><![CDATA[Test XML Editor]]></rdfs:label>
+      <rdfs:comment xml:lang="en-US"><![CDATA[The Test XML Editor Role]]></rdfs:comment>
+      <generis:includesRole rdf:resource="http://www.tao.lu/Ontologies/TAO.rdf#BackOfficeRole"/>
+    </rdf:Description>
   
 </rdf:RDF>

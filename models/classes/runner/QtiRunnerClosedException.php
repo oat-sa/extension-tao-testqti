@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
@@ -32,7 +34,10 @@ class QtiRunnerClosedException extends \common_Exception implements \common_exce
      * @param string $message A technical information message.
      * @param integer $code A code to explicitly identify the nature of the error.
      */
-    public function __construct($message = 'The assessment has been terminated. You cannot interact with it anymore.', $code = AssessmentTestSessionState::CLOSED) {
+    public function __construct(
+        $message = 'The assessment has been terminated. You cannot interact with it anymore.',
+        $code = AssessmentTestSessionState::CLOSED
+    ) {
         parent::__construct($message, $code);
     }
 
@@ -41,7 +46,8 @@ class QtiRunnerClosedException extends \common_Exception implements \common_exce
      *
      * @return string A human-readable message.
      */
-    public function getUserMessage() {
+    public function getUserMessage()
+    {
         return __('The assessment has been terminated. You cannot interact with it anymore.');
     }
 }

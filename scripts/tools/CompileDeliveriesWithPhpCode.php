@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,13 +17,13 @@
  *
  * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  */
- 
+
 namespace oat\taoQtiTest\scripts\tools;
 
 use qtism\data\storage\php\PhpDocument;
 
 /**
- * 
+ *
  * @package oat\taoQtiTest\scripts\tools
  */
 class CompileDeliveriesWithPhpCode extends CompileDeliveriesPhpData
@@ -36,7 +37,7 @@ class CompileDeliveriesWithPhpCode extends CompileDeliveriesPhpData
             $phpDocument = new PhpDocument();
             $phpDocument->setDocumentComponent($component);
             $file->put($phpDocument->saveToString());
-            
+
             return true;
         }
     }

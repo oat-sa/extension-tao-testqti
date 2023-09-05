@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +17,7 @@
  *
  * Copyright (c) 2019 (original work) Open Assessment Technologies SA ;
  */
+
 /**
  * @author Péter Halász <peter@taotesting.com>
  */
@@ -28,7 +30,7 @@ use taoQtiTest_models_classes_QtiTestService;
 
 class TestDefinitionSerializerService extends ConfigurableService
 {
-    const SERVICE_ID = 'taoQtiTest/TestDefinitionSerializerService';
+    public const SERVICE_ID = 'taoQtiTest/TestDefinitionSerializerService';
 
     /**
      * @param QtiRunnerServiceContext $serviceContext
