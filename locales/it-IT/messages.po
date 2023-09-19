@@ -426,7 +426,7 @@ msgstr "Errore durante l'importazione di file"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr "Errore rilevato nel IMS QTI Test: \\ n %S"
+msgstr "Errore rilevato nel IMS QTI Test: \\ n %s"
 
 msgid "Expand the review panel"
 msgstr "Espandi il riquadro recensione"
