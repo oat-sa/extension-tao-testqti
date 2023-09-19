@@ -7,7 +7,7 @@
     {{/if}}
     {{#if is.menu}}
     <ul class="menu hidden">
-        {{#each ../items}}
+        {{#each items}}
         <li data-control="{{id}}" class="small btn-info action menu-item{{#if selected}} selected{{/if}}"{{#if title}} title="{{title}}"{{/if}}>
             <a class="li-inner menu-inner" href="#">
                 {{#if icon}}<span class="icon icon-{{icon}}{{#unless label}} no-label{{/unless}}"></span>{{/if}}
@@ -18,7 +18,7 @@
     </ul>
     {{/if}}
     {{#if is.group}}
-        {{#each ../items}}
+        {{#each items}}
         <a data-control="{{id}}" class="li-inner action-button{{#if active}} active{{/if}}" href="#"{{#if title}} title="{{title}}"{{/if}}>
             {{#if icon}}<span class="icon icon-{{icon}}{{#unless label}} no-label{{/unless}}"></span>{{/if}}
             {{#if label}}<span class="label">{{label}}</span>{{/if}}
