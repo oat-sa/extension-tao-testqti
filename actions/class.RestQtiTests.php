@@ -98,7 +98,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isMetadataValidatorsEnabled(),
                     $this->isItemMustExistEnabled(),
                     $this->isItemMustBeOverwrittenEnabled(),
-                    $this->isOverwriteTest(),
+                    $this->getPostBoolFlag(self::OVERWRITE_TEST),
                     $this->getItemClassUri()
                 );
 
@@ -132,21 +132,21 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     /**
      * @throws common_exception_RestApi
      */
-    protected function isOverwriteTest(): bool
+    private function getPostBoolFlag(string $paramName): bool
     {
-        $isOverwriteTest = $this->getPostParameter(self::OVERWRITE_TEST);
+        $rawValue = $this->getPostParameter($paramName);
 
-        if (is_null($isOverwriteTest)) {
+        if (is_null($rawValue)) {
             return false;
         }
 
-        if (!in_array($isOverwriteTest, ['true', 'false'])) {
+        if (!in_array($rawValue, ['true', 'false'])) {
             throw new \common_exception_RestApi(
-                'isOverwriteTest parameter should be boolean (true or false).'
+                sprintf('%s parameter should be boolean (true or false).', $paramName)
             );
         }
 
-        return filter_var($isOverwriteTest, FILTER_VALIDATE_BOOLEAN);
+        return filter_var($rawValue, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -175,7 +175,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isMetadataValidatorsEnabled(),
                 $this->isItemMustExistEnabled(),
                 $this->isItemMustBeOverwrittenEnabled(),
-                $this->isOverwriteTest(),
+                $this->getPostBoolFlag(self::OVERWRITE_TEST),
+                $this->getPostBoolFlag(ImportQtiTest::PARAM_SAVE_ITEM_ASSETS_STANDALONE),
                 $this->getItemClassUri()
             );
 

@@ -346,7 +346,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         core_kernel_classes_Class $targetClass,
         $file,
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        ?bool $saveItemAssetsStandalone = false
     ) {
         $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
@@ -414,7 +415,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $folder,
                                 $alreadyImportedQtiResources,
                                 $overwriteTest,
-                                $itemClassUri
+                                $itemClassUri,
+                                $saveItemAssetsStandalone
                             );
                             $report->add($importTestReport);
 
@@ -534,7 +536,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $folder,
         array $ignoreQtiResources = [],
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        ?bool $saveItemAssetsStandalone = false
     ) {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
@@ -691,7 +694,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $this->useMetadataValidators,
                                             $this->itemMustExist,
                                             $this->itemMustBeOverwritten,
-                                            $reportCtx->overwrittenItems
+                                            $reportCtx->overwrittenItems,
+                                            $saveItemAssetsStandalone
                                         );
 
                                         $reportCtx->createdClasses = array_merge(

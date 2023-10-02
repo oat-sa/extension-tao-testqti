@@ -50,7 +50,8 @@ class QtiTestImporter extends AbstractTestImporter
         $itemMustExist = false,
         $itemMustBeOverwritten = false,
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        ?bool $saveItemAssetsStandalone = false
     ) {
         $service = \taoQtiTest_models_classes_CrudQtiTestsService::singleton();
         return $service->importQtiTest(
@@ -61,7 +62,8 @@ class QtiTestImporter extends AbstractTestImporter
             $itemMustExist,
             $itemMustBeOverwritten,
             $overwriteTest,
-            $itemClassUri
+            $itemClassUri,
+            $saveItemAssetsStandalone
         );
     }
 }

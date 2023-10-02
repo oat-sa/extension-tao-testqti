@@ -53,6 +53,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     public const PARAM_ITEM_MUST_BE_OVERWRITTEN = 'item_must_be_overwritten';
     public const PARAM_ITEM_CLASS_URI = 'item_class_uri';
     public const PARAM_OVERWRITE_TEST = 'overwrite_test';
+    public const PARAM_SAVE_ITEM_ASSETS_STANDALONE = 'saveItemAssetsStandalone';
 
     protected $service;
 
@@ -91,7 +92,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $params[self::PARAM_ITEM_MUST_EXIST] ?? false,
             $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] ?? false,
             $params[self::PARAM_OVERWRITE_TEST] ?? false,
-            $params[self::PARAM_ITEM_CLASS_URI] ?? false
+            $params[self::PARAM_ITEM_CLASS_URI] ?? false,
+            $params[self::PARAM_SAVE_ITEM_ASSETS_STANDALONE] ?? false
         );
 
         return $report;
@@ -124,6 +126,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $itemMustExist = false,
         $itemMustBeOverwritten = false,
         $overwriteTest = false,
+        $saveItemAssetsStandalone = false,
         ?string $itemClassUri = null
     ) {
         $action = new self();
@@ -145,6 +148,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
                 self::PARAM_ITEM_MUST_BE_OVERWRITTEN => $itemMustBeOverwritten,
                 self::PARAM_OVERWRITE_TEST => $overwriteTest,
                 self::PARAM_ITEM_CLASS_URI => $itemClassUri,
+                self::PARAM_SAVE_ITEM_ASSETS_STANDALONE => $saveItemAssetsStandalone
             ],
             __('Import QTI TEST into "%s"', $class->getLabel())
         );

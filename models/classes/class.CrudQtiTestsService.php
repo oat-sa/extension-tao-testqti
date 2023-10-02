@@ -67,7 +67,8 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
         $itemMustExist = false,
         $itemMustBeOverwritten = false,
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        ?bool $saveItemAssetsStandalone = false
     ) {
         try {
             //The zip extraction is a long process that can exceed the 30s timeout
@@ -91,7 +92,7 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
                 $importer->enableItemMustBeOverwritten();
             }
 
-            $report = $importer->importMultipleTests($class, $uploadedFile, $overwriteTest, $itemClassUri);
+            $report = $importer->importMultipleTests($class, $uploadedFile, $overwriteTest, $itemClassUri, $saveItemAssetsStandalone);
             helpers_TimeOutHelper::reset();
             return $report;
         } catch (common_exception_UserReadableException $e) {

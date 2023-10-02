@@ -384,6 +384,14 @@
                         "description": "Flag that indicates whether items found by guardians should be overwritten. 'true' value counts as true, 'false' as false. Default value is false.",
                         "type": "string",
                         "required": false
+                    },
+                    {
+                        "name": "saveItemAssetsStandalone",
+                        "in": "formData",
+                        "description": "Flag that allows to save assets within a test item, which means that no separate media manager resource will be created even for a passage. 'true' value counts as true, 'false' as false.",
+                        "type": "string",
+                        "required": false,
+                        "default": "false"
                     }
                 ],
                 "consumes": [
