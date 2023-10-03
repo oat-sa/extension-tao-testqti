@@ -96,6 +96,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     public const XML_TEST_PART = 'testPart';
     public const XML_ASSESSMENT_SECTION = 'assessmentSection';
     public const XML_ASSESSMENT_ITEM_REF = 'assessmentItemRef';
+
+    private const IN_PROGRESS_LABEL = 'in progress';
+
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
      */
@@ -518,7 +521,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     /**
      * Import a QTI Test and its dependent Items into the TAO Platform.
      *
-     * @param core_kernel_classes_Class $targetClass The RDFS Class where Ontology resources must be created.
+     * @param core_kernel_classes_Class $testClass The RDFS Class where Ontology resources must be created.
      * @param oat\taoQtiItem\model\qti\Resource $qtiTestResource The QTI Test Resource representing the IMS QTI Test to
      *                                                           be imported.
      * @param taoQtiTest_models_classes_ManifestParser $manifestParser The parser used to retrieve the IMS Manifest.
@@ -528,7 +531,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @return common_report_Report A report about how the importation behaved.
      */
     protected function importTest(
-        core_kernel_classes_Class $targetClass,
+        core_kernel_classes_Class $testClass,
         Resource $qtiTestResource,
         taoQtiTest_models_classes_ManifestParser $manifestParser,
         $folder,
@@ -538,12 +541,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     ) {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
-        $testClass = $targetClass;
         $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
 
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
-        $testResource = $this->createInstance($testClass, 'in progress');
+        $testResource = $this->createInstance($testClass, self::IN_PROGRESS_LABEL);
         $qtiTestModelResource = $this->getResource(self::INSTANCE_TEST_MODEL_QTI);
         $modelProperty = $this->getProperty(TestService::PROPERTY_TEST_TESTMODEL);
         $testResource->editPropertyValues($modelProperty, $qtiTestModelResource);
@@ -557,7 +559,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
 
         // The class where the items that belong to the test will be imported.
-        $itemClass = $this->getClass($itemClassUri ?: TaoOntology::CLASS_URI_ITEM);
+        $itemRootClass = $this->getClass($itemClassUri ?: TaoOntology::CLASS_URI_ITEM);
 
         // Load and validate the manifest
         $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
@@ -608,9 +610,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
+                $testLabel = $testDefinition->getDocumentComponent()->getTitle();
 
                 if ($overwriteTest) {
-                    $testLabel = $testDefinition->getDocumentComponent()->getTitle();
                     $itemsClassLabel = $testLabel;
                     /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $m */
                     foreach ($reportCtx->testMetadata as $singleMetadata) {
@@ -619,11 +621,15 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         }
                     }
 
-                    $this->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemClass);
+                    $this->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemRootClass);
                 }
 
-                $targetClass = $itemClass->createSubClass($testResource->getLabel());
-                $reportCtx->itemClass = $targetClass;
+                $targetItemClass = $itemRootClass->createSubClass(self::IN_PROGRESS_LABEL);
+
+                // add real label without saving (to not pass it separately to item importer)
+                $targetItemClass->label = $testLabel;
+
+                $reportCtx->itemClass = $targetItemClass;
                 // -- Load all items related to test.
                 $itemError = false;
 
@@ -682,7 +688,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                         $itemReport = $itemImportService->importQtiItem(
                                             $folder,
                                             $qtiDependency,
-                                            $targetClass,
+                                            $targetItemClass,
                                             $sharedFiles,
                                             $dependencies['dependencies'],
                                             $metadataValues,
@@ -769,7 +775,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                             // 3. Give meaningful names to resources.
                             $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
-                            $targetClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
+                            $targetItemClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
 
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
@@ -778,8 +784,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             // 5. if $targetClass does not contain any instances
                             // (because everything resolved by class lookups),
                             // Just delete it.
-                            if ($targetClass->countInstances() == 0) {
-                                $targetClass->delete();
+                            if ($targetItemClass->countInstances() == 0) {
+                                $targetItemClass->delete();
                             }
                         }
                     } else {
