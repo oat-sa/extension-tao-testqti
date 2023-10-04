@@ -559,7 +559,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
 
         // The class where the items that belong to the test will be imported.
-        $itemRootClass = $this->getClass($itemClassUri ?: TaoOntology::CLASS_URI_ITEM);
+        $itemParentClass = $this->getClass($itemClassUri ?: TaoOntology::CLASS_URI_ITEM);
 
         // Load and validate the manifest
         $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
@@ -621,10 +621,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         }
                     }
 
-                    $this->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemRootClass);
+                    $this->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemParentClass);
                 }
 
-                $targetItemClass = $itemRootClass->createSubClass(self::IN_PROGRESS_LABEL);
+                $targetItemClass = $itemParentClass->createSubClass(self::IN_PROGRESS_LABEL);
 
                 // add real label without saving (to not pass it separately to item importer)
                 $targetItemClass->label = $testLabel;
