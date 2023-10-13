@@ -1,14 +1,14 @@
 {
-    "name": "@oat-sa/tao-testqti",
-    "version": "0.4.2",
-    "description": "Tao Test Qti",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/oat-sa/extension-tao-testqti.git"
-    },
-    "license": "GPL-2.0",
-    "dependencies": {
-        "@oat-sa/tao-test-runner": "^0.9.1",
-        "@oat-sa/tao-test-runner-qti": "^3.0.0"
-    }
+  "name": "@oat-sa/tao-testqti",
+  "version": "0.4.2",
+  "description": "Tao Test Qti",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oat-sa/extension-tao-testqti.git"
+  },
+  "license": "GPL-2.0",
+  "dependencies": {
+    "@oat-sa/tao-test-runner": "^1.0.0",
+    "@oat-sa/tao-test-runner-qti": "https://github.com/oat-sa/tao-item-runner-qti-fe#feat/ADF-1595/update-lodash-v4"
+  }
 }
