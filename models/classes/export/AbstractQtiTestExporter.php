@@ -159,6 +159,10 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     /** Export the test definition and all its dependencies (media, items, ...) into the related ZIP archive. */
     public function export(array $options = []): Report
     {
+        if ($options['manifest']) {
+            $this->setManifest($options['manifest']);
+        }
+
         $this->preProcessing();
 
         // 1. Export the items bound to the test.

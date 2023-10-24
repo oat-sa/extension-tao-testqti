@@ -26,6 +26,7 @@ use core_kernel_classes_Resource as Resource;
 use oat\taoQtiTest\models\export\AbstractTestExport;
 use oat\taoQtiTest\models\export\QtiTestExporterInterface;
 use taoQtiTest_models_classes_QtiTestServiceException as QtiTestServiceException;
+use ZipArchive;
 
 class TestPackageExport extends AbstractTestExport
 {
@@ -46,7 +47,7 @@ class TestPackageExport extends AbstractTestExport
      */
     protected function getTestExporter(Resource $test): QtiTestExporterInterface
     {
-        return new QtiTestExporter($test, $this->getZip(), $this->getManifest());
+        return new QtiTestExporter($test, $this->getZip(), $this->getEmptyManifest());
     }
 }
 
