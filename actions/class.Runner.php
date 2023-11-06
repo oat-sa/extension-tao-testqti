@@ -622,6 +622,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function move()
     {
         try {
+            //FIXME @TODO Here we do the validation that breaks access...
             $this->validateSecurityToken();
 
             $moveCommand = new MoveCommand(

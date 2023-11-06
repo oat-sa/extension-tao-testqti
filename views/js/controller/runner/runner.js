@@ -160,6 +160,9 @@ define([
                 loggerByType({ displayMessage : displayMessage }, err);
 
                 if(type === "error" && (err.code === 403 || err.code === 500)) {
+                    /**
+                     * @TODO @FIXME Here is the exit when a second delivery was started and we try to continue the previous one
+                     */
                     displayMessage = `${__('An error occurred during the test, please content your administrator.')} ${displayMessage}`;
                     return exit(displayMessage, 'error');
                 }
