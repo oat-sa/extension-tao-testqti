@@ -46,7 +46,7 @@ class TestPackageExport extends AbstractTestExport
      */
     protected function getTestExporter(Resource $test): QtiTestExporterInterface
     {
-        return new QtiTestExporter($test, $this->getZip(), $this->getManifest());
+        return new QtiTestExporter($test, $this->getZip(), $this->getEmptyManifest());
     }
 }
 
