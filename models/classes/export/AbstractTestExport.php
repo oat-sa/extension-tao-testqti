@@ -111,8 +111,10 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
             throw new common_Exception(sprintf('Unable to create ZIP archive for QTI Test at location "%s".', $path));
         }
 
+        $manifest = $this->getServiceManager()->get(QtiTestUtils::SERVICE_ID)->emptyImsManifest(static::VERSION);
+
         foreach ($instances as $instance) {
-            $subReport = $this->getTestExporter($this->getResource($instance))->export();
+            $subReport = $this->getTestExporter($this->getResource($instance))->export(['manifest' => $manifest]);
             if (
                 $report->getType() !== ReportInterface::TYPE_ERROR &&
                 ($subReport->containsError() || $subReport->getType() === ReportInterface::TYPE_ERROR)
@@ -151,7 +153,7 @@ abstract class AbstractTestExport implements ExportHandler, PhpSerializable
         return sprintf('%s_%d.zip', $userDefinedName, time());
     }
 
-    protected function getManifest()
+    protected function getEmptyManifest()
     {
         return $this->getServiceManager()->get(QtiTestUtils::SERVICE_ID)->emptyImsManifest(static::VERSION);
     }
