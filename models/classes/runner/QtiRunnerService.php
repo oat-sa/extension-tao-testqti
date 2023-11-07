@@ -276,6 +276,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      */
     public function init(RunnerServiceContext $context)
     {
+        $this->getLogger()->info(sprintf('%s::init called', self::class));
+
         $this->assertIsQtiRunnerServiceContext($context, 'init');
 
         /* @var TestSession $session */
@@ -283,6 +285,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
         // code borrowed from the previous implementation, but the reset timers option has been discarded
         if ($session->getState() === AssessmentTestSessionState::INITIAL) {
+            $this->getLogger()->info(sprintf('%s: state is INITIAL', self::class));
+
             // The test has just been instantiated.
             $session->beginTestSession();
             $event = new TestInitEvent($session);
@@ -299,15 +303,20 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 $context->persistSeenCatItemIds($nextCatItemId);
             }
         } elseif ($session->getState() === AssessmentTestSessionState::SUSPENDED) {
+            $this->getLogger()->info(sprintf('%s: state is SUSPENDED', self::class));
             $session->resume();
+        } else {
+            $this->getLogger()->info(sprintf('%s: Other state', self::class));
         }
 
         $session->initItemTimer();
         if ($session->isTimeout() === false) {
+            $this->getLogger()->info(sprintf('%s: Session is not in timeout', self::class));
             TestRunnerUtils::beginCandidateInteraction($session);
         }
 
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($session->getSessionId());
+        $this->getLogger()->info(sprintf('%s: Events cleared', self::class));
 
         return true;
     }
@@ -1054,6 +1063,9 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
      */
     public function move(RunnerServiceContext $context, $direction, $scope, $ref)
     {
+        // Not called when the test starts
+        $this->getLogger()->critical(sprintf('%s: MOVE ------------------', self::class));
+
         $this->assertIsQtiRunnerServiceContext($context, 'move');
 
         $result = true;

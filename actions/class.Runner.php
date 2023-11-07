@@ -28,6 +28,7 @@ use oat\libCat\exception\CatEngineConnectivityException;
 use oat\tao\model\routing\AnnotationReader\security;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
+use oat\taoDelivery\model\execution\OntologyDeliveryExecution;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
@@ -292,7 +293,81 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function init()
     {
+        // @todo Lots of debug code, review & remove what's not needed
+        $this->getLogger()->critical(sprintf('%s: init() ------------------', self::class));
+
         $this->validateSecurityToken();
+
+        // @todo Check for any delivery execution currently in progress by the same user
+
+        $userUri = $this->getSessionService()->getCurrentSession()->getUserUri();
+
+        $this->getLogger()->critical(
+            sprintf(
+                '%s: TODO Check other tests in progress by %s ------------------',
+                self::class,
+                $userUri
+                //$this->getSessionService()->getCurrentUser()->getIdentifier()
+            )
+        );
+
+        // @todo Rename as deliveryUri ("compilation" is confusing)
+        $serviceContext = $this->getServiceContext();
+        $compilationUri = $serviceContext->getTestCompilationUri();
+
+        $this->getLogger()->critical(
+            sprintf(
+                '%s: deliveryUri %s ------------------',
+                self::class,
+                $compilationUri
+                //$this->getSessionService()->getCurrentUser()->getIdentifier()
+            )
+        );
+
+        //$testExecution = $this->getSessionId();
+        //$execution = $this->getDeliveryExecutionService()->getDeliveryExecution($testExecution);
+
+        // @todo Move into a service
+
+            // @todo Try to use some repository class instead of instantiating a generic
+            //       RDF class to just perform the lookup
+
+        // @todo Code adapted from OntolofyService::getUserExecutions
+
+        // Get all *other* executions by the same user by retrieving them all by user and filtering
+        // out the current one as well as finished ones
+        //
+        // @todo Restrict it to executions for *OTHER* deliveries
+        $executionClass = new core_kernel_classes_Class(DeliveryExecutionInterface::CLASS_URI);
+        $instances = $executionClass->searchInstances([
+            OntologyDeliveryExecution::PROPERTY_SUBJECT  => $userUri,
+            OntologyDeliveryExecution::PROPERTY_STATUS => DeliveryExecutionInterface::STATE_ACTIVE,
+        ], [
+            'like' => false
+        ]);
+
+        $this->getLogger()->critical(
+            sprintf(
+                '%s: %d instances ------------------',
+                self::class,
+                count($instances)
+            )
+        );
+
+        foreach ($instances as $instance) {
+            $this->getLogger()->critical(
+                sprintf(
+                    '%s: instance %s instance.delivery: %s current?: %s current.delivery ------------------',
+                    self::class,
+                    $instance->getUri(),
+                    $instance->getUniquePropertyValue(
+                        new core_kernel_classes_Property(OntologyDeliveryExecution::PROPERTY_DELIVERY)
+                    ),
+                    $instance->getUri() === $this->getSessionId() ? 'true' : 'false'
+
+                )
+            );
+        }
 
         try {
             /** @var QtiRunnerServiceContext $serviceContext */
@@ -621,6 +696,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function move()
     {
+        // Not called when the test starts, called when sending a response
+        $this->getLogger()->critical(sprintf('%s: move() ------------------', self::class));
+
         try {
             //FIXME @TODO Here we do the validation that breaks access...
             $this->validateSecurityToken();
