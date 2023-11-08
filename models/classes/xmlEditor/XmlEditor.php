@@ -22,21 +22,43 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\xmlEditor;
 
-use oat\oatbox\service\ConfigurableService;
+use common_ext_ExtensionsManager;
+use core_kernel_classes_Resource;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use qtism\data\storage\xml\XmlDocument;
 use taoQtiTest_models_classes_QtiTestService;
-use core_kernel_classes_Resource;
 
-class XmlEditor extends ConfigurableService implements XmlEditorInterface
+class XmlEditor implements XmlEditorInterface
 {
     private const FEATURE_FLAG_XML_EDITOR_ENABLED = 'FEATURE_FLAG_XML_EDITOR_ENABLED';
+    private const CONFIG = 'xmlEditor';
+
+    /** @var taoQtiTest_models_classes_QtiTestService */
+    private taoQtiTest_models_classes_QtiTestService $qtiTestService;
+
+    /** @var FeatureFlagChecker */
+    private FeatureFlagChecker $featureFlagChecker;
+
+    private array $options = [];
+
+    public function __construct(
+        common_ext_ExtensionsManager $extensionsManager,
+        taoQtiTest_models_classes_QtiTestService $qtiTestService,
+        FeatureFlagChecker $featureFlagChecker
+    ) {
+        $this->options = $extensionsManager
+            ->getExtensionById('taoQtiTest')
+            ->getConfig(self::CONFIG);
+        $this->qtiTestService = $qtiTestService;
+        $this->featureFlagChecker = $featureFlagChecker;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getTestXml(core_kernel_classes_Resource $test): string
     {
-        return $this->getTestService()->getDoc($test)->saveToString();
+        return $this->qtiTestService->getDoc($test)->saveToString();
     }
 
     /**
@@ -48,7 +70,7 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
         $doc->loadFromString($testString, true);
         $converter = new \taoQtiTest_models_classes_QtiTestConverter($doc);
 
-        return $this->getTestService()->saveJsonTest($test, $converter->toJson());
+        return $this->qtiTestService->saveJsonTest($test, $converter->toJson());
     }
 
     /**
@@ -56,20 +78,10 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
      */
     public function isLocked(): bool
     {
-        if ($this->getFeatureFlagChecker()->isEnabled(self::FEATURE_FLAG_XML_EDITOR_ENABLED)) {
+        if ($this->featureFlagChecker->isEnabled(self::FEATURE_FLAG_XML_EDITOR_ENABLED)) {
             return false;
         }
 
-        return $this->hasOption('is_locked') ? (bool)$this->getOption('is_locked') : true;
-    }
-
-    private function getTestService(): taoQtiTest_models_classes_QtiTestService
-    {
-        return $this->getServiceLocator()->get(taoQtiTest_models_classes_QtiTestService::class);
-    }
-
-    private function getFeatureFlagChecker(): FeatureFlagChecker
-    {
-        return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
+        return isset($this->options['is_locked']) ? (bool)$this->options['is_locked'] : true;
     }
 }

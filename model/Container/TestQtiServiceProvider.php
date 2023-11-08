@@ -24,17 +24,18 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Container;
 
+use common_ext_ExtensionsManager;
 use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
-use oat\taoQtiItem\model\qti\Service;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
-use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiTestRepository;
+use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\model\Service\MoveService;
@@ -44,7 +45,10 @@ use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\TestModelService;
+use oat\taoQtiTest\models\xmlEditor\XmlEditor;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use taoQtiTest_models_classes_QtiTestService;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
@@ -154,6 +158,17 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                 [
                     service(Ontology::SERVICE_ID),
                     service(TestModelService::SERVICE_ID),
+                ]
+            );
+
+        $services
+            ->set(XmlEditorInterface::class, XmlEditor::class)
+            ->public()
+            ->args(
+                [
+                    service(common_ext_ExtensionsManager::SERVICE_ID),
+                    service(taoQtiTest_models_classes_QtiTestService::class),
+                    service(FeatureFlagChecker::class),
                 ]
             );
     }
