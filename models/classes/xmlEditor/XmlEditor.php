@@ -30,7 +30,7 @@ use core_kernel_classes_Resource;
 
 class XmlEditor extends ConfigurableService implements XmlEditorInterface
 {
-    private const XML_EDITOR_ENABLED = 'XML_EDITOR_ENABLED';
+    private const FEATURE_FLAG_XML_EDITOR_ENABLED = 'FEATURE_FLAG_XML_EDITOR_ENABLED';
     /**
      * {@inheritdoc}
      */
@@ -56,7 +56,7 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
      */
     public function isLocked(): bool
     {
-        if ($this->getFeatureFlagChecker()->isEnabled(self::XML_EDITOR_ENABLED)) {
+        if ($this->getFeatureFlagChecker()->isEnabled(self::FEATURE_FLAG_XML_EDITOR_ENABLED)) {
             return false;
         }
 
