@@ -86,7 +86,9 @@ class XmlEditorTest extends UnitTestCase
             ->willReturn([XmlEditor::OPTION_XML_EDITOR_LOCK => true]);
 
         $serviceXmlEditor = new XmlEditor(
-            $this->extensionsManagerMock, $this->qtiTestServiceMock, $this->featureFlagCheckerMock
+            $this->extensionsManagerMock,
+            $this->qtiTestServiceMock,
+            $this->featureFlagCheckerMock
         );
 
         $xmlString = $serviceXmlEditor->getTestXml($this->testResourceMock);
@@ -107,7 +109,9 @@ class XmlEditorTest extends UnitTestCase
             ->willReturn([XmlEditor::OPTION_XML_EDITOR_LOCK => true]);
 
         $serviceXmlEditor = new XmlEditor(
-            $this->extensionsManagerMock, $this->qtiTestServiceMock, $this->featureFlagCheckerMock
+            $this->extensionsManagerMock,
+            $this->qtiTestServiceMock,
+            $this->featureFlagCheckerMock
         );
 
         // phpcs:disable Generic.Files.LineLength
@@ -201,7 +205,9 @@ EOL;
             ->willReturn([XmlEditor::OPTION_XML_EDITOR_LOCK => false]);
 
         $serviceXmlEditor = new XmlEditor(
-            $this->extensionsManagerMock, $this->qtiTestServiceMock, $this->featureFlagCheckerMock
+            $this->extensionsManagerMock,
+            $this->qtiTestServiceMock,
+            $this->featureFlagCheckerMock
         );
 
         $this->featureFlagCheckerMock
