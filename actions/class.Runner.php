@@ -73,6 +73,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 {
     use RunnerToolStates;
 
+    // @todo Move this somewhere else
+    public const PAUSE_REASON_CONCURRENT_TEST = 'PAUSE_REASON_CONCURRENT_TEST';
+
     /**
      * The current test session
      * @var QtiRunnerServiceContext
@@ -325,9 +328,24 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 );
 
                 if ($execution) {
-                    $this->getRunnerService()->pause(
+                    $testContext = $this->getRunnerService()->getTestContext(
                         $this->getServiceContextByDeliveryExecution($execution)
                     );
+
+                    $this->setSessionAttribute(
+                        'pauseReason',
+                        self::PAUSE_REASON_CONCURRENT_TEST
+                    );
+
+                    /*array_merge(
+                        ,
+                        ['pauseReason' => self::PAUSE_REASON_CONCURRENT_TEST],
+                    );* /
+
+                    $runnerConfig = $this->getRunnerService()->getTestConfig();
+                    //$runnerConfig->*/
+
+                    $this->getRunnerService()->pause($testContext);
                 }
             } catch (Throwable $e) {
                 $this->getLogger()->warning(
