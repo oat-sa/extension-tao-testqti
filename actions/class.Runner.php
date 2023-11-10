@@ -337,14 +337,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                         self::PAUSE_REASON_CONCURRENT_TEST
                     );
 
-                    /*array_merge(
-                        ,
-                        ['pauseReason' => self::PAUSE_REASON_CONCURRENT_TEST],
-                    );* /
-
-                    $runnerConfig = $this->getRunnerService()->getTestConfig();
-                    //$runnerConfig->*/
-
                     $this->getRunnerService()->pause($testContext);
                 }
             } catch (Throwable $e) {
