@@ -26,6 +26,7 @@
 
 use oat\libCat\exception\CatEngineConnectivityException;
 use oat\tao\model\routing\AnnotationReader\security;
+use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\execution\OntologyDeliveryExecution;
@@ -144,7 +145,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     /**
      * Gets the test service context
      * @return QtiRunnerServiceContext
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     protected function getServiceContext()
     {
@@ -155,7 +156,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 throw new common_exception_ResourceNotFound();
             }
 
-            $currentUser = $this->getSessionService()->getCurrentUser();
+            /*$currentUser = $this->getSessionService()->getCurrentUser();
             if (!$currentUser || $execution->getUserIdentifier() !== $currentUser->getIdentifier()) {
                 throw new common_exception_Unauthorized($execution->getUserIdentifier());
             }
@@ -173,10 +174,40 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $testDefinition,
                 $testCompilation,
                 $testExecution
-            );
+            );*/
+            $this->serviceContext = $this->getServiceContextByDeliveryExecution($execution);
         }
 
         return $this->serviceContext;
+    }
+
+    /**
+     * Gets the test service context
+     * @throws common_Exception
+     */
+    protected function getServiceContextByDeliveryExecution(
+        DeliveryExecution $execution
+    ): QtiRunnerServiceContext {
+        $currentUser = $this->getSessionService()->getCurrentUser();
+        if (!$currentUser || $execution->getUserIdentifier() !== $currentUser->getIdentifier()) {
+            throw new common_exception_Unauthorized($execution->getUserIdentifier());
+        }
+
+        $delivery = $execution->getDelivery();
+        $container = $this->getRuntimeService()->getDeliveryContainer($delivery->getUri());
+        if (!$container instanceof QtiTestDeliveryContainer) {
+            throw new common_Exception(
+                'Non QTI test container ' . get_class($container) . ' in qti test runner'
+            );
+        }
+        $testDefinition = $container->getSourceTest($execution);
+        $testCompilation = $container->getPrivateDirId($execution) . '|' . $container->getPublicDirId($execution);
+
+        return $this->getRunnerService()->getServiceContext(
+            $testDefinition,
+            $testCompilation,
+            $execution->getIdentifier()
+        );
     }
 
     /**
@@ -293,80 +324,40 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function init()
     {
-        // @todo Lots of debug code, review & remove what's not needed
-        $this->getLogger()->critical(sprintf('%s: init() ------------------', self::class));
-
         $this->validateSecurityToken();
 
-        // @todo Check for any delivery execution currently in progress by the same user
-
-        $userUri = $this->getSessionService()->getCurrentSession()->getUserUri();
-
-        $this->getLogger()->critical(
-            sprintf(
-                '%s: TODO Check other tests in progress by %s ------------------',
-                self::class,
-                $userUri
-                //$this->getSessionService()->getCurrentUser()->getIdentifier()
-            )
+        $otherDeliveriesExecutionIds = $this->getExecutionIdsForOtherDeliveries(
+            $this->getSessionService()->getCurrentSession()->getUserUri()
         );
+        $deliveryExecutionService = $this->getDeliveryExecutionService();
 
-        // @todo Rename as deliveryUri ("compilation" is confusing)
-        $serviceContext = $this->getServiceContext();
-        $compilationUri = $serviceContext->getTestCompilationUri();
+        // @fixme Executions for the *same* delivery are still being finished
+        //        when the same delivery is started a second time
+        // @fixme Other executions are being sent to a "You've finished the test" page
+        //        instead of showing a message about the execution being *paused* instead
 
-        $this->getLogger()->critical(
-            sprintf(
-                '%s: deliveryUri %s ------------------',
-                self::class,
-                $compilationUri
-                //$this->getSessionService()->getCurrentUser()->getIdentifier()
-            )
-        );
+        foreach ($otherDeliveriesExecutionIds as $executionId) {
+            try {
+                $this->getLogger()->debug("Pausing execution {$executionId}");
+                $execution = $deliveryExecutionService->getDeliveryExecution(
+                    $executionId
+                );
 
-        //$testExecution = $this->getSessionId();
-        //$execution = $this->getDeliveryExecutionService()->getDeliveryExecution($testExecution);
-
-        // @todo Move into a service
-
-            // @todo Try to use some repository class instead of instantiating a generic
-            //       RDF class to just perform the lookup
-
-        // @todo Code adapted from OntolofyService::getUserExecutions
-
-        // Get all *other* executions by the same user by retrieving them all by user and filtering
-        // out the current one as well as finished ones
-        //
-        // @todo Restrict it to executions for *OTHER* deliveries
-        $executionClass = new core_kernel_classes_Class(DeliveryExecutionInterface::CLASS_URI);
-        $instances = $executionClass->searchInstances([
-            OntologyDeliveryExecution::PROPERTY_SUBJECT  => $userUri,
-            OntologyDeliveryExecution::PROPERTY_STATUS => DeliveryExecutionInterface::STATE_ACTIVE,
-        ], [
-            'like' => false
-        ]);
-
-        $this->getLogger()->critical(
-            sprintf(
-                '%s: %d instances ------------------',
-                self::class,
-                count($instances)
-            )
-        );
-
-        foreach ($instances as $instance) {
-            $this->getLogger()->critical(
-                sprintf(
-                    '%s: instance %s instance.delivery: %s current?: %s current.delivery ------------------',
-                    self::class,
-                    $instance->getUri(),
-                    $instance->getUniquePropertyValue(
-                        new core_kernel_classes_Property(OntologyDeliveryExecution::PROPERTY_DELIVERY)
-                    ),
-                    $instance->getUri() === $this->getSessionId() ? 'true' : 'false'
-
-                )
-            );
+                if ($execution) {
+                    $this->getRunnerService()->pause(
+                        $this->getServiceContextByDeliveryExecution($execution)
+                    );
+                }
+            } catch (Throwable $e) {
+                $this->getLogger()->warning(
+                    sprintf(
+                        '%s: Unable to pause delivery execution %s: %s',
+                        self::class,
+                        $executionId,
+                        $e->getMessage()
+                    )
+                );
+            }
         }
 
         try {
@@ -379,6 +370,57 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $this->getStatusCodeFromException($e)
             );
         }
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getExecutionIdsForOtherDeliveries(string $userUri): array
+    {
+        $executionClass = new core_kernel_classes_Class(DeliveryExecutionInterface::CLASS_URI);
+        $instances = $executionClass->searchInstances([
+            DeliveryExecutionInterface::PROPERTY_SUBJECT  => $userUri,
+            DeliveryExecutionInterface::PROPERTY_STATUS => DeliveryExecutionInterface::STATE_ACTIVE,
+        ], [
+            'like' => false
+        ]);
+
+        $this->getLogger()->critical(
+            sprintf(
+                '%s: %d instances ------------------',
+                self::class,
+                count($instances)
+            )
+        );
+
+        $deliveryProperty = new core_kernel_classes_Property(
+            DeliveryExecutionInterface::PROPERTY_DELIVERY
+        );
+        $statusProperty = new core_kernel_classes_Property(
+            DeliveryExecutionInterface::PROPERTY_STATUS
+        );
+
+        $executions = [];
+
+        foreach ($instances as $instance) {
+            /** @noinspection PhpToStringImplementationInspection */
+            $this->getLogger()->critical(
+                sprintf(
+                    '%s: instance %s instance.delivery: %s current?: %s state: %s ------------------',
+                    self::class,
+                    $instance->getUri(),
+                    $instance->getUniquePropertyValue($deliveryProperty),
+                    $instance->getUri() === $this->getSessionId() ? 'true' : 'false',
+                    $instance->getUniquePropertyValue($statusProperty)
+                )
+            );
+
+            if ($instance->getUri() !== $this->getSessionId()) {
+                $executions[] = $instance->getUri();
+            }
+        }
+
+        return $executions;
     }
 
     /**
@@ -567,7 +609,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * Save the actual item state.
      * Requires params itemIdentifier and itemState
      * @return boolean true if saved
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     protected function saveItemState()
     {
@@ -584,7 +626,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * End the item timer and save the duration
      * Requires params itemDuration and optionaly consumedExtraTime
      * @return boolean true if saved
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     protected function endItemTimer()
     {
@@ -601,7 +643,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * Requires params itemDuration and optionally consumedExtraTime
      * @param boolean $emptyAllowed if we allow empty responses
      * @return boolean true if saved
-     * @throws \common_Exception
+     * @throws common_Exception
      * @throws QtiRunnerEmptyResponsesException if responses are empty, emptyAllowed is false and no allowSkipping
      */
     protected function saveItemResponses($emptyAllowed = true)
