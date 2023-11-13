@@ -314,9 +314,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         // @fixme Executions for the *same* delivery are still being finished
         //        when the same delivery is started a second time
-        // @fixme Other executions are being sent to a "You've finished the test" page
-        //        instead of showing a message about the execution being *paused* instead
-
         foreach ($otherDeliveriesExecutionIds as $executionId) {
             try {
                 $this->getLogger()->debug("Pausing execution {$executionId}");
