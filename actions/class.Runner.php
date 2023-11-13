@@ -73,9 +73,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 {
     use RunnerToolStates;
 
-    // @todo Move this somewhere else
-    public const PAUSE_REASON_CONCURRENT_TEST = 'PAUSE_REASON_CONCURRENT_TEST';
-
     /**
      * The current test session
      * @var QtiRunnerServiceContext
@@ -334,7 +331,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
                     $this->setSessionAttribute(
                         'pauseReason',
-                        self::PAUSE_REASON_CONCURRENT_TEST
+                        PauseService::PAUSE_REASON_CONCURRENT_TEST
                     );
 
                     $this->getRunnerService()->pause($testContext);
