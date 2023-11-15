@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2020 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2023 (original work) Open Assessment Technologies SA.
  */
 
 /**
@@ -25,11 +25,10 @@
  */
 
 use oat\libCat\exception\CatEngineConnectivityException;
-use oat\tao\model\routing\AnnotationReader\security;
+use oat\oatbox\cache\SimpleCache;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
-use oat\taoDelivery\model\execution\OntologyDeliveryExecution;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
@@ -61,6 +60,8 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
 use oat\taoQtiTest\models\runner\StorageManager;
+use Psr\SimpleCache\CacheInterface;
+use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\oatbox\session\SessionService;
 
@@ -307,44 +308,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     {
         $this->validateSecurityToken();
 
-        $otherDeliveriesExecutionIds = $this->getExecutionIdsForOtherDeliveries(
-            $this->getSessionService()->getCurrentSession()->getUserUri()
-        );
-        $deliveryExecutionService = $this->getDeliveryExecutionService();
-
-        // @fixme Executions for the *same* delivery are still being finished
-        //        when the same delivery is started a second time
-        foreach ($otherDeliveriesExecutionIds as $executionId) {
-            try {
-                $this->getLogger()->debug("Pausing execution {$executionId}");
-                $execution = $deliveryExecutionService->getDeliveryExecution(
-                    $executionId
-                );
-
-                if ($execution) {
-                    $testContext = $this->getRunnerService()->getTestContext(
-                        $this->getServiceContextByDeliveryExecution($execution)
-                    );
-
-                    $this->setSessionAttribute(
-                        'pauseReason',
-                        PauseService::PAUSE_REASON_CONCURRENT_TEST
-                    );
-
-                    $this->getRunnerService()->pause($testContext);
-                }
-            } catch (Throwable $e) {
-                $this->getLogger()->warning(
-                    sprintf(
-                        '%s: Unable to pause delivery execution %s: %s',
-                        self::class,
-                        $executionId,
-                        $e->getMessage()
-                    )
-                );
-            }
-        }
-
         try {
             /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
@@ -355,57 +318,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $this->getStatusCodeFromException($e)
             );
         }
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getExecutionIdsForOtherDeliveries(string $userUri): array
-    {
-        $executionClass = new core_kernel_classes_Class(DeliveryExecutionInterface::CLASS_URI);
-        $instances = $executionClass->searchInstances([
-            DeliveryExecutionInterface::PROPERTY_SUBJECT  => $userUri,
-            DeliveryExecutionInterface::PROPERTY_STATUS => DeliveryExecutionInterface::STATE_ACTIVE,
-        ], [
-            'like' => false
-        ]);
-
-        $this->getLogger()->critical(
-            sprintf(
-                '%s: %d instances ------------------',
-                self::class,
-                count($instances)
-            )
-        );
-
-        $deliveryProperty = new core_kernel_classes_Property(
-            DeliveryExecutionInterface::PROPERTY_DELIVERY
-        );
-        $statusProperty = new core_kernel_classes_Property(
-            DeliveryExecutionInterface::PROPERTY_STATUS
-        );
-
-        $executions = [];
-
-        foreach ($instances as $instance) {
-            /** @noinspection PhpToStringImplementationInspection */
-            $this->getLogger()->critical(
-                sprintf(
-                    '%s: instance %s instance.delivery: %s current?: %s state: %s ------------------',
-                    self::class,
-                    $instance->getUri(),
-                    $instance->getUniquePropertyValue($deliveryProperty),
-                    $instance->getUri() === $this->getSessionId() ? 'true' : 'false',
-                    $instance->getUniquePropertyValue($statusProperty)
-                )
-            );
-
-            if ($instance->getUri() !== $this->getSessionId()) {
-                $executions[] = $instance->getUri();
-            }
-        }
-
-        return $executions;
     }
 
     /**
@@ -720,14 +632,50 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Moves the current position to the provided scoped reference: item, section, part
+     *
+     * This action is called when the user sends a test response, but not when
+     * the test starts.
      */
     public function move()
     {
-        // Not called when the test starts, called when sending a response
         $this->getLogger()->critical(sprintf('%s: move() ------------------', self::class));
 
         try {
-            //FIXME @TODO Here we do the validation that breaks access...
+            $serviceContext = $this->getServiceContext();
+
+            if ($serviceContext->getTestSession()->getState() == AssessmentTestSessionState::SUSPENDED) {
+                $this->getLogger()->critical(sprintf('%s: session is suspended ------------------', self::class));
+                $this->getLogger()->critical(sprintf('%s: PROCESSING SUSPENDED SESSION in QtiTest ', self::class));
+
+                // PingPong: The DeliveryTool from ltiDeliveryProvider suspended
+                //           the old session when a new one was started, so now
+                //           we send the frontend a response telling that the
+                //           test is paused
+                //           @todo ... but we need some way to make ltiReturn in
+                //                 ltiDeliveryProvider (DeliveryRunner controller)
+                //                 to forward the user to the "feedback" action
+                //                 instead of the "thankYou" page
+                //           ltiReturn is called with the executionId, and that controller
+                //           sends the redirect
+                //           That controller gets the redirectUrl from some place, and falls
+                //           back to the thank you page, maybe we can set a value there
+                //           to point to the "paused" page instead
+
+                // @fixme It is still pausing executions for the *same* delivery when a second one starts
+
+                // Generate an HTTP response telling the FE that the test was paused
+                //
+                $command = new PauseCommand($serviceContext);
+
+                $this->setItemContextToCommand($command);
+
+                $response = $this->getPauseService()($command);
+
+                $this->returnJson($response->toArray());
+
+                return;
+            }
+
             $this->validateSecurityToken();
 
             $moveCommand = new MoveCommand(
@@ -744,7 +692,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $response = $moveService($moveCommand);
 
-            common_Logger::d('Test session state : ' . $this->getServiceContext()->getTestSession()->getState());
+            common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
@@ -877,10 +825,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->setItemContextToCommand($command);
 
-            /** @var PauseService $pause */
-            $pause = $this->getPsrContainer()->get(PauseService::class);
-
-            $response = $pause($command);
+            $response = $this->getPauseService()($command);
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
@@ -1206,6 +1151,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     private function getRuntimeService(): RuntimeService
     {
         return $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
+    }
+
+    private function getPauseService(): PauseService
+    {
+        return $this->getPsrContainer()->get(PauseService::class);
     }
 
     private function getItemDuration(): ?float
