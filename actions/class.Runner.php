@@ -157,39 +157,29 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 throw new common_exception_ResourceNotFound();
             }
 
-            $this->serviceContext = $this->getServiceContextByDeliveryExecution($execution);
+            $currentUser = $this->getSessionService()->getCurrentUser();
+            if (!$currentUser || $execution->getUserIdentifier() !== $currentUser->getIdentifier()) {
+                throw new common_exception_Unauthorized($execution->getUserIdentifier());
+            }
+
+            $delivery = $execution->getDelivery();
+            $container = $this->getRuntimeService()->getDeliveryContainer($delivery->getUri());
+            if (!$container instanceof QtiTestDeliveryContainer) {
+                throw new common_Exception(
+                    'Non QTI test container ' . get_class($container) . ' in qti test runner'
+                );
+            }
+            $testDefinition = $container->getSourceTest($execution);
+            $testCompilation = $container->getPrivateDirId($execution) . '|' . $container->getPublicDirId($execution);
+
+            $this->serviceContext = $this->getRunnerService()->getServiceContext(
+                $testDefinition,
+                $testCompilation,
+                $execution->getIdentifier()
+            );
         }
 
         return $this->serviceContext;
-    }
-
-    /**
-     * Gets the test service context
-     * @throws common_Exception
-     */
-    protected function getServiceContextByDeliveryExecution(
-        DeliveryExecution $execution
-    ): QtiRunnerServiceContext {
-        $currentUser = $this->getSessionService()->getCurrentUser();
-        if (!$currentUser || $execution->getUserIdentifier() !== $currentUser->getIdentifier()) {
-            throw new common_exception_Unauthorized($execution->getUserIdentifier());
-        }
-
-        $delivery = $execution->getDelivery();
-        $container = $this->getRuntimeService()->getDeliveryContainer($delivery->getUri());
-        if (!$container instanceof QtiTestDeliveryContainer) {
-            throw new common_Exception(
-                'Non QTI test container ' . get_class($container) . ' in qti test runner'
-            );
-        }
-        $testDefinition = $container->getSourceTest($execution);
-        $testCompilation = $container->getPrivateDirId($execution) . '|' . $container->getPublicDirId($execution);
-
-        return $this->getRunnerService()->getServiceContext(
-            $testDefinition,
-            $testCompilation,
-            $execution->getIdentifier()
-        );
     }
 
     /**
