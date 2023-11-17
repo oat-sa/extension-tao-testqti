@@ -637,19 +637,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $this->getLogger()->critical(sprintf('%s: session is suspended ------------------', self::class));
                 $this->getLogger()->critical(sprintf('%s: PROCESSING SUSPENDED SESSION in QtiTest ', self::class));
 
-                // PingPong: The DeliveryTool from ltiDeliveryProvider suspended
-                //           the old session when a new one was started, so now
-                //           we send the frontend a response telling that the
-                //           test is paused
-                //           @todo ... but we need some way to make ltiReturn in
-                //                 ltiDeliveryProvider (DeliveryRunner controller)
-                //                 to forward the user to the "feedback" action
-                //                 instead of the "thankYou" page
-                //           ltiReturn is called with the executionId, and that controller
-                //           sends the redirect
-                //           That controller gets the redirectUrl from some place, and falls
-                //           back to the thank you page, maybe we can set a value there
-                //           to point to the "paused" page instead
 
                 // @fixme It is still pausing executions for the *same* delivery when a second one starts
 
