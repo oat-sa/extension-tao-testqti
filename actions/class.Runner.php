@@ -637,8 +637,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $this->getLogger()->critical(sprintf('%s: session is suspended ------------------', self::class));
                 $this->getLogger()->critical(sprintf('%s: PROCESSING SUSPENDED SESSION in QtiTest ', self::class));
 
-
-                // @fixme It is still pausing executions for the *same* delivery when a second one starts
+                $this->endItemTimer();
 
                 // Generate an HTTP response telling the FE that the test was paused
                 //
