@@ -639,10 +639,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
                 $this->endItemTimer();
 
-                // Generate an HTTP response telling the FE that the test was paused
-                //
                 $command = new PauseCommand($serviceContext);
-
                 $this->setItemContextToCommand($command);
 
                 $response = $this->getPauseService()($command);
