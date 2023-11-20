@@ -741,6 +741,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
+            $this->checkExceptionForTestSessionConflict($e);
+
             $this->returnJson(
                 $this->getErrorResponse($e),
                 $this->getStatusCodeFromException($e)
