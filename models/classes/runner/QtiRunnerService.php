@@ -304,7 +304,6 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
         $session->initItemTimer();
         if ($session->isTimeout() === false) {
-            $this->getLogger()->info(sprintf('%s: Session is not in timeout', self::class));
             TestRunnerUtils::beginCandidateInteraction($session);
         }
 
