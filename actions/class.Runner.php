@@ -673,6 +673,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
+            $this->checkExceptionForTestSessionConflict($e);
+
             $this->returnJson(
                 $this->getErrorResponse($e),
                 $this->getStatusCodeFromException($e)
@@ -704,6 +706,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
+            $this->checkExceptionForTestSessionConflict($e);
+
             $this->returnJson(
                 $this->getErrorResponse($e),
                 $this->getStatusCodeFromException($e)
@@ -1200,5 +1204,19 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getErrorResponse($exception),
             $this->getStatusCodeFromException($exception)
         );
+    }
+
+    private function checkExceptionForTestSessionConflict($exception): void
+    {
+        if (!$exception instanceof common_exception_Unauthorized) {
+            return;
+        }
+
+        try {
+            if ($this->getServiceContext()->getTestSession()->getState() === AssessmentTestSessionState::INTERACTING) {
+                $this->setSessionAttribute('testSessionConflict', true);
+            }
+        } catch (common_Exception $exception) {
+        }
     }
 }
