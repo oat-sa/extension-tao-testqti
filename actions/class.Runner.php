@@ -30,6 +30,7 @@ use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiTest\model\Service\ActionResponse;
 use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
@@ -59,6 +60,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
+use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\StorageManager;
 use Psr\SimpleCache\CacheInterface;
 use qtism\runtime\tests\AssessmentTestSessionState;
@@ -300,8 +302,30 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             /** @var QtiRunnerServiceContext $serviceContext */
-            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
-            $this->returnJson($this->getInitResponse($serviceContext));
+            $serviceContext = $this->getRunnerService()->initServiceContext(
+                $this->getServiceContext()
+            );
+
+            $this->getLogger()->info(
+                sprintf(
+                    'State on init: %d',
+                    $serviceContext->getTestSession()->getState()
+                )
+            );
+
+            $initResponse = $this->getInitResponse($serviceContext);
+
+            if ($initResponse['success']) {
+                $currentState = $serviceContext->getTestSession()->getState();
+
+                if ($currentState != AssessmentTestSessionState::INITIAL) {
+                    // @fixme This solution won't work if the session is restarted on
+                    //        a different browser (it won't have the timers info)
+                    $initResponse['testData']['config']['timer']['restoreTimerFromClient'] = true;
+                }
+            }
+
+            $this->returnJson($initResponse);
         } catch (Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
@@ -635,16 +659,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             if ($serviceContext->getTestSession()->getState() == AssessmentTestSessionState::SUSPENDED) {
                 $this->getLogger()->critical(sprintf('%s: session is suspended ------------------', self::class));
-                $this->getLogger()->critical(sprintf('%s: PROCESSING SUSPENDED SESSION in QtiTest ', self::class));
+                $this->getLogger()->critical(
+                    sprintf('%s: EXIT EARLY FROM SUSPENDED SESSION in QtiTest ', self::class)
+                );
 
-                $this->endItemTimer();
-
-                $command = new PauseCommand($serviceContext);
-                $this->setItemContextToCommand($command);
-
-                $response = $this->getPauseService()($command);
-
-                $this->returnJson($response->toArray());
+                $this->returnJson(
+                    $this->getErrorResponse(
+                        new QtiRunnerPausedException()
+                    )
+                );
 
                 return;
             }
