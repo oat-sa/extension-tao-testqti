@@ -26,6 +26,7 @@
 
 use oat\libCat\exception\CatEngineConnectivityException;
 use oat\oatbox\cache\SimpleCache;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
@@ -75,6 +76,13 @@ use oat\oatbox\session\SessionService;
 class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 {
     use RunnerToolStates;
+
+    /**
+     * Controls whether launching a new delivery suspends other sessions by the same user.
+     *
+     * @var string
+     */
+    public const FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS = 'FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS';
 
     /**
      * The current test session
@@ -306,23 +314,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $this->getServiceContext()
             );
 
-            $this->getLogger()->info(
-                sprintf(
-                    'State on init: %d',
-                    $serviceContext->getTestSession()->getState()
-                )
-            );
-
             $initResponse = $this->getInitResponse($serviceContext);
 
-            if ($initResponse['success']) {
-                $currentState = $serviceContext->getTestSession()->getState();
-
-                if ($currentState != AssessmentTestSessionState::INITIAL) {
-                    // @fixme This solution won't work if the session is restarted on
-                    //        a different browser (it won't have the timers info)
-                    $initResponse['testData']['config']['timer']['restoreTimerFromClient'] = true;
-                }
+            if ($this->mustForceRestoreTimersFromClient($serviceContext, $initResponse)) {
+                $initResponse['testData']['config']['timer']['restoreTimerFromClient'] = true;
             }
 
             $this->returnJson($initResponse);
@@ -652,15 +647,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      */
     public function move()
     {
-        $this->getLogger()->critical(sprintf('%s: move() ------------------', self::class));
-
         try {
             $serviceContext = $this->getServiceContext();
+            $state = $serviceContext->getTestSession()->getState();
 
-            if ($serviceContext->getTestSession()->getState() == AssessmentTestSessionState::SUSPENDED) {
-                $this->getLogger()->critical(sprintf('%s: session is suspended ------------------', self::class));
-                $this->getLogger()->critical(
-                    sprintf('%s: EXIT EARLY FROM SUSPENDED SESSION in QtiTest ', self::class)
+            if ($state == AssessmentTestSessionState::SUSPENDED) {
+                $this->getLogger()->debug(
+                    sprintf(
+                        '%s: session %s is suspended, returning a PausedException response',
+                        self::class,
+                        $serviceContext->getTestSession()->getSessionId()
+                    )
                 );
 
                 $this->returnJson(
@@ -687,8 +684,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $moveService = $this->getPsrContainer()->get(MoveService::class);
 
             $response = $moveService($moveCommand);
-
-            common_Logger::d('Test session state : ' . $serviceContext->getTestSession()->getState());
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
@@ -1021,6 +1016,35 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         }
 
         $this->returnJson($response, $code);
+    }
+
+    private function mustForceRestoreTimersFromClient(
+        QtiRunnerServiceContext $serviceContext,
+        $initResponse
+    ): bool {
+        if (!$this->isPausingConcurrentSessionsEnabled()) {
+            return false;
+        }
+
+        if (isset($initResponse['success']) && $initResponse['success']) {
+            $currentState = $serviceContext->getTestSession()->getState();
+
+            return ($currentState != AssessmentTestSessionState::INITIAL);
+        }
+
+        return false;
+    }
+
+    private function isPausingConcurrentSessionsEnabled(): bool
+    {
+        return !$this->getFeatureFlagChecker()->isEnabled(
+            static::FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS
+        );
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagChecker
+    {
+        return $this->getPsrContainer()->get(FeatureFlagChecker::class);
     }
 
     /**
