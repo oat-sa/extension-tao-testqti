@@ -448,7 +448,7 @@ class RegisterTestRunnerPlugins extends InstallAction
         ]
     ];
 
-    public static function getPlugin(string $pluginIdentifier): TestPlugin
+    public static function getPlugin(string $pluginIdentifier): ?TestPlugin
     {
         foreach (self::$plugins as $categoryPlugins) {
             foreach ($categoryPlugins as $pluginData) {
