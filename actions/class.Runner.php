@@ -1008,7 +1008,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     private function mustForceRestoreTimersFromClient(
         QtiRunnerServiceContext $serviceContext,
-        $initResponse
+        array $initResponse
     ): bool {
         return $this->isPausingConcurrentSessionsEnabled() 
             && isset($initResponse['success']) 
