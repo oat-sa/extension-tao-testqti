@@ -73,13 +73,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     use RunnerToolStates;
 
     /**
-     * Controls whether launching a new delivery suspends other sessions by the same user.
-     *
-     * @var string
-     */
-    public const FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS = 'FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS';
-
-    /**
      * The current test session
      * @var QtiRunnerServiceContext
      */
@@ -1033,7 +1026,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     private function isPausingConcurrentSessionsEnabled(): bool
     {
         return !$this->getFeatureFlagChecker()->isEnabled(
-            static::FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS
+            'FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS'
         );
     }
 
