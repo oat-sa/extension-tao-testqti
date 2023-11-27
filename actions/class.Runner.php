@@ -173,7 +173,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->serviceContext = $this->getRunnerService()->getServiceContext(
                 $testDefinition,
                 $testCompilation,
-                $execution->getIdentifier()
+                $testExecution
             );
         }
 
