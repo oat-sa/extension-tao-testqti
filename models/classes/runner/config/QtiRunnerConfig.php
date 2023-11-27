@@ -147,14 +147,6 @@ class QtiRunnerConfig extends ConfigurableService implements RunnerConfig
             ];
         }
 
-        // Send a unique value so the frontend knows if the test has been reopened
-        // in another tab (that allows it to not modify the local storage from two
-        // different tabs)
-        //
-        $config['runNumberId'] = floor(microtime(true) * 100);
-
-        // @todo If the session is being restored, force restoreTimerFromClient to be true
-
         return $config;
     }
 
