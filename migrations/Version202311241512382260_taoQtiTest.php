@@ -10,8 +10,6 @@ use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
- *
  * phpcs:disable Squiz.Classes.ValidClassName
  */
 final class Version202311241512382260_taoQtiTest extends AbstractMigration
