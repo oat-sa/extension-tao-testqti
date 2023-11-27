@@ -6,8 +6,8 @@ namespace oat\taoQtiTest\migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
+use oat\taoQtiTest\scripts\install\RegisterTestRunnerPlugins;
 use oat\taoTests\models\runner\plugins\PluginRegistry;
-use oat\taoTests\models\runner\plugins\TestPlugin;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -16,6 +16,8 @@ use oat\taoTests\models\runner\plugins\TestPlugin;
  */
 final class Version202311241512382260_taoQtiTest extends AbstractMigration
 {
+    public const PLUGIN_URI = 'taoQtiTest/runner/plugins/controls/session/preventConcurrency';
+
     public function getDescription(): string
     {
         return 'Register plugin to prevent session concurrency';
@@ -24,25 +26,18 @@ final class Version202311241512382260_taoQtiTest extends AbstractMigration
     public function up(Schema $schema): void
     {
         $registry = PluginRegistry::getRegistry();
-        if (!$registry->isRegistered('taoQtiTest/runner/plugins/controls/session/preventConcurrency')) {
-            $registry->register(TestPlugin::fromArray([
-                'id' => 'preventConcurrency',
-                'name' => 'Prevent session concurrency',
-                'module' => 'taoQtiTest/runner/plugins/controls/session/preventConcurrency',
-                'bundle' => 'taoQtiTest/loader/testPlugins.min',
-                'description' => 'Detect concurrent deliveries launched from the same user session',
-                'category' => 'controls',
-                'active' => true,
-                'tags' => [ 'core', 'technical' ]
-            ]));
+
+        if (!$registry->isRegistered(self::PLUGIN_URI)) {
+            $registry->register(RegisterTestRunnerPlugins::getPlugin('preventConcurrency'));
         }
     }
 
     public function down(Schema $schema): void
     {
         $registry = PluginRegistry::getRegistry();
-        if ($registry->isRegistered('taoQtiTest/runner/plugins/controls/session/preventConcurrency')) {
-            $registry->remove('taoQtiTest/runner/plugins/controls/session/preventConcurrency');
+
+        if ($registry->isRegistered(self::PLUGIN_URI)) {
+            $registry->remove(self::PLUGIN_URI);
         }
     }
 }
