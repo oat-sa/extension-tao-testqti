@@ -25,13 +25,10 @@
  */
 
 use oat\libCat\exception\CatEngineConnectivityException;
-use oat\oatbox\cache\SimpleCache;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
-use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
-use oat\taoQtiTest\model\Service\ActionResponse;
 use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
@@ -61,9 +58,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
-use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\StorageManager;
-use Psr\SimpleCache\CacheInterface;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\oatbox\session\SessionService;
