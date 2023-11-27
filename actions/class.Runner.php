@@ -1010,17 +1010,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         QtiRunnerServiceContext $serviceContext,
         $initResponse
     ): bool {
-        if (!$this->isPausingConcurrentSessionsEnabled()) {
-            return false;
-        }
-
-        if (isset($initResponse['success']) && $initResponse['success']) {
-            $currentState = $serviceContext->getTestSession()->getState();
-
-            return ($currentState != AssessmentTestSessionState::INITIAL);
-        }
-
-        return false;
+        return $this->isPausingConcurrentSessionsEnabled() 
+            && isset($initResponse['success']) 
+            && $initResponse['success'] 
+            && $serviceContext->getTestSession()->getState() !== AssessmentTestSessionState::INITIAL;
     }
 
     private function isPausingConcurrentSessionsEnabled(): bool
