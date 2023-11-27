@@ -448,6 +448,18 @@ class RegisterTestRunnerPlugins extends InstallAction
         ]
     ];
 
+    public static function getPlugin(string $pluginIdentifier): TestPlugin
+    {
+        foreach (self::$plugins as $categoryPlugins) {
+            foreach ($categoryPlugins as $pluginData) {
+                if ($pluginData['id'] == $pluginIdentifier || $pluginData['module'] == $pluginIdentifier) {
+                    return TestPlugin::fromArray($pluginData);
+                }
+            }
+        }
+        return null;
+    }
+
     public function __invoke($params)
     {
         $registry = PluginRegistry::getRegistry();
