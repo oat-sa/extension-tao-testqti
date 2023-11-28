@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2020 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2016-2023 (original work) Open Assessment Technologies SA.
  */
 
 /**
@@ -25,10 +25,12 @@
  */
 
 use oat\libCat\exception\CatEngineConnectivityException;
-use oat\tao\model\routing\AnnotationReader\security;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiTest\model\Service\ConcurringSessionService;
 use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
@@ -59,6 +61,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerToolStates;
 use oat\taoQtiTest\models\runner\StorageManager;
+use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\oatbox\session\SessionService;
 
@@ -143,7 +146,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     /**
      * Gets the test service context
      * @return QtiRunnerServiceContext
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     protected function getServiceContext()
     {
@@ -162,11 +165,18 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $delivery = $execution->getDelivery();
             $container = $this->getRuntimeService()->getDeliveryContainer($delivery->getUri());
             if (!$container instanceof QtiTestDeliveryContainer) {
-                throw new common_Exception('Non QTI test container ' . get_class($container) . ' in qti test runner');
+                throw new common_Exception(
+                    'Non QTI test container ' . get_class($container) . ' in qti test runner'
+                );
             }
             $testDefinition = $container->getSourceTest($execution);
             $testCompilation = $container->getPrivateDirId($execution) . '|' . $container->getPublicDirId($execution);
-            $this->serviceContext = $this->getRunnerService()->getServiceContext($testDefinition, $testCompilation, $testExecution);
+
+            $this->serviceContext = $this->getRunnerService()->getServiceContext(
+                $testDefinition,
+                $testCompilation,
+                $testExecution
+            );
         }
 
         return $this->serviceContext;
@@ -234,7 +244,9 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                         /** @var QtiRunnerMessageService $messageService */
                         $messageService = $this->getServiceManager()->get(QtiRunnerMessageService::SERVICE_ID);
                         try {
+                            // phpcs:disable Generic.Files.LineLength
                             $response['message'] = __($messageService->getStateMessage($this->serviceContext->getTestSession()));
+                            // phpcs:enable Generic.Files.LineLength
                         } catch (common_exception_Error $e) {
                             $response['message'] = null;
                         }
@@ -287,7 +299,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $this->validateSecurityToken();
 
         try {
-            /** @var QtiRunnerServiceContext $serviceContext */
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
             $this->returnJson($this->getInitResponse($serviceContext));
         } catch (Exception $e) {
@@ -392,14 +403,18 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
                 $response['success'] = false;
 
                 $userIdentifier = common_session_SessionManager::getSession()->getUser()->getIdentifier();
-                common_Logger::e("Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'.");
+                common_Logger::e(
+                    "Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'."
+                );
             }
 
             $this->getRunnerService()->startTimer($serviceContext);
         } catch (common_Exception $e) {
             $userIdentifier = common_session_SessionManager::getSession()->getUser()->getIdentifier();
-            $msg = __CLASS__ . "::getItem(): Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'.\n";
-            $msg .= "Exception of type '" . get_class($e) . "' was thrown in '" . $e->getFile() . "' l." . $e->getLine() . " with message '" . $e->getMessage() . "'.";
+            $msg = __CLASS__ . "::getItem(): Unable to retrieve item with identifier '${itemIdentifier}' for "
+                . "user '${userIdentifier}'.\n";
+            $msg .= "Exception of type '" . get_class($e) . "' was thrown in '" . $e->getFile() . "' l." . $e->getLine()
+                . " with message '" . $e->getMessage() . "'.";
 
             if ($e instanceof common_exception_Unauthorized) {
                 // Log as debug as not being authorized is not a "real" system error.
@@ -480,7 +495,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * Save the actual item state.
      * Requires params itemIdentifier and itemState
      * @return boolean true if saved
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     protected function saveItemState()
     {
@@ -497,7 +512,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * End the item timer and save the duration
      * Requires params itemDuration and optionaly consumedExtraTime
      * @return boolean true if saved
-     * @throws \common_Exception
+     * @throws common_Exception
      */
     protected function endItemTimer()
     {
@@ -514,7 +529,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
      * Requires params itemDuration and optionally consumedExtraTime
      * @param boolean $emptyAllowed if we allow empty responses
      * @return boolean true if saved
-     * @throws \common_Exception
+     * @throws common_Exception
      * @throws QtiRunnerEmptyResponsesException if responses are empty, emptyAllowed is false and no allowSkipping
      */
     protected function saveItemResponses($emptyAllowed = true)
@@ -528,11 +543,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $itemResponse = $this->getItemResponse();
 
             if ($serviceContext->getCurrentAssessmentItemRef()->getIdentifier() !== $itemIdentifier) {
-                throw new QtiRunnerItemResponseException(__('Item response identifier does not match current item'));
+                throw new QtiRunnerItemResponseException(
+                    __('Item response identifier does not match current item')
+                );
             }
 
             if (!is_null($itemResponse) && !empty($itemDefinition)) {
-                $responses = $this->getRunnerService()->parsesItemResponse($serviceContext, $itemDefinition, $itemResponse);
+                $responses = $this->getRunnerService()->parsesItemResponse(
+                    $serviceContext,
+                    $itemDefinition,
+                    $itemResponse
+                );
 
                 //still verify allowSkipping & empty responses
                 if (
@@ -564,7 +585,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             // as we need to store the item state whatever the test state is
             $this->validateSecurityToken();
             $serviceContext = $this->getServiceContext();
-            $itemRef        = $this->getRunnerService()->getItemHref($serviceContext, $this->getRequestParameter('itemDefinition'));
+            $itemRef = $this->getRunnerService()->getItemHref(
+                $serviceContext,
+                $this->getRequestParameter('itemDefinition')
+            );
 
             if (!$this->getRunnerService()->isTerminated($serviceContext)) {
                 $this->endItemTimer();
@@ -597,10 +621,34 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
     /**
      * Moves the current position to the provided scoped reference: item, section, part
+     *
+     * This action is called when the user sends a test response, but not when
+     * the test starts.
      */
     public function move()
     {
         try {
+            $serviceContext = $this->getServiceContext();
+            $state = $serviceContext->getTestSession()->getState();
+
+            if ($state == AssessmentTestSessionState::SUSPENDED) {
+                $this->getLogger()->debug(
+                    sprintf(
+                        '%s: session %s is suspended, returning a PausedException response',
+                        self::class,
+                        $serviceContext->getTestSession()->getSessionId()
+                    )
+                );
+
+                $this->returnJson(
+                    $this->getErrorResponse(
+                        new QtiRunnerPausedException()
+                    )
+                );
+
+                return;
+            }
+
             $this->validateSecurityToken();
 
             $moveCommand = new MoveCommand(
@@ -617,10 +665,10 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $response = $moveService($moveCommand);
 
-            common_Logger::d('Test session state : ' . $this->getServiceContext()->getTestSession()->getState());
-
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
+            $this->checkExceptionForTestSessionConflict($e);
+
             $this->returnJson(
                 $this->getErrorResponse($e),
                 $this->getStatusCodeFromException($e)
@@ -652,6 +700,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
+            $this->checkExceptionForTestSessionConflict($e);
+
             $this->returnJson(
                 $this->getErrorResponse($e),
                 $this->getStatusCodeFromException($e)
@@ -685,6 +735,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
+            $this->checkExceptionForTestSessionConflict($e);
+
             $this->returnJson(
                 $this->getErrorResponse($e),
                 $this->getStatusCodeFromException($e)
@@ -750,10 +802,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
             $this->setItemContextToCommand($command);
 
-            /** @var PauseService $pause */
-            $pause = $this->getPsrContainer()->get(PauseService::class);
-
-            $response = $pause($command);
+            $response = $this->getPauseService()($command);
 
             $this->returnJson($response->toArray());
         } catch (common_Exception $e) {
@@ -1081,6 +1130,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         return $this->getServiceLocator()->get(RuntimeService::SERVICE_ID);
     }
 
+    private function getPauseService(): PauseService
+    {
+        return $this->getPsrContainer()->get(PauseService::class);
+    }
+
     private function getItemDuration(): ?float
     {
         if (!$this->hasRequestParameter('itemDuration')) {
@@ -1146,5 +1200,24 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->getErrorResponse($exception),
             $this->getStatusCodeFromException($exception)
         );
+    }
+
+    private function checkExceptionForTestSessionConflict($exception): void
+    {
+        if (!$exception instanceof common_exception_Unauthorized) {
+            return;
+        }
+
+        try {
+            if ($this->getServiceContext()->getTestSession()->getState() === AssessmentTestSessionState::INTERACTING) {
+                $this->getConcurringSessionService()->setConcurringSession($this->getSessionId());
+            }
+        } catch (common_Exception $exception) {
+        }
+    }
+
+    private function getConcurringSessionService(): ConcurringSessionService
+    {
+        return $this->getPsrContainer()->get(ConcurringSessionService::class);
     }
 }
