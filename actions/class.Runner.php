@@ -26,9 +26,11 @@
 
 use oat\libCat\exception\CatEngineConnectivityException;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiTest\model\Service\ConcurringSessionService;
 use oat\taoQtiTest\model\Service\ExitTestCommand;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ItemContextAwareInterface;
@@ -297,18 +299,8 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $this->validateSecurityToken();
 
         try {
-            /** @var QtiRunnerServiceContext $serviceContext */
-            $serviceContext = $this->getRunnerService()->initServiceContext(
-                $this->getServiceContext()
-            );
-
-            $initResponse = $this->getInitResponse($serviceContext);
-
-            if ($this->mustForceRestoreTimersFromClient($serviceContext, $initResponse)) {
-                $initResponse['testData']['config']['timer']['restoreTimerFromClient'] = true;
-            }
-
-            $this->returnJson($initResponse);
+            $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+            $this->returnJson($this->getInitResponse($serviceContext));
         } catch (Exception $e) {
             $this->returnJson(
                 $this->getErrorResponse($e),
@@ -1006,28 +998,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
         $this->returnJson($response, $code);
     }
 
-    private function mustForceRestoreTimersFromClient(
-        QtiRunnerServiceContext $serviceContext,
-        array $initResponse
-    ): bool {
-        return $this->isPausingConcurrentSessionsEnabled() 
-            && isset($initResponse['success']) 
-            && $initResponse['success'] 
-            && $serviceContext->getTestSession()->getState() !== AssessmentTestSessionState::INITIAL;
-    }
-
-    private function isPausingConcurrentSessionsEnabled(): bool
-    {
-        return !$this->getFeatureFlagChecker()->isEnabled(
-            'FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS'
-        );
-    }
-
-    private function getFeatureFlagChecker(): FeatureFlagChecker
-    {
-        return $this->getPsrContainer()->get(FeatureFlagChecker::class);
-    }
-
     /**
      * @throws QtiRunnerClosedException
      * @throws common_exception_NotFound
@@ -1240,9 +1210,14 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             if ($this->getServiceContext()->getTestSession()->getState() === AssessmentTestSessionState::INTERACTING) {
-                $this->setSessionAttribute('testSessionConflict', true);
+                $this->getConcurringSessionService()->setConcurringSession($this->getSessionId());
             }
         } catch (common_Exception $exception) {
         }
+    }
+
+    private function getConcurringSessionService(): ConcurringSessionService
+    {
+        return $this->getPsrContainer()->get(ConcurringSessionService::class);
     }
 }

@@ -30,8 +30,6 @@ use oat\taoQtiTest\models\runner\RunnerService;
 
 class PauseService
 {
-    public const PAUSE_REASON_CONCURRENT_TEST = 'PAUSE_REASON_CONCURRENT_TEST';
-
     /** @var RunnerService */
     private $runnerService;
 
