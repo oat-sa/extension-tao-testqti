@@ -81,7 +81,7 @@ class ConcurringSessionService
 
         $userIdentifier = $activeExecution->getUserIdentifier();
 
-        if (empty($userIdentifier) || $userIdentifier === 'anonymous') { //@TODO Find if we have a constant
+        if (empty($userIdentifier) || $userIdentifier === 'anonymous') {
             return;
         }
 
@@ -121,7 +121,8 @@ class ConcurringSessionService
 
     public function isConcurringSession(DeliveryExecution $execution): bool
     {
-        return $this->currentSession->getAttribute("pauseReason-{$execution->getIdentifier()}") === self::PAUSE_REASON_CONCURRENT_TEST;
+        return $this->currentSession->hasAttribute("pauseReason-{$execution->getIdentifier()}")
+            && $this->currentSession->getAttribute("pauseReason-{$execution->getIdentifier()}") === self::PAUSE_REASON_CONCURRENT_TEST;
     }
 
     public function clearConcurringSession(DeliveryExecution $execution): void
