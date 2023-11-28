@@ -239,7 +239,7 @@ class ConcurringSessionService
             return; // Already paused
         }
 
-        $this->setConcurringSession($execution);
+        $this->setConcurringSession($execution->getIdentifier());
 
         $context = $this->getRunnerServiceContextByDeliveryExecution($execution);
 
