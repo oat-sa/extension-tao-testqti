@@ -251,7 +251,8 @@ class ConcurringSessionService
         if (!$container instanceof QtiTestDeliveryContainer) {
             throw new common_Exception(
                 sprintf(
-                    'Non QTI test container %s in qti test runner', get_class($container)
+                    'Non QTI test container %s in qti test runner',
+                    get_class($container)
                 )
             );
         }
