@@ -60,8 +60,7 @@ class ConcurringSessionService
         DeliveryExecutionService $deliveryExecutionService,
         FeatureFlagCheckerInterface $featureFlagChecker,
         PHPSession $currentSession = null
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->qtiRunnerService = $qtiRunnerService;
         $this->stateService = $stateService;
@@ -120,8 +119,10 @@ class ConcurringSessionService
 
     public function isConcurringSession(DeliveryExecution $execution): bool
     {
-        return $this->currentSession->hasAttribute("pauseReason-{$execution->getIdentifier()}")
-            && $this->currentSession->getAttribute("pauseReason-{$execution->getIdentifier()}") === self::PAUSE_REASON_CONCURRENT_TEST;
+        $key = "pauseReason-{$execution->getIdentifier()}";
+
+        return $this->currentSession->hasAttribute($key)
+            && $this->currentSession->getAttribute($key) === self::PAUSE_REASON_CONCURRENT_TEST;
     }
 
     public function clearConcurringSession(DeliveryExecution $execution): void
@@ -163,10 +164,7 @@ class ConcurringSessionService
     /**
      * @return string[]
      */
-    private function getExecutionIdsForOtherDeliveries(
-        string $userUri,
-        string $currentExecutionId
-    ): array
+    private function getExecutionIdsForOtherDeliveries(string $userUri, string $currentExecutionId): array
     {
         $currentDeliveryUri = (string)$this->getDeliveryIdByExecutionId($currentExecutionId);
         $executions = $this->getActiveDeliveryExecutionsByUser($userUri);
@@ -239,15 +237,14 @@ class ConcurringSessionService
 
         $this->setConcurringSession($execution->getIdentifier());
 
-        $context = $this->getRunnerServiceContextByDeliveryExecution($execution);
+        $context = $this->getContextByDeliveryExecution($execution);
 
         $this->qtiRunnerService->endTimer($context);
         $this->qtiRunnerService->pause($context);
     }
 
-    private function getRunnerServiceContextByDeliveryExecution(
-        DeliveryExecutionInterface $execution
-    ): QtiRunnerServiceContext {
+    private function getContextByDeliveryExecution(DeliveryExecutionInterface $execution): QtiRunnerServiceContext
+    {
         $delivery = $execution->getDelivery();
         $container = $this->runtimeService->getDeliveryContainer($delivery->getUri());
 
@@ -273,5 +270,3 @@ class ConcurringSessionService
         );
     }
 }
-
-
