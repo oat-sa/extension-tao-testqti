@@ -239,6 +239,12 @@ class ConcurringSessionService
 
         $context = $this->getContextByDeliveryExecution($execution);
 
+        //@FIXME @TODO Testing
+        $testSession = $context->getTestSession();
+        $testSession->initItemTimer(microtime(true));
+        $testSession->getTimer()->end($testSession->getItemTags($testSession->getRoute()->current()), microtime(true))->save();
+        //@FIXME @TODO Testing
+
         $this->qtiRunnerService->endTimer($context);
         $this->qtiRunnerService->pause($context);
     }
