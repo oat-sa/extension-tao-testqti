@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\migrations;
 
 use common_ext_Extension as Extension;
-use common_ext_ExtensionException as ExtensionException;
 use common_ext_ExtensionsManager as ExtensionsManager;
 use Doctrine\DBAL\Schema\Schema;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
