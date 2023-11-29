@@ -27,7 +27,6 @@ use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
-use common_session_Session;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\execution\StateServiceInterface;
@@ -53,12 +52,12 @@ class ConcurringSessionService
     private ?PHPSession $currentSession;
 
     public function __construct(
-        LoggerInterface             $logger,
-        QtiRunnerService            $qtiRunnerService,
-        StateServiceInterface       $stateService,
-        RuntimeService              $runtimeService,
-        Ontology                    $ontology,
-        DeliveryExecutionService    $deliveryExecutionService,
+        LoggerInterface $logger,
+        QtiRunnerService $qtiRunnerService,
+        StateServiceInterface $stateService,
+        RuntimeService $runtimeService,
+        Ontology $ontology,
+        DeliveryExecutionService $deliveryExecutionService,
         FeatureFlagCheckerInterface $featureFlagChecker,
         PHPSession $currentSession = null
     )
@@ -233,11 +232,9 @@ class ConcurringSessionService
     private function pauseSingleExecution(DeliveryExecution $execution): void
     {
         if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-            $this->logger->debug(
-                sprintf('%s already paused', $execution->getIdentifier())
-            );
+            $this->logger->debug(sprintf('%s already paused', $execution->getIdentifier()));
 
-            return; // Already paused
+            return;
         }
 
         $this->setConcurringSession($execution->getIdentifier());
@@ -246,7 +243,6 @@ class ConcurringSessionService
 
         $this->qtiRunnerService->endTimer($context);
         $this->qtiRunnerService->pause($context);
-        $this->stateService->pause($execution);
     }
 
     private function getRunnerServiceContextByDeliveryExecution(
