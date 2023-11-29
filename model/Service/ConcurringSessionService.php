@@ -146,10 +146,6 @@ class ConcurringSessionService
             $deliveryUri = $deliveryUri->getUri();
         }
 
-        $this->logger->info(
-            sprintf('getDeliveryIdByExecutionId: deliveryUri=%s', var_export($deliveryUri, true))
-        );
-
         if ($deliveryUri) {
             return (string)$deliveryUri;
         }
