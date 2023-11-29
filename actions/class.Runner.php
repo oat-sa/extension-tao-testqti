@@ -25,8 +25,6 @@
  */
 
 use oat\libCat\exception\CatEngineConnectivityException;
-use oat\tao\model\featureFlag\FeatureFlagChecker;
-use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\RuntimeService;
@@ -628,27 +626,6 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     public function move()
     {
         try {
-            $serviceContext = $this->getServiceContext();
-            $state = $serviceContext->getTestSession()->getState();
-
-            if ($state == AssessmentTestSessionState::SUSPENDED) {
-                $this->getLogger()->debug(
-                    sprintf(
-                        '%s: session %s is suspended, returning a PausedException response',
-                        self::class,
-                        $serviceContext->getTestSession()->getSessionId()
-                    )
-                );
-
-                $this->returnJson(
-                    $this->getErrorResponse(
-                        new QtiRunnerPausedException()
-                    )
-                );
-
-                return;
-            }
-
             $this->validateSecurityToken();
 
             $moveCommand = new MoveCommand(
