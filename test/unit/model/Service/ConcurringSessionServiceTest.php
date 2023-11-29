@@ -143,7 +143,6 @@ class ConcurringSessionServiceTest extends TestCase
 
     public function testPausesExecutionsForOtherDeliveries(): void
     {
-        error_reporting(0xFFFFFFFF);
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
