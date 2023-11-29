@@ -47,9 +47,7 @@ class ConcurringSessionServiceTest extends TestCase
     private DeliveryExecutionService $deliveryExecutionService;
     private FeatureFlagCheckerInterface $featureFlagChecker;
     private PHPSession $currentSession;
-
-    /** @var ConcurringSessionService */
-    private $subject;
+    private ConcurringSessionService $subject;
 
     protected function setUp(): void
     {
