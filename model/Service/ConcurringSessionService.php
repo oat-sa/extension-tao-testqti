@@ -29,7 +29,6 @@ use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
-use oat\taoDelivery\model\execution\StateServiceInterface;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
@@ -44,7 +43,6 @@ class ConcurringSessionService
 
     private LoggerInterface $logger;
     private QtiRunnerService $qtiRunnerService;
-    private StateServiceInterface $stateService;
     private RuntimeService $runtimeService;
     private Ontology $ontology;
     private DeliveryExecutionService $deliveryExecutionService;
@@ -54,7 +52,6 @@ class ConcurringSessionService
     public function __construct(
         LoggerInterface $logger,
         QtiRunnerService $qtiRunnerService,
-        StateServiceInterface $stateService,
         RuntimeService $runtimeService,
         Ontology $ontology,
         DeliveryExecutionService $deliveryExecutionService,
@@ -63,7 +60,6 @@ class ConcurringSessionService
     ) {
         $this->logger = $logger;
         $this->qtiRunnerService = $qtiRunnerService;
-        $this->stateService = $stateService;
         $this->runtimeService = $runtimeService;
         $this->ontology = $ontology;
         $this->deliveryExecutionService = $deliveryExecutionService;
@@ -92,7 +88,7 @@ class ConcurringSessionService
             try {
                 $execution = $this->deliveryExecutionService->getDeliveryExecution($executionId);
 
-                if ($execution) {
+                if ($execution instanceof DeliveryExecution) {
                     $this->logger->debug(
                         sprintf(
                             '%s: Current execution %s, pausing non-current execution %s',
@@ -169,7 +165,7 @@ class ConcurringSessionService
         $currentDeliveryUri = (string)$this->getDeliveryIdByExecutionId($currentExecutionId);
         $executions = $this->getActiveDeliveryExecutionsByUser($userUri);
 
-        $this->logger->logCritical(
+        $this->logger->debug(
             sprintf(
                 '%s: userUri=%s currentExecutionId=%s currentDeliveryUri=%s',
                 __FUNCTION__,
@@ -186,9 +182,9 @@ class ConcurringSessionService
                 $execution->getIdentifier() !== $currentExecutionId
                 && $execution->getDelivery()->getUri() !== $currentDeliveryUri
             ) {
-                $executionIdsForOtherDeliveries[] = $execution->getUri();
+                $executionIdsForOtherDeliveries[] = $execution->getIdentifier();
 
-                $this->logger->logCritical(
+                $this->logger->debug(
                     sprintf(
                         '%s: execution %s belongs to other delivery "%s" != "%s"',
                         __FUNCTION__,
