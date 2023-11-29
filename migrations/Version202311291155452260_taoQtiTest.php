@@ -45,11 +45,7 @@ final class Version202311291155452260_taoQtiTest extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $oldXmlConfigKey = 'XmlEditor';
-        $newXmlConfigKey = 'xmlEditor';
-        $extension = $this->getExtension();
-        $extension->unsetConfig($newXmlConfigKey);
-        $extension->setConfig($oldXmlConfigKey, ['is_locked' => false]);
+        $this->throwIrreversibleMigrationException();
     }
 
     private function getExtension(): Extension
