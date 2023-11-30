@@ -135,9 +135,9 @@ class ConcurringSessionServiceTest extends TestCase
     public function doesNothingIfTheExecutionIsForAnAnonymousUserDataProvider(): array
     {
         return [
-            "Null user identifier" => [null],
-            "Empty user identifier" => [''],
-            "User identifier provided as 'anonymous'" => ['anonymous'],
+            'Null user identifier' => [null],
+            'Empty user identifier' => [''],
+            'User identifier provided as "anonymous"' => ['anonymous'],
         ];
     }
 
