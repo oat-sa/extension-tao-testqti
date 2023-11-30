@@ -74,7 +74,7 @@ class ConcurringSessionService
             return;
         }
 
-        /** @var DeliveryExecutionInterface[] $execution */
+        /** @var DeliveryExecutionInterface[] $userExecutions */
         $userExecutions = $this->deliveryExecutionService->getDeliveryExecutionsByStatus(
             $activeExecution->getUserIdentifier(),
             DeliveryExecutionInterface::STATE_ACTIVE
@@ -83,13 +83,18 @@ class ConcurringSessionService
         foreach ($userExecutions as $execution) {
             if ($execution->getOriginalIdentifier() !== $activeExecution->getOriginalIdentifier()) {
                 try {
-                    $this->pauseSingleExecution($execution);
+                    $this->setConcurringSession($execution->getOriginalIdentifier());
+
+                    $context = $this->getContextByDeliveryExecution($execution);
+
+                    $this->qtiRunnerService->endTimer($context);
+                    $this->qtiRunnerService->pause($context);
                 } catch (Throwable $e) {
                     $this->logger->warning(
                         sprintf(
                             '%s: Unable to pause delivery execution %s: %s',
                             self::class,
-                            $activeExecution->getOriginalIdentifier(),
+                            $execution->getOriginalIdentifier(),
                             $e->getMessage()
                         )
                     );
@@ -119,22 +124,9 @@ class ConcurringSessionService
         );
     }
 
-    private function pauseSingleExecution(DeliveryExecution $execution): void
-    {
-        if ($execution->getState()->getUri() !== DeliveryExecutionInterface::STATE_PAUSED) {
-            $this->setConcurringSession($execution->getOriginalIdentifier());
-
-            $context = $this->getContextByDeliveryExecution($execution);
-
-            $this->qtiRunnerService->endTimer($context);
-            $this->qtiRunnerService->pause($context);
-        }
-    }
-
     private function getContextByDeliveryExecution(DeliveryExecutionInterface $execution): QtiRunnerServiceContext
     {
-        $delivery = $execution->getDelivery();
-        $container = $this->runtimeService->getDeliveryContainer($delivery->getUri());
+        $container = $this->runtimeService->getDeliveryContainer($execution->getDelivery()->getUri());
 
         if (!$container instanceof QtiTestDeliveryContainer) {
             throw new common_Exception(
