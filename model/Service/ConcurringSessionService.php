@@ -81,7 +81,7 @@ class ConcurringSessionService
 
         $otherExecutionIds = $this->getExecutionIdsForOtherDeliveries(
             $userIdentifier,
-            $activeExecution->getIdentifier()
+            $activeExecution->getOriginalIdentifier()
         );
 
         foreach ($otherExecutionIds as $executionId) {
@@ -93,7 +93,7 @@ class ConcurringSessionService
                         sprintf(
                             '%s: Current execution %s, pausing non-current execution %s',
                             self::class,
-                            $activeExecution->getIdentifier(),
+                            $activeExecution->getOriginalIdentifier(),
                             $executionId
                         )
                     );
@@ -115,7 +115,7 @@ class ConcurringSessionService
 
     public function isConcurringSession(DeliveryExecution $execution): bool
     {
-        $key = "pauseReason-{$execution->getIdentifier()}";
+        $key = "pauseReason-{$execution->getOriginalIdentifier()}";
 
         return $this->currentSession->hasAttribute($key)
             && $this->currentSession->getAttribute($key) === self::PAUSE_REASON_CONCURRENT_TEST;
@@ -123,7 +123,7 @@ class ConcurringSessionService
 
     public function clearConcurringSession(DeliveryExecution $execution): void
     {
-        $this->currentSession->removeAttribute("pauseReason-{$execution->getIdentifier()}");
+        $this->currentSession->removeAttribute("pauseReason-{$execution->getOriginalIdentifier()}");
     }
 
     public function setConcurringSession(string $executionId): void
@@ -175,16 +175,16 @@ class ConcurringSessionService
 
         foreach ($executions as $execution) {
             if (
-                $execution->getIdentifier() !== $currentExecutionId
+                $execution->getOriginalIdentifier() !== $currentExecutionId
                 && $execution->getDelivery()->getUri() !== $currentDeliveryUri
             ) {
-                $executionIdsForOtherDeliveries[] = $execution->getIdentifier();
+                $executionIdsForOtherDeliveries[] = $execution->getOriginalIdentifier();
 
                 $this->logger->debug(
                     sprintf(
                         '%s: execution %s belongs to other delivery "%s" != "%s"',
                         __FUNCTION__,
-                        $execution->getIdentifier(),
+                        $execution->getOriginalIdentifier(),
                         $execution->getDelivery()->getUri(),
                         $currentDeliveryUri
                     )
@@ -222,12 +222,12 @@ class ConcurringSessionService
     private function pauseSingleExecution(DeliveryExecution $execution): void
     {
         if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-            $this->logger->debug(sprintf('%s already paused', $execution->getIdentifier()));
+            $this->logger->debug(sprintf('%s already paused', $execution->getOriginalIdentifier()));
 
             return;
         }
 
-        $this->setConcurringSession($execution->getIdentifier());
+        $this->setConcurringSession($execution->getOriginalIdentifier());
 
         $context = $this->getContextByDeliveryExecution($execution);
 
@@ -259,7 +259,7 @@ class ConcurringSessionService
         return $this->qtiRunnerService->getServiceContext(
             $testDefinition,
             $testCompilation,
-            $execution->getIdentifier()
+            $execution->getOriginalIdentifier()
         );
     }
 }

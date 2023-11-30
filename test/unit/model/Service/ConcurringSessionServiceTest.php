@@ -217,7 +217,7 @@ class ConcurringSessionServiceTest extends TestCase
             ->willReturn($otherDeliveryResource);
         $otherExecutionDomainObject
             ->expects($this->atLeastOnce())
-            ->method('getIdentifier')
+            ->method('getOriginalIdentifier')
             ->willReturn('https://example.com/execution/2');
         $otherExecutionDomainObject
             ->expects($this->atLeastOnce())
@@ -240,7 +240,7 @@ class ConcurringSessionServiceTest extends TestCase
         $execution = $this->createMock(DeliveryExecution::class);
         $execution
             ->expects($this->atLeastOnce())
-            ->method('getIdentifier')
+            ->method('getOriginalIdentifier')
             ->willReturn('https://example.com/execution/1');
         $execution
             ->expects($this->atLeastOnce())
