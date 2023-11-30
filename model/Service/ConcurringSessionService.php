@@ -23,8 +23,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
-use core_kernel_classes_Resource;
-use oat\generis\model\data\Ontology;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
@@ -44,7 +42,6 @@ class ConcurringSessionService
     private LoggerInterface $logger;
     private QtiRunnerService $qtiRunnerService;
     private RuntimeService $runtimeService;
-    private Ontology $ontology;
     private DeliveryExecutionService $deliveryExecutionService;
     private FeatureFlagCheckerInterface $featureFlagChecker;
     private ?PHPSession $currentSession;
@@ -53,7 +50,6 @@ class ConcurringSessionService
         LoggerInterface $logger,
         QtiRunnerService $qtiRunnerService,
         RuntimeService $runtimeService,
-        Ontology $ontology,
         DeliveryExecutionService $deliveryExecutionService,
         FeatureFlagCheckerInterface $featureFlagChecker,
         PHPSession $currentSession = null
@@ -61,7 +57,6 @@ class ConcurringSessionService
         $this->logger = $logger;
         $this->qtiRunnerService = $qtiRunnerService;
         $this->runtimeService = $runtimeService;
-        $this->ontology = $ontology;
         $this->deliveryExecutionService = $deliveryExecutionService;
         $this->featureFlagChecker = $featureFlagChecker;
         $this->currentSession = $currentSession ?? PHPSession::singleton();
@@ -79,36 +74,26 @@ class ConcurringSessionService
             return;
         }
 
-        $otherExecutionIds = $this->getExecutionIdsForOtherDeliveries(
-            $userIdentifier,
-            $activeExecution->getOriginalIdentifier()
+        /** @var DeliveryExecutionInterface[] $execution */
+        $userExecutions = $this->deliveryExecutionService->getDeliveryExecutionsByStatus(
+            $activeExecution->getUserIdentifier(),
+            DeliveryExecutionInterface::STATE_ACTIVE
         );
 
-        foreach ($otherExecutionIds as $executionId) {
-            try {
-                $execution = $this->deliveryExecutionService->getDeliveryExecution($executionId);
-
-                if ($execution instanceof DeliveryExecution) {
-                    $this->logger->debug(
+        foreach ($userExecutions as $execution) {
+            if ($execution->getOriginalIdentifier() !== $activeExecution->getOriginalIdentifier()) {
+                try {
+                    $this->pauseSingleExecution($execution);
+                } catch (Throwable $e) {
+                    $this->logger->warning(
                         sprintf(
-                            '%s: Current execution %s, pausing non-current execution %s',
+                            '%s: Unable to pause delivery execution %s: %s',
                             self::class,
                             $activeExecution->getOriginalIdentifier(),
-                            $executionId
+                            $e->getMessage()
                         )
                     );
-
-                    $this->pauseSingleExecution($execution);
                 }
-            } catch (Throwable $e) {
-                $this->logger->warning(
-                    sprintf(
-                        '%s: Unable to pause delivery execution %s: %s',
-                        self::class,
-                        $executionId,
-                        $e->getMessage()
-                    )
-                );
             }
         }
     }
@@ -134,105 +119,16 @@ class ConcurringSessionService
         );
     }
 
-    private function getDeliveryIdByExecutionId(string $executionId): ?string
-    {
-        $executionClass = $this->ontology->getClass(DeliveryExecutionInterface::CLASS_URI);
-        $deliveryProperty = $this->ontology->getProperty(DeliveryExecutionInterface::PROPERTY_DELIVERY);
-
-        $executionInstance = $executionClass->getResource($executionId);
-        $deliveryUri = $executionInstance->getUniquePropertyValue($deliveryProperty);
-
-        if ($deliveryUri instanceof core_kernel_classes_Resource) {
-            $deliveryUri = $deliveryUri->getUri();
-        }
-
-        if ($deliveryUri) {
-            return (string)$deliveryUri;
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getExecutionIdsForOtherDeliveries(string $userUri, string $currentExecutionId): array
-    {
-        $currentDeliveryUri = (string)$this->getDeliveryIdByExecutionId($currentExecutionId);
-        $executions = $this->getActiveDeliveryExecutionsByUser($userUri);
-
-        $this->logger->debug(
-            sprintf(
-                '%s: userUri=%s currentExecutionId=%s currentDeliveryUri=%s',
-                __FUNCTION__,
-                $userUri,
-                $currentExecutionId,
-                $currentDeliveryUri
-            )
-        );
-
-        $executionIdsForOtherDeliveries = [];
-
-        foreach ($executions as $execution) {
-            if (
-                $execution->getOriginalIdentifier() !== $currentExecutionId
-                && $execution->getDelivery()->getUri() !== $currentDeliveryUri
-            ) {
-                $executionIdsForOtherDeliveries[] = $execution->getOriginalIdentifier();
-
-                $this->logger->debug(
-                    sprintf(
-                        '%s: execution %s belongs to other delivery "%s" != "%s"',
-                        __FUNCTION__,
-                        $execution->getOriginalIdentifier(),
-                        $execution->getDelivery()->getUri(),
-                        $currentDeliveryUri
-                    )
-                );
-            }
-        }
-
-        return $executionIdsForOtherDeliveries;
-    }
-
-    /**
-     * @return DeliveryExecutionInterface[]
-     */
-    private function getActiveDeliveryExecutionsByUser(string $userUri): array
-    {
-        $executionClass = $this->ontology->getClass(DeliveryExecutionInterface::CLASS_URI);
-        $executionInstances = $executionClass->searchInstances([
-            DeliveryExecutionInterface::PROPERTY_SUBJECT => $userUri,
-            DeliveryExecutionInterface::PROPERTY_STATUS => DeliveryExecutionInterface::STATE_ACTIVE,
-        ], [
-            'like' => false
-        ]);
-
-        $executions = [];
-
-        foreach ($executionInstances as $executionInstance) {
-            $executions[] = $this->deliveryExecutionService->getDeliveryExecution(
-                $executionInstance->getUri()
-            );
-        }
-
-        return $executions;
-    }
-
     private function pauseSingleExecution(DeliveryExecution $execution): void
     {
-        if ($execution->getState()->getUri() === DeliveryExecutionInterface::STATE_PAUSED) {
-            $this->logger->debug(sprintf('%s already paused', $execution->getOriginalIdentifier()));
+        if ($execution->getState()->getUri() !== DeliveryExecutionInterface::STATE_PAUSED) {
+            $this->setConcurringSession($execution->getOriginalIdentifier());
 
-            return;
+            $context = $this->getContextByDeliveryExecution($execution);
+
+            $this->qtiRunnerService->endTimer($context);
+            $this->qtiRunnerService->pause($context);
         }
-
-        $this->setConcurringSession($execution->getOriginalIdentifier());
-
-        $context = $this->getContextByDeliveryExecution($execution);
-
-        $this->qtiRunnerService->endTimer($context);
-        $this->qtiRunnerService->pause($context);
     }
 
     private function getContextByDeliveryExecution(DeliveryExecutionInterface $execution): QtiRunnerServiceContext
