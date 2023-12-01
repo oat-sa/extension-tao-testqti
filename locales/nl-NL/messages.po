@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint155\n"
-"PO-Revision-Date: 2021-06-02T16:55:53\n"
+"Project-Id-Version: TAO 2023.12\n"
+"PO-Revision-Date: 2023-12-01T07:53:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -20,6 +20,9 @@ msgid "(Visual) Clear all active highlights"
 msgstr ""
 
 msgid "(Visual) Highlight Text"
+msgstr ""
+
+msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -46,6 +49,9 @@ msgstr "Een geldig antwoord voor dit item is vereist."
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Een zichtbare sectie is er een die herkenbaar is voor de kandidaat."
 
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
+
 msgid "Activated"
 msgstr "Geactiveerd"
 
@@ -57,6 +63,9 @@ msgstr "Voeg een zip-bestand toe met QTI/APIP toetsen en items"
 
 msgid "Add selected item(s) here."
 msgstr "Voeg geselecteerde item(s) hier toe."
+
+msgid "Add Subsection"
+msgstr ""
 
 msgid "Add the source file"
 msgstr "Voeg het bron bestand toe"
@@ -223,6 +232,15 @@ msgstr "Zwart op Paars"
 msgid "Black on White"
 msgstr "Zwart op Wit"
 
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
+msgid "Bookmarked question %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Rekenmachine"
 
@@ -361,6 +379,9 @@ msgstr "Weergegeven naam"
 msgid "Displays a customisable magnifier"
 msgstr "Toont een aanpasbare vergroting"
 
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "Volg deze vraag niet meer op"
 
@@ -406,11 +427,11 @@ msgstr "Schakel het item herzieningsscherm in / navigator."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Maakt het mogelijk om naar items binnen deze sectie over te gaan. Vereist de optie voor het beoordelingsscherm."
 
-msgid "End test"
-msgstr "Test beëindigen"
-
 msgid "End Test"
 msgstr "Eindig toets"
+
+msgid "End test"
+msgstr "Test beëindigen"
 
 msgid "Enter a blueprint"
 msgstr "Voer een blauwdruk in"
@@ -432,11 +453,20 @@ msgstr "Fout gevonden in de IMS QTI Toets:\n"
 msgid "Expand the review panel"
 msgstr "Vergroot het review paneel"
 
+msgid "Export"
+msgstr ""
+
 msgid "Export failed for the test \"%s"
 msgstr "Export voor examen \"%s is mislukt"
 
+msgid "Export failed. Key uri nor classUri in formValues are not defined"
+msgstr ""
+
 msgid "Export metadata"
 msgstr "Metadata exporteren"
+
+msgid "Export QTI %s Test Package"
+msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "Exporteer QTI 2.1 toets pakket"
@@ -507,6 +537,9 @@ msgstr "Grijs op Groen"
 msgid "Hide Review"
 msgstr "Verberg herziening"
 
+msgid "Hide test overview panel"
+msgstr ""
+
 msgid "Hide the review screen"
 msgstr "Verberg het overzichtsscherm"
 
@@ -558,6 +591,9 @@ msgstr "Indien de categorie optie is gezet, zal de score ook worden verwerkt per
 msgid "If the connection cannot be restored, see option B."
 msgstr ""
 
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr ""
+
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
@@ -590,6 +626,9 @@ msgstr "Inconsistentie op regel %1d:"
 
 msgid "Individual"
 msgstr "Individueel"
+
+msgid "Informational item"
+msgstr ""
 
 msgid "Informational Item Usage"
 msgstr "Informatief item gebruik"
@@ -630,11 +669,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Item sessie controle"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Items"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Items kunnen optioneel worden toegewezen aan een of meer categorieën. "
@@ -763,11 +802,14 @@ msgstr "Minimale duur voor dit deel van de toets."
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \'id\'"
 msgstr ""
 
 msgid "Missed test package file"
 msgstr "Miste een examen pakket bestand"
+
+msgid "Missing filename for QTI Test export"
+msgstr ""
 
 msgid "Missing required configuration option %s"
 msgstr ""
@@ -817,11 +859,17 @@ msgstr "Volgende sectie"
 msgid "No"
 msgstr "Nee"
 
+msgid "NO"
+msgstr ""
+
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Geen CAT-engine geconfigureerd voor CAT-eindpunt \"%s\"."
 
 msgid "No file found at location \"%s\"."
 msgstr "Geen bestand gevonden op locatie: \"%s\"."
+
+msgid "No instance in form to export"
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "Geen pogingen meer toegestaan voor item \"%s\"."
@@ -964,6 +1012,12 @@ msgstr "Publiceren van QTI toets \"%s\" mislukt."
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI toets \"%s\" succesvol gepubliceerd"
 
+msgid "QTI Test Metadata"
+msgstr ""
+
+msgid "QTI Test Package %s"
+msgstr ""
+
 msgid "QTI Test Package 2.1"
 msgstr "QTI Toets pakket 2.1"
 
@@ -973,10 +1027,13 @@ msgstr "QTI Examen pakket 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "QTI/APIP Examen Content Pakket"
 
+msgid "Question"
+msgstr ""
+
 msgid "question"
 msgstr ""
 
-msgid "Question"
+msgid "Question %s"
 msgstr ""
 
 msgid "questions"
@@ -1003,6 +1060,9 @@ msgstr "Verwijder rubriek blok"
 msgid "Remove Section"
 msgstr "Verwijder sectie"
 
+msgid "Remove Subsection"
+msgstr ""
+
 msgid "Remove Test Part"
 msgstr ""
 
@@ -1017,6 +1077,9 @@ msgstr "Filter resetten"
 
 msgid "Resource(s) successfully exported."
 msgstr "Resource(s) met succes geëxporteerd."
+
+msgid "ResultTransmission event successfully registered"
+msgstr ""
 
 msgid "Review"
 msgstr "Herzien"
@@ -1048,10 +1111,10 @@ msgstr "Puntenteller"
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Notitieboekje"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Notitieboekje"
 
 msgid "Scratchpad"
@@ -1125,6 +1188,9 @@ msgstr "Toon beoordeling"
 
 msgid "Show Solution"
 msgstr "Oplossing tonen"
+
+msgid "Show test overview panel"
+msgstr ""
 
 msgid "Show the review screen"
 msgstr "Toon het overzichtsscherm"
@@ -1234,6 +1300,12 @@ msgstr "Test metagegevens met succes geëxporteerd."
 msgid "Test Navigation"
 msgstr "Examennavigatie"
 
+msgid "Test overview"
+msgstr ""
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
+
 msgid "Test Part Properties"
 msgstr ""
 
@@ -1262,11 +1334,11 @@ msgstr "Examens"
 msgid "Text content"
 msgstr "Tekst inhoud"
 
-msgid "Text to Speech"
-msgstr "Tekst naar spraak"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Tekst naar spraak"
 
 msgid "that was being taken."
 msgstr ""
@@ -1349,6 +1421,9 @@ msgstr "De hoofdnaam van de toets"
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
 msgstr "Het aangeleverde archief is ongeldig. Zorg ervoor dat het niet corrupt is en dat het een 'imsmanifest.xml' bestand bevat."
 
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "De te compileren toets '%s' moet minstens één QTI item bevatten. Geen gevonden."
 
@@ -1378,6 +1453,14 @@ msgstr "De sectie titel."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "De verzending modus bepaalt wanneer de antwoorden van een kandidaat worden verwerkt. Een testdeel in individuele modus vereist dat de kandidaat zijn antwoord op een item-voor-item basis verwerkt. In simultaan modus zullen de antwoorden van de kandidaat in een keer aan het eind van het testdeel worden verwerkt."
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
+msgstr ""
 
 msgid "The test has been closed/suspended!"
 msgstr "Het examen is gesloten/geschorst!"
@@ -1595,6 +1678,9 @@ msgstr "XML fout op regel %1$d kolom %2$d \"%3$s\"."
 
 msgid "Yellow on Blue"
 msgstr "Geel op Blauw"
+
+msgid "YES"
+msgstr ""
 
 msgid "Yes"
 msgstr "Ja"
