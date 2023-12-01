@@ -807,7 +807,7 @@ msgstr "تم فقدان المعلم المطلوب 'id \\"\n"
 "\n"
 "msgid "
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \'id\'"
 msgstr ""
 
 msgid "Missed test package file"
