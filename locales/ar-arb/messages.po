@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint160\n"
-"PO-Revision-Date: 2021-12-29 12:39+0100\n"
+"Project-Id-Version: TAO 2023.12\n"
+"PO-Revision-Date: 2023-12-01T07:53:18\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ar-arb\n"
@@ -9,11 +9,8 @@ msgstr ""
 "targetLanguage: ar-arb\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Basepath: ../..\n"
+"X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
-"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
-"POT-Creation-Date: \n"
-"X-Generator: Poedit 2.4.3\n"
 "X-Poedit-SearchPath-0: .\n"
 
 msgid "%s to answer %s"
@@ -24,6 +21,9 @@ msgstr "(مرئي) امسح كل الإضاءات النشطة"
 
 msgid "(Visual) Highlight Text"
 msgstr "(بصري) تمييز النص"
+
+msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "تعذر تجميع بند QTI المتضمن في رائز QTI '%s'"
@@ -49,6 +49,9 @@ msgstr "مطلوب جواب صحيح عن هذا البند."
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "القسم المرئي هو القسم الذي يمكن للمرشح تحديده."
 
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
+
 msgid "Activated"
 msgstr "مفعل"
 
@@ -60,6 +63,9 @@ msgstr "أضف ملفًا مضغوطًا يحتوي على روائز وبنود
 
 msgid "Add selected item(s) here."
 msgstr "أضف البنود المحددة هنا."
+
+msgid "Add Subsection"
+msgstr ""
 
 msgid "Add the source file"
 msgstr "أضف مصدر الملف"
@@ -226,6 +232,15 @@ msgstr "أسود على أرجواني فاتح"
 msgid "Black on White"
 msgstr "أسود على خلفية بيضاء"
 
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
+msgid "Bookmarked question %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "آلة حاسبة"
 
@@ -235,10 +250,10 @@ msgstr "آلة حاسبة BODMAS"
 msgid "Can not playback media file!"
 msgstr "لا يمكن تشغيل ملف الوسائط!"
 
-msgid "CANCEL"
+msgid "Cancel"
 msgstr "إلغاء"
 
-msgid "Cancel"
+msgid "CANCEL"
 msgstr "إلغاء"
 
 msgid "Candidate"
@@ -364,6 +379,9 @@ msgstr "التسمية المعروضة"
 msgid "Displays a customisable magnifier"
 msgstr "يعرض المكبر القابل للتخصيص"
 
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "لا تضع علامة على البند الحالي للمراجعة لاحقًا"
 
@@ -435,11 +453,20 @@ msgstr "تم العثور على خطأ في اختبار : IMS QTI\n"
 msgid "Expand the review panel"
 msgstr "قم بتوسيع لوحة المراجعة"
 
+msgid "Export"
+msgstr ""
+
 msgid "Export failed for the test \"%s"
 msgstr "فشل تصدير الرائز \"%s"
 
+msgid "Export failed. Key uri nor classUri in formValues are not defined"
+msgstr ""
+
 msgid "Export metadata"
 msgstr "تصدير البيانات الوصفية"
+
+msgid "Export QTI %s Test Package"
+msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "تصدير حزمةروائز QTI 2.1"
@@ -510,6 +537,9 @@ msgstr "رمادي على أخضر"
 msgid "Hide Review"
 msgstr "إخفاء المراجعة"
 
+msgid "Hide test overview panel"
+msgstr ""
+
 msgid "Hide the review screen"
 msgstr "إخفاء شاشة المراجعة"
 
@@ -561,6 +591,9 @@ msgstr "إذا تم تعيين خيار الفئة ، فستتم معالجة ا
 msgid "If the connection cannot be restored, see option B."
 msgstr "إذا تعذر استعادة الاتصال ، فراجع الخيار ب."
 
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr ""
+
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr "إذا كنت بحاجة إلى مساعدة ، يرجى الاتصال بخط المساعدة الخاص بنا على 033088 4171."
 
@@ -593,6 +626,9 @@ msgstr "عدم تناسق في السطر  %1d:"
 
 msgid "Individual"
 msgstr "فردي"
+
+msgid "Informational item"
+msgstr ""
 
 msgid "Informational Item Usage"
 msgstr "استخدام بند إعلاميائي"
@@ -705,6 +741,7 @@ msgstr "إدارة مجموعات المواد"
 msgid "Manage test properties"
 msgstr "إدارة خصائص الرائز"
 
+#, tao-public
 msgid "Manage tests"
 msgstr "إدارة الروائز"
 
@@ -766,10 +803,18 @@ msgid "minutes"
 msgstr "دقائق"
 
 msgid "Missed required parameter 'id\\"
-msgstr "تم فقدان المعلم المطلوب 'id \\"
+msgstr "تم فقدان المعلم المطلوب 'id \\"\n"
+"\n"
+"msgid "
+
+msgid "Missed required parameter \'id\"
+msgstr ""
 
 msgid "Missed test package file"
-msgstr "ملف حزمة الرائز مفقود"
+msgstr ""
+
+msgid "Missing filename for QTI Test export"
+msgstr ""
 
 msgid "Missing required configuration option %s"
 msgstr "خيار التكوين المطلوب مفقود %s"
@@ -819,11 +864,17 @@ msgstr "الجزء التالي"
 msgid "No"
 msgstr "لا"
 
+msgid "NO"
+msgstr ""
+
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "لم يتم تكوين محرك CAT لنقطة نهاية \"%s\"."
 
 msgid "No file found at location \"%s\"."
 msgstr "لم يتم العثور على ملف في الموقع \"%s\"."
+
+msgid "No instance in form to export"
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "لا مزيد من المحاولات المسموح بها للبند \"%s\"."
@@ -858,10 +909,10 @@ msgstr "لا يتم خلطه ، يظل الموضع ثابتًا."
 msgid "Offline"
 msgstr "غير متصل على الانترنت"
 
-msgid "OK"
+msgid "Ok"
 msgstr "نعم"
 
-msgid "Ok"
+msgid "OK"
 msgstr "نعم"
 
 msgid "OK & End test"
@@ -966,6 +1017,12 @@ msgstr "فشل نشر الرائز \"%s\""
 msgid "QTI Test \"%s\" successfully published."
 msgstr "تم نشر الرائز  \"%s\" بنجاح."
 
+msgid "QTI Test Metadata"
+msgstr ""
+
+msgid "QTI Test Package %s"
+msgstr ""
+
 msgid "QTI Test Package 2.1"
 msgstr "حزمة الرائز QTI 2.1"
 
@@ -980,6 +1037,9 @@ msgstr "سؤال"
 
 msgid "Question"
 msgstr "سؤال"
+
+msgid "Question %s"
+msgstr ""
 
 msgid "questions"
 msgstr "أسئلة"
@@ -1005,6 +1065,9 @@ msgstr "إزالة قالب القاعدة"
 msgid "Remove Section"
 msgstr "إزالة الجزء"
 
+msgid "Remove Subsection"
+msgstr ""
+
 msgid "Remove Test Part"
 msgstr "إزالة جزء الرائز"
 
@@ -1019,6 +1082,9 @@ msgstr "إعادة تعيين المفرزات"
 
 msgid "Resource(s) successfully exported."
 msgstr "تم تصدير المورد (الموارد) بنجاح."
+
+msgid "ResultTransmission event successfully registered"
+msgstr ""
 
 msgid "Review"
 msgstr "مراجعة"
@@ -1128,6 +1194,9 @@ msgstr "إظهار المراجعة"
 msgid "Show Solution"
 msgstr "إظهار الحل"
 
+msgid "Show test overview panel"
+msgstr ""
+
 msgid "Show the review screen"
 msgstr "إظهار مراجعة الشاشة"
 
@@ -1236,6 +1305,12 @@ msgstr "تم تصدير بيانات تعريف  الرائز بنجاح."
 msgid "Test Navigation"
 msgstr "اختبار التصفح"
 
+msgid "Test overview"
+msgstr ""
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
+
 msgid "Test Part Properties"
 msgstr "اختبار خصائص الجزء"
 
@@ -1257,6 +1332,7 @@ msgstr "حالة الرائز وبنية المراجعة"
 msgid "Test-Taker Tools"
 msgstr "أدوات الرائز"
 
+#, tao-public
 msgid "Tests"
 msgstr "الروائز"
 
@@ -1350,6 +1426,9 @@ msgstr "المعرف الأساسي للرائز."
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
 msgstr "الأرشيف المقدم غير مضبوط. تأكد من أنه غير تالف وأنه يحتوي على ملف \"imsmanifest.xml\"."
 
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "يجب أن يحتوي رائز QTI '%s' المراد ترجمته على بند QTI واحد على الأقل. لا شيء وجد."
 
@@ -1379,6 +1458,14 @@ msgstr "عنوان القسم."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "يحدد وضع الإرسال وقت إرسال أجوبة المرشح لمعالجتها. يتطلب قسم من الرائز في الوضع الفردي من المرشح إرسال أجوبته على أساس كل بند على حدة. في الوضع المتزامن ، يتم تقديم جميع أجوبة المرشح معًا في نهايةقسم من الرائز.."
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
+msgstr ""
 
 msgid "The test has been closed/suspended!"
 msgstr "تم إغلاق  الرائز!"
@@ -1587,6 +1674,7 @@ msgstr "نوع الملف الخاطئ mime"
 msgid "XML Content"
 msgstr "محتوى XML"
 
+#, tao-public
 msgid "XML Editor"
 msgstr "محرر XML"
 
@@ -1598,6 +1686,9 @@ msgstr "أصفر على أزرق"
 
 msgid "Yes"
 msgstr "نعم"
+
+msgid "YES"
+msgstr ""
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr "لقد أجبت على %s  من %s  سؤال (أسئلة) لهذا المقطع من الاختبار"
@@ -1676,3 +1767,4 @@ msgstr "تكبير في"
 
 msgid "Zoom out"
 msgstr "تكبير خارج"
+
