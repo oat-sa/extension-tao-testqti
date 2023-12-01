@@ -20,6 +20,10 @@
  *
  */
 
+declare(strict_types=1);
+
 use oat\taoQtiTest\models\xmlEditor\XmlEditor;
 
-return [XmlEditor::OPTION_XML_EDITOR_LOCK => true];
+return new XmlEditor([
+    XmlEditor::OPTION_XML_EDITOR_LOCK => true
+]);

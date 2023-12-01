@@ -26,16 +26,16 @@ use core_kernel_classes_Resource;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\models\xmlEditor\XmlEditor;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase as UnitTestCase;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use SplObjectStorage;
+use oat\generis\test\TestCase;
 use taoQtiTest_models_classes_QtiTestConverterException;
 use taoQtiTest_models_classes_QtiTestService;
 use taoQtiTest_models_classes_QtiTestServiceException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class XmlEditorTest extends UnitTestCase
+class XmlEditorTest extends TestCase
 {
     /** @var XmlDocument */
     private $xmlDoc;
@@ -43,11 +43,8 @@ class XmlEditorTest extends UnitTestCase
     /** @var core_kernel_classes_Resource|MockObject */
     private $testResourceMock;
 
-    /** @var common_ext_ExtensionsManager|MockObject */
-    private $extensionsManagerMock;
-
-    /** @var common_ext_Extension|MockObject */
-    private $extensionMock;
+    /** @var ServiceLocatorInterface */
+    private $serviceLocatorMock;
 
     /** @var taoQtiTest_models_classes_QtiTestService|MockObject */
     private $qtiTestServiceMock;
@@ -62,36 +59,24 @@ class XmlEditorTest extends UnitTestCase
         $this->xmlDoc = $doc;
 
         $this->testResourceMock = $this->createMock(core_kernel_classes_Resource::class);
-        $this->extensionMock = $this->createMock(common_ext_Extension::class);
-        $this->extensionsManagerMock = $this->createMock(common_ext_ExtensionsManager::class);
-        $this->extensionsManagerMock
-            ->expects(self::once())
-            ->method('getExtensionById')
-            ->with('taoQtiTest')
-            ->willReturn($this->extensionMock);
         $this->qtiTestServiceMock = $this->createMock(taoQtiTest_models_classes_QtiTestService::class);
         $this->qtiTestServiceMock
             ->method('getDoc')
             ->with($this->testResourceMock)
             ->willReturn($this->xmlDoc);
         $this->featureFlagCheckerMock = $this->createMock(FeatureFlagChecker::class);
+
+        $this->serviceLocatorMock = $this->getServiceLocatorMock([
+            taoQtiTest_models_classes_QtiTestService::class => $this->qtiTestServiceMock,
+            FeatureFlagChecker::class => $this->featureFlagCheckerMock,
+        ]);
     }
 
     public function testGetTestXml()
     {
-        $this->extensionMock
-            ->expects(self::once())
-            ->method('getConfig')
-            ->with('xmlEditor')
-            ->willReturn([XmlEditor::OPTION_XML_EDITOR_LOCK => true]);
-
-        $serviceXmlEditor = new XmlEditor(
-            $this->extensionsManagerMock,
-            $this->qtiTestServiceMock,
-            $this->featureFlagCheckerMock
-        );
-
-        $xmlString = $serviceXmlEditor->getTestXml($this->testResourceMock);
+        $service = new XmlEditor();
+        $service->setServiceLocator($this->serviceLocatorMock);
+        $xmlString = $service->getTestXml($this->testResourceMock);
         $this->assertEquals($this->xmlDoc->saveToString(), $xmlString);
     }
 
@@ -102,17 +87,7 @@ class XmlEditorTest extends UnitTestCase
      */
     public function testSaveStringTest()
     {
-        $this->extensionMock
-            ->expects(self::once())
-            ->method('getConfig')
-            ->with('xmlEditor')
-            ->willReturn([XmlEditor::OPTION_XML_EDITOR_LOCK => true]);
-
-        $serviceXmlEditor = new XmlEditor(
-            $this->extensionsManagerMock,
-            $this->qtiTestServiceMock,
-            $this->featureFlagCheckerMock
-        );
+        $service = new XmlEditor();
 
         // phpcs:disable Generic.Files.LineLength
         $xmlMock = <<<'EOL'
@@ -193,28 +168,53 @@ EOL;
             ->method('saveJsonTest')
             ->with($this->testResourceMock, json_encode($expectArrayTest));
 
-        $serviceXmlEditor->saveStringTest($this->testResourceMock, $xmlMock);
+        $service->setServiceLocator($this->serviceLocatorMock);
+        $service->saveStringTest($this->testResourceMock, $xmlMock);
     }
 
-    public function testIsLocked()
+    /**
+     * @dataProvider getFeatureIsLockedData
+     */
+    public function testIsLocked($configFlag, $newFeatureFlag, $legacyFeatureFlag, $expectedLock)
     {
-        $this->extensionMock
-            ->expects(self::once())
-            ->method('getConfig')
-            ->with('xmlEditor')
-            ->willReturn([XmlEditor::OPTION_XML_EDITOR_LOCK => false]);
-
-        $serviceXmlEditor = new XmlEditor(
-            $this->extensionsManagerMock,
-            $this->qtiTestServiceMock,
-            $this->featureFlagCheckerMock
-        );
+        $service = new XmlEditor([XmlEditor::OPTION_XML_EDITOR_LOCK => $configFlag]);
+        $service->setServiceLocator($this->serviceLocatorMock);
 
         $this->featureFlagCheckerMock
             ->method('isEnabled')
-            ->with('FEATURE_FLAG_XML_EDITOR_ENABLED')
-            ->willReturn(true);
+            ->withConsecutive(['FEATURE_FLAG_XML_EDITOR_ENABLED'], ['XML_EDITOR_ENABLED'])
+            ->willReturnOnConsecutiveCalls($newFeatureFlag, $legacyFeatureFlag);
 
-        $this->assertEquals(false, $serviceXmlEditor->isLocked());
+        $this->assertEquals($expectedLock, $service->isLocked());
+    }
+
+    public function getFeatureIsLockedData(): array
+    {
+        return [
+            'unlocked by config' => [
+                true,
+                false,
+                false,
+                false
+            ],
+            'unlocked by new feature flag' => [
+                false,
+                true,
+                false,
+                false
+            ],
+            'unlocked by legacy feature flag' => [
+                false,
+                false,
+                true,
+                false
+            ],
+            'locked' => [
+                false,
+                false,
+                false,
+                true
+            ],
+        ];
     }
 }

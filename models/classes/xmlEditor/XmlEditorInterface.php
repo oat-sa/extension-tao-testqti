@@ -26,6 +26,7 @@ use core_kernel_classes_Resource;
 
 interface XmlEditorInterface
 {
+    public const SERVICE_ID = 'taoQtiTest/XmlEditor';
     public const XML_EDITOR_ROLE = 'http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor';
     public const OPTION_XML_EDITOR_LOCK = 'is_locked';
 

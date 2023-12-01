@@ -85,6 +85,6 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
       */
     private function getXmlEditorService(): XmlEditorInterface
     {
-        return $this->getServiceLocator()->getContainer()->get(XmlEditorInterface::class);
+        return $this->getServiceLocator()->get(XmlEditorInterface::SERVICE_ID);
     }
 }
