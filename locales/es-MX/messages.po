@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint146\n"
-"PO-Revision-Date: 2021-01-20T12:36:02\n"
+"Project-Id-Version: TAO 2023.12\n"
+"PO-Revision-Date: 2023-12-01T07:53:19\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es-MX\n"
@@ -21,6 +21,9 @@ msgstr "(Visual) Borrar todos los puntos resaldados activos"
 
 msgid "(Visual) Highlight Text"
 msgstr "(Visual) Texto Resaltado"
+
+msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Un Elemento QTI involucrado en la Prueba '%s' QTI no pudo ser compilado."
@@ -46,6 +49,9 @@ msgstr "Se requiere una respuesta válida a este ítem."
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Una sección visible es una que es identificable por el candidato."
 
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
+
 msgid "Activated"
 msgstr "Activado"
 
@@ -57,6 +63,9 @@ msgstr "Añadir un archivo zip que contiene pruebas QTI/APIP y elementos"
 
 msgid "Add selected item(s) here."
 msgstr "Añadir elemento(s) seleccionados aqui."
+
+msgid "Add Subsection"
+msgstr ""
 
 msgid "Add the source file"
 msgstr "Añadir el archivo origen"
@@ -223,6 +232,15 @@ msgstr "Negro sobre Magenta Claro"
 msgid "Black on White"
 msgstr "Negro sobre Blanco"
 
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
+msgid "Bookmarked question %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Calculadora"
 
@@ -361,6 +379,9 @@ msgstr "Etiqueta mostrada"
 msgid "Displays a customisable magnifier"
 msgstr "Muestra una lupa adaptable"
 
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "No marcar el ítem actual para revisión posterior"
 
@@ -406,10 +427,10 @@ msgstr "Activar la pantalla de revisión/navegador de ítems."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Permite saltar a otros elementos de esta sección. Requiere la opción Pantalla de revisión."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finalizar prueba"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finalizar prueba"
 
 msgid "Enter a blueprint"
@@ -432,11 +453,20 @@ msgstr "Error encontrado en la prueba IMS QTI :\n"
 msgid "Expand the review panel"
 msgstr "Expandir el panel de revisión"
 
+msgid "Export"
+msgstr ""
+
 msgid "Export failed for the test \"%s"
 msgstr "La exportación falló para la prueba \"%s"
 
+msgid "Export failed. Key uri nor classUri in formValues are not defined"
+msgstr ""
+
 msgid "Export metadata"
 msgstr "Exportar metadatos"
+
+msgid "Export QTI %s Test Package"
+msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "Exportar Paquete de Prueba QTI 2.1"
@@ -507,6 +537,9 @@ msgstr "Gris sobre Verde"
 msgid "Hide Review"
 msgstr "Esconder revisión"
 
+msgid "Hide test overview panel"
+msgstr ""
+
 msgid "Hide the review screen"
 msgstr "Esconder la pantalla de revisión"
 
@@ -558,6 +591,9 @@ msgstr "Si se establece la opción de categoría, el puntaje también se procesa
 msgid "If the connection cannot be restored, see option B."
 msgstr "Si no se puede restablecer la conexión, véase la opción B."
 
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr ""
+
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr "Si necesita ayuda, por favor contacte con nuestra línea de ayuda en el 0330 088 4171."
 
@@ -590,6 +626,9 @@ msgstr "Inconsistencia en linea %1d:"
 
 msgid "Individual"
 msgstr "Individual"
+
+msgid "Informational item"
+msgstr ""
 
 msgid "Informational Item Usage"
 msgstr "Uso de ítem informativo"
@@ -630,11 +669,11 @@ msgstr "El identificador de respuesta del elemento no coincide con el elemento a
 msgid "Item Session Control"
 msgstr "Control de Sesión de Elemento"
 
-msgid "items"
-msgstr "elementos"
-
 msgid "Items"
 msgstr "Elementos"
+
+msgid "items"
+msgstr "elementos"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
@@ -769,6 +808,9 @@ msgstr "Se omitió el parámetro requerido \'id\'"
 msgid "Missed test package file"
 msgstr "Se omitió el archivo de paquete de la prueba"
 
+msgid "Missing filename for QTI Test export"
+msgstr ""
+
 msgid "Missing required configuration option %s"
 msgstr "Falta la opción de configuración requerida %s"
 
@@ -817,11 +859,17 @@ msgstr "Sección siguiente"
 msgid "No"
 msgstr "No"
 
+msgid "NO"
+msgstr ""
+
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "No hay ningún motor CAT configurado para el punto final CAT \"%s\"."
 
 msgid "No file found at location \"%s\"."
 msgstr "Archivo no encontrado en ubicación \"%s\"."
+
+msgid "No instance in form to export"
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "No se permiten más intentos para el elemento \"%s\"."
@@ -964,6 +1012,12 @@ msgstr "Publicación de prueba \"%s\" QTI fallida."
 msgid "QTI Test \"%s\" successfully published."
 msgstr "Prueba \"%s\" QTI publicada satisfactoriamente."
 
+msgid "QTI Test Metadata"
+msgstr ""
+
+msgid "QTI Test Package %s"
+msgstr ""
+
 msgid "QTI Test Package 2.1"
 msgstr "Paquete de Prueba QTI 2.1"
 
@@ -973,11 +1027,14 @@ msgstr "Paquete de prueba QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Paquete con contenido de prueba QTI/APIP"
 
+msgid "Question"
+msgstr "Pregunta"
+
 msgid "question"
 msgstr "pregunta"
 
-msgid "Question"
-msgstr "Pregunta"
+msgid "Question %s"
+msgstr ""
 
 msgid "questions"
 msgstr "preguntas"
@@ -1003,6 +1060,9 @@ msgstr "Eliminar Bloque de Rúbrica"
 msgid "Remove Section"
 msgstr "Eliminar Sección"
 
+msgid "Remove Subsection"
+msgstr ""
+
 msgid "Remove Test Part"
 msgstr "Retire la parte de la prueba"
 
@@ -1017,6 +1077,9 @@ msgstr "Restaurar filtros"
 
 msgid "Resource(s) successfully exported."
 msgstr "Recursos exportados satisfactoriamente."
+
+msgid "ResultTransmission event successfully registered"
+msgstr ""
 
 msgid "Review"
 msgstr "Revisión"
@@ -1048,11 +1111,11 @@ msgstr "Puntuador"
 msgid "Scoring"
 msgstr "Puntaje"
 
-msgid "Scratch pad"
-msgstr "Bloc de notas"
-
 msgid "Scratch Pad"
 msgstr "Bloc de Notas"
+
+msgid "Scratch pad"
+msgstr "Bloc de notas"
 
 msgid "Scratchpad"
 msgstr "Bloc de notas"
@@ -1125,6 +1188,9 @@ msgstr "Mostrar revisión"
 
 msgid "Show Solution"
 msgstr "Mostrar Solución"
+
+msgid "Show test overview panel"
+msgstr ""
 
 msgid "Show the review screen"
 msgstr "Mostrar la pantalla de revisión"
@@ -1234,6 +1300,12 @@ msgstr "Los metadatos de la prueba se exportaron satisfactoriamente."
 msgid "Test Navigation"
 msgstr "Navegación por la prueba"
 
+msgid "Test overview"
+msgstr ""
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
+
 msgid "Test Part Properties"
 msgstr "Propiedades de la parte de prueba"
 
@@ -1262,11 +1334,11 @@ msgstr "Pruebas"
 msgid "Text content"
 msgstr "Contenido del texto"
 
-msgid "Text to Speech"
-msgstr "Texto a Voz"
-
 msgid "Text To Speech"
 msgstr "Texto A Voz"
+
+msgid "Text to Speech"
+msgstr "Texto a Voz"
 
 msgid "that was being taken."
 msgstr "que estaba siendo tomada."
@@ -1349,6 +1421,9 @@ msgstr "El identificador principio de la prueba."
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
 msgstr "El archivo proporcionado no es válido. Asegúrese de que no está dañado y que contiene un archivo 'imsmanifest.xml'."
 
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "La prueba '%s' QTI para ser compilada debe contener al menos 1 Elemento QTI. Ninguno encontrado."
 
@@ -1379,6 +1454,14 @@ msgstr "El título de sección."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "El modo de presentación determina cuando las respuestas de los candidatos se presentan para el procesamiento de la respuesta. Un testPart en modo individual requiere que el candidato presente sus respuestas en una base elemento por elemento. En el modo simultáneo las respuestas de los candidatos están presentadas juntas al final del testPart."
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
+msgstr ""
 
 msgid "The test has been closed/suspended!"
 msgstr "¡La evaluación se cerró/se suspendió!"
@@ -1596,6 +1679,9 @@ msgstr "error XML en la linea %1$d columna %2$d \"%3$s\"."
 
 msgid "Yellow on Blue"
 msgstr "Amarillo sobre Azul"
+
+msgid "YES"
+msgstr ""
 
 msgid "Yes"
 msgstr "Sí"

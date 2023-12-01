@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint146\n"
-"PO-Revision-Date: 2021-01-20T12:36:05\n"
+"Project-Id-Version: TAO 2023.12\n"
+"PO-Revision-Date: 2023-12-01T07:53:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it-IT\n"
@@ -20,6 +20,9 @@ msgid "(Visual) Clear all active highlights"
 msgstr ""
 
 msgid "(Visual) Highlight Text"
+msgstr ""
+
+msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -46,6 +49,9 @@ msgstr ""
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Una sezione visibile è quella che è identificabile dal candidato."
 
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
+
 msgid "Activated"
 msgstr ""
 
@@ -57,6 +63,9 @@ msgstr ""
 
 msgid "Add selected item(s) here."
 msgstr "Aggiungi qui item selezionato/i"
+
+msgid "Add Subsection"
+msgstr ""
 
 msgid "Add the source file"
 msgstr "Aggiungi il file sorgente"
@@ -223,6 +232,15 @@ msgstr ""
 msgid "Black on White"
 msgstr ""
 
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
+msgid "Bookmarked question %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Calcolatrice"
 
@@ -361,6 +379,9 @@ msgstr ""
 msgid "Displays a customisable magnifier"
 msgstr ""
 
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "Non contrassegnare l'item corrente per una revisione successiva"
 
@@ -406,10 +427,10 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
-msgid "End test"
+msgid "End Test"
 msgstr "Fine test"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Fine test"
 
 msgid "Enter a blueprint"
@@ -431,10 +452,19 @@ msgstr "Errore rilevato nel IMS QTI Test: \\ n %s"
 msgid "Expand the review panel"
 msgstr "Espandi il riquadro recensione"
 
+msgid "Export"
+msgstr ""
+
 msgid "Export failed for the test \"%s"
 msgstr ""
 
+msgid "Export failed. Key uri nor classUri in formValues are not defined"
+msgstr ""
+
 msgid "Export metadata"
+msgstr ""
+
+msgid "Export QTI %s Test Package"
 msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
@@ -506,6 +536,9 @@ msgstr ""
 msgid "Hide Review"
 msgstr "Nascondi revisione"
 
+msgid "Hide test overview panel"
+msgstr ""
+
 msgid "Hide the review screen"
 msgstr "Nascondi pannello revisioni"
 
@@ -557,6 +590,9 @@ msgstr ""
 msgid "If the connection cannot be restored, see option B."
 msgstr ""
 
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr ""
+
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
@@ -589,6 +625,9 @@ msgstr "Incoerenza alla riga% 1d:"
 
 msgid "Individual"
 msgstr "Singolo"
+
+msgid "Informational item"
+msgstr ""
 
 msgid "Informational Item Usage"
 msgstr ""
@@ -629,11 +668,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Sessione di controllo item"
 
-msgid "items"
-msgstr ""
-
 msgid "Items"
 msgstr "Item"
+
+msgid "items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Gli item possono opzionalmente essere assegnati a una o più categorie"
@@ -768,6 +807,9 @@ msgstr ""
 msgid "Missed test package file"
 msgstr ""
 
+msgid "Missing filename for QTI Test export"
+msgstr ""
+
 msgid "Missing required configuration option %s"
 msgstr ""
 
@@ -816,11 +858,17 @@ msgstr "Sezione successiva"
 msgid "No"
 msgstr "No"
 
+msgid "NO"
+msgstr ""
+
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr ""
 
 msgid "No file found at location \"%s\"."
 msgstr "Nessun file trovato in posizione \"%s\""
+
+msgid "No instance in form to export"
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "Nessun altro tentativo consentito per item \"% s\""
@@ -963,6 +1011,12 @@ msgstr "Pubblicazione QTI Test \"%s\" non riuscita."
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI Test \"%s\" pubblicato con successo"
 
+msgid "QTI Test Metadata"
+msgstr ""
+
+msgid "QTI Test Package %s"
+msgstr ""
+
 msgid "QTI Test Package 2.1"
 msgstr "Pacchetto test QTI 2.1"
 
@@ -972,10 +1026,13 @@ msgstr ""
 msgid "QTI/APIP Test Content Package"
 msgstr ""
 
+msgid "Question"
+msgstr ""
+
 msgid "question"
 msgstr ""
 
-msgid "Question"
+msgid "Question %s"
 msgstr ""
 
 msgid "questions"
@@ -1002,6 +1059,9 @@ msgstr "Rimuovi Rubrica Block"
 msgid "Remove Section"
 msgstr "Rimuovi sezione"
 
+msgid "Remove Subsection"
+msgstr ""
+
 msgid "Remove Test Part"
 msgstr ""
 
@@ -1015,6 +1075,9 @@ msgid "Reset filters"
 msgstr "Filtri usati"
 
 msgid "Resource(s) successfully exported."
+msgstr ""
+
+msgid "ResultTransmission event successfully registered"
 msgstr ""
 
 msgid "Review"
@@ -1047,10 +1110,10 @@ msgstr "Segnapunti"
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1124,6 +1187,9 @@ msgstr "Mostra revisione"
 
 msgid "Show Solution"
 msgstr "Mostra soluzione"
+
+msgid "Show test overview panel"
+msgstr ""
 
 msgid "Show the review screen"
 msgstr "Mostra pannello revisioni"
@@ -1233,6 +1299,12 @@ msgstr ""
 msgid "Test Navigation"
 msgstr ""
 
+msgid "Test overview"
+msgstr ""
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
+
 msgid "Test Part Properties"
 msgstr ""
 
@@ -1261,10 +1333,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1348,6 +1420,9 @@ msgstr "Il principale identificatore del test."
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
 msgstr "L'archivio fornito non è valido. Assicurarsi che non sia corrotto e che contenga un file 'imsmanifest.xml'."
 
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "Il test QTI '%s' da compilare deve contenere almeno 1 item QTI. Nessuno trovato."
 
@@ -1377,6 +1452,14 @@ msgstr "Il titolo della sezione"
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "La modalità di presentazione definisce quando le risposte del candidato sono presentate per l'elaborazione di risposta. Una parte di test in modalità individuale richiede che il candidato presenti le risposte su base item per item. In modo simultaneo le risposte del candidato sono tutte presentate insieme alla fine della parte di test."
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
+msgstr ""
 
 msgid "The test has been closed/suspended!"
 msgstr ""
@@ -1593,6 +1676,9 @@ msgid "XML error at line %1$d column %2$d \"%3$s\"."
 msgstr "Errore XML alla riga%1$d colonna %2$d \"%3$s\"."
 
 msgid "Yellow on Blue"
+msgstr ""
+
+msgid "YES"
 msgstr ""
 
 msgid "Yes"

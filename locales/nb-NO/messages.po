@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2023.02 LTS\n"
-"PO-Revision-Date: 2023-02-14T10:14:22\n"
+"Project-Id-Version: TAO 2023.12\n"
+"PO-Revision-Date: 2023-12-01T07:53:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nb-NO\n"
@@ -21,6 +21,9 @@ msgstr "(Visuell) Fjern alle aktive uthevinger"
 
 msgid "(Visual) Highlight Text"
 msgstr "(Visuell) Uthev tekst"
+
+msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
+msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "En QTI-oppgave som er med i QTI-prøven '%s' kunne ikke kompileres."
@@ -427,10 +430,10 @@ msgstr "Aktiver oppgavegjennomgang/navigering på skjerm."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Aktiver muligheten til å  gå videre i oppgavesettet innen gitt oppgaveseksjon. Krever at valget se gjennom oppgavene på skjerm er aktivert."
 
-msgid "End test"
+msgid "End Test"
 msgstr "Avslutt prøven"
 
-msgid "End Test"
+msgid "End test"
 msgstr "Avslutt prøven"
 
 msgid "Enter a blueprint"
@@ -668,11 +671,11 @@ msgstr "Oppgavens svaridentifikator samsvarer ikke med gjeldende oppgave"
 msgid "Item Session Control"
 msgstr "Innstilling for gjennomføring"
 
-msgid "items"
-msgstr "oppgaver"
-
 msgid "Items"
 msgstr "Oppgaver"
+
+msgid "items"
+msgstr "oppgaver"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Oppgaver kan tilordnes en eller flere kategorier."
@@ -740,12 +743,12 @@ msgstr "Administrer rubrikkbokser"
 msgid "Manage test properties"
 msgstr "Administrer prøveegenskaper"
 
-msgid "Manage Tests"
-msgstr "Administrer Oppgavesett"
-
 #, tao-public
 msgid "Manage tests"
 msgstr "Administrer oppgavesett"
+
+msgid "Manage Tests"
+msgstr "Administrer Oppgavesett"
 
 msgid "Mark for review"
 msgstr "Marker for å se gjennom"
@@ -1029,11 +1032,11 @@ msgstr "QTI-prøvepakke 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Innholdspakke for QTI/APIP-prøve"
 
-msgid "Question"
-msgstr "Spørsmål"
-
 msgid "question"
 msgstr "spørsmål"
+
+msgid "Question"
+msgstr "Spørsmål"
 
 msgid "Question %s"
 msgstr ""
@@ -1113,10 +1116,10 @@ msgstr "Skårer"
 msgid "Scoring"
 msgstr "Skåring"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Tegnebrett"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Tegnebrett"
 
 msgid "Scratchpad"
@@ -1681,11 +1684,11 @@ msgstr "XML-feil på linje %1$d kolonne %2 $ d \" %3 $ s\"."
 msgid "Yellow on Blue"
 msgstr "Gul på blå"
 
-msgid "YES"
-msgstr ""
-
 msgid "Yes"
 msgstr "Ja"
+
+msgid "YES"
+msgstr ""
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr "Du svarte %s av %s spørsmål på denne seksjonen av prøven"
