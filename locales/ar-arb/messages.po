@@ -802,13 +802,9 @@ msgstr "المدة الدنيا لهذا الجزء من الرائز ."
 msgid "minutes"
 msgstr "دقائق"
 
-msgid "Missed required parameter 'id\\"
-msgstr "تم فقدان المعلم المطلوب 'id \\"\n"
-"\n"
-"msgid "
-
 msgid "Missed required parameter \'id\'"
-msgstr ""
+msgstr "تم فقدان المعلم المطلوب \'id\'"
+"msgid "
 
 msgid "Missed test package file"
 msgstr ""
