@@ -802,7 +802,7 @@ msgstr "Minimali trukmė šio testo daliai."
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \'id\'"
 msgstr ""
 
 msgid "Missed required parameter \'id\'"
