@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-09-05 09:12\n"
+"PO-Revision-Date: 2023-12-04 16:19\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -21,551 +21,591 @@ msgstr ""
 "Language-Team: Japanese\n"
 
 msgid "%s to answer %s"
-msgstr ""
+msgstr "%s から %s の回答"
 
 msgid "(Visual) Clear all active highlights"
-msgstr ""
+msgstr "（ビジュアル）アクティブなハイライトをクリア"
 
 msgid "(Visual) Highlight Text"
+msgstr "（ビジュアル）ハイライトテキスト"
+
+msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr ""
+msgstr "QTIテスト '%s' 内のQTIアイテムがコンパイルできませんでした。"
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr ""
+msgstr "QTIテストは少なくともひとつのコンパイルされたQTIアイテムがなくてはなりません。"
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "QTIテストパッケージ"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr ""
+msgstr "QTIテスト '%s' で参照された外部リソースが見つかりませんでした。"
 
 msgid "A response to every question in this item is required."
-msgstr ""
+msgstr "すべての問いに答えてください。"
 
 msgid "A response to this item is required."
-msgstr ""
+msgstr "この問いに回答してください"
 
 msgid "A valid response to this item is required."
-msgstr ""
+msgstr "この問いに回答してください"
 
 msgid "A visible section is one that is identifiable by the candidate."
-msgstr ""
+msgstr "ビジブルセクションは受験者が識別できるものです。"
+
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr "受験者がアイテムの内容を音声で読み上げることができるアクセシビリティツールです。"
 
 msgid "Activated"
-msgstr ""
+msgstr "フィードバック有効"
 
 msgid "add a new weight"
-msgstr ""
+msgstr "新規「重み」追加"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr ""
+msgstr "QTI/APIPテストとアイテムを含むzipファイルを追加"
 
 msgid "Add selected item(s) here."
-msgstr ""
+msgstr "選択したアイテムを追加"
+
+msgid "Add Subsection"
+msgstr "サブセクション追加"
 
 msgid "Add the source file"
-msgstr ""
+msgstr "ソースファイルを追加。"
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr ""
+msgstr "このセクションを終了した後、このセクションに戻って変更を加えることはできません。このセクションを終了してもよろしいですか？"
 
 msgid "All"
-msgstr ""
+msgstr "すべて"
 
 msgid "Allow Comment"
-msgstr ""
+msgstr "コメントを許可"
 
 msgid "Allow Review"
-msgstr ""
+msgstr "レビューを許可"
 
 msgid "Allow Section Skipping"
-msgstr ""
+msgstr "セクションのスキップ許可"
 
 msgid "Allow Skipping"
-msgstr ""
+msgstr "スキップ許可"
 
 msgid "Allow skipping of the current section."
-msgstr ""
+msgstr "現在のセクションのスキップを許可"
 
 msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
-msgstr ""
+msgstr "受験者は，APIPプロトコル準拠のアイテム内のメディアファイルを再生できます"
 
 msgid "Allow the candidate to review his answers."
-msgstr ""
+msgstr "受験者に自分の解答を確認することを許可します"
 
 msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
-msgstr ""
+msgstr "選択問題で消去法での解答（取り消し線表示）をするためのサポートツール"
 
 msgid "Allow the test-taker to highlight parts of the item text."
-msgstr ""
+msgstr "黄色ラインマーカー"
 
 msgid "Allow the test-taker to mask and unmask answers in choice interactions."
-msgstr ""
+msgstr "選択問題で選択肢を一つづつ表示させながら解答するためのサポートツール"
 
 msgid "Allow the test-taker to mask parts of the item with a movable mask."
-msgstr ""
+msgstr "問題の一部分を隠しながら解答するためのサポートツール"
 
 msgid "Allow the test-taker to use a basic calculator."
-msgstr ""
+msgstr "電卓が使用できます"
 
 msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
-msgstr ""
+msgstr "受験者は，演算順序BODMASに沿った電卓が使えます。"
 
 msgid "Allow the test-taker to use a movable magnifier tool."
-msgstr ""
+msgstr "部分拡大するための移動式拡大レンズ"
 
 msgid "Allow the test-taker to use a scientific calculator."
-msgstr ""
+msgstr "関数電卓が使用できます"
 
 msgid "Allow the test-taker to visually isolate a line of text."
-msgstr ""
+msgstr "１行づつ表示範囲を移動しながら，読み進めるためのサポートツール"
 
 msgid "Allows Test-taker to zoom in and out the item content."
-msgstr ""
+msgstr "画面全体を拡大・縮小できるようにします"
 
 msgid "Also compute the score per categories"
-msgstr ""
+msgstr "カテゴリごとにスコアを採点する場合に設定"
 
 msgid "An error occured while retrieving items"
-msgstr ""
+msgstr "アイテムの取得中にエラーが発生しました"
 
 msgid "An error occurred during results submission. Please retry."
-msgstr ""
+msgstr "結果の送信中にエラーが発生しました。再度実行してください"
 
 msgid "An error occurred during the test initialization!"
-msgstr ""
+msgstr "テスト初期化中にエラーが発生しました"
 
 msgid "An error occurred during the test, please content your administrator."
-msgstr ""
+msgstr "エラーが発生しました。管理者に連絡してください。"
 
 msgid "An error occurred!"
 msgstr "エラーが発生しました!"
 
 msgid "An error occurs, please contact your administrator"
-msgstr ""
+msgstr "エラーが発生しました。管理者に連絡してください。"
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
-msgstr ""
+msgstr "シャッフルの対象となる親セクションを持つ不可視セクションでは、親セクションの一部であるかのように受験者に表示される子セクションを、ブロックとしてシャッフルするか、親セクションの他の子セクションと混ぜてシャッフルするかを指定できます。"
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr ""
+msgstr "テストのアイテムを読み込めません。もしくはQTIに準拠していません。"
 
 msgid "An item involved in the test cannot be written."
-msgstr ""
+msgstr "テストのアイテムを書き込めません"
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr ""
+msgstr "QTIテスト'%s'のコンパイル中に不明なエラーが発生しました。"
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr ""
+msgstr "QTIテスト'%s'のコンパイル中に不明なエラーが発生しました。"
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
-msgstr ""
+msgstr "回復不能なエラーが発生しました。受験は一時停止されます。"
 
 msgid "and"
 msgstr ""
 
 msgid "and flagged %s of them"
-msgstr ""
+msgstr "%s にフラグを立てました。"
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr ""
+msgstr "今レビューできるアイテム %s にフラグを立てました"
 
 msgid "Answer Eliminator"
-msgstr ""
+msgstr "消去法ツール"
 
 msgid "Answer Masking"
-msgstr ""
+msgstr "選択肢マスキング"
 
 msgid "Answered"
-msgstr ""
+msgstr "解答済み"
 
 msgid "APIP Text To Speech"
-msgstr ""
+msgstr "テキスト読み上げ（APIP)"
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
-msgstr ""
+msgstr "解答をクリアして次に進んでよろしいですか？　戻って解答することができなくなります。"
 
 msgid "Are you sure you want to end the test?"
 msgstr "テストを終了してよろしいでしょうか？"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
-msgstr ""
+msgstr "次に進んでよろしいですか？　戻って解答し直すことができなくなります。"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
-msgstr ""
+msgstr "次に進んでよろしいですか？　戻って解答することができなくなります。"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back."
-msgstr ""
+msgstr "次に進んでよろしいですか？　一旦進むと戻ることができません。"
 
 msgid "Area Masking"
-msgstr ""
+msgstr "エリアマスキング"
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
-msgstr ""
+msgstr "ブループリントをセクションに関連付けることで、そのセクションを指定されたブループリントに対して検証することができます。"
 
 msgid "Associate Blueprint"
-msgstr ""
+msgstr "ブループリントの関連付け"
 
 msgid "At least one mandatory parameter was required but found missing in your request"
-msgstr ""
+msgstr "少なくとも1つの必須パラメータが必要ですが、不足しています"
 
 msgid "Author"
-msgstr ""
+msgstr "作成者"
 
 msgid "Auxiliary file not found at location \"%s\"."
-msgstr ""
+msgstr "ロケーション\"%s\"にAuxiliaryファイルが見つかりませんでした。"
 
 msgid "Black on Cream"
-msgstr ""
+msgstr "クリーム地に黒"
 
 msgid "Black on Light Blue"
-msgstr ""
+msgstr "ブルー地に黒"
 
 msgid "Black on Light Magenta"
-msgstr ""
+msgstr "ライトマゼンタ地に黒"
 
 msgid "Black on White"
-msgstr ""
+msgstr "白地に黒"
+
+msgid "Bookmark question"
+msgstr "ブックマークに関する質問"
+
+msgid "Bookmark the current question for later review"
+msgstr "この問題をマークし、後で確認できるようにする"
+
+msgid "Bookmarked question %s"
+msgstr "マークした問題：%s"
 
 msgid "Calculator"
-msgstr ""
+msgstr "電卓"
 
 msgid "Calculator BODMAS"
-msgstr ""
+msgstr "電卓（BODMAS）"
 
 msgid "Can not playback media file!"
-msgstr ""
+msgstr "メディアファイルが再生できない"
 
 msgid "CANCEL"
-msgstr ""
+msgstr "キャンセル"
 
 msgid "Cancel"
 msgstr "キャンセル"
 
 msgid "Candidate"
-msgstr ""
+msgstr "受験者"
 
 msgid "Cardinality"
-msgstr ""
+msgstr "カーディナリティ"
 
 msgid "Categories"
-msgstr ""
+msgstr "カテゴリ"
 
 msgid "Category score"
-msgstr ""
+msgstr "カテゴリスコア"
 
 msgid "Change the current color preset"
-msgstr ""
+msgstr "現在の色設定を変更"
 
 msgid "Class"
-msgstr ""
+msgstr "クラス"
 
 msgid "Class successfully created."
 msgstr "クラスが作成されました。"
 
 msgid "Clear all active highlights"
-msgstr ""
+msgstr "すべてのラインマーカをクリア"
 
 msgid "Clear Highlights"
-msgstr ""
+msgstr "ラインマーカをクリア"
 
 msgid "Click \"%s\" to continue"
 msgstr ""
 
+msgid "Click \"%s\" to continue."
+msgstr "続行するには、「%s」をクリックしてください"
+
 msgid "Click to speak"
-msgstr ""
+msgstr "クリックして話してください"
 
 msgid "Close"
 msgstr "閉じる"
 
 msgid "Close Magnifier"
-msgstr ""
+msgstr "拡大レンスを閉じる"
 
 msgid "Close the mask"
-msgstr ""
+msgstr "マスクを閉じる"
 
 msgid "Close this Section"
-msgstr ""
+msgstr "セクションを閉じる"
 
 msgid "Collapse the review panel"
-msgstr ""
+msgstr "レビューパネルをたたむ"
 
 msgid "Comment"
-msgstr ""
+msgstr "コメント"
 
 msgid "Completed items"
-msgstr ""
+msgstr "完了したアイテム"
 
 msgid "Connected to server"
-msgstr ""
+msgstr "サーバに接続しました"
 
 msgid "CONTINUE TO THE NEXT SECTION"
-msgstr ""
+msgstr "次のセクションへ続く"
 
 msgid "Contrast"
-msgstr ""
+msgstr "コントラスト"
 
 msgid "Controls the contribution of an individual item score to the overall test score."
-msgstr ""
+msgstr "アイテムごとのスコアの重み付け（重み付の識別子名と重み付けの値）を設定します"
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
-msgstr ""
+msgstr "アイテムの最大実施回数を設定します。0の場合は無制限となります。"
 
 msgid "Covers parts of the item"
-msgstr ""
+msgstr "アイテムの一部をカバーする"
 
 msgid "Custom"
-msgstr ""
+msgstr "カスタム"
 
 msgid "custom categories"
-msgstr ""
+msgstr "カスタムカテゴリ"
 
 msgid "Custom outcome processing. No changes will be made to the existing rules."
-msgstr ""
+msgstr "カスタム結果処理。既存のルールを変更することはありません。"
 
 msgid "Cut score"
-msgstr ""
+msgstr "カットスコア"
 
 msgid "Cut score (pass ratio)"
-msgstr ""
+msgstr "カットスコア（合格得点率）"
 
 msgid "Disable validation"
-msgstr ""
+msgstr "検証を無効にする"
 
 msgid "Disconnected from server"
-msgstr ""
+msgstr "サーバとの接続が切断されました"
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
-msgstr ""
+msgstr "受験者がテストパートを終了する時に、未解答や見直しマークが残っている場合，警告を表示します。"
 
 msgid "Display a warning before the test-taker ends the test part."
-msgstr ""
+msgstr "テストパートを終了する前に，受験者へ警告を表示します。"
 
 msgid "Display a warning before the test-taker ends the test."
-msgstr ""
+msgstr "テストを終了する前に，受験者へ警告を表示します。"
 
 msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
-msgstr ""
+msgstr "受験者がセクションをスキップする時に警告を表示します。セクションスキップの設定が前提です。"
 
 msgid "Display End Test Warning"
-msgstr ""
+msgstr "テスト終了警告"
 
 msgid "Display Next Part Warning"
-msgstr ""
+msgstr "テストパート終了警告"
 
 msgid "Display Next Section Warning"
-msgstr ""
+msgstr "セクションスキップ警告"
 
 msgid "Display Unanswered Warning"
-msgstr ""
+msgstr "未解答あり警告"
 
 msgid "Displayed label"
-msgstr ""
+msgstr "ラベル表示"
 
 msgid "Displays a customisable magnifier"
-msgstr ""
+msgstr "カスタマイズ拡大レンズを表示"
+
+msgid "Do not bookmark the current question for later review"
+msgstr "この問題にマークを付けない"
 
 msgid "Do not flag the current item for later review"
-msgstr ""
+msgstr "現在のアイテムに見直しフラグを外す"
 
 msgid "Do not rename it."
-msgstr ""
+msgstr "リネームしないでください"
 
 msgid "Do not show alert on timeout"
-msgstr ""
+msgstr "タイムアウト警告を非表示"
 
 msgid "Don\\'t save"
-msgstr ""
+msgstr "保存しないでください"
 
 msgid "Download"
 msgstr "ダウンロード"
 
 msgid "Download the pupil responses and submit manually."
-msgstr ""
+msgstr "生徒の回答をダウンロードし、手動で提出する。"
 
 msgid "Eliminate choices"
-msgstr ""
+msgstr "選択肢の消去"
 
 msgid "Enable Mark for Review"
-msgstr ""
+msgstr "見直しマーク表示"
 
 msgid "Enable mark for review of items. Requires the Review Screen option."
-msgstr ""
+msgstr "アイテムの見直しマークの利用が有効になります。レビュースクリーンも有効にしてください。"
 
 msgid "Enable Review Screen"
-msgstr ""
+msgstr "レビュースクリーン表示"
 
 msgid "Enable selection"
-msgstr ""
+msgstr "選択出題"
 
 msgid "Enable Skipping Ahead"
-msgstr ""
+msgstr "スキップ有効"
 
 msgid "Enable text to speech"
-msgstr ""
+msgstr "テキスト読み上げ有効"
 
 msgid "Enable the item review screen / navigator."
-msgstr ""
+msgstr "受験者にレビュースクリーン（問題一覧・解答状況画面）が表示されます"
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
-msgstr ""
+msgstr "このセクション内のスキップを有効にします。レビュースクリーン設定が必要です。"
 
 msgid "End test"
-msgstr ""
+msgstr "テスト終了"
 
 msgid "End Test"
-msgstr ""
+msgstr "テスト終了"
 
 msgid "Enter a blueprint"
-msgstr ""
+msgstr "ブループリントの入力"
 
 msgid "Enter a custom category"
-msgstr ""
+msgstr "カテゴリを入力"
 
 msgid "Error"
 msgstr "エラー"
 
 msgid "Error during file import"
-msgstr ""
+msgstr "ファイルインポート中のエラー"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr ""
+msgstr "QTIテストにエラーが見つかりました:\n"
+"%s"
 
 msgid "Expand the review panel"
-msgstr ""
+msgstr "レビューパネルを開く"
+
+msgid "Export"
+msgstr "エクスポート"
 
 msgid "Export failed for the test \"%s"
+msgstr "テスト \"%s のエクスポート失敗"
+
+msgid "Export failed. Key uri nor classUri in formValues are not defined"
 msgstr ""
 
 msgid "Export metadata"
 msgstr "メタデータのエクスポート"
 
-msgid "Export QTI 2.1 Test Package"
+msgid "Export QTI %s Test Package"
 msgstr ""
+
+msgid "Export QTI 2.1 Test Package"
+msgstr "QTI2.1 Test Packageエクスポート"
 
 msgid "Export QTI 2.2 Test Package"
-msgstr ""
+msgstr "QTI2.2 Test Packageエクスポート"
 
 msgid "Export successful for the test \"%s"
-msgstr ""
+msgstr "テスト \"%s のエクスポートが完了しました"
 
 msgid "Feedback block"
-msgstr ""
+msgstr "フィードバックブロック"
 
 msgid "File name"
 msgstr "ファイル名"
 
 msgid "File not found"
-msgstr ""
+msgstr "ファイルが見つかりません"
 
 msgid "File not found!"
-msgstr ""
+msgstr "ファイルは見つかりません!"
 
 msgid "Filter"
 msgstr "フィルタ"
 
 msgid "Fixed"
-msgstr ""
+msgstr "出題順を固定"
 
 msgid "Fixed position in a shuffled the selection."
-msgstr ""
+msgstr "シャッフルでの固定位置"
 
 msgid "Flag for Review"
-msgstr ""
+msgstr "見直しマーク"
 
 msgid "Flag the current item for later review"
-msgstr ""
+msgstr "このアイテムの見直しマークグ"
 
 msgid "Flagged"
-msgstr ""
+msgstr "見直しマーク"
 
 msgid "Flagged for review"
-msgstr ""
+msgstr "見直しマーク"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
-msgstr ""
+msgstr "インフォメーションのためのアイテムと見なし、解答・未解答や見直しマークのカウントに反映されません。"
 
 msgid "Go to next item"
-msgstr ""
+msgstr "次へ進む"
 
 msgid "Go to the current question"
-msgstr ""
+msgstr "現在の問題に進む"
 
 msgid "Go to the next item?"
-msgstr ""
+msgstr "次へ進みますか？"
 
 msgid "Go to the next question"
-msgstr ""
+msgstr "次の問題に進む"
 
 msgid "Go to the previous question"
-msgstr ""
+msgstr "前の問題に戻る"
 
 msgid "Go to the top of the page"
-msgstr ""
+msgstr "最初のページに戻る"
 
 msgid "Gray on Green"
-msgstr ""
+msgstr "グリーン地にグレイ"
 
 msgid "Hide Review"
-msgstr ""
+msgstr "一覧を隠す"
+
+msgid "Hide test overview panel"
+msgstr "テスト一覧非表示"
 
 msgid "Hide the review screen"
-msgstr ""
+msgstr "レビュースクリーン非表示"
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
-msgstr ""
+msgstr "時間制限のあるセクションが終了する際に自動的に表示される警告を非表示にします"
 
 msgid "Hide Timed Section Warning"
-msgstr ""
+msgstr "セクション時間切れ警告を非表示"
 
 msgid "Hide timers"
-msgstr ""
+msgstr "タイマーを隠す"
 
 msgid "Highlight"
-msgstr ""
+msgstr "ハイライト"
 
 msgid "Highlight Text"
-msgstr ""
+msgstr "ハイライトテキスト"
 
 msgid "Highlighter"
-msgstr ""
+msgstr "ラインマーカー"
 
 msgid "hours"
-msgstr ""
+msgstr "時間"
 
 msgid "Html title"
-msgstr ""
+msgstr "HTMLタイトル"
 
 msgid "Identifier"
 msgstr "識別子"
 
 msgid "If required it must appear (at least once) in the selection."
-msgstr ""
+msgstr "必須にすると，選択出題の場合でもこのアイテムは必ず出題されます"
 
 msgid "If required, it must appears at least once in the selection."
-msgstr ""
+msgstr "必須にすると，選択出題の場合でもこのアイテムは必ず出題されます"
 
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
-msgstr ""
+msgstr "チェックを入れると選択された問題の順序はランダムに表示されます。未チェックの場合は、テストに配置された順序を保って出題されます。"
 
 msgid "If the candidate can skip the item, without submitting a response (default is true)."
-msgstr ""
+msgstr "受験者が解答を送信せずに，問題をスキップすることを許可する（デフォルトはスキップ許可）"
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
-msgstr ""
+msgstr "さらにカテゴリスコアが設定されている場合、スコアはカテゴリごとに集計され、「PASS_xxx」として結果表示されます。（「xxx」はカテゴリ名）"
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
-msgstr ""
+msgstr "さらにカテゴリスコアが設定されている場合、スコアはカテゴリごとに集計され、「SCORE_xxx」として結果表示されます。（「xxx」はカテゴリ名）"
 
 msgid "If the connection cannot be restored, see option B."
-msgstr ""
+msgstr "接続を回復できない場合は、オプションBを参照してください。"
+
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr "テストから抜けると、テストの設定が無効なため、変更内容が保存されません。本当に退出しますか？"
 
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
-msgstr ""
+msgstr "お困りの際は、ヘルプライン（0330-088-4171）にご連絡ください。"
 
 msgid "Import"
 msgstr "インポート"
@@ -574,383 +614,398 @@ msgid "Import a QTI/APIP Content Package"
 msgstr "QTI/APIP Content Packageのインポート"
 
 msgid "Import QTI TEST into \"%s"
-msgstr ""
+msgstr "QTI TESTを\"%s\"にインポートします"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "IMS Manifestファイル\"%s\"として参照されるIMS QTIアイテムをインポートできませんでした。"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr ""
+msgstr "IMSマニフェストファイル内で\"%s\"として参照されるQTIアイテムのインポートが完了しました"
 
 msgid "IMS QTI Test Package successfully imported."
-msgstr ""
+msgstr "IMS QTIのテストパッケージのインポートが完了しました"
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr ""
+msgstr "IMS QTIテストがIMSマニフェストファイル \"%s\"から正常にインポートされました"
 
 msgid "In this part of the test navigation is not allowed."
-msgstr ""
+msgstr "このパートでは問題一覧は利用できません"
 
 msgid "Inconsistency at line %1d:"
-msgstr ""
+msgstr "%1d行に矛盾があります:"
 
 msgid "Individual"
-msgstr ""
+msgstr "個別"
+
+msgid "Informational item"
+msgstr "インフォメーションアイテム"
 
 msgid "Informational Item Usage"
-msgstr ""
+msgstr "インフォメーションアイテムに適用"
 
 msgid "Internal server error!"
-msgstr ""
+msgstr "内部サーバエラー"
 
 msgid "is already used in the test."
-msgstr ""
+msgstr "既にテストで使用されています"
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
-msgstr ""
+msgstr "有効な識別子（空白スペース以外）にしてください"
 
 msgid "It is not possible to save your responses while working offline."
-msgstr ""
+msgstr "オフラインの間は、回答を保存することはできません。"
 
 msgid "Item \"%s\" is completed."
-msgstr ""
+msgstr "アイテム \"%s\" は完了しました"
 
 msgid "Item %d"
-msgstr ""
+msgstr "アイテム %d"
 
 msgid "Item %d of %d"
-msgstr ""
+msgstr "%d／%d"
 
 msgid "Item %s loaded"
-msgstr ""
+msgstr "アイテム%sを読み込みました"
 
 msgid "Item Reference Properties"
-msgstr ""
+msgstr "アイテム参照プロパティ"
 
 msgid "Item response identifier does not match current item"
-msgstr ""
+msgstr "アイテム・レスポンス識別子が現在のアイテムと一致しません"
 
 msgid "Item Session Control"
-msgstr ""
+msgstr "アイテムセッションコントロール"
 
 msgid "items"
-msgstr ""
+msgstr "アイテム"
 
 msgid "Items"
 msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
-msgstr ""
+msgstr "アイテムをひとつまたは複数のカテゴリに割当てることができます"
 
 msgid "Items Compilation"
-msgstr ""
+msgstr "アイテムコンパイル"
 
 msgid "Items marked for later review"
-msgstr ""
+msgstr "見直しマークされた問題"
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
-msgstr ""
+msgstr "assessmentItemRef識別子　\"%s\"　のアイテムは，関連するCATエンドポイントに登録されていません。"
 
 msgid "Jump Menu"
-msgstr ""
+msgstr "移動先"
 
 msgid "Jump to:"
-msgstr ""
+msgstr "移動先："
 
 msgid "Keep Together"
-msgstr ""
+msgstr "まとめる"
 
 msgid "Keyboard Navigation"
-msgstr ""
+msgstr "キーボードナビゲーション"
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
-msgstr ""
+msgstr "アクセシビリティツールのキーボードショートカットは、受験者が利用することができます。"
 
 msgid "Late submission allowed"
-msgstr ""
+msgstr "タイムアウト後の提出許可"
 
 msgid "Leave a comment"
-msgstr ""
+msgstr "コメントを残す"
 
 msgid "Line Reader"
-msgstr ""
+msgstr "リーディングトラッカー"
 
 msgid "Linear"
-msgstr ""
+msgstr "順次式"
 
 msgid "Link durations to activate the guided navigation"
-msgstr ""
+msgstr "ガイド付きナビゲーションを有効にするためのリンク継続時間"
 
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
-msgstr ""
+msgstr "ロックされた持続時間 : ガイド付きナビゲーション。時間が0になると次の問題に移動します。"
 
 msgid "Magnifier"
-msgstr ""
+msgstr "拡大レンズ"
 
 msgid "Magnify less"
-msgstr ""
+msgstr "縮小"
 
 msgid "Magnify more"
-msgstr ""
+msgstr "拡大"
 
 msgid "Magnifying Glass"
-msgstr ""
+msgstr "拡大鏡"
 
 msgid "Main navigation"
-msgstr ""
+msgstr "メインナビゲーション"
 
 msgid "Manage Rubric Blocks"
-msgstr ""
+msgstr "ルーブリックブロックの管理"
 
 msgid "Manage test properties"
-msgstr ""
+msgstr "テスト管理"
+
+msgid "Manage Tests"
+msgstr "テスト管理"
 
 #, tao-public
 msgid "Manage tests"
 msgstr "テスト管理"
 
-msgid "Manage Tests"
-msgstr ""
-
 msgid "Mark for review"
-msgstr ""
+msgstr "見直しマーク"
 
 msgid "Masking"
-msgstr ""
+msgstr "マスキング"
 
 msgid "Match value"
-msgstr ""
+msgstr "有効値"
 
 msgid "Max Attempts"
-msgstr ""
+msgstr "最大実施回数"
 
 msgid "Maximum Duration"
-msgstr ""
+msgstr "最大時間"
 
 msgid "Maximum duration : the items times out when the duration reaches 0."
-msgstr ""
+msgstr "最大時間：最大時間が0になると終了します。"
 
 msgid "Maximum duration for the all test."
-msgstr ""
+msgstr "テスト全体の最大時間"
 
 msgid "Maximum duration for this item."
-msgstr ""
+msgstr "このアイテムの最大時間"
 
 msgid "Maximum duration for this section."
-msgstr ""
+msgstr "このセクションの最大時間"
 
 msgid "Maximum duration for this test part."
-msgstr ""
+msgstr "このテストパートの最大時間"
 
 msgid "Metadata export is not available for test \"%s."
-msgstr ""
+msgstr "メタデータのエクスポートはテスト \"%s では使用できません。"
 
 msgid "Minimum Duration"
-msgstr ""
+msgstr "最小時間"
 
 msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
-msgstr ""
+msgstr "最小時間 : 指定された時間の間、受験者は次に進むことができません。"
 
 msgid "Minimum duration for the test."
-msgstr ""
+msgstr "テスト全体の最小時間"
 
 msgid "Minimum duration for this item."
-msgstr ""
+msgstr "このアイテムの最小時間"
 
 msgid "Minimum duration for this section."
-msgstr ""
+msgstr "このセクション最小時間"
 
 msgid "Minimum duration for this test part."
-msgstr ""
+msgstr "このテストパートの最小時間"
 
 msgid "minutes"
 msgstr "分"
 
 msgid "Missed required parameter \\'id\\'"
+msgstr "必要なパラメータが不足しています \\'id\\'"
+
+msgid "Missed required parameter \\'id\\'"
 msgstr ""
 
 msgid "Missed test package file"
+msgstr "見つからないテストパッケージファイル"
+
+msgid "Missing filename for QTI Test export"
 msgstr ""
 
 msgid "Missing required configuration option %s"
-msgstr ""
+msgstr "必要な設定が見つかりません： %s "
 
 msgid "Move"
 msgstr "移動"
 
 msgid "Move Down"
-msgstr ""
+msgstr "下へ"
 
 msgid "Move Up"
-msgstr ""
+msgstr "上へ"
 
 msgid "Moving to the next item without time limit reached message."
-msgstr ""
+msgstr "制限時間アラートを表示しないで次のアイテムに移動します"
 
 msgid "name of the pupil"
-msgstr ""
+msgstr "生徒名"
 
 msgid "Navigation"
 msgstr "ナビゲーション"
 
 msgid "Navigation shortcuts"
-msgstr ""
+msgstr "ナビゲーションショートカット"
 
 msgid "Navigation Warnings"
-msgstr ""
+msgstr "ナビゲーション警告"
 
 msgid "network"
-msgstr ""
+msgstr "ネットワーク"
 
 msgid "New Rubric Block"
-msgstr ""
+msgstr "新規ルーブリックブロック"
 
 msgid "New section"
-msgstr ""
+msgstr "新規セクション"
 
 msgid "New test part"
-msgstr ""
+msgstr "新規テストパート"
 
 msgid "Next"
 msgstr "次へ"
 
 msgid "Next Section"
-msgstr ""
+msgstr "次のセクション"
 
 msgid "No"
 msgstr "いいえ"
 
+msgid "NO"
+msgstr "いいえ"
+
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
-msgstr ""
+msgstr "CATエンドポイント \"％s\" にCATエンジンが構成されていません。"
 
 msgid "No file found at location \"%s\"."
+msgstr "\"%s\"にはファイルがありません"
+
+msgid "No instance in form to export"
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr ""
+msgstr "これ以上，問題\"%s\"の解答はできません。"
 
 msgid "no outcome declaration found"
-msgstr ""
+msgstr "結果変数の宣言なし"
 
 msgid "No outcome processing. Erase the existing rules, if any."
-msgstr ""
+msgstr "結果処理を行いません。既存のルールがあればそれを削除します。"
 
 msgid "No reference to any IMS QTI Item found."
-msgstr ""
+msgstr "QTIアイテムのリファレンスが見つかりませんでした。"
 
 msgid "Non Linear"
-msgstr ""
+msgstr "非順次式"
 
 msgid "None"
 msgstr "なし"
 
 msgid "Not all test could be exported"
-msgstr ""
+msgstr "すべてのテストはエクスポートできませんでした"
 
 msgid "Not answered"
-msgstr ""
+msgstr "未解答"
 
 msgid "Not seen"
-msgstr ""
+msgstr "未閲覧"
 
 msgid "Not shuffled, the position remains fixed."
-msgstr ""
+msgstr "チェックを入れるとシャッフルされずに，提示順はこの位置で維持されます。"
 
 msgid "Offline"
-msgstr ""
+msgstr "オフライン"
 
 msgid "OK"
 msgstr "OK"
 
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 msgid "OK & End test"
-msgstr ""
+msgstr "OK ＆ テスト終了"
 
 msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr ""
+msgstr "このセクションを閉じると、そのセクションに戻ったり、解答を変更したりすることはできません。"
 
 msgid "One or more dependent IMS QTI Items could not be imported."
-msgstr ""
+msgstr "少なくとも１個のQTI依存アイテムがインポートできませんでした。"
 
 msgid "Online"
-msgstr ""
+msgstr "オンライン"
 
 msgid "Only display the items marked for review"
-msgstr ""
+msgstr "見直しマークの問題のみ表示"
 
 msgid "Only display the unanswered items"
-msgstr ""
+msgstr "未解答の問題のみ表示"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "電卓を開く"
 
 msgid "Open Keyboard Shortcuts"
-msgstr ""
+msgstr "キーボードショートカットを開く"
 
 msgid "Option A"
-msgstr ""
+msgstr "オプションA"
 
 msgid "Option B"
-msgstr ""
+msgstr "オプションB"
 
 msgid "or"
-msgstr ""
+msgstr "｜"
 
 msgid "Ordering"
-msgstr ""
+msgstr "出題順"
 
 msgid "Outcome"
 msgstr "結果"
 
 msgid "Outcome declarations"
-msgstr ""
+msgstr "結果変数の宣言"
 
 msgid "Outcome processing"
-msgstr ""
+msgstr "結果処理方法"
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
-msgstr ""
+msgstr "パッケージは有効ですがテストがありません。有効なQTIテストが含まれているか確認してください。"
 
 msgid "Part %d"
-msgstr ""
+msgstr "パート%d"
 
 msgid "Passage"
-msgstr ""
+msgstr "パッセージ"
 
 msgid "Pause"
 msgstr "一時停止"
 
 msgid "Pause the test"
-msgstr ""
+msgstr "テストを一時停止"
 
 msgid "Play"
-msgstr ""
+msgstr "再生"
 
 msgid "Please confirm you want to leave the test."
-msgstr ""
+msgstr "テストを終了してよろしいですか？"
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
-msgstr ""
+msgstr "ページを再読み込みするか、テストを一時停止してみてください。一時停止した場合、このページからテストを再開することができます。"
 
 msgid "Please wait while we try to restore the connection."
-msgstr ""
+msgstr "接続を回復中です。しばらくお待ちください。"
 
 msgid "Preview"
 msgstr "プレビュー"
 
 msgid "Preview the covered area"
-msgstr ""
+msgstr "カバーエリアをプレビュー"
 
 msgid "Previous"
 msgstr "前へ"
 
 msgid "PROCEED & END ASSESSMENT"
-msgstr ""
+msgstr "進行と最終評価"
 
 msgid "Proctor"
 msgstr "試検監督者"
@@ -965,9 +1020,15 @@ msgid "QTI Item Runner"
 msgstr "QTIアイテムランナー"
 
 msgid "QTI Test \"%s\" publishing failed."
-msgstr ""
+msgstr "QTIテスト \"%s\" の公開ができませんでした"
 
 msgid "QTI Test \"%s\" successfully published."
+msgstr "QTIテスト\"%s\" の公開が完了しました"
+
+msgid "QTI Test Metadata"
+msgstr ""
+
+msgid "QTI Test Package %s"
 msgstr ""
 
 msgid "QTI Test Package 2.1"
@@ -980,706 +1041,737 @@ msgid "QTI/APIP Test Content Package"
 msgstr ""
 
 msgid "question"
-msgstr ""
+msgstr "問題"
 
 msgid "Question"
 msgstr "問題"
 
+msgid "Question %s"
+msgstr "問題 %s"
+
 msgid "questions"
-msgstr ""
+msgstr "問題"
 
 msgid "Reference"
-msgstr ""
+msgstr "参照"
 
 msgid "Regenerate"
-msgstr ""
+msgstr "再生成"
 
 msgid "Reload the page"
-msgstr ""
+msgstr "ページ再読み込み"
 
 msgid "remaining %s %s"
-msgstr ""
+msgstr "残り %s %s"
 
 msgid "Remove Item Reference"
-msgstr ""
+msgstr "アイテム参照削除"
 
 msgid "Remove Rubric Block"
-msgstr ""
+msgstr "ルーブリックブロック削除"
 
 msgid "Remove Section"
-msgstr ""
+msgstr "セクション削除"
+
+msgid "Remove Subsection"
+msgstr "サブセクション削除"
 
 msgid "Remove Test Part"
-msgstr ""
+msgstr "テストパート削除"
 
 msgid "Required"
-msgstr ""
+msgstr "必須"
 
 msgid "Required field"
-msgstr ""
+msgstr "必須フィールド"
 
 msgid "Reset filters"
-msgstr ""
+msgstr "全て表示"
 
 msgid "Resource(s) successfully exported."
 msgstr "リソースがエクスポートされました"
 
+msgid "ResultTransmission event successfully registered"
+msgstr "ResultTransmission イベントが正常に登録されました。"
+
 msgid "Review"
-msgstr ""
+msgstr "レビュー"
 
 msgid "Review my Answers"
-msgstr ""
+msgstr "解答を確認する"
 
 msgid "Rubric Block"
-msgstr ""
+msgstr "ルーブリックブロック"
 
 msgid "Rubric Block Properties"
-msgstr ""
+msgstr "ルーブリックブロックプロパティ"
 
 msgid "Rubric Blocks"
-msgstr ""
+msgstr "ルーブリックブロック"
 
 msgid "Save"
 msgstr "保存"
 
 msgid "Saved"
-msgstr ""
+msgstr "保存済み"
 
 msgid "Scientific Calculator"
-msgstr ""
+msgstr "関数電卓"
 
 msgid "Scorer"
-msgstr ""
+msgstr "採点者"
 
 msgid "Scoring"
-msgstr ""
-
-msgid "Scratch pad"
-msgstr ""
+msgstr "採点方法"
 
 msgid "Scratch Pad"
-msgstr ""
+msgstr "スクラッチパッド"
+
+msgid "Scratch pad"
+msgstr "スクラッチパッド"
 
 msgid "Scratchpad"
-msgstr ""
+msgstr "スクラッチパッド"
 
 msgid "seconds"
-msgstr ""
+msgstr "秒"
 
 msgid "Section %d"
-msgstr ""
+msgstr "セクション %d"
 
 msgid "Section %d of %d"
-msgstr ""
+msgstr "セクション：%d／%d"
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr ""
+msgstr "セクションレベルでのカテゴリ設定では、構成アイテムのカテゴリをまとめて設定できます。グレイのカテゴリは、すべてのアイテムがそのカテゴリに属することを意味します。いくつかのアイテムのみが対象となるカテゴリは、白で表示されます。"
 
 msgid "Section Properties"
-msgstr ""
+msgstr "セッションプロパティ"
 
 msgid "Select"
 msgstr "選択"
 
 msgid "Select a blueprint"
-msgstr ""
+msgstr "ブループリント選択"
 
 msgid "Select Items"
-msgstr ""
+msgstr "アイテム選択"
 
 msgid "Select the way the responses of your test should be processed"
-msgstr ""
+msgstr "テストの採点結果の処理方法を選択します"
 
 msgid "Selection"
-msgstr ""
+msgstr "選択数"
 
 msgid "Send"
-msgstr ""
+msgstr "送信"
 
 msgid "Set outcome identifier the feedback block is related to"
-msgstr ""
+msgstr "フィードバックのための結果識別子（outcome identifier）を設定してください"
 
 msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
-msgstr ""
+msgstr "カットスコア（合格得点率）を０〜１の間で設定します。"
 
 msgid "Set the rubric block as a feedback block"
-msgstr ""
+msgstr "フィードバックブロックとしてルーブリックブロックを設定"
 
 msgid "Set the value of the outcome that will activate the feedback block"
-msgstr ""
+msgstr "フィードバックブロックを有効にする結果（outcome）の値を設定してください"
 
 msgid "Set the weight identifier used to process the score"
-msgstr ""
+msgstr "重み付けを設定する場合，このテスト全体に適用される「重み付け（weight)の識別子」を設定します"
 
 msgid "Set the XHTML-QTI class of the rubric block."
-msgstr ""
+msgstr "ルーブリックブロックの XHTML-QTI クラスを設定"
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
-msgstr ""
+msgstr "ルーブリックブロックの XHTML-QTI 識別子を設定"
 
 msgid "SetSynchronisationService successfully configured."
-msgstr ""
+msgstr "SetSynchronisationServiceの設定が完了しました"
 
 msgid "Settings"
 msgstr "設定"
 
 msgid "Show Feedback"
-msgstr ""
+msgstr "フィードバック表示"
 
 msgid "Show Review"
-msgstr ""
+msgstr "問題一覧"
 
 msgid "Show Solution"
-msgstr ""
+msgstr "答えを表示"
+
+msgid "Show test overview panel"
+msgstr "テスト一覧表示"
 
 msgid "Show the review screen"
-msgstr ""
+msgstr "レビュースクリーン表示"
 
 msgid "Show the solution once the answer is submitted."
-msgstr ""
+msgstr "解答を送信すると答えを表示します"
 
 msgid "Show timers"
-msgstr ""
+msgstr "タイマー表示"
 
 msgid "Show/Hide the review screen"
-msgstr ""
+msgstr "レビュースクリーン表示／非表示"
 
 msgid "Shuffle"
 msgstr "シャッフル"
 
 msgid "Simultaneous"
-msgstr ""
+msgstr "同時"
 
 msgid "Skip"
-msgstr ""
+msgstr "スキップ"
 
 msgid "Skip &amp; End Test"
-msgstr ""
+msgstr "スキップ &amp; テスト終了"
 
 msgid "Skip and end test"
-msgstr ""
+msgstr "スキップしテスト終了"
 
 msgid "Skip and go to the end of the test"
-msgstr ""
+msgstr "スキップしてテストを終了します"
 
 msgid "Skip and go to the next item"
-msgstr ""
+msgstr "スキップして次へ進みます"
 
 msgid "Skip to the end of the test"
-msgstr ""
+msgstr "テストの最後までスキップします"
 
 msgid "Skip to the next item"
-msgstr ""
+msgstr "次の問題にスキップします"
 
 msgid "Skip to the next section"
-msgstr ""
+msgstr "次のセクションにスキップします"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
-msgstr ""
+msgstr "結果リストの変更に伴い、一部のルーブリックブロックを更新しました"
 
 msgid "Something unexpected happened."
-msgstr ""
+msgstr "予想外のエラーが発生しまた。"
 
 msgid "Something went wrong..."
 msgstr "何か問題が発生しました。"
 
 msgid "Speech speed"
-msgstr ""
+msgstr "話す速さ"
 
 msgid "Speed"
-msgstr ""
+msgstr "速さ"
 
 msgid "Start Test-part"
-msgstr ""
+msgstr "テストパート開始"
 
 msgid "Step 1: Download the file (see below when available)."
-msgstr ""
+msgstr "ステップ1：ファイルをダウンロードする（利用可能な場合は下記を参照）。"
 
 msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
-msgstr ""
+msgstr "Step 2: 再度オンラインになったら、ダウンロードしたファイルを事務局まで一緒に送ってください。"
 
 msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
-msgstr ""
+msgstr "ステップ3: ファイルのダウンロードが完了したら、ブラウザウィンドウを閉じます。ヘルプラインがファイルをアップロードすると、ステータスが更新されます。"
 
 msgid "Stop"
-msgstr ""
+msgstr "ストップ"
 
 msgid "Submission"
-msgstr ""
+msgstr "送信（提出）"
 
 msgid "Submit and go to the end of the test"
-msgstr ""
+msgstr "テストを送信し終了画面に移動します"
 
 msgid "Submit and go to the item %s"
-msgstr ""
+msgstr "送信してこの問題に移動します: %s"
 
 msgid "Submit and go to the next item"
-msgstr ""
+msgstr "送信して次の問題に進みます"
 
 msgid "Submit and go to the previous item"
-msgstr ""
+msgstr "送信して前の問題に戻ります"
 
 msgid "SUBMIT THE TEST"
-msgstr ""
+msgstr "テストを提出する"
 
 msgid "SUBMIT THIS PART"
-msgstr ""
+msgstr "このパートを提出する"
 
 msgid "technical"
-msgstr ""
+msgstr "テクニカル"
 
 msgid "Test"
 msgstr "テスト"
 
 msgid "Test constructor"
-msgstr ""
+msgstr "テスト作成"
 
 msgid "Test metadata successfully exported."
-msgstr ""
+msgstr "テストメタデータのエクスポートが完了しました。"
 
 msgid "Test Navigation"
-msgstr ""
+msgstr "テストナビゲーション"
+
+msgid "Test overview"
+msgstr "テスト一覧"
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr "テストパートレベルのカテゴリは、その構成アイテムのカテゴリを一度に設定することができます。グレーで表示されているカテゴリは、すべての項目がそのカテゴリを持つことを意味します。白色のカテゴリは、そのカテゴリを持つアイテムが少数であることを意味します。"
 
 msgid "Test Part Properties"
-msgstr ""
+msgstr "テストパートプロパティ"
 
 msgid "Test Preview is not installed, please contact to your administrator."
 msgstr "テストプレビューはインストールされていません。管理者に問合せてください。"
 
 msgid "Test Saved"
-msgstr ""
+msgstr "テストを保存しました"
 
 msgid "Test status"
-msgstr ""
+msgstr "解答状況"
 
 msgid "Test status and review structure"
-msgstr ""
+msgstr "テスト状況とレビューの仕組み"
 
 msgid "Test Status and Structure"
-msgstr ""
+msgstr "テスト状況と構成"
 
 msgid "Test-Taker Tools"
-msgstr ""
+msgstr "サポートツール"
 
 #, tao-public
 msgid "Tests"
 msgstr "テスト"
 
 msgid "Text content"
-msgstr ""
+msgstr "テキストコンテンツ"
 
 msgid "Text to Speech"
-msgstr ""
+msgstr "テキスト読み上げ"
 
 msgid "Text To Speech"
-msgstr ""
+msgstr "テキスト読み上げ"
 
 msgid "that was being taken."
-msgstr ""
+msgstr "取得されていました"
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
-msgstr ""
+msgstr "アーカイブで見つかった 'imsmanifest.xml'ファイルは有効ではありません"
 
 msgid "the assessment (LCL or Mathematics)"
-msgstr ""
+msgstr "評価（LCLまたは数学）"
 
 msgid "The assessment has been created but is not already running."
-msgstr ""
+msgstr "テストは作成されましたが、まだ実施されていません"
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
+msgstr "テストは担当の試験監督者によって中断されています。再開する場合は、再度実施して必要に応じて試験監督者に連絡してください。"
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr "テストは中断されています。再開する場合は、再度実行して必要に応じて試験監督に連絡してください。"
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr ""
+msgstr "テストは中断されています。再開する場合は再度実施してください。"
 
 msgid "The assessment has been terminated."
-msgstr ""
+msgstr "テストは終了されました"
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
 msgstr "テストは終了していますので、これ以上操作することはできません。"
 
 msgid "The assessment is still running."
-msgstr ""
+msgstr "テストは実施中です"
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr ""
+msgstr "無効な解答（未解答がないか）を確認しアラートを出します。"
 
 msgid "The connection seems to be back, please proceed"
-msgstr ""
+msgstr "接続が回復したようです。続けてください。"
 
 msgid "the current question"
-msgstr ""
+msgstr "今問題になっているもの"
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
-msgstr ""
+msgstr "IMSマニフェストファイル内の IMS QTI AssessmentItemRef\"%s\"への依存関係は解決できませんでした。"
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr ""
+msgstr "ダウンロードは<strong>%d</strong>秒で利用可能になります。"
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr ""
+msgstr "この識別子はテスト全体でユニークではありません : %s"
 
 msgid "The identifier of the item reference."
-msgstr ""
+msgstr "アイテム参照用識別子"
 
 msgid "The identifier of the section."
-msgstr ""
+msgstr "セクション識別子"
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
 msgstr "IMS Manifestファイルの中で\"%s\"として参照されているIMS QTIアイテムは、すでにアイテムバンクに格納されました。"
 
 msgid "The IMS QTI Test Package could not be imported."
-msgstr ""
+msgstr "IMS QTIのテストパッケージはインポートできませんでした。"
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr ""
+msgstr "IMSマニフェストファイルで、\"%s\" として参照されたIMS QTIアイテムはインポートされませんでした。"
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
-msgstr ""
+msgstr "受験者が解答する順序をコントロールします。「順次式」の場合、受験者は提示された順序で解答してゆきます。「非順次式」の場合は、受験者は問題を任意の順序で自由に解答できます。"
 
 msgid "The number of child elements to be selected."
-msgstr ""
+msgstr "選択出題される数"
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
-msgstr ""
+msgstr "結果 \"%s\" は存在しませんが、フィードバックブロックによって参照されます。"
 
 msgid "The outcomes have been regenerated!"
-msgstr ""
+msgstr "結果が再生成されました!"
 
 msgid "The principle identifier of the test."
-msgstr ""
+msgstr "テストの主要識別子"
 
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
-msgstr ""
+msgstr "適応されたアーカイブは無効です。破損していないか、'imsmanifest.xml'ファイルを含んでいるかを確認してください。"
+
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr "QTIアイテム（ URI '%s'）が見つかりません。"
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr ""
+msgstr "コンパイルするQTIテスト'%s'は少なくとも１つのQTIアイテムが必要ですが，見つかりません。"
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr ""
+msgstr "QTIテストは正しく取得できませんでした"
 
 msgid "The QTI Test XML or one of its dependencies is malformed or empty."
-msgstr ""
+msgstr "QTIテストXMLまたはその依存関係の1つは、不正または空です"
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr ""
+msgstr "QTI-XMLテストは正常に書き込むことができませんでした"
 
 msgid "The reference."
-msgstr ""
+msgstr "参照"
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr ""
+msgstr "IMS Manifestファイルの「%s」として参照されるIMS QTI Testに関連するリソースがロールバックされました。"
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
-msgstr ""
+msgstr "テスト全体での採点が行われます。スコア（得点）の合計をMAX SCORE（最大得点）で割った値がカットスコア（合格得点率）と比較され、PASS_TOTAL で合否判定が提示されます。"
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
-msgstr ""
+msgstr "テスト全体での採点結果処理が行われます。すべてのスコア（得点）が合計され、結果はSCORE_TOTALで提示されます。"
 
 msgid "The section title."
-msgstr ""
+msgstr "セクション名"
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
+msgstr "受験者の解答がどのようなタイミングで送信されるかを設定します。「個別」送信モードのテストパートでは、受験者はアイテムごとに解答を提出する必要があります。「同時」送信モードでは、受験者の解答はテストパートの最後にまとめて送信されます。"
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
 msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
+msgstr "現在、テストに無効な設定が含まれているため、テストを保存することができません。無効な設定を修正し、再度お試しください。"
 
 msgid "The test has been closed/suspended!"
-msgstr ""
+msgstr "テストは終了/停止しています。"
 
 msgid "The test has been paused, we are unable to connect to the server."
-msgstr ""
+msgstr "サーバに接続できないため、テストを一時停止しました。"
 
 msgid "The test has not been saved."
-msgstr ""
+msgstr "テストは保存されませんでした。"
 
 msgid "The test has unsaved changes, are you sure you want to leave?"
-msgstr ""
+msgstr "アイテムの変更が保存されていません。終了してよろしいですか？"
 
 msgid "The test has unsaved changes, would you like to save it?"
-msgstr ""
+msgstr "テストに未保存の変更がありますが、保存しますか？"
 
 msgid "The test needs to be saved before it can be previewed."
-msgstr ""
+msgstr "プレビューする前に、テストを保存してください。"
 
 msgid "The test part identifier."
-msgstr ""
+msgstr "テストパート識別子"
 
 msgid "The test title."
-msgstr ""
+msgstr "テストタイトル"
 
 msgid "The time limit has been reached for this part of the test."
-msgstr ""
+msgstr "テストパートは制限時間に達しました。"
 
 msgid "There are %s unanswered questions"
-msgstr ""
+msgstr "未回答のものが%s問あります。"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr ""
+msgstr "テストのこの部分には、%sつの未回答の質問があります。"
 
 msgid "There is %s unanswered question"
-msgstr ""
+msgstr "未回答のものが%s問あります。"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr ""
+msgstr "テストのこの部分には未回答の質問が%sつあります。"
 
 msgid "There is not outcomes!"
-msgstr ""
+msgstr "結果がありません!"
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
-msgstr ""
+msgstr "この制約は、最後の実施終了後のフィードバックの見え方に影響します"
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
-msgstr ""
+msgstr "受験中に，問題に対するコメントを受験者に許可するかどうかを設定します。なお、コメントは採点対象にはなりません。"
 
 msgid "This functionality is blocked. Please contact with your administrator for more details."
-msgstr ""
+msgstr "この機能はブロックされています。詳細については、管理者にお問い合わせください。"
 
 msgid "This test has been suspended"
-msgstr ""
+msgstr "テストは一時中断されました"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "テストは強制終了されました"
 
 msgid "Time limit reached for item \"%s\"."
-msgstr ""
+msgstr "問題\"%s\"の制限時間に達しました"
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr ""
+msgstr "制限時間に達したためテストのこのパートは終了しました"
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr ""
+msgstr "制限時間に達しました。ただし、現在の問題はこのまま解答を続け終了することができます。"
 
 msgid "Time Limits"
-msgstr ""
+msgstr "時間制限"
 
 msgid "Time Remaining"
-msgstr ""
+msgstr "残り時間"
 
 msgid "Title"
 msgstr "タイトル"
 
 msgid "Toggle playback"
-msgstr ""
+msgstr "再生を切り替える"
 
 msgid "Toggle start from here mode"
-msgstr ""
+msgstr "[ここから開始] モードを切り替える"
 
 msgid "Tool box and flagging for review"
-msgstr ""
+msgstr "ツールボックスとレビューマーク"
 
 msgid "Toolbox"
-msgstr ""
+msgstr "ツールボックス"
 
 msgid "Total score"
-msgstr ""
+msgstr "合計スコア"
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
-msgstr ""
+msgstr "本機をケーブルでインターネットに接続するか、無線LANの電波が届きやすい場所に移動してみてください。"
 
 msgid "Tutor"
-msgstr ""
+msgstr "チュータ"
 
 msgid "Type"
 msgstr "タイプ"
 
 msgid "Unanswered"
-msgstr ""
+msgstr "未解答"
 
 msgid "Unanswered items"
-msgstr ""
+msgstr "未解答の問題"
 
 msgid "Unflag for Review"
-msgstr ""
+msgstr "見直しマークを外す"
 
 msgid "Unknown error."
-msgstr ""
+msgstr "不明なエラー"
 
 msgid "Unlink to use separated durations"
-msgstr ""
+msgstr "分離した期間を使用するためにリンクを解除する"
 
 msgid "Unseen"
-msgstr ""
+msgstr "未公開"
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr ""
+msgstr "QTI 2.1 Test Package Fileのアップロード"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "複数選択のためにCtrl / Metaキーまたは投げ縄ツールを使用してください"
 
 msgid "Validate Responses"
-msgstr ""
+msgstr "解答の検証"
 
 msgid "Value"
 msgstr "値"
 
 msgid "Viewed"
-msgstr ""
+msgstr "表示済み"
 
 msgid "Viewed items"
-msgstr ""
+msgstr "表示アイテム"
 
 msgid "Views"
-msgstr ""
+msgstr "表示"
 
 msgid "Visible"
-msgstr ""
+msgstr "表示可能"
 
 msgid "Volume"
-msgstr ""
+msgstr "ボリューム"
 
 msgid "Wait for your connection to come back online."
-msgstr ""
+msgstr "接続が回復するのを待ちます。"
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr ""
+msgstr "警告：テスト終了まであと%sです"
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr ""
+msgstr "警告：この問題が終了するまであと %s です"
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr ""
+msgstr "警告：このセクションが終了するまであと %s です"
 
 msgid "Warning – You have %s remaining to complete this test part."
-msgstr ""
+msgstr "警告：このテストパートが終了するまであと %s です"
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr ""
+msgstr "警告：このテストが終了するまであと %s です"
 
 msgid "We are unable to connect the server to submit your results."
-msgstr ""
+msgstr "結果を送信するためのサーバに接続できません。"
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr ""
+msgstr "次の問題を取得するためのサーバに接続できません。"
 
 msgid "Weight"
-msgstr ""
+msgstr "重み付け"
 
 msgid "Weights"
-msgstr ""
+msgstr "重み付け"
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
-msgstr ""
+msgstr "チェックを入れると同じ問題が繰り返し選択される場合があります。通常はチェックを外しておきます。"
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
-msgstr ""
+msgstr "チェックを入れると，アイテムで設定された制限時間に達した後であっても，解答し送信することができます。"
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
-msgstr ""
+msgstr "チェックを入れると，セクションで設定された制限時間に達した後であっても，解答し送信することができます。"
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
-msgstr ""
+msgstr "チェックを入れると，テストパートで設定された制限時間に達した後であっても，解答し送信することができます。"
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
-msgstr ""
+msgstr "チェックを入れると，制限時間に達した後であっても，解答し送信することができます。"
 
 msgid "White on Black"
-msgstr ""
+msgstr "白地に黒"
 
 msgid "White on Blue (TAO standard theme)"
-msgstr ""
+msgstr "白地に黒（TAO標準テーマ）"
 
 msgid "Who can view the rubric block during the delivery."
-msgstr ""
+msgstr "デリバリ中に誰がルーブリックブロックを参照できるか"
 
 msgid "With Replacement"
-msgstr ""
+msgstr "復元抽出"
 
 msgid "Wrong file mime type"
-msgstr ""
+msgstr "ファイルのMIMEタイプが間違っています"
 
 msgid "XML Content"
-msgstr ""
+msgstr "XMLコンテンツ"
 
 #, tao-public
 msgid "XML Editor"
-msgstr ""
+msgstr "XMLエディタ"
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
-msgstr ""
+msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""
 
 msgid "Yellow on Blue"
-msgstr ""
+msgstr "ブルー地に黄色"
 
 msgid "Yes"
 msgstr "Yes"
 
+msgid "YES"
+msgstr "はい"
+
 msgid "You answered %s of %s question(s) for this section of the test"
-msgstr ""
+msgstr "あなたはこのセクションの%s問のうち%s問を解答しました。"
 
 msgid "You answered all %s question(s) in this section"
-msgstr ""
+msgstr "このセクションの全 %s問の問題に答えました。"
 
 msgid "You answered all %s question(s) in this test"
-msgstr ""
+msgstr "このテストの全 %s 問の問題に答えました。"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr ""
+msgstr "このセクションの %s問の問題のうち、%s問のみに答えました"
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
-msgstr ""
+msgstr "次の問題に進もうとしています。次の問題に進む場合は「OK」をクリックしてください。"
 
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
-msgstr ""
+msgstr "前の問題に戻ろうとしています。前の問題に戻る場合は「OK」をクリックしてください。"
 
 msgid "You are about to leave this section."
-msgstr ""
+msgstr "このセクションを終了しようとしています"
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "テストを終了しようとしています。"
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
+msgstr "テストを終了しようとしています。一度終了したテストには再びアクセスすることはできません よろしければOK をクリックしてテストを終了してください。"
 
 msgid "You are about to submit this test part."
-msgstr ""
+msgstr "このテストパートを提出しようとしています。"
 
 msgid "You are currently working offline."
-msgstr ""
+msgstr "現在、オフラインで作業しています。"
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr ""
+msgstr "長時間の接続障害が発生しています"
 
 msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
-msgstr ""
+msgstr "最大200%まで拡大表示することができます。方法はブラウザの設定をご確認ください。"
 
 msgid "You flagged %s item(s) that you can review now"
-msgstr ""
+msgstr "マークしたアイテム%sを確認できます"
 
 msgid "You have %s item(s) marked for review."
-msgstr ""
+msgstr "見直しマークがついた問題が%s問あります"
 
 msgid "You have %s left to answer remaining %s questions."
-msgstr ""
+msgstr "残り %s の質問に答えるために残っているのは %s です。"
 
 msgid "You have %s remaining to complete the current item."
-msgstr ""
+msgstr "この問題が終了するまであと %s です"
 
 msgid "You have %s unanswered question(s)"
-msgstr ""
+msgstr "未解答の問題が%s問あります。"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr ""
+msgstr "%s問の未解答問題と%s問の見直しマーク問題があります"
 
 msgid "You have %s unanswered question(s)."
-msgstr ""
+msgstr "%s問の未解答問題があります"
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr ""
+msgstr "一度終了したテストには再びアクセスすることはできません。よろしければ\"%s\" をクリックしてテストを終了してください。"
 
 msgid "Your comment…"
-msgstr ""
+msgstr "あなたのコメント..."
 
 msgid "Your connection seems to be back, please proceed."
-msgstr ""
+msgstr "接続が回復したようです。続けてください。"
 
 msgid "Zoom"
-msgstr ""
+msgstr "ズーム"
 
 msgid "Zoom in"
-msgstr ""
+msgstr "拡大"
 
 msgid "Zoom out"
-msgstr ""
+msgstr "縮小"
 
