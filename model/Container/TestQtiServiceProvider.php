@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2021 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2021-2023 (original work) Open Assessment Technologies SA;
  *
  * @author Ricardo Quintanilha <ricardo.quintanilha@taotesting.com>
  */
@@ -28,13 +28,17 @@ use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
-use oat\taoQtiItem\model\qti\Service;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\taoDelivery\model\execution\DeliveryExecutionService;
+use oat\taoDelivery\model\execution\StateServiceInterface;
+use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiTestRepository;
+use oat\taoQtiTest\model\Service\ConcurringSessionService;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\model\Service\MoveService;
@@ -154,6 +158,19 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                 [
                     service(Ontology::SERVICE_ID),
                     service(TestModelService::SERVICE_ID),
+                ]
+            );
+
+        $services
+            ->set(ConcurringSessionService::class, ConcurringSessionService::class)
+            ->public()
+            ->args(
+                [
+                    service(LoggerService::SERVICE_ID),
+                    service(QtiRunnerService::SERVICE_ID),
+                    service(RuntimeService::SERVICE_ID),
+                    service(DeliveryExecutionService::SERVICE_ID),
+                    service(FeatureFlagChecker::class),
                 ]
             );
     }
