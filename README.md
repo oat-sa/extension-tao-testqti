@@ -59,3 +59,4 @@ Environment variables
 | Var                                           | Description                                                                         |
 |-----------------------------------------------|-------------------------------------------------------------------------------------|
 | FEATURE_FLAG_FORCE_DISPLAY_TEST_ITEM_FEEDBACK | Even if itemSessionControl `showFeedback` option is false, show item feedback modal |
+| FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS        | When set, forces restoring the timers state from the browser storage on test init   |
