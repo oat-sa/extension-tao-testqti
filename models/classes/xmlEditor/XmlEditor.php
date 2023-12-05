@@ -61,8 +61,8 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     {
         if (
             $this->getFeatureFlagChecker()->isEnabled(self::FEATURE_FLAG_XML_EDITOR_ENABLED)
-            || $this->getFeatureFlagChecker()->isEnabled(self::LEGACY_FEATURE_FLAG_XML_EDITOR_ENABLED))
-        {
+            || $this->getFeatureFlagChecker()->isEnabled(self::LEGACY_FEATURE_FLAG_XML_EDITOR_ENABLED)
+        ) {
             return false;
         }
 
