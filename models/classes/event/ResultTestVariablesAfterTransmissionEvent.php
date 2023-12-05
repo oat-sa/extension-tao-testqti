@@ -30,13 +30,16 @@ class ResultTestVariablesAfterTransmissionEvent implements Event
     private string $deliveryExecutionId;
 
     private array $variables;
+    private bool $isManualScored;
 
     public function __construct(
         string $deliveryExecutionId,
-        array $variables
+        array $variables,
+        bool $isManualScored
     ) {
         $this->deliveryExecutionId = $deliveryExecutionId;
         $this->variables = $variables;
+        $this->isManualScored = $isManualScored;
     }
 
     public function getName(): string
@@ -52,5 +55,10 @@ class ResultTestVariablesAfterTransmissionEvent implements Event
     public function getVariables(): array
     {
         return $this->variables;
+    }
+
+    public function getIsManualScored(): bool
+    {
+        return $this->isManualScored;
     }
 }
