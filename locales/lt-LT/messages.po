@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 3.4.0-sprint146\n"
-"PO-Revision-Date: 2021-01-20T12:36:07\n"
+"Project-Id-Version: TAO 2023.12\n"
+"PO-Revision-Date: 2023-12-01T07:53:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -20,6 +20,9 @@ msgid "(Visual) Clear all active highlights"
 msgstr ""
 
 msgid "(Visual) Highlight Text"
+msgstr ""
+
+msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -46,6 +49,9 @@ msgstr "Pasitikrinkite ar teisingai įvedėte atsakymą."
 msgid "A visible section is one that is identifiable by the candidate."
 msgstr "Matomas skyrius yra kandidatui atpažįstamas."
 
+msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
+msgstr ""
+
 msgid "Activated"
 msgstr "Aktyvuota"
 
@@ -57,6 +63,9 @@ msgstr "Pridėti ZIP failą turintį QTI/APIP testus ir elementus"
 
 msgid "Add selected item(s) here."
 msgstr "Įkelkite pažymėtus klausimus šioje vietoje"
+
+msgid "Add Subsection"
+msgstr ""
 
 msgid "Add the source file"
 msgstr "Pridėti šaltinio failą."
@@ -223,6 +232,15 @@ msgstr ""
 msgid "Black on White"
 msgstr ""
 
+msgid "Bookmark question"
+msgstr ""
+
+msgid "Bookmark the current question for later review"
+msgstr ""
+
+msgid "Bookmarked question %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Skaičiuotuvas"
 
@@ -232,11 +250,11 @@ msgstr "Skaičiuotuvas BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr "ATŠAUKTI"
-
 msgid "Cancel"
 msgstr "Atšaukti"
+
+msgid "CANCEL"
+msgstr "ATŠAUKTI"
 
 msgid "Candidate"
 msgstr "Kandidatas"
@@ -361,6 +379,9 @@ msgstr "Rodomas pavadinimas"
 msgid "Displays a customisable magnifier"
 msgstr "Didinimo įrankis"
 
+msgid "Do not bookmark the current question for later review"
+msgstr ""
+
 msgid "Do not flag the current item for later review"
 msgstr "Nežymėti šio elemento vėlesnei apžvalgai"
 
@@ -432,11 +453,20 @@ msgstr "Rasta klaida IMS QTI Teste:\n"
 msgid "Expand the review panel"
 msgstr "Praplėsti apžvalgos skydelį"
 
+msgid "Export"
+msgstr ""
+
 msgid "Export failed for the test \"%s"
 msgstr "Nepavyko testo \"%s eksportavimas"
 
+msgid "Export failed. Key uri nor classUri in formValues are not defined"
+msgstr ""
+
 msgid "Export metadata"
 msgstr "Eksportuoti metaduomenis"
+
+msgid "Export QTI %s Test Package"
+msgstr ""
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "Eksportuoti QTI 2.1 Testų Paketą"
@@ -507,6 +537,9 @@ msgstr ""
 msgid "Hide Review"
 msgstr "Slėpti apžvalgą"
 
+msgid "Hide test overview panel"
+msgstr ""
+
 msgid "Hide the review screen"
 msgstr "Slėpti apžvalgos ekraną"
 
@@ -558,6 +591,9 @@ msgstr ""
 msgid "If the connection cannot be restored, see option B."
 msgstr ""
 
+msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
+msgstr ""
+
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
@@ -590,6 +626,9 @@ msgstr "Neatitikimai %1d eilutėje:"
 
 msgid "Individual"
 msgstr "Individualus"
+
+msgid "Informational item"
+msgstr ""
 
 msgid "Informational Item Usage"
 msgstr "Informacinis Elemento Naudojimas"
@@ -766,8 +805,14 @@ msgstr ""
 msgid "Missed required parameter \'id\'"
 msgstr ""
 
+msgid "Missed required parameter \'id\'"
+msgstr ""
+
 msgid "Missed test package file"
 msgstr "Nesurastas testo paketo failas"
+
+msgid "Missing filename for QTI Test export"
+msgstr ""
 
 msgid "Missing required configuration option %s"
 msgstr ""
@@ -817,11 +862,17 @@ msgstr "Kitas skyrius"
 msgid "No"
 msgstr "Ne"
 
+msgid "NO"
+msgstr ""
+
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr ""
 
 msgid "No file found at location \"%s\"."
 msgstr "Joks failas nerastas \"%s\" vietoje."
+
+msgid "No instance in form to export"
+msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "Daugiau nėra galimų bandymų \"%s\" elementui."
@@ -856,10 +907,10 @@ msgstr "Nemaišoma, vieta išlieka pastovi."
 msgid "Offline"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr "Gerai"
 
-msgid "Ok"
+msgid "OK"
 msgstr "Gerai"
 
 msgid "OK & End test"
@@ -964,6 +1015,12 @@ msgstr "QTI Testo \"%s\" paskelbimas nesėkmingas."
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI Testas \"%s\" sėkmingai paskelbtas."
 
+msgid "QTI Test Metadata"
+msgstr ""
+
+msgid "QTI Test Package %s"
+msgstr ""
+
 msgid "QTI Test Package 2.1"
 msgstr "QTI Testo Paketas 2.1"
 
@@ -977,6 +1034,9 @@ msgid "question"
 msgstr ""
 
 msgid "Question"
+msgstr ""
+
+msgid "Question %s"
 msgstr ""
 
 msgid "questions"
@@ -1003,6 +1063,9 @@ msgstr "Pašalinti Rubrikos Bloką"
 msgid "Remove Section"
 msgstr "Pašalinti Skyrių"
 
+msgid "Remove Subsection"
+msgstr ""
+
 msgid "Remove Test Part"
 msgstr ""
 
@@ -1017,6 +1080,9 @@ msgstr "Atstatyti filtrus"
 
 msgid "Resource(s) successfully exported."
 msgstr "Resursas(-ai) sėkmingai eksportuoti."
+
+msgid "ResultTransmission event successfully registered"
+msgstr ""
 
 msgid "Review"
 msgstr "Apžvalga"
@@ -1126,6 +1192,9 @@ msgstr "Rodyti Apžvalgą"
 msgid "Show Solution"
 msgstr "Rodyti Sprendimą"
 
+msgid "Show test overview panel"
+msgstr ""
+
 msgid "Show the review screen"
 msgstr "Rodyti apžvalgos ekraną"
 
@@ -1233,6 +1302,12 @@ msgstr "Testo meta duomenys sėkmingai išeksportuoti."
 
 msgid "Test Navigation"
 msgstr "Testo Navigacija"
+
+msgid "Test overview"
+msgstr ""
+
+msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
+msgstr ""
 
 msgid "Test Part Properties"
 msgstr ""
@@ -1349,6 +1424,9 @@ msgstr "Pagrindinis testo identifikatorius."
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
 msgstr "Pateiktas archyvas yra blogas. Patikrinkite ar jis nesugadintas ir turi „imsmanifest.xml“ failą."
 
+msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "QTI Testas '%s' surinkimui privalo turėti bent 1 QTI Elementą. Joks nebuvo surastas."
 
@@ -1377,6 +1455,14 @@ msgid "The section title."
 msgstr "Skyriaus pavadinimas."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
 msgstr ""
 
 msgid "The test has been closed/suspended!"
@@ -1598,6 +1684,9 @@ msgstr ""
 
 msgid "Yes"
 msgstr "Taip"
+
+msgid "YES"
+msgstr ""
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr ""
