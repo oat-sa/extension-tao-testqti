@@ -20,7 +20,6 @@
 
 declare(strict_types=1);
 
-
 namespace oat\taoQtiTest\models\event;
 
 use oat\oatbox\event\Event;
