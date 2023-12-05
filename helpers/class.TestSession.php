@@ -63,7 +63,6 @@ use Symfony\Component\Lock\LockInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use taoResultServer_models_classes_ReadableResultStorage as ReadableResultStorage;
 
-
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class.
  *
