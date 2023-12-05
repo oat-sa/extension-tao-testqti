@@ -192,25 +192,25 @@ EOL;
     {
         return [
             'unlocked by config' => [
-                true,
+                false,
                 false,
                 false,
                 false
             ],
             'unlocked by new feature flag' => [
-                false,
+                true,
                 true,
                 false,
                 false
             ],
             'unlocked by legacy feature flag' => [
-                false,
+                true,
                 false,
                 true,
                 false
             ],
             'locked' => [
-                false,
+                true,
                 false,
                 false,
                 true
