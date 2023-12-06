@@ -31,7 +31,7 @@ use taoQtiTest_models_classes_QtiTestService;
 class XmlEditor extends ConfigurableService implements XmlEditorInterface
 {
     private const FEATURE_FLAG_XML_EDITOR_ENABLED = 'FEATURE_FLAG_XML_EDITOR_ENABLED';
-    /** @var @depricated */
+    /** @var @deprecated */
     private const LEGACY_FEATURE_FLAG_XML_EDITOR_ENABLED = 'XML_EDITOR_ENABLED';
 
     /**
