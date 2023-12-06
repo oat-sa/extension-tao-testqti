@@ -832,10 +832,14 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
 
     public function attachToTransmissionEvent(ResultTestVariablesTransmissionEvent $event): void
     {
-        $scoreTotal = array_filter($event->getVariables(), function ($item) {
-            return $item->getIdentifier() === 'SCORE_TOTAL';
-        })[0];
-        if ($scoreTotal === null) {
+        $scoreTotal = array_filter(
+            $event->getVariables(),
+            function ($item) {
+                return $item->getIdentifier() === 'SCORE_TOTAL';
+            }
+        );
+
+        if (empty($scoreTotal)) {
             return;
         }
         $outcomeVariables = $this->getResultsStorage()->getDeliveryVariables($event->getDeliveryExecutionId());
@@ -851,10 +855,11 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         /** @var AssessmentItemRef $itemRef */
         foreach ($this->getRoute()->getAssessmentItemRefs() as $itemRef) {
             foreach ($itemRef->getComponents() as $component) {
-                if ($component instanceof OutcomeDeclaration) {
-                    if ($component->isExternallyScored()) {
-                        return true;
-                    }
+                if (
+                    $component instanceof OutcomeDeclaration
+                    && $component->isExternallyScored()
+                ) {
+                    return true;
                 }
             }
         }
