@@ -24,10 +24,9 @@ namespace oat\taoQtiTest\models\event;
 
 use oat\oatbox\event\Event;
 
-class ResultTestVariablesAfterTransmissionEvent implements Event
+class TestVariablesRecorded implements Event
 {
     private string $deliveryExecutionId;
-
     private array $variables;
     private bool $isManualScored;
 

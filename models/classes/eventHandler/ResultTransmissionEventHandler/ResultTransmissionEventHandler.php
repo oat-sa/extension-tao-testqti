@@ -22,11 +22,17 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler;
 
+use oat\oatbox\event\EventManager;
+use oat\oatbox\service\ServiceManager;
 use oat\tao\model\service\InjectionAwareService;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
+use oat\taoQtiTest\models\event\TestVariablesRecorded;
 use taoQtiCommon_helpers_ResultTransmitter;
+use oat\oatbox\service\exception\InvalidServiceManagerException;
+use oat\taoResultServer\models\classes\implementation\ResultServerService;
+use taoResultServer_models_classes_ReadableResultStorage as ReadableResultStorage;
 
 class ResultTransmissionEventHandler extends InjectionAwareService implements
     Api\ResultTransmissionEventHandlerInterface
@@ -45,6 +51,8 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements
     }
 
     /**
+     * @param ResultTestVariablesTransmissionEvent $event
+     * @throws InvalidServiceManagerException
      * @throws \taoQtiCommon_helpers_ResultTransmissionException
      */
     public function transmitResultTestVariable(ResultTestVariablesTransmissionEvent $event): void
@@ -54,6 +62,12 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements
             $event->getTransmissionId(),
             $event->getTestUri()
         );
+
+        if (empty($this->containsScoreTotal($event))) {
+            return;
+        }
+
+        $this->triggerTestVariablesRecorded($event);
     }
 
     private function buildTransmitter($deliveryExecutionId): taoQtiCommon_helpers_ResultTransmitter
@@ -63,5 +77,60 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements
         $resultStore = $deliveryServerService->getResultStoreWrapper($deliveryExecutionId);
 
         return new taoQtiCommon_helpers_ResultTransmitter($resultStore);
+    }
+
+    public function getEventManager()
+    {
+        return $this->getServiceLocator()->get(EventManager::SERVICE_ID);
+    }
+
+    public function getServiceLocator()
+    {
+        return ServiceManager::getServiceManager();
+    }
+
+    /**
+     * @throws common_exception_Error
+     * @throws InvalidServiceManagerException
+     */
+    private function getResultsStorage(): ReadableResultStorage
+    {
+        $resultServerService = $this->getServiceLocator()->get(ResultServerService::SERVICE_ID);
+        $storage = $resultServerService->getResultStorage();
+
+        if (!$storage instanceof ReadableResultStorage) {
+            throw new common_exception_Error('Configured result storage is not writable.');
+        }
+
+        return $storage;
+    }
+
+    /**
+     * @param ResultTestVariablesTransmissionEvent $event
+     * @return array
+     */
+    private function containsScoreTotal(ResultTestVariablesTransmissionEvent $event): array
+    {
+        return array_filter(
+            $event->getVariables(),
+            function ($item) {
+                return $item->getIdentifier() === 'SCORE_TOTAL';
+            }
+        );
+    }
+
+    /**
+     * @param ResultTestVariablesTransmissionEvent $event
+     * @return void
+     * @throws InvalidServiceManagerException
+     */
+    private function triggerTestVariablesRecorded(ResultTestVariablesTransmissionEvent $event): void
+    {
+        $outcomeVariables = $this->getResultsStorage()->getDeliveryVariables($event->getDeliveryExecutionId());
+        $this->getEventManager()->trigger(new TestVariablesRecorded(
+            $event->getDeliveryExecutionId(),
+            $outcomeVariables,
+            $event->isManualScored()
+        ));
     }
 }

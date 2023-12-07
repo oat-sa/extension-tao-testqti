@@ -20,15 +20,12 @@
  */
 
 use oat\oatbox\event\EventManager;
-use oat\oatbox\service\exception\InvalidServiceManagerException;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\helpers\TestSessionMemento;
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
 use oat\taoQtiTest\models\event\QtiTestChangeEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
-use oat\taoQtiTest\models\event\ResultTestVariablesAfterTransmissionEvent;
-use oat\taoResultServer\models\classes\implementation\ResultServerService;
 use oat\taoResultServer\models\classes\ResultStorageWrapper;
 use oat\taoTests\models\event\TestExecutionPausedEvent;
 use oat\taoTests\models\event\TestExecutionResumedEvent;
@@ -61,7 +58,6 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use qtism\runtime\tests\Route;
 use Symfony\Component\Lock\LockInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use taoResultServer_models_classes_ReadableResultStorage as ReadableResultStorage;
 
 /**
  * A TAO Specific extension of QtiSm's AssessmentTestSession class.
@@ -819,33 +815,11 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
         array $variables,
         string $testUri = ''
     ): void {
-        $event = new ResultTestVariablesTransmissionEvent(
+        $this->getEventManager()->trigger(new ResultTestVariablesTransmissionEvent(
             $this->getSessionId(),
             $variables,
             $this->getSessionId(),
-            $testUri
-        );
-
-        $this->getEventManager()->attach($event, [$this, 'attachToTransmissionEvent']);
-        $this->getEventManager()->trigger($event);
-    }
-
-    public function attachToTransmissionEvent(ResultTestVariablesTransmissionEvent $event): void
-    {
-        $scoreTotal = array_filter(
-            $event->getVariables(),
-            function ($item) {
-                return $item->getIdentifier() === 'SCORE_TOTAL';
-            }
-        );
-
-        if (empty($scoreTotal)) {
-            return;
-        }
-        $outcomeVariables = $this->getResultsStorage()->getDeliveryVariables($event->getDeliveryExecutionId());
-        $this->getEventManager()->trigger(new ResultTestVariablesAfterTransmissionEvent(
-            $event->getDeliveryExecutionId(),
-            $outcomeVariables,
+            $testUri,
             $this->isManualScored()
         ));
     }
@@ -926,21 +900,5 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
     protected function getSessionMemento()
     {
         return new TestSessionMemento($this);
-    }
-
-    /**
-     * @throws common_exception_Error
-     * @throws InvalidServiceManagerException
-     */
-    private function getResultsStorage(): ReadableResultStorage
-    {
-        $resultServerService = $this->getServiceLocator()->get(ResultServerService::SERVICE_ID);
-        $storage = $resultServerService->getResultStorage();
-
-        if (!$storage instanceof ReadableResultStorage) {
-            throw new common_exception_Error('Configured result storage is not writable.');
-        }
-
-        return $storage;
     }
 }
