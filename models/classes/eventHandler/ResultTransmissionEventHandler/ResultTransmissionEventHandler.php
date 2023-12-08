@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler;
 
+use common_exception_Error;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\service\ServiceManager;
+use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\service\InjectionAwareService;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
@@ -63,7 +65,7 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements
             $event->getTestUri()
         );
 
-        if (empty($this->containsScoreTotal($event))) {
+        if (!$this->containsScoreTotal($event)) {
             return;
         }
 
@@ -90,8 +92,9 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements
     }
 
     /**
+     * @return ReadableResultStorage
+     * @throws ServiceNotFoundException
      * @throws common_exception_Error
-     * @throws InvalidServiceManagerException
      */
     private function getResultsStorage(): ReadableResultStorage
     {
@@ -105,18 +108,16 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements
         return $storage;
     }
 
-    /**
-     * @param ResultTestVariablesTransmissionEvent $event
-     * @return array
-     */
-    private function containsScoreTotal(ResultTestVariablesTransmissionEvent $event): array
+    private function containsScoreTotal(ResultTestVariablesTransmissionEvent $event): bool
     {
-        return array_filter(
+        $scoreTotal = array_filter(
             $event->getVariables(),
             function ($item) {
                 return $item->getIdentifier() === 'SCORE_TOTAL';
             }
         );
+
+        return !empty($scoreTotal);
     }
 
     /**
