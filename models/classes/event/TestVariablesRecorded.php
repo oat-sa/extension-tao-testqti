@@ -15,39 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2021 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2023 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\classes\event;
+namespace oat\taoQtiTest\models\event;
 
 use oat\oatbox\event\Event;
 
-class ResultTestVariablesTransmissionEvent implements Event
+class TestVariablesRecorded implements Event
 {
-    /** @var string */
-    private $deliveryExecutionId;
-    /** @var array */
-    private $variables;
-    /** @var string */
-    private $transmissionId;
-    /** @var string */
-    private $testUri;
-    /** @var bool  */
+    private string $deliveryExecutionId;
+    private array $variables;
     private bool $isManualScored;
 
     public function __construct(
         string $deliveryExecutionId,
         array $variables,
-        string $transmissionId,
-        string $testUri = '',
-        bool $isManualScored = null,
+        bool $isManualScored
     ) {
         $this->deliveryExecutionId = $deliveryExecutionId;
         $this->variables = $variables;
-        $this->transmissionId = $transmissionId;
-        $this->testUri = $testUri;
         $this->isManualScored = $isManualScored;
     }
 
@@ -66,17 +55,7 @@ class ResultTestVariablesTransmissionEvent implements Event
         return $this->variables;
     }
 
-    public function getTransmissionId(): string
-    {
-        return $this->transmissionId;
-    }
-
-    public function getTestUri(): string
-    {
-        return $this->testUri;
-    }
-
-    public function isManualScored(): bool
+    public function getIsManualScored(): bool
     {
         return $this->isManualScored;
     }

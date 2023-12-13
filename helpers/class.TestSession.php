@@ -44,6 +44,7 @@ use qtism\data\ExtendedAssessmentItemRef;
 use qtism\data\processing\OutcomeProcessing;
 use qtism\data\rules\OutcomeRuleCollection;
 use qtism\data\rules\SetOutcomeValue;
+use qtism\data\state\OutcomeDeclaration;
 use qtism\runtime\common\OutcomeVariable;
 use qtism\runtime\common\ProcessingException;
 use qtism\runtime\processing\OutcomeProcessingEngine;
@@ -772,8 +773,26 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             $this->getSessionId(),
             $variables,
             $this->getSessionId(),
-            $testUri
+            $testUri,
+            $this->isManualScored()
         ));
+    }
+
+    private function isManualScored(): bool
+    {
+        /** @var AssessmentItemRef $itemRef */
+        foreach ($this->getRoute()->getAssessmentItemRefs() as $itemRef) {
+            foreach ($itemRef->getComponents() as $component) {
+                if (
+                    $component instanceof OutcomeDeclaration
+                    && $component->isExternallyScored()
+                ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
