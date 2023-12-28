@@ -215,7 +215,7 @@ define([
      */
     function extractCategoriesFromPresets() {
         return allPresets.reduce(function (prev, current) {
-            const groupIds = _.pluck(current.presets, 'qtiCategory');
+            const groupIds = _.map(current.presets, 'qtiCategory');
             return prev.concat(groupIds);
         }, []);
     }

@@ -489,7 +489,7 @@ function (
              */
             isCurrentItemAnswered: function(){
                 var answered = false;
-                _.each(this.getCurrentItemState(), function(state){
+                _.forEach(this.getCurrentItemState(), function(state){
                     if(state && _.isObject(state.response) && state.response.base !== null){
                         answered = true;//at least one response is not null so consider the item answered
                         return false;
@@ -789,7 +789,7 @@ function (
                                 if (self.testContext.timerWarning && self.testContext.timerWarning[cst.qtiClassName]) {
                                     cst.warnings = {};
                                     _(self.testContext.timerWarning[cst.qtiClassName]).forEach(function (value, key) {
-                                        if (_.contains(['info', 'warning', 'danger'], value)) {
+                                        if (_.includes(['info', 'warning', 'danger'], value)) {
                                             cst.warnings[key] = {
                                                 type: value,
                                                 showed: cst.seconds <= key,

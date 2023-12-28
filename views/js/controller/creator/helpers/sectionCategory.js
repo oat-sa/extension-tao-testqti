@@ -116,7 +116,7 @@ define(['lodash', 'i18n', 'core/errorHandler'], function (_, __, errorHandler) {
      */
     function addCategories(model, categories) {
         if (isValidSectionModel(model)) {
-            _.each(model.sectionParts, function (sectionPart) {
+            _.forEach(model.sectionParts, function (sectionPart) {
                 if (sectionPart['qti-type'] === 'assessmentItemRef') {
                     if (!_.isArray(sectionPart.categories)) {
                         sectionPart.categories = [];
@@ -141,7 +141,7 @@ define(['lodash', 'i18n', 'core/errorHandler'], function (_, __, errorHandler) {
      */
     function removeCategories(model, categories) {
         if (isValidSectionModel(model)) {
-            _.each(model.sectionParts, function (sectionPart) {
+            _.forEach(model.sectionParts, function (sectionPart) {
                 if (sectionPart['qti-type'] === 'assessmentItemRef' && _.isArray(sectionPart.categories)) {
                     sectionPart.categories = _.difference(sectionPart.categories, categories);
                 }

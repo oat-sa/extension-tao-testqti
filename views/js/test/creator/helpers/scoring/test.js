@@ -266,8 +266,8 @@ define([
 
             modelOverseer.on('scoring-write', function(writtenModel) {
 
-                model = _.omit(model, 'scoring');
-                writtenModel = _.omit(writtenModel, 'scoring');
+                model = _.omitBy(model, 'scoring');
+                writtenModel = _.omitBy(writtenModel, 'scoring');
 
                 assert.deepEqual(writtenModel, data.expected, 'The written model is as expected');
                 assert.deepEqual(model, data.expected, 'The score processing has been set');
@@ -293,8 +293,8 @@ define([
 
         modelOverseer.on('scoring-write', function(writtenModel) {
 
-            model = _.omit(model, 'scoring');
-            writtenModel = _.omit(writtenModel, 'scoring');
+            model = _.omitBy(model, 'scoring');
+            writtenModel = _.omitBy(writtenModel, 'scoring');
 
             assert.deepEqual(writtenModel, scoringCustomSample, 'The written model is as expected');
             assert.deepEqual(model, scoringCustomSample, 'The score processing has been set');

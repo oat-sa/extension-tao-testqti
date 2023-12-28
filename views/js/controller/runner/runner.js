@@ -192,7 +192,7 @@ define([
             providerLoader(config.providers, context.bundle)
                 .then(function (results) {
 
-                    const testRunnerConfig = _.omit(config, ['providers']);
+                    const testRunnerConfig = _.omitBy(config, ['providers']);
                     testRunnerConfig.renderTo = $container;
 
                     if (results.proxy && typeof results.proxy.getAvailableProviders === 'function') {

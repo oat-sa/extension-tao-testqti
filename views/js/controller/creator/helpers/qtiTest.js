@@ -35,7 +35,7 @@ define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'],
          * @returns {String[]} the list of unique identifiers
          */
         getIdentifiers: function getIdentifiers(model, includesOnlyTypes, excludeTypes) {
-            return _.uniq(_.pluck(validators.extractIdentifiers(model, includesOnlyTypes, excludeTypes), 'identifier'));
+            return _.uniqBy(_.map(validators.extractIdentifiers(model, includesOnlyTypes, excludeTypes), 'identifier'));
         },
 
         /**
@@ -151,7 +151,7 @@ define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'],
             const glue = '-';
             let identifier;
             let current;
-            if (_.contains(validators.qtiTypesForUniqueIds, qtiType)) {
+            if (_.includes(validators.qtiTypesForUniqueIds, qtiType)) {
                 current = this.getIdentifiers(model, validators.qtiTypesForUniqueIds);
             } else {
                 current = this.getIdentifiersOf(model, qtiType);
@@ -162,7 +162,7 @@ define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'],
             do {
                 identifier = suggestion + glue + index++;
             } while (
-                _.contains(current, identifier.toUpperCase()) || // identifier exist in model
+                _.includes(current, identifier.toUpperCase()) || // identifier exist in model
                 $(`#${identifier}`).length // identifier was in model but still exist in DOM
             );
 
