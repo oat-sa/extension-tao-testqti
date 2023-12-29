@@ -35,7 +35,7 @@ define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'],
          * @returns {String[]} the list of unique identifiers
          */
         getIdentifiers: function getIdentifiers(model, includesOnlyTypes, excludeTypes) {
-            return _.uniqBy(_.map(validators.extractIdentifiers(model, includesOnlyTypes, excludeTypes), 'identifier'));
+            return _.uniq(_.map(validators.extractIdentifiers(model, includesOnlyTypes, excludeTypes), 'identifier'));
         },
 
         /**
