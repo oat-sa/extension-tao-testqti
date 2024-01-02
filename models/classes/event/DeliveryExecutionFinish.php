@@ -23,19 +23,20 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\event;
 
 use oat\oatbox\event\Event;
+use oat\taoDelivery\model\execution\DeliveryExecution;
 
-class TestVariablesRecorded implements Event
+class DeliveryExecutionFinish implements Event
 {
-    private string $deliveryExecutionId;
+    private DeliveryExecution $deliveryExecutionId;
     private array $variables;
     private bool $isManualScored;
 
     public function __construct(
-        string $deliveryExecutionId,
+        DeliveryExecution $deliveryExecution,
         array $variables,
         bool $isManualScored
     ) {
-        $this->deliveryExecutionId = $deliveryExecutionId;
+        $this->deliveryExecutionId = $deliveryExecution;
         $this->variables = $variables;
         $this->isManualScored = $isManualScored;
     }
@@ -45,7 +46,7 @@ class TestVariablesRecorded implements Event
         return self::class;
     }
 
-    public function getDeliveryExecutionId(): string
+    public function getDeliveryExecution(): DeliveryExecution
     {
         return $this->deliveryExecutionId;
     }
