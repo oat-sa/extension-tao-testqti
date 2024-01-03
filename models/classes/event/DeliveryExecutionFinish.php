@@ -27,7 +27,7 @@ use oat\taoDelivery\model\execution\DeliveryExecution;
 
 class DeliveryExecutionFinish implements Event
 {
-    private DeliveryExecution $deliveryExecutionId;
+    private DeliveryExecution $deliveryExecution;
     private array $variables;
     private bool $isManualScored;
 
@@ -36,7 +36,7 @@ class DeliveryExecutionFinish implements Event
         array $variables,
         bool $isManualScored
     ) {
-        $this->deliveryExecutionId = $deliveryExecution;
+        $this->deliveryExecution = $deliveryExecution;
         $this->variables = $variables;
         $this->isManualScored = $isManualScored;
     }
@@ -48,7 +48,7 @@ class DeliveryExecutionFinish implements Event
 
     public function getDeliveryExecution(): DeliveryExecution
     {
-        return $this->deliveryExecutionId;
+        return $this->deliveryExecution;
     }
 
     public function getVariables(): array
