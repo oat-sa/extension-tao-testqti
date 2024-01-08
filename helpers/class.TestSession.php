@@ -819,12 +819,11 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             $this->getSessionId(),
             $variables,
             $this->getSessionId(),
-            $testUri,
-            $this->isManualScored()
+            $testUri
         ));
     }
 
-    private function isManualScored(): bool
+    public function isManualScored(): bool
     {
         /** @var AssessmentItemRef $itemRef */
         foreach ($this->getRoute()->getAssessmentItemRefs() as $itemRef) {

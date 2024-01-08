@@ -34,21 +34,17 @@ class ResultTestVariablesTransmissionEvent implements Event
     private $transmissionId;
     /** @var string */
     private $testUri;
-    /** @var bool  */
-    private bool $isManualScored;
 
     public function __construct(
         string $deliveryExecutionId,
         array $variables,
         string $transmissionId,
-        string $testUri = '',
-        bool $isManualScored = null,
+        string $testUri = ''
     ) {
         $this->deliveryExecutionId = $deliveryExecutionId;
         $this->variables = $variables;
         $this->transmissionId = $transmissionId;
         $this->testUri = $testUri;
-        $this->isManualScored = $isManualScored;
     }
 
     public function getName(): string
@@ -74,10 +70,5 @@ class ResultTestVariablesTransmissionEvent implements Event
     public function getTestUri(): string
     {
         return $this->testUri;
-    }
-
-    public function isManualScored(): bool
-    {
-        return $this->isManualScored;
     }
 }
