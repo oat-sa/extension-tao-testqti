@@ -1208,7 +1208,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 $deliveryExecution,
                 $outcomeVariables,
                 $isManualScored
-            ));
+            )
+        );
     }
 
     /**
