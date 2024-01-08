@@ -46,7 +46,6 @@ use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
 use oat\taoDelivery\model\RuntimeService;
-use oat\taoOutcomeRds\model\RdsResultStorage;
 use oat\taoQtiItem\model\portableElement\exception\PortableElementNotFoundException;
 use oat\taoQtiItem\model\portableElement\exception\PortableModelMissing;
 use oat\taoQtiItem\model\portableElement\PortableElementService;
@@ -58,7 +57,6 @@ use oat\taoQtiTest\models\event\QtiContinueInteractionEvent;
 use oat\taoQtiTest\models\event\TestExitEvent;
 use oat\taoQtiTest\models\event\TestInitEvent;
 use oat\taoQtiTest\models\event\TestTimeoutEvent;
-use oat\taoQtiTest\models\event\DeliveryExecutionFinish;
 use oat\taoQtiTest\models\ExtendedStateService;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
 use oat\taoQtiTest\models\render\UpdateItemContentReferencesService;
@@ -70,7 +68,6 @@ use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\toolsStates\ToolsStateStorage;
 use oat\taoQtiTest\models\TestSessionService;
-use oat\taoResultServer\models\classes\implementation\ResultServerService;
 use qtism\common\datatypes\QtiInteger;
 use qtism\common\datatypes\QtiString as QtismString;
 use qtism\common\enums\BaseType;
@@ -1188,27 +1185,8 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         }
 
         $this->getServiceManager()->get(ExtendedStateService::SERVICE_ID)->clearEvents($executionUri);
-        /** @var TestSession $session */
-        $session = $context->getTestSession();
-        $this->triggerDeliveryExecutionFinish($deliveryExecution, $session->isManualScored());
 
         return $result;
-    }
-
-    private function getResultsStorage(): RdsResultStorage
-    {
-        return $this->getServiceLocator()->get(ResultServerService::SERVICE_ID)->getResultStorage();
-    }
-
-    private function triggerDeliveryExecutionFinish(DeliveryExecution $deliveryExecution, bool $isManualScored): void
-    {
-        $outcomeVariables = $this->getResultsStorage()->getDeliveryVariables($deliveryExecution->getIdentifier());
-        $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger(
-            new DeliveryExecutionFinish(
-                $deliveryExecution,
-                $outcomeVariables,
-                $isManualScored
-            ));
     }
 
     /**
