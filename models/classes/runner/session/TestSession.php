@@ -336,12 +336,16 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     {
         $target = $this->getTimerTarget();
         $routeItem = $this->getCurrentRouteItem();
+
         $sources = [
-            $routeItem->getAssessmentTest(),
+            $this->getAssessmentTest(),
             $this->getCurrentTestPart(),
             $this->getCurrentAssessmentSection(),
-            $routeItem->getAssessmentItemRef(),
         ];
+
+        if ($routeItem instanceof RouteItem) {
+            array_unshift($sources, $routeItem->getAssessmentItemRef());
+        }
 
         foreach ($sources as $source) {
             $this->updateDurationCache($source->getIdentifier(), $target);
