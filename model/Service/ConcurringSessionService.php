@@ -24,7 +24,6 @@ namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
 use core_kernel_classes_Resource;
-use DateTime;
 use oat\generis\model\data\Ontology;
 use oat\oatbox\service\ServiceManager;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
@@ -43,6 +42,7 @@ use oat\taoQtiTest\models\TestSessionService;
 use PHPSession;
 use Psr\Log\LoggerInterface;
 use qtism\runtime\tests\RouteItem;
+use DateTime;
 use Throwable;
 
 class ConcurringSessionService
