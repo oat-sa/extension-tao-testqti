@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
-use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
 use oat\oatbox\service\ServiceManager;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
