@@ -193,50 +193,12 @@ class ConcurringSessionService
 
             $this->getTimerAdjustmentService()->increase(
                 $testSession,
-                (int) $delta,
-                TimerAdjustmentServiceInterface::TYPE_TIME_ADJUSTMENT,
-                $this->getAdjustmentPlace($testSession)
+                (int) $delta
             );
 
             $testSession->suspend();
             $this->getTestSessionService()->persist($testSession);
         }
-    }
-
-    private function getAdjustmentPlace(TestSession $testSession): ?QtiIdentifiable
-    {
-        $test = $testSession->getAssessmentTest();
-        $testPart = $testSession->getCurrentTestPart();
-        $section = $testSession->getCurrentAssessmentSection();
-        $itemRef = $testSession->getCurrentAssessmentItemRef();
-
-        if ($itemRef && $itemRef->hasTimeLimits()) {
-            $this->logger->info('Adjusting at the item level');
-
-            return $itemRef;
-        }
-
-        if ($testPart && $testPart->hasTimeLimits()) {
-            $this->logger->info('Adjusting at the test part level');
-
-            return $testPart;
-        }
-
-        if ($section && $section->hasTimeLimits()) {
-            $this->logger->info('Adjusting at the section level');
-
-            return $section;
-        }
-
-        if ($test && $test->hasTimeLimits()) {
-            $this->logger->info('Adjusting at the test level');
-
-            return $section;
-        }
-
-        $this->logger->info('Adjusting at the test session level');
-
-        return null;
     }
 
     private function getHighestItemTimestamp(TestSession $testSession, QtiTimer $timer): ?float
