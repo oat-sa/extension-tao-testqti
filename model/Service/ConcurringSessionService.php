@@ -38,9 +38,11 @@ use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\time\QtiTimer;
 use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\TestSessionService;
 use PHPSession;
 use Psr\Log\LoggerInterface;
+use qtism\data\QtiIdentifiable;
 use qtism\runtime\tests\RouteItem;
 use DateTime;
 use Throwable;
@@ -186,20 +188,55 @@ class ConcurringSessionService
         }
 
         if (isset($last) && $last > 0) {
-            $increaseSeconds = (new DateTime('now'))->format('U') - $last;
-
-            $this->logger->info(
-                sprintf("Adding %.2f s increase to adj map", $increaseSeconds)
-            );
+            $delta = (new DateTime('now'))->format('U') - $last;
+            $this->logger->info(sprintf("Adjusting by %.2f s", $delta));
 
             $this->getTimerAdjustmentService()->increase(
                 $testSession,
-                (int) $increaseSeconds
+                (int) $delta,
+                TimerAdjustmentServiceInterface::TYPE_TIME_ADJUSTMENT,
+                $this->getAdjustmentPlace($testSession)
             );
 
             $testSession->suspend();
             $this->getTestSessionService()->persist($testSession);
         }
+    }
+
+    private function getAdjustmentPlace(TestSession $testSession): ?QtiIdentifiable
+    {
+        $test = $testSession->getAssessmentTest();
+        $testPart = $testSession->getCurrentTestPart();
+        $section = $testSession->getCurrentAssessmentSection();
+        $itemRef = $testSession->getCurrentAssessmentItemRef();
+
+        if ($itemRef && $itemRef->hasTimeLimits()) {
+            $this->logger->info('Adjusting at the item level');
+
+            return $itemRef;
+        }
+
+        if ($testPart && $testPart->hasTimeLimits()) {
+            $this->logger->info('Adjusting at the test part level');
+
+            return $testPart;
+        }
+
+        if ($section && $section->hasTimeLimits()) {
+            $this->logger->info('Adjusting at the section level');
+
+            return $section;
+        }
+
+        if ($test && $test->hasTimeLimits()) {
+            $this->logger->info('Adjusting at the test level');
+
+            return $section;
+        }
+
+        $this->logger->info('Adjusting at the test session level');
+
+        return null;
     }
 
     private function getHighestItemTimestamp(TestSession $testSession, QtiTimer $timer): ?float
