@@ -189,7 +189,7 @@ class ConcurringSessionService
 
         if (isset($last) && $last > 0) {
             $delta = (new DateTime('now'))->format('U') - $last;
-            $this->logger->info(sprintf("Adjusting by %.2f s", $delta));
+            $this->logger->info(sprintf("Adjusting timers by %.2f s", $delta));
 
             $this->getTimerAdjustmentService()->increase(
                 $testSession,
