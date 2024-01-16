@@ -96,9 +96,10 @@ class ConcurringSessionService
 
         foreach ($userExecutions as $execution) {
             $executionId = $execution->getOriginalIdentifier();
+
             if ($executionId !== $activeExecution->getOriginalIdentifier()) {
                 try {
-                    $this->setConcurringSession($execution->getOriginalIdentifier());
+                    $this->setConcurringSession($executionId);
 
                     $context = $this->getContextByDeliveryExecution($execution);
                     $this->qtiRunnerService->endTimer($context);
@@ -110,7 +111,7 @@ class ConcurringSessionService
                         sprintf(
                             '%s: Unable to pause delivery execution %s: %s',
                             self::class,
-                            $execution->getOriginalIdentifier(),
+                            $executionId,
                             $e->getMessage()
                         )
                     );
