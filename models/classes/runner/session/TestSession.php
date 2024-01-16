@@ -344,7 +344,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
         ];
 
         if ($routeItem instanceof RouteItem) {
-            array_unshift($sources, $routeItem->getAssessmentItemRef());
+            $sources[] = $routeItem->getAssessmentItemRef();
         }
 
         foreach ($sources as $source) {
