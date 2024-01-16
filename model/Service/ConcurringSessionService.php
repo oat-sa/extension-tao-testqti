@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
-use oat\generis\model\data\Ontology;
 use oat\oatbox\service\ServiceManager;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -51,7 +50,6 @@ class ConcurringSessionService
     private LoggerInterface $logger;
     private QtiRunnerService $qtiRunnerService;
     private RuntimeService $runtimeService;
-    private Ontology $ontology;
     private DeliveryExecutionService $deliveryExecutionService;
     private FeatureFlagCheckerInterface $featureFlagChecker;
     private ?PHPSession $currentSession;
@@ -60,7 +58,6 @@ class ConcurringSessionService
         LoggerInterface $logger,
         QtiRunnerService $qtiRunnerService,
         RuntimeService $runtimeService,
-        Ontology $ontology,
         DeliveryExecutionService $deliveryExecutionService,
         FeatureFlagCheckerInterface $featureFlagChecker,
         PHPSession $currentSession = null
@@ -68,7 +65,6 @@ class ConcurringSessionService
         $this->logger = $logger;
         $this->qtiRunnerService = $qtiRunnerService;
         $this->runtimeService = $runtimeService;
-        $this->ontology = $ontology;
         $this->deliveryExecutionService = $deliveryExecutionService;
         $this->featureFlagChecker = $featureFlagChecker;
         $this->currentSession = $currentSession ?? PHPSession::singleton();
