@@ -138,7 +138,7 @@ class ConcurringSessionService
 
     public function adjustTimers(DeliveryExecution $execution): void
     {
-        $this->logger->info(
+        $this->logger->debug(
             sprintf('Adjusting timers on test restart, current ts is %f', microtime(true))
         );
 
@@ -163,7 +163,7 @@ class ConcurringSessionService
                 $last = $this->currentSession->getAttribute("pausedAt-{$executionId}");
                 $this->currentSession->removeAttribute("pausedAt-{$executionId}");
 
-                $this->logger->info(
+                $this->logger->debug(
                     sprintf('Adjusting timers based on timestamp stored in session: %f', $last)
                 );
             }
@@ -172,14 +172,14 @@ class ConcurringSessionService
         if (!isset($last) && $testSession instanceof TestSession) {
             $last = $this->getHighestItemTimestamp($testSession, $timer);
 
-            $this->logger->info(
+            $this->logger->debug(
                 sprintf('Adjusting timers based on highest item timestamp: %f', $last)
             );
         }
 
         if (isset($last) && $last > 0) {
             $delta = (new DateTime('now'))->format('U') - $last;
-            $this->logger->info(sprintf('Adjusting timers by %.2f s', $delta));
+            $this->logger->debug(sprintf('Adjusting timers by %.2f s', $delta));
 
             $this->getTimerAdjustmentService()->increase(
                 $testSession,
