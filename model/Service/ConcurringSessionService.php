@@ -139,7 +139,7 @@ class ConcurringSessionService
     public function adjustTimers(DeliveryExecution $execution): void
     {
         $this->logger->info(
-            sprintf("Adjusting timers on test restart, current ts is %f", microtime(true))
+            sprintf('Adjusting timers on test restart, current ts is %f', microtime(true))
         );
 
         $testSession = $this->getTestSessionService()->getTestSession($execution);
@@ -164,7 +164,7 @@ class ConcurringSessionService
                 $this->currentSession->removeAttribute("pausedAt-{$executionId}");
 
                 $this->logger->info(
-                    sprintf("Adjusting timers based on timestamp stored in session: %f", $last)
+                    sprintf('Adjusting timers based on timestamp stored in session: %f', $last)
                 );
             }
         }
@@ -173,13 +173,13 @@ class ConcurringSessionService
             $last = $this->getHighestItemTimestamp($testSession, $timer);
 
             $this->logger->info(
-                sprintf("Adjusting timers based on highest item timestamp: %f", $last)
+                sprintf('Adjusting timers based on highest item timestamp: %f', $last)
             );
         }
 
         if (isset($last) && $last > 0) {
             $delta = (new DateTime('now'))->format('U') - $last;
-            $this->logger->info(sprintf("Adjusting timers by %.2f s", $delta));
+            $this->logger->info(sprintf('Adjusting timers by %.2f s', $delta));
 
             $this->getTimerAdjustmentService()->increase(
                 $testSession,
@@ -201,7 +201,7 @@ class ConcurringSessionService
                 $testSession->getItemTags($item)
             );
 
-            if($timestamp > 0) {
+            if ($timestamp > 0) {
                 $timestamps[] = $timestamp;
             }
         }
