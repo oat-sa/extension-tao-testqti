@@ -347,7 +347,7 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
             $sources[] = $routeItem->getAssessmentItemRef();
         }
 
-        foreach ($sources as $source) {
+        foreach (array_filter($sources) as $source) {
             $this->updateDurationCache($source->getIdentifier(), $target);
         }
     }
