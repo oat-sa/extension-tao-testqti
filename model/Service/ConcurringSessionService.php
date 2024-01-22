@@ -178,13 +178,10 @@ class ConcurringSessionService
         }
 
         if (isset($last) && $last > 0) {
-            $delta = (new DateTime('now'))->format('U') - $last;
-            $this->logger->debug(sprintf('Adjusting timers by %.2f s', $delta));
+            $delta = (int) round((new DateTime('now'))->format('U') - $last);
+            $this->logger->debug(sprintf('Adjusting timers by %d s', $delta));
 
-            $this->getTimerAdjustmentService()->increase(
-                $testSession,
-                (int) $delta
-            );
+            $this->getTimerAdjustmentService()->increase($testSession, $delta);
 
             $testSession->suspend();
             $this->getTestSessionService()->persist($testSession);
@@ -227,7 +224,8 @@ class ConcurringSessionService
             );
         }
 
-        $testDefinition = $container->getSourceTest($execution);
+        $sessionId = $execution->getIdentifier();
+        $testDefinitionUri = $container->getSourceTest($execution);
         $testCompilation = sprintf(
             '%s|%s',
             $container->getPrivateDirId($execution),
@@ -235,9 +233,10 @@ class ConcurringSessionService
         );
 
         return $this->qtiRunnerService->getServiceContext(
-            $testDefinition,
+            $testDefinitionUri,
             $testCompilation,
-            $execution->getOriginalIdentifier()
+            $sessionId,
+            $execution->getUserIdentifier()
         );
     }
 
