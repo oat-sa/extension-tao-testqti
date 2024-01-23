@@ -193,6 +193,15 @@ class RegisterTestRunnerPlugins extends InstallAction
                 'active' => true,
                 'tags' => [ 'core', 'technical', 'required' ]
             ], [
+                'id' => 'preventConcurrency',
+                'name' => 'Prevent session concurrency',
+                'module' => 'taoQtiTest/runner/plugins/controls/session/preventConcurrency',
+                'bundle' => 'taoQtiTest/loader/testPlugins.min',
+                'description' => 'Detect concurrent deliveries launched from the same user session',
+                'category' => 'controls',
+                'active' => true,
+                'tags' => [ 'core', 'technical' ]
+            ], [
                 'id' => 'connectivity',
                 'name' => 'Connectivity check',
                 'module' => 'taoQtiTest/runner/plugins/controls/connectivity/connectivity',
@@ -438,6 +447,18 @@ class RegisterTestRunnerPlugins extends InstallAction
             ]
         ]
     ];
+
+    public static function getPlugin(string $pluginIdentifier): ?TestPlugin
+    {
+        foreach (self::$plugins as $categoryPlugins) {
+            foreach ($categoryPlugins as $pluginData) {
+                if ($pluginData['id'] == $pluginIdentifier || $pluginData['module'] == $pluginIdentifier) {
+                    return TestPlugin::fromArray($pluginData);
+                }
+            }
+        }
+        return null;
+    }
 
     public function __invoke($params)
     {
