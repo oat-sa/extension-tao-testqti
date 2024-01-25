@@ -63,7 +63,7 @@ define([
      * @returns {Array}
      */
     function getAttributes(object) {
-        return _.omitBy(object, [
+        return _.omit(object, [
             'qti-type',
             'content',
             'xmlBase',

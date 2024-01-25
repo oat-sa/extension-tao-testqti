@@ -69,7 +69,7 @@ define([
          * @returns {button}
          */
         init : function init(id, config, testContext, testRunner) {
-            this.config = _.omitBy(config || {}, function(value) {
+            this.config = _.omit(config || {}, function(value) {
                 return value === undefined || value === null;
             });
             this.config.id = id;
