@@ -31,9 +31,13 @@ use oat\taoQtiTest\model\Service\ConcurringSessionService;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoTests\models\runner\time\TimePoint;
 use PHPSession;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use qtism\common\datatypes\QtiDuration;
+use qtism\data\AssessmentItemRef;
 
 class ConcurringSessionServiceTest extends TestCase
 {
@@ -129,7 +133,6 @@ class ConcurringSessionServiceTest extends TestCase
             ->with('FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS')
             ->willReturn(true);
 
-        $deliveryResource = $this->createMock(core_kernel_classes_Resource::class);
         $otherDeliveryResource = $this->createMock(core_kernel_classes_Resource::class);
         $executionDomainObject = $this->createMock(DeliveryExecution::class);
         $otherExecutionDomainObject = $this->createMock(DeliveryExecution::class);
@@ -146,6 +149,10 @@ class ConcurringSessionServiceTest extends TestCase
         $otherExecutionDomainObject
             ->expects($this->atLeastOnce())
             ->method('getOriginalIdentifier')
+            ->willReturn('https://example.com/execution/2');
+        $otherExecutionDomainObject
+            ->expects($this->atLeastOnce())
+            ->method('getIdentifier')
             ->willReturn('https://example.com/execution/2');
 
         $this->deliveryExecutionService
@@ -191,7 +198,39 @@ class ConcurringSessionServiceTest extends TestCase
             ->with('https://example.com/delivery/2')
             ->willReturn($qtiTestDeliveryContainer);
 
+        $itemRef = $this->createMock(AssessmentItemRef::class);
+        $itemRef
+            ->expects($this->once())
+            ->method('getIdentifier')
+            ->willReturn('itemRef');
+
+        $duration = $this->createMock(QtiDuration::class);
+        $duration
+            ->expects($this->exactly(2))
+            ->method('getSeconds')
+            ->with(true)
+            ->willReturn(123);
+
+        $testSession = $this->createMock(TestSession::class);
+        $testSession
+            ->expects($this->once())
+            ->method('getCurrentAssessmentItemRef')
+            ->willReturn($itemRef);
+        $testSession
+            ->expects($this->once())
+            ->method('getTimerTarget')
+            ->willReturn(TimePoint::TARGET_SERVER);
+        $testSession
+            ->expects($this->once())
+            ->method('getTimerDuration')
+            ->with('itemRef', TimePoint::TARGET_SERVER)
+            ->willReturn($duration);
+
         $context = $this->createMock(QtiRunnerServiceContext::class);
+        $context
+            ->expects($this->exactly(2))
+            ->method('getTestSession')
+            ->willReturn($testSession);
 
         $this->qtiRunnerService
             ->expects($this->once())
@@ -202,14 +241,18 @@ class ConcurringSessionServiceTest extends TestCase
                 'https://example.com/execution/2'
             )->willReturn($context);
 
-        // Expectations
-        //
         $this->currentSession
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('setAttribute')
-            ->with(
-                'pauseReason-https://example.com/execution/2',
-                'PAUSE_REASON_CONCURRENT_TEST'
+            ->withConsecutive(
+                [
+                    'pauseReason-https://example.com/execution/2',
+                    'PAUSE_REASON_CONCURRENT_TEST'
+                ],
+                [
+                    'itemDuration-https://example.com/execution/2',
+                    123
+                ]
             )->willReturn(null);
 
         $this->qtiRunnerService
