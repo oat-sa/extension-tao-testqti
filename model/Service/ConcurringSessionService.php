@@ -32,15 +32,12 @@ use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\session\TestSession;
-use oat\taoQtiTest\models\runner\time\QtiTimer;
-use oat\taoQtiTest\models\runner\time\QtiTimerFactory;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
 use oat\taoQtiTest\models\TestSessionService;
 use PHPSession;
 use Psr\Log\LoggerInterface;
-use qtism\runtime\tests\RouteItem;
-use DateTime;
+use qtism\common\datatypes\QtiDuration;
+use qtism\data\AssessmentItemRef;
 use Throwable;
 
 class ConcurringSessionService
@@ -76,7 +73,6 @@ class ConcurringSessionService
             return;
         }
 
-        $now = $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true);
         $userIdentifier = $activeExecution->getUserIdentifier();
 
         if (empty($userIdentifier) || $userIdentifier === 'anonymous') {
@@ -97,10 +93,10 @@ class ConcurringSessionService
                     $this->setConcurringSession($executionId);
 
                     $context = $this->getContextByDeliveryExecution($execution);
+
+                    $this->storeItemDuration($context, $executionId);
                     $this->qtiRunnerService->endTimer($context);
                     $this->qtiRunnerService->pause($context);
-
-                    $this->currentSession->setAttribute("pausedAt-{$executionId}", $now);
                 } catch (Throwable $e) {
                     $this->logger->warning(
                         sprintf(
@@ -139,75 +135,92 @@ class ConcurringSessionService
     public function adjustTimers(DeliveryExecution $execution): void
     {
         $this->logger->debug(
-            sprintf('Adjusting timers on test restart, current ts is %f', microtime(true))
+            sprintf(
+                'Adjusting timers on execution %s restart',
+                $execution->getIdentifier()
+            )
         );
 
         $testSession = $this->getTestSessionService()->getTestSession($execution);
 
-        if ($testSession instanceof TestSession) {
-            $timer = $testSession->getTimer();
-        } else {
-            $timer = $this->getQtiTimerFactory()->getTimer(
-                $execution->getIdentifier(),
-                $execution->getUserIdentifier()
+        if ($testSession->getCurrentAssessmentItemRef()) {
+            $duration = $testSession->getTimerDuration(
+                $testSession->getCurrentAssessmentItemRef()->getIdentifier(),
+                $testSession->getTimerTarget()
             );
-        }
-
-        $ids = [
-            $execution->getIdentifier(),
-            $execution->getOriginalIdentifier()
-        ];
-
-        foreach ($ids as $executionId) {
-            if ($this->currentSession->hasAttribute("pausedAt-{$executionId}")) {
-                $last = $this->currentSession->getAttribute("pausedAt-{$executionId}");
-                $this->currentSession->removeAttribute("pausedAt-{$executionId}");
-
-                $this->logger->debug(
-                    sprintf('Adjusting timers based on timestamp stored in session: %f', $last)
-                );
-            }
-        }
-
-        if (!isset($last) && $testSession instanceof TestSession) {
-            $last = $this->getHighestItemTimestamp($testSession, $timer);
 
             $this->logger->debug(
-                sprintf('Adjusting timers based on highest item timestamp: %f', $last)
+                sprintf(
+                    'Timer duration on execution %s timer adjustment = %f',
+                    $execution->getIdentifier(),
+                    $duration->getSeconds(true)
+                )
             );
-        }
 
-        if (isset($last) && $last > 0) {
-            $delta = (int) round((new DateTime('now'))->format('U') - $last);
-            $this->logger->debug(sprintf('Adjusting timers by %d s', $delta));
+            $ids = [
+                $execution->getIdentifier(),
+                $execution->getOriginalIdentifier()
+            ];
 
-            $this->getTimerAdjustmentService()->increase($testSession, $delta);
+            foreach ($ids as $executionId) {
+                $key = "itemDuration-{$executionId}";
 
-            $testSession->suspend();
-            $this->getTestSessionService()->persist($testSession);
+                if (!$this->currentSession->hasAttribute($key)) {
+                    continue;
+                }
+
+                $oldDuration = $this->currentSession->getAttribute($key);
+                $this->currentSession->removeAttribute($key);
+
+                $this->logger->debug(
+                    sprintf(
+                        'Timer duration on execution %s pause was %f',
+                        $execution->getIdentifier(),
+                        $oldDuration
+                    )
+                );
+
+                $delta = (int) ceil($duration->getSeconds(true) - $oldDuration);
+
+                if ($delta > 0) {
+                    $this->logger->debug(sprintf('Adjusting timers by %d s', $delta));
+
+                    $this->getTimerAdjustmentService()->increase($testSession, $delta);
+
+                    $testSession->suspend();
+                    $this->getTestSessionService()->persist($testSession);
+                }
+            }
         }
     }
 
-    private function getHighestItemTimestamp(TestSession $testSession, QtiTimer $timer): ?float
-    {
-        $timestamps = [];
+    private function storeItemDuration(
+        QtiRunnerServiceContext $context,
+        string $executionId
+    ): void {
+        $testSession = $context->getTestSession();
+        $itemRef = $testSession->getCurrentAssessmentItemRef();
 
-        foreach ($testSession->getRoute()->getAllRouteItems() as $item) {
-            /* @var $item RouteItem */
-            $timestamp = $timer->getLastTimestamp(
-                $testSession->getItemTags($item)
+        if ($itemRef instanceof AssessmentItemRef) {
+            /** @var QtiDuration $duration */
+            $duration = $context->getTestSession()->getTimerDuration(
+                $itemRef->getIdentifier(),
+                $testSession->getTimerTarget()
             );
 
-            if ($timestamp > 0) {
-                $timestamps[] = $timestamp;
-            }
-        }
+            $this->logger->debug(
+                sprintf(
+                    'duration when execution %s was paused = %f',
+                    $executionId,
+                    $duration->getSeconds(true)
+                )
+            );
 
-        if (empty($timestamps)) {
-            return null;
+            $this->currentSession->setAttribute(
+                "itemDuration-{$executionId}",
+                $duration->getSeconds(true)
+            );
         }
-
-        return max($timestamps);
     }
 
     private function getContextByDeliveryExecution(DeliveryExecutionInterface $execution): QtiRunnerServiceContext
@@ -238,12 +251,6 @@ class ConcurringSessionService
             $sessionId,
             $execution->getUserIdentifier()
         );
-    }
-
-    private function getQtiTimerFactory(): QtiTimerFactory
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceManager()->get(QtiTimerFactory::SERVICE_ID);
     }
 
     private function getTimerAdjustmentService(): TimerAdjustmentService
