@@ -149,8 +149,7 @@ class taoQtiTest_models_classes_QtiTestConverter
                 $key = $property->getName();
                 if ($value instanceof QtiPair) {
                     $array[$property->getName()] = (string) $value;
-                }
-                elseif ($value instanceof QtiComponentCollection) {
+                } elseif ($value instanceof QtiComponentCollection) {
                     $array[$key] = [];
                     foreach ($value as $item) {
                         $array[$key][] = $this->componentToArray($item);
